@@ -315,3 +315,39 @@ const ExIm={
     r.readAsText(file);ev.target.value='';
   }
 };
+
+const WhatsNew={
+  check(){
+    const lastShown=localStorage.getItem('vos_wn_ver');
+    if(lastShown===VER) return; // Already shown this version
+    localStorage.setItem('vos_wn_ver',VER); // Mark as shown immediately
+    setTimeout(()=>this.show(), 1200);
+  },
+  show(){
+    localStorage.setItem('vos_wn_ver',VER);
+    Modal.open('✨ Welcome to VaultOS v'+VER,`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">🪪 Standalone Documents Module</div>
+        <div style="font-size:12px;color:var(--text2)">Passports, IDs, Visas, Contracts, Tax docs — 13 adaptive schemas with intelligent fields</div>
+      </div>
+      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">📥 Smart Bulk Import</div>
+        <div style="font-size:12px;color:var(--text2)">Paste text, Excel, Word, CSV, PDF — auto-detects banks, cards, investments, SIMs. Edit before importing.</div>
+      </div>
+      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">⚙️ Tabbed Settings Center</div>
+        <div style="font-size:12px;color:var(--text2)">8-section Settings: Profile, Security, Appearance, Modules, Backup, Import, Accessibility, About</div>
+      </div>
+      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">🔍 Self-Check Engine</div>
+        <div style="font-size:12px;color:var(--text2)">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
+      </div>
+      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">🎨 8 New Premium Themes</div>
+        <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
+      </div>
+    </div>`,
+    `<button class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultOS →</button>`);
+  }
+};
