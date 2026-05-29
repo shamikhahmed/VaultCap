@@ -33,6 +33,8 @@ const ALL_MODULES=[
   {id:'emails', n:'Emails',      ic:'📧', desc:'All email identities & security',    group:'Identity'},
   {id:'gadgets',n:'Gadgets',     ic:'💻', desc:'Devices, IMEI, warranty',            group:'Identity'},
   {id:'digital',n:'Digital',     ic:'💼', desc:'Logins, wallets, social media',      group:'Identity'},
+  {id:'vehicles',n:'Vehicles',   ic:'🚗', desc:'Cars, fuel, service, insurance',     group:'Assets'},
+  {id:'reminders',n:'Reminders', ic:'🔔', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
 ];
 
 const COUNTRIES=[
@@ -84,6 +86,22 @@ const BANKS_DB=[
   {n:'State Bank of India',c:'IN',t:'government'},{n:'Axis Bank',c:'IN',t:'commercial'},
   {n:'DBS Bank',c:'SG',t:'commercial'},{n:'OCBC',c:'SG',t:'commercial'},
   {n:'Maybank',c:'MY',t:'commercial'},{n:'CIMB',c:'MY',t:'commercial'},
+  {n:'Silk Bank',c:'PK',t:'commercial'},{n:'Summit Bank',c:'PK',t:'commercial'},
+  {n:'First Women Bank',c:'PK',t:'government'},{n:'Bank of Khyber',c:'PK',t:'government'},
+  {n:'Zarai Taraqiati Bank',c:'PK',t:'government'},{n:'SME Bank',c:'PK',t:'government'},
+  {n:'Industrial Development Bank',c:'PK',t:'government'},{n:'Punjab Provincial Cooperative Bank',c:'PK',t:'cooperative'},
+  {n:'MCB Islamic',c:'PK',t:'islamic'},{n:'UBL Ameen',c:'PK',t:'islamic'},{n:'HBL Islamic',c:'PK',t:'islamic'},
+  {n:'Deutsche Bank PK',c:'PK',t:'international'},{n:'Taam',c:'PK',t:'microfinance'},
+  {n:'U Microfinance',c:'PK',t:'microfinance'},{n:'NRSP',c:'PK',t:'microfinance'},
+  {n:'Apna Microfinance',c:'PK',t:'microfinance'},{n:'Akhuwat',c:'PK',t:'microfinance'},
+  {n:'Tide',c:'GB',t:'digital'},{n:'Anna Money',c:'GB',t:'digital'},{n:'Zempler',c:'GB',t:'digital'},
+  {n:'Kroo',c:'GB',t:'digital'},{n:'Pockit',c:'GB',t:'digital'},{n:'Suits Me',c:'GB',t:'digital'},
+  {n:'Chip',c:'GB',t:'digital'},{n:'Plum',c:'GB',t:'digital'},{n:'Tandem',c:'GB',t:'digital'},
+  {n:'Cynergy Bank',c:'GB',t:'commercial'},
+  {n:'Abu Dhabi Commercial Bank',c:'AE',t:'commercial'},{n:'National Bank of Fujairah',c:'AE',t:'commercial'},
+  {n:'Al Hilal Bank',c:'AE',t:'islamic'},{n:'Bank of Sharjah',c:'AE',t:'commercial'},
+  {n:'Invest Bank',c:'AE',t:'commercial'},{n:'Finance House',c:'AE',t:'commercial'},
+  {n:'Aafaq Islamic',c:'AE',t:'islamic'},
 ];
 
 const NETWORKS_DB=[
@@ -137,9 +155,35 @@ const CARDS_DB=[
   {n:'Klarna Card',net:'Visa',cat:'BNPL'},
   {n:'Clearpay Card',net:'Mastercard',cat:'BNPL'},
   {n:'Tabby Card',net:'Visa',cat:'BNPL'},
+  {n:'Meezan Visa Debit',net:'Visa',cat:'Debit'},
+  {n:'Bank Alfalah Visa Debit',net:'Visa',cat:'Debit'},
+  {n:'Allied Bank MC Debit',net:'Mastercard',cat:'Debit'},
+  {n:'UBL Visa Debit',net:'Visa',cat:'Debit'},
+  {n:'HBL Platinum MC',net:'Mastercard',cat:'Premium'},
+  {n:'HBL Islamic Visa',net:'Visa',cat:'Standard'},
+  {n:'Sadapay MC',net:'Mastercard',cat:'Debit'},
+  {n:'Zindigi MC',net:'Mastercard',cat:'Debit'},
+  {n:'NayaPay Visa',net:'Visa',cat:'Debit'},
+  {n:'Bank Al Habib Visa',net:'Visa',cat:'Debit'},
+  {n:'Monese MC',net:'Mastercard',cat:'Debit'},
+  {n:'Zempler MC',net:'Mastercard',cat:'Debit'},
+  {n:'Tide Business Visa',net:'Visa',cat:'Debit'},
+  {n:'Kroo Visa',net:'Visa',cat:'Debit'},
+  {n:'Anna Business MC',net:'Mastercard',cat:'Debit'},
+  {n:'Emirates Islamic Visa',net:'Visa',cat:'Standard'},
+  {n:'Al Hilal Islamic Visa',net:'Visa',cat:'Standard'},
+  {n:'ADCB Traveller Visa',net:'Visa',cat:'Travel'},
+  {n:'Mashreq Neo Visa',net:'Visa',cat:'Debit'},
+  {n:'FAB Islamic MC',net:'Mastercard',cat:'Standard'},
 ];
 
-const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eToro','Vanguard UK','Sarwa','Baraka','Al Meezan','AKD Securities','JS Global','Binance','Coinbase','Kraken','Bybit','OKX'];
+const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eToro','Vanguard UK','Sarwa','Baraka','Al Meezan','AKD Securities','JS Global','Binance','Coinbase','Kraken','Bybit','OKX',
+  'Rafi Securities','JS Global Capital','Arif Habib Limited','Topline Securities','Alfalah Securities',
+  'Next Capital','Sherman Securities','Ismail Iqbal Securities','IGI Securities','KASB Securities',
+  'Optimus Capital','Pearl Securities','Vector Securities','CDC Pakistan','UBL Fund Managers',
+  'Al Meezan Investments','NBP Funds','MCB Arif Habib Savings','Faysal Asset Management',
+  'Atlas Asset Management','HBL Asset Management','NAFA Funds','Meezan Islamic Fund',
+  'ABL Asset Management','Lakson Investments'];
 
 const SUBS_DB=[
   {n:'Netflix',c:'Streaming',ic:'🎬'},{n:'Disney+',c:'Streaming',ic:'🏰'},{n:'Amazon Prime',c:'Streaming',ic:'📦'},
@@ -462,8 +506,8 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true },
-  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], activity:[], tags:[],
+  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
+  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[],
   loanF:'all',
   wallet:[],
   fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false,
@@ -482,7 +526,7 @@ const Store = {
         modules: S.modules,
         banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
         assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
-        digital: S.digital, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
+        digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
         fails: S.fails, lockedUntil: S.lockedUntil,
         autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
       }));
@@ -502,7 +546,7 @@ const Store = {
         .forEach(k => localStorage.removeItem(k));
     } catch(e) {}
     S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
-    S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[];
+    S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
     S.activity=[]; S.tags=[]; S.wallet=[];
     S.user = { name:'', avatar:'💼', theme:'dark', currency:'USD', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:null };
     S.pin=''; S.decoyPin=''; S.fails=0; S.unlocked=false; S.decoy=false;
@@ -637,6 +681,8 @@ const R = {
       backup:      () => BackupCenter.render(),
       recovery:    () => RecoveryCenter.render(),
       workspace:   () => WorkspaceManager.render(),
+      vehicles:    () => Vehicles.render(),
+      reminders:   () => Reminders.render(),
       settings:    () => {
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
@@ -687,15 +733,20 @@ const PIN = {
     if (pe.length === 6) setTimeout(() => this.verify(), 130);
   },
   del() {
-    pe = pe.slice(0, -1); this.dots();
-    document.getElementById('pmsg').className = 'pin-msg';
-    document.getElementById('pmsg').textContent = '';
+    pe = pe.slice(0, -1);
+    const msg = document.getElementById('pmsg');
+    if (msg) msg.className = 'pin-msg';
+    this.dots();
   },
   dots() {
     [0,1,2,3,4,5].forEach(i => {
       const d = document.getElementById('pd' + i);
       if (d) d.className = 'pd' + (i < pe.length ? ' on' : '');
     });
+    const msg = document.getElementById('pmsg');
+    if (msg && !msg.classList.contains('err')) {
+      msg.textContent = pe.length > 0 ? pe.length + ' of 6' : '';
+    }
   },
   verify() {
     if (Date.now() < S.lockedUntil) { this.showLo(); pe = ''; this.dots(); return; }
@@ -962,12 +1013,15 @@ function buildNav() {
     if (active) { const p = document.getElementById('btabsIn'); if (p) p.scrollTo({ left: active.offsetLeft - p.offsetWidth / 2 + active.offsetWidth / 2, behavior:'smooth' }); }
   }, 60);
 
-  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital' };
+  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles' };
+  const quickAdds = [
+    {id:'cash',  icon:'💵', label:'Cash',  obj:'Cash'},
+    {id:'loans', icon:'🤝', label:'Loan',  obj:'Loans'},
+    {id:'banks', icon:'🏦', label:'Bank',  obj:'Banks'},
+    {id:'cards', icon:'💳', label:'Card',  obj:'Cards'},
+  ].filter(q => S.modules[q.id] && document.getElementById('pg-' + q.id));
   const fabItems = [
-    ...active.slice(0, 7).map(m => {
-      const obj = modMap[m.id];
-      return `<div class="fmi" onclick="${obj}.openAdd();FAB.close()">${m.ic} Add ${m.n.replace(/s$/, '')}</div>`;
-    }),
+    ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${q.icon} Add ${q.label}</div>`),
     '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
     '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
   ];
@@ -1065,24 +1119,42 @@ const PanicLock = {
 // ===================== DECOY MODE =====================
 function loadDecoyData() {
   S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
-  S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[];
+  S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[]; S.vehicles=[];
   const id = U.id, ts = () => new Date().toISOString();
-  [
-    { bankName:'HBL (Habib Bank)', country:'PK', bankType:'commercial', accountType:'Savings', currency:'PKR', last4:'7788', holderName:'A. Hassan', tags:['Primary'], favorite:true },
-    { bankName:'Meezan Bank', country:'PK', bankType:'islamic', accountType:'Current', currency:'PKR', last4:'2241', holderName:'A. Hassan', tags:['Islamic'] },
-    { bankName:'Monzo', country:'GB', bankType:'digital', accountType:'Current', currency:'GBP', last4:'3312', holderName:'A. Hassan', tags:['UK'] },
-  ].forEach(b => S.banks.push({ id:id(), ...b, createdAt:ts() }));
-  [
-    { cardName:'HBL Debit', network:'Visa', cardType:'Debit', category:'Standard', country:'PK', last4:'7788', expiry:'11/27', holderName:'A HASSAN', tags:['Primary'], favorite:true },
-    { cardName:'Monzo Visa', network:'Visa', cardType:'Debit', category:'Standard', country:'GB', last4:'3312', expiry:'06/28', holderName:'A HASSAN', tags:['UK'] },
-  ].forEach(c => S.cards.push({ id:id(), issuer:c.cardName.split(' ')[0], ...c, createdAt:ts() }));
-  [{ network:'Jazz', country:'PK', simType:'Physical', status:'Active', phone:'+92 300 1234567', dataPlan:10 }]
-    .forEach(s => S.sims.push({ id:id(), ...s, createdAt:ts() }));
-  [
-    { investmentName:'Engro Corporation', broker:'Arif Habib', type:'Stocks', ticker:'ENGRO', country:'PK', currency:'PKR', amountInvested:250000, currentValue:287500, riskLevel:'Medium', ownership:'personal', tags:['PSX'], favorite:false },
-    { investmentName:'Lucky Cement', broker:'Arif Habib', type:'Stocks', ticker:'LUCK', country:'PK', currency:'PKR', amountInvested:180000, currentValue:196200, riskLevel:'Medium', ownership:'personal', tags:['PSX'], favorite:false },
-  ].forEach(i => S.investments.push({ id:id(), ...i, createdAt:ts() }));
-  S.user.netWorth = 950000; S.user.currency = 'PKR';
+  const names = ['Ali Hassan','Sara Ahmed','Omar Khan','Fatima Malik'];
+  const dName = names[Math.floor(Math.random() * names.length)];
+  const dFirst = dName.split(' ')[0];
+  const rl4 = () => String(1000 + Math.floor(Math.random() * 8999));
+  // 2 random PK commercial banks
+  const pkBanks = BANKS_DB.filter(b => b.c === 'PK' && (b.t === 'commercial' || b.t === 'islamic'));
+  const shuffled = [...pkBanks].sort(() => Math.random() - 0.5);
+  const selBanks = shuffled.slice(0, 2);
+  selBanks.forEach((b, i) => {
+    S.banks.push({ id:id(), bankName:b.n, country:'PK', bankType:b.t, accountType:i===0?'Current':'Savings', currency:'PKR', last4:rl4(), holderName:dName, tags:[i===0?'Primary':'Secondary'], favorite:i===0, createdAt:ts() });
+  });
+  // 1 random debit card
+  const selCard = CARDS_DB.filter(c => c.cat === 'Debit')[Math.floor(Math.random() * CARDS_DB.filter(c => c.cat === 'Debit').length)];
+  const expYr = (new Date().getFullYear() - 2000 + 3);
+  const expMo = String(Math.floor(Math.random() * 12) + 1).padStart(2,'0');
+  S.cards.push({ id:id(), cardName:selCard.n, network:selCard.net, cardType:'Debit', category:'Standard', country:'PK', last4:rl4(), expiry:`${expMo}/${expYr}`, holderName:dName.toUpperCase(), issuer:selCard.n.split(' ')[0], tags:['Primary'], createdAt:ts() });
+  // Jazz SIM
+  S.sims.push({ id:id(), network:'Jazz', country:'PK', simType:'Physical', status:'Active', phone:`+92 300 ${Math.floor(1000000 + Math.random() * 8999999)}`, dataPlan:10, createdAt:ts() });
+  // Small cash amount
+  const cashAmt = Math.floor(2000 + Math.random() * 13000);
+  S.cash.push({ id:id(), label:'Wallet', amount:cashAmt, currency:'PKR', location:'Wallet', createdAt:ts() });
+  // 1 PSX stock
+  const stocks = [
+    {name:'Engro Corporation',ticker:'ENGRO',inv:150000,cur:163500},
+    {name:'Lucky Cement',ticker:'LUCK',inv:90000,cur:97200},
+    {name:'HBL',ticker:'HBL',inv:120000,cur:128400},
+    {name:'MCB Bank',ticker:'MCB',inv:80000,cur:86400},
+    {name:'Pakistan Petroleum',ticker:'PPL',inv:60000,cur:64800},
+  ];
+  const st = stocks[Math.floor(Math.random() * stocks.length)];
+  S.investments.push({ id:id(), investmentName:st.name, broker:'Arif Habib Limited', type:'Stocks', ticker:st.ticker, country:'PK', currency:'PKR', amountInvested:st.inv, currentValue:st.cur, riskLevel:'Medium', ownership:'personal', tags:['PSX'], createdAt:ts() });
+  S.user.name = dName;
+  S.user.netWorth = cashAmt + st.cur;
+  S.user.currency = 'PKR';
   Activity.log('Vault unlocked');
   Store.save();
   R.goto('dashboard');

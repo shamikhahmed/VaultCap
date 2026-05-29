@@ -1,3 +1,4 @@
+const FX={PKR:1,GBP:350,AED:75,USD:280,EUR:320,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
 const Dash={
   render(){
     const h=new Date().getHours();
@@ -7,6 +8,15 @@ const Dash={
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const b=document.getElementById('dashBody');
+    const cur=S.user.currency||'PKR';
+    const toB=(a,c)=>(a||0)*(FX[c]||1);
+    const toCur=(pkr,c)=>pkr/(FX[c]||1);
+    const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
+    const asPKR=S.assets.reduce((a,x)=>a+toB(x.currentValue||0,x.currency||cur),0);
+    const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
+    const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
+    const nwPKR=invPKR+asPKR+cashPKR-debtPKR;
+    const nwDisplay=Math.round(toCur(nwPKR,cur));
     const totalInv=S.investments.reduce((a,i)=>a+(i.amountInvested||0),0);
     const curInv=S.investments.reduce((a,i)=>a+(i.currentValue||0),0);
     const pnl=curInv-totalInv;
@@ -15,22 +25,24 @@ const Dash={
     const monthlyExp=S.expenses.filter(e=>e.active).reduce((a,e)=>a+(parseFloat(e.amount)||0),0);
     const simRem=S.sims.filter(s=>s.rechargeReminder&&s.status==='Active');
     // Stats
-    const modStats=ALL_MODULES.filter(m=>S.modules[m.id]).map(m=>`<div class="stat-card" onclick="R.goto('${m.id}')"><div class="sc-ic">${m.ic}</div><div class="sc-n">${S[m.id]?.length||0}</div><div class="sc-l">${m.n}</div></div>`).join('');
+    const modStats=ALL_MODULES.filter(m=>S.modules[m.id]&&S[m.id]).map(m=>`<div class="stat-card" onclick="R.goto('${m.id}')"><div class="sc-ic">${m.ic}</div><div class="sc-n">${S[m.id]?.length||0}</div><div class="sc-l">${m.n}</div></div>`).join('');
     // Donut data
     const allocData=[
-      {l:'Investments',v:curInv,col:'#0080ff'},{l:'Assets',v:S.assets.reduce((a,x)=>a+(x.currentValue||0),0),col:'#10b981'},
-      {l:'Other',v:S.user.netWorth*0.15,col:'#d4af37'}
+      {l:'Investments',v:Math.round(toCur(invPKR,cur)),col:'#0080ff'},
+      {l:'Assets',v:Math.round(toCur(asPKR,cur)),col:'#10b981'},
+      {l:'Cash',v:Math.round(toCur(cashPKR,cur)),col:'#d4af37'},
     ].filter(d=>d.v>0);
     const totAlloc=allocData.reduce((a,d)=>a+d.v,0)||1;
     const donutSVG=this.donut(allocData,totAlloc);
     const secScore=this.security();
+    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
+    const nwSub=debtPKR>0?`Assets ${cur} ${U.fmt(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} − Debt ${U.fmt(Math.round(toCur(debtPKR,cur)))}`:`Investments · Assets · Cash`;
     b.innerHTML=`
     <div class="hero">
-      <div class="hero-label">Net Worth</div>
-      <div class="hero-amount sens">${S.user.currency} ${U.fmt(S.user.netWorth)}</div>
-      <div class="hero-sub sens">${totalInv>0?`Portfolio ${U.fmt(curInv)} · P&L ${pnl>=0?'+':''}${U.fmt(Math.round(pnl))}`:'Add investments to track your portfolio'}</div>
+      <div class="hero-label">NET WORTH</div>
+      <div class="hero-amount sens">${cur} ${U.fmt(nwDisplay)}</div>
+      <div class="hero-sub sens">${nwSub}</div>
       <div class="hero-acts">
-        <button class="btn btn-p btn-sm" onclick="Dash.editNW()">✏️ Update</button>
         <button class="btn btn-s btn-sm" onclick="Dash.snap()">📸 Snapshot</button>
         <button class="btn btn-s btn-sm" onclick="ExIm.export('vault')">📤 Backup</button>
       </div>
@@ -74,6 +86,7 @@ const Dash={
     setTimeout(()=>{const c=document.getElementById('nwc');if(c)c.value=S.user.currency||'GBP';},50);
   },
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
+  toggleCurrency(){const order=['PKR','GBP','AED','USD'];const idx=order.indexOf(S.user.currency||'PKR');S.user.currency=order[(idx+1)%order.length];Store.save();this.render();},
   security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.pin!=='123456')s+=5;return Math.min(s,100);}
 };
 

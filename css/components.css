@@ -379,9 +379,9 @@ textarea.inp { resize: vertical; min-height: 64px; }
 
 /* ─ PIN dots ─ */
 .pin-dots { display: flex; gap: 12px; margin: 12px 0 6px; }
-.pd { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--border2); transition: all var(--dur-fast) var(--spring); background: transparent; }
-.pd.filled { background: var(--accent); border-color: var(--accent); transform: scale(1.1); box-shadow: 0 0 8px var(--glow); }
-.pd.error  { background: var(--err); border-color: var(--err); animation: shake .4s var(--ease-out); }
+.pd { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border2); transition: all var(--dur-fast) var(--spring); background: transparent; }
+.pd.filled, .pd.on { background: var(--accent); border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 10px var(--glow); }
+.pd.error, .pd.err { background: var(--err); border-color: var(--err); animation: shake .4s var(--ease-out); transform: scale(1.1); }
 .pin-msg   { height: 20px; font-size: 12px; text-align: center; margin-bottom: 18px; position: relative; z-index: 1; color: var(--text3); }
 .pin-msg.err { color: var(--err); }
 @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }

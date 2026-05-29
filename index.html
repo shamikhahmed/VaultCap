@@ -214,6 +214,7 @@
 <!-- Pages rendered dynamically -->
 <div class="page on" id="pg-dashboard">
 <div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px"><div style="flex:1"><div id="dashGreet" style="font-size:17px;font-weight:700;letter-spacing:-.3px"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
+<button class="btn btn-g btn-sm" id="currBtn" onclick="Dash.toggleCurrency()" title="Toggle currency">PKR</button>
 <button class="btn btn-g btn-sm" onclick="CMD.open()">⌘K</button>
 <button class="icb" onclick="togglePrivacy()" title="Privacy">🙈</button>
 <button class="icb" onclick="R.lock()">🔒</button></div></div>
@@ -234,6 +235,8 @@
 <div class="page" id="pg-alerts"><div class="ph"><h2>🔔 Alerts</h2></div><div class="pb" id="alertBody"></div></div>
 <div class="page" id="pg-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="importBody"><div class="empty"><div class="empty-ic">📥</div><h3>Loading...</h3></div></div></div>
 <div class="page" id="pg-documents"><div class="ph"><h2>🪪 Documents</h2></div><div id="docsChips" class="chips" style="padding:0 14px 4px"></div><div class="pb" id="docsItems"></div></div>
+<div class="page" id="pg-vehicles"><div class="ph"><h2>🚗 Vehicles</h2><button class="btn btn-p btn-sm" onclick="Vehicles.openAdd()">+ Add</button></div><div class="pb" id="vItems"></div></div>
+<div class="page" id="pg-reminders"><div class="ph"><h2>🔔 Reminders</h2></div><div class="pb" id="reminderBody"></div></div>
 <div class="page" id="pg-search"><div class="pb" id="searchBody" style="padding-top:0"></div></div>
 <div class="page" id="pg-timeline"><div class="ph"><h2>📅 Timeline</h2></div><div class="pb" id="timelineBody"></div></div>
 <div class="page" id="pg-security"><div class="ph"><h2>🛡️ Security Center</h2></div><div class="pb" id="securityBody"></div></div>
@@ -295,5 +298,7 @@
 <script src="js/modules/timeline.js"></script>
 <script src="js/modules/security.js"></script>
 <script src="js/modules/search.js"></script>
+<script src="js/modules/vehicles.js"></script>
+<script src="js/modules/reminders.js"></script>
 </body>
 </html>
