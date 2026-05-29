@@ -23,6 +23,7 @@ const ALL_MODULES=[
   {id:'banks',  n:'Banks',       ic:'🏦', desc:'Accounts, IBAN, login details',      group:'Finance'},
   {id:'cards',  n:'Cards',       ic:'💳', desc:'Debit, credit, crypto & BNPL',       group:'Finance'},
   {id:'investments',n:'Investments',ic:'📈',desc:'Stocks, funds, bonds, crypto',      group:'Finance'},
+  {id:'cash',    n:'Cash',        ic:'💵', desc:'Physical cash by location',          group:'Finance'},
   {id:'expenses',n:'Expenses',   ic:'📋', desc:'Subscriptions & recurring bills',    group:'Finance'},
   {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, valuables',      group:'Assets'},
   {id:'sims',   n:'SIM Cards',   ic:'📱', desc:'Mobile numbers & networks',          group:'Identity'},
@@ -459,8 +460,8 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, sims:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true },
-  banks:[], cards:[], investments:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], activity:[], tags:[],
+  modules: { banks:true, cards:true, investments:true, cash:true, sims:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true },
+  banks:[], cards:[], investments:[], cash:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], activity:[], tags:[],
   wallet:[],
   fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false,
   bF:'all', cF:'all', invF:'all', simF:'all', aF:'all', expF:'all', gF:'all',
@@ -476,7 +477,7 @@ const Store = {
         schemaVersion: SCHEMA_VERSION,
         user: S.user, pin: S.pin, decoyPin: S.decoyPin, noPin: S.noPin,
         modules: S.modules,
-        banks: S.banks, cards: S.cards, investments: S.investments, sims: S.sims,
+        banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, sims: S.sims,
         assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
         digital: S.digital, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
         fails: S.fails, lockedUntil: S.lockedUntil,
@@ -497,7 +498,7 @@ const Store = {
       [...Object.keys(localStorage)].filter(k => k.startsWith('vos') || k === 'vos3')
         .forEach(k => localStorage.removeItem(k));
     } catch(e) {}
-    S.banks=[]; S.cards=[]; S.investments=[]; S.sims=[]; S.assets=[];
+    S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.sims=[]; S.assets=[];
     S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[];
     S.activity=[]; S.tags=[]; S.wallet=[];
     S.user = { name:'', avatar:'💼', theme:'dark', currency:'USD', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:null };
@@ -615,6 +616,7 @@ const R = {
       banks:       () => Banks.render(),
       cards:       () => Cards.render(),
       investments: () => Inv.render(),
+      cash:        () => Cash.render(),
       sims:        () => Sims.render(),
       assets:      () => Assets.render(),
       expenses:    () => Exp.render(),
@@ -955,7 +957,7 @@ function buildNav() {
     if (active) { const p = document.getElementById('btabsIn'); if (p) p.scrollTo({ left: active.offsetLeft - p.offsetWidth / 2 + active.offsetWidth / 2, behavior:'smooth' }); }
   }, 60);
 
-  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital' };
+  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital' };
   const fabItems = [
     ...active.slice(0, 7).map(m => {
       const obj = modMap[m.id];
@@ -1057,7 +1059,7 @@ const PanicLock = {
 
 // ===================== DECOY MODE =====================
 function loadDecoyData() {
-  S.banks=[]; S.cards=[]; S.investments=[]; S.sims=[]; S.assets=[];
+  S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.sims=[]; S.assets=[];
   S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[];
   const id = U.id, ts = () => new Date().toISOString();
   [
