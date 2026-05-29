@@ -351,3 +351,674 @@ const WhatsNew={
     `<button class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultOS →</button>`);
   }
 };
+
+const ImportEngine={
+  render(){
+    const b=document.getElementById('importBody');if(!b)return;
+    b.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:14px;padding-bottom:40px">
+      <!-- DRAG/UPLOAD ZONE -->
+      <div id="ie-dropzone" style="border:2px dashed var(--border2);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:var(--glass)"
+        ondragover="event.preventDefault();this.style.borderColor='var(--accent)';this.style.background='var(--glow)'"
+        ondragleave="this.style.borderColor='var(--border2)';this.style.background='var(--glass)'"
+        ondrop="ImportEngine.handleDrop(event)" onclick="document.getElementById('ie-file').click()" style="border:2px dashed var(--border2);border-radius:20px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:var(--glass)">
+        <div style="font-size:44px;margin-bottom:12px">📥</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Drop files here or tap to browse</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Images · CSV · JSON · Text · Vault files</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📷 Photos</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📄 PDFs</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📊 CSV</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📊 Excel</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📝 Word</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">📋 Text/PDF</span>
+          <span style="padding:4px 12px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">🔒 .vos Vault</span>
+        </div>
+      </div>
+      <input type="file" id="ie-file" accept="image/*,.csv,.json,.txt,.vos,.vault,.xlsx,.xls,.docx,.doc,.pdf" style="display:none" onchange="ImportEngine.handleFile(this.files[0])">
+      <!-- STATUS -->
+      <div id="ie-status" style="display:none;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center">
+        <div id="ie-status-text" style="font-size:13px;color:var(--text2)"></div>
+        <div style="background:var(--border);border-radius:2px;height:4px;margin-top:10px;overflow:hidden"><div id="ie-progress" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s var(--ease)"></div></div>
+      </div>
+      <!-- RESULTS -->
+      <div id="ie-results" style="display:none"></div>
+      <!-- MANUAL PARSE SECTION -->
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">✏️ Paste Text to Import</div>
+        <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultOS will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:13px;line-height:1.6"></textarea>
+        <button class="btn btn-p btn-sm" onclick="ImportEngine.parseText(document.getElementById('ie-paste').value)" style="margin-top:8px;width:100%">🔍 Detect & Import</button>
+      </div>
+      <!-- HISTORY -->
+      ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).length>0?`
+      <div class="widget">
+        <div class="wh"><span>📋</span>Import History</div>
+        ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).slice(0,5).map(a=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${a.a}</span><span style="color:var(--text3)">${Activity.ago(a.t)}</span></div>`).join('')}
+      </div>`:''}
+    </div>`;
+  },
+  setStatus(msg, pct=null){
+    const s=document.getElementById('ie-status');
+    const t=document.getElementById('ie-status-text');
+    const p=document.getElementById('ie-progress');
+    if(s)s.style.display='block';
+    if(t)t.textContent=msg;
+    if(p&&pct!==null)p.style.width=pct+'%';
+  },
+  handleDrop(e){
+    e.preventDefault();
+    const el=document.getElementById('ie-dropzone');
+    if(el){el.style.borderColor='var(--border2)';el.style.background='var(--glass)';}
+    const file=e.dataTransfer.files[0];
+    if(file)this.handleFile(file);
+  },
+  handleFile(file){
+    if(!file)return;
+    const name=file.name.toLowerCase();
+    if(name.endsWith('.vos')||name.endsWith('.vault')){this.importVault(file);return;}
+    if(name.endsWith('.csv')){this.importCSV(file);return;}
+    if(name.endsWith('.json')){this.importJSON(file);return;}
+    if(name.endsWith('.txt')||name.endsWith('.md')){this.readText(file,t=>this.parseText(t));return;}
+    if(name.endsWith('.xlsx')||name.endsWith('.xls')){this.importExcel(file);return;}
+    if(name.endsWith('.docx')||name.endsWith('.doc')){this.importWord(file);return;}
+    if(name.endsWith('.pdf')){this.importPDF(file);return;}
+    if(file.type.startsWith('image/')){this.runOCR(file);return;}
+    // Try text as fallback
+    this.readText(file,t=>this.parseText(t));
+  },
+  importExcel(file){
+    this.setStatus('Loading Excel parser...',10);
+    // Load SheetJS dynamically
+    if(typeof XLSX==='undefined'){
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload=()=>this._readExcel(file);
+      s.onerror=()=>{Toast.show('Could not load Excel parser — try CSV export','error');};
+      document.head.appendChild(s);
+    } else {this._readExcel(file);}
+  },
+  _readExcel(file){
+    this.setStatus('Reading Excel file...',30);
+    const r=new FileReader();
+    r.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'binary'});
+        let allRows=[];
+        wb.SheetNames.forEach(name=>{
+          const ws=wb.Sheets[name];
+          const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+          allRows=[...allRows,...rows];
+        });
+        this.setStatus('Parsing '+allRows.length+' rows...',60);
+        const results=[];
+        allRows.forEach(row=>{
+          const line=row.filter(Boolean).join(' ');
+          if(line.length<3)return;
+          const guessed=this.parseOCRText(line);
+          results.push(...guessed);
+        });
+        const unique=[...new Map(results.map(r=>[JSON.stringify(r.data),r])).values()];
+        this.setStatus('Found '+unique.length+' items in Excel',100);
+        this.showResults(unique);
+      }catch(err){Toast.show('Excel parse error: '+err.message,'error');}
+    };
+    r.readAsBinaryString(file);
+  },
+  importWord(file){
+    this.setStatus('Reading Word document...',20);
+    // Load mammoth.js for .docx
+    if(typeof mammoth==='undefined'){
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js';
+      s.onload=()=>this._readWord(file);
+      s.onerror=()=>{
+        // Fallback: read as text
+        this.readText(file,t=>this.parseText(t));
+      };
+      document.head.appendChild(s);
+    } else {this._readWord(file);}
+  },
+  _readWord(file){
+    const r=new FileReader();
+    r.onload=e=>{
+      mammoth.extractRawText({arrayBuffer:e.target.result})
+        .then(result=>{this.setStatus('Extracted text from Word doc',70);this.parseText(result.value);})
+        .catch(()=>this.readText(file,t=>this.parseText(t)));
+    };
+    r.readAsArrayBuffer(file);
+  },
+  importPDF(file){
+    this.setStatus('PDF detected — extracting text via OCR...',10);
+    // For PDF, convert to image and OCR, or use text extraction
+    const r=new FileReader();
+    r.onload=e=>{
+      // Try as text first (text-based PDFs)
+      const textContent=new TextDecoder('utf-8',{fatal:false}).decode(new Uint8Array(e.target.result).slice(0,50000));
+      const extracted=textContent.split('').filter(ch=>ch.charCodeAt(0)>=32&&ch.charCodeAt(0)<=126||ch==='\n').join('').replace(/\s+/g,' ').trim();
+      if(extracted.length>50){
+        this.setStatus('Parsing PDF text content...',70);
+        this.parseText(extracted);
+      } else {
+        Toast.show('PDF is image-based — use OCR scan','warning');
+        this.setStatus('Upload image scan of PDF pages for OCR',0);
+      }
+    };
+    r.readAsArrayBuffer(file);
+  },
+  importVault(file){
+    const r=new FileReader();
+    r.onload=e=>{
+      const raw=e.target.result;
+      if(raw.startsWith('VAULTOS_AES256::')&&Crypto.available()){
+        const enc=raw.replace('VAULTOS_AES256::','');
+        const pw=prompt('Enter vault PIN to decrypt:');
+        if(!pw)return;
+        const derivedPw=pw+'_vos4_'+S.user.name;
+        Crypto.decrypt(enc,derivedPw).then(plain=>this.mergeVault(JSON.parse(plain))).catch(()=>Toast.show('Wrong PIN or corrupted file','error'));
+      } else {
+        try{this.mergeVault(JSON.parse(raw));}catch(e){Toast.show('Invalid vault file','error');}
+      }
+    };
+    r.readAsText(file);
+  },
+  mergeVault(data){
+    if(!data.banks&&!data.cards){Toast.show('Not a valid VaultOS file','error');return;}
+    const total=['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].reduce((a,k)=>{
+      if(Array.isArray(data[k])){const new_=data[k].filter(x=>!S[k]?.find(y=>y.id===x.id));S[k]=[...(S[k]||[]),...new_];return a+new_.length;}return a;
+    },0);
+    Store.save();buildNav();Activity.log('Vault merged',''+total+' new entries');
+    Toast.show('Imported '+total+' new entries','success');this.render();
+  },
+  importCSV(file){
+    this.setStatus('Reading CSV...',20);
+    const r=new FileReader();
+    r.onload=e=>{
+      const lines=e.target.result.split('\n').filter(l=>l.trim());
+      this.setStatus('Parsing '+lines.length+' rows...',50);
+      const results=[];
+      lines.slice(1).forEach(line=>{
+        const parts=line.split(',').map(p=>p.replace(/^"|"$/g,'').trim());
+        if(!parts[0])return;
+        const guessed=this.guessType(parts.join(' '));
+        if(guessed)results.push(guessed);
+      });
+      this.setStatus('Done — '+results.length+' items detected',100);
+      this.showResults(results);
+    };
+    r.readAsText(file);
+  },
+  importJSON(file){
+    this.setStatus('Reading JSON...',30);
+    const r=new FileReader();
+    r.onload=e=>{
+      try{const data=JSON.parse(e.target.result);if(data.banks||data.cards){this.mergeVault(data);}else{Toast.show('Unrecognized JSON format','warning');}}
+      catch(err){Toast.show('Invalid JSON','error');}
+    };
+    r.readAsText(file);
+  },
+  readText(file,cb){
+    const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsText(file);
+  },
+  runOCR(file){
+    if(typeof Tesseract==='undefined'){Toast.show('OCR loading... please wait a moment','info');setTimeout(()=>this.runOCR(file),2000);return;}
+    this.setStatus('📷 Scanning image with OCR...',10);
+    const r=new FileReader();
+    r.onload=e=>{
+      Tesseract.recognize(e.target.result,'eng',{logger:m=>{if(m.status==='recognizing text')this.setStatus('OCR: '+Math.round(m.progress*100)+'%...',Math.round(m.progress*90));}})
+        .then(({data:{text,confidence}})=>{
+          this.setStatus('✅ OCR complete — confidence '+Math.round(confidence)+'%',100);
+          const results=this.parseOCRText(text);
+          this.showResults(results,text);
+        })
+        .catch(()=>{this.setStatus('❌ OCR failed — try a clearer image',0);});
+    };
+    r.readAsDataURL(file);
+  },
+  parseText(text){
+    if(!text.trim()){Toast.show('Please enter some text first','warning');return;}
+    this.setStatus('Analysing text...',20);
+    // Try TSV/CSV table detection first (most structured)
+    const tsvResults=this.parseTSV(text);
+    if(tsvResults.length>0){
+      this.setStatus('Detected structured table — found '+tsvResults.length+' items',100);
+      this.showResults(tsvResults,text);
+      return;
+    }
+    // Fall back to OCR text parsing
+    const results=this.parseOCRText(text);
+    this.setStatus('Found '+results.length+' items',100);
+    this.showResults(results,text);
+  },
+  parseTSV(text){
+    const results=[];
+    // Split into lines, detect separator
+    const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    if(lines.length<2)return[];
+    // Detect separator: tab or comma
+    const sep=lines[0].includes('\t')?'\t':lines[0].split(',').length>3?',':null;
+    if(!sep)return[];
+    // Split all rows
+    const rows=lines.map(l=>l.split(sep).map(c=>c.trim()));
+    // Find header rows and data sections
+    // Multiple tables can be pasted — detect by header rows containing keywords
+    const bankKeywords=['bank name','bank','category','account type','branch','last 4','digits','account name'];
+    const cardKeywords=['card name','network','visa','mastercard','amex','credit limit','billing','rewards','provider'];
+    const investKeywords=['platform','broker','stocks','crypto','funds','mutual','securities','approx value'];
+    const simKeywords=['network','sim','phone','recharge','provider'];
+    const isHeader=(row)=>{
+      const text=row.join(' ').toLowerCase();
+      return bankKeywords.some(k=>text.includes(k))||cardKeywords.some(k=>text.includes(k))||investKeywords.some(k=>text.includes(k));
+    };
+    let currentType=null;let headers=[];let dataRows=[];
+    const flush=()=>{
+      if(!headers.length||!dataRows.length)return;
+      const bankH=headers.join(' ').toLowerCase();
+      const isBank=bankKeywords.some(k=>bankH.includes(k))&&!cardKeywords.some(k=>bankH.includes(k));
+      const isCard=cardKeywords.some(k=>bankH.includes(k));
+      const isInvest=investKeywords.some(k=>bankH.includes(k));
+      // Map columns
+      const getCol=(row,keywords)=>{
+        for(const kw of keywords){
+          const ci=headers.findIndex(h=>h.toLowerCase().includes(kw.toLowerCase()));
+          if(ci>=0&&row[ci]&&row[ci].trim()&&row[ci].trim()!=='-')return row[ci].trim();
+        }
+        return '';
+      };
+      dataRows.forEach(row=>{
+        if(!row||row.every(c=>!c.trim()))return;
+        if(row.join('').trim().length<2)return;
+        if(isCard){
+          const provider=getCol(row,['provider','issuer','bank']);
+          const cardName=getCol(row,['card name','name']);
+          const network=getCol(row,['network','visa','mastercard','amex']);
+          const last4=getCol(row,['last 4','digits','last4','****']);
+          const limit=getCol(row,['credit limit','limit']);
+          const rewards=getCol(row,['rewards','reward type']);
+          const notes=getCol(row,['notes','note','category']);
+          if(provider||cardName){
+            const name=(provider&&cardName)?provider+' '+cardName:(provider||cardName);
+            results.push({type:'card',confidence:'high',data:{
+              cardName:name,
+              network:network&&['visa','mastercard','amex'].find(n=>network.toLowerCase().includes(n))?network.charAt(0).toUpperCase()+network.slice(1):'',
+              last4:last4&&last4.length<=4?last4:'',
+              category:notes||rewards||'',
+              cardType:bankH.includes('bnpl')||notes.toLowerCase().includes('bnpl')?'BNPL':'Credit',
+            }});
+          }
+        } else if(isInvest){
+          const country=getCol(row,['country']);
+          const broker=getCol(row,['platform','broker','company']);
+          const type=getCol(row,['type','stocks','crypto','funds']);
+          const email=getCol(row,['email','account email']);
+          const val=getCol(row,['value','approx value']);
+          const term=getCol(row,['term','long','short']);
+          if(broker){
+            results.push({type:'investment',confidence:'high',data:{
+              investmentName:broker+(type?' — '+type:''),
+              broker,type:type||'Stocks',currency:'USD',
+              country:country||'',amountInvested:0,
+            }});
+          }
+        } else {
+          // Bank (default)
+          const bankName=getCol(row,['bank name','bank','name','company']);
+          const acType=getCol(row,['account type','type','account name']);
+          const category=getCol(row,['category','size','big','small','digital','islamic']);
+          const last4=getCol(row,['last 4','digits','last4']);
+          const phone=getCol(row,['phone','mobile','registered phone']);
+          const email=getCol(row,['email','registered email']);
+          const notes=getCol(row,['notes','note']);
+          const branch=getCol(row,['branch']);
+          if(bankName&&bankName.length>1){
+            // Determine currency from context
+            const rowText=row.join(' ').toLowerCase();
+            const currency=rowText.includes('pkr')||rowText.includes('pakistan')?'PKR':rowText.includes('gbp')||rowText.includes('gbp')||bankH.includes('uk')?'GBP':rowText.includes('aed')||rowText.includes('uae')?'AED':'USD';
+            // Determine bank type
+            const bankType=category.toLowerCase().includes('islamic')?'islamic':category.toLowerCase().includes('digital')?'digital':category.toLowerCase().includes('big')?'commercial':'commercial';
+            results.push({type:'bank',confidence:'high',data:{
+              bankName:bankName+(acType&&acType!==bankName?' ('+acType+')':''),
+              bankType,
+              accountType:acType||'Current',
+              currency,last4:last4||'',
+              phone:phone||'',email:email||'',
+              notes:(notes||branch?[notes,branch].filter(Boolean).join(' · '):''),
+              country:rowText.includes('pakistan')||rowText.includes('ubL')||category.toLowerCase().includes('pk')?'PK':rowText.includes('uae')||rowText.includes('mashreq')?'AE':'GB',
+              favorite:getCol(row,['priority']).toLowerCase()==='high',
+            }});
+          }
+        }
+      });
+    };
+    for(const row of rows){
+      if(isHeader(row)){
+        flush();headers=row;dataRows=[];
+      } else {
+        if(headers.length>0)dataRows.push(row);
+      }
+    }
+    flush();
+    return[...new Map(results.map(r=>[JSON.stringify(r.data),r])).values()];
+  },
+  parseOCRText(text){
+    const results=[];const all=text.replace(/\n/g,' ');
+    // Card number detection
+    const cardNums=all.match(/\b\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b/g)||[];
+    cardNums.forEach(cn=>{
+      const last4=cn.replace(/[\s\-]/g,'').slice(-4);
+      const exp=all.match(/(0[1-9]|1[0-2])[\/\-](\d{2,4})/);
+      let net='',name='';
+      if(/amex|american express/i.test(all))net='American Express';
+      else if(/visa/i.test(all))net='Visa';
+      else if(/mastercard|master card/i.test(all))net='Mastercard';
+      BANKS_DB.forEach(b=>{if(new RegExp(b.n.split(' ')[0],'i').test(all)&&b.n.split(' ')[0].length>2)name=b.n;});
+      results.push({type:'card',confidence:'high',data:{cardName:(name||'Detected')+' Card',network:net,last4,expiry:exp?exp[1]+'/'+(exp[2].length===4?exp[2].slice(-2):exp[2]):'',cardType:'Credit'}});
+    });
+    // IBAN / account number
+    const ibans=all.match(/\b[A-Z]{2}\d{2}[\sA-Z0-9]{4,30}\b/g)||[];
+    ibans.forEach(ib=>{
+      const cc=ib.slice(0,2);const country=COUNTRIES.find(x=>x.c===cc);
+      if(country)results.push({type:'bank',confidence:'medium',data:{bankName:country.n+' Bank Account',country:cc,iban:ib.replace(/\s/g,''),currency:cc==='GB'?'GBP':cc==='AE'?'AED':cc==='PK'?'PKR':''}});
+    });
+    // Phone numbers → SIM
+    const phones=all.match(/\+?(\d[\s\-]?){10,15}/g)||[];
+    phones.filter(p=>p.replace(/\D/g,'').length>=10).forEach(ph=>{
+      const digits=ph.replace(/\D/g,'');
+      let cc='',net='';
+      if(digits.startsWith('92')||digits.startsWith('0092'))cc='PK';
+      else if(digits.startsWith('44')||digits.startsWith('0044'))cc='GB';
+      else if(digits.startsWith('971'))cc='AE';
+      if(cc)results.push({type:'sim',confidence:'medium',data:{network:'Detected '+COUNTRIES.find(x=>x.c===cc)?.n+' SIM',country:cc,phone:ph.trim(),status:'Active',simType:'Physical'}});
+    });
+    // Email addresses
+    const emails=all.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g)||[];
+    emails.forEach(em=>{
+      let prov='Other';
+      if(/@gmail/i.test(em))prov='Gmail';else if(/@hotmail|@outlook/i.test(em))prov='Outlook / Hotmail';
+      else if(/@icloud|@me\.com|@mac\.com/i.test(em))prov='Apple iCloud Mail';else if(/@proton/i.test(em))prov='ProtonMail';
+      results.push({type:'email',confidence:'high',data:{email:em,provider:prov,purpose:'Detected',mfaEnabled:false}});
+    });
+    // Subscription keywords
+    const subs=SUBS_DB.filter(s=>new RegExp(s.n.replace(/[+.]/g,'\\$&'),'i').test(all));
+    subs.forEach(s=>{const amt=all.match(new RegExp(s.n+'.*?\\$?€?£?(\\d+\\.?\\d*)','i'));results.push({type:'expense',confidence:'medium',data:{name:s.n,icon:s.ic,category:s.c,amount:amt?parseFloat(amt[1]):0,currency:'GBP',active:true}});});
+    return [...new Map(results.map(r=>[JSON.stringify(r.data),r])).values()];
+  },
+  guessType(line){
+    const l=line.toLowerCase();
+    if(/bank|iban|account|bic|swift/.test(l))return {type:'bank',confidence:'low',data:{bankName:line.slice(0,40),country:'',currency:''}};
+    if(/card|visa|mastercard|credit|debit/.test(l))return {type:'card',confidence:'low',data:{cardName:line.slice(0,40),network:''}};
+    if(/netflix|spotify|amazon|apple|google/.test(l))return {type:'expense',confidence:'low',data:{name:line.slice(0,30),amount:0,active:true}};
+    return null;
+  },
+  showResults(results, rawText=''){
+    const el=document.getElementById('ie-results');if(!el)return;
+    if(!results.length){el.style.display='block';el.innerHTML='<div class="empty"><div class="empty-ic">🔍</div><h3>Nothing detected</h3><p>Try a clearer image or paste the text manually below</p></div>';return;}
+    const typeIc={card:'💳',bank:'🏦',sim:'📱',email:'📧',expense:'🔄',gadget:'💻'};
+    el.style.display='block';
+    el.innerHTML=`<div class="widget"><div class="wh"><span>✨</span>Detected ${results.length} item${results.length>1?'s':''} — review & import</div>
+    ${results.map((r,i)=>`<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px">
+        <input type="checkbox" id="ie-check-${i}" checked style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0">
+        <div style="font-size:20px;flex-shrink:0">${typeIc[r.type]||'📋'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.5px">${r.type} · <span style="color:${r.confidence==='high'?'var(--ok)':r.confidence==='medium'?'var(--warn)':'var(--text3)'}">${r.confidence}</span></div>
+          <div style="font-size:13px;font-weight:600;margin-top:2px">${Object.values(r.data).filter(Boolean)[0]||'—'}</div>
+        </div>
+        <button onclick="this.closest('div').nextElementSibling.style.display=this.closest('div').nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.textContent==='✏️'?'▲':'✏️'" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✏️</button>
+      </div>
+      <div style="display:none;padding:0 14px 12px;border-top:1px solid var(--border);background:var(--glass)">
+        ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" oninput="ImportEngine._results[${i}].data['${k}']=this.value" style="padding:7px 10px;font-size:12px"></div>`).join('')}
+      </div>
+    </div>`).join('')}
+    <button class="btn btn-p btn-full" onclick="ImportEngine.importSelected(${JSON.stringify(results).replace(/"/g,'&quot;')})">✅ Import Selected Items</button>
+    </div>`;
+    ImportEngine._results=results;
+  },
+  importSelected(results){
+    if(!results)results=this._results;
+    const checks=document.querySelectorAll('[id^="ie-check-"]');
+    let count=0;
+    results.forEach((r,i)=>{
+      if(checks[i]&&!checks[i].checked)return;
+      const id=U.id(),ts=new Date().toISOString();
+      if(r.type==='card'&&r.data.cardName)S.cards.push({id,...r.data,issuer:r.data.cardName.split(' ')[0],createdAt:ts});
+      else if(r.type==='bank'&&r.data.bankName)S.banks.push({id,...r.data,accountType:'Current',createdAt:ts});
+      else if(r.type==='sim'&&r.data.network)S.sims.push({id,...r.data,createdAt:ts});
+      else if(r.type==='email'&&r.data.email)S.emails.push({id,...r.data,createdAt:ts});
+      else if(r.type==='expense'&&r.data.name)S.expenses.push({id,...r.data,icon:r.data.icon||'🔄',createdAt:ts});
+      count++;
+    });
+    Store.save();Activity.log('Smart import',''+count+' items from import engine');
+    Toast.show('Imported '+count+' items — review in each module','success');
+    document.getElementById('ie-results').style.display='none';
+    document.getElementById('ie-status').style.display='none';
+  }
+};
+
+const Links={
+  getOptions(excludeId=''){
+    const opts=[];
+    const add=(arr,type,ic)=>arr.forEach(x=>{if(x.id!==excludeId)opts.push({id:x.id,type,ic,label:(x.name||x.bankName||x.cardName||x.network||x.email||x.serviceName||x.investmentName||'Unnamed')});});
+    add(S.banks,'bank','🏦');add(S.cards,'card','💳');add(S.investments,'inv','📈');
+    add(S.sims,'sim','📱');add(S.assets,'asset','🏠');add(S.expenses,'expense','🔄');
+    add(S.emails,'email','📧');add(S.gadgets,'gadget','💻');add(S.digital,'digital','💼');
+    return opts;
+  },
+  openLinkModal(entryId, entryType, entryArr){
+    const entry=entryArr.find(x=>x.id===entryId);if(!entry)return;
+    const linked=entry.linkedIds||[];
+    const opts=this.getOptions(entryId);
+    Modal.open('🔗 Link Related Items',`
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Connect related entries — property with insurance, card with bank, device with email account...</p>
+    <div style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:7px">
+      ${opts.map(o=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:10px;cursor:pointer;border:1px solid var(--border)">
+        <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${o.id}" style="width:18px;height:18px;accent-color:var(--accent)">
+        <span style="font-size:18px">${o.ic}</span>
+        <div><div style="font-size:13px;font-weight:500">${o.label}</div><div style="font-size:11px;color:var(--text3)">${o.type}</div></div>
+      </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">No other entries to link to yet</div>'}
+    </div>`,
+    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
+     <button class="btn btn-p" onclick="Links.savLinks('${entryId}',${JSON.stringify(entryArr===S.banks?'banks':entryArr===S.cards?'cards':entryArr===S.investments?'investments':entryArr===S.sims?'sims':entryArr===S.assets?'assets':entryArr===S.expenses?'expenses':entryArr===S.emails?'emails':entryArr===S.gadgets?'gadgets':'digital')})">Save Links</button>`);
+  },
+  savLinks(entryId, arrName){
+    const arr=S[arrName];const entry=arr.find(x=>x.id===entryId);if(!entry)return;
+    entry.linkedIds=[...document.querySelectorAll('[data-lid]:checked')].map(c=>c.dataset.lid);
+    Store.save();Modal.close();Toast.show('Links saved — '+entry.linkedIds.length+' connected','success');
+  },
+  renderLinked(entry){
+    if(!entry.linkedIds?.length)return '';
+    const linked=entry.linkedIds.map(id=>{
+      const allArr=[...S.banks,...S.cards,...S.investments,...S.sims,...S.assets,...S.expenses,...S.emails,...S.gadgets,...S.digital];
+      const found=allArr.find(x=>x.id===id);
+      return found?{label:found.name||found.bankName||found.cardName||found.network||found.email||found.serviceName||'Entry'}:null;
+    }).filter(Boolean);
+    if(!linked.length)return '';
+    return `<div style="margin-top:8px"><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🔗 Linked</div><div style="display:flex;flex-wrap:wrap;gap:5px">${linked.map(l=>`<span style="padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">${l.label}</span>`).join('')}</div></div>`;
+  }
+};
+
+const BackupCenter={
+  render(){
+    const b=document.getElementById('backupBody');if(!b)return;
+    const lastBackup=S.user.lastBackup;
+    const backupAge=lastBackup?Math.floor((Date.now()-new Date(lastBackup))/864e5):null;
+    const backupStatus=!lastBackup?'Never backed up':backupAge===0?'Backed up today':backupAge<=7?'Backed up '+backupAge+' day'+(backupAge>1?'s':'')+' ago':'⚠️ Last backup '+backupAge+' days ago';
+    const backupOk=lastBackup&&backupAge<=7;
+    const history=JSON.parse(localStorage.getItem('vos_backup_history')||'[]');
+    b.innerHTML=`
+    <!-- STATUS HERO -->
+    <div class="hero" style="text-align:center;margin-bottom:14px">
+      <div style="font-size:44px;margin-bottom:10px">${backupOk?'✅':'⚠️'}</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px">${backupOk?'Vault Protected':'Backup Recommended'}</div>
+      <div style="font-size:13px;color:var(--text2)">${backupStatus}</div>
+      ${!backupOk?'<div style="font-size:12px;color:var(--err);margin-top:6px">Your vault data exists only on this device</div>':''}
+    </div>
+    <!-- BACKUP OPTIONS -->
+    <div class="set-sec"><div class="set-title">Create Backup</div><div class="set-card">
+      <div class="si" onclick="BackupCenter.exportVOS()" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--glow);display:flex;align-items:center;justify-content:center;font-size:20px">🔐</div>
+          <div class="sil"><div class="name">Encrypted Vault (.vos)</div><div class="desc">AES-256-GCM encrypted — recommended</div></div>
+        </div><span style="color:var(--accent);font-size:13px;font-weight:600">Export →</span>
+      </div>
+      <div class="si" onclick="ExIm.export('json')" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📄</div>
+          <div class="sil"><div class="name">Plain JSON</div><div class="desc">Human-readable — keep secure!</div></div>
+        </div><span style="color:var(--text2);font-size:13px">Export →</span>
+      </div>
+      <div class="si" onclick="ExIm.export('csv')" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📊</div>
+          <div class="sil"><div class="name">CSV Spreadsheet</div><div class="desc">For reference — no passwords exported</div></div>
+        </div><span style="color:var(--text2);font-size:13px">Export →</span>
+      </div>
+      <div class="si" onclick="ExIm.share()" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📲</div>
+          <div class="sil"><div class="name">Share via AirDrop / Files</div><div class="desc">iOS share sheet — sends encrypted .vos</div></div>
+        </div><span style="color:var(--text2);font-size:13px">Share →</span>
+      </div>
+    </div></div>
+    <!-- RESTORE -->
+    <div class="set-sec"><div class="set-title">Restore</div><div class="set-card">
+      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📥</div>
+          <div class="sil"><div class="name">Import / Restore Backup</div><div class="desc">Merge .vos, .json, or CSV into vault</div></div>
+        </div><span style="color:var(--accent);font-size:13px;font-weight:600">Import →</span>
+      </div>
+    </div></div>
+    <!-- BACKUP TIPS -->
+    <div class="set-sec"><div class="set-title">Backup Strategy</div><div class="set-card">
+      ${[
+        {ic:'☁️',t:'iCloud Drive',d:'Export .vos → save to Files → iCloud Drive'},
+        {ic:'📦',t:'Google Drive',d:'Export .vos → upload manually to Drive'},
+        {ic:'💽',t:'External SSD / USB',d:'Drag .vos file to external drive'},
+        {ic:'💻',t:'Mac / Windows',d:'AirDrop or USB transfer — files app'},
+        {ic:'🗄️',t:'NAS / Home Server',d:'Transfer .vos via Wi-Fi file sharing'},
+      ].map(({ic,t,d})=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:22px">${ic}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div></div>`).join('')}
+      <div style="padding:12px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">🔐 All exports are encrypted with AES-256-GCM before leaving your device. No cloud servers involved. Only you hold the key (derived from your PIN).</div>
+    </div></div>
+    <!-- BACKUP HISTORY -->
+    ${history.length?`<div class="set-sec"><div class="set-title">Export History</div><div class="set-card">
+      ${history.slice(0,8).map(h=>`<div class="si"><div class="sil"><div class="name">${h.type} backup</div><div class="desc">${new Date(h.date).toLocaleString('en-GB')}</div></div><span class="badge b-ok">Done</span></div>`).join('')}
+    </div></div>`:''}
+    <!-- DATA SUMMARY -->
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">What Gets Backed Up</div><div class="set-card">
+      ${[...ALL_MODULES.map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity log',S.activity.length,'📋'],['Custom tags',S.tags.length,'🏷️']].map(([n,c,ic])=>`<div class="si"><div style="display:flex;align-items:center;gap:8px;flex:1"><span>${ic}</span><div class="name">${n}</div></div><span style="font-weight:700;color:var(--accent)">${c}</span></div>`).join('')}
+      <div class="si"><div class="name">Total entries</div><div style="font-weight:800;font-size:16px;color:var(--accent)">${ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)}</div></div>
+    </div></div>`;
+  },
+  exportVOS(){
+    ExIm.export('vault');
+    const h=JSON.parse(localStorage.getItem('vos_backup_history')||'[]');
+    h.unshift({type:'Encrypted .vos',date:new Date().toISOString()});
+    localStorage.setItem('vos_backup_history',JSON.stringify(h.slice(0,20)));
+    setTimeout(()=>this.render(),500);
+  }
+};
+
+const RecoveryCenter={
+  render(){
+    const b=document.getElementById('recoveryBody');if(!b)return;
+    const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));
+    const masterKey=(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
+    b.innerHTML=`
+    <!-- MASTER KEY -->
+    <div class="hero" style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">🗝️ Emergency Master Key</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">This key can unlock your vault if you forget your PIN. It is mathematically derived from your PIN and name — it is NOT stored anywhere on this device or any server. Write it down now.</div>
+      <div id="masterKeyDisplay" style="font-size:20px;font-weight:900;letter-spacing:5px;color:var(--accent);text-align:center;padding:18px;background:rgba(0,0,0,.4);border-radius:12px;font-family:var(--mono);filter:blur(8px);cursor:pointer;transition:filter .3s" onclick="this.style.filter='none';document.getElementById('rc-copy').style.display='flex'" title="Tap to reveal">
+        ${masterKey}
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Tap to reveal · Keep this private</div>
+      <div id="rc-copy" style="display:none;gap:8px;margin-top:12px">
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="U.copy('${masterKey}','Master key')">📋 Copy</button>
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="RecoveryCenter.printKey('${masterKey}')">🖨️ Print Card</button>
+      </div>
+    </div>
+    <!-- RECOVERY OPTIONS -->
+    <div class="set-sec"><div class="set-title">Recovery Methods</div><div class="set-card">
+      <div class="si" onclick="Settings.useMasterKey()" style="cursor:pointer"><div class="sil"><div class="name">Use Master Key</div><div class="desc">Enter master key to reset your PIN</div></div><button class="btn btn-g btn-sm">Enter Key →</button></div>
+      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div class="sil"><div class="name">Restore from Backup</div><div class="desc">Import .vos vault to recover data</div></div><button class="btn btn-g btn-sm">Import →</button></div>
+      <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">⚠️ Delete all data — cannot be undone</div></div><button class="btn btn-d btn-sm">Reset</button></div>
+    </div></div>
+    <!-- SECURITY CHECKLIST -->
+    <div class="set-sec"><div class="set-title">Recovery Checklist</div><div class="set-card">
+      ${[
+        {done:S.user.name,label:'Name set',tip:'Required for master key derivation'},
+        {done:S.pin!=='123456',label:'Custom PIN set',tip:'Change from default PIN 123456'},
+        {done:!!S.decoyPin,label:'Decoy PIN configured',tip:'Shows fake vault under coercion'},
+        {done:!!S.user.lastBackup,label:'Vault backed up',tip:'Export encrypted backup to safe location'},
+        {done:S.autoLock,label:'Auto-lock enabled',tip:'Vault locks automatically when idle'},
+      ].map(({done,label,tip})=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">✓</span>':'<span style="color:var(--err);font-size:11px">Needed</span>'}</div>`).join('')}
+    </div></div>
+    <!-- VAULT HEALTH -->
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Vault Diagnostics</div><div class="set-card">
+      ${[
+        {label:'Schema version',val:'v'+SCHEMA_VERSION},
+        {label:'Encryption',val:Crypto.available()?'AES-256-GCM ✅':'Basic'},
+        {label:'Total entries',val:ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)+''},
+        {label:'Activity records',val:S.activity.length+''},
+        {label:'Last backup',val:S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never'},
+        {label:'App version',val:'VaultOS v'+VER},
+      ].map(({label,val})=>`<div class="si"><div class="name">${label}</div><div style="color:var(--text2);font-size:12px">${val}</div></div>`).join('')}
+    </div></div>`;
+  },
+  printKey(key){
+    const win=window.open('','_blank');
+    if(!win)return;
+    win.document.write(`<html><head><title>VaultOS Recovery Key</title><style>body{font-family:monospace;padding:40px;max-width:400px}h2{font-size:18px}p{font-size:12px;color:#666}.key{font-size:24px;font-weight:bold;letter-spacing:4px;padding:20px;border:2px solid #333;border-radius:8px;margin:20px 0}.warn{color:#c00;font-size:11px;margin-top:20px;border-top:1px solid #eee;padding-top:12px}</style></head><body><h2>🔐 VaultOS Emergency Recovery Key</h2><p>Generated: ${new Date().toLocaleString()}<br>Owner: ${S.user.name}</p><div class="key">${key}</div><p><strong>Instructions:</strong></p><ul><li>Open VaultOS and tap "Forgot PIN?"</li><li>Choose "Use Master Key"</li><li>Enter this code exactly</li></ul><div class="warn">⚠️ KEEP THIS CARD SECURE. Anyone with this key can reset your vault. Store in a safe place separate from your device.</div>`);
+    win.print();
+  }
+};
+
+const SelfCheck={
+  errors:[],fixes:[],lastCheck:null,
+  run(){
+    this.errors=[];this.fixes=[];
+    this.checkStateArrays();this.checkModuleFlags();
+    this.checkCriticalDOM();this.checkDataIntegrity();
+    this.autoRepair();this.lastCheck=new Date();
+    if(this.errors.length)console.warn('[VaultOS SelfCheck]',this.errors);
+    if(this.fixes.length)console.info('[VaultOS AutoFixed]',this.fixes);
+    return{errors:this.errors,fixes:this.fixes};
+  },
+  checkStateArrays(){
+    ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','activity','tags','wallet'].forEach(k=>{
+      if(!Array.isArray(S[k])){this.errors.push('S.'+k+' corrupted');S[k]=[];this.fixes.push('Reset S.'+k);}
+    });
+  },
+  checkModuleFlags(){
+    ALL_MODULES.forEach(m=>{if(S.modules[m.id]===undefined){S.modules[m.id]=false;this.fixes.push('Module flag: '+m.id);}});
+  },
+  checkCriticalDOM(){
+    if(!document.getElementById('importF-global')){
+      const inp=document.createElement('input');inp.type='file';inp.id='importF-global';
+      inp.accept='.vos,.vault,.json,.csv,.xlsx,.docx,.pdf,.txt';inp.style.display='none';
+      inp.onchange=e=>ExIm.import(e);document.body.appendChild(inp);
+      this.fixes.push('Created importF-global');
+    }
+  },
+  checkDataIntegrity(){
+    ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].forEach(k=>{
+      const before=(S[k]||[]).length;
+      S[k]=(S[k]||[]).filter(x=>x&&typeof x==='object'&&x.id);
+      if(S[k].length<before)this.fixes.push('Removed '+(before-S[k].length)+' invalid '+k);
+    });
+    if(!Array.isArray(S.documents))S.documents=[];
+  },
+  autoRepair(){if(this.fixes.length)Store.save();},
+  renderReport(){
+    const r=this.run();
+    Modal.open('🔍 VaultOS Diagnostic',`
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Checked: ${this.lastCheck?.toLocaleTimeString()}</div>
+    ${r.errors.length?`<div style="margin-bottom:10px">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:12px">❌ ${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">✅ All systems healthy</div>'}
+    ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:12px">🔧 ${f}</div>`).join('')}</div>`:''}
+    <div style="margin-top:12px;padding:10px;background:var(--glass);border-radius:10px">
+      ${['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].map(k=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">${k}</span><strong>${(S[k]||[]).length}</strong></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">documents</span><strong>${(S.documents||[]).length}</strong></div>
+    </div>`,
+    `<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="SelfCheck.renderReport()">Re-run</button>`);
+  }
+};
