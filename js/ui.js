@@ -2,12 +2,13 @@ const FX={PKR:1,GBP:350,AED:75,USD:280,EUR:320,SAR:74,CAD:210,AUD:185,SGD:210,IN
 const Dash={
   render(){
     const h=new Date().getHours();
-    const greet=h<5?'🌙 Good Night':h<12?'🌅 Good Morning':h<17?'☀️ Good Afternoon':'🌆 Good Evening';
+    const greet=h<5?'Good Night':h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
     const el=document.getElementById('dashGreet');
     if(el)el.innerHTML=`<span>${greet}, <strong>${S.user.name||'User'}</strong></span>`;
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const b=document.getElementById('dashBody');
+    if(!b)return;
     const cur=S.user.currency||'PKR';
     const toB=(a,c)=>(a||0)*(FX[c]||1);
     const toCur=(pkr,c)=>pkr/(FX[c]||1);
@@ -17,44 +18,84 @@ const Dash={
     const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
     const nwPKR=invPKR+asPKR+cashPKR-debtPKR;
     const nwDisplay=Math.round(toCur(nwPKR,cur));
-    const totalInv=S.investments.reduce((a,i)=>a+(i.amountInvested||0),0);
-    const curInv=S.investments.reduce((a,i)=>a+(i.currentValue||0),0);
-    const pnl=curInv-totalInv;
     const exp=S.cards.filter(c=>{const s=U.expSt(c.expiry);return s!=='ok';});
     const wCards=S.cards.filter(c=>S.wallet.includes(c.id));
     const monthlyExp=S.expenses.filter(e=>e.active).reduce((a,e)=>a+(parseFloat(e.amount)||0),0);
     const simRem=S.sims.filter(s=>s.rechargeReminder&&s.status==='Active');
-    // Stats
-    const modStats=ALL_MODULES.filter(m=>S.modules[m.id]&&S[m.id]).map(m=>`<div class="stat-card" onclick="R.goto('${m.id}')"><div class="sc-ic">${m.ic}</div><div class="sc-n">${S[m.id]?.length||0}</div><div class="sc-l">${m.n}</div></div>`).join('');
-    // Donut data
+    const secScore=this.security();
+    // trend
+    const hist=S.user.nwHistory||[];
+    const prevV=hist.length>=2?hist[hist.length-1].v:null;
+    const trendDir=prevV!==null?(nwDisplay>prevV?1:nwDisplay<prevV?-1:0):0;
+    const trendArrow=trendDir>0?`<span class="dash-nw-trend up">↑</span>`:trendDir<0?`<span class="dash-nw-trend down">↓</span>`:'';
+    // nw subtitle
+    const nwSub=debtPKR>0?`${cur} ${U.fmt(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} assets − ${U.fmt(Math.round(toCur(debtPKR,cur)))} debt`:`Investments · Assets · Cash`;
+    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
+    // allocation donut
     const allocData=[
-      {l:'Investments',v:Math.round(toCur(invPKR,cur)),col:'#0080ff'},
-      {l:'Assets',v:Math.round(toCur(asPKR,cur)),col:'#10b981'},
-      {l:'Cash',v:Math.round(toCur(cashPKR,cur)),col:'#d4af37'},
+      {l:'Investments',v:Math.round(toCur(invPKR,cur)),col:'var(--accent)'},
+      {l:'Assets',v:Math.round(toCur(asPKR,cur)),col:'var(--ok)'},
+      {l:'Cash',v:Math.round(toCur(cashPKR,cur)),col:'var(--warn)'},
     ].filter(d=>d.v>0);
     const totAlloc=allocData.reduce((a,d)=>a+d.v,0)||1;
     const donutSVG=this.donut(allocData,totAlloc);
-    const secScore=this.security();
-    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
-    const nwSub=debtPKR>0?`Assets ${cur} ${U.fmt(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} − Debt ${U.fmt(Math.round(toCur(debtPKR,cur)))}`:`Investments · Assets · Cash`;
+    // active modules grid
+    const activeMods=ALL_MODULES.filter(m=>S.modules[m.id]&&S[m.id]);
+    const modGrid=activeMods.map(m=>`<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
+
     b.innerHTML=`
-    <div class="hero">
-      <div class="hero-label">NET WORTH</div>
-      <div class="hero-amount sens">${cur} ${U.fmt(nwDisplay)}</div>
-      <div class="hero-sub sens">${nwSub}</div>
-      <div class="hero-acts">
-        <button class="btn btn-s btn-sm" onclick="Dash.snap()">📸 Snapshot</button>
-        <button class="btn btn-s btn-sm" onclick="ExIm.export('vault')">📤 Backup</button>
+    <!-- Net Worth Card -->
+    <div class="dash-card dash-hero">
+      <div class="dash-label">NET WORTH</div>
+      <div class="dash-nw-amount sens">${trendArrow}${cur} ${U.fmt(nwDisplay)}</div>
+      <div class="dash-nw-sub sens">${nwSub}</div>
+      <div class="dash-hero-acts">
+        <button class="btn btn-g btn-sm" onclick="Dash.toggleCurrency()">${cur}</button>
+        <button class="btn btn-g btn-sm" onclick="Dash.snap()">Snapshot</button>
+        <button class="btn btn-g btn-sm" onclick="ExIm.export('vault')">Backup</button>
       </div>
     </div>
-    <div class="stat-row">${modStats}</div>
-    ${S.modules.cards&&wCards.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wCards.map(c=>this.miniCard(c)).join('')}</div></div>`:`<div class="widget"><div class="wh"><span>👝</span>Wallet — Today's Cards<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div style="font-size:12px;color:var(--text3);padding:4px 0">No cards selected — tap Edit to choose cards you're carrying today</div></div>`}
-    ${allocData.length>0?`<div class="widget"><div class="wh"><span>📊</span>Asset Allocation</div><div class="donut-wrap"><svg width="84" height="84" viewBox="0 0 84 84">${donutSVG}</svg><div class="dl">${allocData.map(d=>`<div class="dli"><div class="dld" style="background:${d.col}"></div><div class="dlk">${d.l}</div><div class="dlv">${((d.v/totAlloc)*100).toFixed(0)}%</div></div>`).join('')}</div></div></div>`:''}
-    ${S.modules.expenses&&monthlyExp>0?`<div class="widget"><div class="wh"><span>📋</span>Monthly Fixed Expenses</div><div style="font-size:28px;font-weight:900;color:var(--accent)">${U.fmt(Math.round(monthlyExp))} <span style="font-size:14px;color:var(--text3);font-weight:400">${S.user.currency}/mo</span></div><div style="font-size:12px;color:var(--text3);margin-top:2px">${U.fmt(Math.round(monthlyExp*12))}/year · ${S.expenses.filter(e=>e.active).length} active</div></div>`:''}
-    ${exp.length>0?`<div class="widget"><div class="wh"><span>⚠️</span>Card Expiry Alerts</div>${exp.map(c=>`<div class="insight err"><div class="insight-ic">💳</div><div class="insight-body"><div class="insight-title">${c.cardName}</div><div class="insight-sub">Expires ${c.expiry}</div></div>${U.expBadge(c.expiry)}</div>`).join('')}</div>`:''}
-    ${simRem.length>0?`<div class="widget"><div class="wh"><span>📱</span>SIM Recharge Reminders</div>${simRem.map(s=>`<div class="insight warn"><div class="insight-ic">📱</div><div class="insight-body"><div class="insight-title">${s.network}</div><div class="insight-sub">Recharge by ${s.nextRecharge||'soon'}</div></div><button class="btn btn-g btn-sm" onclick="Sims.edit('${s.id}')">Edit</button></div>`).join('')}</div>`:''}
-    <div class="widget"><div class="wh"><span>🛡️</span>Vault Security</div><div style="display:flex;gap:14px;align-items:center"><div class="sring"><svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="28" fill="none" stroke="var(--border2)" stroke-width="6"/><circle cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${secScore*1.759} 1000" transform="rotate(-90 36 36)"/></svg><div class="snum">${secScore}</div></div><div style="flex:1;font-size:12px;color:var(--text2);line-height:1.7">${secScore>=85?'🔒 Excellent security!':secScore>=70?'⚠️ Good — consider enabling more protections':'❌ Review your security settings'}</div></div></div>
-    ${S.activity.length>0?`<div class="widget" style="margin-bottom:0"><div class="wh"><span>📋</span>Recent Activity</div>${S.activity.slice(0,6).map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:500">${a.a}</div>${a.d?`<div style="font-size:11px;color:var(--text3)">${a.d}</div>`:''}</div><div style="font-size:10px;color:var(--text3)">${Activity.ago(a.t)}</div></div>`).join('')}</div>`:''}`;
+
+    <!-- 2-column quick stats -->
+    <div class="dash-stats">
+      <div class="dash-stat" onclick="R.goto('banks')">
+        <div class="dash-stat-n">${S.banks.length}</div>
+        <div class="dash-stat-l">Banks</div>
+      </div>
+      <div class="dash-stat" onclick="R.goto('cards')">
+        <div class="dash-stat-n">${S.cards.length}</div>
+        <div class="dash-stat-l">Cards</div>
+      </div>
+      <div class="dash-stat" onclick="R.goto('investments')">
+        <div class="dash-stat-n sens">${U.fmt(Math.round(toCur(invPKR,cur)))}</div>
+        <div class="dash-stat-l">Invested (${cur})</div>
+      </div>
+      <div class="dash-stat" onclick="R.goto('cash')">
+        <div class="dash-stat-n sens">${U.fmt(Math.round(toCur(cashPKR,cur)))}</div>
+        <div class="dash-stat-l">Cash (${cur})</div>
+      </div>
+    </div>
+
+    <!-- Wallet -->
+    ${S.modules.cards?`<div class="widget"><div class="wh">Wallet<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div>${wCards.length>0?`<div class="wallet-row">${wCards.map(c=>this.miniCard(c)).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:2px 0">No cards selected — tap Edit to choose today's cards</div>`}</div>`:''}
+
+    <!-- Alerts -->
+    ${exp.length>0||simRem.length>0?`<div class="widget"><div class="wh">Alerts</div>${exp.map(c=>`<div class="insight err"><div class="insight-ic">💳</div><div class="insight-body"><div class="insight-title">${c.cardName}</div><div class="insight-sub">Expires ${c.expiry}</div></div>${U.expBadge(c.expiry)}</div>`).join('')}${simRem.map(s=>`<div class="insight warn"><div class="insight-ic">📱</div><div class="insight-body"><div class="insight-title">${s.network}</div><div class="insight-sub">Recharge by ${s.nextRecharge||'soon'}</div></div></div>`).join('')}</div>`:''}
+
+    <!-- Allocation -->
+    ${allocData.length>0?`<div class="widget"><div class="wh">Asset Allocation</div><div class="donut-wrap"><svg width="84" height="84" viewBox="0 0 84 84">${donutSVG}</svg><div class="dl">${allocData.map(d=>`<div class="dli"><div class="dld" style="background:${d.col}"></div><div class="dlk">${d.l}</div><div class="dlv">${((d.v/totAlloc)*100).toFixed(0)}%</div></div>`).join('')}</div></div></div>`:''}
+
+    <!-- Monthly expenses -->
+    ${S.modules.expenses&&monthlyExp>0?`<div class="widget"><div class="wh">Monthly Expenses</div><div style="font-size:26px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums">${U.fmt(Math.round(monthlyExp))} <span style="font-size:13px;color:var(--text3);font-weight:400">${S.user.currency}/mo</span></div><div style="font-size:11px;color:var(--text3);margin-top:3px">${U.fmt(Math.round(monthlyExp*12))}/year · ${S.expenses.filter(e=>e.active).length} active</div></div>`:''}
+
+    <!-- Security -->
+    <div class="widget"><div class="wh">Security Score</div><div style="display:flex;gap:14px;align-items:center"><div class="sring"><svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="28" fill="none" stroke="var(--border2)" stroke-width="6"/><circle cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${secScore*1.759} 1000" transform="rotate(-90 36 36)"/></svg><div class="snum">${secScore}</div></div><div style="flex:1;font-size:12px;color:var(--text2);line-height:1.7">${secScore>=85?'Excellent — vault fully secured':secScore>=70?'Good — consider enabling more protections':'Review your security settings'}</div></div></div>
+
+    <!-- Recent activity -->
+    ${S.activity.length>0?`<div class="widget" style="margin-bottom:12px"><div class="wh">Recent Activity</div>${S.activity.slice(0,6).map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:500">${a.a}</div>${a.d?`<div style="font-size:11px;color:var(--text3)">${a.d}</div>`:''}</div><div style="font-size:10px;color:var(--text3)">${Activity.ago(a.t)}</div></div>`).join('')}</div>`:''}
+
+    <!-- Module grid -->
+    ${activeMods.length>0?`<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>`:''}`;
   },
   donut(data,total){
     const r=30,cx=42,cy=42;let angle=-Math.PI/2;let paths='';

@@ -25,9 +25,11 @@
   --fw-light: 300; --fw-normal: 400; --fw-medium: 500;
   --fw-semibold: 600; --fw-bold: 700; --fw-heavy: 800; --fw-black: 900;
 
-  /* Spacing */
-  --sp1: 4px; --sp2: 8px; --sp3: 12px; --sp4: 16px; --sp5: 24px; --sp6: 32px;
+  /* Spacing — 8px base grid */
+  --sp1: 8px; --sp2: 16px; --sp3: 24px; --sp4: 32px; --sp5: 40px; --sp6: 56px;
   --card-br: 16px; --section-gap: 28px;
+  /* Display font for numbers */
+  --font-display: -apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',sans-serif;
 
   /* Depth / Shadow system */
   --ds-0: none;
@@ -159,5 +161,7 @@ body.session-clean input[type=password] { color: transparent; caret-color: var(-
 @keyframes fadeOut { to { opacity: 0; height: 0; padding: 0; } }
 
 /* ─ Keyframe utilities ─ */
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes pgIn  { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes float   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pgIn    { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes breathe { 0%, 100% { opacity: 0.65; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
+@keyframes lockIn  { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }

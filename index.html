@@ -28,45 +28,59 @@
 
 <!-- LOCK -->
 <div id="pgLock" style="display:none">
-<div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 30%,var(--glow),transparent 65%);pointer-events:none;z-index:0"></div>
-<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px;padding-top:8px">
-  <!-- CLOCK -->
-  <div style="text-align:center;margin-bottom:20px">
-    <div id="lkClock" style="font-size:68px;font-weight:100;letter-spacing:-4px;line-height:1;font-variant-numeric:tabular-nums">00:00</div>
-    <div id="lkDate" style="font-size:13px;color:var(--text2);margin-top:5px;letter-spacing:.2px"></div>
+  <!-- subtle radial glow -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 20%,var(--glow),transparent 70%);pointer-events:none;z-index:0"></div>
+  <!-- emergency panic button -->
+  <button class="lk-emergency" onclick="typeof PanicLock!=='undefined'&&PanicLock.trigger()" title="Emergency Lock">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9v3H4c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V9c0-3.87-3.13-7-7-7z"/></svg>
+  </button>
+
+  <!-- TOP: clock + date -->
+  <div class="lk-top">
+    <div id="lkClock">00:00</div>
+    <div id="lkDate"></div>
   </div>
-  <!-- BRAND -->
-  <div style="text-align:center;margin-bottom:22px">
-    <div style="font-size:38px;margin-bottom:6px;animation:float 4s ease-in-out infinite">🔐</div>
-    <div style="font-size:20px;font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">VAULT OS</div>
-    <div id="lkSub" style="font-size:12px;color:var(--text2);margin-top:4px">Enter your PIN</div>
-    <div style="font-size:10px;color:var(--text3);margin-top:2px;opacity:.55">by Shamikh Ahmed</div>
+
+  <!-- MID: logo + PIN input -->
+  <div class="lk-mid">
+    <div class="lk-brand">
+      <div class="lk-mark">🔐</div>
+      <div class="lk-brand-name">VAULT OS</div>
+    </div>
+    <div id="lkSub" class="lk-sub">Enter your PIN</div>
+    <div class="pin-dots" id="pdots">
+      <div class="pd" id="pd0"></div>
+      <div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div>
+      <div class="pd" id="pd3"></div>
+      <div class="pd" id="pd4"></div>
+      <div class="pd" id="pd5"></div>
+    </div>
+    <div class="pin-msg" id="pmsg"></div>
+    <!-- kept for JS compatibility -->
+    <div class="lk-bar" id="lkBar"><div class="lk-fill" id="lkFill"></div></div>
   </div>
-  <!-- PIN DOTS -->
-  <div class="pin-dots" id="pdots" style="margin-bottom:8px">
-    <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
-    <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
-    <div class="pd" id="pd4"></div><div class="pd" id="pd5"></div>
+
+  <!-- BOT: keypad + hint -->
+  <div class="lk-bot">
+    <div class="keypad">
+      <button class="key" onclick="PIN.in('1')">1</button>
+      <button class="key" onclick="PIN.in('2')"><span>2</span><span class="key-sub">ABC</span></button>
+      <button class="key" onclick="PIN.in('3')"><span>3</span><span class="key-sub">DEF</span></button>
+      <button class="key" onclick="PIN.in('4')"><span>4</span><span class="key-sub">GHI</span></button>
+      <button class="key" onclick="PIN.in('5')"><span>5</span><span class="key-sub">JKL</span></button>
+      <button class="key" onclick="PIN.in('6')"><span>6</span><span class="key-sub">MNO</span></button>
+      <button class="key" onclick="PIN.in('7')"><span>7</span><span class="key-sub">PQRS</span></button>
+      <button class="key" onclick="PIN.in('8')"><span>8</span><span class="key-sub">TUV</span></button>
+      <button class="key" onclick="PIN.in('9')"><span>9</span><span class="key-sub">WXYZ</span></button>
+      <button class="key act" onclick="ThemeEngine.openPicker()">🎨</button>
+      <button class="key" onclick="PIN.in('0')">0</button>
+      <button class="key act" onclick="PIN.del()">⌫</button>
+    </div>
+    <div class="lk-hint">
+      <span onclick="Settings.forgotPIN()">Forgot PIN?</span>
+    </div>
   </div>
-  <div class="pin-msg" id="pmsg" style="margin-bottom:14px;min-height:18px"></div>
-  <div class="lk-bar" id="lkBar" style="width:200px;margin-bottom:16px"><div class="lk-fill" id="lkFill"></div></div>
-  <!-- KEYPAD -->
-  <div class="keypad">
-    <button class="key" onclick="PIN.in('1')">1</button>
-    <button class="key" onclick="PIN.in('2')"><span>2</span><span class="key-sub">ABC</span></button>
-    <button class="key" onclick="PIN.in('3')"><span>3</span><span class="key-sub">DEF</span></button>
-    <button class="key" onclick="PIN.in('4')"><span>4</span><span class="key-sub">GHI</span></button>
-    <button class="key" onclick="PIN.in('5')"><span>5</span><span class="key-sub">JKL</span></button>
-    <button class="key" onclick="PIN.in('6')"><span>6</span><span class="key-sub">MNO</span></button>
-    <button class="key" onclick="PIN.in('7')"><span>7</span><span class="key-sub">PQRS</span></button>
-    <button class="key" onclick="PIN.in('8')"><span>8</span><span class="key-sub">TUV</span></button>
-    <button class="key" onclick="PIN.in('9')"><span>9</span><span class="key-sub">WXYZ</span></button>
-    <button class="key act" onclick="ThemeEngine.openPicker()" style="font-size:18px">🎨</button>
-    <button class="key" onclick="PIN.in('0')">0</button>
-    <button class="key act" onclick="PIN.del()">⌫</button>
-  </div>
-  <div class="lk-hint" style="margin-top:18px">Tap 🎨 for themes · <span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="Settings.forgotPIN()">Forgot PIN?</span></div>
-</div>
 </div>
 
 <!-- HOME -->

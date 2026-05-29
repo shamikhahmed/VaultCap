@@ -78,7 +78,7 @@
   border-bottom: 1px solid var(--border); display: flex; align-items: center;
   gap: 10px; flex-shrink: 0; background: var(--bg2);
 }
-.ph h2 { font-size: 18px; font-weight: 700; flex: 1; letter-spacing: -0.3px; }
+.ph h2 { font-size: 17px; font-weight: 600; flex: 1; letter-spacing: -0.3px; }
 @media (max-width: 768px) { .ph { padding-top: calc(10px + var(--st)); } }
 
 /* ─ Page body ─ */
@@ -90,11 +90,11 @@
 /* ─ Bottom tabs ─ */
 .btabs {
   display: none; position: fixed; bottom: 0; left: 0; right: 0;
-  background: color-mix(in srgb, var(--bg2) 85%, transparent);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: color-mix(in srgb, var(--bg2) 88%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid var(--border); z-index: 200;
-  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 8px);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 }
 .btabs-in { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); scrollbar-width: none; }
 .btabs-in::-webkit-scrollbar { display: none; }
@@ -112,35 +112,78 @@
 
 /* ─ Lock screen ─ */
 #pgLock {
-  position: fixed; inset: 0; z-index: 990; background: var(--bg);
+  position: fixed; inset: 0; z-index: 990;
+  background: var(--bg);
   display: none; flex-direction: column; align-items: center;
   justify-content: space-between;
-  padding: max(env(safe-area-inset-top,20px), 36px) 0 max(env(safe-area-inset-bottom,20px), 28px);
+  padding: max(env(safe-area-inset-top,50px), 50px) 0 max(env(safe-area-inset-bottom,24px), 24px);
   overflow: hidden;
 }
-#pgLock > div {
+/* lock section layout */
+.lk-top, .lk-mid, .lk-bot {
   width: 100%; max-width: 340px; margin: 0 auto;
-  display: flex; flex-direction: column; align-items: center; padding: 0 16px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 20px; position: relative; z-index: 1;
 }
+.lk-top { padding-top: 4px; }
+/* clock */
 #lkClock {
-  font-size: clamp(52px,15vw,80px); font-weight: 200;
+  font-size: clamp(64px,17vw,88px); font-weight: 200;
   letter-spacing: -4px; line-height: 1; font-variant-numeric: tabular-nums;
-  background: linear-gradient(135deg, var(--text), var(--text2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 6px;
+  font-family: var(--font-display, var(--font));
+  color: var(--text);
+  text-align: center; animation: lockIn .5s var(--ease-out);
 }
-#lkDate { font-size: clamp(12px,3.5vw,15px); color: var(--text2); letter-spacing: .3px; margin-bottom: 0; }
-.lk-hint { font-size: 11px; color: var(--text3); margin-top: 16px; position: relative; z-index: 1; text-align: center; }
-.lk-bar  { width: 180px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.lk-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .15s var(--ease-out); }
+#lkDate {
+  font-size: clamp(13px,3.5vw,16px); color: var(--text2);
+  letter-spacing: .3px; margin-top: 6px; text-align: center;
+}
+/* logo mark */
+.lk-brand {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  margin-bottom: 14px; animation: lockIn .5s .1s var(--ease-out) both;
+}
+.lk-mark {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--glass2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  animation: breathe 5s ease-in-out infinite;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2);
+}
+.lk-brand-name {
+  font-size: 13px; font-weight: 700; letter-spacing: 3px;
+  color: var(--text2); text-transform: uppercase;
+}
+.lk-sub { font-size: 13px; color: var(--text3); margin-bottom: 18px; text-align: center; }
+/* emergency button */
+.lk-emergency {
+  position: absolute;
+  top: max(env(safe-area-inset-top,16px), 16px); right: 16px;
+  z-index: 10;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,64,96,.1); border: 1px solid rgba(255,64,96,.2);
+  color: var(--err); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .18s ease;
+}
+.lk-emergency:hover { background: var(--err); color: #fff; }
+/* hint */
+.lk-hint { font-size: 12px; color: var(--text3); margin-top: 18px; text-align: center; }
+.lk-hint a, .lk-hint span { cursor: pointer; color: var(--accent); }
+/* progress bar — kept for JS compatibility, visually hidden */
+.lk-bar  { width: 0; height: 0; overflow: hidden; }
+.lk-fill { height: 100%; }
+/* responsive */
 @media (max-height: 650px) {
-  #lkClock { font-size: 40px; margin-bottom: 3px; }
-  #pgLock  { justify-content: center; gap: 12px; }
+  #lkClock { font-size: 44px; }
+  #pgLock  { justify-content: center; gap: 10px; }
+  .lk-brand { margin-bottom: 8px; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
-  #pgLock  { flex-direction: row; padding: 8px 40px; }
-  #pgLock > div { flex: 1; padding: 0 8px; }
-  #lkClock { font-size: 36px; }
+  #pgLock  { flex-direction: row; padding: 8px 40px; gap: 20px; }
+  .lk-top, .lk-mid, .lk-bot { flex: 1; padding: 0 12px; }
+  #lkClock { font-size: 38px; }
 }
 @media (min-width: 769px) { #pgLock { padding-bottom: 0 !important; } }
 
