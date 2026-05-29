@@ -1,0 +1,52 @@
+/* ═══════════ THEMES: accent / palette overrides per body class ═══════════ */
+
+/* ─ Dark accent themes ─ */
+body.ocean   { --accent: #0ea5e9; --glow: rgba(14,165,233,0.2); }
+body.forest  { --accent: #10b981; --glow: rgba(16,185,129,0.2);  --bg: #040e08; --bg2: #081510; }
+body.aurora  { --accent: #d946ef; --glow: rgba(217,70,239,0.2);  --bg: #08040e; --bg2: #100818; }
+body.gold    { --accent: #d4af37; --glow: rgba(212,175,55,0.2);  --bg: #090800; --bg2: #121000; }
+body.purple  { --accent: #a855f7; --glow: rgba(168,85,247,0.2);  --bg: #06040e; --bg2: #0e081c; }
+body.batman  { --accent: #e11d48; --glow: rgba(225,29,72,0.2); }
+body.matrix  { --accent: #00ff41; --glow: rgba(0,255,65,0.2);    --bg: #000; --bg2: #000d00; --font: 'Courier New',monospace; --text: #00ff41; --text2: #009922; --border: rgba(0,255,65,0.08); }
+body.ironman { --accent: #ff6b00; --glow: rgba(255,107,0,0.2);   --bg: #050200; --bg2: #0a0400; }
+
+/* ─ Light themes ─ */
+body.rose {
+  --accent: #f43f5e; --glow: rgba(244,63,94,0.15);
+  --bg: #fef2f5; --bg2: #fff; --bg3: #fff8fa;
+  --glass: rgba(0,0,0,0.025); --glass2: rgba(0,0,0,0.045); --glass3: rgba(0,0,0,0.08);
+  --border: rgba(0,0,0,0.07); --border2: rgba(0,0,0,0.12); --border3: rgba(0,0,0,0.18);
+  --text: #18060f; --text2: #7a3050; --text3: #c0a0b0;
+}
+body.candy {
+  --accent: #ec4899; --glow: rgba(236,72,153,0.15);
+  --bg: #fdf4fb; --bg2: #fff; --bg3: #fdf0fc;
+  --glass: rgba(0,0,0,0.025); --glass2: rgba(0,0,0,0.045); --glass3: rgba(0,0,0,0.08);
+  --border: rgba(0,0,0,0.07); --border2: rgba(0,0,0,0.12); --border3: rgba(0,0,0,0.18);
+  --text: #180618; --text2: #7a3070; --text3: #c0a0c0;
+}
+body.dreamy {
+  --accent: #a855f7; --glow: rgba(168,85,247,0.15);
+  --bg: #f8f4ff; --bg2: #fff; --bg3: #f6f0ff;
+  --glass: rgba(0,0,0,0.025); --glass2: rgba(0,0,0,0.045); --glass3: rgba(0,0,0,0.08);
+  --border: rgba(0,0,0,0.07); --border2: rgba(0,0,0,0.12); --border3: rgba(0,0,0,0.18);
+  --text: #100618; --text2: #603890; --text3: #b0a0d8;
+}
+
+/* ─ Premium palette themes ─ */
+.theme-rosegold  { --bg: #1a0f0e; --bg2: #130b0a; --accent: #e8a598; --glow: rgba(232,165,152,.2); }
+.theme-lavender  { --bg: #110d1a; --bg2: #0d0a14; --accent: #b085f5; --glow: rgba(176,133,245,.2); }
+.theme-titanium  { --bg: #0d0f11; --bg2: #080a0c; --accent: #b4bcc8; --glow: rgba(180,188,200,.15); }
+.theme-sapphire  { --bg: #020a18; --bg2: #010712; --accent: #4a9eff; --glow: rgba(74,158,255,.25); }
+.theme-peach     { --bg: #1a100a; --bg2: #130c07; --accent: #f4a460; --glow: rgba(244,164,96,.2); }
+.theme-pearl     {
+  --bg: #f5f5f7; --bg2: #eeeeef; --accent: #555; --glow: rgba(0,0,0,.07);
+  --text: #1a1a1a; --text2: #444; --text3: #888;
+  --glass: rgba(0,0,0,.04); --glass2: rgba(0,0,0,.08);
+  --border: rgba(0,0,0,.1); --border2: rgba(0,0,0,.2);
+}
+
+/* ─ Pearl / theme-pearl text fix ─ */
+body.theme-pearl { --text:#1a1a1a; --text2:#444444; --text3:#888888; --bg:#f5f5f7; --bg2:#eeeeef; --glass:rgba(0,0,0,.04); --glass2:rgba(0,0,0,.08); --border:rgba(0,0,0,.1); --border2:rgba(0,0,0,.2); --glow:rgba(0,0,0,.08); --accent:#333; --ok:#34c759; --warn:#ff9500; --err:#ff3b30; }
+body.theme-pearl .lk-clock, body.theme-pearl .lk-title { color: #1a1a1a; }
+body.theme-pearl input, body.theme-pearl textarea, body.theme-pearl select { color: #1a1a1a; }

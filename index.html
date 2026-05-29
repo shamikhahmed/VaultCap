@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VaultOS">
+<meta name="theme-color" content="#0080ff" id="themeColorMeta">
+<title>VaultOS — by Shamikh Ahmed</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+<input type="file" id="importF-global" accept=".vos,.vault,.json,.csv,.xlsx,.xls,.docx,.doc,.pdf,.txt,image/*" style="display:none" onchange="if(window.ExIm)ExIm.import(event)">
+
+
+<div id="toastWrap" class="tw"></div>
+<div class="offline-bar" id="offBar">📴 Offline — Vault works locally</div>
+
+<!-- CMD PALETTE -->
+<div id="cmdPal"><div class="cmd-bg" onclick="CMD.close()"></div>
+<div class="cmd-box"><input class="cmd-in" id="cmdIn" placeholder="Search everything..." oninput="CMD.search(this.value)" onkeydown="CMD.key(event)"><div class="cmd-list" id="cmdList"></div><div class="cmd-hint"><span>↑↓ navigate</span><span>⏎ select</span><span>Esc close</span><span style="margin-left:auto">⌘K open · ⌘N add · ⌘L lock</span></div></div></div>
+
+<!-- LOCK -->
+<div id="pgLock" style="display:none">
+<div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 30%,var(--glow),transparent 65%);pointer-events:none;z-index:0"></div>
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px;padding-top:8px">
+  <!-- CLOCK -->
+  <div style="text-align:center;margin-bottom:20px">
+    <div id="lkClock" style="font-size:68px;font-weight:100;letter-spacing:-4px;line-height:1;font-variant-numeric:tabular-nums">00:00</div>
+    <div id="lkDate" style="font-size:13px;color:var(--text2);margin-top:5px;letter-spacing:.2px"></div>
+  </div>
+  <!-- BRAND -->
+  <div style="text-align:center;margin-bottom:22px">
+    <div style="font-size:38px;margin-bottom:6px;animation:float 4s ease-in-out infinite">🔐</div>
+    <div style="font-size:20px;font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">VAULT OS</div>
+    <div id="lkSub" style="font-size:12px;color:var(--text2);margin-top:4px">Enter your PIN</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:2px;opacity:.55">by Shamikh Ahmed</div>
+  </div>
+  <!-- PIN DOTS -->
+  <div class="pin-dots" id="pdots" style="margin-bottom:8px">
+    <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+    <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+    <div class="pd" id="pd4"></div><div class="pd" id="pd5"></div>
+  </div>
+  <div class="pin-msg" id="pmsg" style="margin-bottom:14px;min-height:18px"></div>
+  <div class="lk-bar" id="lkBar" style="width:200px;margin-bottom:16px"><div class="lk-fill" id="lkFill"></div></div>
+  <!-- KEYPAD -->
+  <div class="keypad">
+    <button class="key" onclick="PIN.in('1')">1</button>
+    <button class="key" onclick="PIN.in('2')"><span>2</span><span class="key-sub">ABC</span></button>
+    <button class="key" onclick="PIN.in('3')"><span>3</span><span class="key-sub">DEF</span></button>
+    <button class="key" onclick="PIN.in('4')"><span>4</span><span class="key-sub">GHI</span></button>
+    <button class="key" onclick="PIN.in('5')"><span>5</span><span class="key-sub">JKL</span></button>
+    <button class="key" onclick="PIN.in('6')"><span>6</span><span class="key-sub">MNO</span></button>
+    <button class="key" onclick="PIN.in('7')"><span>7</span><span class="key-sub">PQRS</span></button>
+    <button class="key" onclick="PIN.in('8')"><span>8</span><span class="key-sub">TUV</span></button>
+    <button class="key" onclick="PIN.in('9')"><span>9</span><span class="key-sub">WXYZ</span></button>
+    <button class="key act" onclick="ThemeEngine.openPicker()" style="font-size:18px">🎨</button>
+    <button class="key" onclick="PIN.in('0')">0</button>
+    <button class="key act" onclick="PIN.del()">⌫</button>
+  </div>
+  <div class="lk-hint" style="margin-top:18px">Tap 🎨 for themes · <span style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="Settings.forgotPIN()">Forgot PIN?</span></div>
+</div>
+</div>
+
+<!-- HOME -->
+<div id="pgHome" style="display:none">
+<div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 25%,var(--glow),transparent 65%);pointer-events:none;z-index:0"></div>
+<!-- Decorative orbs -->
+<div style="position:absolute;top:10%;left:-20%;width:300px;height:300px;border-radius:50%;background:var(--glow);filter:blur(80px);opacity:.4;pointer-events:none;z-index:0"></div>
+<div style="position:absolute;bottom:15%;right:-15%;width:250px;height:250px;border-radius:50%;background:var(--glow);filter:blur(70px);opacity:.3;pointer-events:none;z-index:0"></div>
+<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:380px;padding:0 20px">
+  <!-- Logo section -->
+  <div style="margin-bottom:16px">
+    <div style="font-size:62px;animation:float 4s ease-in-out infinite;line-height:1;filter:drop-shadow(0 8px 24px var(--glow))">🔐</div>
+  </div>
+  <div style="margin-bottom:6px">
+    <h1 style="font-size:46px;font-weight:900;letter-spacing:-3px;background:linear-gradient(135deg,var(--text) 20%,var(--accent) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin:0">VAULT OS</h1>
+  </div>
+  <p style="font-size:14px;color:var(--text2);margin-bottom:2px;font-weight:400" id="hWelcome">Your Private Life Operating System</p>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:3px">Zero-knowledge · Encrypted · Offline-first</p>
+  <p style="font-size:10px;color:var(--text3);margin-bottom:28px;opacity:.5;letter-spacing:.3px">by Shamikh Ahmed</p>
+  <!-- CTA -->
+  <button onclick="R.showLock()" style="width:100%;max-width:280px;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:14px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px var(--glow)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3)'">🔓 Open Vault</button>
+  <!-- Feature pills -->
+  <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:22px">
+    <span style="padding:5px 13px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2);font-weight:500">🔐 Encrypted locally</span>
+    <span style="padding:5px 13px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2);font-weight:500">📴 Offline-first</span>
+    <span style="padding:5px 13px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2);font-weight:500">⚡ Instant access</span>
+  </div>
+  <!-- Module grid -->
+  <div style="width:100%;background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:18px">
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;text-align:left">Everything you can manage</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">🏦</div><div style="font-size:9px;color:var(--text3);font-weight:600">Banks</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">💳</div><div style="font-size:9px;color:var(--text3);font-weight:600">Cards</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">📈</div><div style="font-size:9px;color:var(--text3);font-weight:600">Invest</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">🏠</div><div style="font-size:9px;color:var(--text3);font-weight:600">Assets</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">📱</div><div style="font-size:9px;color:var(--text3);font-weight:600">SIMs</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">📧</div><div style="font-size:9px;color:var(--text3);font-weight:600">Emails</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">💻</div><div style="font-size:9px;color:var(--text3);font-weight:600">Gadgets</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">🪪</div><div style="font-size:9px;color:var(--text3);font-weight:600">Docs</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">🔄</div><div style="font-size:9px;color:var(--text3);font-weight:600">Subs</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">💼</div><div style="font-size:9px;color:var(--text3);font-weight:600">Logins</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">🛡️</div><div style="font-size:9px;color:var(--text3);font-weight:600">Security</div></div>
+      <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">📋</div><div style="font-size:9px;color:var(--text3);font-weight:600">Expenses</div></div>
+    </div>
+  </div>
+  <!-- Theme dots -->
+  <div style="font-size:9px;color:var(--text3);margin-bottom:7px;letter-spacing:.8px;text-transform:uppercase">Themes</div>
+  <div class="home-themes" id="homeThemes" style="margin-bottom:16px"></div>
+</div>
+</div>
+
+<!-- ONBOARD -->
+<div id="pgOnboard" style="display:none">
+<div class="ob-wrap">
+<div class="ob-prog" id="obProg"></div>
+<div class="ob-step on" id="ob1">
+<div class="ob-ic">👋</div>
+<h2 class="ob-title">Welcome to VaultOS</h2>
+<p class="ob-sub">Your offline-first, zero-knowledge personal life operating system. Everything stays on your device — encrypted, always.</p>
+<div style="background:var(--glass2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:left;width:100%;max-width:360px">
+<div style="font-size:12px;color:var(--text2);line-height:1.7">🔐 PIN-protected · 📴 Works offline · 🌍 Global · Offline-first · Private<br>💳 Banks · Cards · Investments · SIMs · Assets<br>📧 Emails · 💻 Gadgets · 🔄 Subscriptions · 📊 Expenses</div>
+</div>
+<input class="inp" id="ob-name" placeholder="What's your name?" maxlength="28" style="font-size:16px;text-align:center;max-width:280px;margin-top:6px">
+<button class="btn btn-p" onclick="OB.next(1)">Get Started →</button>
+</div>
+<div class="ob-step" id="ob2">
+<div class="ob-ic">🧩</div>
+<h2 class="ob-title">Choose Your Modules</h2>
+<p class="ob-sub">Only activate what you need. You can change this anytime in Settings.</p>
+<div class="module-grid" id="modGrid"></div>
+<button class="btn btn-p" onclick="OB.next(2)" style="margin-top:6px">Continue →</button>
+</div>
+<div class="ob-step" id="ob3">
+<div class="ob-ic">🎨</div>
+<h2 class="ob-title">Choose Your Theme</h2>
+<div id="ob-themes" style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:380px"></div>
+<button class="btn btn-p" onclick="OB.next(3)" style="margin-top:6px">Continue →</button>
+</div>
+<div class="ob-step" id="ob4">
+<div class="ob-ic">🛡️</div>
+<h2 class="ob-title">Security Level</h2>
+<div class="sec-opts">
+<div class="so" id="so-paranoid" onclick="OB.setSec('paranoid')"><h4>🔒 Paranoid — Lock immediately</h4><p>Clear clipboard in 15s · Perfect for shared devices</p></div>
+<div class="so on" id="so-secure" onclick="OB.setSec('secure')"><h4>🛡️ Secure (Recommended)</h4><p>Lock in 10 min · Clear clipboard in 30s</p></div>
+<div class="so" id="so-relaxed" onclick="OB.setSec('relaxed')"><h4>⚖️ Relaxed — Lock in 30 min</h4><p>Clear clipboard in 60s · Convenient personal device</p></div>
+</div>
+<button class="btn btn-p" onclick="OB.next(4)">Continue →</button>
+</div>
+<div class="ob-step" id="ob5">
+<div style="font-size:48px;animation:float 3s ease-in-out infinite;line-height:1;margin-bottom:10px">🔑</div>
+<h2 class="ob-title" style="font-size:26px;margin-bottom:6px">Create Your PIN</h2>
+<p class="ob-sub" style="margin-bottom:20px">A 6-digit PIN protects your vault.<br>Only you will ever know it.</p>
+<div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:0">
+  <!-- PIN input with dot preview -->
+  <div style="margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">New PIN</div>
+    <input class="inp" id="ob-pin" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" oninput="OB.checkPIN()">
+  </div>
+  <div style="margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
+    <input class="inp" id="ob-pin2" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" oninput="OB.checkPIN()">
+  </div>
+  <!-- PIN match indicator -->
+  <div id="ob-pinmatch" style="height:20px;text-align:center;font-size:12px;margin-bottom:6px"></div>
+  <!-- Divider -->
+  <div style="display:flex;align-items:center;gap:10px;margin:6px 0 14px">
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+    <div style="font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px">OPTIONAL</div>
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+  </div>
+  <!-- Decoy PIN section -->
+  <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:4px">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+      <div style="font-size:20px;flex-shrink:0;margin-top:1px">🎭</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px">Decoy PIN</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">Entering this PIN shows a believable fake vault with realistic data — useful if you're ever forced to open it.</div>
+      </div>
+    </div>
+    <input class="inp" id="ob-decoy" type="password" maxlength="6" inputmode="numeric" placeholder="Decoy PIN (must differ)" style="font-size:24px;text-align:center;letter-spacing:12px;padding:12px;border-radius:12px">
+  </div>
+  <div class="ferr" id="ob-perr" style="text-align:center;min-height:16px;margin-bottom:4px"></div>
+</div>
+<button class="btn btn-p" onclick="OB.finish()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px;margin-top:4px">🔒 Secure My Vault</button>
+<div style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;line-height:1.5;max-width:280px">Your PIN never leaves your device.<br>No cloud. No accounts. 100% local.</div>
+</div>
+</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app" style="display:none">
+<div class="sidebar">
+<div class="sb-logo"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><div class="mark" style="font-size:22px">🔐</div><h1 style="font-size:16px">VAULT OS</h1></div><p id="sbUser" style="font-size:10px;color:var(--text3)">by Shamikh Ahmed</p></div>
+<nav class="sb-nav" id="sbNav"></nav>
+<div class="sb-bot">
+<button class="btn btn-g btn-full btn-sm" onclick="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:11px">Search everything</span></button>
+<div style="display:flex;gap:6px">
+<button class="btn btn-g btn-sm" onclick="togglePrivacy()" id="privBtn" style="flex:1">🙈</button>
+<button class="btn btn-g btn-sm" onclick="ExIm.export('vos')" style="flex:1" title="Backup">📤</button>
+<button class="btn btn-g btn-sm" onclick="R.lock()" style="flex:1">🔒</button>
+</div>
+</div>
+</div>
+<div class="main" id="mainPages">
+<!-- Pages rendered dynamically -->
+<div class="page on" id="pg-dashboard">
+<div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px"><div style="flex:1"><div id="dashGreet" style="font-size:17px;font-weight:700;letter-spacing:-.3px"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
+<button class="btn btn-g btn-sm" onclick="CMD.open()">⌘K</button>
+<button class="icb" onclick="togglePrivacy()" title="Privacy">🙈</button>
+<button class="icb" onclick="R.lock()">🔒</button></div></div>
+<div class="pb" id="dashBody"></div>
+</div>
+<div class="page" id="pg-banks"><div class="ph"><h2>🏦 Banks</h2><button class="btn btn-p btn-sm" onclick="Banks.openAdd()">+ Add</button></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="bQ" placeholder="Search banks..." oninput="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" onchange="Banks.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
+<div class="page" id="pg-cards"><div class="ph"><h2>💳 Cards</h2><button class="btn btn-p btn-sm" onclick="Cards.openAdd()">+ Add</button></div><div class="pb"><div id="cWallet" style="margin-bottom:12px"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="cQ" placeholder="Search cards..." oninput="Cards.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="cSort" onchange="Cards.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="expiry">Expiry</option><option value="network">Network</option><option value="recent">Recent</option></select></div></div><div class="chips" id="cChips"></div><div id="cItems"></div></div></div>
+<div class="page" id="pg-investments"><div class="ph"><h2>📈 Investments</h2><button class="btn btn-p btn-sm" onclick="Inv.openAdd()">+ Add</button></div><div class="pb"><div id="invSummary"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="invQ" placeholder="Search..." oninput="Inv.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="invSort" onchange="Inv.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="value">Value ↓</option><option value="pnl">P&L</option></select></div></div><div class="chips" id="invChips"></div><div id="invItems"></div></div></div>
+<div class="page" id="pg-sims"><div class="ph"><h2>📱 SIM Cards</h2><button class="btn btn-p btn-sm" onclick="Sims.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="simQ" placeholder="Search SIMs..." oninput="Sims.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="simSort" onchange="Sims.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="network">Network</option><option value="country">Country</option><option value="status">Status</option></select></div></div><div class="chips" id="simChips"></div><div id="simItems"></div></div></div>
+<div class="page" id="pg-assets"><div class="ph"><h2>🏠 Assets</h2><button class="btn btn-p btn-sm" onclick="Assets.openAdd()">+ Add</button></div><div class="pb"><div class="chips" id="aChips"></div><div id="aItems"></div></div></div>
+<div class="page" id="pg-expenses"><div class="ph"><h2>📋 Expenses</h2><button class="btn btn-p btn-sm" onclick="Exp.openAdd()">+ Add</button></div><div class="pb"><div id="expSummary"></div><div class="chips" id="expChips"></div><div id="expItems"></div></div></div>
+<div class="page" id="pg-emails"><div class="ph"><h2>📧 Email Identities</h2><button class="btn btn-p btn-sm" onclick="Emails.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="emailQ" placeholder="Search emails..." oninput="Emails.render()" style="padding-left:36px"></div><div id="emailItems"></div></div></div>
+<div class="page" id="pg-gadgets"><div class="ph"><h2>💻 Gadgets & Devices</h2><button class="btn btn-p btn-sm" onclick="Gadgets.openAdd()">+ Add</button></div><div class="pb"><div class="chips" id="gChips"></div><div id="gItems"></div></div></div>
+<div class="page" id="pg-digital"><div class="ph"><h2>💼 Digital Services</h2><button class="btn btn-p btn-sm" onclick="Digital.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="digQ" placeholder="Search..." oninput="Digital.render()" style="padding-left:36px"></div><div id="digItems"></div></div></div>
+<div class="page" id="pg-alerts"><div class="ph"><h2>🔔 Alerts</h2></div><div class="pb" id="alertBody"></div></div>
+<div class="page" id="pg-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="importBody"><div class="empty"><div class="empty-ic">📥</div><h3>Loading...</h3></div></div></div>
+<div class="page" id="pg-documents"><div class="ph"><h2>🪪 Documents</h2></div><div id="docsChips" class="chips" style="padding:0 14px 4px"></div><div class="pb" id="docsItems"></div></div>
+<div class="page" id="pg-search"><div class="pb" id="searchBody" style="padding-top:0"></div></div>
+<div class="page" id="pg-timeline"><div class="ph"><h2>📅 Timeline</h2></div><div class="pb" id="timelineBody"></div></div>
+<div class="page" id="pg-security"><div class="ph"><h2>🛡️ Security Center</h2></div><div class="pb" id="securityBody"></div></div>
+<div class="page" id="pg-backup"><div class="ph"><h2>💾 Backup Center</h2></div><div class="pb" id="backupBody"></div></div>
+<div class="page" id="pg-recovery"><div class="ph"><h2>🔑 Recovery</h2></div><div class="pb" id="recoveryBody"></div></div>
+<div class="page" id="pg-workspace"><div class="ph"><h2>🗂️ Workspaces</h2></div><div class="pb" id="workspaceBody"></div></div>
+<div class="page" id="pg-settings">
+<div class="ph" style="flex-direction:column;align-items:flex-start;gap:8px;padding-bottom:6px">
+  <h2>⚙️ Settings</h2>
+  <div class="tab-scroller" id="settTabs" style="width:100%">
+    <div class="tab-pill on" onclick="SettingsNav.show('profile')">👤 Profile</div>
+    <div class="tab-pill" onclick="SettingsNav.show('security')">🔒 Security</div>
+    <div class="tab-pill" onclick="SettingsNav.show('appearance')">🎨 Appearance</div>
+    <div class="tab-pill" onclick="SettingsNav.show('modules')">🧩 Modules</div>
+    <div class="tab-pill" onclick="SettingsNav.show('backup')">💾 Backup</div>
+    <div class="tab-pill" onclick="SettingsNav.show('import')">📥 Import</div>
+    <div class="tab-pill" onclick="SettingsNav.show('accessibility')">♿ Accessibility</div>
+    <div class="tab-pill" onclick="SettingsNav.show('about')">ℹ️ About</div>
+  </div>
+</div>
+<div class="pb" id="settBody"></div>
+</div>
+</div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="FAB.toggle()">＋</button>
+<div class="fab-menu" id="fabMenu"></div>
+
+<!-- BOTTOM TABS -->
+<div class="btabs"><div class="btabs-in" id="btabs"></div></div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)Modal.close()">
+<div class="modal" id="modal"><div class="mhandle"></div><div class="mh"><h3 id="mTitle">–</h3><button class="icb" onclick="Modal.close()">✕</button></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div>
+</div>
+
+<!-- THEME PICKER -->
+<div class="overlay" id="themeOv" onclick="if(event.target===this)ThemeEngine.closePicker()">
+<div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Choose Theme</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/modules/banks.js"></script>
+<script src="js/modules/cards.js"></script>
+<script src="js/modules/sims.js"></script>
+<script src="js/modules/investments.js"></script>
+<script src="js/modules/assets.js"></script>
+<script src="js/modules/expenses.js"></script>
+<script src="js/modules/documents.js"></script>
+<script src="js/modules/emails.js"></script>
+<script src="js/modules/gadgets.js"></script>
+<script src="js/modules/digital.js"></script>
+<script src="js/modules/alerts.js"></script>
+<script src="js/modules/timeline.js"></script>
+<script src="js/modules/security.js"></script>
+<script src="js/modules/search.js"></script>
+</body>
+</html>

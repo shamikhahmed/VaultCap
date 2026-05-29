@@ -1,0 +1,148 @@
+/* ═══════════ BASE: variables, reset, fonts, scrollbar, body ═══════════ */
+
+:root {
+  --bg: #080808; --bg2: #0f0f0f; --bg3: #161616;
+  --glass: rgba(255,255,255,0.04); --glass2: rgba(255,255,255,0.07); --glass3: rgba(255,255,255,0.12);
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13); --border3: rgba(255,255,255,0.2);
+  --text: #f0f0f0; --text2: #8a8a8a; --text3: #3a3a3a;
+  --accent: #0080ff; --glow: rgba(0,128,255,0.2);
+  --ok: #00d68f; --warn: #ffaa00; --err: #ff4060; --info: #00aaff;
+  --r: 14px; --rsm: 8px; --rlg: 20px; --rxl: 26px; --rfull: 9999px;
+  --ease: cubic-bezier(0.4,0,0.2,1); --spring: cubic-bezier(0.34,1.56,0.64,1);
+  --t: all 0.25s var(--ease);
+  --shadow: 0 4px 24px rgba(0,0,0,0.4); --shadowlg: 0 16px 56px rgba(0,0,0,0.7);
+  --font: -apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono: 'SF Mono','Fira Code',monospace;
+  --tabh: 68px; --sbw: 256px;
+  --st: env(safe-area-inset-top); --sb: env(safe-area-inset-bottom);
+
+  /* Typography scale */
+  --fs-display: 42px; --fs-title: 22px; --fs-section: 18px;
+  --fs-body: 14px; --fs-secondary: 12px; --fs-label: 11px;
+  --fs-meta: 10px; --fs-mono: 13px;
+  --lh-tight: 1.2; --lh-normal: 1.5; --lh-loose: 1.7;
+  --ls-tight: -0.5px; --ls-normal: 0; --ls-wide: 0.5px; --ls-widest: 1.2px;
+  --fw-light: 300; --fw-normal: 400; --fw-medium: 500;
+  --fw-semibold: 600; --fw-bold: 700; --fw-heavy: 800; --fw-black: 900;
+
+  /* Spacing */
+  --sp1: 4px; --sp2: 8px; --sp3: 12px; --sp4: 16px; --sp5: 24px; --sp6: 32px;
+  --card-br: 16px; --section-gap: 28px;
+
+  /* Depth / Shadow system */
+  --ds-0: none;
+  --ds-1: 0 1px 3px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.12);
+  --ds-2: 0 4px 12px rgba(0,0,0,.28), 0 2px 4px rgba(0,0,0,.16);
+  --ds-3: 0 8px 28px rgba(0,0,0,.4), 0 4px 10px rgba(0,0,0,.22);
+  --ds-4: 0 16px 56px rgba(0,0,0,.6), 0 8px 20px rgba(0,0,0,.3);
+  --ds-glow: 0 0 0 1px var(--glow), 0 4px 16px var(--glow);
+
+  /* Blur hierarchy */
+  --blur-xs: blur(4px); --blur-sm: blur(8px);
+  --blur-md: blur(16px); --blur-lg: blur(24px); --blur-xl: blur(48px);
+
+  /* Motion tokens */
+  --dur-instant: 50ms; --dur-fast: 120ms; --dur-normal: 220ms;
+  --dur-slow: 380ms; --dur-lazy: 600ms;
+  --ease-out: cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out: cubic-bezier(0.4,0,0.2,1);
+  --ease-decel: cubic-bezier(0,0,0.2,1);
+
+  /* Component sizes */
+  --sz-xs: 24px; --sz-sm: 32px; --sz-md: 40px; --sz-lg: 48px; --sz-xl: 56px;
+}
+
+/* ─ Reset ─ */
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  height: 100%; overflow: hidden; overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--glow); color: var(--text); }
+
+/* ─ Scrollbar ─ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ─ Accessibility ─ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0;
+  margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* ─ Typography helpers ─ */
+.t-display   { font-size: var(--fs-display);  font-weight: var(--fw-black);    letter-spacing: var(--ls-tight);   line-height: var(--lh-tight); }
+.t-title     { font-size: var(--fs-title);    font-weight: var(--fw-bold);     letter-spacing: var(--ls-tight);   line-height: var(--lh-tight); }
+.t-section   { font-size: var(--fs-section);  font-weight: var(--fw-semibold); }
+.t-body      { font-size: var(--fs-body);     font-weight: var(--fw-normal);   line-height: var(--lh-normal); }
+.t-secondary { font-size: var(--fs-secondary); color: var(--text2);            line-height: var(--lh-normal); }
+.t-label     { font-size: var(--fs-label);    font-weight: var(--fw-bold);     letter-spacing: var(--ls-widest);  text-transform: uppercase; color: var(--text3); }
+.t-meta      { font-size: var(--fs-meta);     color: var(--text3); }
+.t-mono      { font-family: var(--mono);      font-size: var(--fs-mono);       letter-spacing: 1px; }
+
+/* ─ Skeleton / Shimmer loaders ─ */
+.skeleton {
+  background: linear-gradient(90deg, var(--glass) 0%, var(--glass2) 40%, var(--glass) 80%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--rsm);
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skel-line    { height: 14px; width: 100%; margin-bottom: 8px; }
+.skel-line.sm { width: 60%; }
+.skel-line.md { width: 80%; }
+.skel-avatar  { width: 40px; height: 40px; border-radius: 50%; }
+.skel-card    { height: 80px; border-radius: var(--r); }
+
+/* ─ Privacy mode ─ */
+body.privacy .sens { filter: blur(7px); pointer-events: none; user-select: none; }
+
+/* ─ High contrast ─ */
+body.hc {
+  --text: #ffffff; --text2: #dddddd; --text3: #aaaaaa;
+  --border: rgba(255,255,255,.3); --border2: rgba(255,255,255,.5);
+  --glass: rgba(255,255,255,.1); --glass2: rgba(255,255,255,.15);
+}
+body.hc .entry, body.hc .widget, body.hc .set-card { border-width: 2px; }
+body.hc .btn { font-weight: 800; }
+
+/* ─ Font scale ─ */
+body.fs-sm { font-size: 13px; }
+body.fs-md { font-size: 15px; }
+body.fs-lg { font-size: 17px; }
+body.fs-xl { font-size: 19px; }
+
+/* ─ Session isolation ─ */
+body.session-clean input[type=password] { color: transparent; caret-color: var(--text); }
+
+/* ─ Drag & drop ─ */
+.draggable { cursor: grab; user-select: none; }
+.draggable:active { cursor: grabbing; }
+.drag-over { border: 2px dashed var(--accent) !important; background: var(--glow) !important; }
+
+/* ─ Secure input ─ */
+.secure-field { font-family: var(--mono); letter-spacing: 3px; color: var(--warn); }
+.secure-field::placeholder { font-family: var(--font); letter-spacing: normal; color: var(--text3); }
+
+/* ─ Swipe hint ─ */
+.swipe-hint { text-align: center; font-size: 10px; color: var(--text3); padding: 6px; animation: fadeOut 3s 2s forwards; }
+@keyframes fadeOut { to { opacity: 0; height: 0; padding: 0; } }
+
+/* ─ Keyframe utilities ─ */
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pgIn  { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
