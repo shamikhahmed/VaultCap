@@ -76,6 +76,7 @@ const Loans = {
     Activity.log((editId ? 'Edited' : 'Added') + ' loan', `${item.type === 'lent' ? 'lent to' : 'borrowed from'} ${person}`);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId ? 'Updated' : 'Added'}: ${person}`, 'success');
+    if (!editId) promptAddAnother('Loan', 'Loans.openAdd');
   },
   edit(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;

@@ -34,7 +34,8 @@ const ALL_MODULES=[
   {id:'gadgets',n:'Gadgets',     ic:'💻', desc:'Devices, IMEI, warranty',            group:'Identity'},
   {id:'digital',n:'Digital',     ic:'💼', desc:'Logins, wallets, social media',      group:'Identity'},
   {id:'vehicles',n:'Vehicles',   ic:'🚗', desc:'Cars, fuel, service, insurance',     group:'Assets'},
-  {id:'reminders',n:'Reminders', ic:'🔔', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
+  {id:'reminders',  n:'Reminders',  ic:'🔔', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
+  {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
 ];
 
 const COUNTRIES=[
@@ -496,8 +497,8 @@ const Migrate = {
       if (stored.cards)   stored.cards   = stored.cards.map(c => ({ ...c, issuer: c.issuer || (c.cardName || '').split(' ')[0] }));
     }
     stored.schemaVersion = SCHEMA_VERSION;
+    // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
-    console.log('VaultOS: migration complete');
   }
 };
 
@@ -517,33 +518,59 @@ let S = {
 
 // ===================== STORAGE ENGINE =====================
 const Store = {
+  // Legacy localStorage accessor (migration only)
   loadRaw() { try { return JSON.parse(localStorage.getItem('vos3')); } catch(e) {} return null; },
-  save() {
+
+  // Build the serialisable data object from S
+  _data() {
+    return {
+      schemaVersion: SCHEMA_VERSION,
+      user: S.user, pin: S.pin, decoyPin: S.decoyPin, noPin: S.noPin,
+      modules: S.modules,
+      banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
+      assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
+      digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
+      fails: S.fails, lockedUntil: S.lockedUntil,
+      autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
+    };
+  },
+
+  // Save non-sensitive prefs to localStorage (for startup display before unlock)
+  _savePrefs() {
     try {
-      localStorage.setItem('vos3', JSON.stringify({
-        schemaVersion: SCHEMA_VERSION,
-        user: S.user, pin: S.pin, decoyPin: S.decoyPin, noPin: S.noPin,
-        modules: S.modules,
-        banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
-        assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
-        digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
-        fails: S.fails, lockedUntil: S.lockedUntil,
-        autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
+      localStorage.setItem('vos_prefs', JSON.stringify({
+        theme: S.user.theme, fontScale: S.fontScale, highContrast: S.highContrast,
+        name: S.user.name, hasVault: true
       }));
     } catch(e) {}
   },
-  load() {
+
+  loadPrefs() { try { return JSON.parse(localStorage.getItem('vos_prefs')); } catch(e) {} return null; },
+
+  // Fire-and-forget: encrypt and persist to IndexedDB.
+  // Callers remain synchronous — VaultDB.save runs in background.
+  save() {
+    const data = this._data();
+    this._savePrefs();
+    if (VaultDB.sessionKey) {
+      VaultDB.save(data).catch(e => console.warn('[VaultDB] save error:', e));
+    }
+  },
+
+  // Load from VaultDB (async). Called after VaultDB.init() in PIN flow.
+  async load() {
     try {
-      const d = JSON.parse(localStorage.getItem('vos3'));
+      const d = await VaultDB.load();
       if (d) { Object.assign(S, d); return true; }
     } catch(e) {}
     return false;
   },
-  clear() {
+
+  async clear() {
+    try { await VaultDB.clear(); } catch(e) {}
     try { sessionStorage.clear(); } catch(e) {}
     try {
-      [...Object.keys(localStorage)].filter(k => k.startsWith('vos') || k === 'vos3')
-        .forEach(k => localStorage.removeItem(k));
+      ['vos3', 'vos_prefs'].forEach(k => localStorage.removeItem(k));
     } catch(e) {}
     S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
     S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
@@ -646,6 +673,7 @@ const R = {
   },
   lock() {
     S.unlocked = false; clearTimeout(S._timer);
+    VaultDB.sessionKey = null;           // clear in-memory key on lock
     document.getElementById('app').style.display = 'none';
     document.getElementById('fab').style.display = 'none';
     Modal.close();
@@ -683,6 +711,7 @@ const R = {
       workspace:   () => WorkspaceManager.render(),
       vehicles:    () => Vehicles.render(),
       reminders:   () => Reminders.render(),
+      'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       settings:    () => {
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
@@ -750,32 +779,95 @@ const PIN = {
   },
   verify() {
     if (Date.now() < S.lockedUntil) { this.showLo(); pe = ''; this.dots(); return; }
-    if (S.noPin || pe === S.pin) {
-      S.fails = 0; Store.save();
-      [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.classList.add('on'); });
-      setTimeout(() => R.unlock(), 180);
-    } else if (S.decoyPin && pe === S.decoyPin) {
-      S.decoy = true; S.fails = 0; pe = '';
-      loadDecoyData(); R.unlock();
-    } else {
-      S.fails++; Store.save();
-      [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.classList.add('err'); });
-      const msg = document.getElementById('pmsg');
-      msg.className = 'pin-msg err';
-      if (S.fails >= 3) {
-        const w = Math.min(30 * Math.pow(2, S.fails - 3), 300);
-        S.lockedUntil = Date.now() + w * 1000; Store.save();
-        msg.textContent = `Too many attempts — locked ${w}s`;
-        this.countdown(w);
+    const entered = pe;
+    pe = '';
+    this.dots();
+    // Show pending state
+    [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.classList.add('on'); });
+    const msg = document.getElementById('pmsg');
+    if (msg) { msg.className = 'pin-msg'; msg.textContent = 'Verifying…'; }
+
+    this._verify(entered).then(result => {
+      if (result === 'real') {
+        S.fails = 0; Store.save();
+        setTimeout(() => R.unlock(), 180);
+      } else if (result === 'decoy') {
+        S.decoy = true; S.fails = 0;
+        loadDecoyData(); R.unlock();
       } else {
-        msg.textContent = `Wrong PIN — ${3 - Math.min(S.fails, 3)} left`;
+        // Wrong PIN — brute force protection
+        S.fails++;
+        // Persist fail count via legacy localStorage during migration, or via VaultDB if available
+        if (VaultDB.sessionKey) { Store.save(); }
+        else { try { localStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); } catch(e) {} }
+
+        [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd err'; });
+        if (msg) msg.className = 'pin-msg err';
+
+        if (S.fails >= 10) {
+          // Wipe vault after 10 fails
+          msg.textContent = '⚠️ Too many attempts — wiping vault';
+          Store.clear().then(() => setTimeout(() => location.reload(), 1500));
+          return;
+        } else if (S.fails >= 5) {
+          const w = 300; // 5 min
+          S.lockedUntil = Date.now() + w * 1000;
+          if (msg) msg.textContent = `Too many attempts — locked ${w}s`;
+          this.countdown(w);
+        } else if (S.fails >= 3) {
+          const w = 30;
+          S.lockedUntil = Date.now() + w * 1000;
+          if (msg) msg.textContent = `Too many attempts — locked ${w}s`;
+          this.countdown(w);
+        } else {
+          if (msg) msg.textContent = `Wrong PIN — ${3 - Math.min(S.fails, 2)} attempts left`;
+        }
+        Activity.log('Failed PIN #' + S.fails);
+        setTimeout(() => {
+          [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
+          this.dots();
+        }, 580);
       }
-      Activity.log('Failed PIN #' + S.fails);
-      setTimeout(() => {
-        [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
-        pe = ''; this.dots();
-      }, 580);
+    }).catch(() => {
+      // Unexpected error
+      [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
+      if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Error — try again'; }
+      this.dots();
+    });
+  },
+
+  // Async PIN verification: migration path + VaultDB path
+  async _verify(pin) {
+    if (S.noPin) return 'real';
+
+    // ── Migration path: old localStorage data ──────────────────────────────
+    const oldData = Store.loadRaw();
+    const hasVaultDB = await VaultDB.isInitialized();
+
+    if (oldData && !hasVaultDB) {
+      if (oldData.noPin || pin === String(oldData.pin)) {
+        // Migrate: load old data into S, then encrypt to VaultDB
+        Object.assign(S, oldData);
+        try {
+          await VaultDB.init(pin || '000000');
+          await VaultDB.save(Store._data());
+          localStorage.removeItem('vos3');
+          Store._savePrefs();
+        } catch(e) { console.warn('[VaultDB] migration error:', e); }
+        return 'real';
+      }
+      if (oldData.decoyPin && pin === String(oldData.decoyPin)) {
+        return 'decoy';
+      }
+      return null;
     }
+
+    // ── VaultDB path: try main then decoy slot ─────────────────────────────
+    const result = await VaultDB.tryPin(pin);
+    if (!result) return null;
+    if (result.slot === 'decoy') return 'decoy';
+    Object.assign(S, result.data);
+    return 'real';
   },
   countdown(s) {
     let r = s;
@@ -865,7 +957,14 @@ const OB = {
     if (!/^\d{6}$/.test(p)) { document.getElementById('ob-perr').textContent = 'PIN must be 6 digits'; return; }
     if (p !== p2) { document.getElementById('ob-perr').textContent = 'PINs do not match'; return; }
     S.pin = p; S.decoyPin = d || ''; S.noPin = false;
-    Store.save();
+    // Initialise VaultDB with the chosen PIN, then save encrypted
+    VaultDB.init(p).then(async () => {
+      Store.save();
+      if (d && /^\d{6}$/.test(d)) {
+        // Pre-create decoy slot so the decoy PIN is recognised on next unlock
+        await VaultDB.saveDecoySlot(d, { _decoy: true });
+      }
+    }).catch(e => console.warn('[VaultDB] init error:', e));
     document.getElementById('pgOnboard').style.display = 'none';
     Toast.show(`Welcome to VaultOS, ${S.user.name}! 🎉`, 'success');
     R.unlock();
@@ -920,13 +1019,25 @@ const U = {
   brokerOpts:  () => BROKERS_DB.map(b => `<option value="${b}">`).join(''),
   netOpts:     cc => (cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB).map(n => `<option value="${n.n}">`).join(''),
   copy(text, label = '') {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;width:1px;height:1px';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    let ok = false; try { ok = document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta);
-    if (ok) Toast.show((label || 'Value') + ' copied!', 'success');
-    else    Toast.show((label || 'Value') + ': ' + text, 'info', 8000);
+    // Try modern Clipboard API first, fall back to execCommand
+    const doCopy = () => {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).catch(() => _legacyCopy(text));
+      } else {
+        _legacyCopy(text);
+      }
+    };
+    function _legacyCopy(t) {
+      const ta = document.createElement('textarea');
+      ta.value = t; ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;width:1px;height:1px';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+    doCopy();
+    Toast.show((label || 'Value') + ' copied!', 'success');
+    // Auto-clear clipboard after configured delay
+    _scheduleClipClear();
   },
   reveal(elId, secret, label = '') {
     const el = document.getElementById(elId); if (!el) return;
@@ -965,6 +1076,29 @@ const U = {
   getLF:  () => ({ username: document.getElementById('lf-user')?.value.trim(), pwdHint: document.getElementById('lf-pwd')?.value.trim(), appPin: document.getElementById('lf-pin')?.value.trim(), twoFA: document.getElementById('lf-2fa')?.value }),
   setLF(obj) { setTimeout(() => { const t = document.getElementById('lf-2fa'); if (t) t.value = obj.twoFA || ''; }, 60); }
 };
+
+// ===================== MEGA-ADD HELPER =====================
+// After any module save, show a quick "Add another?" prompt at the bottom.
+function promptAddAnother(moduleLabel, openFn) {
+  // Remove any existing prompt
+  const existing = document.getElementById('add-another-bar');
+  if (existing) existing.remove();
+
+  const bar = document.createElement('div');
+  bar.id = 'add-another-bar';
+  bar.style.cssText = `
+    position:fixed;bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 8px);left:50%;transform:translateX(-50%);
+    background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rfull);
+    padding:10px 18px;display:flex;align-items:center;gap:12px;z-index:9999;
+    box-shadow:var(--shadowlg);animation:slideIn .25s var(--spring);white-space:nowrap;
+  `;
+  bar.innerHTML = `<span style="font-size:13px;color:var(--text2)">Add another ${moduleLabel}?</span>
+    <button class="btn btn-p btn-sm" onclick="document.getElementById('add-another-bar').remove();(${openFn})()">Yes</button>
+    <button class="btn btn-g btn-sm" onclick="document.getElementById('add-another-bar').remove()">No</button>`;
+  document.body.appendChild(bar);
+  // Auto-dismiss after 8s
+  setTimeout(() => { if (bar.isConnected) bar.remove(); }, 8000);
+}
 
 // ===================== PRIVACY MODE =====================
 function togglePrivacy() {
@@ -1022,6 +1156,7 @@ function buildNav() {
   ].filter(q => S.modules[q.id] && document.getElementById('pg-' + q.id));
   const fabItems = [
     ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${q.icon} Add ${q.label}</div>`),
+    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">🤖 AI Import</div>',
     '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
     '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
   ];
@@ -1160,8 +1295,43 @@ function loadDecoyData() {
   R.goto('dashboard');
 }
 
+// ===================== SECURITY HARDENING =====================
+
+// Console suppression in production (non-localhost)
+(function() {
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+  if (!isLocal) {
+    const noop = () => {};
+    ['log', 'debug', 'info', 'warn'].forEach(m => { try { window.console[m] = noop; } catch(e) {} });
+  }
+})();
+
+// Clipboard auto-clear helper — clear after clipSecs seconds
+function _scheduleClipClear() {
+  const secs = S.clipSecs || 30;
+  setTimeout(() => {
+    try { navigator.clipboard.writeText(''); } catch(e) {}
+  }, secs * 1000);
+}
+
+// Anti-devtools: blur app when devtools likely open
+(function() {
+  let _dtOpen = false;
+  function _checkDevtools() {
+    const w = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+    if (w && !_dtOpen) {
+      _dtOpen = true;
+      if (S.unlocked) document.body.classList.add('app-blur');
+    } else if (!w && _dtOpen) {
+      _dtOpen = false;
+      document.body.classList.remove('app-blur');
+    }
+  }
+  window.addEventListener('resize', _checkDevtools);
+})();
+
 // ===================== APP INIT =====================
-function App() {
+async function App() {
   document.addEventListener('click', function(e) {
     const ni = e.target.closest('[data-pg]');
     if (ni && ni.dataset.pg) R.goto(ni.dataset.pg);
@@ -1188,8 +1358,14 @@ function App() {
     if (e.key === 'Escape') { CMD.close(); Modal.close(); FAB.close(); ThemeEngine.closePicker(); }
   });
 
+  // Auto-lock on tab/window hide; blur screenshot on hide
   document.addEventListener('visibilitychange', function() {
-    if (document.hidden && S.unlocked && S.autoLock) R.lock();
+    if (document.hidden) {
+      document.body.classList.add('app-blur');
+      if (S.unlocked && S.autoLock) { R.lock(); }
+    } else {
+      document.body.classList.remove('app-blur');
+    }
   });
 
   window.addEventListener('online',  function() { document.getElementById('offBar').classList.remove('on'); });
@@ -1200,15 +1376,36 @@ function App() {
     k.addEventListener('click', function() { if (navigator.vibrate) navigator.vibrate(6); });
   });
 
-  Migrate.run();
-  const loaded = Store.load();
-  ThemeEngine.apply(S.user.theme || 'dark');
+  // Restore brute-force state from lightweight localStorage (pre-unlock)
+  try {
+    const fc = JSON.parse(localStorage.getItem('vos_fails') || 'null');
+    if (fc) { S.fails = fc.fails || 0; S.lockedUntil = fc.lockedUntil || 0; }
+  } catch(e) {}
 
+  // Load non-sensitive prefs for startup display (theme, font scale)
+  const prefs = Store.loadPrefs();
+  if (prefs) {
+    if (prefs.theme)       S.user.theme    = prefs.theme;
+    if (prefs.fontScale)   S.fontScale     = prefs.fontScale;
+    if (prefs.highContrast) S.highContrast = prefs.highContrast;
+    if (prefs.name)        S.user.name     = prefs.name;
+  }
+
+  ThemeEngine.apply(S.user.theme || 'dark');
   const fs = S.fontScale || 'md';
   document.body.className = document.body.className.replace(/\bfs-\w+\b/, '').trim() + ' fs-' + fs;
   if (S.highContrast) document.body.classList.add('hc');
 
-  if (!loaded || !S.user.name) {
+  // Check if old localStorage data exists (migration)
+  const oldData = Store.loadRaw();
+  if (oldData) { Migrate.run(); }
+
+  // Determine startup screen
+  const hasVaultDB = await VaultDB.isInitialized();
+  const hasOldData = !!oldData;
+  const hasData    = hasVaultDB || hasOldData;
+
+  if (!hasData || !(prefs?.hasVault || oldData?.user?.name)) {
     document.getElementById('pgOnboard').style.display = 'flex';
     OB.init();
   } else {

@@ -110,7 +110,22 @@ body {
 .skel-card    { height: 80px; border-radius: var(--r); }
 
 /* ─ Privacy mode ─ */
-body.privacy .sens { filter: blur(7px); pointer-events: none; user-select: none; }
+body.privacy .sens {
+  filter: blur(6px);
+  -webkit-filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ─ Screenshot / devtools blur (applied via JS on visibility/devtools detection) ─ */
+body.app-blur * {
+  filter: blur(8px) !important;
+  -webkit-filter: blur(8px) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
 
 /* ─ High contrast ─ */
 body.hc {

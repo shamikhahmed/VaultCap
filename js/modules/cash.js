@@ -39,6 +39,7 @@ const Cash = {
     Activity.log((editId ? 'Edited' : 'Added') + ' cash', loc);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId ? 'Updated' : 'Added'}: ${loc}`, 'success');
+    if (!editId) promptAddAnother('Cash entry', 'Cash.openAdd');
   },
   edit(id) {
     const c = (S.cash || []).find(x => x.id === id); if (!c) return;

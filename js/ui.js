@@ -185,7 +185,10 @@ const Settings={
     if(o!==S.pin){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
     if(!/^\d{6}$/.test(n)){document.getElementById('cp-err').textContent='New PIN must be 6 digits';return;}
     if(n!==c){document.getElementById('cp-err').textContent='PINs do not match';return;}
-    S.pin=n;Store.save();Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
+    S.pin=n;
+    // Re-encrypt VaultDB data with the new PIN-derived key
+    VaultDB.changePin(o,n).then(()=>{Store.save();}).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
+    Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
   },
   showMasterKey(){
     const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));
@@ -209,7 +212,10 @@ const Settings={
     const p=document.getElementById('dp-pin').value;
     if(!/^\d{6}$/.test(p)){document.getElementById('dp-err').textContent='Must be exactly 6 digits';return;}
     if(p===S.pin){document.getElementById('dp-err').textContent='Must be different from your real PIN';return;}
-    S.decoyPin=p;Store.save();Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
+    S.decoyPin=p;Store.save();
+    // Persist decoy slot in VaultDB so it's recognised on next unlock
+    VaultDB.saveDecoySlot(p,{_decoy:true}).catch(e=>console.warn('[VaultDB] decoy slot error:',e));
+    Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
   },
   forgotPIN(){
     Modal.open('🔑 Forgot PIN',`
@@ -241,11 +247,11 @@ const Settings={
   resetVault(){
     if(!window.__vos_confirm('⚠️ This will permanently delete ALL your vault data.'))return;
     if(!window.__vos_confirm('Final confirmation — this CANNOT be undone. Reset entire vault?'))return;
-    Store.clear();
-    // Clear all caches
-    if(window.caches)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
-    Toast.show('Vault cleared — reloading...','warning',1500);
-    setTimeout(()=>location.reload(),1600);
+    Store.clear().then(()=>{
+      if(window.caches)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+      Toast.show('Vault cleared — reloading...','warning',1500);
+      setTimeout(()=>location.reload(),1600);
+    });
   }
 };
 

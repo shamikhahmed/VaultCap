@@ -220,8 +220,8 @@
 <button class="icb" onclick="R.lock()">🔒</button></div></div>
 <div class="pb" id="dashBody"></div>
 </div>
-<div class="page" id="pg-banks"><div class="ph"><h2>🏦 Banks</h2><button class="btn btn-p btn-sm" onclick="Banks.openAdd()">+ Add</button></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="bQ" placeholder="Search banks..." oninput="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" onchange="Banks.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
-<div class="page" id="pg-cards"><div class="ph"><h2>💳 Cards</h2><button class="btn btn-p btn-sm" onclick="Cards.openAdd()">+ Add</button></div><div class="pb"><div id="cWallet" style="margin-bottom:12px"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="cQ" placeholder="Search cards..." oninput="Cards.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="cSort" onchange="Cards.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="expiry">Expiry</option><option value="network">Network</option><option value="recent">Recent</option></select></div></div><div class="chips" id="cChips"></div><div id="cItems"></div></div></div>
+<div class="page" id="pg-banks"><div class="ph"><h2>🏦 Banks</h2><div style="display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="Banks.openBulkAdd()">⚡ Bulk</button><button class="btn btn-p btn-sm" onclick="Banks.openAdd()">+ Add</button></div></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="bQ" placeholder="Search banks..." oninput="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" onchange="Banks.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
+<div class="page" id="pg-cards"><div class="ph"><h2>💳 Cards</h2><div style="display:flex;gap:6px"><button class="btn btn-g btn-sm" onclick="Cards.openBulkAdd()">⚡ Bulk</button><button class="btn btn-p btn-sm" onclick="Cards.openAdd()">+ Add</button></div></div><div class="pb"><div id="cWallet" style="margin-bottom:12px"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="cQ" placeholder="Search cards..." oninput="Cards.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="cSort" onchange="Cards.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="expiry">Expiry</option><option value="network">Network</option><option value="recent">Recent</option></select></div></div><div class="chips" id="cChips"></div><div id="cItems"></div></div></div>
 <div class="page" id="pg-investments"><div class="ph"><h2>📈 Investments</h2><button class="btn btn-p btn-sm" onclick="Inv.openAdd()">+ Add</button></div><div class="pb"><div id="invSummary"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="invQ" placeholder="Search..." oninput="Inv.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="invSort" onchange="Inv.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="value">Value ↓</option><option value="pnl">P&L</option></select></div></div><div class="chips" id="invChips"></div><div id="invItems"></div></div></div>
 <div class="page" id="pg-cash"><div class="ph"><h2>💵 Cash</h2><button class="btn btn-p btn-sm" onclick="Cash.openAdd()">+ Add</button></div><div class="pb"><div id="cashSummary"></div><div id="cashItems"></div></div></div>
 <div class="page" id="pg-loans"><div class="ph"><h2>🤝 Loans</h2><button class="btn btn-p btn-sm" onclick="Loans.openAdd()">+ Add</button></div><div class="pb"><div id="loanSummary"></div><div class="chips" id="loanChips"></div><div id="loanItems"></div></div></div>
@@ -238,6 +238,7 @@
 <div class="page" id="pg-vehicles"><div class="ph"><h2>🚗 Vehicles</h2><button class="btn btn-p btn-sm" onclick="Vehicles.openAdd()">+ Add</button></div><div class="pb" id="vItems"></div></div>
 <div class="page" id="pg-reminders"><div class="ph"><h2>🔔 Reminders</h2></div><div class="pb" id="reminderBody"></div></div>
 <div class="page" id="pg-search"><div class="pb" id="searchBody" style="padding-top:0"></div></div>
+<div class="page" id="pg-ai-import"><div class="ph"><h2>🤖 AI Import</h2></div><div class="pb" id="aiImportBody"></div></div>
 <div class="page" id="pg-timeline"><div class="ph"><h2>📅 Timeline</h2></div><div class="pb" id="timelineBody"></div></div>
 <div class="page" id="pg-security"><div class="ph"><h2>🛡️ Security Center</h2></div><div class="pb" id="securityBody"></div></div>
 <div class="page" id="pg-backup"><div class="ph"><h2>💾 Backup Center</h2></div><div class="pb" id="backupBody"></div></div>
@@ -279,6 +280,7 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Choose Theme</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
+<script src="js/storage.js"></script>
 <script src="js/app.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/modules/banks.js"></script>
@@ -300,5 +302,6 @@
 <script src="js/modules/search.js"></script>
 <script src="js/modules/vehicles.js"></script>
 <script src="js/modules/reminders.js"></script>
+<script src="js/modules/ai-import.js"></script>
 </body>
 </html>
