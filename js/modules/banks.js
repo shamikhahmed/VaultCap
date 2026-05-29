@@ -32,40 +32,51 @@ const Banks={
   emptyState(){return `<div class="empty"><div class="empty-ic">🏦</div><h3>No banks yet</h3><p>Track all your bank accounts in one place</p><div class="empty-guide"><div class="guide-step"><div class="gst-num">1</div><div class="gst-body"><h4>Tap "Add" above</h4><p>Enter your bank name and account details</p></div></div><div class="guide-step"><div class="gst-num">2</div><div class="gst-body"><h4>Add login credentials</h4><p>Store username, password hints and 2FA info securely</p></div></div><div class="guide-step"><div class="gst-num">3</div><div class="gst-body"><h4>Use filters above</h4><p>Filter by type — Commercial, Islamic, Digital and more</p></div></div></div><button class="btn btn-p" style="margin-top:14px" onclick="Banks.openAdd()">🏦 Add Your First Bank</button></div>`;},
   openAdd(){Modal.open('🏦 Add Bank',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Banks.save()">Save</button>`);this.bindCC();},
   form(b={}){
-    return `<datalist id="bkDL">${U.bankOpts(b.country||'')}</datalist>
-    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" value="${b.bankName||''}" list="bkDL" placeholder="e.g. HSBC, HBL..." autocomplete="off"></div>
-    <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="bf-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Type</label><datalist id="bfTypeDL"><option>commercial</option><option>islamic</option><option>microfinance</option><option>digital</option><option>international</option><option>government</option><option>investment</option></datalist><input class="inp" id="bf-type" value="${b.bankType||''}" list="bfTypeDL" placeholder="commercial, islamic, digital..."></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Account Type</label><datalist id="bfAtypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Joint</option><option>Multi-Currency</option><option>Islamic</option><option>Student</option><option>Fixed Deposit</option><option>Other</option></datalist><input class="inp" id="bf-atype" value="${b.accountType||''}" list="bfAtypeDL" placeholder="Current, Savings, Business..."></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="bf-cur">${U.currencies()}</select></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="bf-l4" value="${b.last4||''}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Balance</label><input class="inp" id="bf-bal" value="${b.balance||''}" type="number" placeholder="0"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">IBAN</label><input class="inp" id="bf-iban" value="${b.iban||''}" placeholder="GB29..."></div><div class="fg"><label class="fl">Sort / SWIFT</label><input class="inp" id="bf-sort" value="${b.sortCode||''}" placeholder="12-34-56"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Account Holder</label><input class="inp" id="bf-holder" value="${b.holderName||S.user.name||''}" placeholder="Full name"></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="bf-own"><option value="personal"${b.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${b.ownership==='business'?' selected':''}>🏢 Business</option><option value="joint"${b.ownership==='joint'?' selected':''}>👥 Joint</option></select></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Registered Email</label><input class="inp" id="bf-email" value="${b.email||''}" type="email" placeholder="email@..."></div><div class="fg"><label class="fl">Registered Phone</label><input class="inp" id="bf-phone" value="${b.phone||''}" placeholder="+44..."></div></div>
-    <div style="font-size:11px;font-weight:700;color:var(--text2);margin:12px 0 8px;letter-spacing:.5px">LOGIN DETAILS</div>
-    ${U.loginFields(b)}
-    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="bf-notes" rows="2">${b.notes||''}</textarea></div>
-    <div class="fg"><label class="fl">Tags</label>${U.tags(b.tags||[])}</div>
-    <label style="display:flex;align-items:center;gap:9px;cursor:pointer;margin-top:4px"><input type="checkbox" id="bf-fav" ${b.favorite?'checked':''}><span style="font-size:13px">⭐ Favourite</span></label>`;
+    const isEdit=!!b.id;
+    const bankNames=SMART_DB.banks.map(x=>`<option value="${x.name}">`).join('');
+    return `
+    <datalist id="bankDL">${bankNames}</datalist>
+    <datalist id="bfTypeDL"><option>commercial</option><option>islamic</option><option>microfinance</option><option>digital</option><option>international</option><option>government</option></datalist>
+    <!-- REQUIRED -->
+    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" oninput="SMART_DB.fillBank(this.value)" value="${b.bankName||''}"></div>
+    <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="bf-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Currency *</label><select class="inp" id="bf-cur">${U.currencies()}</select></div></div>
+    <!-- MORE DETAILS -->
+    <details${isEdit?' open':''} style="margin-top:10px">
+      <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
+        <span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span>
+      </summary>
+      <div style="padding-top:10px">
+        <div class="fr"><div class="fg"><label class="fl">Account Type</label><datalist id="bfAtypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Joint</option><option>Islamic</option><option>Fixed Deposit</option></datalist><input class="inp" id="bf-atype" value="${b.accountType||''}" list="bfAtypeDL" placeholder="Current, Savings…"></div><div class="fg"><label class="fl">Bank Type</label><input class="inp" id="bf-type" value="${b.bankType||''}" list="bfTypeDL" placeholder="commercial, digital…"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="bf-l4" value="${b.last4||''}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Balance</label><input class="inp" id="bf-bal" value="${b.balance||''}" type="number" placeholder="0"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">IBAN</label><input class="inp" id="bf-iban" value="${b.iban||''}" placeholder="GB29…"></div><div class="fg"><label class="fl">SWIFT / Sort Code</label><input class="inp" id="bf-swift" value="${b.sortCode||''}" placeholder="12-34-56 or SWIFT"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Account Holder</label><input class="inp" id="bf-holder" value="${b.holderName||S.user.name||''}" placeholder="Full name"></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="bf-own"><option value="personal"${b.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${b.ownership==='business'?' selected':''}>🏢 Business</option><option value="joint"${b.ownership==='joint'?' selected':''}>👥 Joint</option></select></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Registered Email</label><input class="inp" id="bf-email" value="${b.email||''}" type="email" placeholder="email@…"></div><div class="fg"><label class="fl">Registered Phone</label><input class="inp" id="bf-phone" value="${b.phone||''}" placeholder="+44…"></div></div>
+        ${U.loginFields(b)}
+        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="bf-notes" rows="2">${b.notes||''}</textarea></div>
+        <div class="fg"><label class="fl">Tags</label>${U.tags(b.tags||[])}</div>
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;margin-top:4px"><input type="checkbox" id="bf-fav" ${b.favorite?'checked':''}><span style="font-size:13px">⭐ Favourite</span></label>
+      </div>
+    </details>`;
   },
-  bindCC(){setTimeout(()=>{const cc=document.getElementById('bf-cc');const cur=document.getElementById('bf-cur');if(cc)cc.onchange=()=>{document.getElementById('bkDL').innerHTML=U.bankOpts(cc.value);};if(cur)cur.value='GBP';},60);},
+  bindCC(){setTimeout(()=>{const cc=document.getElementById('bf-cc');const cur=document.getElementById('bf-cur');if(cc){cc.onchange=()=>{document.getElementById('bankDL').innerHTML=SMART_DB.banks.filter(b=>b.country===cc.value).map(b=>`<option value="${b.name}">`).join('');const pfxMap={PK:'PKR',GB:'GBP',AE:'AED',US:'USD'};const c=document.getElementById('bf-cur');if(c)c.value=pfxMap[cc.value]||'GBP';};}if(cur)cur.value=S.user.currency||'GBP';},60);},
   save(editId=null){
     const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
     const lf=U.getLF();
-    const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:document.getElementById('bf-type').value,accountType:document.getElementById('bf-atype').value,currency:document.getElementById('bf-cur').value,last4:document.getElementById('bf-l4').value.trim(),balance:parseFloat(document.getElementById('bf-bal').value)||0,iban:document.getElementById('bf-iban').value.trim(),sortCode:document.getElementById('bf-sort').value.trim(),holderName:document.getElementById('bf-holder').value.trim(),ownership:document.getElementById('bf-own').value,email:document.getElementById('bf-email').value.trim(),phone:document.getElementById('bf-phone').value.trim(),...lf,notes:document.getElementById('bf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('bf-fav').checked,createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+    const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat(g('bf-bal'))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     if(editId)S.banks=S.banks.map(x=>x.id===editId?item:x);else S.banks.push(item);
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(!editId)promptAddAnother('Bank','Banks.openAdd');
   },
-  openBulkAdd(){
-    const rows=Array.from({length:5},(_,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center"><span style="font-size:11px;color:var(--text3);width:16px">${i+1}</span><input class="inp" id="bulk-b-name-${i}" placeholder="Bank name" style="flex:2"><input class="inp" id="bulk-b-type-${i}" placeholder="Type" style="flex:1"><select class="inp" id="bulk-b-cur-${i}" style="flex:1">${U.currencies()}</select></div>`).join('');
-    Modal.open('🏦 Bulk Add Banks',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Fill as many rows as you need. Empty rows are ignored.</p>${rows}`,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Banks.saveBulk()">Save All</button>`);
-  },
-  saveBulk(){
-    let n=0;
-    for(let i=0;i<5;i++){const name=(document.getElementById('bulk-b-name-'+i)?.value||'').trim();if(!name)continue;const item={id:U.id(),bankName:name,country:'GB',bankType:(document.getElementById('bulk-b-type-'+i)?.value||'commercial'),currency:(document.getElementById('bulk-b-cur-'+i)?.value||'GBP'),tags:[],createdAt:new Date().toISOString()};S.banks.push(item);n++;}
-    if(n){Activity.log('Bulk added '+n+' banks');Store.save();Modal.close();this.render();Toast.show('Added '+n+' bank'+(n!==1?'s':''),'success');}else{Toast.show('No banks to add','warning');}
-  },
-  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);},60);},
+  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();},60);},
   detail(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open(`🏦 ${b.bankName}`,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}</div>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Banks.edit('${id}');Modal.close()">Edit</button>`);},
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
-  del(id,fm=false){if(!window.__vos_confirm('Delete this bank?'))return;const b=S.banks.find(x=>x.id===id);S.banks=S.banks.filter(x=>x.id!==id);Activity.log('Deleted bank',b?.bankName);Store.save();if(fm)Modal.close();this.render();Toast.show('Deleted','info');}
+  del(id,fm=false){
+    if(!window.__vos_confirm('Move to Trash?'))return;
+    const b=S.banks.find(x=>x.id===id);if(!b)return;
+    S.trash.push({id:U.id(),type:'banks',data:b,deletedAt:new Date().toISOString()});
+    S.banks=S.banks.filter(x=>x.id!==id);
+    Activity.log('Trashed bank',b.bankName);Store.save();if(fm)Modal.close();this.render();
+    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
+  }
 };

@@ -28,8 +28,9 @@ const Dash={
     const prevV=hist.length>=2?hist[hist.length-1].v:null;
     const trendDir=prevV!==null?(nwDisplay>prevV?1:nwDisplay<prevV?-1:0):0;
     const trendArrow=trendDir>0?`<span class="dash-nw-trend up">↑</span>`:trendDir<0?`<span class="dash-nw-trend down">↓</span>`:'';
+    const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     // nw subtitle
-    const nwSub=debtPKR>0?`${cur} ${U.fmt(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} assets − ${U.fmt(Math.round(toCur(debtPKR,cur)))} debt`:`Investments · Assets · Cash`;
+    const nwSub=debtPKR>0?`${cur} ${fmtN(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} assets − ${fmtN(Math.round(toCur(debtPKR,cur)))} debt`:`Investments · Assets · Cash`;
     const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
     // allocation donut
     const allocData=[
@@ -47,7 +48,7 @@ const Dash={
     <!-- Net Worth Card -->
     <div class="dash-card dash-hero">
       <div class="dash-label">NET WORTH</div>
-      <div class="dash-nw-amount sens">${trendArrow}${cur} ${U.fmt(nwDisplay)}</div>
+      <div class="dash-nw-amount sens">${trendArrow}${cur} ${fmtN(nwDisplay)}</div>
       <div class="dash-nw-sub sens">${nwSub}</div>
       <div class="dash-hero-acts">
         <button class="btn btn-g btn-sm" onclick="Dash.toggleCurrency()">${cur}</button>
@@ -67,11 +68,11 @@ const Dash={
         <div class="dash-stat-l">Cards</div>
       </div>
       <div class="dash-stat" onclick="R.goto('investments')">
-        <div class="dash-stat-n sens">${U.fmt(Math.round(toCur(invPKR,cur)))}</div>
+        <div class="dash-stat-n sens">${fmtN(Math.round(toCur(invPKR,cur)))}</div>
         <div class="dash-stat-l">Invested (${cur})</div>
       </div>
       <div class="dash-stat" onclick="R.goto('cash')">
-        <div class="dash-stat-n sens">${U.fmt(Math.round(toCur(cashPKR,cur)))}</div>
+        <div class="dash-stat-n sens">${fmtN(Math.round(toCur(cashPKR,cur)))}</div>
         <div class="dash-stat-l">Cash (${cur})</div>
       </div>
     </div>
@@ -223,13 +224,14 @@ const Settings={
   },
   savePIN(){
     const o=document.getElementById('cp-cur').value,n=document.getElementById('cp-new').value,c=document.getElementById('cp-con').value;
-    if(o!==S.pin){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
     if(!/^\d{6}$/.test(n)){document.getElementById('cp-err').textContent='New PIN must be 6 digits';return;}
     if(n!==c){document.getElementById('cp-err').textContent='PINs do not match';return;}
-    S.pin=n;
-    // Re-encrypt VaultDB data with the new PIN-derived key
-    VaultDB.changePin(o,n).then(()=>{Store.save();}).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
-    Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
+    // Verify old PIN via VaultDB (PIN not kept in S after first unlock)
+    VaultDB.tryPin(o).then(result=>{
+      if(!result){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
+      VaultDB.changePin(o,n).then(()=>{Store.save();}).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
+      Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
+    });
   },
   showMasterKey(){
     const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));

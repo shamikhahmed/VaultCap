@@ -38,22 +38,35 @@ const Cards={
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
   openAdd(){Modal.open('💳 Add Card',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},
   form(c={}){
-    return `<datalist id="cdDL">${U.cardOpts()}</datalist>
-    <div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" value="${c.cardName||''}" list="cdDL" placeholder="e.g. Amex Gold..." autocomplete="off"></div>
-    <div class="fr"><div class="fg"><label class="fl">Network</label><datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>Maestro</option><option>Discover</option></datalist><input class="inp" id="cf-net" value="${c.network||''}" list="cfNetDL" placeholder="Visa, Mastercard, Amex..."></div><div class="fg"><label class="fl">Type</label><datalist id="cfTypeDL"><option>Credit</option><option>Debit</option><option>Prepaid</option><option>Corporate</option><option>Virtual</option><option>Charge</option></datalist><input class="inp" id="cf-type" value="${c.cardType||''}" list="cfTypeDL" placeholder="Credit, Debit, Prepaid..."></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Category</label><datalist id="cfCatDL"><option>Standard</option><option>Premium</option><option>Travel</option><option>Cashback</option><option>Rewards</option><option>Student</option><option>Business</option><option>Crypto</option><option>BNPL</option><option>Metal</option></datalist><input class="inp" id="cf-cat" value="${c.category||''}" list="cfCatDL" placeholder="Standard, Premium, Travel..."></div><div class="fg"><label class="fl">Country</label><select class="inp" id="cf-cc">${U.countries()}</select></div></div>
-    <div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="${c.holderName||S.user.name||''}" placeholder="Name on card"></div>
-    <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="${c.last4||''}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Expiry (MM/YY)</label><input class="inp" id="cf-exp" value="${c.expiry||''}" placeholder="12/28" maxlength="5"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">CVV</label><input class="inp" id="cf-cvv" value="${c.cvv||''}" maxlength="4" type="password" inputmode="numeric" placeholder="•••"></div><div class="fg"><label class="fl">Card PIN</label><input class="inp" id="cf-cpin" value="${c.cardPin||''}" maxlength="6" type="password" inputmode="numeric" placeholder="••••"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="${c.rewardsProgram||''}" placeholder="Avios, MR..."></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="${c.rewardsPoints||''}" type="number" placeholder="50000"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"${c.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${c.ownership==='business'?' selected':''}>🏢 Business</option><option value="joint"${c.ownership==='joint'?' selected':''}>👥 Joint</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="${c.annualFee||''}" type="number" placeholder="0"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="${c.username||''}" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="${c.pwdHint||''}" placeholder="e.g. 'Email+!'"></div></div>
-    <div class="fg"><label class="fl">Notes / Benefits</label><textarea class="inp" id="cf-notes" rows="2">${c.notes||''}</textarea></div>
-    <div class="fg"><label class="fl">Tags</label>${U.tags(c.tags||[])}</div>
-    <div style="display:flex;gap:16px;margin-top:4px">
-      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-fav" ${c.favorite?'checked':''}> ⭐ Favourite</label>
-      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-carry" ${S.wallet.includes(c.id)?'checked':''}> 👝 Carrying</label>
-    </div>`;
+    const isEdit=!!c.id;
+    const cardNames=SMART_DB.cards.map(x=>`<option value="${x.name}">`).join('');
+    return `
+    <datalist id="cardDL">${cardNames}</datalist>
+    <datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option></datalist>
+    <!-- REQUIRED -->
+    <div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cardDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" oninput="SMART_DB.fillCard(this.value)" value="${c.cardName||''}"></div>
+    <div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="${c.network||''}" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="${c.last4||''}" maxlength="4" inputmode="numeric" placeholder="1234"></div></div>
+    <!-- MORE DETAILS -->
+    <details${isEdit?' open':''} style="margin-top:10px">
+      <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
+        <span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span>
+      </summary>
+      <div style="padding-top:10px">
+        <div class="fr"><div class="fg"><label class="fl">Type</label><datalist id="cfTypeDL"><option>Credit</option><option>Debit</option><option>Prepaid</option><option>Corporate</option><option>Virtual</option></datalist><input class="inp" id="cf-type" value="${c.cardType||''}" list="cfTypeDL" placeholder="Credit, Debit…"></div><div class="fg"><label class="fl">Category</label><datalist id="cfCatDL"><option>Standard</option><option>Premium</option><option>Travel</option><option>Cashback</option><option>Rewards</option><option>Business</option><option>Crypto</option><option>BNPL</option><option>Islamic</option><option>Digital</option></datalist><input class="inp" id="cf-cat" value="${c.category||''}" list="cfCatDL" placeholder="Standard, Premium…"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="cf-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Expiry (MM/YY)</label><input class="inp" id="cf-exp" value="${c.expiry||''}" placeholder="12/28" maxlength="5"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">CVV</label><input class="inp" id="cf-cvv" value="${c.cvv||''}" maxlength="4" type="password" inputmode="numeric" placeholder="•••"></div><div class="fg"><label class="fl">Card PIN</label><input class="inp" id="cf-cpin" value="${c.cardPin||''}" maxlength="6" type="password" inputmode="numeric" placeholder="••••"></div></div>
+        <div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="${c.holderName||S.user.name||''}" placeholder="Name on card"></div>
+        <div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="${c.rewardsProgram||''}" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="${c.rewardsPoints||''}" type="number" placeholder="50000"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"${c.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${c.ownership==='business'?' selected':''}>🏢 Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="${c.annualFee||''}" type="number" placeholder="0"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="${c.username||''}" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="${c.pwdHint||''}" placeholder="'Email+!'"></div></div>
+        <div class="fg"><label class="fl">Notes / Benefits</label><textarea class="inp" id="cf-notes" rows="2">${c.notes||''}</textarea></div>
+        <div class="fg"><label class="fl">Tags</label>${U.tags(c.tags||[])}</div>
+        <div style="display:flex;gap:16px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-fav" ${c.favorite?'checked':''}> ⭐ Favourite</label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-carry" ${S.wallet.includes(c.id)?'checked':''}> 👝 Carrying</label>
+        </div>
+      </div>
+    </details>`;
   },
   save(editId=null){
     const name=document.getElementById('cf-name').value.trim();if(!name){Toast.show('Card name required','warning');return;}
@@ -65,17 +78,15 @@ const Cards={
     Activity.log((editId?'Edited':'Added')+' card',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(!editId)promptAddAnother('Card','Cards.openAdd');
   },
-  openBulkAdd(){
-    const rows=Array.from({length:5},(_,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center"><span style="font-size:11px;color:var(--text3);width:16px">${i+1}</span><input class="inp" id="bulk-c-name-${i}" placeholder="Card name" style="flex:2"><input class="inp" id="bulk-c-net-${i}" placeholder="Visa/MC/Amex" style="flex:1"><input class="inp" id="bulk-c-l4-${i}" placeholder="Last 4" maxlength="4" inputmode="numeric" style="flex:1"><input class="inp" id="bulk-c-exp-${i}" placeholder="MM/YY" style="flex:1"></div>`).join('');
-    Modal.open('💳 Bulk Add Cards',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Fill as many rows as you need. Empty rows are ignored.</p>${rows}`,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.saveBulk()">Save All</button>`);
-  },
-  saveBulk(){
-    let n=0;
-    for(let i=0;i<5;i++){const name=(document.getElementById('bulk-c-name-'+i)?.value||'').trim();if(!name)continue;const item={id:U.id(),cardName:name,network:(document.getElementById('bulk-c-net-'+i)?.value||'Visa'),cardType:'Debit',last4:(document.getElementById('bulk-c-l4-'+i)?.value||'').trim(),expiry:(document.getElementById('bulk-c-exp-'+i)?.value||'').trim(),currency:'GBP',tags:[],issuer:name.split(' ')[0],createdAt:new Date().toISOString()};S.cards.push(item);n++;}
-    if(n){Activity.log('Bulk added '+n+' cards');Store.save();Modal.close();this.render();Toast.show('Added '+n+' card'+(n!==1?'s':''),'success');}else{Toast.show('No cards to add','warning');}
-  },
   edit(id){const c=S.cards.find(x=>x.id===id);if(!c)return;Modal.open('✏️ Edit Card',this.form(c),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Cards.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Cards.save('${id}')">Update</button>`);setTimeout(()=>{[['cf-net',c.network||'Visa'],['cf-type',c.cardType||'Credit'],['cf-cat',c.category||'Standard'],['cf-cc',c.country||'GB'],['cf-own',c.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});},60);},
   openDetail(id){const c=S.cards.find(x=>x.id===id);if(!c)return;Modal.open(`💳 ${c.cardName}`,`<div>${[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)],['Last 4','****'+(c.last4||'—')],['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}</div>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);},
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
-  del(id,fm=false){if(!window.__vos_confirm('Delete this card?'))return;const c=S.cards.find(x=>x.id===id);S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);Activity.log('Deleted card',c?.cardName);Store.save();if(fm)Modal.close();this.render();Toast.show('Deleted','info');}
+  del(id,fm=false){
+    if(!window.__vos_confirm('Move to Trash?'))return;
+    const c=S.cards.find(x=>x.id===id);if(!c)return;
+    S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});
+    S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);
+    Activity.log('Trashed card',c.cardName);Store.save();if(fm)Modal.close();this.render();
+    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
+  }
 };

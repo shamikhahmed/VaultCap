@@ -26,6 +26,7 @@ const ALL_MODULES=[
   {id:'vehicles',n:'Vehicles',   ic:'🚗', desc:'Cars, fuel, service, insurance',     group:'Assets'},
   {id:'reminders',  n:'Reminders',  ic:'🔔', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
   {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
+  {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
 ];
 
 const COUNTRIES=[
@@ -175,6 +176,168 @@ const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eTo
   'Al Meezan Investments','NBP Funds','MCB Arif Habib Savings','Faysal Asset Management',
   'Atlas Asset Management','HBL Asset Management','NAFA Funds','Meezan Islamic Fund',
   'ABL Asset Management','Lakson Investments'];
+
+// ===================== SMART AUTOCOMPLETE DB =====================
+const SMART_DB = {
+  banks:[
+    {name:'HBL',country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
+    {name:'Habib Bank Limited',country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
+    {name:'Meezan Bank',country:'PK',currency:'PKR',type:'islamic',swift:'MEZNPKKA'},
+    {name:'UBL',country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
+    {name:'United Bank Limited',country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
+    {name:'MCB Bank',country:'PK',currency:'PKR',type:'commercial',swift:'MCIBPKKA'},
+    {name:'Bank Alfalah',country:'PK',currency:'PKR',type:'commercial',swift:'ALFHPKKA'},
+    {name:'Allied Bank',country:'PK',currency:'PKR',type:'commercial',swift:'ABPAPKKA'},
+    {name:'Askari Bank',country:'PK',currency:'PKR',type:'commercial',swift:'ASCMPKKA'},
+    {name:'Bank Al Habib',country:'PK',currency:'PKR',type:'commercial',swift:'BAHLPKKA'},
+    {name:'Faysal Bank',country:'PK',currency:'PKR',type:'islamic',swift:'FAYSPKKA'},
+    {name:'Bank Islami',country:'PK',currency:'PKR',type:'islamic',swift:null},
+    {name:'Sadapay',country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'NayaPay',country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'Zindigi',country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'JazzCash',country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'EasyPaisa',country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'NBP',country:'PK',currency:'PKR',type:'government',swift:'NBPKPKKA'},
+    {name:'Bank of Punjab',country:'PK',currency:'PKR',type:'government',swift:null},
+    {name:'Monzo',country:'GB',currency:'GBP',type:'digital',swift:'MONZGB2L'},
+    {name:'Starling Bank',country:'GB',currency:'GBP',type:'digital',swift:'SRLGGB3L'},
+    {name:'Revolut',country:'GB',currency:'GBP',type:'digital',swift:'REVOGB21'},
+    {name:'Wise',country:'GB',currency:'GBP',type:'digital',swift:'TRWIGB22'},
+    {name:'Barclays',country:'GB',currency:'GBP',type:'commercial',swift:'BARCGB22'},
+    {name:'HSBC',country:'GB',currency:'GBP',type:'commercial',swift:'MIDLGB22'},
+    {name:'NatWest',country:'GB',currency:'GBP',type:'commercial',swift:'NWBKGB2L'},
+    {name:'Lloyds Bank',country:'GB',currency:'GBP',type:'commercial',swift:'LOYDGB2L'},
+    {name:'Santander UK',country:'GB',currency:'GBP',type:'commercial',swift:'ABBYGB2L'},
+    {name:'Emirates NBD',country:'AE',currency:'AED',type:'commercial',swift:'EBILAEAD'},
+    {name:'FAB',country:'AE',currency:'AED',type:'commercial',swift:'FABEAEAD'},
+    {name:'ADCB',country:'AE',currency:'AED',type:'commercial',swift:'ADCBAEAD'},
+    {name:'Mashreq Bank',country:'AE',currency:'AED',type:'commercial',swift:'BOMLAEAD'},
+    {name:'ADIB',country:'AE',currency:'AED',type:'islamic',swift:'ADIBAEAA'},
+    {name:'Dubai Islamic Bank',country:'AE',currency:'AED',type:'islamic',swift:'DUIBAEAD'},
+    {name:'RAKBank',country:'AE',currency:'AED',type:'commercial',swift:'RAKBAEAD'},
+    {name:'Chase',country:'US',currency:'USD',type:'commercial',swift:'CHASUS33'},
+    {name:'Bank of America',country:'US',currency:'USD',type:'commercial',swift:'BOFAUS3N'},
+    {name:'Wells Fargo',country:'US',currency:'USD',type:'commercial',swift:'WFBIUS6S'},
+  ],
+  cards:[
+    {name:'Sadapay Mastercard',network:'Mastercard',type:'Debit',country:'PK',category:'Digital'},
+    {name:'Zindigi Mastercard',network:'Mastercard',type:'Debit',country:'PK',category:'Digital'},
+    {name:'NayaPay Visa',network:'Visa',type:'Debit',country:'PK',category:'Digital'},
+    {name:'HBL Debit Visa',network:'Visa',type:'Debit',country:'PK',category:'Standard'},
+    {name:'HBL Credit Mastercard',network:'Mastercard',type:'Credit',country:'PK',category:'Standard'},
+    {name:'Meezan Visa Debit',network:'Visa',type:'Debit',country:'PK',category:'Islamic'},
+    {name:'Meezan Platinum Visa',network:'Visa',type:'Credit',country:'PK',category:'Islamic'},
+    {name:'Bank Alfalah Visa',network:'Visa',type:'Credit',country:'PK',category:'Standard'},
+    {name:'UBL Visa Debit',network:'Visa',type:'Debit',country:'PK',category:'Standard'},
+    {name:'MCB Visa',network:'Visa',type:'Credit',country:'PK',category:'Standard'},
+    {name:'Allied Bank Mastercard',network:'Mastercard',type:'Debit',country:'PK',category:'Standard'},
+    {name:'Monzo Visa',network:'Visa',type:'Debit',country:'GB',category:'Digital'},
+    {name:'Starling Mastercard',network:'Mastercard',type:'Debit',country:'GB',category:'Digital'},
+    {name:'Revolut Visa',network:'Visa',type:'Debit',country:'GB',category:'Digital'},
+    {name:'Wise Mastercard',network:'Mastercard',type:'Debit',country:'GB',category:'Digital'},
+    {name:'Amex Gold',network:'American Express',type:'Credit',country:'GB',category:'Premium'},
+    {name:'Barclays Visa',network:'Visa',type:'Credit',country:'GB',category:'Standard'},
+    {name:'HSBC Premier Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Premium'},
+    {name:'Emirates NBD Visa',network:'Visa',type:'Credit',country:'AE',category:'Standard'},
+    {name:'FAB Mastercard',network:'Mastercard',type:'Credit',country:'AE',category:'Standard'},
+    {name:'ADCB Visa',network:'Visa',type:'Credit',country:'AE',category:'Standard'},
+    {name:'ADIB Visa',network:'Visa',type:'Debit',country:'AE',category:'Islamic'},
+  ],
+  sims:[
+    {network:'Jazz',country:'PK',prefixes:['300','306','307','308'],type:'Physical'},
+    {network:'Telenor Pakistan',country:'PK',prefixes:['340','341','342','343','344','345','346'],type:'Physical'},
+    {network:'Ufone',country:'PK',prefixes:['333','331','332'],type:'Physical'},
+    {network:'Zong',country:'PK',prefixes:['310','311','312','313','314','315'],type:'Physical'},
+    {network:'SCOM',country:'PK',prefixes:['320'],type:'Physical'},
+    {network:'EVO',country:'PK',prefixes:[],type:'Physical'},
+    {network:'EE',country:'GB',prefixes:['7'],type:'Physical'},
+    {network:'O2',country:'GB',prefixes:['7'],type:'Physical'},
+    {network:'Vodafone UK',country:'GB',prefixes:['7'],type:'Physical'},
+    {network:'Three',country:'GB',prefixes:['7'],type:'Physical'},
+    {network:'du',country:'AE',prefixes:['5'],type:'Physical'},
+    {network:'Etisalat',country:'AE',prefixes:['5'],type:'Physical'},
+    {network:'e&',country:'AE',prefixes:['5'],type:'Physical'},
+    {network:'Virgin Mobile AE',country:'AE',prefixes:['5'],type:'Physical'},
+    {network:'Lebara UAE',country:'AE',prefixes:['5'],type:'Physical'},
+  ],
+  investments:[
+    {name:'Engro Corporation',ticker:'ENGRO',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Lucky Cement',ticker:'LUCK',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'HBL',ticker:'HBL',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'MCB Bank',ticker:'MCB',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'UBL',ticker:'UBL',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'OGDC',ticker:'OGDC',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'PPL',ticker:'PPL',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'PSO',ticker:'PSO',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Fauji Fertilizer',ticker:'FFC',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Hub Power',ticker:'HUBC',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Maple Leaf',ticker:'MLCF',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Systems Ltd',ticker:'SYS',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'TRG Pakistan',ticker:'TRG',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'K-Electric',ticker:'KEL',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Sui Northern',ticker:'SNGP',exchange:'PSX',type:'Stocks',country:'PK',currency:'PKR',broker:''},
+    {name:'Lloyds Banking Group',ticker:'LLOY',exchange:'LSE',type:'Stocks',country:'GB',currency:'GBP',broker:''},
+    {name:'Barclays',ticker:'BARC',exchange:'LSE',type:'Stocks',country:'GB',currency:'GBP',broker:''},
+    {name:'HSBC Holdings',ticker:'HSBA',exchange:'LSE',type:'Stocks',country:'GB',currency:'GBP',broker:''},
+    {name:'Al Meezan Islamic Fund',ticker:null,exchange:null,type:'Mutual Funds',country:'PK',currency:'PKR',broker:'Al Meezan Investments'},
+    {name:'NBP Income Fund',ticker:null,exchange:null,type:'Mutual Funds',country:'PK',currency:'PKR',broker:'NBP Funds'},
+    {name:'UBL Stock Advantage Fund',ticker:null,exchange:null,type:'Mutual Funds',country:'PK',currency:'PKR',broker:'UBL Fund Managers'},
+    {name:'Bitcoin',ticker:'BTC',exchange:null,type:'Crypto',country:'',currency:'USD',broker:''},
+    {name:'Ethereum',ticker:'ETH',exchange:null,type:'Crypto',country:'',currency:'USD',broker:''},
+    {name:'USDT',ticker:'USDT',exchange:null,type:'Crypto',country:'',currency:'USD',broker:''},
+  ],
+  documents:[
+    {name:'Pakistani CNIC',type:'cnic',numberFormat:'00000-0000000-0',hasExpiry:true},
+    {name:'Pakistani Passport',type:'passport',numberFormat:'AB1234567',hasExpiry:true},
+    {name:'Pakistani Driving Licence',type:'driving_licence',numberFormat:'',hasExpiry:true},
+    {name:'NTN',type:'ntn',numberFormat:'0000000-0',hasExpiry:false},
+    {name:'UK Passport',type:'passport',numberFormat:'123456789',hasExpiry:true},
+    {name:'UK Driving Licence',type:'driving_licence',numberFormat:'',hasExpiry:true},
+    {name:'UAE Residence Visa',type:'visa',numberFormat:'',hasExpiry:true},
+    {name:'UAE Emirates ID',type:'emirates_id',numberFormat:'784-0000-0000000-0',hasExpiry:true},
+    {name:'International Vaccination Card',type:'vaccination',numberFormat:'',hasExpiry:false},
+  ],
+  // Auto-fill helpers
+  fillBank(val) {
+    const match = this.banks.find(b => b.name.toLowerCase().includes(val.toLowerCase()));
+    if (!match) return;
+    setTimeout(() => {
+      const cc = document.getElementById('bf-cc'); if (cc) cc.value = match.country;
+      const cur = document.getElementById('bf-cur'); if (cur) cur.value = match.currency;
+      const type = document.getElementById('bf-type'); if (type) type.value = match.type;
+      const swift = document.getElementById('bf-swift'); if (swift && match.swift) swift.value = match.swift;
+    }, 50);
+  },
+  fillCard(val) {
+    const match = this.cards.find(c => c.name.toLowerCase().includes(val.toLowerCase()));
+    if (!match) return;
+    setTimeout(() => {
+      const net = document.getElementById('cf-net'); if (net) net.value = match.network;
+      const type = document.getElementById('cf-type'); if (type) type.value = match.type;
+      const cat = document.getElementById('cf-cat'); if (cat) cat.value = match.category;
+      const cc = document.getElementById('cf-cc'); if (cc) cc.value = match.country;
+    }, 50);
+  },
+  fillSim(val) {
+    const match = this.sims.find(s => s.network.toLowerCase().includes(val.toLowerCase()));
+    if (!match) return;
+    setTimeout(() => {
+      const cc = document.getElementById('sf-cc'); if (cc) { cc.value = match.country; cc.dispatchEvent(new Event('change')); }
+      const pfx = document.getElementById('sf-pfx'); if (pfx) pfx.textContent = U.phone(match.country);
+    }, 50);
+  },
+  fillInv(val) {
+    const match = this.investments.find(i => i.name.toLowerCase().includes(val.toLowerCase()) || (i.ticker && i.ticker.toLowerCase() === val.toLowerCase()));
+    if (!match) return;
+    setTimeout(() => {
+      const tick = document.getElementById('if-tick'); if (tick && match.ticker) tick.value = match.ticker;
+      const type = document.getElementById('if-type'); if (type) type.value = match.type;
+      const cc = document.getElementById('if-cc'); if (cc && match.country) cc.value = match.country;
+      const cur = document.getElementById('if-cur'); if (cur) cur.value = match.currency;
+      const broker = document.getElementById('if-broker'); if (broker && match.broker) broker.value = match.broker;
+    }, 50);
+  },
+};
 
 const SUBS_DB=[
   {n:'Netflix',c:'Streaming',ic:'🎬'},{n:'Disney+',c:'Streaming',ic:'🏰'},{n:'Amazon Prime',c:'Streaming',ic:'📦'},
@@ -498,7 +661,7 @@ let S = {
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
   modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
-  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[],
+  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[], trash:[],
   loanF:'all',
   wallet:[],
   fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false,
@@ -515,11 +678,11 @@ const Store = {
   _data() {
     return {
       schemaVersion: SCHEMA_VERSION,
-      user: S.user, pin: S.pin, decoyPin: S.decoyPin, noPin: S.noPin,
+      user: S.user, noPin: S.noPin,
       modules: S.modules,
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
       assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
-      digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet,
+      digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
     };
@@ -564,7 +727,7 @@ const Store = {
     } catch(e) {}
     S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
     S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
-    S.activity=[]; S.tags=[]; S.wallet=[];
+    S.activity=[]; S.tags=[]; S.wallet=[]; S.trash=[];
     S.user = { name:'', avatar:'💼', theme:'dark', currency:'USD', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:null };
     S.pin=''; S.decoyPin=''; S.fails=0; S.unlocked=false; S.decoy=false;
   }
@@ -657,6 +820,11 @@ const R = {
     buildNav();
     this.goto('dashboard');
     Activity.log('Vault unlocked');
+    // Auto-purge trash items older than 30 days
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const before = (S.trash||[]).length;
+    S.trash = (S.trash||[]).filter(item => new Date(item.deletedAt).getTime() > cutoff);
+    if (S.trash.length < before) Store.save();
     if (S.autoLock) this.resetTimer();
     setTimeout(() => WhatsNew.check(), 800);
     if (S._clockTimer) clearInterval(S._clockTimer);
@@ -702,6 +870,7 @@ const R = {
       vehicles:    () => Vehicles.render(),
       reminders:   () => Reminders.render(),
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
+      'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
       settings:    () => {
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
@@ -947,13 +1116,14 @@ const OB = {
     if (!/^\d{6}$/.test(p)) { document.getElementById('ob-perr').textContent = 'PIN must be 6 digits'; return; }
     if (p !== p2) { document.getElementById('ob-perr').textContent = 'PINs do not match'; return; }
     S.pin = p; S.decoyPin = d || ''; S.noPin = false;
-    // Initialise VaultDB with the chosen PIN, then save encrypted
+    // Initialise VaultDB with the chosen PIN, then save encrypted, then clear PIN from memory
     VaultDB.init(p).then(async () => {
       Store.save();
       if (d && /^\d{6}$/.test(d)) {
-        // Pre-create decoy slot so the decoy PIN is recognised on next unlock
         await VaultDB.saveDecoySlot(d, { _decoy: true });
       }
+      // PIN only needed to derive VaultDB key — purge from runtime state
+      delete S.pin; delete S.decoyPin;
     }).catch(e => console.warn('[VaultDB] init error:', e));
     document.getElementById('pgOnboard').style.display = 'none';
     Toast.show(`Welcome to VaultOS, ${S.user.name}! 🎉`, 'success');
@@ -984,6 +1154,12 @@ const U = {
   cname:    c  => COUNTRIES.find(x => x.c === c)?.n || c,
   phone:    c  => COUNTRIES.find(x => x.c === c)?.p || '+0',
   fmt:      n  => new Intl.NumberFormat().format(n || 0),
+  fmtPKR(n) {
+    n = Math.abs(Math.round(n || 0));
+    if (n >= 10000000) return (n / 10000000).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
+    if (n >= 100000)   return (n / 100000).toFixed(2).replace(/\.?0+$/, '') + ' L';
+    return new Intl.NumberFormat('en-PK').format(n);
+  },
   expSt(e) {
     if (!e) return 'ok';
     const [m, y] = e.split('/');
@@ -1070,6 +1246,11 @@ const U = {
 // ===================== MEGA-ADD HELPER =====================
 // After any module save, show a quick "Add another?" prompt at the bottom.
 function promptAddAnother(moduleLabel, openFn) {
+  // Cap at 3 prompts per module to avoid annoying users
+  const key = 'vos_addcount_' + moduleLabel;
+  const count = parseInt(localStorage.getItem(key) || '0');
+  if (count >= 3) return;
+  localStorage.setItem(key, count + 1);
   // Remove any existing prompt
   const existing = document.getElementById('add-another-bar');
   if (existing) existing.remove();
@@ -1088,6 +1269,16 @@ function promptAddAnother(moduleLabel, openFn) {
   document.body.appendChild(bar);
   // Auto-dismiss after 8s
   setTimeout(() => { if (bar.isConnected) bar.remove(); }, 8000);
+}
+
+// ===================== MORE SHEET =====================
+function openMore() {
+  const el = document.getElementById('moreSheet');
+  if (el) { el.style.display = 'block'; }
+}
+function closeMore() {
+  const el = document.getElementById('moreSheet');
+  if (el) { el.style.display = 'none'; }
 }
 
 // ===================== PRIVACY MODE =====================
@@ -1125,17 +1316,27 @@ function buildNav() {
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
 
   const hasPage = id => !!document.getElementById('pg-' + id);
-  const nonSettings = all.filter(m => m.id !== 'settings' && (hasPage(m.id) || ['dashboard'].includes(m.id))).slice(0, 6);
-  const settingsItem = all.find(m => m.id === 'settings') || { id:'settings', n:'Settings', ic:'⚙️' };
-  const tabs = [...nonSettings, settingsItem];
-  document.getElementById('btabs').innerHTML = '<div class="btabs-in" id="btabsIn">' + tabs.map(m =>
-    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><div class="ti-ic">${m.ic}</div><span>${m.n.length > 7 ? m.n.slice(0, 6) + '…' : m.n}</span></div>`
-  ).join('') + '</div>';
+  const navMods = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active.filter(m => hasPage(m.id))];
+  const first5 = navMods.slice(0, 5);
+  const overflow = navMods.slice(5);
+  const moreItem = { id:'__more__', n:'More', ic:'⋯' };
+  const tabs = overflow.length > 0 ? [...first5, moreItem] : [...first5, { id:'settings', n:'Settings', ic:'⚙️' }];
 
-  setTimeout(() => {
-    const active = document.querySelector('.ti.on');
-    if (active) { const p = document.getElementById('btabsIn'); if (p) p.scrollTo({ left: active.offsetLeft - p.offsetWidth / 2 + active.offsetWidth / 2, behavior:'smooth' }); }
-  }, 60);
+  // Populate moreGrid for the More sheet
+  const mg = document.getElementById('moreGrid');
+  if (mg) {
+    const moreItems = [...overflow, ...extras];
+    mg.innerHTML = moreItems.map(m =>
+      `<div onclick="R.goto('${m.id}');closeMore()" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
+        <div style="font-size:22px;margin-bottom:5px">${m.ic}</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text2)">${m.n}</div>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('btabs').innerHTML = tabs.map(m =>
+    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="${m.id==='__more__'?'openMore()':'R.goto(\''+m.id+'\')'}"><div class="ti-ic">${m.ic}</div><span>${m.n.length > 7 ? m.n.slice(0, 6) + '…' : m.n}</span></div>`
+  ).join('');
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles' };
   const quickAdds = [
