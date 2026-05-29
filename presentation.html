@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultOS — Presentation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #000000;
+    --bg2: #0a0a0a;
+    --bg3: #111111;
+    --accent: #0080ff;
+    --accent2: #0055cc;
+    --text: #ffffff;
+    --text2: #a0a0a0;
+    --text3: #505050;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --err: #ef4444;
+    --border: rgba(255,255,255,0.08);
+    --glow: rgba(0,128,255,0.15);
+    --mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ─── Deck ─── */
+  #deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ─── Controls ─── */
+  #controls {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+
+  .ctrl-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .ctrl-btn:hover { background: rgba(0,128,255,0.18); border-color: var(--accent); }
+  .ctrl-btn:disabled { opacity: 0.25; cursor: default; }
+
+  #slide-counter {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text2);
+    min-width: 52px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── Progress bar ─── */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+    z-index: 100;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ─── Slide number chip ─── */
+  .slide-num {
+    position: absolute;
+    top: 28px; right: 36px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── Typography ─── */
+  .slide-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.0;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .tagline {
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--text2);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    max-width: 620px;
+    text-align: center;
+  }
+  .accent { color: var(--accent); }
+  .ok { color: var(--ok); }
+  .warn { color: var(--warn); }
+  .err { color: var(--err); }
+
+  /* ─── Divider ─── */
+  .divider {
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 24px 0;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ─── Cards / panels ─── */
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+  .card-sm {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  /* ─── Grid ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 880px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; max-width: 900px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; max-width: 960px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 900px; }
+
+  /* ─── Module chip ─── */
+  .module-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 12px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .module-chip:hover { border-color: var(--accent); }
+  .module-chip .ic { font-size: 26px; }
+  .module-chip .mn { font-size: 11px; color: var(--text2); font-weight: 500; letter-spacing: 0.02em; }
+  .module-chip .mc { font-size: 10px; color: var(--text3); }
+
+  /* ─── Bullet list ─── */
+  .blist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 680px;
+    width: 100%;
+  }
+  .blist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: clamp(14px, 1.6vw, 17px);
+    line-height: 1.5;
+    color: var(--text2);
+  }
+  .blist li .bi {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0,128,255,0.12);
+    border: 1px solid rgba(0,128,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .blist li strong { color: var(--text); font-weight: 600; }
+
+  /* ─── Code / mono block ─── */
+  .mono-block {
+    font-family: var(--mono);
+    font-size: clamp(11px, 1.4vw, 14px);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    line-height: 2.0;
+    color: var(--text2);
+    width: 100%;
+    max-width: 680px;
+  }
+  .mono-block .line-acc { color: var(--accent); }
+  .mono-block .line-ok { color: var(--ok); }
+  .mono-block .line-dim { color: var(--text3); }
+
+  /* ─── Stat badge ─── */
+  .stat-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0,128,255,0.08);
+    border: 1px solid rgba(0,128,255,0.2);
+    border-radius: 12px;
+    padding: 14px 24px;
+    min-width: 140px;
+  }
+  .stat .sv {
+    font-family: var(--mono);
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .stat .sk {
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ─── Before/after ─── */
+  .ba-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 860px;
+    align-items: start;
+  }
+  .ba-col {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .ba-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .ba-label.before { color: var(--warn); }
+  .ba-label.after { color: var(--ok); }
+  .ba-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ba-field:last-child { border-bottom: none; }
+  .ba-field .fk { color: var(--text3); }
+  .ba-field .fv { color: var(--text); font-weight: 500; font-family: var(--mono); }
+  .ba-field .fv.auto { color: var(--accent); }
+
+  /* ─── URL hero ─── */
+  .url-hero {
+    font-family: var(--mono);
+    font-size: clamp(16px, 2.5vw, 28px);
+    color: var(--accent);
+    background: rgba(0,128,255,0.08);
+    border: 1px solid rgba(0,128,255,0.25);
+    border-radius: 12px;
+    padding: 18px 36px;
+    letter-spacing: 0.02em;
+    margin-top: 8px;
+  }
+
+  /* ─── QR placeholder ─── */
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--text3);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .qr-box svg { opacity: 0.3; }
+
+  /* ─── Platform badges ─── */
+  .platform-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .platform-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ─── Flag row ─── */
+  .flag-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 8px 0 16px;
+  }
+  .flag-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .flag-item .fi { font-size: 40px; }
+  .flag-item .fn { font-size: 11px; color: var(--text2); font-weight: 600; letter-spacing: 0.05em; }
+
+  /* ─── Step row ─── */
+  .step-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 880px;
+    align-items: stretch;
+  }
+  .step-item {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent2);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .step-item p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .step-item strong { color: var(--text); font-weight: 600; font-size: 14px; }
+
+  /* ─── Slide 1 specific ─── */
+  #s1 { text-align: center; background: radial-gradient(ellipse at 50% 30%, rgba(0,128,255,0.08) 0%, transparent 70%); }
+  #s1 h1 { text-align: center; }
+  #s1 .by-line { font-size: 13px; color: var(--text3); margin-top: 28px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ─── Diagram ─── */
+  .diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 860px;
+    overflow-x: auto;
+  }
+  .diag-node {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    min-width: 110px;
+  }
+  .diag-node .dn-ic { font-size: 22px; margin-bottom: 6px; }
+  .diag-node .dn-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .diag-node .dn-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); line-height: 1.5; }
+  .diag-arrow {
+    padding: 0 8px;
+    color: var(--accent);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .diag-node.hi { border-color: rgba(0,128,255,0.4); background: rgba(0,128,255,0.06); }
+
+  /* ─── Wide layout ─── */
+  .wide { width: 100%; max-width: 960px; }
+  .full-w { align-items: flex-start; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="deck">
+
+  <!-- ─── Slide 1: Title ─── -->
+  <div class="slide active" id="s1">
+    <span class="slide-num">01 / 12</span>
+    <div class="slide-label">Personal Finance OS</div>
+    <h1>VaultOS</h1>
+    <div class="tagline">Your private financial operating system.<br>
+    Zero cloud. Zero compromise. Enterprise-grade encryption.</div>
+    <div class="divider"></div>
+    <p class="by-line">by Shamikh Ahmed &nbsp;·&nbsp; Director, NEWS Logistics &nbsp;·&nbsp; Founder, TheSolution360</p>
+  </div>
+
+  <!-- ─── Slide 2: The Problem ─── -->
+  <div class="slide" id="s2">
+    <span class="slide-num">02 / 12</span>
+    <div class="slide-label">The Problem</div>
+    <h2>What existing apps get wrong</h2>
+    <div class="divider"></div>
+    <ul class="blist">
+      <li><span class="bi">☁️</span><div><strong>Your data lives on their servers.</strong> Every finance app syncs to the cloud — which means a breach, a subpoena, or a shutdown wipes you out.</div></li>
+      <li><span class="bi">🔓</span><div><strong>Zero encryption at rest.</strong> Most apps store your account numbers, card details, and passwords in plaintext or with reversible encoding.</div></li>
+      <li><span class="bi">🌍</span><div><strong>No PK / UK / UAE support.</strong> Western-centric apps don't know HBL, Meezan, Sadapay, Jazz, Etisalat, or PSX stocks exist.</div></li>
+      <li><span class="bi">🧩</span><div><strong>Fragmented tools.</strong> One app for banking, another for passwords, another for documents — no unified view of your financial identity.</div></li>
+      <li><span class="bi">💳</span><div><strong>Subscription paywalls.</strong> Premium features locked behind recurring fees for data that is yours.</div></li>
+    </ul>
+  </div>
+
+  <!-- ─── Slide 3: The Solution ─── -->
+  <div class="slide" id="s3">
+    <span class="slide-num">03 / 12</span>
+    <div class="slide-label">The Solution</div>
+    <h2>One vault. Everything.<br><span class="accent">Completely private.</span></h2>
+    <div class="divider"></div>
+    <div class="grid-3" style="max-width:800px;">
+      <div class="card-sm" style="text-align:center;">
+        <div style="font-size:32px;margin-bottom:10px;">🔒</div>
+        <strong style="font-size:15px;">Local-first</strong>
+        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">All data stays on your device. No account. No server. No sync.</p>
+      </div>
+      <div class="card-sm" style="text-align:center;">
+        <div style="font-size:32px;margin-bottom:10px;">🛡️</div>
+        <strong style="font-size:15px;">Encrypted</strong>
+        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">AES-256-GCM encryption. Key derived from your PIN — never stored.</p>
+      </div>
+      <div class="card-sm" style="text-align:center;">
+        <div style="font-size:32px;margin-bottom:10px;">📱</div>
+        <strong style="font-size:15px;">PWA</strong>
+        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">Installs on iPhone, Android, Mac, Windows. No app store required.</p>
+      </div>
+    </div>
+    <div class="stat-row" style="margin-top:28px;">
+      <div class="stat"><span class="sv">15+</span><span class="sk">Data modules</span></div>
+      <div class="stat"><span class="sv">0</span><span class="sk">External servers</span></div>
+      <div class="stat"><span class="sv">0</span><span class="sk">Dependencies</span></div>
+      <div class="stat"><span class="sv">Free</span><span class="sk">Forever</span></div>
+    </div>
+  </div>
+
+  <!-- ─── Slide 4: Security Architecture ─── -->
+  <div class="slide" id="s4">
+    <span class="slide-num">04 / 12</span>
+    <div class="slide-label">Security Architecture</div>
+    <h2>Defense in depth, <span class="accent">by design</span></h2>
+    <div class="divider"></div>
+    <div class="diagram">
+      <div class="diag-node hi">
+        <div class="dn-ic">🔢</div>
+        <div class="dn-title">6-digit PIN</div>
+        <div class="dn-sub">Never stored<br>Never transmitted</div>
+      </div>
+      <div class="diag-arrow">→</div>
+      <div class="diag-node hi">
+        <div class="dn-ic">🔑</div>
+        <div class="dn-title">PBKDF2</div>
+        <div class="dn-sub">SHA-256<br>310,000 iterations<br>Random 16B salt</div>
+      </div>
+      <div class="diag-arrow">→</div>
+      <div class="diag-node hi">
+        <div class="dn-ic">🛡️</div>
+        <div class="dn-title">AES-256-GCM</div>
+        <div class="dn-sub">Authenticated<br>encryption<br>Memory-only key</div>
+      </div>
+      <div class="diag-arrow">→</div>
+      <div class="diag-node hi">
+        <div class="dn-ic">🗄️</div>
+        <div class="dn-title">IndexedDB</div>
+        <div class="dn-sub">Encrypted blob<br>Zero plaintext<br>on disk</div>
+      </div>
+    </div>
+    <div class="stat-row" style="margin-top:24px;">
+      <div class="stat"><span class="sv">310K</span><span class="sk">PBKDF2 iterations</span></div>
+      <div class="stat"><span class="sv">256-bit</span><span class="sk">AES-GCM key</span></div>
+      <div class="stat"><span class="sv">0</span><span class="sk">Plaintext on disk</span></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:16px;">+ Decoy vault · Panic mode · Auto-lock · Brute-force protection · Privacy blur</p>
+  </div>
+
+  <!-- ─── Slide 5: What You Can Store ─── -->
+  <div class="slide" id="s5">
+    <span class="slide-num">05 / 12</span>
+    <div class="slide-label">Data Modules</div>
+    <h2>Everything in <span class="accent">one vault</span></h2>
+    <div class="divider"></div>
+    <div class="grid-5" style="max-width:920px;">
+      <div class="module-chip"><span class="ic">🏦</span><span class="mn">Banks</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">💳</span><span class="mn">Cards</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">📈</span><span class="mn">Investments</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">💵</span><span class="mn">Cash</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">🤝</span><span class="mn">Loans</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">📋</span><span class="mn">Expenses</span><span class="mc">Finance</span></div>
+      <div class="module-chip"><span class="ic">🏠</span><span class="mn">Assets</span><span class="mc">Assets</span></div>
+      <div class="module-chip"><span class="ic">🚗</span><span class="mn">Vehicles</span><span class="mc">Assets</span></div>
+      <div class="module-chip"><span class="ic">📱</span><span class="mn">SIM Cards</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">🪪</span><span class="mn">Documents</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">📧</span><span class="mn">Emails</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">💻</span><span class="mn">Gadgets</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">💼</span><span class="mn">Digital</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">👥</span><span class="mn">Friends</span><span class="mc">Identity</span></div>
+      <div class="module-chip"><span class="ic">🔔</span><span class="mn">Reminders</span><span class="mc">Tools</span></div>
+    </div>
+  </div>
+
+  <!-- ─── Slide 6: Smart Autocomplete ─── -->
+  <div class="slide" id="s6">
+    <span class="slide-num">06 / 12</span>
+    <div class="slide-label">Smart Autocomplete</div>
+    <h2>Type a name. <span class="accent">The rest fills itself.</span></h2>
+    <div class="divider"></div>
+    <div class="ba-wrap">
+      <div class="ba-col">
+        <div class="ba-label before">Before — user types</div>
+        <div class="ba-field"><span class="fk">Bank Name</span><span class="fv">Meezan_</span></div>
+        <div class="ba-field"><span class="fk">Country</span><span class="fv" style="color:var(--text3)">—</span></div>
+        <div class="ba-field"><span class="fk">Currency</span><span class="fv" style="color:var(--text3)">—</span></div>
+        <div class="ba-field"><span class="fk">Bank Type</span><span class="fv" style="color:var(--text3)">—</span></div>
+        <div class="ba-field"><span class="fk">SWIFT Code</span><span class="fv" style="color:var(--text3)">—</span></div>
+        <div class="ba-field"><span class="fk">Flag</span><span class="fv" style="color:var(--text3)">—</span></div>
+      </div>
+      <div class="ba-col">
+        <div class="ba-label after">After — SMART_DB match</div>
+        <div class="ba-field"><span class="fk">Bank Name</span><span class="fv">Meezan Bank</span></div>
+        <div class="ba-field"><span class="fk">Country</span><span class="fv auto">🇵🇰 Pakistan</span></div>
+        <div class="ba-field"><span class="fk">Currency</span><span class="fv auto">PKR</span></div>
+        <div class="ba-field"><span class="fk">Bank Type</span><span class="fv auto">Islamic</span></div>
+        <div class="ba-field"><span class="fk">SWIFT Code</span><span class="fv auto">MEZNPKKA</span></div>
+        <div class="ba-field"><span class="fk">Flag</span><span class="fv auto">🇵🇰 +92</span></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:16px;">Works for 100+ banks across PK · UK · UAE · US · SG · IN · SA</p>
+  </div>
+
+  <!-- ─── Slide 7: AI Import ─── -->
+  <div class="slide" id="s7">
+    <span class="slide-num">07 / 12</span>
+    <div class="slide-label">AI Import Engine</div>
+    <h2>Paste anything. <span class="accent">It just works.</span></h2>
+    <div class="divider"></div>
+    <div class="step-row">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div style="font-size:28px;">📋</div>
+        <strong>Paste</strong>
+        <p>Paste any text — a bank SMS, a statement row, a spreadsheet snippet, a screenshot transcription</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div style="font-size:28px;">🤖</div>
+        <strong>Detect</strong>
+        <p>Pattern engine identifies the data type — bank, card, SIM, investment, expense, document</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div style="font-size:28px;">✅</div>
+        <strong>Confirm</strong>
+        <p>Review the parsed fields before saving. You stay in control of every entry.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div style="font-size:28px;">🔒</div>
+        <strong>Saved</strong>
+        <p>Encrypted and stored locally. Nothing uploaded. No API key required.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Slide 8: Dashboard ─── -->
+  <div class="slide" id="s8">
+    <span class="slide-num">08 / 12</span>
+    <div class="slide-label">Dashboard</div>
+    <h2>Your complete financial<br><span class="accent">picture at a glance</span></h2>
+    <div class="divider"></div>
+    <div class="grid-2" style="max-width:820px;">
+      <div class="card">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Net Worth</div>
+        <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ok);">PKR 4,82,000</div>
+        <div style="font-family:var(--mono);font-size:14px;color:var(--text2);margin-top:4px;">£ 1,340 · $ 1,720 · AED 6,300</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:12px;">Currency toggle: PKR · GBP · AED · USD</div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Quick Stats</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">🏦 Banks</span><span style="font-family:var(--mono);color:var(--accent);">3 accounts</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">💳 Cards</span><span style="font-family:var(--mono);color:var(--accent);">5 cards</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">📈 Investments</span><span style="font-family:var(--mono);color:var(--ok);">+12.4%</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">🔔 Reminders</span><span style="font-family:var(--mono);color:var(--warn);">2 due soon</span></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:20px;">Net worth tracked over time · All values in your preferred currency · Tap any stat to navigate directly</p>
+  </div>
+
+  <!-- ─── Slide 9: PK/UK/UAE Focus ─── -->
+  <div class="slide" id="s9">
+    <span class="slide-num">09 / 12</span>
+    <div class="slide-label">Regional Focus</div>
+    <h2>Built for <span class="accent">your world</span></h2>
+    <div class="divider"></div>
+    <div class="flag-row">
+      <div class="flag-item"><span class="fi">🇵🇰</span><span class="fn">Pakistan</span></div>
+      <div class="flag-item"><span class="fi">🇬🇧</span><span class="fn">United Kingdom</span></div>
+      <div class="flag-item"><span class="fi">🇦🇪</span><span class="fn">UAE</span></div>
+    </div>
+    <div class="grid-3" style="max-width:860px;">
+      <div class="card-sm">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇵🇰 Banks</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;">HBL · UBL · Meezan · MCB<br>Sadapay · NayaPay · JazzCash<br>EasyPaisa · Zindigi · Bank Alfalah</div>
+      </div>
+      <div class="card-sm">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇬🇧 Banks</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;">Monzo · Starling · Revolut<br>Barclays · HSBC · NatWest<br>Wise · Chase UK · Lloyds</div>
+      </div>
+      <div class="card-sm">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇦🇪 Banks</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;">Emirates NBD · FAB · ADCB<br>Mashreq Neo · Liv. · Wio Bank<br>Dubai Islamic · ADIB · RAKBANK</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:16px;">SIM networks · PSX stocks · PKR / GBP / AED / USD currency support · Local card networks</p>
+  </div>
+
+  <!-- ─── Slide 10: PWA ─── -->
+  <div class="slide" id="s10">
+    <span class="slide-num">10 / 12</span>
+    <div class="slide-label">Progressive Web App</div>
+    <h2>Works everywhere.<br><span class="accent">No app store needed.</span></h2>
+    <div class="divider"></div>
+    <div class="platform-row">
+      <div class="platform-badge"><span style="font-size:24px;">📱</span><div><strong>iPhone / iPad</strong><br><span style="font-size:11px;color:var(--text2);">Safari → Share → Add to Home Screen</span></div></div>
+      <div class="platform-badge"><span style="font-size:24px;">🤖</span><div><strong>Android</strong><br><span style="font-size:11px;color:var(--text2);">Chrome → Install banner</span></div></div>
+      <div class="platform-badge"><span style="font-size:24px;">🖥️</span><div><strong>Mac</strong><br><span style="font-size:11px;color:var(--text2);">Chrome / Edge → Install icon</span></div></div>
+      <div class="platform-badge"><span style="font-size:24px;">🪟</span><div><strong>Windows</strong><br><span style="font-size:11px;color:var(--text2);">Edge → Apps → Install this site</span></div></div>
+    </div>
+    <ul class="blist" style="margin-top:24px;">
+      <li><span class="bi">⚡</span><div><strong>Instant load</strong> — under 2 MB total, loads on slow mobile connections</div></li>
+      <li><span class="bi">✈️</span><div><strong>Offline first</strong> — all data local, works without internet after first load</div></li>
+      <li><span class="bi">🏠</span><div><strong>Home screen icon</strong> — looks and feels like a native app, no browser chrome</div></li>
+    </ul>
+  </div>
+
+  <!-- ─── Slide 11: Technical Excellence ─── -->
+  <div class="slide" id="s11">
+    <span class="slide-num">11 / 12</span>
+    <div class="slide-label">Technical Excellence</div>
+    <h2>Zero compromise,<br><span class="accent">zero bloat</span></h2>
+    <div class="divider"></div>
+    <div class="grid-2" style="max-width:840px;">
+      <div>
+        <div class="mono-block">
+          <div><span class="line-acc">Architecture</span></div>
+          <div class="line-dim">─────────────────────────</div>
+          <div>Vanilla JS &nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">zero dependencies</span></div>
+          <div>IndexedDB &nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">native storage</span></div>
+          <div>WebCrypto API &nbsp; <span class="line-ok">native crypto</span></div>
+          <div>Service Worker &nbsp; <span class="line-ok">offline ready</span></div>
+          <div>No npm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">no build step</span></div>
+          <div>Single HTML &nbsp;&nbsp;&nbsp; <span class="line-ok">loads anywhere</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="stat-row" style="flex-direction:column;gap:12px;align-items:stretch;">
+          <div class="stat" style="flex-direction:row;justify-content:space-between;">
+            <span class="sk" style="text-align:left;">Total size</span>
+            <span class="sv">&lt; 2 MB</span>
+          </div>
+          <div class="stat" style="flex-direction:row;justify-content:space-between;">
+            <span class="sk" style="text-align:left;">Data modules</span>
+            <span class="sv">15+</span>
+          </div>
+          <div class="stat" style="flex-direction:row;justify-content:space-between;">
+            <span class="sk" style="text-align:left;">npm packages</span>
+            <span class="sv" style="color:var(--ok);">0</span>
+          </div>
+          <div class="stat" style="flex-direction:row;justify-content:space-between;">
+            <span class="sk" style="text-align:left;">Schema version</span>
+            <span class="sv">v4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Slide 12: Try It Now ─── -->
+  <div class="slide" id="s12">
+    <span class="slide-num">12 / 12</span>
+    <div class="slide-label">Get Started</div>
+    <h2>Try it now.<br><span class="accent">Free. Forever.</span></h2>
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;">
+      <div style="text-align:center;">
+        <a class="url-hero" href="https://shamikhahmed.github.io/VaultOS" target="_blank" rel="noopener" style="text-decoration:none;display:block;">
+          shamikhahmed.github.io/VaultOS
+        </a>
+        <p style="font-size:12px;color:var(--text3);margin-top:12px;">Open in Safari on iPhone → Share → Add to Home Screen</p>
+      </div>
+      <div class="qr-box">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
+          <rect x="14" y="14" width="12" height="12" rx="1" fill="white"/>
+          <rect x="48" y="8" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
+          <rect x="54" y="14" width="12" height="12" rx="1" fill="white"/>
+          <rect x="8" y="48" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
+          <rect x="14" y="54" width="12" height="12" rx="1" fill="white"/>
+          <rect x="48" y="48" width="8" height="8" rx="1" fill="white"/>
+          <rect x="60" y="48" width="8" height="8" rx="1" fill="white"/>
+          <rect x="48" y="60" width="8" height="8" rx="1" fill="white"/>
+          <rect x="60" y="60" width="8" height="8" rx="1" fill="white"/>
+          <rect x="36" y="8" width="6" height="6" rx="1" fill="white"/>
+          <rect x="36" y="18" width="6" height="6" rx="1" fill="white"/>
+          <rect x="36" y="28" width="6" height="6" rx="1" fill="white"/>
+          <rect x="8" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="18" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="28" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="38" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="48" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="58" y="36" width="6" height="6" rx="1" fill="white"/>
+          <rect x="68" y="36" width="6" height="6" rx="1" fill="white"/>
+        </svg>
+        <span>Scan to open</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:24px;">Demo PIN: 123456 &nbsp;·&nbsp; No sign-up &nbsp;·&nbsp; No cloud &nbsp;·&nbsp; No tracking</p>
+  </div>
+
+</div><!-- /deck -->
+
+<div id="controls">
+  <button class="ctrl-btn" id="btn-prev" disabled>← Prev</button>
+  <span id="slide-counter">1 / 12</span>
+  <button class="ctrl-btn" id="btn-next">Next →</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const counter = document.getElementById('slide-counter');
+  const progress = document.getElementById('progress');
+  const total = slides.length;
+  let current = 0;
+
+  function go(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, n));
+    slides[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + total;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  btnPrev.addEventListener('click', () => go(current - 1));
+  btnNext.addEventListener('click', () => go(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(current - 1); }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) go(dx > 0 ? current + 1 : current - 1);
+  });
+
+  go(0);
+</script>
+</body>
+</html>
