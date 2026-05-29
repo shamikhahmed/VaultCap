@@ -1061,22 +1061,24 @@ function loadDecoyData() {
   S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[];
   const id = U.id, ts = () => new Date().toISOString();
   [
-    { bankName:'Lloyds Bank', country:'GB', bankType:'commercial', accountType:'Current', currency:'GBP', last4:'4521', holderName:'J. Smith', tags:['Primary'], favorite:true },
-    { bankName:'Monzo', country:'GB', bankType:'digital', accountType:'Current', currency:'GBP', last4:'3312', holderName:'J. Smith', tags:['Day-to-day'] },
-    { bankName:'HBL (Habib Bank)', country:'PK', bankType:'commercial', accountType:'Savings', currency:'PKR', last4:'7788', holderName:'J. Smith', tags:['Pakistan'] },
+    { bankName:'HBL (Habib Bank)', country:'PK', bankType:'commercial', accountType:'Savings', currency:'PKR', last4:'7788', holderName:'A. Hassan', tags:['Primary'], favorite:true },
+    { bankName:'Meezan Bank', country:'PK', bankType:'islamic', accountType:'Current', currency:'PKR', last4:'2241', holderName:'A. Hassan', tags:['Islamic'] },
+    { bankName:'Monzo', country:'GB', bankType:'digital', accountType:'Current', currency:'GBP', last4:'3312', holderName:'A. Hassan', tags:['UK'] },
   ].forEach(b => S.banks.push({ id:id(), ...b, createdAt:ts() }));
   [
-    { cardName:'Lloyds Debit', network:'Visa', cardType:'Debit', category:'Standard', country:'GB', last4:'4521', expiry:'09/26', holderName:'A HASSAN', tags:['Primary'], favorite:true },
-    { cardName:'Capital One Classic', network:'Mastercard', cardType:'Credit', category:'Standard', country:'GB', last4:'8834', expiry:'03/27', holderName:'A HASSAN', tags:[] },
+    { cardName:'HBL Debit', network:'Visa', cardType:'Debit', category:'Standard', country:'PK', last4:'7788', expiry:'11/27', holderName:'A HASSAN', tags:['Primary'], favorite:true },
+    { cardName:'Monzo Visa', network:'Visa', cardType:'Debit', category:'Standard', country:'GB', last4:'3312', expiry:'06/28', holderName:'A HASSAN', tags:['UK'] },
   ].forEach(c => S.cards.push({ id:id(), issuer:c.cardName.split(' ')[0], ...c, createdAt:ts() }));
-  [
-    { name:'Netflix', icon:'🎬', category:'Streaming', amount:17.99, currency:'GBP', from:'💳 Lloyds Debit ****4521', active:true },
-    { name:'Spotify', icon:'🎵', category:'Music', amount:10.99, currency:'GBP', from:'💳 Lloyds Debit ****4521', active:true },
-  ].forEach(e => S.expenses.push({ id:id(), ...e, createdAt:ts() }));
-  [{ network:'O2', country:'GB', simType:'Physical', status:'Active', phone:'+44 7700 900456', dataPlan:20 }]
+  [{ network:'Jazz', country:'PK', simType:'Physical', status:'Active', phone:'+92 300 1234567', dataPlan:10 }]
     .forEach(s => S.sims.push({ id:id(), ...s, createdAt:ts() }));
-  S.user.netWorth = 12500; S.user.currency = 'GBP';
+  [
+    { investmentName:'Engro Corporation', broker:'Arif Habib', type:'Stocks', ticker:'ENGRO', country:'PK', currency:'PKR', amountInvested:250000, currentValue:287500, riskLevel:'Medium', ownership:'personal', tags:['PSX'], favorite:false },
+    { investmentName:'Lucky Cement', broker:'Arif Habib', type:'Stocks', ticker:'LUCK', country:'PK', currency:'PKR', amountInvested:180000, currentValue:196200, riskLevel:'Medium', ownership:'personal', tags:['PSX'], favorite:false },
+  ].forEach(i => S.investments.push({ id:id(), ...i, createdAt:ts() }));
+  S.user.netWorth = 950000; S.user.currency = 'PKR';
   Activity.log('Vault unlocked');
+  Store.save();
+  R.goto('dashboard');
 }
 
 // ===================== APP INIT =====================
