@@ -46,10 +46,12 @@ const Friends = {
     Modal.open('✏️ Edit Friend', this.form(f), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Friends.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Friends.save('${id}')">Update</button>`);
   },
   del(id, fm = false) {
-    if (!window.__vos_confirm('Delete this friend?')) return;
-    const f = (S.friends || []).find(x => x.id === id);
+    if (!window.__vos_confirm('Move to Trash?')) return;
+    const f = (S.friends || []).find(x => x.id === id); if (!f) return;
+    S.trash.push({id: U.id(), type: 'friends', data: f, deletedAt: new Date().toISOString()});
     S.friends = (S.friends || []).filter(x => x.id !== id);
-    Activity.log('Deleted friend', f?.name);
+    Activity.log('Trashed friend', f.name);
     Store.save(); if (fm) Modal.close(); this.render();
+    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
   }
 };

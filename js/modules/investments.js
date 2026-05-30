@@ -53,5 +53,5 @@ const Inv={
     }else{if(hint)hint.textContent='';}
   },
   fav(id){const i=S.investments.find(x=>x.id===id);if(!i)return;i.favorite=!i.favorite;Store.save();this.render();},
-  del(id,fm=false){if(!window.__vos_confirm('Delete?'))return;const i=S.investments.find(x=>x.id===id);S.investments=S.investments.filter(x=>x.id!==id);Activity.log('Deleted investment',i?.investmentName);Store.save();if(fm)Modal.close();this.render();}
+  del(id,fm=false){if(!window.__vos_confirm('Move to Trash?'))return;const i=S.investments.find(x=>x.id===id);if(!i)return;S.trash.push({id:U.id(),type:'investments',data:i,deletedAt:new Date().toISOString()});S.investments=S.investments.filter(x=>x.id!==id);Activity.log('Trashed investment',i.investmentName);Store.save();if(fm)Modal.close();this.render();Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);}
 };

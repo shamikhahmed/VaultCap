@@ -143,11 +143,14 @@ const Vehicles = {
   },
 
   del(id) {
-    if (!window.__vos_confirm('Delete this vehicle?')) return;
+    if (!window.__vos_confirm('Move to Trash?')) return;
+    const v = S.vehicles.find(x => x.id === id); if (!v) return;
+    S.trash.push({id: U.id(), type: 'vehicles', data: v, deletedAt: new Date().toISOString()});
     S.vehicles = S.vehicles.filter(x => x.id !== id);
+    Activity.log('Trashed vehicle', v.make);
     Store.save();
-    Toast.show('Deleted', 'info');
     this.render();
+    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
   },
 
   detail(id) {
