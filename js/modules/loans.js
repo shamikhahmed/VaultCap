@@ -56,7 +56,7 @@ const Loans = {
       const settle  = status !== 'Settled'
         ? `<button class="icb" title="Mark settled" onclick="Loans.settle('${l.id}')">✔</button>`
         : '';
-      return `<div class="entry">
+      return `<div class="entry" data-id="${l.id}">
         <div class="entry-main">
           <div class="entry-ic">${l.type === 'lent' ? '💸' : '🤲'}</div>
           <div class="entry-body">
@@ -110,6 +110,7 @@ const Loans = {
     el.innerHTML = renderSection(borrowed, 'borrowed')
       + `<div style="height:1px;background:var(--border);margin:4px 0 16px"></div>`
       + renderSection(lent, 'lent');
+    initSwipeDelete(el);
   },
 
   openAdd(type = 'borrowed') {

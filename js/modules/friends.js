@@ -14,7 +14,7 @@ const Friends = {
     const data = allFriends.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
       .slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     if (!data.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-ic">👥</div><h3>No friends yet</h3><p>Add people you lend or borrow money from, or just keep contacts here</p><button class="btn btn-p" style="margin-top:12px" onclick="Friends.openAdd()">👥 Add Friend</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">👥</div><div class="ei-title">No Friends Yet</div><div class="ei-sub">Add people you share loans with or just keep as contacts</div><button class="btn btn-p" onclick="Friends.openAdd()">👥 Add Friend</button></div>`;
       return;
     }
     el.innerHTML = data.map(f => {

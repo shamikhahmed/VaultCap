@@ -4,7 +4,7 @@ const Vehicles = {
     if (!el) return;
     const data = S.vehicles || [];
     if (!data.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-ic">🚗</div><h3>No vehicles</h3><p>Track your cars, fuel logs, service history, insurance and documents</p><button class="btn btn-p" style="margin-top:12px" onclick="Vehicles.openAdd()">🚗 Add Vehicle</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🚗</div><div class="ei-title">No Vehicles</div><div class="ei-sub">Track cars, fuel logs, service history, insurance and documents</div><button class="btn btn-p" onclick="Vehicles.openAdd()">🚗 Add Vehicle</button></div>`;
       return;
     }
     el.innerHTML = data.map(v => {

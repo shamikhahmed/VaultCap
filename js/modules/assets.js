@@ -6,7 +6,7 @@ const Assets={
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()">${l}</div>`).join('');
     const data=S.assets.filter(a=>f==='all'||a.assetType===f);
     const el=document.getElementById('aItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-ic">🏠</div><h3>No assets yet</h3><p>Track your property, valuables and equipment</p><button class="btn btn-p" style="margin-top:12px" onclick="Assets.openAdd()">+ Add Asset</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🏠</div><div class="ei-title">No Assets Yet</div><div class="ei-sub">Track property, valuables, watches, jewellery, and more</div><button class="btn btn-p" onclick="Assets.openAdd()">+ Add Asset</button></div>`;return;}
     const icons={property:'🏠',vehicle:'🚗',watch:'⌚',jewelry:'💎',precious:'🥇',subscription:'🔄',insurance:'🛡️',digital:'💻',business:'🏢',loan:'💰',other:'📦'};
     el.innerHTML=data.map(a=>{
       let sub='';

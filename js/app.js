@@ -228,6 +228,20 @@ const SMART_DB = {
     // ── PK FOREIGN BANKS ──
     {name:'HSBC Pakistan',aliases:['HSBC PK'],country:'PK',currency:'PKR',type:'international',swift:'HSBCPKKA'},
     {name:'Citibank PK',aliases:['Citi Pakistan','Citibank Pakistan','Citi PK'],country:'PK',currency:'PKR',type:'international',swift:'CITIPKKA'},
+    // ── PK ADDITIONAL MICROFINANCE / SPECIAL BANKS ──
+    {name:'Khushhali Microfinance Bank',aliases:['KMBL','Khushhali Bank','KMB','Khushhali MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'NRSP Microfinance Bank',aliases:['NRSP Bank','NRSP MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Apna Microfinance Bank',aliases:['Apna Bank','Apna MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Mobilink Microfinance Bank',aliases:['MMBL','Mobilink Bank','Mobilink MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Telenor Microfinance Bank',aliases:['TMB','Telenor MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'U Microfinance Bank',aliases:['U Bank','UMicro','U MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'FINCA Microfinance Bank',aliases:['FINCA Pakistan','FINCA MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'First MicroFinance Bank',aliases:['FMFB','First Micro','First MFB'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Kashf Microfinance Bank',aliases:['Kashf Bank','Kashf MFB','Kashf Foundation'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Akhuwat Islamic Microfinance',aliases:['Akhuwat Bank','Akhuwat'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'Pak Oman Investment Company',aliases:['Pak Oman','POIC'],country:'PK',currency:'PKR',type:'investment',swift:null},
+    {name:'Pak Kuwait Investment Company',aliases:['Pak Kuwait','PKIC'],country:'PK',currency:'PKR',type:'investment',swift:null},
+    {name:'Pakistan Post Savings',aliases:['Pakistan Post Office Savings','PO Savings','Post Office Savings'],country:'PK',currency:'PKR',type:'government',swift:null},
     // ── UK TRADITIONAL BANKS ──
     {name:'Barclays',aliases:['Barclays Bank','Barclaycard','Barclays International'],country:'GB',currency:'GBP',type:'commercial',swift:'BARCGB22'},
     {name:'HSBC UK',aliases:['HSBC','HSBC Holdings','HSBC Kinetic'],country:'GB',currency:'GBP',type:'commercial',swift:'MIDLGB22'},
@@ -427,6 +441,41 @@ const SMART_DB = {
     {name:'Amex BA Premium Plus',network:'American Express',type:'Credit',country:'GB',category:'Premium'},
     {name:'Amex Cashback Everyday',network:'American Express',type:'Credit',country:'GB',category:'Cashback'},
     {name:'Amex Nectar',network:'American Express',type:'Credit',country:'GB',category:'Rewards'},
+    {name:'Amex Preferred Rewards Gold UK',network:'American Express',type:'Credit',country:'GB',category:'Rewards'},
+    // ── UK CARDS — Nationwide ──
+    {name:'Nationwide Visa Debit',network:'Visa',type:'Debit',country:'GB',category:'Standard'},
+    {name:'Nationwide FlexPlus Visa',network:'Visa',type:'Debit',country:'GB',category:'Standard'},
+    {name:'Nationwide Select Credit Card',network:'Visa',type:'Credit',country:'GB',category:'Standard'},
+    // ── UK CARDS — Virgin Money ──
+    {name:'Virgin Money Visa Debit',network:'Visa',type:'Debit',country:'GB',category:'Standard'},
+    {name:'Virgin Money All Round Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Rewards'},
+    // ── UK CARDS — Co-op Bank ──
+    {name:'Co-op Bank Visa Debit',network:'Visa',type:'Debit',country:'GB',category:'Standard'},
+    {name:'Co-op Bank Ethical Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    // ── UK CARDS — TSB ──
+    {name:'TSB Spend & Save Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Cashback'},
+    {name:'TSB Platinum Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Premium'},
+    // ── UK CARDS — Metro Bank ──
+    {name:'Metro Bank Mastercard Debit',network:'Mastercard',type:'Debit',country:'GB',category:'Standard'},
+    {name:'Metro Bank Personal Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    // ── UK CARDS — Travel ──
+    {name:'Curve Mastercard',network:'Mastercard',type:'Debit',country:'GB',category:'Digital'},
+    {name:'Caxton Mastercard',network:'Mastercard',type:'Prepaid',country:'GB',category:'Travel'},
+    {name:'FairFX Mastercard',network:'Mastercard',type:'Prepaid',country:'GB',category:'Travel'},
+    {name:'Post Office Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Travel'},
+    // ── UK CARDS — Retail / Partner ──
+    {name:"Sainsbury's Bank Nectar Mastercard",network:'Mastercard',type:'Credit',country:'GB',category:'Rewards'},
+    {name:'John Lewis Partnership Card',network:'Mastercard',type:'Credit',country:'GB',category:'Rewards'},
+    {name:'M&S Bank Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Rewards'},
+    {name:'Tesco Bank Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Cashback'},
+    {name:'Asda Money Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Cashback'},
+    {name:'AA Credit Card Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    {name:'RAC Credit Card Visa',network:'Visa',type:'Credit',country:'GB',category:'Standard'},
+    // ── UK CARDS — Credit Building ──
+    {name:'Capital One Classic Mastercard UK',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    {name:'Aqua Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    {name:'Marbles Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Standard'},
+    {name:'Vanquis Visa',network:'Visa',type:'Credit',country:'GB',category:'Standard'},
     // ── UAE CARDS — Emirates NBD ──
     {name:'ENBD Visa Debit',network:'Visa',type:'Debit',country:'AE',category:'Standard'},
     {name:'ENBD Titanium Mastercard',network:'Mastercard',type:'Credit',country:'AE',category:'Standard'},
@@ -1078,9 +1127,45 @@ const Modal = {
     document.getElementById('mTitle').textContent = title;
     document.getElementById('mBody').innerHTML = body;
     document.getElementById('mFoot').innerHTML = foot;
+    const modal = document.getElementById('modal');
+    modal.style.transform = '';
+    modal.style.transition = '';
     document.getElementById('overlay').classList.add('on');
+    this._initSwipe();
   },
-  close() { document.getElementById('overlay').classList.remove('on'); }
+  close() {
+    const modal = document.getElementById('modal');
+    modal.style.transform = '';
+    modal.style.transition = '';
+    document.getElementById('overlay').classList.remove('on');
+  },
+  _initSwipe() {
+    const modal = document.getElementById('modal');
+    if (!modal || modal._swipeInited) return;
+    modal._swipeInited = true;
+    let startY = 0, startScrollTop = 0;
+    modal.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY;
+      startScrollTop = modal.querySelector('.mb')?.scrollTop || 0;
+    }, {passive: true});
+    modal.addEventListener('touchmove', e => {
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0 && startScrollTop === 0) {
+        modal.style.transform = `translateY(${Math.max(0, dy * 0.6)}px)`;
+        modal.style.transition = 'none';
+      }
+    }, {passive: true});
+    modal.addEventListener('touchend', e => {
+      const dy = e.changedTouches[0].clientY - startY;
+      modal.style.transition = 'transform .3s var(--spring)';
+      if (dy > 80 && startScrollTop === 0) {
+        Modal.close();
+      } else {
+        modal.style.transform = '';
+      }
+      setTimeout(() => { modal.style.transition = ''; }, 350);
+    }, {passive: true});
+  }
 };
 
 // ===================== ROUTER =====================
@@ -1114,6 +1199,10 @@ const R = {
     buildNav();
     this.goto('dashboard');
     Activity.log('Vault unlocked');
+    setTimeout(() => {
+      const dashPb = document.getElementById('dashBody');
+      if (dashPb) pullToRefresh(dashPb, () => Dash.render());
+    }, 500);
     // Auto-purge trash items older than 30 days
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const before = (S.trash||[]).length;
@@ -1807,6 +1896,183 @@ function promptAddAnother(moduleLabel, openFn) {
   setTimeout(() => { if (bar.isConnected) bar.remove(); }, 8000);
 }
 
+// ===================== iOS INTERACTION UTILS =====================
+
+function skeletonCard() {
+  return `<div class="entry" style="pointer-events:none">
+    <div class="entry-main">
+      <div class="entry-ic skel" style="width:40px;height:40px;border-radius:var(--rsm);flex-shrink:0"></div>
+      <div class="entry-body" style="gap:6px;display:flex;flex-direction:column">
+        <div class="skel skel-line medium" style="height:14px;border-radius:6px"></div>
+        <div class="skel skel-line short" style="height:11px;border-radius:5px"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initSwipeDelete(containerEl, deleteCallback) {
+  if (!containerEl) return;
+  containerEl.querySelectorAll('.entry:not([data-swipe])').forEach(entry => {
+    entry.setAttribute('data-swipe', '1');
+    if (!entry.querySelector('.entry-del-bg')) {
+      const bg = document.createElement('div');
+      bg.className = 'entry-del-bg';
+      bg.textContent = 'DELETE';
+      entry.appendChild(bg);
+    }
+    const main = entry.querySelector('.entry-main');
+    const bg = entry.querySelector('.entry-del-bg');
+    let startX = 0, dx = 0;
+    entry.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX; dx = 0;
+      if (main) { main.style.transition = 'none'; }
+    }, {passive: true});
+    entry.addEventListener('touchmove', e => {
+      dx = e.touches[0].clientX - startX;
+      if (dx < 0 && main) {
+        const offset = Math.max(-140, dx);
+        main.style.transform = `translateX(${offset}px)`;
+        if (bg) bg.style.transform = `translateX(${Math.max(0, 100 + (offset / 80) * 100)}%)`;
+      }
+    }, {passive: true});
+    entry.addEventListener('touchend', () => {
+      if (main) main.style.transition = 'transform .25s var(--spring)';
+      if (bg) bg.style.transition = 'transform .25s var(--spring)';
+      if (dx < -120) {
+        if (navigator.vibrate) navigator.vibrate(50);
+        if (main) main.style.transform = '';
+        if (bg) bg.style.transform = '';
+        const delBtn = entry.querySelector('.icb.del');
+        if (delBtn) delBtn.click();
+        else if (deleteCallback) deleteCallback(entry.dataset.id);
+      } else if (dx < -60) {
+        if (main) main.style.transform = 'translateX(-80px)';
+        if (bg) bg.style.transform = 'translateX(0%)';
+      } else {
+        if (main) main.style.transform = '';
+        if (bg) bg.style.transform = '';
+      }
+    }, {passive: true});
+  });
+}
+
+function pullToRefresh(el, callback) {
+  if (!el || el._ptrInited) return;
+  el._ptrInited = true;
+  const ind = document.createElement('div');
+  ind.className = 'ptr-indicator';
+  ind.textContent = '↻';
+  el.style.position = 'relative';
+  el.insertBefore(ind, el.firstChild);
+  let startY = 0, pulling = false;
+  el.addEventListener('touchstart', e => {
+    if (el.scrollTop === 0) { startY = e.touches[0].clientY; pulling = true; }
+  }, {passive: true});
+  el.addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 0 && el.scrollTop === 0) {
+      const pull = Math.min(80, dy);
+      ind.style.top = (pull - 44) + 'px';
+      el.style.transform = `translateY(${pull * 0.25}px)`;
+      el.style.transition = 'none';
+    }
+  }, {passive: true});
+  el.addEventListener('touchend', e => {
+    if (!pulling) return;
+    pulling = false;
+    const dy = e.changedTouches[0].clientY - startY;
+    el.style.transition = 'transform .3s var(--spring)';
+    el.style.transform = '';
+    ind.style.top = '-44px';
+    if (dy > 60) {
+      ind.textContent = '⟳';
+      setTimeout(() => { callback(); ind.textContent = '↻'; }, 300);
+    }
+    setTimeout(() => { el.style.transition = ''; }, 400);
+  }, {passive: true});
+}
+
+let _ctxMenuItems = [];
+function showContextMenu(x, y, items) {
+  document.getElementById('_ctxOverlay')?.remove();
+  _ctxMenuItems = items;
+  const overlay = document.createElement('div');
+  overlay.id = '_ctxOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:1000;';
+  overlay.addEventListener('click', () => overlay.remove());
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu';
+  const mw = 220, mh = items.length * 50;
+  const left = Math.min(x, window.innerWidth - mw - 12);
+  const top = Math.min(y, window.innerHeight - mh - 12);
+  menu.style.cssText = `left:${Math.max(8, left)}px;top:${Math.max(8, top)}px;`;
+  menu.innerHTML = items.map((item, i) =>
+    `<div class="ctx-menu-item${item.destructive ? ' destructive' : ''}" data-ci="${i}">
+      <span class="ctx-menu-ic">${item.icon || ''}</span><span>${item.label}</span>
+    </div>`
+  ).join('');
+  menu.addEventListener('click', e => {
+    const el = e.target.closest('[data-ci]');
+    if (el) { _ctxMenuItems[+el.dataset.ci]?.action?.(); overlay.remove(); }
+    e.stopPropagation();
+  });
+  overlay.appendChild(menu);
+  document.body.appendChild(overlay);
+}
+
+function initLongPress(containerEl, buildItems) {
+  if (!containerEl) return;
+  containerEl.querySelectorAll('.entry:not([data-lp])').forEach(entry => {
+    entry.setAttribute('data-lp', '1');
+    let timer = null;
+    entry.addEventListener('touchstart', e => {
+      const id = entry.dataset.id;
+      if (!id) return;
+      timer = setTimeout(() => {
+        if (navigator.vibrate) navigator.vibrate(10);
+        const touch = e.touches[0];
+        showContextMenu(touch.clientX, touch.clientY, buildItems(id));
+      }, 500);
+    }, {passive: true});
+    entry.addEventListener('touchmove', () => { clearTimeout(timer); timer = null; }, {passive: true});
+    entry.addEventListener('touchend', () => { clearTimeout(timer); timer = null; }, {passive: true});
+  });
+}
+
+// ===================== SMART SUGGEST =====================
+const SmartSuggest = {
+  forBank(countryCode) {
+    const popMap = {
+      PK: ['HBL','Meezan Bank','UBL','MCB Bank','Bank Alfalah','Allied Bank','Sadapay','NayaPay'],
+      GB: ['Monzo','Starling Bank','Barclays','HSBC UK','Lloyds Bank','NatWest','Revolut','Wise'],
+      AE: ['Emirates NBD','FAB','ADCB','Dubai Islamic Bank','Mashreq Bank','ADIB','Wio Bank','Liv.'],
+      US: ['Chase','Bank of America','Wells Fargo','Citibank','Capital One'],
+    };
+    const names = popMap[countryCode] || [];
+    return names.map(n => SMART_DB.banks.find(b => b.name === n)).filter(Boolean);
+  },
+  forCard(bankName) {
+    const lc = (bankName || '').toLowerCase();
+    return SMART_DB.cards.filter(c => c.name.toLowerCase().includes(lc.split(' ')[0])).slice(0, 6);
+  },
+  forExpense(name) {
+    const n = (name || '').toLowerCase();
+    const subs = [
+      {k:'netflix',cat:'Streaming',freq:'monthly'},{k:'spotify',cat:'Streaming',freq:'monthly'},
+      {k:'youtube',cat:'Streaming',freq:'monthly'},{k:'amazon',cat:'Shopping',freq:'monthly'},
+      {k:'apple',cat:'Tech',freq:'monthly'},{k:'google',cat:'Tech',freq:'monthly'},
+      {k:'gym',cat:'Fitness',freq:'monthly'},{k:'electricity',cat:'Utilities',freq:'monthly'},
+      {k:'internet',cat:'Utilities',freq:'monthly'},{k:'insurance',cat:'Insurance',freq:'monthly'},
+      {k:'rent',cat:'Housing',freq:'monthly'},{k:'mortgage',cat:'Housing',freq:'monthly'},
+    ];
+    return subs.find(s => n.includes(s.k)) || null;
+  },
+  forInvestment(ticker) {
+    return SMART_DB.investments.find(i => i.ticker === (ticker || '').toUpperCase()) || null;
+  }
+};
+
 // ===================== MORE SHEET =====================
 function openMore() {
   const el = document.getElementById('moreSheet');
@@ -1867,19 +2133,29 @@ function buildNav() {
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
 
   const hasPage = id => !!document.getElementById('pg-' + id);
-  const navMods = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active.filter(m => hasPage(m.id))];
-  const first5 = navMods.slice(0, 5);
-  const overflow = navMods.slice(5);
+  const activeMods = active.filter(m => hasPage(m.id));
+  const dash = { id:'dashboard', n:'Dashboard', ic:'📊' };
+  const first4 = [dash, ...activeMods.slice(0, 3)];
+  const overflow = activeMods.slice(3);
   const moreItem = { id:'__more__', n:'More', ic:'⋯' };
-  const tabs = overflow.length > 0 ? [...first5, moreItem] : [...first5, { id:'settings', n:'Settings', ic:'⚙️' }];
+  const tabs = [...first4, moreItem];
 
-  // Populate moreGrid for the More sheet
+  // Populate moreGrid — always includes overflow + permanent extras
   const mg = document.getElementById('moreGrid');
   if (mg) {
-    const first5Ids = new Set(first5.map(m => m.id));
+    const first4Ids = new Set(first4.map(m => m.id));
+    const permanentExtras = [
+      { id:'settings', n:'Settings', ic:'⚙️' },
+      { id:'trash', n:'Trash', ic:'🗑️' },
+      { id:'reminders', n:'Reminders', ic:'🔔' },
+      { id:'sync', n:'Sync', ic:'🔄' },
+      { id:'timeline', n:'Timeline', ic:'📅' },
+      { id:'security', n:'Security', ic:'🛡️' },
+      { id:'backup', n:'Backup', ic:'💾' },
+    ];
     const seenIds = new Set();
-    const moreItems = [...overflow, ...extras].filter(m => {
-      if (first5Ids.has(m.id)) return false;
+    const moreItems = [...overflow, ...permanentExtras].filter(m => {
+      if (first4Ids.has(m.id)) return false;
       if (seenIds.has(m.id)) return false;
       seenIds.add(m.id);
       return true;

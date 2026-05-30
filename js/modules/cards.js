@@ -27,16 +27,77 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px"><div style="width:56px;height:56px;border-radius:16px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">💳</div><h3 style="font-size:17px;font-weight:700;margin-bottom:6px">No cards yet</h3><p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5">Add your debit, credit, or digital cards here</p><button class="btn btn-p" onclick="Cards.openAdd()" style="padding:14px 28px;font-size:15px;font-weight:700;border-radius:14px">+ Add Card</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No Cards Yet</div><div class="ei-sub">Add your debit, credit, or digital cards here</div><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button></div>`;return;}
     const byNet={};data.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
     el.innerHTML=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
+    initSwipeDelete(el);
+    initLongPress(el, id => {
+      const c = S.cards.find(x => x.id === id); if (!c) return [];
+      return [
+        {label:'Edit', icon:'✏️', action: () => Cards.edit(id)},
+        {label:'View Details', icon:'👁️', action: () => Cards.openDetail(id)},
+        {label:'Toggle Carry', icon:'👝', action: () => Cards.toggleCarry(id)},
+        {label:'Delete', icon:'🗑️', destructive: true, action: () => Cards.del(id)},
+      ];
+    });
   },
   row(c){
     const carrying=S.wallet.includes(c.id);
-    return `<div class="entry"><div class="entry-main"><div class="entry-ic" style="background:${c.category==='Crypto'?'rgba(247,147,26,.12)':c.category==='BNPL'?'rgba(168,85,247,.12)':'var(--glass2)'}">💳</div><div class="entry-body"><div class="entry-name">${c.cardName}${carrying?' <span style="font-size:11px">👝</span>':''}</div><div class="entry-sub">${c.cardType||''} ${c.network?'· '+c.network:''} ${c.last4?'· ****'+c.last4:''} ${c.expiry?'· '+c.expiry:''}</div><div class="entry-meta">${U.expBadge(c.expiry)} ${c.category==='Crypto'?'<span class="badge b-warn">₿</span>':''} ${c.category==='BNPL'?'<span class="badge b-info">BNPL</span>':''} ${c.ownership==='business'?'<span class="badge b-warn">🏢</span>':''} ${c.rewardsPoints?`<span class="badge b-acc">⭐ ${U.fmt(c.rewardsPoints)}pts</span>`:''}</div></div><div class="entry-acts"><button class="icb${carrying?' on':''}" style="${carrying?'color:var(--accent)':''}" onclick="Cards.toggleCarry('${c.id}')" title="Carrying">👝</button><button class="icb fav${c.favorite?' on':''}" onclick="Cards.fav('${c.id}')">⭐</button><button class="icb" onclick="Cards.openDetail('${c.id}')">👁️</button><button class="icb" onclick="Cards.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cards.del('${c.id}')">🗑️</button></div></div></div>`;
+    return `<div class="entry" data-id="${c.id}"><div class="entry-main"><div class="entry-ic" style="background:${c.category==='Crypto'?'rgba(247,147,26,.12)':c.category==='BNPL'?'rgba(168,85,247,.12)':'var(--glass2)'}">💳</div><div class="entry-body"><div class="entry-name">${c.cardName}${carrying?' <span style="font-size:11px">👝</span>':''}</div><div class="entry-sub">${c.cardType||''} ${c.network?'· '+c.network:''} ${c.last4?'· ****'+c.last4:''} ${c.expiry?'· '+c.expiry:''}</div><div class="entry-meta">${U.expBadge(c.expiry)} ${c.category==='Crypto'?'<span class="badge b-warn">₿</span>':''} ${c.category==='BNPL'?'<span class="badge b-info">BNPL</span>':''} ${c.ownership==='business'?'<span class="badge b-warn">🏢</span>':''} ${c.rewardsPoints?`<span class="badge b-acc">⭐ ${U.fmt(c.rewardsPoints)}pts</span>`:''}</div></div><div class="entry-acts"><button class="icb${carrying?' on':''}" style="${carrying?'color:var(--accent)':''}" onclick="Cards.toggleCarry('${c.id}')" title="Carrying">👝</button><button class="icb fav${c.favorite?' on':''}" onclick="Cards.fav('${c.id}')">⭐</button><button class="icb" onclick="Cards.openDetail('${c.id}')">👁️</button><button class="icb" onclick="Cards.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cards.del('${c.id}')">🗑️</button></div></div></div>`;
   },
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
-  openAdd(){Modal.open('💳 Add Card',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},
+  openAdd(){
+    Modal.open('💳 Add Card',
+      `<div style="margin-bottom:12px"><button class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card</button></div>` + this.form(),
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`
+    );
+  },
+  scanCard() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:2000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    overlay.innerHTML = `
+      <video id="_scanVid" autoplay playsinline style="width:100%;max-width:400px;border-radius:12px"></video>
+      <canvas id="_scanCanvas" style="display:none"></canvas>
+      <div style="color:#fff;font-size:13px;margin-top:16px;text-align:center;padding:0 24px">Point camera at a card or QR code</div>
+      <button onclick="Cards._stopScan()" style="margin-top:20px;padding:12px 28px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
+    `;
+    document.body.appendChild(overlay);
+    Cards._scanOverlay = overlay;
+    navigator.mediaDevices?.getUserMedia({video:{facingMode:'environment'}}).then(stream => {
+      const vid = document.getElementById('_scanVid');
+      if (!vid) return;
+      vid.srcObject = stream;
+      Cards._scanStream = stream;
+      Cards._scanInterval = setInterval(() => {
+        const canvas = document.getElementById('_scanCanvas');
+        if (!vid.videoWidth || !canvas) return;
+        canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(vid, 0, 0);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const qr = window.jsQR?.(imgData.data, imgData.width, imgData.height);
+        if (qr) { Cards._onScanResult(qr.data); return; }
+        const text = canvas.toDataURL();
+        const m16 = text.match(/\b(\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b/);
+        if (m16) { Cards._onScanResult(m16[1].replace(/\D/g,'')); }
+      }, 300);
+    }).catch(() => { overlay.remove(); Toast.show('Camera not available','warning'); });
+  },
+  _stopScan() {
+    clearInterval(Cards._scanInterval);
+    Cards._scanStream?.getTracks().forEach(t => t.stop());
+    Cards._scanOverlay?.remove();
+  },
+  _onScanResult(raw) {
+    Cards._stopScan();
+    const digits = raw.replace(/\D/g,'');
+    const last4 = digits.slice(-4);
+    const first = digits.charAt(0);
+    const network = first==='4'?'Visa':first==='5'?'Mastercard':raw.startsWith('34')||raw.startsWith('37')?'American Express':raw.startsWith('62')?'UnionPay':'';
+    const nEl = document.getElementById('cf-net'); if (nEl && network) nEl.value = network;
+    const l4El = document.getElementById('cf-l4'); if (l4El && last4) l4El.value = last4;
+    Toast.show(`Detected: ${network||'Card'} ****${last4||'?'}`, 'success', 3000);
+  },
   form(c={}){
     const isEdit=!!c.id;
     const cardNames=SMART_DB.cards.map(x=>`<option value="${x.name}">`).join('');

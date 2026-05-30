@@ -24,12 +24,22 @@ const Banks={
     if(!data.length){el.innerHTML=this.emptyState();return;}
     const byCC={};data.forEach(b=>{const k=b.country||'OTHER';(byCC[k]=byCC[k]||[]).push(b);});
     el.innerHTML=Object.entries(byCC).map(([cc,items])=>`<div><div class="csec-h"><span style="font-size:18px">${U.flag(cc)}</span><span class="csec-name">${U.cname(cc)}</span><span class="csec-cnt">${items.length}</span></div>${items.map(b=>this.row(b)).join('')}</div>`).join('');
+    initSwipeDelete(el);
+    initLongPress(el, id => {
+      const b = S.banks.find(x => x.id === id); if (!b) return [];
+      return [
+        {label:'Edit', icon:'✏️', action: () => Banks.edit(id)},
+        {label:'Copy IBAN', icon:'📋', action: () => b.iban && U.copy(b.iban)},
+        {label:'View Details', icon:'👁️', action: () => Banks.detail(id)},
+        {label:'Delete', icon:'🗑️', destructive: true, action: () => Banks.del(id)},
+      ];
+    });
   },
   row(b){
     const tIc={commercial:'🏦',islamic:'🕌',digital:'📱',microfinance:'🏪',international:'🌐',government:'🏛️',investment:'📊'};
-    return `<div class="entry"><div class="entry-main"><div class="entry-ic">${tIc[b.bankType]||'🏦'}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
+    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic">${tIc[b.bankType]||'🏦'}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
   },
-  emptyState(){return `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px"><div style="width:56px;height:56px;border-radius:16px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">🏦</div><h3 style="font-size:17px;font-weight:700;margin-bottom:6px">No banks added yet</h3><p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5">Start by adding your first bank account</p><button class="btn btn-p" onclick="Banks.openAdd()" style="padding:14px 28px;font-size:15px;font-weight:700;border-radius:14px">+ Add Bank</button></div>`;},
+  emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No Banks Yet</div><div class="ei-sub">Add your bank accounts to track balances, IBANs, and login details</div><button class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button></div>`;},
   openAdd(){
     const ctries=[{c:'PK',f:'🇵🇰',n:'Pakistan'},{c:'GB',f:'🇬🇧',n:'UK'},{c:'AE',f:'🇦🇪',n:'UAE'},{c:'US',f:'🇺🇸',n:'US'},{c:'OTHER',f:'🌍',n:'Other'}];
     Modal.open('🏦 Add Bank',`

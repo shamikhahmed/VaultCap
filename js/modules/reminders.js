@@ -4,7 +4,7 @@ const Reminders = {
     if (!body) return;
     const items = this._collect();
     if (!items.length) {
-      body.innerHTML = `<div class="empty"><div class="empty-ic">✅</div><h3>All clear!</h3><p>No upcoming reminders or expiring items. Add cards, documents, loans and vehicles to get alerts.</p></div>`;
+      body.innerHTML = `<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items. Add cards, documents, loans and vehicles to get alerts.</div></div>`;
       this._badge(0);
       return;
     }
