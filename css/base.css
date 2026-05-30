@@ -163,5 +163,6 @@ body.session-clean input[type=password] { color: transparent; caret-color: var(-
 /* ─ Keyframe utilities ─ */
 @keyframes float   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes pgIn    { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes obIn    { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes breathe { 0%, 100% { opacity: 0.65; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
 @keyframes lockIn  { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }

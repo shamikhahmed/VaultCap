@@ -132,7 +132,9 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .modal {
   background: var(--bg2); border: 1px solid var(--border2);
   border-radius: 22px 22px 0 0;
-  width: 100%; max-width: 540px; max-height: 92vh; overflow: hidden;
+  width: 100%; max-width: 540px;
+  max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 40px);
+  overflow: hidden;
   display: flex; flex-direction: column; box-shadow: var(--shadowlg);
   animation: slideup .28s var(--spring);
 }
@@ -327,6 +329,9 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .ci:hover, .ci.hi { background: var(--glass2); color: var(--text); }
 .ci-ic      { font-size: 17px; width: 22px; text-align: center; }
 .cmd-hint   { font-size: 10px; color: var(--text3); padding: 7px 18px; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+.ci-cat     { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); padding: 8px 20px 3px; }
+.ci-info    { cursor: default; opacity: .7; }
+.ci-info:hover { background: none; color: var(--text2); }
 
 /* ─ FAB ─ */
 .fab {

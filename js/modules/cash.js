@@ -1,3 +1,5 @@
+const _FX = typeof FX !== 'undefined' ? FX : {PKR:1,GBP:350,AED:75,USD:280,EUR:320};
+
 const Cash = {
   render() {
     const el = document.getElementById('cashItems'); if (!el) return;
@@ -8,8 +10,8 @@ const Cash = {
         const byCur = {};
         data.forEach(c => { byCur[c.currency] = (byCur[c.currency] || 0) + (c.amount || 0); });
         const userCur = S.user.currency || 'PKR';
-        const totalPKR = data.reduce((a, c) => a + (c.amount || 0) * (FX[c.currency] || 1), 0);
-        const totalUser = totalPKR / (FX[userCur] || 1);
+        const totalPKR = data.reduce((a, c) => a + (c.amount || 0) * (_FX[c.currency] || 1), 0);
+        const totalUser = totalPKR / (_FX[userCur] || 1);
         const byLocStr = Object.entries(byCur).map(([cur, v]) => `<div class="sens" style="font-size:15px;font-weight:700">${U.fmt(v)} ${cur}</div>`).join('');
         const convLine = Object.keys(byCur).length > 1 || Object.keys(byCur)[0] !== userCur
           ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';

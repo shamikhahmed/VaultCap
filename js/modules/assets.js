@@ -6,7 +6,7 @@ const Assets={
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()">${l}</div>`).join('');
     const data=S.assets.filter(a=>f==='all'||a.assetType===f);
     const el=document.getElementById('aItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-ic">🏠</div><h3>No assets</h3><p>Track property, vehicles, watches, jewellery, metals, subscriptions, insurance and more</p><div class="empty-guide"><div class="guide-step"><div class="gst-num">1</div><div class="gst-body"><h4>Add your first asset</h4><p>Property, car, watch — anything of value</p></div></div><div class="guide-step"><div class="gst-num">2</div><div class="gst-body"><h4>Track purchase vs current value</h4><p>See your gains and losses at a glance</p></div></div><div class="guide-step"><div class="gst-num">3</div><div class="gst-body"><h4>Link mortgages and rent</h4><p>For property — add financing details and rental income</p></div></div></div><button class="btn btn-p" style="margin-top:14px" onclick="Assets.openAdd()">🏠 Add Asset</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-ic">🏠</div><h3>No assets yet</h3><p>Track your property, valuables and equipment</p><button class="btn btn-p" style="margin-top:12px" onclick="Assets.openAdd()">+ Add Asset</button></div>`;return;}
     const icons={property:'🏠',vehicle:'🚗',watch:'⌚',jewelry:'💎',precious:'🥇',subscription:'🔄',insurance:'🛡️',digital:'💻',business:'🏢',loan:'💰',other:'📦'};
     el.innerHTML=data.map(a=>{
       let sub='';
@@ -97,5 +97,5 @@ const Assets={
     },60);
   },
   fav(id){const a=S.assets.find(x=>x.id===id);if(!a)return;a.favorite=!a.favorite;Store.save();this.render();},
-  del(id,fm=false){if(!window.__vos_confirm('Delete this asset?'))return;const a=S.assets.find(x=>x.id===id);S.assets=S.assets.filter(x=>x.id!==id);if(a?.assetType==='subscription')S.expenses=S.expenses.filter(e=>e.name!==a.serviceName&&e.name!==a.name);Activity.log('Deleted asset',a?.name);Store.save();if(fm)Modal.close();this.render();}
+  del(id,fm=false){if(!window.__vos_confirm('Move to Trash?'))return;const a=S.assets.find(x=>x.id===id);if(!a)return;if(a.assetType==='subscription')S.expenses=S.expenses.filter(e=>e.name!==a.serviceName&&e.name!==a.name);S.trash.push({id:U.id(),type:'assets',data:a,deletedAt:new Date().toISOString()});S.assets=S.assets.filter(x=>x.id!==id);Activity.log('Trashed asset',a.name);Store.save();if(fm)Modal.close();this.render();Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);}
 };

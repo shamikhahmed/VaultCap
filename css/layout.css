@@ -79,12 +79,12 @@
   gap: 10px; flex-shrink: 0; background: var(--bg2);
 }
 .ph h2 { font-size: 17px; font-weight: 600; flex: 1; letter-spacing: -0.3px; }
-@media (max-width: 768px) { .ph { padding-top: calc(10px + var(--st)); } }
+@media (max-width: 768px) { .ph { padding-top: calc(env(safe-area-inset-top, 0px) + 10px); } }
 
 /* ─ Page body ─ */
 .pb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 32px; overscroll-behavior: contain; }
 .pb::-webkit-scrollbar { width: 0; }
-.main, .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); }
+.main, .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); }
 @media (min-width: 769px) { .main, .pb { padding-bottom: 24px !important; } }
 .btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); }
 
@@ -95,7 +95,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid var(--border); z-index: 200;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px);
 }
 .btabs-in { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); scrollbar-width: none; }
 .btabs-in::-webkit-scrollbar { display: none; }
@@ -117,7 +117,7 @@
   background: var(--bg);
   display: none; flex-direction: column; align-items: center;
   justify-content: space-between;
-  padding: max(env(safe-area-inset-top,50px), 50px) 0 max(env(safe-area-inset-bottom,24px), 24px);
+  padding: max(env(safe-area-inset-top, 44px), 44px) 0 max(env(safe-area-inset-bottom, 24px), 24px);
   overflow: hidden;
 }
 /* lock section layout */
@@ -251,7 +251,7 @@
 .ob-pd    { width: 8px; height: 8px; border-radius: 4px; background: var(--border2); transition: all .3s var(--spring); }
 .ob-pd.on { background: var(--accent); width: 24px; box-shadow: 0 0 8px var(--glow); }
 .ob-step    { display: none; flex-direction: column; align-items: center; text-align: center; gap: 16px; width: 100%; }
-.ob-step.on { display: flex; animation: pgIn .3s var(--ease); }
+.ob-step.on { display: flex; animation: obIn .32s var(--ease); }
 .ob-ic    { font-size: 52px; margin-bottom: 4px; }
 .ob-title { font-size: 24px; font-weight: 800; letter-spacing: -.4px; line-height: 1.2; }
 .ob-sub   { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 300px; }

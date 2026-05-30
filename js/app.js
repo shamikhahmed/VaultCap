@@ -859,12 +859,14 @@ const R = {
     this.showHome();
     Activity.log('Vault locked');
   },
-  goto(pg) {
+  goto(pg, force = false) {
+    const prev = S.currentPage;
+    S.currentPage = pg;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
     const el = document.getElementById('pg-' + pg);
     if (el) el.classList.add('on');
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
-    S.currentPage = pg;
+    if (prev === pg && !force) return;
     const renders = {
       dashboard:   () => Dash.render(),
       banks:       () => Banks.render(),
@@ -903,6 +905,7 @@ const R = {
       }
     };
     if (renders[pg]) renders[pg]();
+    if (prev !== pg) buildNav();
   },
   resetTimer() {
     clearTimeout(S._timer);
@@ -1080,7 +1083,7 @@ const OB = {
     this.renderProg(); this.renderMods(); this.renderThemes();
   },
   renderProg() {
-    document.getElementById('obProg').innerHTML = Array.from({ length:5 }, (_, i) =>
+    document.getElementById('obProg').innerHTML = Array.from({ length:6 }, (_, i) =>
       `<div class="ob-pd${i < obStep ? ' on' : ''}"></div>`
     ).join('');
   },
@@ -1139,15 +1142,18 @@ const OB = {
     if (!/^\d{6}$/.test(p)) { document.getElementById('ob-perr').textContent = 'PIN must be 6 digits'; return; }
     if (p !== p2) { document.getElementById('ob-perr').textContent = 'PINs do not match'; return; }
     S.pin = p; S.decoyPin = d || ''; S.noPin = false;
-    // Initialise VaultDB with the chosen PIN, then save encrypted, then clear PIN from memory
     VaultDB.init(p).then(async () => {
       Store.save();
       if (d && /^\d{6}$/.test(d)) {
         await VaultDB.saveDecoySlot(d, { _decoy: true });
       }
-      // PIN only needed to derive VaultDB key — purge from runtime state
       delete S.pin; delete S.decoyPin;
     }).catch(e => console.warn('[VaultDB] init error:', e));
+    obStep = 6;
+    document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
+    this.renderProg();
+  },
+  complete() {
     document.getElementById('pgOnboard').style.display = 'none';
     Toast.show(`Welcome to VaultOS, ${S.user.name}! 🎉`, 'success');
     R.unlock();
@@ -1398,12 +1404,20 @@ function buildNav() {
       seenIds.add(m.id);
       return true;
     });
-    mg.innerHTML = moreItems.map(m =>
-      `<div onclick="R.goto('${m.id}');closeMore()" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
-        <div style="font-size:22px;margin-bottom:5px">${m.ic}</div>
+    const getItemCount = id => {
+      if (id === 'trash') return (S.trash || []).length;
+      if (id === 'reminders') return (S.reminders || []).filter(r => !r.done && r.date && new Date(r.date) <= new Date()).length;
+      const arr = S[id];
+      return Array.isArray(arr) ? arr.length : 0;
+    };
+    mg.innerHTML = moreItems.map(m => {
+      const cnt = getItemCount(m.id);
+      const badge = cnt > 0 ? `<span style="position:absolute;top:-4px;right:-5px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;padding:0 4px;border-radius:5px;min-width:14px;text-align:center;line-height:16px">${cnt}</span>` : '';
+      return `<div onclick="R.goto('${m.id}');closeMore()" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
+        <div style="position:relative;display:inline-block;margin-bottom:5px"><span style="font-size:22px">${m.ic}</span>${badge}</div>
         <div style="font-size:10px;font-weight:600;color:var(--text2)">${m.n}</div>
-      </div>`
-    ).join('');
+      </div>`;
+    }).join('');
   }
 
   document.getElementById('btabs').innerHTML = tabs.map(m =>
@@ -1445,32 +1459,85 @@ const CMD = {
   },
   recentActions: [],
   addRecent(action) { this.recentActions = [action, ...this.recentActions.filter(a => a.label !== action.label)].slice(0, 8); },
+  _allCmds: [
+    {icon:'🏦',label:'Add Bank',action:()=>Banks.openAdd()},
+    {icon:'💳',label:'Add Card',action:()=>Cards.openAdd()},
+    {icon:'📈',label:'Add Investment',action:()=>Inv.openAdd()},
+    {icon:'💵',label:'Add Cash',action:()=>Cash.openAdd()},
+    {icon:'🤝',label:'Add Loan',action:()=>Loans.openAdd()},
+    {icon:'📱',label:'Add SIM',action:()=>Sims.openAdd()},
+    {icon:'🏠',label:'Add Asset',action:()=>Assets.openAdd()},
+    {icon:'📋',label:'Add Expense',action:()=>Exp.openAdd()},
+    {icon:'📧',label:'Add Email',action:()=>Emails.openAdd()},
+    {icon:'💻',label:'Add Device',action:()=>Gadgets.openAdd()},
+    {icon:'💼',label:'Add Login',action:()=>Digital.openAdd()},
+    {icon:'🪪',label:'Add Document',action:()=>DocsModule.openAdd()},
+    {icon:'📊',label:'Dashboard',action:()=>R.goto('dashboard')},
+    {icon:'⚙️',label:'Settings',action:()=>R.goto('settings')},
+    {icon:'🔒',label:'Lock Vault',action:()=>R.lock()},
+    {icon:'🚨',label:'Panic Lock',action:()=>PanicLock.trigger()},
+    {icon:'🎨',label:'Theme Dark',action:()=>ThemeEngine.apply('dark')},
+    {icon:'🎨',label:'Theme Light',action:()=>ThemeEngine.apply('light')},
+    {icon:'🎨',label:'Theme Ocean',action:()=>ThemeEngine.apply('ocean')},
+    {icon:'🎨',label:'Theme Forest',action:()=>ThemeEngine.apply('forest')},
+    {icon:'🎨',label:'Change Theme',action:()=>ThemeEngine.openPicker()},
+    {icon:'📤',label:'Export Vault',action:()=>ExIm.export('vault')},
+    {icon:'📸',label:'Net Worth Snapshot',action:()=>Dash.snap()},
+    {icon:'🙈',label:'Privacy Mode',action:()=>togglePrivacy()},
+    {icon:'🗑️',label:'Trash',action:()=>R.goto('trash')},
+    {icon:'💾',label:'Backup',action:()=>R.goto('backup')},
+    {icon:'🔔',label:'Reminders',action:()=>R.goto('reminders')},
+    {icon:'🛡️',label:'Security',action:()=>R.goto('security')},
+    {icon:'📅',label:'Timeline',action:()=>R.goto('timeline')},
+    {icon:'📥',label:'Import',action:()=>R.goto('import')},
+  ],
   search(q) {
     const ql = q.toLowerCase(); cmdRes = [];
     if (!q) {
-      if (this.recentActions.length) { this.recentActions.forEach(a => cmdRes.push({ ...a, cat:'Recent', isRecent:true })); }
+      if (this.recentActions.length) {
+        this.recentActions.forEach(a => cmdRes.push({ ...a, cat:'Recent' }));
+      } else {
+        [
+          {icon:'⌘', label:'⌘K — command palette', cat:'Shortcuts', action:null},
+          {icon:'⌘', label:'⌘L — lock vault', cat:'Shortcuts', action:()=>R.lock()},
+          {icon:'⌘', label:'⌘F — search', cat:'Shortcuts', action:()=>R.goto('search')},
+          {icon:'⎋', label:'Escape — close palette', cat:'Shortcuts', action:null},
+          {icon:'💬', label:'Try: "add bank" · "lock" · "theme dark" · "reminders"', cat:'Shortcuts', action:null},
+        ].forEach(a => cmdRes.push(a));
+      }
       [
-        { cat:'Navigate', items:[['📊','Dashboard',()=>R.goto('dashboard')],['🔔','Alerts',()=>R.goto('alerts')],['📅','Timeline',()=>R.goto('timeline')],['🛡️','Security',()=>R.goto('security')],['💾','Backup',()=>R.goto('backup')],['⚙️','Settings',()=>R.goto('settings')],['📥','Import',()=>R.goto('import')],['🗂️','Workspaces',()=>R.goto('workspace')]] },
+        { cat:'Navigate', items:[['📊','Dashboard',()=>R.goto('dashboard')],['🔔','Reminders',()=>R.goto('reminders')],['📅','Timeline',()=>R.goto('timeline')],['🛡️','Security',()=>R.goto('security')],['💾','Backup',()=>R.goto('backup')],['⚙️','Settings',()=>R.goto('settings')],['📥','Import',()=>R.goto('import')]] },
         { cat:'Add Entry', items:[['🏦','Add Bank',()=>Banks.openAdd()],['💳','Add Card',()=>Cards.openAdd()],['📈','Add Investment',()=>Inv.openAdd()],['📱','Add SIM',()=>Sims.openAdd()],['🏠','Add Asset',()=>Assets.openAdd()],['📋','Add Expense',()=>Exp.openAdd()],['📧','Add Email',()=>Emails.openAdd()],['💻','Add Device',()=>Gadgets.openAdd()],['💼','Add Login',()=>Digital.openAdd()]] },
-        { cat:'Vault Actions', items:[['🎨','Change Theme',()=>ThemeEngine.openPicker()],['📤','Export Encrypted Vault',()=>ExIm.export('vault')],['📸','Take Net Worth Snapshot',()=>Dash.snap()],['👝','Edit Carrying Wallet',()=>Dash.editWallet()],['🙈','Toggle Privacy Mode',()=>togglePrivacy()],['🔒','Lock Vault',()=>R.lock()],['🚨','Panic Lock',()=>PanicLock.trigger()]] },
+        { cat:'Vault Actions', items:[['🎨','Change Theme',()=>ThemeEngine.openPicker()],['📤','Export Encrypted Vault',()=>ExIm.export('vault')],['📸','Net Worth Snapshot',()=>Dash.snap()],['👝','Edit Wallet',()=>Dash.editWallet()],['🙈','Toggle Privacy Mode',()=>togglePrivacy()],['🔒','Lock Vault',()=>R.lock()],['🚨','Panic Lock',()=>PanicLock.trigger()]] },
       ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ icon:i, label:l, action:a, cat })));
     } else {
       const fm = this.fuzzyMatch.bind(this);
-      S.banks.filter(b => fm(b.bankName || '', q)).slice(0, 4).forEach(b => cmdRes.push({ icon:'🏦', label:b.bankName + ' · ' + b.currency + (b.last4 ? ' ****' + b.last4 : ''), cat:'Banks', action:()=>Banks.detail(b.id) }));
-      S.cards.filter(cv => fm(cv.cardName || '', q) || fm(cv.last4 || '', q)).slice(0, 4).forEach(cv => cmdRes.push({ icon:'💳', label:cv.cardName + (cv.last4 ? ' ****' + cv.last4 : ''), cat:'Cards', action:()=>Cards.openDetail(cv.id) }));
-      S.investments.filter(i => fm(i.investmentName || '', q) || fm(i.broker || '', q)).slice(0, 3).forEach(i => cmdRes.push({ icon:'📈', label:i.investmentName || i.broker, cat:'Investments', action:()=>Inv.edit(i.id) }));
-      S.emails.filter(e => fm(e.email, q) || fm(e.provider || '', q)).slice(0, 3).forEach(e => cmdRes.push({ icon:'📧', label:e.email, cat:'Emails', action:()=>Emails.detail(e.id) }));
-      S.gadgets.filter(g => fm(g.name, q) || fm(g.brand || '', q) || fm(g.serialNum || '', q)).slice(0, 3).forEach(g => cmdRes.push({ icon:g.ic || '💻', label:g.name + (g.storage ? ' · ' + g.storage : ''), cat:'Devices', action:()=>Gadgets.detail(g.id) }));
-      S.digital.filter(d => fm(d.serviceName, q) || fm(d.username || '', q)).slice(0, 3).forEach(d => cmdRes.push({ icon:'💼', label:d.serviceName + (d.username ? ' · @' + d.username : ''), cat:'Logins', action:()=>Digital.detail(d.id) }));
-      S.expenses.filter(e => fm(e.name, q)).slice(0, 3).forEach(e => cmdRes.push({ icon:e.icon || '📋', label:e.name + ' · ' + e.currency + ' ' + e.amount + '/mo', cat:'Expenses', action:()=>Exp.edit(e.id) }));
-      S.assets.filter(a => fm(a.name, q) || fm(a.assetType || '', q)).slice(0, 3).forEach(a => cmdRes.push({ icon:'🏠', label:a.name, cat:'Assets', action:()=>Assets.edit(a.id) }));
-      S.sims.filter(s => fm(s.network, q) || fm(s.phone || '', q)).slice(0, 3).forEach(s => cmdRes.push({ icon:'📱', label:s.network + ' ' + U.flag(s.country), cat:'SIMs', action:()=>Sims.detail(s.id) }));
+      this._allCmds.filter(c => fm(c.label, ql)).slice(0, 5).forEach(c => cmdRes.push({...c, cat:'Actions'}));
+      S.banks.filter(b => fm(b.bankName || '', ql)).slice(0, 4).forEach(b => cmdRes.push({ icon:'🏦', label:b.bankName + ' · ' + b.currency + (b.last4 ? ' ****' + b.last4 : ''), cat:'Banks', action:()=>Banks.detail(b.id) }));
+      S.cards.filter(cv => fm(cv.cardName || '', ql) || fm(cv.last4 || '', ql)).slice(0, 4).forEach(cv => cmdRes.push({ icon:'💳', label:cv.cardName + (cv.last4 ? ' ****' + cv.last4 : ''), cat:'Cards', action:()=>Cards.openDetail(cv.id) }));
+      S.investments.filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).slice(0, 3).forEach(i => cmdRes.push({ icon:'📈', label:i.investmentName || i.broker, cat:'Investments', action:()=>Inv.edit(i.id) }));
+      S.emails.filter(e => fm(e.email, ql) || fm(e.provider || '', ql)).slice(0, 3).forEach(e => cmdRes.push({ icon:'📧', label:e.email, cat:'Emails', action:()=>Emails.detail(e.id) }));
+      S.gadgets.filter(g => fm(g.name, ql) || fm(g.brand || '', ql) || fm(g.serialNum || '', ql)).slice(0, 3).forEach(g => cmdRes.push({ icon:g.ic || '💻', label:g.name + (g.storage ? ' · ' + g.storage : ''), cat:'Devices', action:()=>Gadgets.detail(g.id) }));
+      S.digital.filter(d => fm(d.serviceName, ql) || fm(d.username || '', ql)).slice(0, 3).forEach(d => cmdRes.push({ icon:'💼', label:d.serviceName + (d.username ? ' · @' + d.username : ''), cat:'Logins', action:()=>Digital.detail(d.id) }));
+      S.expenses.filter(e => fm(e.name, ql)).slice(0, 3).forEach(e => cmdRes.push({ icon:e.icon || '📋', label:e.name + ' · ' + e.currency + ' ' + e.amount + '/mo', cat:'Expenses', action:()=>Exp.edit(e.id) }));
+      S.assets.filter(a => fm(a.name, ql) || fm(a.assetType || '', ql)).slice(0, 3).forEach(a => cmdRes.push({ icon:'🏠', label:a.name, cat:'Assets', action:()=>Assets.edit(a.id) }));
+      S.sims.filter(s => fm(s.network, ql) || fm(s.phone || '', ql)).slice(0, 3).forEach(s => cmdRes.push({ icon:'📱', label:s.network + ' ' + U.flag(s.country), cat:'SIMs', action:()=>Sims.detail(s.id) }));
       if (!cmdRes.length) cmdRes.push({ icon:'🔍', label:`No results for "${q}"`, cat:'', action:null });
     }
     cmdIdx = -1;
-    document.getElementById('cmdList').innerHTML = cmdRes.map((r, i) =>
-      `<div class="ci" id="ci${i}" onclick="CMD.select(${i})"><span class="ci-ic">${r.icon}</span><span>${r.label}</span></div>`
-    ).join('');
+    let html = '', lastCat = null;
+    cmdRes.forEach((r, i) => {
+      if (r.cat !== lastCat) {
+        if (r.cat) html += `<div class="ci-cat">${r.cat}</div>`;
+        lastCat = r.cat;
+      }
+      if (!r.action) {
+        html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${r.icon}</span><span>${r.label}</span></div>`;
+      } else {
+        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})"><span class="ci-ic">${r.icon}</span><span>${r.label}</span></div>`;
+      }
+    });
+    document.getElementById('cmdList').innerHTML = html;
   },
   select(i) { const r = cmdRes[i]; if (r?.action) { this.addRecent(r); this.close(); r.action(); } },
   key(e) {
