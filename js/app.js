@@ -979,6 +979,7 @@ let S = {
   pin: '123456', decoyPin: '', noPin: false,
   modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[], trash:[],
+  importedFiles:[], _pendingLinks:[],
   loanF:'all',
   wallet:[],
   fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false,
@@ -1000,6 +1001,7 @@ const Store = {
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
       assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
+      importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
     };
@@ -1713,6 +1715,60 @@ function checkDuplicate(type, data) {
   return { isDuplicate:false };
 }
 
+// ===================== AUTO LINK =====================
+function autoLink(module, item) {
+  const n = s => (s||'').toLowerCase().trim();
+  S._pendingLinks = S._pendingLinks || [];
+
+  if (module === 'card') {
+    const cardLow = n(item.cardName || '');
+    const bank = (S.banks||[]).find(b => {
+      const bn = n(b.bankName);
+      return bn && (cardLow.includes(bn) || bn.includes(cardLow.split(' ')[0]));
+    });
+    if (bank) {
+      item.linkedBankId = bank.id;
+    } else if (cardLow) {
+      S._pendingLinks.push({ type:'card', id:item.id, matchName:cardLow, field:'linkedBankId', targetModule:'banks' });
+    }
+  }
+
+  if (module === 'bank') {
+    const bankLow = n(item.bankName || '');
+    const stillPending = [];
+    S._pendingLinks.forEach(link => {
+      if ((link.type === 'card' || link.type === 'expense') && link.matchName &&
+          (link.matchName.includes(bankLow) || bankLow.includes(link.matchName.split(' ')[0]))) {
+        const arr = link.type === 'card' ? S.cards : S.expenses;
+        const target = (arr||[]).find(x => x.id === link.id);
+        if (target) target[link.field] = item.id;
+      } else {
+        stillPending.push(link);
+      }
+    });
+    S._pendingLinks = stillPending;
+  }
+
+  if (module === 'loan') {
+    const person = n(item.person || item.personName || '');
+    if (person) {
+      const friend = (S.friends||[]).find(f => n(f.name) === person);
+      if (friend) item.linkedFriendId = friend.id;
+    }
+  }
+
+  if (module === 'sim') {
+    const network = n(item.network || '');
+    if (network) {
+      const expense = (S.expenses||[]).find(e => {
+        const en = n(e.name);
+        return en.includes(network) || network.includes(en);
+      });
+      if (expense) item.linkedExpenseId = expense.id;
+    }
+  }
+}
+
 // ===================== AUTO TAGS =====================
 function autoTags(type, data) {
   const tags = [];
@@ -2189,12 +2245,126 @@ function buildNav() {
   ].filter(q => S.modules[q.id] && document.getElementById('pg-' + q.id));
   const fabItems = [
     ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${q.icon} Add ${q.label}</div>`),
+    '<div class="fmi" onclick="SmartAdd.open();FAB.close()">✨ Smart Add</div>',
     '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">🤖 AI Import</div>',
     '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
     '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
   ];
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
 }
+
+// ===================== SMART ADD =====================
+const SmartAdd = {
+  open() {
+    const hasKey = !!(S.user && S.user.claudeKey);
+    const keySection = hasKey ? '' : `
+      <div class="fg" style="margin-bottom:12px">
+        <label class="fl">Claude API Key <span style="font-size:10px;color:var(--text3)">(stored in your vault only)</span></label>
+        <input class="inp" id="sa-key" type="password" placeholder="sk-ant-...">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Get your key at console.anthropic.com</div>
+      </div>`;
+    Modal.open('✨ Smart Add', `
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. Claude AI will extract the details and open the form pre-filled.</p>
+      ${keySection}
+      <div class="fg">
+        <label class="fl">What do you want to add?</label>
+        <textarea class="inp" id="sa-text" rows="4" placeholder="Add my HBL Islamic savings account with PKR balance of 50,000&#10;I lent 5000 rupees to Ahmed last week&#10;I have a Jazz SIM with number +92 300 1234567" style="font-size:13px;line-height:1.6"></textarea>
+      </div>
+      <div id="sa-status" style="display:none;font-size:12px;color:var(--text2);margin-top:10px;text-align:center;padding:8px">⏳ Extracting with AI...</div>
+    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Extract &amp; Pre-fill</button>`);
+    setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
+  },
+
+  async run() {
+    const keyEl = document.getElementById('sa-key');
+    if (keyEl && keyEl.value.trim()) {
+      S.user = S.user || {};
+      S.user.claudeKey = keyEl.value.trim();
+      Store.save();
+    }
+    const key = S.user && S.user.claudeKey;
+    if (!key) { Toast.show('Enter your Claude API key first', 'warning'); return; }
+    const text = (document.getElementById('sa-text')?.value || '').trim();
+    if (!text) { Toast.show('Describe what to add', 'warning'); return; }
+
+    const btn = document.getElementById('sa-run-btn');
+    const statusEl = document.getElementById('sa-status');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Working...'; }
+    if (statusEl) statusEl.style.display = 'block';
+
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 512,
+          system: 'You are a financial data extractor for a personal finance app. Parse the user description and return ONLY valid JSON: {"module":"bank|card|investment|cash|loan|sim|expense","fields":{...}}. Field names — bank: bankName,currency,balance,iban,country,bankType; card: cardName,network,cardType,last4,expiry; loan: person,amount,currency,type(lent|borrowed),date,dueDate; sim: network,phone,country,simType,status; cash: label,amount,currency,location; investment: investmentName,broker,type,currency,amountInvested,currentValue; expense: name,amount,currency,category. Return ONLY the JSON, no markdown.',
+          messages: [{ role: 'user', content: text }]
+        })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error((err.error && err.error.message) || resp.statusText);
+      }
+      const data = await resp.json();
+      const raw = (data.content && data.content[0] && data.content[0].text) || '';
+      let parsed;
+      try { parsed = JSON.parse(raw.trim()); }
+      catch(e) { const m = raw.match(/\{[\s\S]*\}/); if (m) parsed = JSON.parse(m[0]); else throw new Error('AI returned invalid JSON'); }
+      Modal.close();
+      this._openForm(parsed);
+    } catch(e) {
+      if (btn) { btn.disabled = false; btn.textContent = '✨ Extract & Pre-fill'; }
+      if (statusEl) statusEl.style.display = 'none';
+      Toast.show('Smart Add: ' + e.message, 'error', 6000);
+    }
+  },
+
+  _openForm(parsed) {
+    if (!parsed || !parsed.module) { Toast.show('Smart Add: could not detect module type', 'warning'); return; }
+    const f = parsed.fields || {};
+    const delay = 220;
+    switch (parsed.module) {
+      case 'bank':
+        typeof Banks !== 'undefined' && Banks.openAdd && Banks.openAdd();
+        setTimeout(() => { this._fill({ 'bf-name':f.bankName, 'bf-bal':f.balance, 'bf-iban':f.iban }); Toast.show('Smart Add: bank pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'card':
+        typeof Cards !== 'undefined' && Cards.openAdd && Cards.openAdd();
+        setTimeout(() => { this._fill({ 'cf-name':f.cardName, 'cf-l4':f.last4, 'cf-exp':f.expiry }); Toast.show('Smart Add: card pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'loan':
+        typeof Loans !== 'undefined' && Loans.openAdd && Loans.openAdd(f.type || 'lent');
+        setTimeout(() => { this._fill({ 'lf-person':f.person || f.personName, 'lf-amt':f.amount, 'lf-due':f.dueDate }); Toast.show('Smart Add: loan pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'sim':
+        typeof Sims !== 'undefined' && Sims.openAdd && Sims.openAdd();
+        setTimeout(() => { this._fill({ 'sf-net':f.network, 'sf-phone':f.phone }); Toast.show('Smart Add: SIM pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'cash':
+        typeof Cash !== 'undefined' && Cash.openAdd && Cash.openAdd();
+        setTimeout(() => { this._fill({ 'cash-label':f.label, 'cash-amount':f.amount }); Toast.show('Smart Add: cash pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'investment':
+        typeof Inv !== 'undefined' && Inv.openAdd && Inv.openAdd();
+        setTimeout(() => { this._fill({ 'inv-name':f.investmentName, 'inv-broker':f.broker, 'inv-amt':f.amountInvested }); Toast.show('Smart Add: investment pre-filled — review and save', 'success', 3000); }, delay); break;
+      case 'expense':
+        typeof Exp !== 'undefined' && Exp.openAdd && Exp.openAdd();
+        setTimeout(() => { this._fill({ 'exp-name':f.name, 'exp-amt':f.amount }); Toast.show('Smart Add: expense pre-filled — review and save', 'success', 3000); }, delay); break;
+      default:
+        Toast.show(`Smart Add detected "${parsed.module}" — open the form manually`, 'info', 4000);
+    }
+  },
+
+  _fill(map) {
+    Object.entries(map).forEach(([id, val]) => {
+      if (!val && val !== 0) return;
+      const el = document.getElementById(id);
+      if (el) { el.value = String(val); el.dispatchEvent(new Event('input')); }
+    });
+  }
+};
 
 // ===================== COMMAND PALETTE =====================
 let cmdRes = [], cmdIdx = -1;
@@ -2216,6 +2386,7 @@ const CMD = {
   recentActions: [],
   addRecent(action) { this.recentActions = [action, ...this.recentActions.filter(a => a.label !== action.label)].slice(0, 8); },
   _allCmds: [
+    {icon:'✨',label:'Smart Add (AI)',action:()=>SmartAdd.open()},
     {icon:'🏦',label:'Add Bank',action:()=>Banks.openAdd()},
     {icon:'💳',label:'Add Card',action:()=>Cards.openAdd()},
     {icon:'📈',label:'Add Investment',action:()=>Inv.openAdd()},

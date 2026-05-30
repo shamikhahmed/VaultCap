@@ -157,6 +157,7 @@ const Loans = {
     if (!S.loans) S.loans = [];
     if (editId) S.loans = S.loans.map(x => x.id === editId ? item : x);
     else S.loans.push(item);
+    if (typeof autoLink === 'function') autoLink('loan', item);
     Activity.log((editId ? 'Edited' : 'Added') + ' loan', `${type === 'lent' ? 'lent to' : 'borrowed from'} ${person}`);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId ? 'Updated' : 'Added'}: ${person}`, 'success');

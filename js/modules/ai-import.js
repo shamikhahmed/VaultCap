@@ -434,6 +434,8 @@ const ExcelImport = (() => {
     expense:    ['expense','subscription','bill','recurring','monthly'],
   };
 
+  const TYPE_ICONS = { bank:'🏦', card:'💳', investment:'📈', cash:'💵', loan:'🤝', sim:'📱', expense:'📋' };
+
   function _detectSheetType(headers, rows) {
     const txt = headers.join(' ').toLowerCase() + ' ' + (rows[0] || []).join(' ').toLowerCase();
     let best = null, bestScore = 0;
@@ -507,45 +509,71 @@ const ExcelImport = (() => {
     return {};
   }
 
+  // ── File hash helpers ──────────────────────────────────────────────────────
+
+  function _fileHash(file) {
+    return file.name + '|' + file.size + '|' + file.lastModified;
+  }
+
+  function _checkFileHash(file) {
+    const hash = _fileHash(file);
+    S.importedFiles = S.importedFiles || [];
+    return S.importedFiles.find(f => f.hash === hash) || null;
+  }
+
+  function _recordFileHash(file) {
+    const hash = _fileHash(file);
+    S.importedFiles = S.importedFiles || [];
+    if (!S.importedFiles.find(f => f.hash === hash)) {
+      S.importedFiles.push({ hash, name: file.name, importedAt: new Date().toISOString() });
+    }
+  }
+
+  // ── Row save with duplicate check ──────────────────────────────────────────
+
   function _saveRow(type, data) {
+    const dup = (typeof checkDuplicate === 'function') ? checkDuplicate(type, data) : { isDuplicate: false };
+    if (dup.isDuplicate) return { saved: false, skipped: true };
     const id = U.id(), ts = new Date().toISOString();
     try {
       if (type === 'bank' && data.bankName) {
-        S.banks.push({ id, bankName:data.bankName, country:data.country||'', bankType:data.bankType||'commercial', currency:data.currency||'', balance:parseFloat(data.balance)||0, iban:data.iban||'', holderName:data.holderName||'', tags:['Excel Import'], createdAt:ts }); return true;
+        S.banks.push({ id, bankName:data.bankName, country:data.country||'', bankType:data.bankType||'commercial', currency:data.currency||'', balance:parseFloat(data.balance)||0, iban:data.iban||'', holderName:data.holderName||'', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'card' && data.cardName) {
-        S.cards.push({ id, cardName:data.cardName, network:data.network||'', cardType:data.cardType||'', last4:data.last4||'', expiry:data.expiry||'', currency:data.currency||'', tags:['Excel Import'], createdAt:ts }); return true;
+        S.cards.push({ id, cardName:data.cardName, network:data.network||'', cardType:data.cardType||'', last4:data.last4||'', expiry:data.expiry||'', currency:data.currency||'', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'investment' && data.investmentName) {
-        S.investments.push({ id, investmentName:data.investmentName, broker:data.broker||'', type:data.type||'Stocks', ticker:data.ticker||'', currency:data.currency||'', amountInvested:parseFloat(data.amountInvested)||0, currentValue:parseFloat(data.currentValue)||0, riskLevel:'Medium', tags:['Excel Import'], createdAt:ts }); return true;
+        S.investments.push({ id, investmentName:data.investmentName, broker:data.broker||'', type:data.type||'Stocks', ticker:data.ticker||'', currency:data.currency||'', amountInvested:parseFloat(data.amountInvested)||0, currentValue:parseFloat(data.currentValue)||0, riskLevel:'Medium', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'cash' && data.amount) {
         S.cash = S.cash || [];
-        S.cash.push({ id, label:data.label||'Cash', location:data.location||'Wallet', amount:parseFloat(data.amount)||0, currency:data.currency||'', createdAt:ts }); return true;
+        S.cash.push({ id, label:data.label||'Cash', location:data.location||'Wallet', amount:parseFloat(data.amount)||0, currency:data.currency||'', createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'loan' && data.personName && data.amount) {
         S.loans = S.loans || [];
         const ltype = (data.type||'').toLowerCase().includes('lent') ? 'lent' : 'borrowed';
-        S.loans.push({ id, person:data.personName, type:ltype, amount:parseFloat(data.amount)||0, currency:data.currency||'', dueDate:data.dueDate||'', status:'Active', tags:['Excel Import'], createdAt:ts }); return true;
+        S.loans.push({ id, person:data.personName, type:ltype, amount:parseFloat(data.amount)||0, currency:data.currency||'', dueDate:data.dueDate||'', status:'Active', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'sim' && data.network) {
         S.sims = S.sims || [];
-        S.sims.push({ id, network:data.network, phone:data.phone||'', country:data.country||'', simType:data.simType||'Physical', status:data.status||'Active', tags:['Excel Import'], createdAt:ts }); return true;
+        S.sims.push({ id, network:data.network, phone:data.phone||'', country:data.country||'', simType:data.simType||'Physical', status:data.status||'Active', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
       }
       if (type === 'expense' && data.name) {
         S.expenses = S.expenses || [];
-        S.expenses.push({ id, name:data.name, amount:parseFloat(data.amount)||0, currency:data.currency||'', category:data.category||'Other', active:true, createdAt:ts }); return true;
+        S.expenses.push({ id, name:data.name, amount:parseFloat(data.amount)||0, currency:data.currency||'', category:data.category||'Other', active:true, createdAt:ts }); return { saved:true, skipped:false };
       }
     } catch(e) { console.warn('Excel import row error:', e); }
-    return false;
+    return { saved: false, skipped: false };
   }
+
+  // ── Modal open ─────────────────────────────────────────────────────────────
 
   function open() {
     if (typeof XLSX === 'undefined') {
       Toast.show('Excel library not loaded — check your connection', 'error'); return;
     }
     Modal.open('📊 Import Excel', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Upload a .xlsx or .xls file. VaultOS will scan all sheets, detect what each contains, and let you choose which to import.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Upload a .xlsx or .xls file. VaultOS will show each row for review before importing.</p>
       <div id="xl-drop" style="border:2px dashed var(--border2);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('xl-file').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="ExcelImport._onDrop(event)">
         <div style="font-size:32px;margin-bottom:8px">📊</div>
         <div style="font-size:13px;font-weight:600;margin-bottom:4px">Drop .xlsx / .xls here or tap to browse</div>
@@ -553,7 +581,7 @@ const ExcelImport = (() => {
       </div>
       <input type="file" id="xl-file" accept=".xlsx,.xls" style="display:none" onchange="ExcelImport._onFile(this.files[0])">
       <div id="xl-preview" style="margin-top:14px"></div>
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="xl-confirm" style="display:none" onclick="ExcelImport._confirmImport()">✅ Import Selected</button>`);
+    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="xl-confirm" style="display:none" onclick="ExcelImport._confirmImportRows()">✅ Import Selected</button>`);
   }
 
   function _onDrop(e) {
@@ -564,76 +592,144 @@ const ExcelImport = (() => {
 
   function _onFile(file) {
     if (!file) return;
+    const prev = _checkFileHash(file);
+    if (prev) {
+      const prevDate = new Date(prev.importedAt).toLocaleDateString();
+      if (!window.__vos_confirm(`"${file.name}" was already imported on ${prevDate}. Import again?`)) return;
+    }
     const reader = new FileReader();
     reader.onload = ev => {
       try {
         const wb = XLSX.read(ev.target.result, { type: 'array' });
-        _preview(wb);
+        _preview(wb, file);
       } catch(e) { Toast.show('Failed to read file: ' + e.message, 'error'); }
     };
     reader.readAsArrayBuffer(file);
   }
 
-  window._xlSheets = [];
-  function _preview(wb) {
-    window._xlSheets = wb.SheetNames.map(name => {
-      const ws = wb.Sheets[name];
+  // ── Row-by-row preview ─────────────────────────────────────────────────────
+
+  window._xlRows = [];
+  window._xlCurrentFile = null;
+
+  function _preview(wb, file) {
+    window._xlCurrentFile = file || null;
+    const allRows = [];
+    let rowIdx = 0;
+
+    wb.SheetNames.forEach(sheetName => {
+      const ws = wb.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' }).filter(r => r.some(c => c !== ''));
-      if (!rows.length) return null;
+      if (!rows.length) return;
       const headers = (rows[0] || []).map(h => String(h||'').trim());
       const dataRows = rows.slice(1).filter(r => r.some(c => c !== ''));
       const type = _detectSheetType(headers, dataRows);
-      return { name, headers, dataRows, type };
-    }).filter(Boolean);
+      if (!type || type === 'unknown') return;
 
+      dataRows.forEach(row => {
+        const data = _mapRow(type, headers, row);
+        if (!Object.values(data).some(v => v)) return;
+        const dup = (typeof checkDuplicate === 'function') ? checkDuplicate(type, data) : { isDuplicate:false };
+        allRows.push({ idx: rowIdx++, sheetName, type, data, isDuplicate: dup.isDuplicate, dupMsg: dup.message || '' });
+      });
+    });
+
+    window._xlRows = allRows;
+    _showRowReview(allRows);
+  }
+
+  function _showRowReview(rows) {
     const pr = document.getElementById('xl-preview');
     if (!pr) return;
-    if (!window._xlSheets.length) { pr.innerHTML = '<div style="color:var(--err);font-size:12px">No usable sheets found</div>'; return; }
 
-    pr.innerHTML = window._xlSheets.map((sh, i) => `
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="xl-chk-${i}" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:600">${sh.name}</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:2px">${sh.dataRows.length} rows · Detected: <span style="color:var(--accent);font-weight:600">${sh.type === 'unknown' ? '❓ Unknown' : '✅ ' + sh.type}</span></div>
+    if (!rows.length) {
+      pr.innerHTML = '<div style="color:var(--err);font-size:12px;padding:12px;text-align:center">No importable rows found in this file</div>';
+      return;
+    }
+
+    const dupCount = rows.filter(r => r.isDuplicate).length;
+    const summary = `<div style="background:var(--glass2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="flex:1"><strong>${rows.length} row${rows.length!==1?'s':''}</strong> detected${dupCount ? ` · <span style="color:var(--warn)">${dupCount} possible duplicate${dupCount!==1?'s':''}</span>` : ''}</span>
+      <button class="btn btn-sm" style="padding:3px 10px;font-size:11px" onclick="ExcelImport._toggleAll(true)">All</button>
+      <button class="btn btn-sm" style="padding:3px 10px;font-size:11px" onclick="ExcelImport._toggleAll(false)">None</button>
+    </div>`;
+
+    const cards = rows.map(r => {
+      const icon = TYPE_ICONS[r.type] || '📋';
+      const dupBadge = r.isDuplicate
+        ? `<span style="background:rgba(255,180,0,0.15);color:var(--warn);border:1px solid rgba(255,180,0,0.4);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0">⚠️ Duplicate</span>`
+        : '';
+      const fieldsHtml = Object.entries(r.data).filter(([,v])=>v).map(([k,v])=>
+        `<div style="display:flex;gap:6px;margin-bottom:2px;font-size:11px"><span style="color:var(--text3);min-width:80px;flex-shrink:0">${k}</span><span style="color:var(--text);font-weight:500;word-break:break-all">${v}</span></div>`
+      ).join('');
+
+      return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:7px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <input type="checkbox" id="xlr-chk-${r.idx}" ${r.isDuplicate ? '' : 'checked'} style="width:15px;height:15px;accent-color:var(--accent);flex-shrink:0">
+          <span style="font-size:18px;flex-shrink:0">${icon}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:700;text-transform:capitalize">${r.type}</div>
+            <div style="font-size:10px;color:var(--text3)">${r.sheetName}</div>
           </div>
-          ${sh.type !== 'unknown' ? `<select class="inp btn-sm" id="xl-type-${i}" style="width:auto;padding:5px 9px;font-size:11px">
-            ${['bank','card','investment','cash','loan','sim','expense'].map(t => `<option value="${t}" ${t===sh.type?'selected':''}>${t}</option>`).join('')}
-          </select>` : `<select class="inp btn-sm" id="xl-type-${i}" style="width:auto;padding:5px 9px;font-size:11px">
-            <option value="">skip</option>
-            ${['bank','card','investment','cash','loan','sim','expense'].map(t => `<option value="${t}">${t}</option>`).join('')}
-          </select>`}
+          ${dupBadge}
         </div>
-      </div>`).join('');
+        <div style="padding-left:24px">${fieldsHtml}</div>
+      </div>`;
+    }).join('');
+
+    pr.innerHTML = summary + cards;
 
     const btn = document.getElementById('xl-confirm');
     if (btn) btn.style.display = '';
   }
 
-  function _confirmImport() {
-    if (!window._xlSheets || !window._xlSheets.length) return;
-    let total = 0;
-    window._xlSheets.forEach((sh, i) => {
-      const chk = document.getElementById('xl-chk-' + i);
-      if (!chk || !chk.checked) return;
-      const typeEl = document.getElementById('xl-type-' + i);
-      const type = typeEl ? typeEl.value : sh.type;
-      if (!type || type === 'unknown') return;
-      sh.dataRows.forEach(row => {
-        const data = _mapRow(type, sh.headers, row);
-        if (_saveRow(type, data)) total++;
-      });
+  function _toggleAll(state) {
+    (window._xlRows || []).forEach(r => {
+      const el = document.getElementById('xlr-chk-' + r.idx);
+      if (el) el.checked = state;
     });
-    Store.save();
-    if (typeof buildNav === 'function') buildNav();
-    Activity.log('Excel Import', `${total} items from ${window._xlSheets.length} sheets`);
+  }
+
+  // ── Confirm import ─────────────────────────────────────────────────────────
+
+  function _confirmImportRows() {
+    const rows = window._xlRows || [];
+    if (!rows.length) return;
+
+    let saved = 0, skipped = 0;
+    const byType = {};
+
+    rows.forEach(r => {
+      const chk = document.getElementById('xlr-chk-' + r.idx);
+      if (!chk || !chk.checked) return;
+      const result = _saveRow(r.type, r.data);
+      if (result.saved) {
+        saved++;
+        byType[r.type] = (byType[r.type] || 0) + 1;
+      } else if (result.skipped) {
+        skipped++;
+      }
+    });
+
+    if (saved > 0) {
+      Store.save();
+      if (typeof buildNav === 'function') buildNav();
+      if (window._xlCurrentFile) _recordFileHash(window._xlCurrentFile);
+    }
+
+    const typeSummary = Object.entries(byType).map(([t, n]) => `${n} ${t}${n!==1?'s':''}`).join(', ');
+    const msg = saved > 0
+      ? `Imported ${saved} item${saved!==1?'s':''} (${typeSummary})${skipped>0?' · skipped '+skipped+' duplicate'+(skipped!==1?'s':''):''}`
+      : skipped > 0 ? `All ${skipped} row${skipped!==1?'s were':' was'} duplicate${skipped!==1?'s':''} — nothing imported`
+      : 'Nothing imported';
+
+    Activity.log('Excel Import', msg);
     Modal.close();
-    Toast.show(`Imported ${total} item${total !== 1 ? 's' : ''} from Excel`, 'success');
+    Toast.show(msg, saved > 0 ? 'success' : 'warning', 5000);
     const pg = S.currentPage;
     if (pg) setTimeout(() => R.goto(pg), 300);
   }
 
-  return { open, _onFile, _onDrop, _confirmImport };
+  return { open, _onFile, _onDrop, _confirmImportRows, _toggleAll };
 })();
 
