@@ -272,8 +272,8 @@ const Settings={
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
       ${[['Version','v4.0 — Enterprise Edition'],['Storage','Local device only — never sent anywhere'],['Encryption','Client-side (localStorage)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
-      <div class="si" style="cursor:pointer" onclick="window.open('widget.html','_blank')"><div class="name">📊 Widget</div><div style="color:var(--accent);font-size:12px">Open →</div></div>
-      <div class="si"><div class="name" style="font-size:11px;color:var(--text3)">Add widget: On iPhone, long-press home screen → + → VaultOS. On Android, long-press app icon → Widget.</div></div>
+      <div class="si" style="cursor:pointer" onclick="window.open('widget.html','_blank')"><div class="sil"><div class="name">📊 Home Screen Widget</div><div class="desc">View net worth without opening the app</div></div><span style="color:var(--accent)">›</span></div>
+      <div class="si"><div class="name" style="font-size:11px;color:var(--text3);line-height:1.6">iPhone: Long-press home screen → + → VaultOS<br>Android: Long-press app icon → Widget</div></div>
     </div></div>`;
   },
   toggleMod(id,v){S.modules[id]=v;Store.save();buildNav();Toast.show(`${v?'Enabled':'Hidden'}: ${ALL_MODULES.find(m=>m.id===id)?.n}`,'info',1500);},

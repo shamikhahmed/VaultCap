@@ -1507,7 +1507,11 @@ const PIN = {
     if (S.noPin) { R.unlock(); return; }
     pe += n; this.dots();
     if (navigator.vibrate) navigator.vibrate(6);
-    if (pe.length === 6) setTimeout(() => this.verify(), 130);
+    if (pe.length === 6) {
+      const fpl = document.getElementById('forgotPinLink');
+      if (fpl) fpl.style.display = 'none';
+      setTimeout(() => this.verify(), 130);
+    }
   },
   del() {
     pe = pe.slice(0, -1);
