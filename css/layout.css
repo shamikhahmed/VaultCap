@@ -86,7 +86,6 @@
 .pb::-webkit-scrollbar { width: 0; }
 .main, .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); }
 @media (min-width: 769px) { .main, .pb { padding-bottom: 24px !important; } }
-#pg-dashboard .pb { padding-top: max(20px, calc(env(safe-area-inset-top, 0px) + 16px)); }
 .btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); }
 
 /* ─ Bottom tabs ─ */

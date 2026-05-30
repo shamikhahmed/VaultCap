@@ -1188,6 +1188,20 @@ const Store = {
     if (VaultDB.sessionKey) {
       VaultDB.save(data).catch(e => console.warn('[VaultDB] save error:', e));
     }
+    this._saveWidgetSnapshot();
+  },
+
+  _saveWidgetSnapshot() {
+    try {
+      localStorage.setItem('vaultos_widget', JSON.stringify({
+        nw: S.user.netWorth || 0,
+        currency: S.user.currency || 'PKR',
+        cards: (S.cards || []).length,
+        banks: (S.banks || []).length,
+        name: S.user.name || '',
+        updated: new Date().toISOString()
+      }));
+    } catch(e) {}
   },
 
   // Load from VaultDB (async). Called after VaultDB.init() in PIN flow.

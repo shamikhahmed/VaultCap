@@ -56,7 +56,7 @@ const Cards={
     const _dom=bankDomain(c.cardName||bankName,c.country);
     const _initials=(bankName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
     const logoHtml=_dom
-      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px;display:block" onerror="this.outerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
+      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px;display:block" onerror="this.parentElement.innerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
       : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
