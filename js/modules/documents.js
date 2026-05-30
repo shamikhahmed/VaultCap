@@ -190,6 +190,8 @@ const DocsModule={
     schema.fields.forEach(f=>{data[f.id]=g(f.id);});
     if(!S.documents)S.documents=[];
     if(editId)S.documents=S.documents.map(x=>x.id===editId?data:x);else S.documents.push(data);
+    const _dPhotoBytes=(S.documents).reduce((a,d)=>a+(d.frontPhoto||'').length+(d.backPhoto||'').length,0)/1.37;
+    if(_dPhotoBytes>10*1024*1024)Toast.show('Storage is getting large. Consider removing old photos.','warning',5000);
     Activity.log((editId?'Edited':'Added')+' document',schema.label);Store.save();Modal.close();this.render();
     Toast.show((editId?'Updated':'Added')+': '+schema.label,'success');
   },

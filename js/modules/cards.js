@@ -311,6 +311,8 @@ const Cards={
     const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:document.getElementById('cf-l4').value.trim(),expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,issuer:name.split(' ')[0],frontPhoto,backPhoto,createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.cards=S.cards.map(x=>x.id===editId?item:x);else S.cards.push(item);
+    const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
+    if(_cPhotoBytes>10*1024*1024)Toast.show('Storage is getting large. Consider removing old photos.','warning',5000);
     Activity.log((editId?'Edited':'Added')+' card',name);Store.save();Modal.close();this.render();Toast.show((editId?'Updated':'Added')+': '+name,'success');
     if(!editId){
       const cLow=name.toLowerCase();

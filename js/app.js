@@ -2347,6 +2347,9 @@ function buildNav() {
       seenIds.add(m.id);
       return true;
     });
+    if (moreItems.length === 0) {
+      [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }].forEach(m => moreItems.push(m));
+    }
     const getItemCount = id => {
       if (id === 'trash') return (S.trash || []).length;
       if (id === 'reminders') return (S.reminders || []).filter(r => !r.done && r.date && new Date(r.date) <= new Date()).length;
@@ -2834,6 +2837,7 @@ function applyLargeText(on) {
   }
   Store.save();
 }
+window.applyLargeText = applyLargeText;
 
 // ===================== SECURITY HARDENING =====================
 
