@@ -4,7 +4,7 @@
   --bg: #080808; --bg2: #0f0f0f; --bg3: #161616;
   --glass: rgba(255,255,255,0.04); --glass2: rgba(255,255,255,0.07); --glass3: rgba(255,255,255,0.12);
   --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13); --border3: rgba(255,255,255,0.2);
-  --text: #f0f0f0; --text2: #8a8a8a; --text3: #3a3a3a;
+  --text: #f0f0f0; --text2: #adadad; --text3: #555555;
   --accent: #0080ff; --glow: rgba(0,128,255,0.2);
   --ok: #00d68f; --warn: #ffaa00; --err: #ff4060; --info: #00aaff;
   --r: 14px; --rsm: 8px; --rlg: 20px; --rxl: 26px; --rfull: 9999px;
@@ -166,3 +166,11 @@ body.session-clean input[type=password] { color: transparent; caret-color: var(-
 @keyframes obIn    { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes breathe { 0%, 100% { opacity: 0.65; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
 @keyframes lockIn  { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* ─ Large text mode ─ */
+body.large-text { font-size: 17px; }
+body.large-text .entry-name { font-size: 17px; }
+body.large-text .entry-sub { font-size: 13px; }
+body.large-text .badge { font-size: 11px; }
+body.large-text .btn { font-size: 15px; }
+body.large-text .inp { font-size: 16px; }

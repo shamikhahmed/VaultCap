@@ -181,10 +181,8 @@ const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eTo
 const SMART_DB = {
   banks:[
     {name:'HBL',country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
-    {name:'Habib Bank Limited',country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
     {name:'Meezan Bank',country:'PK',currency:'PKR',type:'islamic',swift:'MEZNPKKA'},
     {name:'UBL',country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
-    {name:'United Bank Limited',country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
     {name:'MCB Bank',country:'PK',currency:'PKR',type:'commercial',swift:'MCIBPKKA'},
     {name:'Bank Alfalah',country:'PK',currency:'PKR',type:'commercial',swift:'ALFHPKKA'},
     {name:'Allied Bank',country:'PK',currency:'PKR',type:'commercial',swift:'ABPAPKKA'},
@@ -825,6 +823,9 @@ const R = {
     this.startClock();
     const sub = document.getElementById('lkSub');
     if (sub && S.user.name) sub.textContent = `Welcome back, ${S.user.name}`;
+    // Forgot PIN only shows before first successful unlock this session
+    const fp = document.getElementById('forgotPinLink');
+    if (fp) fp.style.display = window._vosUnlocked ? 'none' : 'inline';
   },
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
@@ -835,6 +836,7 @@ const R = {
   },
   unlock() {
     S.unlocked = true; S.decoy = false;
+    window._vosUnlocked = true;
     ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     document.getElementById('app').style.display = 'flex';
     document.getElementById('fab').style.display = 'flex';
@@ -1157,6 +1159,29 @@ const OB = {
     document.getElementById('pgOnboard').style.display = 'none';
     Toast.show(`Welcome to VaultOS, ${S.user.name}! 🎉`, 'success');
     R.unlock();
+    setTimeout(() => {
+      const ov = document.createElement('div');
+      ov.id = 'quickStartOv';
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:24px';
+      ov.innerHTML = `
+        <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start 🚀</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
+          <div onclick="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
+            <span style="font-size:26px">🏦</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs & login details</div></div><span style="color:var(--accent)">→</span>
+          </div>
+          <div onclick="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
+            <span style="font-size:26px">🪪</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
+          </div>
+          <div onclick="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
+            <span style="font-size:26px">📱</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers & networks</div></div><span style="color:var(--accent)">→</span>
+          </div>
+        </div>
+        <button onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
+      `;
+      document.body.appendChild(ov);
+      setTimeout(() => { const e = document.getElementById('quickStartOv'); if (e) e.remove(); }, 8000);
+    }, 400);
   }
 };
 
@@ -1175,6 +1200,65 @@ const Activity = {
     return new Date(iso).toLocaleDateString();
   }
 };
+
+// ===================== DUPLICATE CHECKER =====================
+const _BANK_ALIAS_GROUPS = [
+  ['hbl','habib bank limited','habib bank'],
+  ['mcb bank','mcb','muslim commercial bank'],
+  ['ubl','united bank','united bank limited'],
+  ['nbp','national bank of pakistan','national bank'],
+  ['allied bank','abl'],
+  ['bank alfalah','alfalah'],
+  ['standard chartered','stanchart','standard chartered pk'],
+];
+function checkDuplicate(type, data) {
+  const n = s => (s||'').toLowerCase().trim();
+  if (type === 'bank') {
+    const nm = n(data.bankName);
+    const grp = _BANK_ALIAS_GROUPS.find(g => g.some(a => a === nm || nm.includes(a) || a.includes(nm)));
+    const ex = (S.banks||[]).find(b => {
+      const bn = n(b.bankName);
+      if (bn === nm) return true;
+      if (grp && grp.some(a => a === bn)) return true;
+      return false;
+    });
+    if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: "${ex.bankName}" already exists. Save anyway?` };
+  }
+  if (type === 'card') {
+    const ex = (S.cards||[]).find(c => n(c.cardName) === n(data.cardName) && (c.last4||'') === (data.last4||''));
+    if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: "${ex.cardName}"${ex.last4?' ****'+ex.last4:''} already exists. Save anyway?` };
+  }
+  if (type === 'sim') {
+    const ph = s => (s||'').replace(/\D/g,'').slice(-7);
+    const ex = (S.sims||[]).find(s => n(s.network) === n(data.network) && ph(s.phone) && ph(data.phone) && ph(s.phone) === ph(data.phone));
+    if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: ${ex.network} ${ex.phone} already exists. Save anyway?` };
+  }
+  if (type === 'email') {
+    const ex = (S.emails||[]).find(e => n(e.email) === n(data.email));
+    if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: "${ex.email}" already exists. Save anyway?` };
+  }
+  return { isDuplicate:false };
+}
+
+// ===================== AUTO TAGS =====================
+function autoTags(type, data) {
+  const tags = [];
+  if (type === 'bank') {
+    if (data.bankType === 'islamic') { tags.push('islamic'); tags.push('halal'); }
+    if (data.country === 'PK') tags.push('pakistan');
+    if ((data.balance||0) > 100000) tags.push('high-value');
+  } else if (type === 'card') {
+    if (data.network === 'American Express') { tags.push('amex'); tags.push('travel'); }
+    if ((data.cardType||'').toLowerCase() === 'credit') tags.push('credit');
+    if ((data.annualFee||0) > 0) tags.push('paid');
+  } else if (type === 'investment') {
+    if (data.type === 'Crypto') { tags.push('crypto'); tags.push('high-risk'); }
+    if (data.type === 'Sukuk') { tags.push('islamic'); tags.push('halal'); }
+  } else if (type === 'sim') {
+    if (data.country === 'PK') tags.push('pakistan');
+  }
+  return tags;
+}
 
 // ===================== UTILS =====================
 const U = {
@@ -1625,6 +1709,146 @@ function loadDecoyData() {
   R.goto('dashboard');
 }
 
+// ===================== DEMO PROFILES =====================
+function loadDemoProfile(type) {
+  const id = U.id, ts = new Date().toISOString();
+  // Reset all arrays
+  ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents'].forEach(k => { if (!S[k]) S[k]=[]; });
+
+  if (type === 'business') {
+    S.user.name = 'Ahmed Karimi'; S.user.currency = 'PKR';
+    S.banks.push({id:id(),bankName:'HBL',country:'PK',bankType:'commercial',accountType:'Current',currency:'PKR',last4:'4821',balance:450000,holderName:'Ahmed Karimi',tags:['Primary','Business'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Meezan Bank',country:'PK',bankType:'islamic',accountType:'Savings',currency:'PKR',last4:'3310',balance:850000,holderName:'Ahmed Karimi',tags:['Savings','Islamic'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Bank Alfalah',country:'PK',bankType:'commercial',accountType:'Business',currency:'PKR',last4:'7734',balance:1200000,holderName:'Ahmed Karimi',tags:['Business'],createdAt:ts});
+    S.cards.push({id:id(),cardName:'HBL Premier World Elite',network:'Mastercard',cardType:'Credit',category:'Premium',country:'PK',last4:'4821',expiry:'09/27',holderName:'AHMED KARIMI',createdAt:ts});
+    S.cards.push({id:id(),cardName:'Meezan Visa Debit',network:'Visa',cardType:'Debit',category:'Islamic',country:'PK',last4:'3310',expiry:'11/26',holderName:'AHMED KARIMI',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Engro Corporation',broker:'Arif Habib Limited',type:'Stocks',ticker:'ENGRO',country:'PK',currency:'PKR',amountInvested:500000,currentValue:567000,riskLevel:'Medium',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Al Meezan Islamic Fund',broker:'Al Meezan Investments',type:'Mutual Funds',country:'PK',currency:'PKR',amountInvested:300000,currentValue:328500,riskLevel:'Low',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:15000,currency:'PKR',createdAt:ts});
+    S.cash.push({id:id(),location:'Office',amount:50000,currency:'PKR',createdAt:ts});
+    S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 9876543',createdAt:ts});
+    S.sims.push({id:id(),network:'Zong',country:'PK',simType:'Physical',status:'Active',phone:'+92 311 2345678',createdAt:ts});
+    S.loans.push({id:id(),person:'Bilal Sheikh',type:'lent',amount:75000,currency:'PKR',status:'Active',date:'2024-01-15',createdAt:ts});
+    S.friends.push({id:id(),name:'Bilal Sheikh',createdAt:ts});
+    S.vehicles.push({id:id(),make:'Toyota',model:'Corolla',year:'2021',regPlate:'LHR-1234',fuel:'Petrol',createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPhone 15 Pro',brand:'Apple',category:'Phone',serialNum:'F2K3L8M9P2',purchasePrice:350000,currency:'PKR',warranty:'2025-10',createdAt:ts});
+    S.gadgets.push({id:id(),name:'MacBook Pro 14" M3',brand:'Apple',category:'Laptop',purchasePrice:580000,currency:'PKR',warranty:'2026-03',createdAt:ts});
+    S.expenses.push({id:id(),name:'Netflix',amount:1200,currency:'PKR',category:'Streaming',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'ChatGPT Plus',amount:7000,currency:'PKR',category:'AI',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'iCloud+ 2TB',amount:1600,currency:'PKR',category:'Cloud',active:true,createdAt:ts});
+    S.emails.push({id:id(),email:'ahmed.karimi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
+    S.emails.push({id:id(),email:'ahmed@karimiconsulting.pk',provider:'Custom Domain',purpose:'Business',mfaEnabled:true,createdAt:ts});
+
+  } else if (type === 'student') {
+    S.user.name = 'Zara Khan'; S.user.currency = 'GBP';
+    S.banks.push({id:id(),bankName:'Monzo',country:'GB',bankType:'digital',accountType:'Current',currency:'GBP',last4:'7821',balance:2340,holderName:'Zara Khan',tags:['Primary'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Barclays',country:'GB',bankType:'commercial',accountType:'Student',currency:'GBP',last4:'4456',balance:500,holderName:'Zara Khan',tags:['Backup'],createdAt:ts});
+    S.cards.push({id:id(),cardName:'Monzo Visa',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'7821',expiry:'08/28',holderName:'ZARA KHAN',createdAt:ts});
+    S.cards.push({id:id(),cardName:'Barclaycard Mastercard',network:'Mastercard',cardType:'Credit',category:'Standard',country:'GB',last4:'4456',expiry:'05/27',holderName:'ZARA KHAN',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Vanguard Global Index',broker:'Trading 212',type:'Mutual Funds',country:'GB',currency:'GBP',amountInvested:500,currentValue:542,riskLevel:'Medium',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Bitcoin',ticker:'BTC',broker:'Coinbase',type:'Crypto',currency:'USD',amountInvested:200,currentValue:380,riskLevel:'High',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:120,currency:'GBP',createdAt:ts});
+    S.sims.push({id:id(),network:'giffgaff',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 234567',createdAt:ts});
+    S.loans.push({id:id(),person:'Parents',type:'borrowed',amount:3000,currency:'GBP',status:'Active',date:'2023-09-01',notes:'Tuition support',createdAt:ts});
+    S.gadgets.push({id:id(),name:'MacBook Air M2 13"',brand:'Apple',category:'Laptop',purchasePrice:1099,currency:'GBP',warranty:'2026-06',createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPhone 15',brand:'Apple',category:'Phone',purchasePrice:799,currency:'GBP',warranty:'2026-09',createdAt:ts});
+    S.expenses.push({id:id(),name:'Spotify',amount:11.99,currency:'GBP',category:'Music',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'Amazon Prime',amount:8.99,currency:'GBP',category:'Streaming',active:true,createdAt:ts});
+    S.emails.push({id:id(),email:'zara.khan@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
+    S.emails.push({id:id(),email:'z.khan@university.ac.uk',provider:'Custom Domain',purpose:'University',mfaEnabled:false,createdAt:ts});
+    S.friends.push({id:id(),name:'Aisha Malik',createdAt:ts});
+    S.friends.push({id:id(),name:'Omar Hassan',createdAt:ts});
+
+  } else if (type === 'family') {
+    S.user.name = 'Tariq Al-Rashidi'; S.user.currency = 'AED';
+    S.banks.push({id:id(),bankName:'Emirates NBD',country:'AE',bankType:'commercial',accountType:'Current',currency:'AED',last4:'9912',balance:85000,holderName:'Tariq Al-Rashidi',tags:['Primary'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'ADCB',country:'AE',bankType:'commercial',accountType:'Savings',currency:'AED',last4:'3344',balance:220000,holderName:'Tariq Al-Rashidi',tags:['Savings'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'HSBC',country:'GB',bankType:'commercial',accountType:'Current',currency:'GBP',last4:'5577',balance:15000,holderName:'Tariq Al-Rashidi',tags:['UK'],createdAt:ts});
+    S.cards.push({id:id(),cardName:'Emirates NBD Visa',network:'Visa',cardType:'Credit',category:'Premium',country:'AE',last4:'9912',expiry:'12/27',holderName:'TARIQ AL-RASHIDI',createdAt:ts});
+    S.cards.push({id:id(),cardName:'ADCB Visa',network:'Visa',cardType:'Debit',category:'Standard',country:'AE',last4:'3344',expiry:'04/28',holderName:'TARIQ AL-RASHIDI',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Dubai Real Estate Fund',broker:'Sarwa',type:'Mutual Funds',country:'AE',currency:'AED',amountInvested:50000,currentValue:58500,riskLevel:'Medium',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Saudi Aramco',ticker:'2222',broker:'Sarwa',type:'Stocks',country:'AE',currency:'AED',amountInvested:15000,currentValue:17800,riskLevel:'Low',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:3000,currency:'AED',createdAt:ts});
+    S.cash.push({id:id(),location:'Home',amount:10000,currency:'AED',createdAt:ts});
+    S.sims.push({id:id(),network:'du',country:'AE',simType:'Physical',status:'Active',phone:'+971 50 234 5678',createdAt:ts});
+    S.loans.push({id:id(),person:'Ahmad (Brother)',type:'lent',amount:20000,currency:'AED',status:'Active',date:'2023-06-01',createdAt:ts});
+    S.vehicles.push({id:id(),make:'BMW',model:'X5',year:'2022',regPlate:'Dubai B 12345',fuel:'Petrol',createdAt:ts});
+    S.assets.push({id:id(),name:'Dubai Apartment',assetType:'property',currentValue:1200000,currency:'AED',purchasePrice:950000,createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPhone 16 Pro',brand:'Apple',category:'Phone',purchasePrice:4500,currency:'AED',warranty:'2026-10',createdAt:ts});
+    S.expenses.push({id:id(),name:'Netflix',amount:55,currency:'AED',category:'Streaming',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'iCloud+ 2TB',amount:39,currency:'AED',category:'Cloud',active:true,createdAt:ts});
+    S.emails.push({id:id(),email:'tariq.rashidi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
+    S.friends.push({id:id(),name:'Ahmad Al-Rashidi',createdAt:ts});
+    S.friends.push({id:id(),name:'Fatima Hassan',createdAt:ts});
+
+  } else if (type === 'expat') {
+    S.user.name = 'Sana Mirza'; S.user.currency = 'GBP';
+    S.banks.push({id:id(),bankName:'Revolut',country:'GB',bankType:'digital',accountType:'Premium',currency:'GBP',last4:'2291',balance:12500,holderName:'Sana Mirza',tags:['Primary','Multi-currency'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Wise',country:'GB',bankType:'digital',accountType:'Multi-currency',currency:'GBP',last4:'8844',balance:8000,holderName:'Sana Mirza',tags:['Transfer'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'HBL',country:'PK',bankType:'commercial',accountType:'Current',currency:'PKR',last4:'5512',balance:350000,holderName:'Sana Mirza',tags:['Pakistan'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Emirates NBD',country:'AE',bankType:'commercial',accountType:'Savings',currency:'AED',last4:'7733',balance:45000,holderName:'Sana Mirza',tags:['UAE'],createdAt:ts});
+    S.cards.push({id:id(),cardName:'Revolut Visa',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'2291',expiry:'07/28',holderName:'SANA MIRZA',createdAt:ts});
+    S.cards.push({id:id(),cardName:'Wise Mastercard',network:'Mastercard',cardType:'Debit',category:'Digital',country:'GB',last4:'8844',expiry:'03/27',holderName:'SANA MIRZA',createdAt:ts});
+    S.cards.push({id:id(),cardName:'Meezan Visa Debit',network:'Visa',cardType:'Debit',category:'Islamic',country:'PK',last4:'5512',expiry:'11/26',holderName:'SANA MIRZA',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Vanguard S&P 500',broker:'Freetrade',type:'Stocks',country:'GB',currency:'GBP',amountInvested:8000,currentValue:9650,riskLevel:'Medium',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Bitcoin',ticker:'BTC',broker:'Coinbase',type:'Crypto',currency:'USD',amountInvested:2000,currentValue:3840,riskLevel:'High',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'NBP Income Fund',broker:'NBP Funds',type:'Mutual Funds',country:'PK',currency:'PKR',amountInvested:200000,currentValue:228000,riskLevel:'Low',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:200,currency:'GBP',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:5000,currency:'PKR',createdAt:ts});
+    S.cash.push({id:id(),location:'Wallet',amount:500,currency:'AED',createdAt:ts});
+    S.sims.push({id:id(),network:'EE',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',createdAt:ts});
+    S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPhone 15 Pro Max',brand:'Apple',category:'Phone',purchasePrice:1199,currency:'GBP',warranty:'2026-10',createdAt:ts});
+    S.emails.push({id:id(),email:'sana.mirza@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
+    S.emails.push({id:id(),email:'sana@protonmail.com',provider:'ProtonMail',purpose:'Private',mfaEnabled:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'Revolut Premium',amount:9.99,currency:'GBP',category:'Finance',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'NordVPN',amount:3.99,currency:'GBP',category:'VPN',active:true,createdAt:ts});
+    S.friends.push({id:id(),name:'Rania Shah',createdAt:ts});
+    S.friends.push({id:id(),name:'Hassan Malik',createdAt:ts});
+    S.friends.push({id:id(),name:'Meera Patel',createdAt:ts});
+
+  } else if (type === 'entrepreneur') {
+    S.user.name = 'Omar Qureshi'; S.user.currency = 'GBP';
+    S.banks.push({id:id(),bankName:'Barclays',country:'GB',bankType:'commercial',accountType:'Business',currency:'GBP',last4:'3301',balance:45000,holderName:'Omar Qureshi',tags:['Business','UK'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Monzo',country:'GB',bankType:'digital',accountType:'Current',currency:'GBP',last4:'9922',balance:8500,holderName:'Omar Qureshi',tags:['Personal'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'MCB Bank',country:'PK',bankType:'commercial',accountType:'Business',currency:'PKR',last4:'7744',balance:2500000,holderName:'Omar Qureshi',tags:['Pakistan','Business'],createdAt:ts});
+    S.banks.push({id:id(),bankName:'Meezan Bank',country:'PK',bankType:'islamic',accountType:'Current',currency:'PKR',last4:'1133',balance:900000,holderName:'Omar Qureshi',tags:['Pakistan','Islamic'],createdAt:ts});
+    S.cards.push({id:id(),cardName:'Barclaycard Mastercard',network:'Mastercard',cardType:'Credit',category:'Business',country:'GB',last4:'3301',expiry:'06/27',holderName:'OMAR QURESHI',annualFee:195,createdAt:ts});
+    S.cards.push({id:id(),cardName:'Amex Gold',network:'American Express',cardType:'Credit',category:'Premium',country:'GB',last4:'8812',expiry:'04/28',holderName:'OMAR QURESHI',annualFee:160,createdAt:ts});
+    S.cards.push({id:id(),cardName:'MCB Visa',network:'Visa',cardType:'Credit',category:'Standard',country:'PK',last4:'7744',expiry:'10/26',holderName:'OMAR QURESHI',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'HSBC Holdings',ticker:'HSBA',broker:'Hargreaves Lansdown',type:'Stocks',country:'GB',currency:'GBP',amountInvested:12000,currentValue:13800,riskLevel:'Low',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Ethereum',ticker:'ETH',broker:'Binance',type:'Crypto',currency:'USD',amountInvested:5000,currentValue:8200,riskLevel:'High',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'Systems Ltd',ticker:'SYS',broker:'Topline Securities',type:'Stocks',country:'PK',currency:'PKR',amountInvested:800000,currentValue:1040000,riskLevel:'Medium',createdAt:ts});
+    S.investments.push({id:id(),investmentName:'USDT',ticker:'USDT',broker:'Binance',type:'Crypto',currency:'USD',amountInvested:10000,currentValue:10000,riskLevel:'Low',createdAt:ts});
+    S.cash.push({id:id(),location:'Office',amount:5000,currency:'GBP',createdAt:ts});
+    S.cash.push({id:id(),location:'Home',amount:100000,currency:'PKR',createdAt:ts});
+    S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7800 567890',createdAt:ts});
+    S.sims.push({id:id(),network:'Zong',country:'PK',simType:'Physical',status:'Active',phone:'+92 310 9876543',createdAt:ts});
+    S.vehicles.push({id:id(),make:'Tesla',model:'Model 3',year:'2023',regPlate:'BM23 XYZ',fuel:'Electric',createdAt:ts});
+    S.gadgets.push({id:id(),name:'MacBook Pro 16" M4 Max',brand:'Apple',category:'Laptop',purchasePrice:3499,currency:'GBP',warranty:'2027-01',createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPhone 16 Pro Max',brand:'Apple',category:'Phone',purchasePrice:1199,currency:'GBP',warranty:'2026-10',createdAt:ts});
+    S.gadgets.push({id:id(),name:'iPad Pro 13" M4',brand:'Apple',category:'Tablet',purchasePrice:1299,currency:'GBP',warranty:'2026-05',createdAt:ts});
+    S.expenses.push({id:id(),name:'Microsoft 365',amount:9.99,currency:'GBP',category:'Productivity',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'Adobe CC',amount:54.99,currency:'GBP',category:'Design',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'ChatGPT Plus',amount:20,currency:'GBP',category:'AI',active:true,createdAt:ts});
+    S.expenses.push({id:id(),name:'LinkedIn Premium',amount:39.99,currency:'GBP',category:'Business',active:true,createdAt:ts});
+    S.emails.push({id:id(),email:'omar@qureshi.co.uk',provider:'Custom Domain',purpose:'Business',mfaEnabled:true,createdAt:ts});
+    S.emails.push({id:id(),email:'omar.qureshi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
+    S.emails.push({id:id(),email:'omar@protonmail.com',provider:'ProtonMail',purpose:'Private',mfaEnabled:true,createdAt:ts});
+    S.friends.push({id:id(),name:'Nadia Hussain',createdAt:ts});
+    S.friends.push({id:id(),name:'Kamran Akhtar',createdAt:ts});
+    S.friends.push({id:id(),name:'Sophie Williams',createdAt:ts});
+    S.assets.push({id:id(),name:'Manchester Apartment',assetType:'property',currentValue:285000,currency:'GBP',purchasePrice:220000,createdAt:ts});
+    S.loans.push({id:id(),person:'Kamran Akhtar',type:'lent',amount:5000,currency:'GBP',status:'Active',date:'2024-03-10',createdAt:ts});
+  }
+
+  S.user.netWorth = 0;
+  Store.save();
+  if (S.unlocked) { buildNav(); R.goto('dashboard'); }
+}
+
+function loadDemoData() { loadDemoProfile('business'); }
+
 // ===================== SECURITY HARDENING =====================
 
 // Console suppression in production (non-localhost)
@@ -1729,6 +1953,7 @@ async function App() {
     document.body.className = document.body.className.trim() + ' fs-' + fs;
   }
   if (S.highContrast && !document.body.classList.contains('hc')) document.body.classList.add('hc');
+  if (S.largeText) document.body.classList.add('large-text');
 
   // Check if old localStorage data exists (migration)
   const oldData = Store.loadRaw();

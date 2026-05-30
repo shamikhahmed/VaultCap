@@ -345,10 +345,30 @@ const Settings={
     else{document.getElementById('mk-err').textContent='Invalid master key — check and try again';}
   },
   loadDemo(){
-    if(!window.__vos_confirm('Load fictional demo data?'))return;
-    loadDemoData();
-    localStorage.setItem('vos_demo_mode','1');
-    buildNav();Toast.show('Demo data loaded!','success');this.render();
+    const profiles=[
+      {id:'business',ic:'👔',label:'Business Professional (Karachi)',desc:'PKR · HBL, Meezan, Alfalah · PSX stocks'},
+      {id:'student',ic:'🎓',label:'Student (UK)',desc:'GBP · Monzo, Barclays · index funds, crypto'},
+      {id:'family',ic:'🏠',label:'Family (Dubai)',desc:'AED · Emirates NBD, ADCB · property investment'},
+      {id:'expat',ic:'💼',label:'Expat (Multiple Countries)',desc:'GBP/PKR/AED · Revolut, HBL, Emirates NBD'},
+      {id:'entrepreneur',ic:'🚀',label:'Entrepreneur (Pakistan + UK)',desc:'GBP/PKR · Barclays, MCB · crypto + PSX stocks'},
+    ];
+    Modal.open('🎮 Load Demo Data',`
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Choose a fictional profile to explore VaultOS. All data is made up.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${profiles.map(p=>`<div onclick="Settings._loadProfile('${p.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+          <span style="font-size:24px">${p.ic}</span>
+          <div style="flex:1"><div style="font-weight:700;font-size:13px">${p.label}</div><div style="font-size:11px;color:var(--text3)">${p.desc}</div></div>
+          <span style="color:var(--accent)">→</span>
+        </div>`).join('')}
+      </div>
+    `,`<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`);
+  },
+  _loadProfile(type){
+    if(!window.__vos_confirm('Load demo data? This will merge fictional data with your vault.'))return;
+    Modal.close();
+    loadDemoProfile(type);
+    buildNav();Toast.show('Demo data loaded!','success');
+    if(typeof SettingsNav!=='undefined')SettingsNav.show('profile');
   },
   resetVault(){
     if(!window.__vos_confirm('⚠️ This will permanently delete ALL your vault data.'))return;
@@ -438,6 +458,117 @@ const ExIm={
       }catch(err){Toast.show('Failed to read file: '+err.message,'error');}
     };
     r.readAsText(file);ev.target.value='';
+  }
+};
+
+// ===================== QR SYNC =====================
+const QRSync = {
+  async exportQR() {
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const data = { ver:'4.0', exported:new Date().toISOString(), banks:S.banks, cards:S.cards, investments:S.investments, sims:S.sims, cash:S.cash, loans:S.loans, friends:S.friends, assets:S.assets, expenses:S.expenses, emails:S.emails, gadgets:S.gadgets, digital:S.digital };
+    let enc;
+    try { enc = await Crypto.encrypt(JSON.stringify(data), code); } catch(e) { Toast.show('Encryption error', 'error'); return; }
+    const qrData = JSON.stringify({ v:'vos1', enc, hint:'Enter the 6-digit code shown on your other device' });
+    Modal.open('📱 Sync to Another Device', `
+      <div style="text-align:center;padding:8px 0">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Scan this QR code from the other device, then enter your 6-digit sync code.</p>
+        <div style="font-size:38px;font-weight:900;letter-spacing:8px;color:var(--accent);background:var(--glass2);padding:16px;border-radius:var(--r);margin-bottom:14px;font-family:var(--mono)">${code}</div>
+        <div id="qrContainer" style="display:flex;justify-content:center;margin-bottom:12px;background:#fff;padding:12px;border-radius:var(--r);display:inline-block"></div>
+        <p style="font-size:11px;color:var(--text3);margin-top:10px">Code expires when you close this dialog. One-time use only.</p>
+      </div>
+    `, `<button class="btn btn-p btn-full" onclick="Modal.close()">Done</button>`);
+    setTimeout(() => {
+      const el = document.getElementById('qrContainer');
+      if (el && typeof QRCode !== 'undefined') {
+        try { new QRCode(el, { text: qrData.length > 2000 ? JSON.stringify({v:'vos1',hint:'VaultOS sync data — too large for QR, use file export'}) : qrData, width:200, height:200 }); }
+        catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err)">QR too large — use file export instead</div>'; }
+      } else if (el) { el.innerHTML = '<div style="font-size:12px;color:var(--text2)">QR library not loaded</div>'; }
+    }, 200);
+  },
+
+  importQR() {
+    Modal.open('📷 Scan from Another Device', `
+      <div style="text-align:center;padding:8px 0">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Point your camera at the QR code shown on the other device.</p>
+        <video id="qrVideo" style="width:100%;max-width:320px;border-radius:var(--r);background:#000" autoplay playsinline></video>
+        <canvas id="qrCanvas" style="display:none"></canvas>
+        <div id="qrStatus" style="font-size:12px;color:var(--text3);margin-top:8px">Starting camera…</div>
+      </div>
+    `, `<button class="btn btn-g" onclick="QRSync._stopCamera();Modal.close()">Cancel</button>`);
+    setTimeout(() => this._startCamera(), 300);
+  },
+
+  _stream: null,
+  _stopCamera() {
+    if (this._stream) { this._stream.getTracks().forEach(t => t.stop()); this._stream = null; }
+  },
+
+  async _startCamera() {
+    const video = document.getElementById('qrVideo');
+    const status = document.getElementById('qrStatus');
+    if (!video) return;
+    try {
+      this._stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = this._stream;
+      video.play();
+      status.textContent = 'Scanning…';
+      this._scanLoop();
+    } catch(e) { if (status) status.textContent = 'Camera access denied — check permissions'; }
+  },
+
+  _scanLoop() {
+    const video = document.getElementById('qrVideo');
+    const canvas = document.getElementById('qrCanvas');
+    if (!video || !canvas || !this._stream) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
+    ctx.drawImage(video, 0, 0);
+    try {
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      if (typeof jsQR !== 'undefined') {
+        const result = jsQR(img.data, img.width, img.height);
+        if (result?.data) { this._stopCamera(); this._processQR(result.data); return; }
+      }
+    } catch(e) {}
+    if (document.getElementById('qrVideo')) setTimeout(() => this._scanLoop(), 200);
+  },
+
+  _processQR(raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed.v !== 'vos1' || !parsed.enc) { Toast.show('Invalid QR code', 'error'); return; }
+      Modal.open('🔐 Enter Sync Code', `
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Enter the 6-digit code shown on the other device.</p>
+        <div class="fg"><label class="fl">Sync Code</label><input class="inp" id="qrCodeIn" maxlength="6" inputmode="numeric" placeholder="123456" style="text-align:center;font-size:24px;letter-spacing:8px;font-family:var(--mono)"></div>
+        <div class="ferr" id="qrCodeErr"></div>
+      `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
+    } catch(e) { Toast.show('Failed to read QR code', 'error'); }
+  },
+
+  async _decryptAndMerge(encEncoded) {
+    const code = document.getElementById('qrCodeIn')?.value.trim();
+    if (!code || code.length !== 6) { const e = document.getElementById('qrCodeErr'); if (e) e.textContent = 'Enter the 6-digit sync code'; return; }
+    try {
+      const enc = decodeURIComponent(encEncoded);
+      const raw = await Crypto.decrypt(enc, code);
+      const data = JSON.parse(raw);
+      const now = t => t ? new Date(t).getTime() : 0;
+      ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital'].forEach(k => {
+        if (!Array.isArray(data[k])) return;
+        data[k].forEach(item => {
+          const existing = (S[k]||[]).find(x => x.id === item.id);
+          if (!existing) { if (!S[k]) S[k]=[]; S[k].push(item); }
+          else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
+        });
+      });
+      Store.save(); buildNav(); Modal.close();
+      Toast.show('Vault synced successfully!', 'success');
+      R.goto(S.currentPage || 'dashboard');
+    } catch(e) {
+      const err = document.getElementById('qrCodeErr');
+      if (err) err.textContent = 'Wrong code or corrupted data';
+    }
   }
 };
 
@@ -1225,6 +1356,8 @@ const SettingsNav = {
         <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="QRSync.exportQR()">📱 Sync to Another Device (QR)</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="QRSync.importQR()">📷 Scan from Another Device</button>
       </div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">💡 Backup Strategy</div><div class="set-card">
@@ -1237,6 +1370,7 @@ const SettingsNav = {
     return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
       <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import Engine</div><div class="desc">Paste text, drop files, scan images — VaultOS detects and imports entries automatically</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" onclick="R.goto('ai-import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🤖</div><div class="sil"><div class="name">AI Import (Smart Pattern Matching)</div><div class="desc">Advanced pattern engine — detect banks, cards, SIMs, investments from any text snippet</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📊</div><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls — auto-detect sheets and map to vault modules</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🔒</div><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup file or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
     </div></div>`;
   },
@@ -1245,7 +1379,7 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">♿ Accessibility</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="S.reduceMotion=this.checked;document.body.classList.toggle('reduce-motion',S.reduceMotion);Store.save();Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="S.largeText=this.checked;document.documentElement.style.fontSize=S.largeText?'17px':'15px';Store.save();Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="S.largeText=this.checked;document.body.classList.toggle('large-text',S.largeText);Store.save();Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
     </div></div>`;
   },
 

@@ -78,7 +78,7 @@
       <button class="key act" onclick="PIN.del()">⌫</button>
     </div>
     <div class="lk-hint">
-      <span onclick="Settings.forgotPIN()">Forgot PIN?</span>
+      <span id="forgotPinLink" onclick="Settings.forgotPIN()" style="display:none">Forgot PIN?</span>
     </div>
   </div>
 </div>
@@ -310,6 +310,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Choose Theme</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/app.js"></script>
 <script src="js/ui.js"></script>

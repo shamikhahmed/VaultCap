@@ -30,7 +30,31 @@ const Banks={
     return `<div class="entry"><div class="entry-main"><div class="entry-ic">${tIc[b.bankType]||'🏦'}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
   },
   emptyState(){return `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px"><div style="width:56px;height:56px;border-radius:16px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">🏦</div><h3 style="font-size:17px;font-weight:700;margin-bottom:6px">No banks added yet</h3><p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5">Start by adding your first bank account</p><button class="btn btn-p" onclick="Banks.openAdd()" style="padding:14px 28px;font-size:15px;font-weight:700;border-radius:14px">+ Add Bank</button></div>`;},
-  openAdd(){Modal.open('🏦 Add Bank',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Banks.save()">Save</button>`);this.bindCC();},
+  openAdd(){
+    const ctries=[{c:'PK',f:'🇵🇰',n:'Pakistan'},{c:'GB',f:'🇬🇧',n:'UK'},{c:'AE',f:'🇦🇪',n:'UAE'},{c:'US',f:'🇺🇸',n:'US'},{c:'OTHER',f:'🌍',n:'Other'}];
+    Modal.open('🏦 Add Bank',`
+      <div style="margin-bottom:4px"><div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Select Country</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px">
+        ${ctries.map(c=>`<div onclick="Banks._openWithCountry('${c.c}')" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:4px">${c.f}</div><div style="font-size:10px;font-weight:600;color:var(--text2)">${c.n}</div></div>`).join('')}
+      </div>
+      <div style="text-align:center"><button class="btn btn-g btn-sm" onclick="Banks._openWithCountry('')">✏️ Enter manually</button></div></div>
+    `,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button>`);
+  },
+  _openWithCountry(cc){
+    Modal.open('🏦 Add Bank',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Banks.save()">Save</button>`);
+    this.bindCC();
+    if(cc){setTimeout(()=>{const el=document.getElementById('bf-cc');if(el){el.value=cc;el.dispatchEvent(new Event('change'));}Banks._showBankChips(cc);},80);}
+  },
+  _showBankChips(cc){
+    const banks=SMART_DB.banks.filter(b=>b.country===cc).slice(0,14);
+    if(!banks.length)return;
+    const inp=document.getElementById('bf-name');if(!inp)return;
+    const existing=inp.parentElement.querySelector('.bank-chips');if(existing)existing.remove();
+    const ct=document.createElement('div');ct.className='bank-chips';
+    ct.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px';
+    ct.innerHTML=banks.map(b=>`<div class="chip" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('bf-name').value='${b.name}';SMART_DB.fillBank('${b.name}');this.parentElement.remove()">${b.name}</div>`).join('');
+    inp.parentElement.insertBefore(ct,inp);
+  },
   form(b={}){
     const isEdit=!!b.id;
     const bankNames=SMART_DB.banks.map(x=>`<option value="${x.name}">`).join('');
@@ -61,9 +85,11 @@ const Banks={
   bindCC(){setTimeout(()=>{const cc=document.getElementById('bf-cc');const cur=document.getElementById('bf-cur');if(cc){cc.onchange=()=>{document.getElementById('bankDL').innerHTML=SMART_DB.banks.filter(b=>b.country===cc.value).map(b=>`<option value="${b.name}">`).join('');const pfxMap={PK:'PKR',GB:'GBP',AE:'AED',US:'USD'};const c=document.getElementById('bf-cur');if(c)c.value=pfxMap[cc.value]||'GBP';};}if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
   save(editId=null){
     const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
+    if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const lf=U.getLF();
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
     const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat((g('bf-bal')||'').replace(/,/g,''))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const auto=autoTags('bank',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.banks=S.banks.map(x=>x.id===editId?item:x);else S.banks.push(item);
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(!editId)promptAddAnother('Bank','Banks.openAdd');

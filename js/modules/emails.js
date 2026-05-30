@@ -29,6 +29,7 @@ const Emails={
   save(editId=null){
     const addr=document.getElementById('emf-addr').value.trim();
     if(!addr||!addr.includes('@')){Toast.show('Valid email required','warning');return;}
+    if(!editId){const dup=checkDuplicate('email',{email:addr});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const item={id:editId||U.id(),email:addr,provider:document.getElementById('emf-prov').value.trim(),purpose:document.getElementById('emf-purp').value.trim(),pwdHint:document.getElementById('emf-pwd').value.trim(),recoveryEmail:document.getElementById('emf-rec').value.trim(),recoveryPhone:document.getElementById('emf-rph').value.trim(),twoFA:document.getElementById('emf-2fa').value.trim(),authenticatorApp:document.getElementById('emf-auth').value.trim(),mfaEnabled:document.getElementById('emf-mfa').checked,passkeyEnabled:document.getElementById('emf-pk').checked,backupCodesStored:document.getElementById('emf-bk').checked,linkedServices:document.getElementById('emf-subs').value.trim(),notes:document.getElementById('emf-notes').value.trim(),tags:U.getTags(),createdAt:editId?S.emails.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     if(editId)S.emails=S.emails.map(x=>x.id===editId?item:x);else S.emails.push(item);
     Activity.log((editId?'Edited':'Added')+' email',addr);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${addr}`,'success');

@@ -70,13 +70,28 @@ const Cards={
   },
   save(editId=null){
     const name=document.getElementById('cf-name').value.trim();if(!name){Toast.show('Card name required','warning');return;}
+    const _l4v=document.getElementById('cf-l4').value.trim();
+    if(!editId){const dup=checkDuplicate('card',{cardName:name,last4:_l4v});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const id2=editId||U.id();
     const carry=document.getElementById('cf-carry').checked;
     if(carry&&!S.wallet.includes(id2))S.wallet.push(id2);else if(!carry)S.wallet=S.wallet.filter(x=>x!==id2);
     const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:document.getElementById('cf-l4').value.trim(),expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,issuer:name.split(' ')[0],createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.cards=S.cards.map(x=>x.id===editId?item:x);else S.cards.push(item);
     Activity.log((editId?'Edited':'Added')+' card',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
-    if(!editId)promptAddAnother('Card','Cards.openAdd');
+    if(!editId){
+      // Auto-add bank if recognized and not already in S.banks
+      const cLow=name.toLowerCase();
+      const bMatch=SMART_DB.banks.find(b=>cLow.includes(b.name.toLowerCase()));
+      if(bMatch){
+        const bExists=(S.banks||[]).some(b=>b.bankName.toLowerCase()===bMatch.name.toLowerCase());
+        if(!bExists){
+          S.banks.push({id:U.id(),bankName:bMatch.name,country:bMatch.country,currency:bMatch.currency,bankType:bMatch.type,accountType:'Current',createdAt:new Date().toISOString()});
+          Store.save();Toast.show(`${bMatch.name} added to Banks`,'info',3000);
+        }
+      }
+      promptAddAnother('Card','Cards.openAdd');
+    }
   },
   edit(id){const c=S.cards.find(x=>x.id===id);if(!c)return;Modal.open('✏️ Edit Card',this.form(c),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Cards.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Cards.save('${id}')">Update</button>`);setTimeout(()=>{[['cf-net',c.network||'Visa'],['cf-type',c.cardType||'Credit'],['cf-cat',c.category||'Standard'],['cf-cc',c.country||'GB'],['cf-own',c.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});},60);},
   openDetail(id){const c=S.cards.find(x=>x.id===id);if(!c)return;Modal.open(`💳 ${c.cardName}`,`<div>${[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)],['Last 4','****'+(c.last4||'—')],['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}</div>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);},

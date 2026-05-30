@@ -24,7 +24,7 @@ const Cash = {
     }
     const locIc = { Wallet:'👛', Home:'🏠', Office:'🏢', Car:'🚗', Other:'📦' };
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span></div></div><div class="entry-acts"><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span></div></div><div class="entry-acts"><button class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
   },
   openAdd() {
     Modal.open('💵 Add Cash', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);
@@ -59,6 +59,50 @@ const Cash = {
       const amtEl = document.getElementById('cf-amt');
       if (amtEl) U.numInput(amtEl, c.currency || 'PKR');
     }, 60);
+  },
+  transfer(id) {
+    const src = (S.cash || []).find(x => x.id === id); if (!src) return;
+    const others = (S.cash || []).filter(x => x.id !== id);
+    const locOpts = ['Wallet','Home','Office','Car','Other'].filter(l => l !== src.location);
+    const otherEntries = others.filter(o => o.currency === src.currency);
+    const destOpts = [
+      ...locOpts.map(l => `<option value="__new__${l}">${l} (new entry)</option>`),
+      ...(otherEntries.length ? ['<option disabled>── existing ──</option>', ...otherEntries.map(o => `<option value="${o.id}">${o.location} (${(o.amount||0).toLocaleString()} ${o.currency})</option>`)] : [])
+    ].join('');
+    Modal.open('→ Transfer Cash', `
+      <div class="fg"><label class="fl">From</label><input class="inp" value="${src.location} · ${(src.amount||0).toLocaleString()} ${src.currency}" readonly style="opacity:.6"></div>
+      <div class="fg"><label class="fl">To *</label><select class="inp" id="ct-dest">${destOpts}</select></div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="ct-amt" type="text" inputmode="decimal" value="${src.amount||''}" placeholder="0"></div>
+        <div class="fg"><label class="fl">Currency</label><input class="inp" value="${src.currency||''}" readonly style="opacity:.6"></div>
+      </div>
+      <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
+    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash._doTransfer('${id}')">Transfer</button>`);
+    setTimeout(() => { const a = document.getElementById('ct-amt'); if (a) U.numInput(a, src.currency || 'PKR'); }, 60);
+  },
+  _doTransfer(srcId) {
+    const src = (S.cash || []).find(x => x.id === srcId); if (!src) return;
+    const rawAmt = (document.getElementById('ct-amt').value || '').replace(/,/g, '');
+    const amt = parseFloat(rawAmt) || 0;
+    if (!amt || amt <= 0) { Toast.show('Enter a valid amount', 'warning'); return; }
+    if (amt > (src.amount || 0)) { Toast.show('Amount exceeds available cash', 'warning'); return; }
+    const destVal = document.getElementById('ct-dest').value;
+    const note = document.getElementById('ct-note').value.trim();
+    // Reduce source
+    if (amt >= (src.amount || 0)) { S.cash = (S.cash || []).filter(x => x.id !== srcId); }
+    else { src.amount = parseFloat(((src.amount || 0) - amt).toFixed(2)); }
+    // Add to destination
+    if (destVal.startsWith('__new__')) {
+      const destLoc = destVal.replace('__new__', '');
+      S.cash.push({ id: U.id(), location: destLoc, amount: amt, currency: src.currency, notes: note, createdAt: new Date().toISOString() });
+    } else {
+      const dest = (S.cash || []).find(x => x.id === destVal);
+      if (dest) { dest.amount = parseFloat(((dest.amount || 0) + amt).toFixed(2)); }
+      else { S.cash.push({ id: U.id(), location: 'Other', amount: amt, currency: src.currency, notes: note, createdAt: new Date().toISOString() }); }
+    }
+    Activity.log('Cash transfer', `${amt} ${src.currency} from ${src.location}`);
+    Store.save(); Modal.close(); this.render();
+    Toast.show(`Moved ${src.currency} ${amt.toLocaleString()} from ${src.location}`, 'success');
   },
   del(id, fm = false) {
     if (!window.__vos_confirm('Delete this cash entry?')) return;

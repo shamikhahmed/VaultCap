@@ -162,11 +162,10 @@ const Loans = {
     if (!editId) {
       const alreadyFriend = (S.friends || []).some(f => f.name === person);
       if (!alreadyFriend) {
-        Loans._friendName = person;
-        Toast.show(
-          `Save <strong>${person}</strong> to Friends? <button style="margin-left:6px;padding:2px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600" onclick="Loans.addFriend(this)">Yes</button>`,
-          'info', 8000
-        );
+        S.friends = S.friends || [];
+        S.friends.push({ id: U.id(), name: person, createdAt: new Date().toISOString() });
+        Store.save();
+        Toast.show(`${person} added to Friends`, 'info', 2500);
       }
       promptAddAnother('Loan', `Loans.openAdd('${type}')`);
     }
