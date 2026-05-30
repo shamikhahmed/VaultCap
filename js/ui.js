@@ -1154,6 +1154,7 @@ const SettingsNav = {
 
   show(section) {
     this.current = section;
+    if (typeof buildSettTabs === 'function') buildSettTabs();
     const order = ['profile','security','appearance','modules','backup','import','accessibility','about'];
     document.querySelectorAll('#settTabs .tab-pill').forEach((p, i) => p.classList.toggle('on', order[i] === section));
     const b = document.getElementById('settBody');
