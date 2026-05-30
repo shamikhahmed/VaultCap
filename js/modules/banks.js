@@ -53,26 +53,74 @@ const Banks={
   _openWithCountry(cc){
     Modal.open('🏦 Add Bank',this.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Banks.save()">Save</button>`);
     this.bindCC();
-    if(cc){setTimeout(()=>{const el=document.getElementById('bf-cc');if(el){el.value=cc;el.dispatchEvent(new Event('change'));}Banks._showBankChips(cc);},80);}
+    if(cc){setTimeout(()=>{const el=document.getElementById('bf-cc');if(el){el.value=cc;Banks._onCountryChange(cc);}},80);}
   },
   _bankIcons:{HBL:'🏦',UBL:'🏛️','MCB Bank':'🏦','Bank Alfalah':'🔵','Allied Bank':'🟢','Askari Bank':'🪖','Meezan Bank':'🕌','Bank Al Habib':'🏦','Habib Metro Bank':'🏦','Faysal Bank':'🕌','Bank Islami':'☪️','Sadapay':'💜','NayaPay':'🔶','Zindigi':'⚡','JazzCash':'🟠','EasyPaisa':'🟢','NBP':'🏛️','Bank of Punjab':'🏛️','Monzo':'🔴','Starling Bank':'💙','Revolut':'⚫','Wise':'💚','Barclays':'🔵','HSBC':'🔴','NatWest':'🟣','Lloyds Bank':'🟢','Santander UK':'🔥','Halifax':'🏠','Nationwide':'🟡','Metro Bank':'🔴','First Direct':'🔵','Chase UK':'🔵','TSB':'🔵','Emirates NBD':'🟠','FAB':'🔷','ADCB':'🔵','Mashreq Bank':'🟦','ADIB':'🕌','Dubai Islamic Bank':'🕌','RAKBank':'🔴','Wio Bank':'🟢','Liv.':'💛','Commercial Bank of Dubai':'🏦','Chase':'🟦','Bank of America':'🔴','Wells Fargo':'🟡','Citibank':'🔵'},
+  _popularOrder:{
+    PK:['HBL','Meezan Bank','UBL','MCB Bank','Bank Alfalah','Allied Bank','Faysal Bank','Bank Al Habib','Askari Bank','Sadapay','NayaPay','Zindigi','JazzCash','EasyPaisa','NBP','Bank of Punjab'],
+    GB:['Monzo','Starling Bank','Barclays','HSBC UK','Lloyds Bank','NatWest','Revolut','Wise','Chase UK','Nationwide'],
+    AE:['Emirates NBD','FAB','ADCB','Dubai Islamic Bank','Mashreq Bank','ADIB','RAKBank','Wio Bank','Liv.'],
+    US:['Chase','Bank of America','Wells Fargo','Citibank']
+  },
   _showBankChips(cc){
-    const banks=SMART_DB.banks.filter(b=>b.country===cc).slice(0,16);
-    if(!banks.length)return;
-    const inp=document.getElementById('bf-name');if(!inp)return;
-    const existing=inp.parentElement.querySelector('.bank-tiles');if(existing)existing.remove();
-    const ct=document.createElement('div');ct.className='bank-tiles';
-    ct.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-bottom:12px';
-    ct.innerHTML=banks.map(b=>{
-      const ic=this._bankIcons[b.name]||'🏦';
-      const typeLabel={commercial:'',islamic:'Islamic',digital:'Digital',microfinance:'MFB',government:'Gov',international:'Intl'}[b.type]||'';
-      return `<div onclick="document.getElementById('bf-name').value='${b.name.replace(/'/g,"\\'")}';SMART_DB.fillBank('${b.name.replace(/'/g,"\\'")}');this.closest('.bank-tiles').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s">
-        <div style="font-size:22px;margin-bottom:4px">${ic}</div>
-        <div style="font-size:10px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div>
-        ${typeLabel?`<div style="font-size:9px;color:var(--text3);margin-top:2px">${typeLabel}</div>`:''}
-      </div>`;
-    }).join('');
-    inp.parentElement.insertBefore(ct,inp);
+    const wrap=document.getElementById('bf-bank-picker-wrap');
+    if(!wrap)return;
+    const allBanks=SMART_DB.banks.filter(b=>b.country===cc);
+    if(!allBanks.length){wrap.innerHTML='';return;}
+    const popularNames=this._popularOrder[cc]||[];
+    const popular=popularNames.map(n=>allBanks.find(b=>b.name===n)).filter(Boolean).slice(0,8);
+    const popularSet=new Set(popular.map(b=>b.name));
+    const grouped={commercial:[],islamic:[],digital:[],microfinance:[],government:[],international:[]};
+    allBanks.filter(b=>!popularSet.has(b.name)).forEach(b=>{
+      const g=grouped[b.type];
+      if(g)g.push(b);else grouped.commercial.push(b);
+    });
+    const typeLabels={commercial:'Commercial',islamic:'Islamic',digital:'Digital',microfinance:'Microfinance',government:'Government',international:'International'};
+    let optgroups='';
+    if(popular.length)optgroups+=`<optgroup label="Popular">${popular.map(b=>`<option value="${b.name}">${b.name}</option>`).join('')}</optgroup>`;
+    Object.entries(grouped).forEach(([type,banks])=>{
+      if(!banks.length)return;
+      banks.sort((a,b)=>a.name.localeCompare(b.name));
+      optgroups+=`<optgroup label="${typeLabels[type]||type}">${banks.map(b=>`<option value="${b.name}">${b.name}</option>`).join('')}</optgroup>`;
+    });
+    const tiles=popularNames.slice(0,16).map(n=>allBanks.find(b=>b.name===n)).filter(Boolean);
+    const safeCC=cc.replace(/'/g,"\\'");
+    wrap.innerHTML=`
+      <div class="fg" style="margin-bottom:10px">
+        <label class="fl">Select Bank</label>
+        <div style="position:relative">
+          <select class="inp" id="bf-bank-sel" onchange="Banks._onBankSelect(this.value)" style="padding-right:32px">
+            <option value="">— Choose a bank —</option>
+            ${optgroups}
+          </select>
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);font-size:11px">▾</span>
+        </div>
+      </div>
+      <details style="margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);padding:4px 0;list-style:none;display:flex;align-items:center;gap:5px"><span style="flex:1">▸ Show all banks as tiles</span></summary>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px" id="bf-tiles-grid">
+          ${tiles.map(b=>{
+            const ic=this._bankIcons[b.name]||'🏦';
+            const safeName=b.name.replace(/'/g,"\\'");
+            return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s"><div style="font-size:22px;margin-bottom:4px">${ic}</div><div style="font-size:10px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
+          }).join('')}
+        </div>
+      </details>`;
+  },
+  _onBankSelect(name){
+    if(!name)return;
+    const nameEl=document.getElementById('bf-name');
+    if(nameEl)nameEl.value=name;
+    const cc=document.getElementById('bf-cc')?.value||'';
+    SMART_DB.fillBank(name,cc);
+  },
+  _onCountryChange(cc){
+    const pfxMap={PK:'PKR',GB:'GBP',AE:'AED',US:'USD'};
+    const curEl=document.getElementById('bf-cur');
+    if(curEl&&pfxMap[cc])curEl.value=pfxMap[cc];
+    const dl=document.getElementById('bankDL');
+    if(dl)dl.innerHTML=SMART_DB.banks.filter(b=>b.country===cc).map(b=>`<option value="${b.name}">`).join('');
+    this._showBankChips(cc);
   },
   form(b={}){
     const isEdit=!!b.id;
@@ -80,9 +128,12 @@ const Banks={
     return `
     <datalist id="bankDL">${bankNames}</datalist>
     <datalist id="bfTypeDL"><option>commercial</option><option>islamic</option><option>microfinance</option><option>digital</option><option>international</option><option>government</option></datalist>
+    <!-- COUNTRY FIRST -->
+    <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="bf-cc" onchange="Banks._onCountryChange(this.value)">${U.countries()}</select></div><div class="fg"><label class="fl">Currency *</label><select class="inp" id="bf-cur">${U.currencies()}</select></div></div>
+    <!-- Bank picker injected here by _showBankChips() -->
+    <div id="bf-bank-picker-wrap"></div>
     <!-- REQUIRED -->
-    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" oninput="SMART_DB.fillBank(this.value)" value="${b.bankName||''}"></div>
-    <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="bf-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Currency *</label><select class="inp" id="bf-cur">${U.currencies()}</select></div></div>
+    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" oninput="SMART_DB.fillBank(this.value,document.getElementById('bf-cc')?.value)" value="${b.bankName||''}"></div>
     <!-- MORE DETAILS -->
     <details${isEdit?' open':''} style="margin-top:10px">
       <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
@@ -101,7 +152,7 @@ const Banks={
       </div>
     </details>`;
   },
-  bindCC(){setTimeout(()=>{const cc=document.getElementById('bf-cc');const cur=document.getElementById('bf-cur');if(cc){cc.onchange=()=>{document.getElementById('bankDL').innerHTML=SMART_DB.banks.filter(b=>b.country===cc.value).map(b=>`<option value="${b.name}">`).join('');const pfxMap={PK:'PKR',GB:'GBP',AE:'AED',US:'USD'};const c=document.getElementById('bf-cur');if(c)c.value=pfxMap[cc.value]||'GBP';};}if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
+  bindCC(){setTimeout(()=>{const cur=document.getElementById('bf-cur');if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
   save(editId=null){
     const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
     if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
@@ -110,11 +161,10 @@ const Banks={
     const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat((g('bf-bal')||'').replace(/,/g,''))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('bank',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.banks=S.banks.map(x=>x.id===editId?item:x);else S.banks.push(item);
-    if(typeof autoLink==='function')autoLink('bank',item);
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(!editId)promptAddAnother('Bank','Banks.openAdd');
   },
-  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();},60);},
+  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
   detail(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open(`🏦 ${b.bankName}`,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}</div>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Banks.edit('${id}');Modal.close()">Edit</button>`);},
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
   del(id,fm=false){

@@ -610,13 +610,14 @@ const SMART_DB = {
     {name:'International Vaccination Card',type:'vaccination',numberFormat:'',hasExpiry:false},
   ],
   // Auto-fill helpers
-  fillBank(val) {
+  fillBank(val, country) {
     const lv = val.toLowerCase();
-    const match = this.banks.find(b => {
+    const _find = list => list.find(b => {
       if (b.name.toLowerCase().includes(lv)) return true;
       if (b.aliases && b.aliases.some(a => a.toLowerCase().includes(lv))) return true;
       return false;
     });
+    const match = (country ? _find(this.banks.filter(b => b.country === country)) : null) || _find(this.banks);
     if (!match) return;
     setTimeout(() => {
       const cc = document.getElementById('bf-cc'); if (cc) cc.value = match.country;
@@ -2162,6 +2163,10 @@ function buildSettTabs() {
 }
 
 function buildNav() {
+  if (S.user && S.user.country) {
+    const uc = S.user.country;
+    SMART_DB.banks.sort((a, b) => (a.country === uc ? 0 : 1) - (b.country === uc ? 0 : 1));
+  }
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
   const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
   const all = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active, ...extras];
