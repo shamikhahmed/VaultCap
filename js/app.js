@@ -735,9 +735,29 @@ const Store = {
 
 // ===================== THEME ENGINE =====================
 const ThemeEngine = {
+  _mqListener: null,
   apply(id) {
+    if (id === 'auto') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const resolved = prefersDark ? 'dark' : 'light';
+      const t = THEMES.find(x => x.id === resolved) || THEMES[0];
+      // Preserve font-scale and high-contrast classes
+      const extra = (document.body.className.match(/\b(fs-\w+|hc)\b/g) || []).join(' ');
+      document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
+      S.user.theme = 'auto';
+      document.getElementById('themeColorMeta').content = t.ac;
+      Store.save();
+      this.renderDots();
+      // Register system preference listener once
+      if (!this._mqListener) {
+        this._mqListener = () => { if (S.user.theme === 'auto') ThemeEngine.apply('auto'); };
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this._mqListener);
+      }
+      return;
+    }
     const t = THEMES.find(x => x.id === id) || THEMES[0];
-    document.body.className = t.cls || '';
+    const extra = (document.body.className.match(/\b(fs-\w+|hc)\b/g) || []).join(' ');
+    document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
     S.user.theme = id;
     document.getElementById('themeColorMeta').content = t.ac;
     Store.save();
@@ -777,7 +797,8 @@ const Toast = {
     const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
     const cls   = { success:'ok', error:'err', warning:'wrn', info:'inf' };
     t.className = `toast ${cls[type] || 'inf'}`;
-    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span style="flex:1;line-height:1.4">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px">×</button>`;
+    // msg is rendered as innerHTML so callers can embed buttons or strong tags
+    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${msg}</span><button onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0">×</button>`;
     w.appendChild(t);
     setTimeout(() => { t.style.animation = 'slideIn .25s reverse'; setTimeout(() => t.remove(), 240); }, dur);
   }
@@ -1618,10 +1639,14 @@ async function App() {
     if (prefs.name)        S.user.name     = prefs.name;
   }
 
-  ThemeEngine.apply(S.user.theme || 'dark');
+  const startTheme = S.user.theme || 'dark';
+  ThemeEngine.apply(startTheme);
   const fs = S.fontScale || 'md';
-  document.body.className = document.body.className.replace(/\bfs-\w+\b/, '').trim() + ' fs-' + fs;
-  if (S.highContrast) document.body.classList.add('hc');
+  // Preserve theme class when adding font-scale; ThemeEngine.apply already preserves them on re-apply
+  if (!document.body.className.includes('fs-')) {
+    document.body.className = document.body.className.trim() + ' fs-' + fs;
+  }
+  if (S.highContrast && !document.body.classList.contains('hc')) document.body.classList.add('hc');
 
   // Check if old localStorage data exists (migration)
   const oldData = Store.loadRaw();

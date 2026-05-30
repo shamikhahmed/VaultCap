@@ -37,49 +37,64 @@ const Vehicles = {
   },
 
   form(v = {}) {
+    const yr = new Date().getFullYear();
+    const makeModel = v.make ? (v.make + (v.model ? ' ' + v.model : '')) : '';
+    const hasExtra = !!(v.regNumber || v.vinNumber || v.fuelType || v.engineCC || v.transmission || v.purchaseDate || v.purchasePrice || v.currentValue);
     return `
-      <div class="fr">
-        <div class="fg"><label class="fl">Make *</label>
-          <datalist id="vMakeDL"><option>Toyota</option><option>Honda</option><option>Suzuki</option><option>Mercedes-Benz</option><option>BMW</option><option>Audi</option><option>Hyundai</option><option>Kia</option><option>Nissan</option><option>Land Rover</option><option>Porsche</option><option>Tesla</option></datalist>
-          <input class="inp" id="vf-make" value="${v.make||''}" list="vMakeDL" placeholder="Toyota, BMW...">
-        </div>
-        <div class="fg"><label class="fl">Model *</label><input class="inp" id="vf-model" value="${v.model||''}" placeholder="Corolla, 3 Series..."></div>
+      <div class="fg"><label class="fl">Make &amp; Model *</label>
+        <datalist id="vModelDL">
+          <option>Toyota Corolla</option><option>Toyota Hilux Revo</option><option>Toyota Prado</option><option>Toyota Land Cruiser</option>
+          <option>Honda Civic</option><option>Honda City</option><option>Honda BR-V</option><option>Honda HR-V</option>
+          <option>Suzuki Swift</option><option>Suzuki Alto</option><option>Suzuki Cultus</option><option>Suzuki Vitara</option>
+          <option>BMW 3 Series</option><option>BMW 5 Series</option><option>BMW X5</option>
+          <option>Mercedes C-Class</option><option>Mercedes E-Class</option><option>Mercedes GLC</option>
+          <option>Audi A4</option><option>Audi Q7</option><option>Hyundai Tucson</option><option>Kia Sportage</option>
+          <option>Tesla Model 3</option><option>Tesla Model Y</option>
+        </datalist>
+        <input class="inp" id="vf-makemodel" value="${makeModel}" list="vModelDL" placeholder="e.g. Toyota Hilux Revo GR-S">
       </div>
       <div class="fr">
-        <div class="fg"><label class="fl">Year</label><input class="inp" id="vf-year" type="number" value="${v.year||''}" placeholder="${new Date().getFullYear()}" min="1900" max="2030"></div>
+        <div class="fg"><label class="fl">Year</label><input class="inp" id="vf-year" type="number" value="${v.year||''}" placeholder="${yr}" min="1900" max="${yr+2}"></div>
         <div class="fg"><label class="fl">Color</label><input class="inp" id="vf-color" value="${v.color||''}" placeholder="White, Black..."></div>
       </div>
-      <div class="fr">
-        <div class="fg"><label class="fl">Reg Number</label><input class="inp" id="vf-reg" value="${v.regNumber||''}" placeholder="ABC-1234"></div>
-        <div class="fg"><label class="fl">VIN / Chassis</label><input class="inp" id="vf-vin" value="${v.vinNumber||''}" placeholder="17-char VIN"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label class="fl">Fuel Type</label>
-          <datalist id="vFuelDL"><option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option><option>CNG</option><option>LPG</option></datalist>
-          <input class="inp" id="vf-fuel" value="${v.fuelType||''}" list="vFuelDL" placeholder="Petrol, Electric...">
+      <details${hasExtra?' open':''} style="margin-top:10px">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>
+        <div style="padding-top:10px">
+          <div class="fr">
+            <div class="fg"><label class="fl">Reg Number</label><input class="inp" id="vf-reg" value="${v.regNumber||''}" placeholder="ABC-1234"></div>
+            <div class="fg"><label class="fl">VIN / Chassis</label><input class="inp" id="vf-vin" value="${v.vinNumber||''}" placeholder="17-char VIN"></div>
+          </div>
+          <div class="fr">
+            <div class="fg"><label class="fl">Fuel Type</label>
+              <datalist id="vFuelDL"><option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option><option>CNG</option><option>LPG</option></datalist>
+              <input class="inp" id="vf-fuel" value="${v.fuelType||''}" list="vFuelDL" placeholder="Petrol...">
+            </div>
+            <div class="fg"><label class="fl">Engine CC</label><input class="inp" id="vf-cc" type="number" value="${v.engineCC||''}" placeholder="1300..."></div>
+          </div>
+          <div class="fr">
+            <div class="fg"><label class="fl">Transmission</label>
+              <datalist id="vTransDL"><option>Manual</option><option>Automatic</option><option>CVT</option><option>DCT</option><option>AMT</option></datalist>
+              <input class="inp" id="vf-trans" value="${v.transmission||''}" list="vTransDL" placeholder="Manual...">
+            </div>
+            <div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="vf-date" type="date" value="${v.purchaseDate||''}"></div>
+          </div>
+          <div class="fr">
+            <div class="fg"><label class="fl">Purchase Price</label><input class="inp" id="vf-pp" type="number" value="${v.purchasePrice||''}" placeholder="0"></div>
+            <div class="fg"><label class="fl">Current Value</label><input class="inp" id="vf-cv" type="number" value="${v.currentValue||''}" placeholder="0"></div>
+          </div>
+          <div class="fg"><label class="fl">Currency</label><select class="inp" id="vf-cur">${U.currencies()}</select></div>
         </div>
-        <div class="fg"><label class="fl">Engine CC</label><input class="inp" id="vf-cc" type="number" value="${v.engineCC||''}" placeholder="1300, 2000..."></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label class="fl">Transmission</label>
-          <datalist id="vTransDL"><option>Manual</option><option>Automatic</option><option>CVT</option><option>DCT</option><option>AMT</option></datalist>
-          <input class="inp" id="vf-trans" value="${v.transmission||''}" list="vTransDL" placeholder="Manual, Automatic...">
-        </div>
-        <div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="vf-date" type="date" value="${v.purchaseDate||''}"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label class="fl">Purchase Price</label><input class="inp" id="vf-pp" type="number" value="${v.purchasePrice||''}" placeholder="0"></div>
-        <div class="fg"><label class="fl">Current Value</label><input class="inp" id="vf-cv" type="number" value="${v.currentValue||''}" placeholder="0"></div>
-      </div>
-      <div class="fg"><label class="fl">Currency</label><select class="inp" id="vf-cur">${U.currencies()}</select></div>`;
+      </details>`;
   },
 
   save(editId = null) {
-    const make = document.getElementById('vf-make')?.value.trim();
-    if (!make) { Toast.show('Make is required', 'warning'); return; }
+    const makeModel = (document.getElementById('vf-makemodel')?.value || '').trim();
+    if (!makeModel) { Toast.show('Make & Model required', 'warning'); return; }
+    const parts = makeModel.split(' ');
+    const make = parts[0];
+    const model = parts.slice(1).join(' ');
     const v = {
-      make,
-      model: document.getElementById('vf-model')?.value.trim() || '',
+      make, model,
       year: parseInt(document.getElementById('vf-year')?.value) || null,
       color: document.getElementById('vf-color')?.value.trim() || '',
       regNumber: document.getElementById('vf-reg')?.value.trim() || '',
@@ -90,22 +105,31 @@ const Vehicles = {
       purchaseDate: document.getElementById('vf-date')?.value || '',
       purchasePrice: parseFloat(document.getElementById('vf-pp')?.value) || 0,
       currentValue: parseFloat(document.getElementById('vf-cv')?.value) || 0,
-      currency: document.getElementById('vf-cur')?.value || 'PKR',
+      currency: document.getElementById('vf-cur')?.value || S.user.currency || 'PKR',
     };
     if (!S.vehicles) S.vehicles = [];
     if (editId) {
       const idx = S.vehicles.findIndex(x => x.id === editId);
-      if (idx >= 0) {
-        S.vehicles[idx] = { ...S.vehicles[idx], ...v };
-      }
+      if (idx >= 0) S.vehicles[idx] = { ...S.vehicles[idx], ...v };
+      Store.save(); Modal.close();
+      Toast.show('Vehicle updated', 'success');
+      this.render();
+      Activity.log('Updated vehicle', makeModel);
     } else {
-      S.vehicles.push({ id: U.id(), createdAt: new Date().toISOString(), fuelLog:[], serviceHistory:[], insurance:[], documents:{}, modifications:[], ...v });
+      const vid = U.id();
+      S.vehicles.push({ id: vid, createdAt: new Date().toISOString(), fuelLog:[], serviceHistory:[], insurance:[], documents:{}, modifications:[], ...v });
+      Store.save(); Modal.close();
+      Toast.show('Vehicle saved', 'success');
+      this.render();
+      Activity.log('Added vehicle', makeModel);
+      // Prompt to add first fuel log
+      const bar = document.createElement('div');
+      bar.id = 'add-fuel-bar';
+      bar.style.cssText = 'position:fixed;bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 8px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rfull);padding:10px 18px;display:flex;align-items:center;gap:12px;z-index:9999;box-shadow:var(--shadowlg);animation:slideIn .25s var(--spring);white-space:nowrap;';
+      bar.innerHTML = `<span style="font-size:13px;color:var(--text2)">⛽ Add a fuel log?</span><button class="btn btn-p btn-sm" onclick="document.getElementById('add-fuel-bar').remove();Vehicles.addFuelLog('${vid}')">Yes</button><button class="btn btn-g btn-sm" onclick="document.getElementById('add-fuel-bar').remove()">No</button>`;
+      document.body.appendChild(bar);
+      setTimeout(() => { if (bar.isConnected) bar.remove(); }, 8000);
     }
-    Store.save();
-    Modal.close();
-    Toast.show('Vehicle saved', 'success');
-    this.render();
-    Activity.log(editId ? 'Updated vehicle' : 'Added vehicle', make + ' ' + v.model);
   },
 
   edit(id) {

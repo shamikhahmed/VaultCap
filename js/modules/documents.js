@@ -31,20 +31,56 @@ const DocsModule={
       return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" value="${val}" placeholder="${f.ph||''}"></div>`;
     }).join('');
   },
+  _smartToSchemaType(t){
+    const m={cnic:'nic',driving_licence:'driving_license',ntn:'tax',emirates_id:'nic',vaccination:'medical'};
+    return m[t]||t;
+  },
   openAdd(){
+    const smartNames=(SMART_DB.documents||[]).map(d=>`<option value="${d.name}">`).join('');
     Modal.open('🪪 Add Document',`
-    <div class="fg"><label class="fl">Document Type *</label><datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${t}">${DOC_SCHEMAS[t].label}</option>`).join('')}</datalist><input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="Passport, Visa, Insurance..." oninput="DocsModule.onTypeChange(this.value)" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Document Type *</label>
+      <datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${DOC_SCHEMAS[t].label}">`).join('')}${smartNames}</datalist>
+      <input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="CNIC, Passport, Visa, Insurance..." oninput="DocsModule.onTypeChange(this.value)" autocomplete="off">
+    </div>
     <div id="doc-dynamic-fields"></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2" placeholder="Any additional details..."></textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags([])}`,
     `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="DocsModule.save()">Save Document</button>`);
   },
   onTypeChange(val){
-    const key=Object.keys(DOC_SCHEMAS).find(k=>DOC_SCHEMAS[k].label.toLowerCase()===val.toLowerCase()||k===val.toLowerCase().replace(/\s+/g,'_'));
+    if(!val.trim()){document.getElementById('doc-dynamic-fields').innerHTML='';return;}
+    // Check SMART_DB.documents first for known doc types
+    const smartDoc=(SMART_DB.documents||[]).find(d=>
+      d.name.toLowerCase().includes(val.toLowerCase())||
+      val.toLowerCase().includes(d.name.toLowerCase().split(' ').slice(-1)[0])
+    );
+    // Resolve to a DOC_SCHEMAS key
+    const key=smartDoc
+      ?this._smartToSchemaType(smartDoc.type)
+      :Object.keys(DOC_SCHEMAS).find(k=>
+          DOC_SCHEMAS[k].label.toLowerCase()===val.toLowerCase()||
+          k===val.toLowerCase().replace(/[\s-]+/g,'_')
+        );
     const schema=key?DOC_SCHEMAS[key]:null;
     const el=document.getElementById('doc-dynamic-fields');
-    if(el&&schema){el.innerHTML=this.buildForm(schema);}
-    else if(el){el.innerHTML='';}
+    if(el&&schema){
+      el.innerHTML=this.buildForm(schema);
+      // Auto-fill number format hint from SMART_DB
+      if(smartDoc){
+        setTimeout(()=>{
+          const numEl=document.getElementById('df-docNumber');
+          if(numEl&&smartDoc.numberFormat){
+            numEl.placeholder=smartDoc.numberFormat+' (format hint)';
+            numEl.title='Format: '+smartDoc.numberFormat;
+          }
+          // Hide expiry date field if document type doesn't have expiry
+          if(smartDoc.hasExpiry===false){
+            const expEl=document.getElementById('df-expiryDate');
+            if(expEl){const fg=expEl.closest('.fg');if(fg)fg.style.display='none';}
+          }
+        },30);
+      }
+    } else if(el){el.innerHTML='';}
   },
   save(editId=null){
     const typeRaw=document.getElementById('doc-type-sel')?.value||'other';

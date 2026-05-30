@@ -82,7 +82,7 @@ const Dash={
     b.innerHTML=`
     <!-- Net Worth Card -->
     <div class="dash-card dash-hero">
-      <div class="dash-label">NET WORTH</div>
+      <div class="dash-label" style="display:flex;align-items:center;gap:6px">NET WORTH <button onclick="Dash.showNWBreakdown()" style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);cursor:pointer;font-size:10px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1" title="See breakdown">ℹ️</button></div>
       <div class="dash-nw-amount sens">${trendArrow}${cur} ${fmtN(nwDisplay)}</div>
       <div class="dash-nw-sub sens">${nwSub}</div>
       <div class="dash-hero-acts">
@@ -164,7 +164,35 @@ const Dash={
   },
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
   toggleCurrency(){const order=['PKR','GBP','AED','USD'];const idx=order.indexOf(S.user.currency||'PKR');S.user.currency=order[(idx+1)%order.length];Store.save();this.render();},
-  security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.pin!=='123456')s+=5;return Math.min(s,100);}
+  security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.pin!=='123456')s+=5;return Math.min(s,100);},
+  showNWBreakdown(){
+    const cur=S.user.currency||'PKR';
+    const toB=(a,c)=>(a||0)*(FX[c]||1);
+    const toCur=(pkr,c)=>pkr/(FX[c]||1);
+    const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
+    const fmt=v=>`${cur} ${fmtN(Math.round(toCur(v,cur)))}`;
+    const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
+    const asPKR=S.assets.reduce((a,x)=>a+toB(x.currentValue||0,x.currency||cur),0);
+    const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
+    const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
+    const nwPKR=invPKR+asPKR+cashPKR-debtPKR;
+    const row=(ic,label,val,col,prefix='')=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>${ic}</span>${label}</div><div style="font-size:14px;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
+    Modal.open('💰 Net Worth Breakdown',`
+    <div style="padding:0 2px">
+      ${row('📈','Investments',invPKR,'var(--accent)')}
+      ${row('🏠','Assets',asPKR,'var(--accent)')}
+      ${row('💵','Cash',cashPKR,'var(--accent)')}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>💸</span>Loans (owed)</div><div style="font-size:14px;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div style="font-size:14px;font-weight:700">Net Worth</div><div style="font-size:20px;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
+    </div>
+    <div style="margin-top:10px;padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:11px;color:var(--text2)">
+        ${Object.entries(FX).filter(([c,r])=>r>0&&c!=='PKR').slice(0,9).map(([c,r])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${c}</span><span style="font-weight:600">${U.fmt(r)}</span></div>`).join('')}
+      </div>
+    </div>`,
+    `<button class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+  }
 };
 
 // ===================== SETTINGS =====================
