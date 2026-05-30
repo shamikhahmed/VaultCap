@@ -20,15 +20,16 @@ const Cash = {
   },
   openAdd() {
     Modal.open('💵 Add Cash', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);
+    setTimeout(() => { const el = document.getElementById('cf-amt'); if (el) U.numInput(el, S.user.currency || 'PKR'); }, 60);
   },
   form(c = {}) {
     return `<div class="fg"><label class="fl">Location *</label><select class="inp" id="cf-loc"><option value="Wallet">👛 Wallet</option><option value="Home">🏠 Home</option><option value="Office">🏢 Office</option><option value="Car">🚗 Car</option><option value="Other">📦 Other</option></select></div>
-    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp" id="cf-amt" type="number" value="${c.amount || ''}" placeholder="0" min="0" step="any"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="cf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${c.amount || ''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${c.notes || ''}</textarea></div>`;
   },
   save(editId = null) {
     const loc = document.getElementById('cf-loc').value;
-    const amt = parseFloat(document.getElementById('cf-amt').value) || 0;
+    const amt = parseFloat((document.getElementById('cf-amt').value || '').replace(/,/g, '')) || 0;
     if (!amt) { Toast.show('Enter an amount', 'warning'); return; }
     const cur = document.getElementById('cf-cur').value;
     const notes = document.getElementById('cf-notes').value.trim();
@@ -47,6 +48,8 @@ const Cash = {
     setTimeout(() => {
       const loc = document.getElementById('cf-loc'); if (loc) loc.value = c.location || 'Wallet';
       const cur = document.getElementById('cf-cur'); if (cur) cur.value = c.currency || 'PKR';
+      const amtEl = document.getElementById('cf-amt');
+      if (amtEl) U.numInput(amtEl, c.currency || 'PKR');
     }, 60);
   },
   del(id, fm = false) {

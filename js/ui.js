@@ -1084,3 +1084,115 @@ const SelfCheck={
     `<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="SelfCheck.renderReport()">Re-run</button>`);
   }
 };
+
+// ===================== SETTINGS NAV (tabbed settings) =====================
+const SettingsNav = {
+  current: 'profile',
+
+  show(section) {
+    this.current = section;
+    const order = ['profile','security','appearance','modules','backup','import','accessibility','about'];
+    document.querySelectorAll('#settTabs .tab-pill').forEach((p, i) => p.classList.toggle('on', order[i] === section));
+    const b = document.getElementById('settBody');
+    if (!b) return;
+    if (section === 'backup') { b.innerHTML = this._backup(); return; }
+    if (section === 'import') { b.innerHTML = this._import(); return; }
+    b.innerHTML = this['_' + section]();
+    if (typeof SelfCheck !== 'undefined') SelfCheck.run();
+  },
+
+  _profile() {
+    return `<div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
+      <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
+      </div>
+      <div class="si"><div class="sil"><div class="name">Default Currency</div><div class="desc">${S.user.currency||'PKR'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+      <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+      <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">📊 Data Summary</div><div class="set-card">
+      ${[...ALL_MODULES.map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity',S.activity.length,'📋']].map(([n,c,ic])=>`<div class="si"><div class="name">${ic} ${n}</div><div style="font-weight:700;color:var(--accent)">${c}</div></div>`).join('')}
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">⚙️ Data Management</div><div class="set-card">
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-s btn-full btn-sm" onclick="Settings.loadDemo()">🎮 Load Demo Data (fictional)</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="S.activity=[];Store.save();SettingsNav.show('profile');Toast.show('Activity cleared')">🗑️ Clear Activity Log</button>
+        <button class="btn btn-d btn-full btn-sm" onclick="Settings.resetVault()">⚠️ Reset Entire Vault</button>
+      </div>
+    </div></div>`;
+  },
+
+  _security() {
+    return `<div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
+      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()">View</button></div>
+      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${S.decoyPin?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">${S.decoyPin?'Change':'Set'}</button></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
+      <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
+      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+    </div></div>`;
+  },
+
+  _appearance() {
+    return `<div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Theme</div><div class="desc">${THEMES.find(t=>t.id===S.user.theme)?.n||'Midnight'}</div></div><button class="btn btn-g btn-sm" onclick="ThemeEngine.openPicker()">Change</button></div>
+      <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil"><div class="name">Quick Switch</div></div><div style="display:flex;gap:7px;flex-wrap:wrap">${THEMES.map(t=>`<div class="tdot${t.id===S.user.theme?' on':''}" style="background:${t.ac}" onclick="ThemeEngine.apply('${t.id}')" title="${t.n}"></div>`).join('')}</div></div>
+    </div></div>`;
+  },
+
+  _modules() {
+    return `<div class="set-sec"><div class="set-title">🧩 Active Modules</div><div class="set-card">
+      ${ALL_MODULES.map(m=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('')}
+      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div>
+    </div></div>`;
+  },
+
+  _backup() {
+    const lastBackup = S.user.lastBackup;
+    const backupAge  = lastBackup ? Math.floor((Date.now()-new Date(lastBackup))/864e5) : null;
+    const backupStatus = !lastBackup ? 'Never backed up' : backupAge===0 ? 'Backed up today' : backupAge<=7 ? 'Backed up '+backupAge+' days ago' : '⚠️ Last backup '+backupAge+' days ago';
+    return `<div class="set-sec"><div class="set-title">💾 Backup & Export</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">📤 Export Encrypted Vault (.vos)</button>
+        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">📄 Export as JSON (readable)</button>
+        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+      </div>
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">💡 Backup Strategy</div><div class="set-card">
+      ${[{ic:'☁️',t:'iCloud Drive',d:'Export .vos → save to Files → iCloud Drive'},{ic:'📦',t:'Google Drive',d:'Export .vos → upload manually to Drive'},{ic:'💽',t:'External Drive / USB',d:'Drag .vos file to external drive'}].map(({ic,t,d})=>`<div class="si"><span style="font-size:22px">${ic}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div>`).join('')}
+      <div style="padding:10px 14px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">🔐 All exports are AES-256-GCM encrypted before leaving your device. No cloud servers involved.</div>
+    </div></div>`;
+  },
+
+  _import() {
+    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
+      <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import Engine</div><div class="desc">Paste text, drop files, scan images — VaultOS detects and imports entries automatically</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="R.goto('ai-import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🤖</div><div class="sil"><div class="name">AI Import (Smart Pattern Matching)</div><div class="desc">Advanced pattern engine — detect banks, cards, SIMs, investments from any text snippet</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🔒</div><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup file or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+    </div></div>`;
+  },
+
+  _accessibility() {
+    return `<div class="set-sec"><div class="set-title">♿ Accessibility</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="S.reduceMotion=this.checked;document.body.classList.toggle('reduce-motion',S.reduceMotion);Store.save();Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="S.largeText=this.checked;document.documentElement.style.fontSize=S.largeText?'17px':'15px';Store.save();Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+    </div></div>`;
+  },
+
+  _about() {
+    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
+      ${[['Version','v4.0 — Enterprise Edition'],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
+      <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="WhatsNew.show()">✨ What's New</button>
+      </div>
+    </div></div>`;
+  }
+};

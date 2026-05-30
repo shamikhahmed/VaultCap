@@ -1,0 +1,55 @@
+const CACHE = 'vaultos-v4';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/css/base.css',
+  '/css/layout.css',
+  '/css/components.css',
+  '/css/themes.css',
+  '/js/storage.js',
+  '/js/app.js',
+  '/js/ui.js',
+  '/js/modules/banks.js',
+  '/js/modules/cards.js',
+  '/js/modules/sims.js',
+  '/js/modules/investments.js',
+  '/js/modules/cash.js',
+  '/js/modules/loans.js',
+  '/js/modules/friends.js',
+  '/js/modules/assets.js',
+  '/js/modules/expenses.js',
+  '/js/modules/documents.js',
+  '/js/modules/emails.js',
+  '/js/modules/gadgets.js',
+  '/js/modules/digital.js',
+  '/js/modules/alerts.js',
+  '/js/modules/timeline.js',
+  '/js/modules/security.js',
+  '/js/modules/search.js',
+  '/js/modules/vehicles.js',
+  '/js/modules/reminders.js',
+  '/js/modules/ai-import.js',
+  '/js/modules/trash.js',
+  '/manifest.json',
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => cached || fetch(e.request))
+  );
+});

@@ -1240,8 +1240,35 @@ const U = {
     <div class="fg"><label class="fl">2FA Method</label><select class="inp" id="lf-2fa"><option value="">None</option><option value="SMS">SMS</option><option value="Authenticator">Authenticator</option><option value="Email">Email</option><option value="Hardware Key">Hardware Key</option></select></div>
   </div>`,
   getLF:  () => ({ username: document.getElementById('lf-user')?.value.trim(), pwdHint: document.getElementById('lf-pwd')?.value.trim(), appPin: document.getElementById('lf-pin')?.value.trim(), twoFA: document.getElementById('lf-2fa')?.value }),
-  setLF(obj) { setTimeout(() => { const t = document.getElementById('lf-2fa'); if (t) t.value = obj.twoFA || ''; }, 60); }
+  setLF(obj) { setTimeout(() => { const t = document.getElementById('lf-2fa'); if (t) t.value = obj.twoFA || ''; }, 60); },
+  numInput(el, currency) {
+    if (!el) return;
+    el.addEventListener('input', () => formatNumberInput(el, currency || S.user.currency || 'PKR'));
+  }
 };
+
+// ===================== NUMBER INPUT FORMATTER =====================
+function formatNumberInput(input, currency) {
+  const raw   = (input.value || '').replace(/,/g, '');
+  const parts = raw.split('.');
+  const intPart = parts[0].replace(/\D/g, '');
+  const hasDec  = raw.includes('.');
+  const decPart = hasDec ? '.' + (parts[1] || '').replace(/\D/g, '').slice(0, 2) : '';
+
+  if (!intPart && !hasDec) { return 0; }
+  const n = parseInt(intPart || '0', 10);
+  const formatted = (currency === 'PKR')
+    ? new Intl.NumberFormat('en-IN').format(n)
+    : new Intl.NumberFormat('en-US').format(n);
+
+  const newVal = formatted + decPart;
+  if (input.value !== newVal) {
+    const pos = input.selectionStart + (newVal.length - input.value.length);
+    input.value = newVal;
+    try { input.setSelectionRange(pos, pos); } catch(e) {}
+  }
+  return parseFloat(raw) || 0;
+}
 
 // ===================== MEGA-ADD HELPER =====================
 // After any module save, show a quick "Add another?" prompt at the bottom.

@@ -1,5 +1,8 @@
 /* ═══════════ COMPONENTS: buttons, inputs, cards, modals, toasts, chips, badges, all UI ═══════════ */
 
+/* ─ Numeric inputs ─ */
+input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter-spacing: 0; }
+
 /* ─ Entry card ─ */
 .entry {
   background: var(--glass); border: 1px solid var(--border);
