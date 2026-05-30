@@ -894,6 +894,7 @@ const R = {
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
       settings:    () => {
         buildNav();
+        buildSettTabs();
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
         } else {
@@ -1338,6 +1339,20 @@ function togglePrivacy() {
 }
 
 // ===================== BUILD NAV =====================
+function buildSettTabs() {
+  const el = document.getElementById('settTabs');
+  if (!el) return;
+  const tabs = [
+    ['profile','👤 Profile'],['security','🔒 Security'],['appearance','🎨 Appearance'],
+    ['modules','🧩 Modules'],['backup','💾 Backup'],['import','📥 Import'],
+    ['accessibility','♿ Accessibility'],['about','ℹ️ About']
+  ];
+  const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'profile';
+  el.innerHTML = tabs.map(([id, label]) =>
+    `<div class="tab-pill${cur === id ? ' on' : ''}" onclick="SettingsNav.show('${id}')">${label}</div>`
+  ).join('');
+}
+
 function buildNav() {
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
   const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }];

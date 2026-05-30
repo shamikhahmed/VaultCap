@@ -7,8 +7,13 @@ const Cash = {
       if (data.length) {
         const byCur = {};
         data.forEach(c => { byCur[c.currency] = (byCur[c.currency] || 0) + (c.amount || 0); });
-        const totStr = Object.entries(byCur).map(([cur, v]) => `${v.toLocaleString()} ${cur}`).join(' &nbsp;+&nbsp; ');
-        sm.innerHTML = `<div class="widget" style="margin-bottom:12px;text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Total Cash on Hand</div><div class="sens" style="font-size:22px;font-weight:800">${totStr}</div></div>`;
+        const userCur = S.user.currency || 'PKR';
+        const totalPKR = data.reduce((a, c) => a + (c.amount || 0) * (FX[c.currency] || 1), 0);
+        const totalUser = totalPKR / (FX[userCur] || 1);
+        const byLocStr = Object.entries(byCur).map(([cur, v]) => `<div class="sens" style="font-size:15px;font-weight:700">${U.fmt(v)} ${cur}</div>`).join('');
+        const convLine = Object.keys(byCur).length > 1 || Object.keys(byCur)[0] !== userCur
+          ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';
+        sm.innerHTML = `<div class="widget" style="margin-bottom:12px;text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Total Cash on Hand</div>${byLocStr}${convLine}</div>`;
       } else { sm.innerHTML = ''; }
     }
     if (!data.length) {
@@ -16,7 +21,8 @@ const Cash = {
       return;
     }
     const locIc = { Wallet:'👛', Home:'🏠', Office:'🏢', Car:'🚗', Other:'📦' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge b-ok sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span></div></div><div class="entry-acts"><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
+    const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span></div></div><div class="entry-acts"><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
   },
   openAdd() {
     Modal.open('💵 Add Cash', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);

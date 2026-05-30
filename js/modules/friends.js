@@ -1,8 +1,17 @@
 const Friends = {
   render() {
     const el = document.getElementById('friendItems'); if (!el) return;
+    const allFriends = S.friends || [];
+    const activeLoans = (S.loans || []).filter(l => l.status !== 'Settled');
+    const friendLoans = activeLoans.filter(l => allFriends.some(f => f.name === l.person));
+    const owedToYou = friendLoans.filter(l => l.type === 'lent').reduce((a, l) => a + (l.amount || 0), 0);
+    const youOwe = friendLoans.filter(l => l.type === 'borrowed').reduce((a, l) => a + (l.amount || 0), 0);
+    const sm = document.getElementById('friendSummary');
+    if (sm && allFriends.length > 0) {
+      sm.innerHTML = `<div class="widget" style="margin-bottom:12px"><div style="display:flex"><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Friends</div><div style="font-size:22px;font-weight:800">${allFriends.length}</div></div><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">They owe me</div><div style="font-size:16px;font-weight:700;color:var(--ok)" class="sens">${U.fmt(owedToYou)}</div></div><div style="flex:1;text-align:center;padding:10px 0"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">I owe them</div><div style="font-size:16px;font-weight:700;color:var(--err)" class="sens">${U.fmt(youOwe)}</div></div></div></div>`;
+    } else if (sm) { sm.innerHTML = ''; }
     const q = (document.getElementById('friendQ')?.value || '').toLowerCase();
-    const data = (S.friends || []).filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
+    const data = allFriends.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
       .slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     if (!data.length) {
       el.innerHTML = `<div class="empty"><div class="empty-ic">👥</div><h3>No friends yet</h3><p>Add people you lend or borrow money from, or just keep contacts here</p><button class="btn btn-p" style="margin-top:12px" onclick="Friends.openAdd()">👥 Add Friend</button></div>`;

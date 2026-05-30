@@ -136,7 +136,10 @@ const Vehicles = {
     const v = S.vehicles.find(x => x.id === id);
     if (!v) return;
     Modal.open('✏️ Edit Vehicle', this.form(v), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Vehicles.save('${id}')">Save</button>`);
-    setTimeout(() => { const c = document.getElementById('vf-cur'); if (c) c.value = v.currency || 'PKR'; }, 50);
+    setTimeout(() => {
+      const c = document.getElementById('vf-cur'); if (c) c.value = v.currency || 'PKR';
+      const mm = document.getElementById('vf-makemodel'); if (mm) mm.value = v.make + (v.model ? ' ' + v.model : '');
+    }, 50);
   },
 
   del(id) {

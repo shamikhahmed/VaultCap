@@ -6,7 +6,8 @@ const DocsModule={
     if(!ci||!el)return;
     const cats=[['all','All'],['passport','📘 Passport'],['nic','🪪 ID'],['driving_license','🚗 Driving'],['visa','✈️ Visa'],['property_doc','🏠 Property'],['insurance_doc','🛡️ Insurance'],['vehicle_reg','🚗 Vehicle Reg'],['tax','📋 Tax'],['medical','🏥 Medical'],['warranty','🧾 Warranty'],['contract','📝 Contract'],['certificate','🎓 Certificate'],['other','📄 Other']];
     ci.innerHTML=cats.map(([v,l])=>`<div class="chip${this.filter===v?' on':''}" onclick="DocsModule.filter='${v}';DocsModule.render()">${l}</div>`).join('');
-    const docs=(S.documents||[]).filter(d=>this.filter==='all'||d.docType===this.filter);
+    const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
+    const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||JSON.stringify(d).toLowerCase().includes(q)));
     if(!docs.length){
       el.innerHTML=`<div class="empty"><div class="empty-ic">🪪</div><h3>No documents yet</h3><p>Store passports, IDs, visas, insurance documents, warranties, certificates and contracts — all encrypted locally</p><div class="empty-guide"><div class="guide-step"><div class="gst-num">1</div><div class="gst-body"><h4>Add a passport or ID</h4><p>Document number, expiry, issuing country</p></div></div><div class="guide-step"><div class="gst-num">2</div><div class="gst-body"><h4>Track expiry dates</h4><p>Get alerts before documents expire</p></div></div><div class="guide-step"><div class="gst-num">3</div><div class="gst-body"><h4>Link to other entries</h4><p>Connect visa to passport, property doc to asset</p></div></div></div><button class="btn btn-p" style="margin-top:12px" onclick="DocsModule.openAdd()">🪪 Add First Document</button></div>`;
       return;

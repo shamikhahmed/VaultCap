@@ -239,7 +239,7 @@
 <div class="page" id="pg-investments"><div class="ph"><h2>📈 Investments</h2><button class="btn btn-p btn-sm" onclick="Inv.openAdd()">+ Add</button></div><div class="pb"><div id="invSummary"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="invQ" placeholder="Search..." oninput="Inv.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="invSort" onchange="Inv.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="value">Value ↓</option><option value="pnl">P&L</option></select></div></div><div class="chips" id="invChips"></div><div id="invItems"></div></div></div>
 <div class="page" id="pg-cash"><div class="ph"><h2>💵 Cash</h2><button class="btn btn-p btn-sm" onclick="Cash.openAdd()">+ Add</button></div><div class="pb"><div id="cashSummary"></div><div id="cashItems"></div></div></div>
 <div class="page" id="pg-loans"><div class="ph"><h2>🤝 Loans</h2></div><div class="pb"><div id="loanSummary"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"><button style="padding:14px;font-size:14px;font-weight:700;background:rgba(239,68,68,.12);border:1.5px solid var(--err);color:var(--err);border-radius:var(--r);cursor:pointer;transition:background .15s" onclick="Loans.openAdd('borrowed')">💸 I Owe</button><button style="padding:14px;font-size:14px;font-weight:700;background:rgba(34,197,94,.12);border:1.5px solid var(--ok);color:var(--ok);border-radius:var(--r);cursor:pointer;transition:background .15s" onclick="Loans.openAdd('lent')">🤲 They Owe Me</button></div><div id="loanItems"></div></div></div>
-<div class="page" id="pg-friends"><div class="ph"><h2>👥 Friends</h2><button class="btn btn-p btn-sm" onclick="Friends.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="friendQ" placeholder="Search friends..." oninput="Friends.render()" style="padding-left:36px"></div><div id="friendItems"></div></div></div>
+<div class="page" id="pg-friends"><div class="ph"><h2>👥 Friends</h2><button class="btn btn-p btn-sm" onclick="Friends.openAdd()">+ Add</button></div><div class="pb"><div id="friendSummary"></div><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="friendQ" placeholder="Search friends..." oninput="Friends.render()" style="padding-left:36px"></div><div id="friendItems"></div></div></div>
 <div class="page" id="pg-sims"><div class="ph"><h2>📱 SIM Cards</h2><button class="btn btn-p btn-sm" onclick="Sims.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="simQ" placeholder="Search SIMs..." oninput="Sims.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="simSort" onchange="Sims.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="network">Network</option><option value="country">Country</option><option value="status">Status</option></select></div></div><div class="chips" id="simChips"></div><div id="simItems"></div></div></div>
 <div class="page" id="pg-assets"><div class="ph"><h2>🏠 Assets</h2><button class="btn btn-p btn-sm" onclick="Assets.openAdd()">+ Add</button></div><div class="pb"><div class="chips" id="aChips"></div><div id="aItems"></div></div></div>
 <div class="page" id="pg-expenses"><div class="ph"><h2>📋 Expenses</h2><button class="btn btn-p btn-sm" onclick="Exp.openAdd()">+ Add</button></div><div class="pb"><div id="expSummary"></div><div class="chips" id="expChips"></div><div id="expItems"></div></div></div>
@@ -248,7 +248,7 @@
 <div class="page" id="pg-digital"><div class="ph"><h2>💼 Digital Services</h2><button class="btn btn-p btn-sm" onclick="Digital.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="digQ" placeholder="Search..." oninput="Digital.render()" style="padding-left:36px"></div><div id="digItems"></div></div></div>
 <div class="page" id="pg-alerts"><div class="ph"><h2>🔔 Alerts</h2></div><div class="pb" id="alertBody"></div></div>
 <div class="page" id="pg-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="importBody"><div class="empty"><div class="empty-ic">📥</div><h3>Loading...</h3></div></div></div>
-<div class="page" id="pg-documents"><div class="ph"><h2>🪪 Documents</h2></div><div id="docsChips" class="chips" style="padding:0 14px 4px"></div><div class="pb" id="docsItems"></div></div>
+<div class="page" id="pg-documents"><div class="ph"><h2>🪪 Documents</h2></div><div style="padding:6px 14px 0"><input class="inp" id="docsQ" placeholder="🔍 Search documents..." oninput="DocsModule.render()" style="width:100%;box-sizing:border-box"></div><div id="docsChips" class="chips" style="padding:4px 14px 4px"></div><div class="pb" id="docsItems"></div></div>
 <div class="page" id="pg-vehicles"><div class="ph"><h2>🚗 Vehicles</h2><button class="btn btn-p btn-sm" onclick="Vehicles.openAdd()">+ Add</button></div><div class="pb" id="vItems"></div></div>
 <div class="page" id="pg-reminders"><div class="ph"><h2>🔔 Reminders</h2></div><div class="pb" id="reminderBody"></div></div>
 <div class="page" id="pg-search"><div class="pb" id="searchBody" style="padding-top:0"></div></div>
@@ -260,19 +260,8 @@
 <div class="page" id="pg-workspace"><div class="ph"><h2>🗂️ Workspaces</h2></div><div class="pb" id="workspaceBody"></div></div>
 <div class="page" id="pg-trash"><div class="ph"><h2>🗑️ Trash</h2></div><div class="pb" id="trashBody"></div></div>
 <div class="page" id="pg-settings">
-<div class="ph" style="flex-direction:column;align-items:flex-start;gap:8px;padding-bottom:6px">
-  <h2>⚙️ Settings</h2>
-  <div class="tab-scroller" id="settTabs" style="width:100%">
-    <div class="tab-pill on" onclick="SettingsNav.show('profile')">👤 Profile</div>
-    <div class="tab-pill" onclick="SettingsNav.show('security')">🔒 Security</div>
-    <div class="tab-pill" onclick="SettingsNav.show('appearance')">🎨 Appearance</div>
-    <div class="tab-pill" onclick="SettingsNav.show('modules')">🧩 Modules</div>
-    <div class="tab-pill" onclick="SettingsNav.show('backup')">💾 Backup</div>
-    <div class="tab-pill" onclick="SettingsNav.show('import')">📥 Import</div>
-    <div class="tab-pill" onclick="SettingsNav.show('accessibility')">♿ Accessibility</div>
-    <div class="tab-pill" onclick="SettingsNav.show('about')">ℹ️ About</div>
-  </div>
-</div>
+<div class="ph"><h2>Settings</h2></div>
+<div id="settTabs" style="display:flex;overflow-x:auto;gap:6px;padding:8px 14px;scrollbar-width:none;border-bottom:1px solid var(--border);flex-shrink:0"></div>
 <div class="pb" id="settBody"></div>
 </div>
 </div>
