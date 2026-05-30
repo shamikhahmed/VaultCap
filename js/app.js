@@ -717,70 +717,70 @@ function brandColor(name){
 function bankLogo(bankName,country){
   const domain=bankDomain(bankName);
   if(!domain)return '';
-  return `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:28px;height:28px;border-radius:6px;object-fit:cover" onerror="this.style.display='none'" loading="lazy">`;
+  return `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:36px;height:36px;border-radius:8px;object-fit:cover" onerror="this.style.display='none'" loading="lazy">`;
 }
 
 function cardGradient(c){
   const g={
-    'HBL':'linear-gradient(135deg,#1a3a6b,#2d5aa0)',
-    'Meezan Bank':'linear-gradient(135deg,#006400,#228b22)',
-    'Meezan':'linear-gradient(135deg,#006400,#228b22)',
-    'UBL':'linear-gradient(135deg,#8b0000,#cc0000)',
-    'MCB Bank':'linear-gradient(135deg,#1a1a2e,#16213e)',
-    'MCB':'linear-gradient(135deg,#1a1a2e,#16213e)',
-    'Bank Alfalah':'linear-gradient(135deg,#003366,#0055a5)',
-    'Alfalah':'linear-gradient(135deg,#003366,#0055a5)',
-    'Allied Bank':'linear-gradient(135deg,#004225,#006b3c)',
-    'ABL':'linear-gradient(135deg,#004225,#006b3c)',
-    'Sadapay':'linear-gradient(135deg,#6b21a8,#9333ea)',
-    'NayaPay':'linear-gradient(135deg,#ea580c,#f97316)',
-    'Monzo':'linear-gradient(135deg,#ff3464,#ff6b8a)',
-    'Starling':'linear-gradient(135deg,#6935d3,#9b59b6)',
-    'Revolut':'linear-gradient(135deg,#191c1f,#2d3436)',
-    'Wise':'linear-gradient(135deg,#00b67a,#9fe870)',
-    'Barclays':'linear-gradient(135deg,#00aeef,#003b7a)',
-    'Barclaycard':'linear-gradient(135deg,#00aeef,#003b7a)',
-    'HSBC':'linear-gradient(135deg,#db0011,#a00008)',
-    'NatWest':'linear-gradient(135deg,#5a0096,#2d0048)',
-    'Lloyds':'linear-gradient(135deg,#006a4e,#004d38)',
-    'Emirates NBD':'linear-gradient(135deg,#c8972a,#8b6914)',
-    'ENBD':'linear-gradient(135deg,#c8972a,#8b6914)',
-    'FAB':'linear-gradient(135deg,#00a651,#007a3d)',
-    'ADCB':'linear-gradient(135deg,#cc0000,#990000)',
-    'Dubai Islamic Bank':'linear-gradient(135deg,#006400,#004d00)',
-    'DIB':'linear-gradient(135deg,#006400,#004d00)',
-    'Chase':'linear-gradient(135deg,#117aca,#003b7a)',
-    'Bank of America':'linear-gradient(135deg,#e31837,#c41230)',
-    'Wells Fargo':'linear-gradient(135deg,#d71921,#9a1422)',
-    'Santander':'linear-gradient(135deg,#ec0000,#aa0000)',
-    'Halifax':'linear-gradient(135deg,#005c8e,#003d5c)',
-    'Nationwide':'linear-gradient(135deg,#00568c,#003a5e)',
-    'Metro Bank':'linear-gradient(135deg,#cc0000,#8b0000)',
-    'TSB':'linear-gradient(135deg,#007db9,#005a87)',
-    'First Direct':'linear-gradient(135deg,#111,#333)',
-    'Atom Bank':'linear-gradient(135deg,#3d1a78,#6b21a8)',
-    'RAKBank':'linear-gradient(135deg,#cc0000,#8b0000)',
-    'Wio Bank':'linear-gradient(135deg,#00b67a,#008a5c)',
-    'Askari':'linear-gradient(135deg,#1a5276,#2e86c1)',
-    'Faysal':'linear-gradient(135deg,#1a5276,#2e86c1)',
-    'Bank Islami':'linear-gradient(135deg,#006400,#228b22)',
-    'Zindigi':'linear-gradient(135deg,#7b2d8b,#a855f7)',
-    'JazzCash':'linear-gradient(135deg,#cc0000,#ff4500)',
-    'EasyPaisa':'linear-gradient(135deg,#007a3d,#00a651)',
-    'NBP':'linear-gradient(135deg,#006400,#004d00)',
-    'Bank of Punjab':'linear-gradient(135deg,#1a3a6b,#2d5aa0)',
+    'HBL':'linear-gradient(135deg,#0d2147 0%,#1a3a6b 50%,#2d5aa0 100%)',
+    'Meezan Bank':'linear-gradient(135deg,#003d00 0%,#006400 50%,#228b22 100%)',
+    'Meezan':'linear-gradient(135deg,#003d00 0%,#006400 50%,#228b22 100%)',
+    'UBL':'linear-gradient(135deg,#5c0000 0%,#8b0000 50%,#cc0000 100%)',
+    'MCB Bank':'linear-gradient(135deg,#0d0d1a 0%,#1a1a2e 50%,#16213e 100%)',
+    'MCB':'linear-gradient(135deg,#0d0d1a 0%,#1a1a2e 50%,#16213e 100%)',
+    'Bank Alfalah':'linear-gradient(135deg,#001a33 0%,#003366 50%,#0055a5 100%)',
+    'Alfalah':'linear-gradient(135deg,#001a33 0%,#003366 50%,#0055a5 100%)',
+    'Allied Bank':'linear-gradient(135deg,#001f0f 0%,#004225 50%,#006b3c 100%)',
+    'ABL':'linear-gradient(135deg,#001f0f 0%,#004225 50%,#006b3c 100%)',
+    'Sadapay':'linear-gradient(135deg,#4a0080 0%,#6b21a8 50%,#9333ea 100%)',
+    'NayaPay':'linear-gradient(135deg,#7a2800 0%,#ea580c 50%,#f97316 100%)',
+    'Monzo':'linear-gradient(135deg,#cc1040 0%,#ff3464 50%,#ff6b8a 100%)',
+    'Starling':'linear-gradient(135deg,#3a1a80 0%,#6935d3 50%,#9b59b6 100%)',
+    'Revolut':'linear-gradient(135deg,#0d0f10 0%,#191c1f 50%,#2d3436 100%)',
+    'Wise':'linear-gradient(135deg,#005c3d 0%,#00b67a 50%,#9fe870 100%)',
+    'Barclays':'linear-gradient(135deg,#001f40 0%,#003b7a 50%,#00aeef 100%)',
+    'Barclaycard':'linear-gradient(135deg,#001f40 0%,#003b7a 50%,#00aeef 100%)',
+    'HSBC':'linear-gradient(135deg,#6b0008 0%,#a00008 50%,#db0011 100%)',
+    'NatWest':'linear-gradient(135deg,#1a0030 0%,#2d0048 50%,#5a0096 100%)',
+    'Lloyds':'linear-gradient(135deg,#002214 0%,#004d38 50%,#006a4e 100%)',
+    'Emirates NBD':'linear-gradient(135deg,#4a3500 0%,#8b6914 50%,#c8972a 100%)',
+    'ENBD':'linear-gradient(135deg,#4a3500 0%,#8b6914 50%,#c8972a 100%)',
+    'FAB':'linear-gradient(135deg,#003d1a 0%,#007a3d 50%,#00a651 100%)',
+    'ADCB':'linear-gradient(135deg,#4d0000 0%,#990000 50%,#cc0000 100%)',
+    'Dubai Islamic Bank':'linear-gradient(135deg,#002600 0%,#004d00 50%,#006400 100%)',
+    'DIB':'linear-gradient(135deg,#002600 0%,#004d00 50%,#006400 100%)',
+    'Chase':'linear-gradient(135deg,#001f40 0%,#003b7a 50%,#117aca 100%)',
+    'Bank of America':'linear-gradient(135deg,#7a0012 0%,#c41230 50%,#e31837 100%)',
+    'Wells Fargo':'linear-gradient(135deg,#6b000a 0%,#9a1422 50%,#d71921 100%)',
+    'Santander':'linear-gradient(135deg,#6b0000 0%,#aa0000 50%,#ec0000 100%)',
+    'Halifax':'linear-gradient(135deg,#002030 0%,#003d5c 50%,#005c8e 100%)',
+    'Nationwide':'linear-gradient(135deg,#001f33 0%,#003a5e 50%,#00568c 100%)',
+    'Metro Bank':'linear-gradient(135deg,#400000 0%,#8b0000 50%,#cc0000 100%)',
+    'TSB':'linear-gradient(135deg,#003040 0%,#005a87 50%,#007db9 100%)',
+    'First Direct':'linear-gradient(135deg,#000000 0%,#111 50%,#333 100%)',
+    'Atom Bank':'linear-gradient(135deg,#1a0040 0%,#3d1a78 50%,#6b21a8 100%)',
+    'RAKBank':'linear-gradient(135deg,#400000 0%,#8b0000 50%,#cc0000 100%)',
+    'Wio Bank':'linear-gradient(135deg,#003d29 0%,#008a5c 50%,#00b67a 100%)',
+    'Askari':'linear-gradient(135deg,#0a1f30 0%,#1a5276 50%,#2e86c1 100%)',
+    'Faysal':'linear-gradient(135deg,#0a1f30 0%,#1a5276 50%,#2e86c1 100%)',
+    'Bank Islami':'linear-gradient(135deg,#003d00 0%,#006400 50%,#228b22 100%)',
+    'Zindigi':'linear-gradient(135deg,#3d1045 0%,#7b2d8b 50%,#a855f7 100%)',
+    'JazzCash':'linear-gradient(135deg,#6b0000 0%,#cc0000 50%,#ff4500 100%)',
+    'EasyPaisa':'linear-gradient(135deg,#003d1f 0%,#007a3d 50%,#00a651 100%)',
+    'NBP':'linear-gradient(135deg,#002600 0%,#004d00 50%,#006400 100%)',
+    'Bank of Punjab':'linear-gradient(135deg,#0d2147 0%,#1a3a6b 50%,#2d5aa0 100%)',
   };
   const n=(c.cardName||'').toLowerCase();
   for(const[k,v]of Object.entries(g)){if(n.includes(k.toLowerCase()))return v;}
   const ng={
-    'Visa':'linear-gradient(135deg,#1a1a2e,#16213e)',
-    'Mastercard':'linear-gradient(135deg,#2c2c2c,#1a1a1a)',
-    'American Express':'linear-gradient(135deg,#007b5e,#005a45)',
-    'UnionPay':'linear-gradient(135deg,#c8102e,#8b0000)',
+    'Visa':'linear-gradient(135deg,#0d0d1a 0%,#1a1a2e 50%,#16213e 100%)',
+    'Mastercard':'linear-gradient(135deg,#1a1a1a 0%,#2c2c2c 50%,#3d3d3d 100%)',
+    'American Express':'linear-gradient(135deg,#003d2e 0%,#005a45 50%,#007b5e 100%)',
+    'UnionPay':'linear-gradient(135deg,#5c0012 0%,#8b0000 50%,#c8102e 100%)',
   };
   if(ng[c.network])return ng[c.network];
-  const tg={Debit:'linear-gradient(135deg,#2d3436,#636e72)',Credit:'linear-gradient(135deg,#2c3e50,#34495e)',Prepaid:'linear-gradient(135deg,#2d3436,#636e72)'};
-  return tg[c.cardType]||'linear-gradient(135deg,#2c3e50,#34495e)';
+  const tg={Debit:'linear-gradient(135deg,#1a1a2e 0%,#2c3e50 50%,#34495e 100%)',Credit:'linear-gradient(135deg,#1a1a2e 0%,#2c3e50 50%,#34495e 100%)',Prepaid:'linear-gradient(135deg,#1a1a2e 0%,#2d3436 50%,#636e72 100%)'};
+  return tg[c.cardType]||'linear-gradient(135deg,#1a1a2e 0%,#2c3e50 50%,#34495e 100%)';
 }
 
 const SUBS_DB=[
@@ -2589,16 +2589,23 @@ const CMD = {
       if (!cmdRes.length) cmdRes.push({ icon:'🔍', label:`No results for "${q}"`, cat:'', action:null });
     }
     cmdIdx = -1;
+    const hl = (text, q) => {
+      if (!q) return text;
+      const idx = text.toLowerCase().indexOf(q.toLowerCase());
+      if (idx < 0) return text;
+      return text.slice(0, idx) + `<mark style="background:rgba(10,132,255,.25);color:var(--accent);border-radius:2px;padding:0 1px">${text.slice(idx, idx + q.length)}</mark>` + text.slice(idx + q.length);
+    };
     let html = '', lastCat = null;
     cmdRes.forEach((r, i) => {
       if (r.cat !== lastCat) {
         if (r.cat) html += `<div class="ci-cat">${r.cat}</div>`;
         lastCat = r.cat;
       }
+      const labelHtml = q ? hl(r.label, q) : r.label;
       if (!r.action) {
-        html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${r.icon}</span><span>${r.label}</span></div>`;
+        html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${r.icon}</span><span>${labelHtml}</span></div>`;
       } else {
-        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})"><span class="ci-ic">${r.icon}</span><span>${r.label}</span></div>`;
+        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})"><span class="ci-ic">${r.icon}</span><span>${labelHtml}</span></div>`;
       }
     });
     document.getElementById('cmdList').innerHTML = html;

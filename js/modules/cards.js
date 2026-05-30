@@ -77,7 +77,7 @@ const Cards={
       'JCB':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="800" font-size="12" fill="white">JCB</text></svg>`,
     };
 
-    const carryBorder=carrying?'box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 0 2.5px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.18)':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
+    const carryBorder=carrying?'animation:cardGlow 2.5s ease-in-out infinite':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
 
     return `<div class="wcard sens" data-id="${c.id}" onclick="Cards.openDetail('${c.id}')" style="background:${gradient};${carryBorder}">
   <div class="wcard-shine"></div>
@@ -110,6 +110,17 @@ const Cards={
 </div>`;
   },
   _showExample(){Modal.open('💳 Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _fmtCardNum(input){
+    let v=input.value.replace(/\D/g,'').slice(0,16);
+    input.value=v.replace(/(.{4})/g,'$1 ').trim();
+    const first=v.charAt(0);
+    const netEl=document.getElementById('cf-net');
+    if(netEl&&v.length>=1){
+      const net=first==='4'?'Visa':first==='5'?'Mastercard':(v.startsWith('34')||v.startsWith('37'))?'American Express':v.startsWith('62')?'UnionPay':'';
+      if(net)netEl.value=net;
+    }
+    if(v.length>=4){const l4El=document.getElementById('cf-l4');if(l4El)l4El.value=v.slice(-4);}
+  },
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
   openAdd(){
     Modal.open('💳 Add Card',
@@ -264,7 +275,8 @@ const Cards={
     return '<datalist id="cardDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option></datalist>'
       +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cardDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" oninput="SMART_DB.fillCard(this.value)" value="'+(c.cardName||'')+'"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234"></div></div>'
+      +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" oninput="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
       +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">📷 Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
       +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
@@ -286,7 +298,8 @@ const Cards={
   },
   save(editId=null){
     const name=document.getElementById('cf-name').value.trim();if(!name){Toast.show('Card name required','warning');return;}
-    const _l4v=document.getElementById('cf-l4').value.trim();
+    const fullNumRaw=(document.getElementById('cf-fullnum')?.value||'').replace(/\D/g,'');
+    const _l4v=fullNumRaw.length>=4?fullNumRaw.slice(-4):(document.getElementById('cf-l4').value.trim());
     if(!editId){const dup=checkDuplicate('card',{cardName:name,last4:_l4v});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const id2=editId||U.id();
     const carry=document.getElementById('cf-carry').checked;
@@ -296,7 +309,7 @@ const Cards={
     const prev=editId?S.cards.find(x=>x.id===editId):null;
     const frontPhoto=(frontEl&&frontEl.dataset&&frontEl.dataset.photo)||prev&&prev.frontPhoto||'';
     const backPhoto=(backEl&&backEl.dataset&&backEl.dataset.photo)||prev&&prev.backPhoto||'';
-    const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:document.getElementById('cf-l4').value.trim(),expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,issuer:name.split(' ')[0],frontPhoto,backPhoto,createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:_l4v,cardNumber:fullNumRaw||'',expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,issuer:name.split(' ')[0],frontPhoto,backPhoto,createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.cards=S.cards.map(x=>x.id===editId?item:x);else S.cards.push(item);
     const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
@@ -327,7 +340,8 @@ const Cards={
         +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
         +'</div>';
     }
-    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)],['Last 4','****'+(c.last4||'—')],['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
+    const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span><button class="icb" onclick="(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()">👁️</button><button class="icb" onclick="U.copy('${c.cardNumber}','Card number')">📋</button></div>`:U.drRow('Last 4','****'+(c.last4||'—'));
+    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   del(id,fm=false){

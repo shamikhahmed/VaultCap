@@ -3,870 +3,594 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VaultOS — Presentation</title>
+<title>VaultOS — by Shamikh Ahmed</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #000000;
-    --bg2: #0a0a0a;
-    --bg3: #111111;
-    --accent: #0080ff;
-    --accent2: #0055cc;
-    --text: #ffffff;
-    --text2: #a0a0a0;
-    --text3: #505050;
-    --ok: #22c55e;
-    --warn: #f59e0b;
-    --err: #ef4444;
-    --border: rgba(255,255,255,0.08);
-    --glow: rgba(0,128,255,0.15);
-    --mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  }
+:root {
+  --bg: #000000; --bg2: #0a0a0a; --bg3: #111111;
+  --accent: #0A84FF; --accent2: #0055cc;
+  --text: #ffffff; --text2: #a0a0a0; --text3: #505050;
+  --ok: #30d158; --warn: #ffd60a; --err: #ff453a;
+  --border: rgba(255,255,255,0.08);
+  --glow: rgba(10,132,255,0.18);
+  --mono: 'SF Mono','Fira Code','Consolas',monospace;
+  --sans: -apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --spring: cubic-bezier(0.34,1.56,0.64,1);
+}
 
-  html, body {
-    width: 100%; height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    overflow: hidden;
-    user-select: none;
-  }
+html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:var(--sans); overflow:hidden; user-select:none; }
 
-  /* ─── Deck ─── */
-  #deck {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-  }
+/* Canvas */
+#particles { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.35; }
 
-  .slide {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 80px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-  }
-  .slide.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
+/* Progress */
+#progress { position:fixed; top:0; left:0; height:2px; background:var(--accent); z-index:200; transition:width .4s ease; box-shadow:0 0 8px var(--accent); }
 
-  /* ─── Controls ─── */
-  #controls {
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-  }
+/* Slide counter */
+#counter { position:fixed; bottom:32px; right:36px; font-family:var(--mono); font-size:12px; color:var(--text3); z-index:200; letter-spacing:.08em; }
 
-  .ctrl-btn {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 22px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-family: var(--sans);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    letter-spacing: 0.02em;
-  }
-  .ctrl-btn:hover { background: rgba(0,128,255,0.18); border-color: var(--accent); }
-  .ctrl-btn:disabled { opacity: 0.25; cursor: default; }
+/* Nav dots */
+#dots { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:200; align-items:center; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--text3); transition:all .3s var(--spring); cursor:pointer; }
+.dot.on { width:18px; border-radius:3px; background:var(--accent); }
 
-  #slide-counter {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text2);
-    min-width: 52px;
-    text-align: center;
-    letter-spacing: 0.05em;
-  }
+/* Fullscreen */
+#fsBtn { position:fixed; top:24px; right:24px; z-index:200; background:rgba(255,255,255,.07); border:1px solid var(--border); color:var(--text2); padding:6px 12px; border-radius:99px; font-size:11px; cursor:pointer; letter-spacing:.03em; }
+#fsBtn:hover { background:rgba(255,255,255,.12); }
 
-  /* ─── Progress bar ─── */
-  #progress {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: var(--accent);
-    transition: width 0.4s ease;
-    z-index: 100;
-    box-shadow: 0 0 8px var(--accent);
-  }
+/* Deck */
+#deck { position:relative; width:100vw; height:100vh; z-index:1; }
 
-  /* ─── Slide number chip ─── */
-  .slide-num {
-    position: absolute;
-    top: 28px; right: 36px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-  }
+/* Slides */
+.slide {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  padding:60px 80px;
+  opacity:0; pointer-events:none;
+  transform:scale(1.05);
+  transition:opacity .4s ease, transform .4s var(--spring);
+}
+.slide.active { opacity:1; pointer-events:auto; transform:scale(1); }
+.slide.out { opacity:0; transform:scale(.95); }
 
-  /* ─── Typography ─── */
-  .slide-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
+/* Anim elements */
+.anim { opacity:0; transform:translateY(20px); transition:opacity .5s ease, transform .5s ease; }
+.slide.active .anim { opacity:1; transform:translateY(0); }
+.slide.active .anim:nth-child(1) { transition-delay:.05s; }
+.slide.active .anim:nth-child(2) { transition-delay:.15s; }
+.slide.active .anim:nth-child(3) { transition-delay:.25s; }
+.slide.active .anim:nth-child(4) { transition-delay:.35s; }
+.slide.active .anim:nth-child(5) { transition-delay:.45s; }
+.slide.active .anim:nth-child(6) { transition-delay:.55s; }
+.slide.active .anim:nth-child(7) { transition-delay:.65s; }
+.slide.active .anim:nth-child(8) { transition-delay:.75s; }
+.slide.active .anim:nth-child(9) { transition-delay:.85s; }
 
-  h1 {
-    font-size: clamp(48px, 7vw, 88px);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.0;
-    margin-bottom: 20px;
-  }
-  h2 {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 20px;
-  }
-  .tagline {
-    font-size: clamp(16px, 2vw, 22px);
-    color: var(--text2);
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    line-height: 1.5;
-    max-width: 620px;
-    text-align: center;
-  }
-  .accent { color: var(--accent); }
-  .ok { color: var(--ok); }
-  .warn { color: var(--warn); }
-  .err { color: var(--err); }
+/* Typography */
+.label { font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; }
+h1 { font-size:clamp(52px,8vw,96px); font-weight:800; letter-spacing:-.04em; line-height:1; margin-bottom:20px; }
+h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; line-height:1.15; margin-bottom:20px; }
+.tagline { font-size:clamp(15px,2vw,21px); color:var(--text2); line-height:1.55; max-width:640px; text-align:center; }
+.accent { color:var(--accent); }
+.ok { color:var(--ok); }
+.err { color:var(--err); }
+.divider { width:40px; height:2px; background:var(--accent); border-radius:2px; margin:24px 0; box-shadow:0 0 8px var(--accent); }
 
-  /* ─── Divider ─── */
-  .divider {
-    width: 48px;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 2px;
-    margin: 24px 0;
-    box-shadow: 0 0 8px var(--accent);
-  }
+/* Letter animation for title */
+.letter { display:inline-block; opacity:0; transform:translateY(40px); animation:letterUp .5s var(--spring) forwards; }
+@keyframes letterUp { to { opacity:1; transform:translateY(0); } }
 
-  /* ─── Cards / panels ─── */
-  .card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px 28px;
-  }
-  .card-sm {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-  }
+/* Glass cards */
+.glass { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:16px; }
+.glass-sm { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; }
 
-  /* ─── Grid ─── */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 880px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; max-width: 900px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; max-width: 960px; }
-  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 900px; }
+/* Stat */
+.stat-row { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.stat { background:rgba(10,132,255,.1); border:1px solid rgba(10,132,255,.25); border-radius:14px; padding:16px 24px; text-align:center; min-width:140px; }
+.sv { font-family:var(--mono); font-size:clamp(22px,3vw,30px); font-weight:700; color:var(--accent); letter-spacing:-.02em; }
+.sk { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:.1em; margin-top:5px; }
 
-  /* ─── Module chip ─── */
-  .module-chip {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 12px;
-    text-align: center;
-    transition: border-color 0.2s;
-  }
-  .module-chip:hover { border-color: var(--accent); }
-  .module-chip .ic { font-size: 26px; }
-  .module-chip .mn { font-size: 11px; color: var(--text2); font-weight: 500; letter-spacing: 0.02em; }
-  .module-chip .mc { font-size: 10px; color: var(--text3); }
+/* Flow */
+.flow { display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; margin:24px 0; }
+.flow-node { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; font-weight:600; text-align:center; white-space:nowrap; }
+.flow-arrow { color:var(--accent); font-size:20px; margin:0 8px; opacity:.6; }
 
-  /* ─── Bullet list ─── */
-  .blist {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    max-width: 680px;
-    width: 100%;
-  }
-  .blist li {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    font-size: clamp(14px, 1.6vw, 17px);
-    line-height: 1.5;
-    color: var(--text2);
-  }
-  .blist li .bi {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(0,128,255,0.12);
-    border: 1px solid rgba(0,128,255,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .blist li strong { color: var(--text); font-weight: 600; }
+/* Pills */
+.pills { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
+.pill { background:rgba(10,132,255,.12); border:1px solid rgba(10,132,255,.3); border-radius:99px; padding:6px 14px; font-size:12px; font-weight:600; color:var(--accent); }
 
-  /* ─── Code / mono block ─── */
-  .mono-block {
-    font-family: var(--mono);
-    font-size: clamp(11px, 1.4vw, 14px);
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px 28px;
-    line-height: 2.0;
-    color: var(--text2);
-    width: 100%;
-    max-width: 680px;
-  }
-  .mono-block .line-acc { color: var(--accent); }
-  .mono-block .line-ok { color: var(--ok); }
-  .mono-block .line-dim { color: var(--text3); }
+/* Module grid */
+.mod-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; width:100%; max-width:680px; margin-top:16px; }
+.mod-tile { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:12px; padding:14px 8px; text-align:center; font-size:24px; cursor:default; transition:all .2s; }
+.mod-tile:hover { background:rgba(10,132,255,.1); border-color:rgba(10,132,255,.3); }
+.mod-label { font-size:9px; color:var(--text3); margin-top:6px; letter-spacing:.03em; }
 
-  /* ─── Stat badge ─── */
-  .stat-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 8px;
-  }
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(0,128,255,0.08);
-    border: 1px solid rgba(0,128,255,0.2);
-    border-radius: 12px;
-    padding: 14px 24px;
-    min-width: 140px;
-  }
-  .stat .sv {
-    font-family: var(--mono);
-    font-size: clamp(20px, 2.5vw, 28px);
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: -0.02em;
-  }
-  .stat .sk {
-    font-size: 11px;
-    color: var(--text2);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
+/* Steps */
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:880px; width:100%; margin-top:16px; }
+.step { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:center; }
+.step-ic { font-size:30px; margin-bottom:10px; }
+.step-title { font-size:14px; font-weight:700; margin-bottom:6px; }
+.step-body { font-size:12px; color:var(--text2); line-height:1.55; }
 
-  /* ─── Before/after ─── */
-  .ba-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    width: 100%;
-    max-width: 860px;
-    align-items: start;
-  }
-  .ba-col {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px 22px;
-  }
-  .ba-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .ba-label.before { color: var(--warn); }
-  .ba-label.after { color: var(--ok); }
-  .ba-field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .ba-field:last-child { border-bottom: none; }
-  .ba-field .fk { color: var(--text3); }
-  .ba-field .fv { color: var(--text); font-weight: 500; font-family: var(--mono); }
-  .ba-field .fv.auto { color: var(--accent); }
+/* Tech badges */
+.badge-grid { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:20px; }
+.tbadge { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:10px; padding:10px 18px; font-size:13px; font-weight:600; font-family:var(--mono); color:var(--text2); }
 
-  /* ─── URL hero ─── */
-  .url-hero {
-    font-family: var(--mono);
-    font-size: clamp(16px, 2.5vw, 28px);
-    color: var(--accent);
-    background: rgba(0,128,255,0.08);
-    border: 1px solid rgba(0,128,255,0.25);
-    border-radius: 12px;
-    padding: 18px 36px;
-    letter-spacing: 0.02em;
-    margin-top: 8px;
-  }
+/* Wallet card */
+.wcard-demo {
+  position:relative; width:min(100%,360px); height:210px;
+  border-radius:16px; overflow:hidden; cursor:pointer;
+  box-shadow:0 12px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.18);
+  opacity:0; transform:translateY(30px) rotate(-2deg);
+  transition:opacity .5s ease, transform .5s var(--spring);
+}
+.wcard-demo.show { opacity:1; transform:translateY(0) rotate(0deg); }
+.wcard-demo::before { content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.02) 0px,rgba(255,255,255,.02) 1px,transparent 1px,transparent 8px); z-index:1; }
+.wcard-demo::after { content:''; position:absolute; inset:0; background:linear-gradient(125deg,rgba(255,255,255,.12) 0%,transparent 40%,rgba(255,255,255,.06) 100%); z-index:1; }
+.wcard-inner { position:relative; z-index:2; height:100%; padding:16px 18px 14px; display:flex; flex-direction:column; justify-content:space-between; }
+.wcard-top { display:flex; align-items:flex-start; justify-content:space-between; }
+.wcard-logo { width:30px; height:30px; border-radius:7px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; }
+.wcard-badge { font-size:8px; font-weight:800; letter-spacing:1.5px; color:rgba(255,255,255,.75); background:rgba(255,255,255,.2); padding:3px 9px; border-radius:99px; }
+.wcard-chip { width:36px; height:28px; background:linear-gradient(135deg,#c9a227,#f0c040); border-radius:4px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.wcard-chip::before { content:''; position:absolute; left:33%; top:0; width:1px; height:100%; background:rgba(0,0,0,.3); }
+.wcard-chip::after { content:''; position:absolute; top:33%; left:0; height:1px; width:100%; background:rgba(0,0,0,.3); }
+.wcard-num { font-family:var(--mono); font-size:16px; font-weight:600; letter-spacing:3px; color:rgba(255,255,255,.95); }
+.wcard-bot { display:flex; align-items:flex-end; justify-content:space-between; }
+.wcard-holder { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.8); }
+.wcard-exp-label { font-size:7px; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:2px; }
+.wcard-exp { font-size:10px; font-weight:600; font-family:var(--mono); color:rgba(255,255,255,.85); }
 
-  /* ─── QR placeholder ─── */
-  .qr-box {
-    width: 140px;
-    height: 140px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 8px;
-    color: var(--text3);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    flex-shrink: 0;
-  }
-  .qr-box svg { opacity: 0.3; }
+/* Bar (bank db) */
+.bar-row { display:flex; flex-direction:column; gap:12px; max-width:520px; width:100%; margin-top:16px; }
+.bar-item { display:flex; align-items:center; gap:12px; }
+.bar-flag { font-size:18px; width:28px; }
+.bar-fill { height:8px; border-radius:4px; background:var(--accent); transition:width 1.2s ease; }
+.bar-count { font-size:12px; font-family:var(--mono); color:var(--text2); white-space:nowrap; }
 
-  /* ─── Platform badges ─── */
-  .platform-row {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 12px;
-  }
-  .platform-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 500;
-  }
+/* Platform tiles */
+.plat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:600px; width:100%; margin-top:16px; }
+.plat-tile { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:14px; padding:16px; display:flex; align-items:flex-start; gap:12px; }
+.plat-ic { font-size:24px; }
+.plat-title { font-size:13px; font-weight:700; margin-bottom:4px; }
+.plat-sub { font-size:11px; color:var(--text2); line-height:1.45; }
 
-  /* ─── Flag row ─── */
-  .flag-row {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 8px 0 16px;
-  }
-  .flag-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-  .flag-item .fi { font-size: 40px; }
-  .flag-item .fn { font-size: 11px; color: var(--text2); font-weight: 600; letter-spacing: 0.05em; }
+/* Counting number */
+.count-num { font-family:var(--mono); font-size:clamp(60px,12vw,120px); font-weight:800; color:var(--accent); line-height:1; letter-spacing:-.04em; }
 
-  /* ─── Step row ─── */
-  .step-row {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    max-width: 880px;
-    align-items: stretch;
-  }
-  .step-item {
-    flex: 1;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 22px 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
-  }
-  .step-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--accent2);
-    border: 1px solid var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-  .step-item p {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.5;
-  }
-  .step-item strong { color: var(--text); font-weight: 600; font-size: 14px; }
+/* QR */
+.qr-box { background:#fff; border-radius:12px; padding:12px; width:120px; height:120px; }
+.url-big { font-family:var(--mono); font-size:clamp(14px,2.5vw,24px); color:var(--accent); letter-spacing:-.01em; text-decoration:none; border-bottom:2px solid var(--accent); padding-bottom:4px; }
 
-  /* ─── Slide 1 specific ─── */
-  #s1 { text-align: center; background: radial-gradient(ellipse at 50% 30%, rgba(0,128,255,0.08) 0%, transparent 70%); }
-  #s1 h1 { text-align: center; }
-  #s1 .by-line { font-size: 13px; color: var(--text3); margin-top: 28px; letter-spacing: 0.08em; text-transform: uppercase; }
+/* Pain points */
+.pain { display:flex; flex-direction:column; gap:14px; max-width:560px; width:100%; margin-top:20px; }
+.pain-item { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:15px; color:var(--text2); display:flex; align-items:center; gap:12px; opacity:0; transform:translateX(-30px); transition:opacity .4s, transform .4s var(--spring); }
+.pain-item.show { opacity:1; transform:translateX(0); }
+.pain-item span { font-size:20px; }
 
-  /* ─── Diagram ─── */
-  .diagram {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    width: 100%;
-    max-width: 860px;
-    overflow-x: auto;
-  }
-  .diag-node {
-    flex: 1;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 10px;
-    text-align: center;
-    min-width: 110px;
-  }
-  .diag-node .dn-ic { font-size: 22px; margin-bottom: 6px; }
-  .diag-node .dn-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .diag-node .dn-sub { font-family: var(--mono); font-size: 10px; color: var(--text3); line-height: 1.5; }
-  .diag-arrow {
-    padding: 0 8px;
-    color: var(--accent);
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-  .diag-node.hi { border-color: rgba(0,128,255,0.4); background: rgba(0,128,255,0.06); }
+/* Big word animate */
+.big-word { font-size:clamp(60px,10vw,100px); font-weight:800; letter-spacing:-.04em; opacity:0; transform:scale(.9); transition:opacity .4s ease, transform .5s var(--spring); }
+.big-word.show { opacity:1; transform:scale(1); }
 
-  /* ─── Wide layout ─── */
-  .wide { width: 100%; max-width: 960px; }
-  .full-w { align-items: flex-start; }
+/* Region cols */
+.region-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:840px; width:100%; margin-top:20px; }
+.region-col { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.region-flag { font-size:24px; margin-bottom:8px; }
+.region-banks { font-size:12px; color:var(--text2); line-height:1.9; }
+
+/* QR sync flow */
+.sync-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:0; max-width:760px; width:100%; margin-top:20px; align-items:center; }
+.sync-node { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:14px; padding:16px 12px; text-align:center; }
+.sync-icon { font-size:28px; margin-bottom:8px; }
+.sync-label { font-size:11px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.sync-sub { font-size:10px; color:var(--text3); }
+.sync-arr { font-size:20px; color:var(--accent); text-align:center; opacity:.6; }
+
+/* Responsive */
+@media (max-width:700px) {
+  .slide { padding:40px 24px; }
+  .mod-grid { grid-template-columns:repeat(4,1fr); }
+  .steps { grid-template-columns:1fr; }
+  .region-grid { grid-template-columns:1fr; }
+  .sync-flow { grid-template-columns:1fr 1fr; gap:10px; }
+  .sync-arr { display:none; }
+  .plat-grid { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
 
+<canvas id="particles"></canvas>
 <div id="progress"></div>
+<div id="counter">01 / 14</div>
+<div id="dots"></div>
+<button id="fsBtn" onclick="toggleFS()">⛶ Fullscreen</button>
 
 <div id="deck">
 
-  <!-- ─── Slide 1: Title ─── -->
-  <div class="slide active" id="s1">
-    <span class="slide-num">01 / 12</span>
-    <div class="slide-label">Personal Finance OS</div>
-    <h1>VaultOS</h1>
-    <div class="tagline">Your private financial operating system.<br>
-    Zero cloud. Zero compromise. Enterprise-grade encryption.</div>
-    <div class="divider"></div>
-    <p class="by-line">by Shamikh Ahmed &nbsp;·&nbsp; Director, NEWS Logistics &nbsp;·&nbsp; Founder, TheSolution360</p>
-  </div>
+<!-- ─── Slide 1: Title ─── -->
+<div class="slide" id="s0">
+  <div class="anim label">Personal Finance · 2025</div>
+  <div class="anim" style="display:flex;gap:0;margin-bottom:16px" id="vaultLetters"></div>
+  <div class="anim tagline" style="color:var(--text);font-size:clamp(16px,2.5vw,24px);font-weight:500;margin-bottom:8px">Your Private Financial OS</div>
+  <div class="anim tagline" style="font-size:clamp(13px,1.6vw,17px)">Enterprise-grade security. Zero cloud. Fully private.</div>
+  <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:12px;color:var(--text3)">by Shamikh Ahmed</div>
+</div>
 
-  <!-- ─── Slide 2: The Problem ─── -->
-  <div class="slide" id="s2">
-    <span class="slide-num">02 / 12</span>
-    <div class="slide-label">The Problem</div>
-    <h2>What existing apps get wrong</h2>
-    <div class="divider"></div>
-    <ul class="blist">
-      <li><span class="bi">☁️</span><div><strong>Your data lives on their servers.</strong> Every finance app syncs to the cloud — which means a breach, a subpoena, or a shutdown wipes you out.</div></li>
-      <li><span class="bi">🔓</span><div><strong>Zero encryption at rest.</strong> Most apps store your account numbers, card details, and passwords in plaintext or with reversible encoding.</div></li>
-      <li><span class="bi">🌍</span><div><strong>No PK / UK / UAE support.</strong> Western-centric apps don't know HBL, Meezan, Sadapay, Jazz, Etisalat, or PSX stocks exist.</div></li>
-      <li><span class="bi">🧩</span><div><strong>Fragmented tools.</strong> One app for banking, another for passwords, another for documents — no unified view of your financial identity.</div></li>
-      <li><span class="bi">💳</span><div><strong>Subscription paywalls.</strong> Premium features locked behind recurring fees for data that is yours.</div></li>
-    </ul>
+<!-- ─── Slide 2: The Problem ─── -->
+<div class="slide" id="s1" style="align-items:flex-start;">
+  <div class="anim label">The Problem</div>
+  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1.1">Your financial data</div>
+  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;color:var(--err);line-height:1.1;margin-bottom:24px">is everywhere.</div>
+  <div class="pain" id="painList">
+    <div class="pain-item"><span>☁️</span> Cloud apps that breach — your data, their servers.</div>
+    <div class="pain-item"><span>💔</span> No single app for PKR + GBP + AED + USD.</div>
+    <div class="pain-item"><span>👁️</span> Privacy traded for convenience. You pay with your data.</div>
   </div>
+</div>
 
-  <!-- ─── Slide 3: The Solution ─── -->
-  <div class="slide" id="s3">
-    <span class="slide-num">03 / 12</span>
-    <div class="slide-label">The Solution</div>
-    <h2>One vault. Everything.<br><span class="accent">Completely private.</span></h2>
-    <div class="divider"></div>
-    <div class="grid-3" style="max-width:800px;">
-      <div class="card-sm" style="text-align:center;">
-        <div style="font-size:32px;margin-bottom:10px;">🔒</div>
-        <strong style="font-size:15px;">Local-first</strong>
-        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">All data stays on your device. No account. No server. No sync.</p>
-      </div>
-      <div class="card-sm" style="text-align:center;">
-        <div style="font-size:32px;margin-bottom:10px;">🛡️</div>
-        <strong style="font-size:15px;">Encrypted</strong>
-        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">AES-256-GCM encryption. Key derived from your PIN — never stored.</p>
-      </div>
-      <div class="card-sm" style="text-align:center;">
-        <div style="font-size:32px;margin-bottom:10px;">📱</div>
-        <strong style="font-size:15px;">PWA</strong>
-        <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5;">Installs on iPhone, Android, Mac, Windows. No app store required.</p>
-      </div>
-    </div>
-    <div class="stat-row" style="margin-top:28px;">
-      <div class="stat"><span class="sv">15+</span><span class="sk">Data modules</span></div>
-      <div class="stat"><span class="sv">0</span><span class="sk">External servers</span></div>
-      <div class="stat"><span class="sv">0</span><span class="sk">Dependencies</span></div>
-      <div class="stat"><span class="sv">Free</span><span class="sk">Forever</span></div>
-    </div>
+<!-- ─── Slide 3: The Solution ─── -->
+<div class="slide" id="s2">
+  <div class="anim label">The Solution</div>
+  <div id="solWords" style="text-align:center">
+    <div class="big-word" id="w-every" style="color:#fff">Everything.</div>
+    <div class="big-word" id="w-enc" style="color:var(--accent)">Encrypted.</div>
+    <div class="big-word" id="w-off" style="color:var(--ok)">Offline.</div>
   </div>
+  <div class="anim stat-row" style="margin-top:28px">
+    <div class="stat"><div class="sv">0</div><div class="sk">Servers</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sk">Accounts</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sk">Subscriptions</div></div>
+  </div>
+</div>
 
-  <!-- ─── Slide 4: Security Architecture ─── -->
-  <div class="slide" id="s4">
-    <span class="slide-num">04 / 12</span>
-    <div class="slide-label">Security Architecture</div>
-    <h2>Defense in depth, <span class="accent">by design</span></h2>
-    <div class="divider"></div>
-    <div class="diagram">
-      <div class="diag-node hi">
-        <div class="dn-ic">🔢</div>
-        <div class="dn-title">6-digit PIN</div>
-        <div class="dn-sub">Never stored<br>Never transmitted</div>
-      </div>
-      <div class="diag-arrow">→</div>
-      <div class="diag-node hi">
-        <div class="dn-ic">🔑</div>
-        <div class="dn-title">PBKDF2</div>
-        <div class="dn-sub">SHA-256<br>310,000 iterations<br>Random 16B salt</div>
-      </div>
-      <div class="diag-arrow">→</div>
-      <div class="diag-node hi">
-        <div class="dn-ic">🛡️</div>
-        <div class="dn-title">AES-256-GCM</div>
-        <div class="dn-sub">Authenticated<br>encryption<br>Memory-only key</div>
-      </div>
-      <div class="diag-arrow">→</div>
-      <div class="diag-node hi">
-        <div class="dn-ic">🗄️</div>
-        <div class="dn-title">IndexedDB</div>
-        <div class="dn-sub">Encrypted blob<br>Zero plaintext<br>on disk</div>
-      </div>
-    </div>
-    <div class="stat-row" style="margin-top:24px;">
-      <div class="stat"><span class="sv">310K</span><span class="sk">PBKDF2 iterations</span></div>
-      <div class="stat"><span class="sv">256-bit</span><span class="sk">AES-GCM key</span></div>
-      <div class="stat"><span class="sv">0</span><span class="sk">Plaintext on disk</span></div>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:16px;">+ Decoy vault · Panic mode · Auto-lock · Brute-force protection · Privacy blur</p>
+<!-- ─── Slide 4: Security ─── -->
+<div class="slide" id="s3">
+  <div class="anim label">Security</div>
+  <div class="anim" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:8px">Military-grade encryption.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Your PIN never touches a server. The key exists only in memory.</div>
+  <div class="anim flow">
+    <div class="flow-node">📱 PIN</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">🔑 PBKDF2<br><span style="font-size:10px;color:var(--text3)">310,000 iterations</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">🔒 AES-256-GCM</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">💾 IndexedDB</div>
   </div>
+  <div class="anim pills">
+    <div class="pill">310K Iterations</div>
+    <div class="pill">AES-256-GCM</div>
+    <div class="pill">Memory-only Key</div>
+    <div class="pill">Decoy Vault</div>
+    <div class="pill">Panic Lock</div>
+  </div>
+</div>
 
-  <!-- ─── Slide 5: What You Can Store ─── -->
-  <div class="slide" id="s5">
-    <span class="slide-num">05 / 12</span>
-    <div class="slide-label">Data Modules</div>
-    <h2>Everything in <span class="accent">one vault</span></h2>
-    <div class="divider"></div>
-    <div class="grid-5" style="max-width:920px;">
-      <div class="module-chip"><span class="ic">🏦</span><span class="mn">Banks</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">💳</span><span class="mn">Cards</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">📈</span><span class="mn">Investments</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">💵</span><span class="mn">Cash</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">🤝</span><span class="mn">Loans</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">📋</span><span class="mn">Expenses</span><span class="mc">Finance</span></div>
-      <div class="module-chip"><span class="ic">🏠</span><span class="mn">Assets</span><span class="mc">Assets</span></div>
-      <div class="module-chip"><span class="ic">🚗</span><span class="mn">Vehicles</span><span class="mc">Assets</span></div>
-      <div class="module-chip"><span class="ic">📱</span><span class="mn">SIM Cards</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">🪪</span><span class="mn">Documents</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">📧</span><span class="mn">Emails</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">💻</span><span class="mn">Gadgets</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">💼</span><span class="mn">Digital</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">👥</span><span class="mn">Friends</span><span class="mc">Identity</span></div>
-      <div class="module-chip"><span class="ic">🔔</span><span class="mn">Reminders</span><span class="mc">Tools</span></div>
-    </div>
-  </div>
+<!-- ─── Slide 5: Modules ─── -->
+<div class="slide" id="s4">
+  <div class="anim label">Coverage</div>
+  <div class="anim" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">One app. Everything.</div>
+  <div class="anim tagline" style="margin-bottom:0">Banks · Cards · Investments · Cash · Loans · Vehicles · Assets · SIMs · Documents · Emails · Devices · Digital · Friends · Expenses · Reminders</div>
+  <div class="anim mod-grid" id="modGrid"></div>
+</div>
 
-  <!-- ─── Slide 6: Smart Autocomplete ─── -->
-  <div class="slide" id="s6">
-    <span class="slide-num">06 / 12</span>
-    <div class="slide-label">Smart Autocomplete</div>
-    <h2>Type a name. <span class="accent">The rest fills itself.</span></h2>
-    <div class="divider"></div>
-    <div class="ba-wrap">
-      <div class="ba-col">
-        <div class="ba-label before">Before — user types</div>
-        <div class="ba-field"><span class="fk">Bank Name</span><span class="fv">Meezan_</span></div>
-        <div class="ba-field"><span class="fk">Country</span><span class="fv" style="color:var(--text3)">—</span></div>
-        <div class="ba-field"><span class="fk">Currency</span><span class="fv" style="color:var(--text3)">—</span></div>
-        <div class="ba-field"><span class="fk">Bank Type</span><span class="fv" style="color:var(--text3)">—</span></div>
-        <div class="ba-field"><span class="fk">SWIFT Code</span><span class="fv" style="color:var(--text3)">—</span></div>
-        <div class="ba-field"><span class="fk">Flag</span><span class="fv" style="color:var(--text3)">—</span></div>
-      </div>
-      <div class="ba-col">
-        <div class="ba-label after">After — SMART_DB match</div>
-        <div class="ba-field"><span class="fk">Bank Name</span><span class="fv">Meezan Bank</span></div>
-        <div class="ba-field"><span class="fk">Country</span><span class="fv auto">🇵🇰 Pakistan</span></div>
-        <div class="ba-field"><span class="fk">Currency</span><span class="fv auto">PKR</span></div>
-        <div class="ba-field"><span class="fk">Bank Type</span><span class="fv auto">Islamic</span></div>
-        <div class="ba-field"><span class="fk">SWIFT Code</span><span class="fv auto">MEZNPKKA</span></div>
-        <div class="ba-field"><span class="fk">Flag</span><span class="fv auto">🇵🇰 +92</span></div>
+<!-- ─── Slide 6: Wallet Cards ─── -->
+<div class="slide" id="s5">
+  <div class="anim label">Cards</div>
+  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Cards that look like cards.</div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;max-width:860px">
+    <!-- HBL Card -->
+    <div class="wcard-demo" style="background:linear-gradient(135deg,#0d2147 0%,#1a3a6b 50%,#2d5aa0 100%)">
+      <div class="wcard-inner">
+        <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.2);font-size:9px;font-weight:800">HBL</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">HBL</span></div><div class="wcard-badge">DEBIT</div></div>
+        <div class="wcard-chip"></div>
+        <div class="wcard-num">**** **** **** 1234</div>
+        <div class="wcard-bot"><div><div class="wcard-exp-label">Card Holder</div><div class="wcard-holder">AHMED S</div></div><div style="text-align:center"><div class="wcard-exp-label">Valid Thru</div><div class="wcard-exp">09/27</div></div><svg viewBox="0 0 80 26" width="44" height="15"><text x="0" y="22" font-family="Arial" font-weight="900" font-size="26" fill="white" letter-spacing="-1" font-style="italic">VISA</text></svg></div>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:16px;">Works for 100+ banks across PK · UK · UAE · US · SG · IN · SA</p>
+    <!-- Monzo Card -->
+    <div class="wcard-demo" style="background:linear-gradient(135deg,#cc1040 0%,#ff3464 50%,#ff6b8a 100%);transition-delay:.15s">
+      <div class="wcard-inner">
+        <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.2);font-size:9px;font-weight:800">M</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">Monzo</span></div><div class="wcard-badge">DEBIT</div></div>
+        <div class="wcard-chip"></div>
+        <div class="wcard-num">**** **** **** 5678</div>
+        <div class="wcard-bot"><div><div class="wcard-exp-label">Card Holder</div><div class="wcard-holder">SHAMIKH A</div></div><div style="text-align:center"><div class="wcard-exp-label">Valid Thru</div><div class="wcard-exp">12/26</div></div><div style="position:relative;width:36px;height:22px;display:flex;align-items:center"><div style="position:absolute;left:0;width:20px;height:20px;border-radius:50%;background:rgba(235,0,27,.92)"></div><div style="position:absolute;left:12px;width:20px;height:20px;border-radius:50%;background:rgba(255,95,0,.85)"></div></div></div>
+      </div>
+    </div>
+    <!-- Emirates NBD Card -->
+    <div class="wcard-demo" style="background:linear-gradient(135deg,#4a3500 0%,#8b6914 50%,#c8972a 100%);transition-delay:.3s">
+      <div class="wcard-inner">
+        <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.15);font-size:7px;font-weight:800">ENBD</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">Emirates NBD</span></div><div class="wcard-badge">CREDIT</div></div>
+        <div class="wcard-chip"></div>
+        <div class="wcard-num">**** **** **** 9012</div>
+        <div class="wcard-bot"><div><div class="wcard-exp-label">Card Holder</div><div class="wcard-holder">S AHMED</div></div><div style="text-align:center"><div class="wcard-exp-label">Valid Thru</div><div class="wcard-exp">03/28</div></div><svg viewBox="0 0 80 26" width="44" height="15"><text x="0" y="22" font-family="Arial" font-weight="900" font-size="26" fill="white" letter-spacing="-1" font-style="italic">VISA</text></svg></div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <!-- ─── Slide 7: Smart Import Engine ─── -->
-  <div class="slide" id="s7">
-    <span class="slide-num">07 / 12</span>
-    <div class="slide-label">Smart Import Engine</div>
-    <h2>Paste anything. <span class="accent">It just works.</span></h2>
-    <div class="divider"></div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center;">Smart pattern-matching engine — no AI API needed. Everything runs locally on your device.</p>
-    <div class="step-row">
-      <div class="step-item">
-        <div class="step-num">1</div>
-        <div style="font-size:28px;">📋</div>
-        <strong>Paste</strong>
-        <p>Paste any text — a bank SMS, a statement row, a spreadsheet snippet, or a screenshot transcription</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">2</div>
-        <div style="font-size:28px;">🔍</div>
-        <strong>Detect</strong>
-        <p>Built-in pattern engine identifies the data type — bank, card, SIM, investment, expense — using regex + keyword matching</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">3</div>
-        <div style="font-size:28px;">✅</div>
-        <strong>Confirm</strong>
-        <p>Review the parsed fields before saving. You stay in control of every entry.</p>
-      </div>
-      <div class="step-item">
-        <div class="step-num">4</div>
-        <div style="font-size:28px;">🔒</div>
-        <strong>Saved</strong>
-        <p>Encrypted and stored locally. Nothing uploaded. Zero API keys. Zero internet required.</p>
-      </div>
-    </div>
+<!-- ─── Slide 7: Import ─── -->
+<div class="slide" id="s6">
+  <div class="anim label">Import</div>
+  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:8px">Add everything in seconds.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Three ways to import your data — no typing required.</div>
+  <div class="anim steps">
+    <div class="step"><div class="step-ic">📷</div><div class="step-title">Camera Scan</div><div class="step-body">Point at any bank card. Fields auto-fill from OCR + pattern matching.</div></div>
+    <div class="step"><div class="step-ic">✨</div><div class="step-title">Quick Add</div><div class="step-body">Describe it in plain English. "HBL current PKR 125,000" — done instantly.</div></div>
+    <div class="step"><div class="step-ic">📊</div><div class="step-title">Excel / PDF Import</div><div class="step-body">Drop a spreadsheet or statement. Review every row before saving.</div></div>
   </div>
+</div>
 
-  <!-- ─── Slide 8: Dashboard ─── -->
-  <div class="slide" id="s8">
-    <span class="slide-num">08 / 12</span>
-    <div class="slide-label">Dashboard</div>
-    <h2>Your complete financial<br><span class="accent">picture at a glance</span></h2>
-    <div class="divider"></div>
-    <div class="grid-2" style="max-width:820px;">
-      <div class="card">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Net Worth</div>
-        <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--ok);">PKR 4,82,000</div>
-        <div style="font-family:var(--mono);font-size:14px;color:var(--text2);margin-top:4px;">£ 1,340 · $ 1,720 · AED 6,300</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:12px;">Currency toggle: PKR · GBP · AED · USD</div>
-      </div>
-      <div class="card">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Quick Stats</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">🏦 Banks</span><span style="font-family:var(--mono);color:var(--accent);">3 accounts</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">💳 Cards</span><span style="font-family:var(--mono);color:var(--accent);">5 cards</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">📈 Investments</span><span style="font-family:var(--mono);color:var(--ok);">+12.4%</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">🔔 Reminders</span><span style="font-family:var(--mono);color:var(--warn);">2 due soon</span></div>
-        </div>
-      </div>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:20px;">Net worth tracked over time · All values in your preferred currency · Tap any stat to navigate directly</p>
+<!-- ─── Slide 8: Bank Database ─── -->
+<div class="slide" id="s7">
+  <div class="anim label">Autocomplete</div>
+  <div class="count-num anim" id="bankCount">0</div>
+  <div class="anim" style="font-size:clamp(18px,2.5vw,28px);font-weight:600;letter-spacing:-.02em;margin:8px 0 4px">banks. Type 3 letters. Done.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Country, currency, SWIFT code — all auto-filled instantly.</div>
+  <div class="anim bar-row">
+    <div class="bar-item"><span class="bar-flag">🇵🇰</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="62%"></div></div><span class="bar-count">50+ PK</span></div>
+    <div class="bar-item"><span class="bar-flag">🇬🇧</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="51%"></div></div><span class="bar-count">40+ UK</span></div>
+    <div class="bar-item"><span class="bar-flag">🇦🇪</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="32%"></div></div><span class="bar-count">25+ UAE</span></div>
   </div>
+</div>
 
-  <!-- ─── Slide 9: PK/UK/UAE Focus ─── -->
-  <div class="slide" id="s9">
-    <span class="slide-num">09 / 12</span>
-    <div class="slide-label">Regional Focus</div>
-    <h2>Built for <span class="accent">your world</span></h2>
-    <div class="divider"></div>
-    <div class="flag-row">
-      <div class="flag-item"><span class="fi">🇵🇰</span><span class="fn">Pakistan</span></div>
-      <div class="flag-item"><span class="fi">🇬🇧</span><span class="fn">United Kingdom</span></div>
-      <div class="flag-item"><span class="fi">🇦🇪</span><span class="fn">UAE</span></div>
-    </div>
-    <div class="grid-3" style="max-width:860px;">
-      <div class="card-sm">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇵🇰 Banks</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.8;">HBL · UBL · Meezan · MCB<br>Sadapay · NayaPay · JazzCash<br>EasyPaisa · Zindigi · Bank Alfalah</div>
-      </div>
-      <div class="card-sm">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇬🇧 Banks</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.8;">Monzo · Starling · Revolut<br>Barclays · HSBC · NatWest<br>Wise · Chase UK · Lloyds</div>
-      </div>
-      <div class="card-sm">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">🇦🇪 Banks</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.8;">Emirates NBD · FAB · ADCB<br>Mashreq Neo · Liv. · Wio Bank<br>Dubai Islamic · ADIB · RAKBANK</div>
-      </div>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:16px;">SIM networks · PSX stocks · PKR / GBP / AED / USD currency support · Local card networks</p>
+<!-- ─── Slide 9: QR Sync ─── -->
+<div class="slide" id="s8">
+  <div class="anim label">Sync</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">No cloud. No account.</div>
+  <div class="anim tagline" style="margin-bottom:24px">End-to-end encrypted device sync via one-time QR code.</div>
+  <div class="anim sync-flow">
+    <div class="sync-node"><div class="sync-icon">📱</div><div class="sync-label">Source Device</div><div class="sync-sub">Your vault</div></div>
+    <div class="sync-arr">→</div>
+    <div class="sync-node"><div class="sync-icon">🔐</div><div class="sync-label">AES Encrypted</div><div class="sync-sub">QR compressed</div></div>
+    <div class="sync-arr">→</div>
+    <div class="sync-node"><div class="sync-icon">📷</div><div class="sync-label">Scan QR</div><div class="sync-sub">Target device</div></div>
+    <div class="sync-arr">→</div>
+    <div class="sync-node"><div class="sync-icon">✅</div><div class="sync-label">Vault Merged</div><div class="sync-sub">No internet</div></div>
   </div>
+  <div class="anim" style="font-size:12px;color:var(--text3);margin-top:20px">No account · No server · Works offline · One-time transfer</div>
+</div>
 
-  <!-- ─── Slide 10: PWA ─── -->
-  <div class="slide" id="s10">
-    <span class="slide-num">10 / 12</span>
-    <div class="slide-label">Progressive Web App</div>
-    <h2>Works everywhere.<br><span class="accent">No app store needed.</span></h2>
-    <div class="divider"></div>
-    <div class="platform-row">
-      <div class="platform-badge"><span style="font-size:24px;">📱</span><div><strong>iPhone / iPad</strong><br><span style="font-size:11px;color:var(--text2);">Safari → Share → Add to Home Screen</span></div></div>
-      <div class="platform-badge"><span style="font-size:24px;">🤖</span><div><strong>Android</strong><br><span style="font-size:11px;color:var(--text2);">Chrome → Install banner</span></div></div>
-      <div class="platform-badge"><span style="font-size:24px;">🖥️</span><div><strong>Mac</strong><br><span style="font-size:11px;color:var(--text2);">Chrome / Edge → Install icon</span></div></div>
-      <div class="platform-badge"><span style="font-size:24px;">🪟</span><div><strong>Windows</strong><br><span style="font-size:11px;color:var(--text2);">Edge → Apps → Install this site</span></div></div>
-    </div>
-    <ul class="blist" style="margin-top:24px;">
-      <li><span class="bi">⚡</span><div><strong>Instant load</strong> — under 2 MB total, loads on slow mobile connections</div></li>
-      <li><span class="bi">✈️</span><div><strong>Offline first</strong> — all data local, works without internet after first load</div></li>
-      <li><span class="bi">🏠</span><div><strong>Home screen icon</strong> — looks and feels like a native app, no browser chrome</div></li>
-    </ul>
+<!-- ─── Slide 10: Dashboard ─── -->
+<div class="slide" id="s9">
+  <div class="anim label">Dashboard</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Your complete financial picture.</div>
+  <div class="anim stat-row">
+    <div class="stat" style="min-width:180px"><div class="sv" style="font-size:clamp(20px,3vw,28px)">PKR 2,450,000</div><div class="sk">Net Worth</div></div>
+    <div class="stat"><div class="sv">4</div><div class="sk">Active Cards</div></div>
+    <div class="stat"><div class="sv" style="color:var(--ok)">+12.4%</div><div class="sk">Investments P&L</div></div>
   </div>
+  <div class="anim" style="margin-top:20px;font-size:12px;color:var(--text3);text-align:center">Net worth tracked over time · Snap history snapshots · Multi-currency</div>
+</div>
 
-  <!-- ─── Slide 11: Technical Excellence ─── -->
-  <div class="slide" id="s11">
-    <span class="slide-num">11 / 12</span>
-    <div class="slide-label">Technical Excellence</div>
-    <h2>Zero compromise,<br><span class="accent">zero bloat</span></h2>
-    <div class="divider"></div>
-    <div class="grid-2" style="max-width:840px;">
-      <div>
-        <div class="mono-block">
-          <div><span class="line-acc">Architecture</span></div>
-          <div class="line-dim">─────────────────────────</div>
-          <div>Vanilla JS &nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">zero dependencies</span></div>
-          <div>IndexedDB &nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">AES-256-GCM encrypted</span></div>
-          <div>WebCrypto API &nbsp; <span class="line-ok">PBKDF2 · 310K iterations</span></div>
-          <div>Service Worker &nbsp; <span class="line-ok">offline / cache-first</span></div>
-          <div>No npm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="line-ok">no build step</span></div>
-          <div>Pattern engine &nbsp; <span class="line-ok">no AI API needed</span></div>
-        </div>
-      </div>
-      <div>
-        <div class="stat-row" style="flex-direction:column;gap:12px;align-items:stretch;">
-          <div class="stat" style="flex-direction:row;justify-content:space-between;">
-            <span class="sk" style="text-align:left;">Total size</span>
-            <span class="sv">&lt; 2 MB</span>
-          </div>
-          <div class="stat" style="flex-direction:row;justify-content:space-between;">
-            <span class="sk" style="text-align:left;">Data modules</span>
-            <span class="sv">15+</span>
-          </div>
-          <div class="stat" style="flex-direction:row;justify-content:space-between;">
-            <span class="sk" style="text-align:left;">npm packages</span>
-            <span class="sv" style="color:var(--ok);">0</span>
-          </div>
-          <div class="stat" style="flex-direction:row;justify-content:space-between;">
-            <span class="sk" style="text-align:left;">Schema version</span>
-            <span class="sv">v4</span>
-          </div>
-          <div class="stat" style="flex-direction:row;justify-content:space-between;">
-            <span class="sk" style="text-align:left;">Offline support</span>
-            <span class="sv" style="color:var(--ok);">✓ SW</span>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- ─── Slide 11: Localization ─── -->
+<div class="slide" id="s10">
+  <div class="anim label">Built for You</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Wherever you are.</div>
+  <div class="anim region-grid">
+    <div class="region-col"><div class="region-flag">🇵🇰</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Pakistan</div><div class="region-banks">HBL · Meezan · UBL<br>MCB · Bank Alfalah · Faysal<br>Sadapay · JazzCash · EasyPaisa<br>NayaPay · Zindigi · NBP</div></div>
+    <div class="region-col"><div class="region-flag">🇬🇧</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">United Kingdom</div><div class="region-banks">Monzo · Starling · Revolut<br>Barclays · HSBC · NatWest<br>Wise · Lloyds · Chase UK<br>Nationwide · Halifax · TSB</div></div>
+    <div class="region-col"><div class="region-flag">🇦🇪</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">UAE</div><div class="region-banks">Emirates NBD · FAB · ADCB<br>Mashreq · DIB · ADIB<br>RAKBank · Wio Bank · Liv.<br>Abu Dhabi Islamic · Etisalat</div></div>
   </div>
+</div>
 
-  <!-- ─── Slide 12: Try It Now ─── -->
-  <div class="slide" id="s12">
-    <span class="slide-num">12 / 12</span>
-    <div class="slide-label">Get Started</div>
-    <h2>Try it now.<br><span class="accent">Free. Forever.</span></h2>
-    <div class="divider"></div>
-    <div style="display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;">
-      <div style="text-align:center;">
-        <a class="url-hero" href="https://shamikhahmed.github.io/VaultOS" target="_blank" rel="noopener" style="text-decoration:none;display:block;">
-          shamikhahmed.github.io/VaultOS
-        </a>
-        <p style="font-size:12px;color:var(--text3);margin-top:12px;">Open in Safari on iPhone → Share → Add to Home Screen</p>
-      </div>
-      <div class="qr-box">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="8" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
-          <rect x="14" y="14" width="12" height="12" rx="1" fill="white"/>
-          <rect x="48" y="8" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
-          <rect x="54" y="14" width="12" height="12" rx="1" fill="white"/>
-          <rect x="8" y="48" width="24" height="24" rx="2" stroke="white" stroke-width="2" fill="none"/>
-          <rect x="14" y="54" width="12" height="12" rx="1" fill="white"/>
-          <rect x="48" y="48" width="8" height="8" rx="1" fill="white"/>
-          <rect x="60" y="48" width="8" height="8" rx="1" fill="white"/>
-          <rect x="48" y="60" width="8" height="8" rx="1" fill="white"/>
-          <rect x="60" y="60" width="8" height="8" rx="1" fill="white"/>
-          <rect x="36" y="8" width="6" height="6" rx="1" fill="white"/>
-          <rect x="36" y="18" width="6" height="6" rx="1" fill="white"/>
-          <rect x="36" y="28" width="6" height="6" rx="1" fill="white"/>
-          <rect x="8" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="18" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="28" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="38" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="48" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="58" y="36" width="6" height="6" rx="1" fill="white"/>
-          <rect x="68" y="36" width="6" height="6" rx="1" fill="white"/>
-        </svg>
-        <span>Scan to open</span>
-      </div>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:24px;">Demo PIN: 123456 &nbsp;·&nbsp; No sign-up &nbsp;·&nbsp; No cloud &nbsp;·&nbsp; No tracking</p>
+<!-- ─── Slide 12: PWA ─── -->
+<div class="slide" id="s11">
+  <div class="anim label">Installation</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">No App Store.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Works everywhere. Installs in 10 seconds.</div>
+  <div class="anim plat-grid">
+    <div class="plat-tile"><span class="plat-ic">📱</span><div><div class="plat-title">iPhone / iPad</div><div class="plat-sub">Safari → Share → Add to Home Screen</div></div></div>
+    <div class="plat-tile"><span class="plat-ic">🤖</span><div><div class="plat-title">Android</div><div class="plat-sub">Chrome → Install banner</div></div></div>
+    <div class="plat-tile"><span class="plat-ic">💻</span><div><div class="plat-title">Mac</div><div class="plat-sub">Chrome address bar install icon</div></div></div>
+    <div class="plat-tile"><span class="plat-ic">🖥</span><div><div class="plat-title">Windows</div><div class="plat-sub">Edge → Apps → Install this site</div></div></div>
   </div>
+</div>
+
+<!-- ─── Slide 13: Engineering ─── -->
+<div class="slide" id="s12">
+  <div class="anim label">Engineering</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">Zero dependencies.</div>
+  <div class="anim tagline" style="margin-bottom:20px">Open the URL. It runs. No build step, no npm, no framework.</div>
+  <div class="anim badge-grid">
+    <div class="tbadge">Vanilla JS</div>
+    <div class="tbadge">No npm</div>
+    <div class="tbadge">No Framework</div>
+    <div class="tbadge">&lt; 2 MB</div>
+    <div class="tbadge">WebCrypto API</div>
+    <div class="tbadge">IndexedDB</div>
+    <div class="tbadge">Service Worker</div>
+    <div class="tbadge">PWA Manifest</div>
+  </div>
+</div>
+
+<!-- ─── Slide 14: CTA ─── -->
+<div class="slide" id="s13">
+  <div class="anim label">Live Now</div>
+  <a class="anim url-big" href="https://shamikhahmed.github.io/VaultOS" target="_blank" rel="noopener">shamikhahmed.github.io/VaultOS</a>
+  <div class="anim" style="font-size:14px;color:var(--text3);margin-top:16px;margin-bottom:32px">Demo PIN: 123456 · No sign-up · No cloud · No tracking</div>
+  <div class="anim" style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;justify-content:center">
+    <div class="qr-box">
+      <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="32" height="32" rx="3" stroke="#000" stroke-width="2.5" fill="none"/>
+        <rect x="12" y="12" width="16" height="16" rx="2" fill="#000"/>
+        <rect x="60" y="4" width="32" height="32" rx="3" stroke="#000" stroke-width="2.5" fill="none"/>
+        <rect x="68" y="12" width="16" height="16" rx="2" fill="#000"/>
+        <rect x="4" y="60" width="32" height="32" rx="3" stroke="#000" stroke-width="2.5" fill="none"/>
+        <rect x="12" y="68" width="16" height="16" rx="2" fill="#000"/>
+        <rect x="44" y="4" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="44" y="16" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="44" y="28" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="4" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="16" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="28" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="40" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="52" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="64" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="76" y="44" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="60" y="60" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="72" y="60" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="60" y="72" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="72" y="72" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="60" y="84" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="80" y="72" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="44" y="60" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="44" y="72" width="8" height="8" rx="1" fill="#000"/>
+        <rect x="44" y="84" width="8" height="8" rx="1" fill="#000"/>
+      </svg>
+    </div>
+  </div>
+  <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:11px;color:var(--text3);text-align:right;line-height:1.7">Built by Shamikh Ahmed<br>Director, NEWS Logistics · Founder, TheSolution360</div>
+</div>
 
 </div><!-- /deck -->
 
-<div id="controls">
-  <button class="ctrl-btn" id="btn-prev" disabled>← Prev</button>
-  <span id="slide-counter">1 / 12</span>
-  <button class="ctrl-btn" id="btn-next">Next →</button>
-</div>
-
 <script>
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const btnPrev = document.getElementById('btn-prev');
-  const btnNext = document.getElementById('btn-next');
-  const counter = document.getElementById('slide-counter');
-  const progress = document.getElementById('progress');
-  const total = slides.length;
-  let current = 0;
-
-  function go(n) {
-    slides[current].classList.remove('active');
-    current = Math.max(0, Math.min(total - 1, n));
-    slides[current].classList.add('active');
-    counter.textContent = (current + 1) + ' / ' + total;
-    btnPrev.disabled = current === 0;
-    btnNext.disabled = current === total - 1;
-    progress.style.width = ((current + 1) / total * 100) + '%';
+// ─── Particles ───
+(function(){
+  const canvas=document.getElementById('particles');
+  const ctx=canvas.getContext('2d');
+  let W,H,dots=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;dots=[];for(let i=0;i<60;i++)dots.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    dots.forEach(d=>{d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>W)d.vx*=-1;if(d.y<0||d.y>H)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.6)';ctx.fill();});
+    dots.forEach((a,i)=>dots.forEach((b,j)=>{if(j<=i)return;const dx=a.x-b.x,dy=a.y-b.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<100){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(10,132,255,${(1-dist/100)*.4})`;ctx.lineWidth=.7;ctx.stroke();}}));
+    requestAnimationFrame(draw);
   }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
 
-  btnPrev.addEventListener('click', () => go(current - 1));
-  btnNext.addEventListener('click', () => go(current + 1));
+// ─── Slides ───
+const total=14;
+let cur=0,prev=-1;
+const slides=document.querySelectorAll('.slide');
+const progress=document.getElementById('progress');
+const counter=document.getElementById('counter');
+const dotsEl=document.getElementById('dots');
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(current - 1); }
+// Build dots
+for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);dotsEl.appendChild(d);}
+
+// Module grid
+const mods=[{ic:'🏦',n:'Banks'},{ic:'💳',n:'Cards'},{ic:'📈',n:'Invest'},{ic:'💵',n:'Cash'},{ic:'🤝',n:'Loans'},{ic:'📋',n:'Bills'},{ic:'🏠',n:'Assets'},{ic:'🚗',n:'Vehicles'},{ic:'📱',n:'SIMs'},{ic:'🪪',n:'Docs'},{ic:'📧',n:'Emails'},{ic:'💻',n:'Gadgets'},{ic:'💼',n:'Digital'},{ic:'👥',n:'Friends'},{ic:'🔔',n:'Alerts'}];
+const mg=document.getElementById('modGrid');
+if(mg)mg.innerHTML=mods.map(m=>`<div class="mod-tile">${m.ic}<div class="mod-label">${m.n}</div></div>`).join('');
+
+function updateDots(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+}
+
+function animateCount(el,target,dur){
+  const start=performance.now();
+  const ease=t=>1-Math.pow(1-t,3);
+  function step(now){const p=Math.min((now-start)/dur,1);el.textContent=Math.round(ease(p)*target);if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+
+function animateBars(){
+  document.querySelectorAll('.bar-fill[data-w]').forEach(b=>{b.style.width=b.dataset.w;});
+}
+
+function triggerSlideAnims(idx){
+  const s=slides[idx];
+  // Pain points
+  if(idx===1){
+    const items=s.querySelectorAll('.pain-item');
+    items.forEach((el,i)=>setTimeout(()=>el.classList.add('show'),400+i*200));
+  }
+  // Solution words
+  if(idx===2){
+    const words=['w-every','w-enc','w-off'];
+    words.forEach((id,i)=>setTimeout(()=>document.getElementById(id)?.classList.add('show'),300+i*350));
+  }
+  // Bank count
+  if(idx===7){
+    const el=document.getElementById('bankCount');
+    if(el)setTimeout(()=>animateCount(el,120,1500),400);
+    setTimeout(animateBars,600);
+  }
+  // Cards fly in
+  if(idx===5){
+    document.querySelectorAll('.wcard-demo').forEach((c,i)=>setTimeout(()=>c.classList.add('show'),300+i*200));
+  }
+}
+
+function resetSlideAnims(idx){
+  const s=slides[idx];
+  if(idx===1) s.querySelectorAll('.pain-item').forEach(el=>el.classList.remove('show'));
+  if(idx===2) ['w-every','w-enc','w-off'].forEach(id=>document.getElementById(id)?.classList.remove('show'));
+  if(idx===7){const el=document.getElementById('bankCount');if(el)el.textContent='0';document.querySelectorAll('.bar-fill').forEach(b=>b.style.width='0');}
+  if(idx===5) document.querySelectorAll('.wcard-demo').forEach(c=>c.classList.remove('show'));
+}
+
+function go(n){
+  if(n===cur)return;
+  const oldSlide=slides[cur];
+  oldSlide.classList.remove('active');
+  oldSlide.classList.add('out');
+  setTimeout(()=>oldSlide.classList.remove('out'),450);
+  resetSlideAnims(cur);
+  cur=Math.max(0,Math.min(total-1,n));
+  const s=slides[cur];
+  s.classList.add('active');
+  triggerSlideAnims(cur);
+  progress.style.width=((cur+1)/total*100)+'%';
+  counter.textContent=String(cur+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  updateDots();
+  // title letter animation
+  if(cur===0) initTitleLetters();
+}
+
+// Letter-by-letter for VAULT OS
+function initTitleLetters(){
+  const el=document.getElementById('vaultLetters');
+  if(!el||el.dataset.built)return;
+  el.dataset.built='1';
+  const text='VAULT OS';
+  el.innerHTML='';
+  text.split('').forEach((ch,i)=>{
+    const sp=document.createElement('span');
+    sp.className='letter';
+    sp.style.cssText=`font-size:clamp(52px,8vw,96px);font-weight:800;letter-spacing:-.04em;line-height:1;animation-delay:${i*60}ms`;
+    sp.textContent=ch==='' ?' ':ch;
+    if(ch===' ')sp.style.width='0.35em';
+    el.appendChild(sp);
   });
+}
 
-  // Touch swipe
-  let touchStartX = 0;
-  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  document.addEventListener('touchend', e => {
-    const dx = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(dx) > 50) go(dx > 0 ? current + 1 : current - 1);
-  });
+// Touch swipe
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>50) go(dx>0?cur+1:cur-1);
+});
 
-  go(0);
+// Click left/right half
+document.addEventListener('click',e=>{
+  const tag=e.target.tagName.toLowerCase();
+  if(['button','a','input','select'].includes(tag))return;
+  if(e.clientX>window.innerWidth/2) go(cur+1); else go(cur-1);
+});
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();go(cur+1);}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(cur-1);}
+});
+
+// Fullscreen
+function toggleFS(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+
+// Boot
+go(0);
 </script>
 </body>
 </html>

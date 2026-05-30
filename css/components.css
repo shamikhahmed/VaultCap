@@ -393,11 +393,15 @@ textarea.inp { resize: vertical; min-height: 64px; }
   display: flex; align-items: flex-start; justify-content: space-between;
 }
 .wcard-logo-pill {
-  width: 28px; height: 28px; border-radius: 8px;
+  width: 32px; height: 32px; border-radius: 8px;
   background: rgba(255,255,255,.18);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; overflow: hidden;
   backdrop-filter: blur(4px);
+}
+@keyframes cardGlow {
+  0%,100% { box-shadow: 0 12px 40px rgba(0,0,0,.5),0 0 0 0 rgba(255,255,255,.15),inset 0 1px 0 rgba(255,255,255,.18); }
+  50% { box-shadow: 0 12px 40px rgba(0,0,0,.5),0 0 20px 4px rgba(255,255,255,.25),0 0 0 2.5px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.18); }
 }
 .wcard-type-badge {
   font-size: 9px; font-weight: 800; letter-spacing: 1.5px;

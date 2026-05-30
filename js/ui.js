@@ -231,7 +231,7 @@ const Settings={
     b.innerHTML=`
     <div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to add email'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
+        <div style="display:flex;align-items:center;gap:12px;flex:1">${(()=>{const n=S.user.name||'User';const initials=n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);const hash=n.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const colors=['#0080ff','#10b981','#d946ef','#f59e0b','#ef4444','#6935d3','#ff3464','#00b67a'];const bg=colors[hash%colors.length];return `<div style="width:48px;height:48px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px">${initials}</div>`;})()}<div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to add email'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
       </div>
       <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
       <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
@@ -353,13 +353,16 @@ const Settings={
     Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
   },
   forgotPIN(){
-    if(document.getElementById('pgLock')?.style.display==='none')return;
     Modal.open('🔑 Forgot PIN',`
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer" onclick="Settings.useMasterKey()"><div style="font-weight:600;margin-bottom:4px">🗝️ Use Master Key</div><div style="font-size:12px;color:var(--text2)">Enter the master key you saved when setting up</div></div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer" onclick="document.getElementById('importF-global').click();Modal.close()"><div style="font-weight:600;margin-bottom:4px">📥 Restore from Backup</div><div style="font-size:12px;color:var(--text2)">Import a .vault backup file</div></div>
-      <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:14px;cursor:pointer" onclick="Settings.resetVault()"><div style="font-weight:600;color:var(--err);margin-bottom:4px">⚠️ Reset Vault</div><div style="font-size:12px;color:var(--text2)">Last resort — wipes all data</div></div>
-    </div>`,`<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`);
+    <p style="font-size:13px;line-height:1.6;color:var(--text2)">VaultOS does not store your PIN anywhere. If you forget it, your vault cannot be unlocked — this is by design for maximum security.</p>
+    <p style="font-size:13px;line-height:1.6;color:var(--text2);margin-top:10px">If you have a <strong>Master Key</strong> (visible in Settings → Security → Master Key), you can use it instead of your PIN.</p>
+    <p style="font-size:13px;line-height:1.6;color:var(--text2);margin-top:10px">If you have a recent <strong>.vos backup file</strong>, delete the app data and restore from backup with the correct PIN.</p>
+    <div style="background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:var(--r);padding:12px;margin-top:14px;font-size:12px;color:var(--err)">⚠️ Without your PIN or Master Key, the encrypted vault cannot be recovered. This protects your data from anyone — including us.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer" onclick="Settings.useMasterKey()"><div style="font-weight:600;font-size:13px;margin-bottom:3px">🗝️ Use Master Key</div><div style="font-size:11px;color:var(--text2)">Enter the emergency master key from Settings</div></div>
+      <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:12px;cursor:pointer" onclick="Settings.resetVault()"><div style="font-weight:600;font-size:13px;color:var(--err);margin-bottom:3px">⚠️ Reset Vault</div><div style="font-size:11px;color:var(--text2)">Last resort — wipes all data permanently</div></div>
+    </div>`,
+    `<button class="btn btn-p btn-full" onclick="Modal.close()">Understood</button>`);
   },
   useMasterKey(){
     Modal.open('🗝️ Enter Master Key',`

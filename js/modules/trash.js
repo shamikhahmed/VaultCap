@@ -13,6 +13,14 @@ const Trash = {
       const d = Math.floor((Date.now() - new Date(iso)) / 86400000);
       return d === 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago';
     };
+    const daysLeft = iso => {
+      const d = Math.floor((Date.now() - new Date(iso)) / 86400000);
+      const left = 30 - d;
+      if (left <= 0) return '<span style="color:var(--err);font-size:10px;font-weight:700">Expiring now</span>';
+      if (left <= 7) return `<span style="color:var(--err);font-size:10px;font-weight:700">${left}d left</span>`;
+      if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
+      return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
+    };
     const emptyBtn = `<div style="padding:0 0 14px"><button class="btn btn-d btn-sm" onclick="Trash.emptyAll()">🗑️ Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
       <div class="sdiv">${typeIc[type] || '📦'} ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
@@ -23,7 +31,7 @@ const Trash = {
             <div class="entry-ic">${typeIc[item.type] || '📦'}</div>
             <div class="entry-body">
               <div class="entry-name">${label}</div>
-              <div class="entry-sub">Deleted ${age(item.deletedAt)}</div>
+              <div class="entry-sub">Deleted ${age(item.deletedAt)} · ${daysLeft(item.deletedAt)}</div>
             </div>
             <div class="entry-acts">
               <button class="icb" onclick="Trash.restore('${item.id}')" title="Restore">↩️</button>

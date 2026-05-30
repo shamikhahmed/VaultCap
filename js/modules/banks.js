@@ -102,9 +102,10 @@ const Banks={
         <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);padding:4px 0;list-style:none;display:flex;align-items:center;gap:5px"><span style="flex:1">▸ Show all banks as tiles</span></summary>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px" id="bf-tiles-grid">
           ${tiles.map(b=>{
-            const ic=this._bankIcons[b.name]||'🏦';
             const safeName=b.name.replace(/'/g,"\\'");
-            return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s"><div style="font-size:22px;margin-bottom:4px">${ic}</div><div style="font-size:10px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
+            const dom=bankDomain(b.name);
+            const logoEl=dom?`<img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" width="28" height="28" style="border-radius:6px;object-fit:cover;background:${brandColor(b.name)}" onerror="this.style.display='none'">`:`<span style="font-size:20px">${this._bankIcons[b.name]||'🏦'}</span>`;
+            return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:8px;background:${brandColor(b.name)};display:flex;align-items:center;justify-content:center;overflow:hidden">${logoEl}</div><div style="font-size:9px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
           }).join('')}
         </div>
       </details>`;
