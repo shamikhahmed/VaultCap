@@ -113,7 +113,7 @@ const Dash={
     </div>
 
     <!-- Wallet -->
-    ${S.modules.cards?`<div class="widget"><div class="wh">Wallet<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div>${wCards.length>0?`<div class="wallet-row">${wCards.map(c=>this.miniCard(c)).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:2px 0">No cards selected — tap Edit to choose today's cards</div>`}</div>`:''}
+    ${S.modules.cards?`<div class="widget"><div class="wh">Wallet<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div>${wCards.length>0?`<div class="wallet-row">${wCards.map(c=>this.miniCard(c,80)).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:2px 0">No cards selected — tap Edit to choose today's cards</div>`}</div>`:''}
 
     <!-- Alerts -->
     ${exp.length>0||simRem.length>0?`<div class="widget"><div class="wh">Alerts</div>${exp.map(c=>`<div class="insight err"><div class="insight-ic">💳</div><div class="insight-body"><div class="insight-title">${c.cardName}</div><div class="insight-sub">Expires ${c.expiry}</div></div>${U.expBadge(c.expiry)}</div>`).join('')}${simRem.map(s=>`<div class="insight warn"><div class="insight-ic">📱</div><div class="insight-body"><div class="insight-title">${s.network}</div><div class="insight-sub">Recharge by ${s.nextRecharge||'soon'}</div></div></div>`).join('')}</div>`:''}
@@ -138,22 +138,38 @@ const Dash={
     data.forEach(d=>{const pct=d.v/total;const sw=pct*2*Math.PI;const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(angle+sw),y2=cy+r*Math.sin(angle+sw);const large=sw>Math.PI?1:0;paths+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r},0,${large},1,${x2.toFixed(1)},${y2.toFixed(1)}Z" fill="${d.col}" opacity="0.85"/>`;angle+=sw;});
     return paths;
   },
-  miniCard(c){
-    const g={Visa:'135deg,#1a237e,#283593','American Express':'135deg,#1b5e20,#2e7d32',Mastercard:'135deg,#880e4f,#c2185b',Crypto:'135deg,#e65100,#f57c00',BNPL:'135deg,#6a1b9a,#8e24aa'};
-    const bg=`linear-gradient(${g[c.network]||'135deg,#263238,#37474f'})`;
+  miniCard(c,h=80){
+    const bg=cardGradient(c);
+    const last4=c.last4||'????';
+    const bankName=c.issuer||((c.cardName||'').split(' ')[0]);
+    const logo=bankLogo(c.cardName||bankName,c.country);
+    const w=Math.round(h*1.586);
+    const pad=Math.round(h*0.1);
+    const br=Math.round(h*0.07);
+    const nsz=h>=100?'48':'32';
+    const netSvg={
+      'Visa':`<svg viewBox="0 0 100 32" width="${nsz}" height="${Math.round(parseInt(nsz)*.33)}"><text x="0" y="26" font-family="Arial" font-weight="900" font-size="32" fill="white" letter-spacing="-2">VISA</text></svg>`,
+      'Mastercard':`<div style="position:relative;width:${h>=100?'32':'22'}px;height:${h>=100?'20':'14'}px;flex-shrink:0"><div style="position:absolute;left:0;width:${h>=100?'18':'13'}px;height:${h>=100?'18':'13'}px;border-radius:50%;background:rgba(235,0,27,.9)"></div><div style="position:absolute;left:${h>=100?'11':'8'}px;width:${h>=100?'18':'13'}px;height:${h>=100?'18':'13'}px;border-radius:50%;background:rgba(255,95,0,.9)"></div></div>`,
+      'American Express':`<svg width="${nsz}" height="${Math.round(parseInt(nsz)*.33)}"><text y="${h>=100?'13':'9'}" font-family="Arial" font-weight="700" font-size="${h>=100?'11':'8'}" fill="white">AMEX</text></svg>`,
+    };
+    const imgSz=h>=100?'20px':'14px';
+    const f1=h>=100?'11px':'9px';
+    const f2=h>=100?'14px':'11px';
+    const f3=h>=100?'9px':'8px';
+    const mb1=h>=100?'6px':'4px';
     const st=U.expSt(c.expiry);
-    return `<div class="ccard" style="background:${bg}" onclick="Cards.openDetail('${c.id}')">
-      ${st!=='ok'?`<div class="cc-status ${st}"></div>`:''}
-      <div class="cc-type" style="font-size:8px;padding:2px 7px">${c.cardType||'Card'}</div>
-      <div class="cc-bank" style="font-size:10px">${c.cardName}</div>
-      <div class="cc-chip" style="width:26px;height:19px;margin:8px 0 7px"></div>
-      <div class="cc-num sens" style="font-size:11px;letter-spacing:1.5px;margin-bottom:8px">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
-      <div class="cc-bot">
-        <div><div class="cc-bl">Exp</div><div class="cc-exp" style="font-size:10px">${c.expiry||'--/--'}</div></div>
-        <div style="max-width:80px"><div class="cc-bl">Holder</div><div class="cc-holder" style="font-size:9px;max-width:80px">${(c.holderName||'CARDHOLDER').toUpperCase().slice(0,14)}</div></div>
-      </div>
-      <div class="cc-net" style="font-size:9px;bottom:12px;right:14px">${c.network||''}</div>
-    </div>`;
+    return `<div class="wc-mini" onclick="Cards.openDetail('${c.id}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
+  <div style="position:absolute;top:-30%;right:-15%;width:${Math.round(h*1.4)}px;height:${Math.round(h*1.4)}px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
+    <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">`:''}${bankName}</div>
+    <div style="font-size:${f3};font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.15);padding:2px 6px;border-radius:99px;white-space:nowrap">${(c.cardType||'').toUpperCase()}</div>
+  </div>
+  <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1">
+    <div style="font-size:${f3};color:rgba(255,255,255,.7)">${c.expiry||''}</div>
+    ${netSvg[c.network]||`<div style="font-size:${f3};color:rgba(255,255,255,.6);font-weight:700">${c.network||''}</div>`}
+  </div>
+</div>`;
   },
   editWallet(){
     Modal.open('👝 Carrying Today',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} onchange="if(this.checked){S.wallet=[...new Set([...S.wallet,'${c.id}'])]}else{S.wallet=S.wallet.filter(x=>x!=='${c.id}')}"><span style="font-size:16px">💳</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div style="font-size:11px;color:var(--text3)">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">💳</div><h3>No cards yet</h3></div>'}`,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Store.save();Modal.close();Dash.render()">Save</button>`);

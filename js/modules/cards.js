@@ -8,7 +8,7 @@ const Cards={
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.cF='${v}';Cards.render()">${l}</div>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     let data=S.cards.filter(c=>{
       if(f==='fav'&&!c.favorite)return false;
       if(f==='credit'&&c.cardType!=='Credit')return false;
@@ -42,7 +42,38 @@ const Cards={
   },
   row(c){
     const carrying=S.wallet.includes(c.id);
-    return `<div class="entry" data-id="${c.id}"><div class="entry-main"><div class="entry-ic" style="background:${c.category==='Crypto'?'rgba(247,147,26,.12)':c.category==='BNPL'?'rgba(168,85,247,.12)':'var(--glass2)'}">💳</div><div class="entry-body"><div class="entry-name">${c.cardName}${carrying?' <span style="font-size:11px">👝</span>':''}</div><div class="entry-sub">${c.cardType||''} ${c.network?'· '+c.network:''} ${c.last4?'· ****'+c.last4:''} ${c.expiry?'· '+c.expiry:''}</div><div class="entry-meta">${U.expBadge(c.expiry)} ${c.category==='Crypto'?'<span class="badge b-warn">₿</span>':''} ${c.category==='BNPL'?'<span class="badge b-info">BNPL</span>':''} ${c.ownership==='business'?'<span class="badge b-warn">🏢</span>':''} ${c.rewardsPoints?`<span class="badge b-acc">⭐ ${U.fmt(c.rewardsPoints)}pts</span>`:''}</div></div><div class="entry-acts"><button class="icb${carrying?' on':''}" style="${carrying?'color:var(--accent)':''}" onclick="Cards.toggleCarry('${c.id}')" title="Carrying">👝</button><button class="icb fav${c.favorite?' on':''}" onclick="Cards.fav('${c.id}')">⭐</button><button class="icb" onclick="Cards.openDetail('${c.id}')">👁️</button><button class="icb" onclick="Cards.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cards.del('${c.id}')">🗑️</button></div></div></div>`;
+    const gradient=cardGradient(c);
+    const last4=c.last4||'????';
+    const holderName=((c.holderName||S.user&&S.user.name||'CARDHOLDER')+'').toUpperCase().slice(0,22);
+    const bankName=c.issuer||((c.cardName||'').split(' ')[0]);
+    const logo=bankLogo(c.cardName||bankName,c.country);
+    const typeLabel=(c.cardType||'CARD').toUpperCase();
+    const chip='<svg width="36" height="28" viewBox="0 0 36 28"><rect width="36" height="28" rx="4" fill="#d4a017"/><rect x="13" y="0" width="10" height="28" fill="#b8860b" opacity="0.5"/><rect x="0" y="9" width="36" height="10" fill="#b8860b" opacity="0.5"/><rect x="13" y="9" width="10" height="10" fill="#ffd700" opacity="0.8"/></svg>';
+    const netSvg={
+      'Visa':'<svg viewBox="0 0 100 32" width="48" height="16"><text x="0" y="26" font-family="Arial" font-weight="900" font-size="32" fill="white" letter-spacing="-2">VISA</text></svg>',
+      'Mastercard':'<div style="position:relative;width:40px;height:24px;flex-shrink:0"><div style="position:absolute;left:0;width:24px;height:24px;border-radius:50%;background:rgba(235,0,27,.9)"></div><div style="position:absolute;left:14px;width:24px;height:24px;border-radius:50%;background:rgba(255,95,0,.9)"></div></div>',
+      'American Express':'<svg width="40" height="16"><text y="13" font-family="Arial" font-weight="700" font-size="11" fill="white">AMEX</text></svg>',
+      'UnionPay':'<svg width="40" height="16"><text y="13" font-family="Arial" font-weight="700" font-size="11" fill="white">UnionPay</text></svg>',
+    };
+    const carryGlow=carrying?';box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 2.5px rgba(255,255,255,.45),inset 0 1px 0 rgba(255,255,255,.15)':'';
+    return `<div class="wallet-card sens" data-id="${c.id}" onclick="Cards.openDetail('${c.id}')" style="background:${gradient}${carryGlow}">
+  <div class="wc-top">
+    <div class="wc-bank">${logo}<span>${bankName}</span></div>
+    <div class="wc-type">${typeLabel}${carrying?' 👝':''}</div>
+  </div>
+  <div class="wc-chip">${chip}</div>
+  <div class="wc-number">**** **** **** ${last4}</div>
+  <div class="wc-bottom">
+    <div class="wc-holder">${holderName}</div>
+    <div class="wc-exp">${c.expiry?'Exp '+c.expiry:''}</div>
+    <div class="wc-net">${netSvg[c.network]||''}</div>
+  </div>
+  <div class="wc-actions">
+    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
+    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
+    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
+  </div>
+</div>`;
   },
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
   openAdd(){

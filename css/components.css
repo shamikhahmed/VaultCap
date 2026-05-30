@@ -316,6 +316,44 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .wallet-row .ccard { min-width: 200px; max-width: 200px; scroll-snap-align: start; }
 @media (max-width: 375px) { .ccard { min-width: 170px !important; max-width: 170px !important; } }
 
+/* ─ Apple Wallet cards ─ */
+.wallet-card {
+  position: relative; width: 100%; height: 190px; border-radius: 18px;
+  padding: 18px 20px; display: flex; flex-direction: column;
+  justify-content: space-between; margin-bottom: 14px; cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.15);
+  overflow: hidden; transition: transform .2s var(--spring), box-shadow .2s; user-select: none;
+}
+.wallet-card:active { transform: scale(.97); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+.wallet-card::before {
+  content: ''; position: absolute; top: -40%; right: -20%;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(255,255,255,.06); pointer-events: none;
+}
+.wc-top  { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.wc-bank { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.9); font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+.wc-bank img { width: 24px; height: 24px; border-radius: 5px; }
+.wc-type { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; color: rgba(255,255,255,.7); background: rgba(255,255,255,.15); padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+.wc-chip { margin: 4px 0; position: relative; z-index: 1; }
+.wc-number { font-size: 16px; font-weight: 600; letter-spacing: 3px; color: rgba(255,255,255,.95); font-family: var(--mono); position: relative; z-index: 1; }
+.wc-bottom { display: flex; align-items: flex-end; justify-content: space-between; position: relative; z-index: 1; }
+.wc-holder { font-size: 11px; font-weight: 600; letter-spacing: 1px; color: rgba(255,255,255,.8); text-transform: uppercase; }
+.wc-exp   { font-size: 10px; color: rgba(255,255,255,.7); }
+.wc-net   { display: flex; align-items: center; }
+.wc-actions {
+  position: absolute; top: 12px; right: 12px; display: flex; gap: 6px;
+  opacity: 0; transition: opacity .2s; z-index: 2;
+}
+.wallet-card:hover .wc-actions { opacity: 1; }
+.wc-act-btn {
+  width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,.35);
+  border: none; color: white; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; backdrop-filter: blur(4px);
+}
+.wc-act-btn:hover { background: rgba(0,0,0,.6); }
+/* mini wallet cards (wallet-row context) */
+.wallet-row .wc-mini { scroll-snap-align: start; flex-shrink: 0; }
+
 /* ─ Settings ─ */
 .set-sec   { margin-bottom: 24px; }
 .set-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 9px; }
