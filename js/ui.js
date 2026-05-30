@@ -324,6 +324,7 @@ const Settings={
     Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
   },
   forgotPIN(){
+    if(document.getElementById('pgLock')?.style.display==='none')return;
     Modal.open('🔑 Forgot PIN',`
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer" onclick="Settings.useMasterKey()"><div style="font-weight:600;margin-bottom:4px">🗝️ Use Master Key</div><div style="font-size:12px;color:var(--text2)">Enter the master key you saved when setting up</div></div>
@@ -544,6 +545,27 @@ const QRSync = {
         <div class="ferr" id="qrCodeErr"></div>
       `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
     } catch(e) { Toast.show('Failed to read QR code', 'error'); }
+  },
+
+  renderPage() {
+    const el = document.getElementById('syncBody'); if (!el) return;
+    el.innerHTML = `
+      <div style="max-width:560px">
+        <div style="background:linear-gradient(135deg,var(--glass),var(--glass2));border:1px solid var(--border);border-radius:var(--rlg);padding:20px;margin-bottom:16px;text-align:center">
+          <div style="font-size:48px;margin-bottom:12px">🔄</div>
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Sync Devices</h3>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">Transfer your vault to another device securely using a QR code and a one-time 6-digit sync code.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
+            <button class="btn btn-p" onclick="QRSync.exportQR()" style="padding:14px;font-size:15px;font-weight:700">📱 Send to Another Device</button>
+            <button class="btn btn-s" onclick="QRSync.importQR()" style="padding:12px;font-size:14px">📷 Receive from Another Device</button>
+          </div>
+        </div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">How it works</div>
+          ${[['1️⃣','On the source device','Tap "Send" — a QR code and 6-digit code appear'],['2️⃣','On the target device','Tap "Receive" — scan the QR code'],['3️⃣','Enter the sync code','Type the 6-digit code shown on the source device'],['4️⃣','Done!','Your vault data merges securely on the target device']].map(([n,t,d])=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><span style="font-size:20px;flex-shrink:0">${n}</span><div><div style="font-size:13px;font-weight:600">${t}</div><div style="font-size:11px;color:var(--text2)">${d}</div></div></div>`).join('')}
+          <div style="margin-top:8px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)">🔐 Data is encrypted with AES-256-GCM. The code never leaves your device.</div>
+        </div>
+      </div>`;
   },
 
   async _decryptAndMerge(encEncoded) {
@@ -1356,6 +1378,7 @@ const SettingsNav = {
         <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="R.goto('sync')">🔄 Sync Devices</button>
         <button class="btn btn-g btn-full btn-sm" onclick="QRSync.exportQR()">📱 Sync to Another Device (QR)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="QRSync.importQR()">📷 Scan from Another Device</button>
       </div>

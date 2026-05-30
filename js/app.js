@@ -863,6 +863,7 @@ const R = {
     S.unlocked = true; S.decoy = false;
     window._vosUnlocked = true;
     ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     document.getElementById('fab').style.display = 'flex';
     buildNav();
@@ -921,6 +922,7 @@ const R = {
       reminders:   () => Reminders.render(),
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
+      sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">🔄</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();
         buildSettTabs();
@@ -1509,7 +1511,7 @@ function buildSettTabs() {
 
 function buildNav() {
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
-  const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }];
+  const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
   const all = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active, ...extras];
 
   const groups = { Finance:'💰 Finance', Assets:'🏠 Assets & Property', Identity:'🪪 Identity & Accounts', Tools:'⚙️ Tools & Security' };
