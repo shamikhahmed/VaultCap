@@ -622,7 +622,7 @@ const SMART_DB = {
     setTimeout(() => {
       const cc = document.getElementById('bf-cc'); if (cc) cc.value = match.country;
       const cur = document.getElementById('bf-cur'); if (cur) cur.value = match.currency;
-      const type = document.getElementById('bf-type'); if (type) type.value = match.type;
+      const type = document.getElementById('bf-type'); if (type && match.type) type.value = match.type.charAt(0).toUpperCase() + match.type.slice(1);
       const swift = document.getElementById('bf-swift'); if (swift && match.swift) swift.value = match.swift;
     }, 50);
   },

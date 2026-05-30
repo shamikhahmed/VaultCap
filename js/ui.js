@@ -481,26 +481,102 @@ const ExIm={
 // ===================== QR SYNC =====================
 const QRSync = {
   async exportQR() {
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    const data = { ver:'4.0', exported:new Date().toISOString(), banks:S.banks, cards:S.cards, investments:S.investments, sims:S.sims, cash:S.cash, loans:S.loans, friends:S.friends, assets:S.assets, expenses:S.expenses, emails:S.emails, gadgets:S.gadgets, digital:S.digital };
-    let enc;
-    try { enc = await Crypto.encrypt(JSON.stringify(data), code); } catch(e) { Toast.show('Encryption error', 'error'); return; }
-    const qrData = JSON.stringify({ v:'vos1', enc, hint:'Enter the 6-digit code shown on your other device' });
+    // Build essential-only payload — no photos, no activity, no trash
+    const stripped = arr => (arr||[]).map(item => {
+      const c = Object.assign({}, item);
+      delete c.frontPhoto; delete c.backPhoto; delete c.photo;
+      return c;
+    });
+    const payload = JSON.stringify({
+      ver:'4.0', exported:new Date().toISOString(),
+      banks: stripped(S.banks),
+      cards: stripped(S.cards),
+      investments: stripped(S.investments),
+      cash: stripped(S.cash),
+      loans: stripped(S.loans),
+      sims: stripped(S.sims),
+      friends: stripped(S.friends),
+      assets: stripped(S.assets),
+      expenses: stripped(S.expenses),
+      documents: stripped(S.documents),
+      vehicles: stripped(S.vehicles),
+    });
+
+    // Compress if available
+    let encoded;
+    const CHUNK = 1800;
+    const canCompress = typeof CompressionStream !== 'undefined';
+    if (canCompress) {
+      try {
+        const cs = new CompressionStream('deflate-raw');
+        const writer = cs.writable.getWriter();
+        writer.write(new TextEncoder().encode(payload));
+        writer.close();
+        const chunks = [];
+        const reader = cs.readable.getReader();
+        while (true) { const {done, value} = await reader.read(); if (done) break; chunks.push(value); }
+        const compressed = new Uint8Array(chunks.reduce((a,b)=>a+b.length,0));
+        let offset = 0;
+        for (const chunk of chunks) { compressed.set(chunk, offset); offset += chunk.length; }
+        encoded = btoa(String.fromCharCode(...compressed)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+      } catch(e) { encoded = btoa(unescape(encodeURIComponent(payload))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''); }
+    } else {
+      encoded = btoa(unescape(encodeURIComponent(payload)));
+    }
+
+    const chunkSize = canCompress ? CHUNK : 800;
+    const chunks = [];
+    for (let i = 0; i < encoded.length; i += chunkSize) chunks.push(encoded.slice(i, i + chunkSize));
+    const total = chunks.length;
+
+    QRSync._qrChunks = chunks;
+    QRSync._qrTotal = total;
+    QRSync._qrEncoded = encoded;
+
     Modal.open('📱 Sync to Another Device', `
       <div style="text-align:center;padding:8px 0">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Scan this QR code from the other device, then enter your 6-digit sync code.</p>
-        <div style="font-size:38px;font-weight:900;letter-spacing:8px;color:var(--accent);background:var(--glass2);padding:16px;border-radius:var(--r);margin-bottom:14px;font-family:var(--mono)">${code}</div>
-        <div id="qrContainer" style="display:flex;justify-content:center;margin-bottom:12px;background:#fff;padding:12px;border-radius:var(--r);display:inline-block"></div>
-        <p style="font-size:11px;color:var(--text3);margin-top:10px">Code expires when you close this dialog. One-time use only.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Scan this QR code from the other device.</p>
+        <div id="qrChunkLabel" style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
+        <div id="qrContainer" style="display:inline-block;background:#fff;padding:10px;border-radius:12px;margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
+          ${total>1?'<button class="btn btn-s btn-sm" id="qrPrevBtn" onclick="QRSync._showChunk(-1)" style="display:none">← Prev</button>':''}
+          ${total>1?'<button class="btn btn-p btn-sm" id="qrNextBtn" onclick="QRSync._showChunk(1)">Next →</button>':''}
+          <button class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">📋 Copy as text</button>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:10px">One-time use — expires when dialog closes.</p>
       </div>
     `, `<button class="btn btn-p btn-full" onclick="Modal.close()">Done</button>`);
-    setTimeout(() => {
-      const el = document.getElementById('qrContainer');
-      if (el && typeof QRCode !== 'undefined') {
-        try { new QRCode(el, { text: qrData.length > 2000 ? JSON.stringify({v:'vos1',hint:'VaultOS sync data — too large for QR, use file export'}) : qrData, width:200, height:200 }); }
-        catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err)">QR too large — use file export instead</div>'; }
-      } else if (el) { el.innerHTML = '<div style="font-size:12px;color:var(--text2)">QR library not loaded</div>'; }
-    }, 200);
+
+    QRSync._qrCurrent = 0;
+    setTimeout(() => QRSync._renderQRChunk(0), 200);
+  },
+
+  _qrChunks: [], _qrTotal: 0, _qrCurrent: 0, _qrEncoded: '',
+
+  _showChunk(dir) {
+    const next = QRSync._qrCurrent + dir;
+    if (next < 0 || next >= QRSync._qrTotal) return;
+    QRSync._qrCurrent = next;
+    QRSync._renderQRChunk(next);
+  },
+
+  _renderQRChunk(idx) {
+    const el = document.getElementById('qrContainer');
+    const label = document.getElementById('qrChunkLabel');
+    const prevBtn = document.getElementById('qrPrevBtn');
+    const nextBtn = document.getElementById('qrNextBtn');
+    if (!el) return;
+    if (label) label.textContent = QRSync._qrTotal > 1 ? 'QR '+(idx+1)+' of '+QRSync._qrTotal+' — show this to the other device, then tap Next' : 'Ready to scan';
+    if (prevBtn) prevBtn.style.display = idx > 0 ? '' : 'none';
+    if (nextBtn) nextBtn.style.display = idx < QRSync._qrTotal - 1 ? '' : 'none';
+    el.innerHTML = '';
+    const chunkData = JSON.stringify({ v:'vos2', i:idx, t:QRSync._qrTotal, d:QRSync._qrChunks[idx] });
+    if (typeof QRCode !== 'undefined') {
+      try { new QRCode(el, { text: chunkData, width:260, height:260, correctLevel: QRCode.CorrectLevel.L }); }
+      catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err);padding:12px">QR generation failed — use Copy as text instead</div>'; }
+    } else {
+      el.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:12px">QR library not loaded</div>';
+    }
   },
 
   importQR() {
@@ -1400,7 +1476,7 @@ const SettingsNav = {
       </div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">💡 Backup Strategy</div><div class="set-card">
-      ${[{ic:'☁️',t:'iCloud Drive',d:'Export .vos → save to Files → iCloud Drive'},{ic:'📦',t:'Google Drive',d:'Export .vos → upload manually to Drive'},{ic:'💽',t:'External Drive / USB',d:'Drag .vos file to external drive'}].map(({ic,t,d})=>`<div class="si"><span style="font-size:22px">${ic}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div>`).join('')}
+      ${[{ic:'☁️',t:'iCloud Drive',d:'Export .vos → save to Files → iCloud Drive'},{ic:'📦',t:'Google Drive',d:'Export .vos → upload manually to Drive'},{ic:'💽',t:'External Drive / USB',d:'Drag .vos file to external drive'}].map(({ic,t,d})=>`<div class="si"><div style="display:flex;align-items:center;gap:12px;flex:1"><span style="font-size:22px;flex-shrink:0">${ic}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div></div>`).join('')}
       <div style="padding:10px 14px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">🔐 All exports are AES-256-GCM encrypted before leaving your device. No cloud servers involved.</div>
     </div></div>`;
   },

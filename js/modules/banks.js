@@ -128,7 +128,7 @@ const Banks={
     const bankNames=SMART_DB.banks.map(x=>`<option value="${x.name}">`).join('');
     return `
     <datalist id="bankDL">${bankNames}</datalist>
-    <datalist id="bfTypeDL"><option>commercial</option><option>islamic</option><option>microfinance</option><option>digital</option><option>international</option><option>government</option></datalist>
+    <datalist id="bfTypeDL"><option>Commercial</option><option>Islamic</option><option>Digital</option><option>Microfinance</option><option>Government</option><option>International</option><option>Investment</option></datalist>
     <!-- COUNTRY FIRST -->
     <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="bf-cc" onchange="Banks._onCountryChange(this.value)">${U.countries()}</select></div><div class="fg"><label class="fl">Currency *</label><select class="inp" id="bf-cur">${U.currencies()}</select></div></div>
     <!-- Bank picker injected here by _showBankChips() -->

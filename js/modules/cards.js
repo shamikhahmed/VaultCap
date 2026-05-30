@@ -27,8 +27,12 @@ const Cards={
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
     if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No Cards Yet</div><div class="ei-sub">Add your debit, credit, or digital cards here</div><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button></div>`;return;}
-    const byNet={};data.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
-    el.innerHTML=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
+    const carrying=data.filter(c=>S.wallet.includes(c.id));
+    const rest=data.filter(c=>!S.wallet.includes(c.id));
+    const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
+    const carrySection=carrying.length?`<div class="sdiv">💳 Carrying Today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
+    const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
+    el.innerHTML=carrySection+restSection;
     initSwipeDelete(el);
     initLongPress(el, id => {
       const c = S.cards.find(x => x.id === id); if (!c) return [];
@@ -46,29 +50,59 @@ const Cards={
     const last4=c.last4||'????';
     const holderName=((c.holderName||S.user&&S.user.name||'CARDHOLDER')+'').toUpperCase().slice(0,22);
     const bankName=c.issuer||((c.cardName||'').split(' ')[0]);
-    const logo=bankLogo(c.cardName||bankName,c.country);
     const typeLabel=(c.cardType||'CARD').toUpperCase();
-    const chip='<svg width="36" height="28" viewBox="0 0 36 28"><rect width="36" height="28" rx="4" fill="#d4a017"/><rect x="13" y="0" width="10" height="28" fill="#b8860b" opacity="0.5"/><rect x="0" y="9" width="36" height="10" fill="#b8860b" opacity="0.5"/><rect x="13" y="9" width="10" height="10" fill="#ffd700" opacity="0.8"/></svg>';
+
+    // Bank logo — pill with favicon
+    const _dom=bankDomain(c.cardName||bankName,c.country);
+    const logoHtml=_dom
+      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px" onerror="this.style.display='none'"></div>`
+      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${(bankName||'?').charAt(0)}</div>`;
+
+    // EMV chip SVG
+    const chip=`<svg width="38" height="30" viewBox="0 0 38 30" class="wcard-chip-svg">
+      <rect width="38" height="30" rx="4" fill="#c9a227"/>
+      <rect x="14" y="0" width="10" height="30" fill="rgba(0,0,0,.18)"/>
+      <rect x="0" y="10" width="38" height="10" fill="rgba(0,0,0,.18)"/>
+      <rect x="14" y="10" width="10" height="10" fill="#f0c040"/>
+      <rect x="5" y="0" width="2" height="30" fill="rgba(0,0,0,.09)"/>
+      <rect x="31" y="0" width="2" height="30" fill="rgba(0,0,0,.09)"/>
+    </svg>`;
+
+    // Network logos
     const netSvg={
-      'Visa':'<svg viewBox="0 0 100 32" width="48" height="16"><text x="0" y="26" font-family="Arial" font-weight="900" font-size="32" fill="white" letter-spacing="-2">VISA</text></svg>',
-      'Mastercard':'<div style="position:relative;width:40px;height:24px;flex-shrink:0"><div style="position:absolute;left:0;width:24px;height:24px;border-radius:50%;background:rgba(235,0,27,.9)"></div><div style="position:absolute;left:14px;width:24px;height:24px;border-radius:50%;background:rgba(255,95,0,.9)"></div></div>',
-      'American Express':'<svg width="40" height="16"><text y="13" font-family="Arial" font-weight="700" font-size="11" fill="white">AMEX</text></svg>',
-      'UnionPay':'<svg width="40" height="16"><text y="13" font-family="Arial" font-weight="700" font-size="11" fill="white">UnionPay</text></svg>',
+      'Visa':`<svg viewBox="0 0 80 26" width="46" height="16" style="display:block"><text x="0" y="22" font-family="Arial,sans-serif" font-weight="900" font-size="26" fill="white" letter-spacing="-1" font-style="italic">VISA</text></svg>`,
+      'Mastercard':`<div style="position:relative;width:38px;height:24px;flex-shrink:0;display:flex;align-items:center"><div style="position:absolute;left:0;width:22px;height:22px;border-radius:50%;background:rgba(235,0,27,.92)"></div><div style="position:absolute;left:12px;width:22px;height:22px;border-radius:50%;background:rgba(255,95,0,.85)"></div></div>`,
+      'American Express':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="800" font-size="11" fill="white" letter-spacing=".5">AMEX</text></svg>`,
+      'UnionPay':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="700" font-size="10" fill="white">UnionPay</text></svg>`,
+      'JCB':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="800" font-size="12" fill="white">JCB</text></svg>`,
     };
-    const carryGlow=carrying?';box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 2.5px rgba(255,255,255,.45),inset 0 1px 0 rgba(255,255,255,.15)':'';
-    return `<div class="wallet-card sens" data-id="${c.id}" onclick="Cards.openDetail('${c.id}')" style="background:${gradient}${carryGlow}">
-  <div class="wc-top">
-    <div class="wc-bank">${logo}<span>${bankName}</span></div>
-    <div class="wc-type">${typeLabel}${carrying?' 👝':''}</div>
+
+    const carryBorder=carrying?'box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 0 2.5px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.18)':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
+
+    return `<div class="wcard sens" data-id="${c.id}" onclick="Cards.openDetail('${c.id}')" style="background:${gradient};${carryBorder}">
+  <div class="wcard-shine"></div>
+  <div class="wcard-inner">
+    <div class="wcard-top">
+      <div style="display:flex;align-items:center;gap:7px">
+        ${logoHtml}
+        <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${bankName}</span>
+      </div>
+      <div class="wcard-type-badge">${typeLabel}${carrying?' 👝':''}</div>
+    </div>
+    <div class="wcard-chip">${chip}</div>
+    <div class="wcard-number">**** **** **** ${last4}</div>
+    <div class="wcard-bottom">
+      <div>
+        <div style="font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
+        <div class="wcard-holder">${holderName}</div>
+      </div>
+      <div style="text-align:center">
+        ${c.expiry?`<div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
+      </div>
+      <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:10px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
+    </div>
   </div>
-  <div class="wc-chip">${chip}</div>
-  <div class="wc-number">**** **** **** ${last4}</div>
-  <div class="wc-bottom">
-    <div class="wc-holder">${holderName}</div>
-    <div class="wc-exp">${c.expiry?'Exp '+c.expiry:''}</div>
-    <div class="wc-net">${netSvg[c.network]||''}</div>
-  </div>
-  <div class="wc-actions">
+  <div class="wcard-actions">
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
@@ -136,7 +170,10 @@ const Cards={
     const qr=window.jsQR&&window.jsQR(imgData.data,imgData.width,imgData.height);
     if(qr){Cards._onScanResult(qr.data);return;}
     const key=S.user&&S.user.claudeKey;
-    if(!key){Cards._stopScan();Toast.show('Add Claude API key in Settings to use OCR','warning',4000);return;}
+    if(!key){
+      if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Add API key in Settings → Security for OCR auto-fill, or keep scanning for QR codes.</span>';
+      return;
+    }
     if(btn){btn.disabled=true;btn.textContent='⏳ Reading…';}
     if(statusEl)statusEl.textContent='Sending to Claude AI — please wait…';
     const base64=canvas.toDataURL('image/jpeg',0.7).split(',')[1];

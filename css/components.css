@@ -354,6 +354,88 @@ textarea.inp { resize: vertical; min-height: 64px; }
 /* mini wallet cards (wallet-row context) */
 .wallet-row .wc-mini { scroll-snap-align: start; flex-shrink: 0; }
 
+/* ─ Realistic Apple Wallet cards (.wcard) ─ */
+.wcard {
+  position: relative;
+  width: 100%; max-width: 380px;
+  height: 220px;
+  border-radius: 16px;
+  margin: 0 auto 16px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform .22s var(--spring, cubic-bezier(.34,1.56,.64,1));
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+}
+.wcard:active { transform: scale(.98); }
+/* subtle crosshatch noise texture */
+.wcard::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 8px),
+                    repeating-linear-gradient(-45deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 8px);
+}
+/* holographic shimmer */
+.wcard-shine {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(125deg, rgba(255,255,255,.10) 0%, transparent 40%, rgba(255,255,255,.06) 100%);
+}
+.wcard-inner {
+  position: relative; z-index: 3;
+  display: flex; flex-direction: column;
+  height: 100%; padding: 18px 20px 16px;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+.wcard-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.wcard-logo-pill {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+.wcard-type-badge {
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
+  color: rgba(255,255,255,.75);
+  background: rgba(255,255,255,.18);
+  padding: 3px 9px; border-radius: 99px;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+.wcard-chip {
+  margin: 2px 0;
+}
+.wcard-chip-svg { display: block; }
+.wcard-number {
+  font-family: var(--mono, 'Courier New', monospace);
+  font-size: 18px; font-weight: 600;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,.95);
+}
+.wcard-bottom {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 8px;
+}
+.wcard-holder {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 150px;
+}
+.wcard-net {
+  display: flex; align-items: center; flex-shrink: 0;
+}
+.wcard-actions {
+  position: absolute; top: 12px; right: 12px; display: flex; gap: 6px;
+  opacity: 0; transition: opacity .2s; z-index: 4;
+}
+.wcard:hover .wcard-actions { opacity: 1; }
+
 /* ─ Settings ─ */
 .set-sec   { margin-bottom: 24px; }
 .set-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 9px; }
