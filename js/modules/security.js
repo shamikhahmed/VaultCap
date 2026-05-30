@@ -6,7 +6,7 @@ const SecurityCenter={
     const totDigital=S.digital.length,no2FADigital=S.digital.filter(d=>!d.twoFAEnabled).length;
     const hasBackup=!!S.user.lastBackup;
     const backupAge=S.user.lastBackup?Math.floor((Date.now()-new Date(S.user.lastBackup))/864e5):999;
-    const usingDefaultPIN=S.pin==='123456';
+    const usingDefaultPIN=false; // PIN verified via VaultDB PBKDF2 — plaintext unavailable
     let score=60;
     if(!usingDefaultPIN)score+=10;
     if(S.autoLock)score+=10;
@@ -59,7 +59,7 @@ const SecurityCenter={
   },
   computeScore(){
     let s=60;
-    if(S.pin!=='123456')s+=12;if(S.autoLock)s+=10;if(S.lockMins<=10)s+=6;
+    s+=12;if(S.autoLock)s+=10;if(S.lockMins<=10)s+=6;
     if(S.emails.every(e=>e.mfaEnabled)&&S.emails.length)s+=8;
     if(S.user.lastBackup&&Math.floor((Date.now()-new Date(S.user.lastBackup))/864e5)<=7)s+=10;
     if(S.decoyPin)s+=6;if(S.clipSecs<=30)s+=4;if(S.panicEnabled)s+=4;

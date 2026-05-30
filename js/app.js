@@ -1261,6 +1261,20 @@ const Modal = {
     modal.style.transition = '';
     document.getElementById('overlay').classList.add('on');
     this._initSwipe();
+    // Wire amount formatting to numeric inputs in modal
+    setTimeout(() => {
+      document.querySelectorAll('.mb input[type=number], .mb input[inputmode=numeric]').forEach(el => {
+        if (el._amtFmt) return;
+        el._amtFmt = true;
+        el.addEventListener('blur', () => {
+          const raw = el.value.replace(/,/g, '');
+          if (!isNaN(raw) && raw !== '' && !el.value.includes('/')) {
+            const n = parseFloat(raw);
+            if (!isNaN(n) && n > 0) el.value = n.toLocaleString('en-US', {maximumFractionDigits:2});
+          }
+        });
+      });
+    }, 80);
   },
   close() {
     const modal = document.getElementById('modal');
@@ -1344,6 +1358,7 @@ const R = {
   lock() {
     S.unlocked = false; clearTimeout(S._timer);
     VaultDB.sessionKey = null;           // clear in-memory key on lock
+    if (navigator.vibrate) navigator.vibrate(50);
     document.getElementById('app').style.display = 'none';
     document.getElementById('fab').style.display = 'none';
     Modal.close();
@@ -1398,6 +1413,14 @@ const R = {
     };
     if (renders[pg]) renders[pg]();
     if (prev !== pg) buildNav();
+    // Pull-to-refresh on module page bodies
+    const ptrMap = {banks:'bList',cards:'cItems',investments:'invItems',cash:'cashItems',loans:'loanItems',sims:'simItems',assets:'aItems',expenses:'expItems',emails:'emailItems',gadgets:'gItems',digital:'digItems',friends:'friendItems'};
+    if (ptrMap[pg]) {
+      const ptrEl = document.getElementById(ptrMap[pg])?.closest('.pb') || document.getElementById('pg-'+pg)?.querySelector('.pb');
+      if (ptrEl && typeof pullToRefresh === 'function') pullToRefresh(ptrEl, () => { if (renders[pg]) renders[pg](); });
+    }
+    // Wire debounced search inputs
+    if (typeof _wireSearchDebounce === 'function') setTimeout(_wireSearchDebounce, 100);
   },
   resetTimer() {
     clearTimeout(S._timer);
@@ -2103,8 +2126,16 @@ function initSwipeDelete(containerEl, deleteCallback) {
       bg.textContent = 'DELETE';
       entry.appendChild(bg);
     }
+    if (!entry.querySelector('.entry-fav-bg')) {
+      const favBg = document.createElement('div');
+      favBg.className = 'entry-fav-bg';
+      favBg.textContent = '⭐';
+      favBg.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:80px;background:var(--ok);display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:var(--r) 0 0 var(--r);transform:translateX(-100%);transition:transform .25s var(--spring)';
+      entry.appendChild(favBg);
+    }
     const main = entry.querySelector('.entry-main');
     const bg = entry.querySelector('.entry-del-bg');
+    const favBg = entry.querySelector('.entry-fav-bg');
     let startX = 0, dx = 0;
     entry.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX; dx = 0;
@@ -2116,13 +2147,20 @@ function initSwipeDelete(containerEl, deleteCallback) {
         const offset = Math.max(-140, dx);
         main.style.transform = `translateX(${offset}px)`;
         if (bg) bg.style.transform = `translateX(${Math.max(0, 100 + (offset / 80) * 100)}%)`;
+        if (favBg) favBg.style.transform = 'translateX(-100%)';
+      } else if (dx > 0 && main) {
+        const offset = Math.min(80, dx);
+        main.style.transform = `translateX(${offset}px)`;
+        if (favBg) favBg.style.transform = `translateX(${Math.min(0, -100 + (offset / 80) * 100)}%)`;
+        if (bg) bg.style.transform = 'translateX(100%)';
       }
     }, {passive: true});
     entry.addEventListener('touchend', () => {
       if (main) main.style.transition = 'transform .25s var(--spring)';
       if (bg) bg.style.transition = 'transform .25s var(--spring)';
+      if (favBg) favBg.style.transition = 'transform .25s var(--spring)';
       if (dx < -120) {
-        if (navigator.vibrate) navigator.vibrate(50);
+        if (navigator.vibrate) navigator.vibrate([50,30,50]);
         if (main) main.style.transform = '';
         if (bg) bg.style.transform = '';
         const delBtn = entry.querySelector('.icb.del');
@@ -2131,9 +2169,22 @@ function initSwipeDelete(containerEl, deleteCallback) {
       } else if (dx < -60) {
         if (main) main.style.transform = 'translateX(-80px)';
         if (bg) bg.style.transform = 'translateX(0%)';
+      } else if (dx > 80) {
+        if (navigator.vibrate) navigator.vibrate(30);
+        if (main) main.style.transform = '';
+        if (favBg) favBg.style.transform = 'translateX(-100%)';
+        const id = entry.dataset.id;
+        if (id) {
+          const allArrs = ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','loans','cash','friends','vehicles'];
+          for (const k of allArrs) {
+            const item = (S[k]||[]).find(x => x.id === id);
+            if (item) { item.favorite = !item.favorite; Store.save(); Toast.show(item.favorite ? '⭐ Favorited' : 'Removed from favorites', 'success', 1500); break; }
+          }
+        }
       } else {
         if (main) main.style.transform = '';
         if (bg) bg.style.transform = '';
+        if (favBg) favBg.style.transform = 'translateX(-100%)';
       }
     }, {passive: true});
   });
@@ -2387,77 +2438,29 @@ function buildNav() {
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
 }
 
-// ===================== SMART ADD =====================
+// ===================== SMART ADD (Quick Add — no API key required) =====================
 const SmartAdd = {
   open() {
-    const hasKey = !!(S.user && S.user.claudeKey);
-    const keySection = hasKey ? '' : `
-      <div class="fg" style="margin-bottom:12px">
-        <label class="fl">Claude API Key <span style="font-size:10px;color:var(--text3)">(stored in your vault only)</span></label>
-        <input class="inp" id="sa-key" type="password" placeholder="sk-ant-...">
-        <div style="font-size:11px;color:var(--text3);margin-top:4px">Get your key at console.anthropic.com</div>
-      </div>`;
-    Modal.open('✨ Smart Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. Claude AI will extract the details and open the form pre-filled.</p>
-      ${keySection}
+    Modal.open('✨ Quick Add', `
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. The engine will detect and pre-fill the form — no API key needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
-        <textarea class="inp" id="sa-text" rows="4" placeholder="Add my HBL Islamic savings account with PKR balance of 50,000&#10;I lent 5000 rupees to Ahmed last week&#10;I have a Jazz SIM with number +92 300 1234567" style="font-size:13px;line-height:1.6"></textarea>
+        <textarea class="inp" id="sa-text" rows="4" placeholder="I have 50000 rupees in HBL savings&#10;Lent 5000 to Ahmed&#10;My Jazz SIM is 0300-1234567&#10;Netflix 1499 per month" style="font-size:13px;line-height:1.6"></textarea>
       </div>
-      <div id="sa-status" style="display:none;font-size:12px;color:var(--text2);margin-top:10px;text-align:center;padding:8px">⏳ Extracting with AI...</div>
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Extract &amp; Pre-fill</button>`);
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "I have 50,000 PKR in HBL savings" · "Lent 5000 to Ahmed" · "Netflix 1499/month"</div>
+    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
 
-  async run() {
-    const keyEl = document.getElementById('sa-key');
-    if (keyEl && keyEl.value.trim()) {
-      S.user = S.user || {};
-      S.user.claudeKey = keyEl.value.trim();
-      Store.save();
-    }
-    const key = S.user && S.user.claudeKey;
-    if (!key) { Toast.show('Enter your Claude API key first', 'warning'); return; }
+  run() {
     const text = (document.getElementById('sa-text')?.value || '').trim();
     if (!text) { Toast.show('Describe what to add', 'warning'); return; }
-
-    const btn = document.getElementById('sa-run-btn');
-    const statusEl = document.getElementById('sa-status');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Working...'; }
-    if (statusEl) statusEl.style.display = 'block';
-
-    try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 512,
-          system: 'You are a financial data extractor for a personal finance app. Parse the user description and return ONLY valid JSON: {"module":"bank|card|investment|cash|loan|sim|expense","fields":{...}}. Field names — bank: bankName,currency,balance,iban,country,bankType; card: cardName,network,cardType,last4,expiry; loan: person,amount,currency,type(lent|borrowed),date,dueDate; sim: network,phone,country,simType,status; cash: label,amount,currency,location; investment: investmentName,broker,type,currency,amountInvested,currentValue; expense: name,amount,currency,category. Return ONLY the JSON, no markdown.',
-          messages: [{ role: 'user', content: text }]
-        })
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error((err.error && err.error.message) || resp.statusText);
-      }
-      const data = await resp.json();
-      const raw = (data.content && data.content[0] && data.content[0].text) || '';
-      let parsed;
-      try { parsed = JSON.parse(raw.trim()); }
-      catch(e) { const m = raw.match(/\{[\s\S]*\}/); if (m) parsed = JSON.parse(m[0]); else throw new Error('AI returned invalid JSON'); }
-      Modal.close();
-      this._openForm(parsed);
-    } catch(e) {
-      if (btn) { btn.disabled = false; btn.textContent = '✨ Extract & Pre-fill'; }
-      if (statusEl) statusEl.style.display = 'none';
-      Toast.show('Smart Add: ' + e.message, 'error', 6000);
-    }
+    const items = (typeof AIImport !== 'undefined') ? AIImport.parse(text) : [];
+    if (!items.length) { Toast.show('Could not detect entry type — try more detail (e.g. mention bank name, amount, currency)', 'warning'); return; }
+    const best = items[0];
+    Modal.close();
+    if (navigator.vibrate) navigator.vibrate(30);
+    this._openForm({ module: best.type, fields: best.fields });
   },
 
   _openForm(parsed) {
@@ -2838,6 +2841,63 @@ function applyLargeText(on) {
   Store.save();
 }
 window.applyLargeText = applyLargeText;
+
+// ===================== DEBOUNCE =====================
+function debounce(fn, ms) {
+  let t;
+  return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
+}
+
+// Wire debounced handlers to all search inputs after page renders
+function _wireSearchDebounce() {
+  const pairs = [
+    ['bQ', () => Banks.render()],
+    ['cQ', () => Cards.render()],
+    ['invQ', () => Inv.render()],
+    ['simQ', () => Sims.render()],
+    ['emailQ', () => Emails.render()],
+    ['friendQ', () => Friends.render()],
+    ['digQ', () => Digital.render()],
+    ['docsQ', () => DocsModule.render()],
+  ];
+  pairs.forEach(([id, fn]) => {
+    const el = document.getElementById(id);
+    if (el && !el._debounced) {
+      el._debounced = true;
+      el.oninput = debounce(fn, 200);
+    }
+  });
+}
+
+// ===================== AMOUNT FORMATTING =====================
+function fmtAmountInput(el) {
+  if (!el) return;
+  const pos = el.selectionStart;
+  const raw = el.value.replace(/,/g, '');
+  if (!raw || isNaN(raw)) return;
+  const parts = raw.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  el.value = parts.join('.');
+}
+
+function initAmountFormatting(container) {
+  (container || document).querySelectorAll('input[type=number],input[inputmode=numeric]').forEach(el => {
+    if (el._fmtInited) return;
+    el._fmtInited = true;
+    const isAmt = el.placeholder && /amount|balance|value|price|cost/i.test(el.placeholder + (el.id || ''));
+    if (!isAmt) return;
+    el.addEventListener('blur', () => fmtAmountInput(el));
+  });
+}
+
+// ===================== HAPTIC FEEDBACK =====================
+const Haptic = {
+  save()   { if (navigator.vibrate) navigator.vibrate(30); },
+  del()    { if (navigator.vibrate) navigator.vibrate([50,30,50]); },
+  error()  { if (navigator.vibrate) navigator.vibrate([100,50,100]); },
+  lock()   { if (navigator.vibrate) navigator.vibrate(50); },
+  tap()    { if (navigator.vibrate) navigator.vibrate(6); },
+};
 
 // ===================== SECURITY HARDENING =====================
 

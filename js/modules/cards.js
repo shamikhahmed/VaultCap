@@ -26,7 +26,7 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No Cards Yet</div><div class="ei-sub">Add your debit, credit, or digital cards here</div><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No Cards Yet</div><div class="ei-sub">Add your debit, credit, or digital cards here</div><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()" style="width:100%;max-width:260px;margin-top:10px">See example</button></div>`;return;}
     const carrying=data.filter(c=>S.wallet.includes(c.id));
     const rest=data.filter(c=>!S.wallet.includes(c.id));
     const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
@@ -109,6 +109,7 @@ const Cards={
   </div>
 </div>`;
   },
+  _showExample(){Modal.open('💳 Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
   openAdd(){
     Modal.open('💳 Add Card',
@@ -169,39 +170,8 @@ const Cards={
     const imgData=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height);
     const qr=window.jsQR&&window.jsQR(imgData.data,imgData.width,imgData.height);
     if(qr){Cards._onScanResult(qr.data);return;}
-    const key=S.user&&S.user.claudeKey;
-    if(!key){
-      if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Add API key in Settings → Security for OCR auto-fill, or keep scanning for QR codes.</span>';
-      return;
-    }
-    if(btn){btn.disabled=true;btn.textContent='⏳ Reading…';}
-    if(statusEl)statusEl.textContent='Sending to Claude AI — please wait…';
-    const base64=canvas.toDataURL('image/jpeg',0.7).split(',')[1];
-    fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:256,messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:base64}},
-        {type:'text',text:'Extract card details from this image. Return JSON only: {"cardNumber":"","expiryDate":"","cardholderName":"","network":"","last4":""} or null if no card visible.'}
-      ]}]})
-    }).then(function(resp){
-      if(!resp.ok)throw new Error(resp.statusText);
-      return resp.json();
-    }).then(function(data){
-      const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
-      let parsed=null;
-      try{parsed=JSON.parse(raw.trim());}catch(e){const m=raw.match(/\{[\s\S]*\}/);if(m)try{parsed=JSON.parse(m[0]);}catch(e2){}}
-      if(parsed&&typeof parsed==='object'){
-        Cards._stopScan();
-        Cards._fillFromOCR(parsed);
-      }else{
-        if(btn){btn.disabled=false;btn.textContent='📷 Capture';}
-        if(statusEl)statusEl.textContent='No card detected — adjust and try again';
-      }
-    }).catch(function(e){
-      Cards._stopScan();
-      Toast.show('OCR error: '+e.message,'error',4000);
-    });
+    if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Fill in the card details manually in the form below.</span>';
+    setTimeout(function(){Cards._stopScan();Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
   },
   _onScanResult(raw){
     Cards._stopScan();
@@ -267,26 +237,7 @@ const Cards={
       thumbEl.innerHTML='<img src="'+dataUrl+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
       thumbEl.dataset.photo=base64;
     }
-    const key=S.user&&S.user.claudeKey;
-    if(!key){Toast.show('Photo saved — add API key in Settings for auto-fill','info',3000);return;}
-    Toast.show('Reading card…','info',2000);
-    fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:256,messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:base64}},
-        {type:'text',text:'Extract card details from this image. Return JSON only: {"cardNumber":"","expiryDate":"","cardholderName":"","network":"","last4":""} or null if no card visible.'}
-      ]}]})
-    }).then(function(resp){
-      if(!resp.ok)throw new Error(resp.statusText);
-      return resp.json();
-    }).then(function(data){
-      const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
-      let parsed=null;
-      try{parsed=JSON.parse(raw.trim());}catch(e){const m=raw.match(/\{[\s\S]*\}/);if(m)try{parsed=JSON.parse(m[0]);}catch(e2){}}
-      if(parsed&&typeof parsed==='object')Cards._fillFromOCR(parsed);
-      else Toast.show('Could not read automatically — please fill in manually','info',3500);
-    }).catch(function(e){Toast.show('OCR failed: '+e.message,'warning',3000);});
+    Toast.show('Photo saved — fill in the details below','info',2000);
   },
   _viewPhotoData(targetId){
     const thumbEl=document.getElementById('cf-photo-'+targetId);
@@ -351,6 +302,7 @@ const Cards={
     const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
     if(_cPhotoBytes>10*1024*1024)Toast.show('Storage is getting large. Consider removing old photos.','warning',5000);
     Activity.log((editId?'Edited':'Added')+' card',name);Store.save();Modal.close();this.render();Toast.show((editId?'Updated':'Added')+': '+name,'success');
+    if(typeof Haptic!=='undefined')Haptic.save();
     if(!editId){
       const cLow=name.toLowerCase();
       const bMatch=SMART_DB.banks.find(b=>cLow.includes(b.name.toLowerCase()));
@@ -381,6 +333,7 @@ const Cards={
   del(id,fm=false){
     if(!window.__vos_confirm('Move to Trash?'))return;
     const c=S.cards.find(x=>x.id===id);if(!c)return;
+    if(typeof Haptic!=='undefined')Haptic.del();
     S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});
     S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);
     Activity.log('Trashed card',c.cardName);Store.save();if(fm)Modal.close();this.render();

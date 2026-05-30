@@ -187,12 +187,18 @@
   #lkClock { font-size: 38px; }
 }
 @media (min-width: 769px) { #pgLock { padding-bottom: 0 !important; } }
-/* Task 1: prevent GPU compositing blur on lock screen interactive elements */
+/* Prevent GPU compositing blur on lock screen interactive elements */
 #pgLock .lk-mark, #pgLock .lk-brand, #pgLock .lk-brand-name,
 #pgLock .pin-dots, #pgLock #lkClock, #pgLock #lkDate, #pgLock .lk-mid {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+/* Isolate lock mark from blur layers via GPU compositing layer */
+.lk-mark {
+  transform: translateZ(0);
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* ─ Home / Splash ─ */

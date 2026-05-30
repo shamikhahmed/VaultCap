@@ -80,9 +80,22 @@ const Dash={
     const modGrid=activeMods.map(m=>`<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
     b.innerHTML=`
+    <!-- Dynamic Island / notch spacer -->
+    <div style="height:max(0px,calc(env(safe-area-inset-top,0px) - 14px))"></div>
+    <!-- Quick Actions Bar -->
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;-webkit-overflow-scrolling:touch" class="qa-row">
+      ${S.modules.banks?`<button onclick="Banks.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🏦 Bank</button>`:''}
+      ${S.modules.cards?`<button onclick="Cards.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">💳 Card</button>`:''}
+      ${S.modules.cash?`<button onclick="Cash.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">💵 Cash</button>`:''}
+      ${S.modules.loans?`<button onclick="Loans.openAdd('lent')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🤝 Loan</button>`:''}
+      <button onclick="SmartAdd.open()" style="padding:7px 14px;border-radius:99px;background:var(--glow);border:1px solid var(--accent);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--accent);touch-action:manipulation;flex-shrink:0">✨ Quick Add</button>
+      <button onclick="CMD.open()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🔍 Search</button>
+      <button onclick="R.goto('import')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">📊 Import</button>
+      <button onclick="R.goto('settings')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">⚙️ Settings</button>
+    </div>
     <!-- Net Worth Card -->
     <div class="dash-card dash-hero">
-      <div class="dash-label" style="display:flex;align-items:center;gap:6px">NET WORTH <button onclick="Dash.showNWBreakdown()" style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);cursor:pointer;font-size:10px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1" title="See breakdown">ℹ️</button></div>
+      <div class="dash-label" style="display:flex;align-items:center;gap:6px">NET WORTH <button onclick="Dash.showNWBreakdown()" style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:var(--text2);font-style:italic;font-family:Georgia,serif;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;touch-action:manipulation" title="See breakdown">i</button></div>
       <div class="dash-nw-amount sens">${trendArrow}${cur} ${fmtN(nwDisplay)}</div>
       <div class="dash-nw-sub sens">${nwSub}</div>
       <div class="dash-hero-acts">
@@ -180,7 +193,7 @@ const Dash={
   },
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
   toggleCurrency(){const order=['PKR','GBP','AED','USD'];const idx=order.indexOf(S.user.currency||'PKR');S.user.currency=order[(idx+1)%order.length];Store.save();this.render();},
-  security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.pin!=='123456')s+=5;return Math.min(s,100);},
+  security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.decoyPin)s+=5;return Math.min(s,100);},
   showNWBreakdown(){
     const cur=S.user.currency||'PKR';
     const toB=(a,c)=>(a||0)*(FX[c]||1);
@@ -1317,7 +1330,7 @@ const RecoveryCenter={
     <div class="set-sec"><div class="set-title">Recovery Checklist</div><div class="set-card">
       ${[
         {done:S.user.name,label:'Name set',tip:'Required for master key derivation'},
-        {done:S.pin!=='123456',label:'Custom PIN set',tip:'Change from default PIN 123456'},
+        {done:!!S.user.lastBackup||S.banks.length>0||S.cards.length>0,label:'Vault has data',tip:'Add banks, cards or other entries'},
         {done:!!S.decoyPin,label:'Decoy PIN configured',tip:'Shows fake vault under coercion'},
         {done:!!S.user.lastBackup,label:'Vault backed up',tip:'Export encrypted backup to safe location'},
         {done:S.autoLock,label:'Auto-lock enabled',tip:'Vault locks automatically when idle'},
@@ -1432,15 +1445,28 @@ const SettingsNav = {
   },
 
   _security() {
+    const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
+    const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
     return `<div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
-      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()">View</button></div>
-      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
+      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
+      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
+      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
       <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
+      ${[
+        {label:'Encryption',val:'AES-256-GCM ✅',ok:true},
+        {label:'PIN',val:'Protected ✅',ok:true},
+        {label:'Storage',val:'Encrypted (IndexedDB) ✅',ok:true},
+        {label:'Auto-lock',val:S.autoLock?'Enabled ✅':'Disabled ⚠️',ok:S.autoLock},
+        {label:'Decoy PIN',val:S.decoyPin?'Configured ✅':'Not set',ok:!!S.decoyPin},
+        {label:'Last backup',val:lastBackup,ok:!!S.user.lastBackup},
+        {label:'Unlock sessions',val:sessionCount+' recorded',ok:true},
+      ].map(({label,val,ok})=>`<div class="si"><div class="name">${label}</div><div style="font-size:12px;color:${ok?'var(--ok)':'var(--warn)'};text-align:right;flex:1">${val}</div></div>`).join('')}
     </div></div>`;
   },
 

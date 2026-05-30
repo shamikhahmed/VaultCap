@@ -134,27 +134,7 @@ const DocsModule={
       thumbEl.innerHTML='<img src="'+dataUrl+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\''+targetId+'\')" title="Tap to view">';
       thumbEl.dataset.photo=base64;
     }
-    const key=S.user&&S.user.claudeKey;
-    if(!key){Toast.show('Photo saved — add API key in Settings for auto-fill','info',3000);return;}
-    Toast.show('Reading…','info',1800);
-    fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:512,messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:base64}},
-        {type:'text',text:'Extract all text and key information from this document image. Identify: document type, document number, name, date of birth, expiry date, issuing country/authority. Return JSON only: {"docType":"","docNumber":"","name":"","dob":"","expiry":"","issuingCountry":"","otherFields":{}}'
-        }
-      ]}]})
-    }).then(function(resp){
-      if(!resp.ok)throw new Error(resp.statusText);
-      return resp.json();
-    }).then(function(data){
-      const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
-      let parsed=null;
-      try{parsed=JSON.parse(raw.trim());}catch(e){const m=raw.match(/\{[\s\S]*\}/);if(m)try{parsed=JSON.parse(m[0]);}catch(e2){}}
-      if(parsed&&typeof parsed==='object')DocsModule._fillFromOCR(parsed);
-      else Toast.show('Could not read automatically — please fill in manually','info',3500);
-    }).catch(function(e){Toast.show('OCR failed: '+e.message,'warning',3000);});
+    Toast.show('Photo saved — fill in the document details below','info',2000);
   },
   _fillFromOCR(data){
     const hi='outline:2px solid var(--info);outline-offset:2px';

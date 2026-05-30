@@ -216,6 +216,49 @@ const AIImport = (() => {
       });
     }
 
+    // ── Expense ────────────────────────────────────────────────────────────────────
+    if (lower.includes('month') || lower.includes('/mo') || lower.includes('per month') || lower.includes('subscription') || lower.includes('bill') || lower.includes('monthly') || lower.includes('yearly') || lower.includes('annual')) {
+      const sub = (typeof SUBS_DB !== 'undefined') ? SUBS_DB.find(s => lower.includes(s.n.toLowerCase())) : null;
+      const expName = sub?.n || names[0] || (_firstMatch(text, /\b([A-Z][a-z]{2,}(?:\+)?)\b/g) || '');
+      const fields = {
+        name:     expName,
+        amount:   amounts[0] || '',
+        currency: currencies[0] || 'GBP',
+        category: sub?.c || 'Other',
+        icon:     sub?.ic || '📋',
+      };
+      if (fields.name || fields.amount) {
+        items.push({
+          type: 'expense',
+          label: `Expense — ${fields.name || 'Subscription'}`,
+          confidence: _confidence(fields, ['name', 'amount']),
+          fields,
+          raw: text.slice(0, 200)
+        });
+      }
+    }
+
+    // ── Enhanced loan from natural language ("lent X to Ahmed", "I owe X") ──────
+    if (!items.find(i => i.type === 'loan')) {
+      const lentMatch = text.match(/(?:lent|gave|loaned|sent)\s+(?:PKR|GBP|AED|USD|Rs\.?)?\s*([\d,]+)\s+(?:rupees?|gbp|usd|aed)?\s*(?:to|from)\s+([A-Z][a-z]{2,}(?:\s[A-Z][a-z]{2,})?)/i);
+      const oweMatch  = text.match(/(?:owe|borrowed|borrowed from)\s+([A-Z][a-z]{2,}(?:\s[A-Z][a-z]{2,})?)\s+(?:PKR|GBP|AED|USD|Rs\.?)?\s*([\d,]+)/i);
+      if (lentMatch) {
+        items.push({ type:'loan', label:`Loan — lent to ${lentMatch[2]}`, confidence:0.85, fields:{ personName:lentMatch[2], amount:lentMatch[1].replace(/,/g,''), currency:currencies[0]||'PKR', type:'lent', dueDate:'' }, raw:text.slice(0,200) });
+      } else if (oweMatch) {
+        items.push({ type:'loan', label:`Loan — borrowed from ${oweMatch[1]}`, confidence:0.85, fields:{ personName:oweMatch[1], amount:oweMatch[2].replace(/,/g,''), currency:currencies[0]||'PKR', type:'borrowed', dueDate:'' }, raw:text.slice(0,200) });
+      }
+    }
+
+    // ── Enhanced SIM from "My Jazz SIM is 0300-..." ────────────────────────────
+    if (!items.find(i => i.type === 'sim')) {
+      const simMatch = text.match(/(?:my\s+)?([A-Za-z]+)\s+(?:SIM|sim|number|no\.?)\s+(?:is\s+)?(\+?[\d\s\-]{10,15})/i);
+      if (simMatch) {
+        const netName = simMatch[1];
+        const matched = (typeof NETWORKS_DB !== 'undefined') ? NETWORKS_DB.find(n => n.n.toLowerCase().includes(netName.toLowerCase())) : null;
+        items.push({ type:'sim', label:`SIM — ${matched?.n||netName}`, confidence:0.9, fields:{ network:matched?.n||netName, phone:simMatch[2].trim(), country:matched?.c||'PK', simType:'Physical', status:'Active' }, raw:text.slice(0,200) });
+      }
+    }
+
     // Deduplicate: keep best-confidence item per type
     const best = {};
     items.forEach(it => {
