@@ -86,6 +86,7 @@
 .pb::-webkit-scrollbar { width: 0; }
 .main, .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); }
 @media (min-width: 769px) { .main, .pb { padding-bottom: 24px !important; } }
+#pg-dashboard .pb { padding-top: max(20px, calc(env(safe-area-inset-top, 0px) + 16px)); }
 .btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); }
 
 /* ─ Bottom tabs ─ */
@@ -102,10 +103,12 @@
 .ti {
   width: 100%; display: flex; flex-direction: column;
   align-items: center; justify-content: center; padding: 7px 4px 5px;
-  cursor: pointer; color: var(--text3); font-size: 10px; font-weight: 600;
+  cursor: pointer; color: var(--text3); font-size: 9px; font-weight: 600;
   gap: 2px; min-height: 52px; transition: var(--t); text-align: center; overflow: hidden;
+  flex: 1; min-width: 0;
 }
 .ti.on { color: var(--accent); }
+.ti > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .ti-ic { font-size: 18px; transition: var(--t); padding: 3px 8px; border-radius: 10px; }
 .ti.on .ti-ic { background: var(--glow); }
 @media (max-width: 768px) { .btabs { display: block; } }
@@ -145,12 +148,12 @@
   margin-bottom: 14px; animation: lockIn .5s .1s var(--ease-out) both;
 }
 .lk-mark {
-  width: 52px; height: 52px; border-radius: 14px;
-  background: var(--glass2); border: 1px solid var(--border2);
+  width: 72px; height: 72px; border-radius: 16px;
+  background: transparent; border: none;
   display: flex; align-items: center; justify-content: center;
-  font-size: 26px;
   animation: breathe 5s ease-in-out infinite;
   box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  overflow: hidden;
 }
 .lk-brand-name {
   font-size: 13px; font-weight: 700; letter-spacing: 3px;

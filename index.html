@@ -45,7 +45,15 @@
   <!-- MID: logo + PIN input -->
   <div class="lk-mid">
     <div class="lk-brand">
-      <div class="lk-mark"><span style="will-change:transform;display:block">🔐</span></div>
+      <div class="lk-mark">
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:translateZ(0);will-change:transform;display:block">
+          <rect width="72" height="72" rx="16" fill="#0A84FF"/>
+          <rect x="20" y="28" width="32" height="26" rx="6" fill="white" opacity="0.95"/>
+          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="white" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="36" cy="41" r="4" fill="#0A84FF"/>
+          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="#0A84FF"/>
+        </svg>
+      </div>
       <div class="lk-brand-name">VAULT OS</div>
     </div>
     <div id="lkSub" class="lk-sub">Enter your PIN</div>
@@ -79,7 +87,7 @@
       <button class="key act" onclick="PIN.del()">⌫</button>
     </div>
     <div class="lk-hint">
-      <span id="forgotPinLink" onclick="Settings.forgotPIN()" style="display:none">Forgot PIN?</span>
+      <span id="forgotPinLink" onclick="Settings.forgotPIN()" style="display:none;font-size:13px;color:var(--text3);margin-top:20px;background:none;border:none;cursor:pointer">Forgot PIN?</span>
     </div>
   </div>
 </div>

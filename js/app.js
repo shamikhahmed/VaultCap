@@ -659,28 +659,47 @@ const SMART_DB = {
 
 // ── Bank logo / brand helpers ──
 const BANK_DOMAINS={
-  'HBL':'hbl.com','Meezan Bank':'meezanbank.com','UBL':'ubl.com','MCB Bank':'mcb.com.pk',
-  'Bank Alfalah':'bankalfalah.com','Allied Bank':'abl.com','Askari Bank':'askaribank.com',
-  'Bank Al Habib':'bankalhabib.com','Habib Metro Bank':'habibmetro.com',
-  'Faysal Bank':'faysalbank.com','Bank Islami':'bankislami.com',
+  'HBL':'hbl.com','Habib Bank':'hbl.com','HBL Bank':'hbl.com',
+  'Meezan Bank':'meezanbank.com','Meezan':'meezanbank.com',
+  'UBL':'ubl.com','MCB Bank':'mcb.com.pk','MCB':'mcb.com.pk',
+  'Bank Alfalah':'bankalfalah.com','Alfalah':'bankalfalah.com',
+  'Allied Bank':'abl.com','Allied':'abl.com',
+  'Askari Bank':'askaribank.com','Askari':'askaribank.com',
+  'Bank Al Habib':'bankalhabib.com','BAHL':'bankalhabib.com',
+  'Habib Metro Bank':'habibmetro.com','Habib Metro':'habibmetro.com',
+  'Faysal Bank':'faysalbank.com','Faysal':'faysalbank.com',
+  'Bank Islami':'bankislami.com','Islami':'bankislami.com',
   'Sadapay':'sadapay.com','NayaPay':'nayapay.com','Zindigi':'zindigi.com',
   'JazzCash':'jazzcash.com.pk','EasyPaisa':'easypaisa.com',
   'NBP':'nbp.com.pk','Bank of Punjab':'bop.com.pk',
-  'Silkbank':'silkbank.com','Soneri Bank':'soneribank.com','JS Bank':'jsbl.com',
-  'Standard Chartered PK':'sc.com','HSBC':'hsbc.com','Monzo':'monzo.com',
-  'Starling Bank':'starlingbank.com','Revolut':'revolut.com','Wise':'wise.com',
-  'Barclays':'barclays.co.uk','Barclaycard':'barclays.co.uk','HSBC UK':'hsbc.co.uk',
-  'NatWest':'natwest.com','Lloyds Bank':'lloydsbank.com','Santander UK':'santander.co.uk',
+  'Silkbank':'silkbank.com','Silk Bank':'silkbank.com',
+  'Soneri Bank':'soneribank.com','Soneri':'soneribank.com',
+  'JS Bank':'jsbl.com','JS':'jsbl.com',
+  'Standard Chartered PK':'sc.com','Standard Chartered':'sc.com',
+  'HSBC':'hsbc.com','HSBC UK':'hsbc.co.uk',
+  'Monzo':'monzo.com',
+  'Starling Bank':'starlingbank.com','Starling':'starlingbank.com',
+  'Revolut':'revolut.com','Wise':'wise.com',
+  'Barclays':'barclays.co.uk','Barclaycard':'barclays.co.uk',
+  'NatWest':'natwest.com',
+  'Lloyds Bank':'lloydsbank.com','Lloyds':'lloydsbank.com',
+  'Santander UK':'santander.co.uk','Santander':'santander.co.uk',
   'Halifax':'halifax.co.uk','Nationwide':'nationwide.co.uk',
-  'Metro Bank':'metrobankonline.co.uk','TSB':'tsb.co.uk',
-  'Chase UK':'chase.co.uk','First Direct':'firstdirect.com','Atom Bank':'atombank.co.uk',
-  'Emirates NBD':'emiratesnbd.com','ENBD':'emiratesnbd.com',
-  'FAB':'bankfab.com','ADCB':'adcb.com','Mashreq Bank':'mashreq.com',
+  'Metro Bank':'metrobankonline.co.uk','TSB':'tsb.co.uk','TSB Bank':'tsb.co.uk',
+  'Chase UK':'chase.co.uk','First Direct':'firstdirect.com',
+  'Atom Bank':'atombank.co.uk','Atom':'atombank.co.uk',
+  'Emirates NBD':'emiratesnbd.com','ENBD':'emiratesnbd.com','Emirates':'emiratesnbd.com',
+  'FAB':'bankfab.com','ADCB':'adcb.com',
+  'Mashreq Bank':'mashreq.com','Mashreq':'mashreq.com',
   'ADIB':'adib.ae','Dubai Islamic Bank':'dib.ae','DIB':'dib.ae',
-  'RAKBank':'rakbank.ae','Wio Bank':'wio.com','Liv.':'liv.ae',
-  'Al Rayan Bank':'alrayanbank.co.uk','Citibank':'citibank.com',
-  'Chase':'chase.com','Bank of America':'bankofamerica.com','Wells Fargo':'wellsfargo.com',
-  'Standard Chartered':'sc.com','BAHL':'bankalhabib.com',
+  'RAKBank':'rakbank.ae','RAK Bank':'rakbank.ae','RAKBANK':'rakbank.ae',
+  'Wio Bank':'wio.com','Wio':'wio.com',
+  'Liv.':'liv.ae','Liv':'liv.ae',
+  'Al Rayan Bank':'alrayanbank.co.uk',
+  'Citibank':'citibank.com','Citi':'citibank.com','Citi Bank':'citibank.com',
+  'Chase':'chase.com','Chase Bank':'chase.com',
+  'Bank of America':'bankofamerica.com',
+  'Wells Fargo':'wellsfargo.com','Wells':'wellsfargo.com',
 };
 
 const BANK_COLORS={
@@ -697,8 +716,23 @@ function bankDomain(name){
   const n=name.trim();
   if(BANK_DOMAINS[n])return BANK_DOMAINS[n];
   const lc=n.toLowerCase();
+  // Case-insensitive exact match
   for(const[k,v]of Object.entries(BANK_DOMAINS)){
-    if(lc.includes(k.toLowerCase())||k.toLowerCase().includes(lc))return v;
+    if(k.toLowerCase()===lc)return v;
+  }
+  // First word of bank name starts any key
+  const firstWord=lc.split(' ')[0];
+  for(const[k,v]of Object.entries(BANK_DOMAINS)){
+    if(k.toLowerCase().startsWith(firstWord))return v;
+  }
+  // Bank name starts with any key
+  for(const[k,v]of Object.entries(BANK_DOMAINS)){
+    if(lc.startsWith(k.toLowerCase()))return v;
+  }
+  // Any key contains or is contained in bank name
+  for(const[k,v]of Object.entries(BANK_DOMAINS)){
+    const kl=k.toLowerCase();
+    if(lc.includes(kl)||kl.includes(lc))return v;
   }
   return null;
 }
@@ -2372,7 +2406,7 @@ function buildNav() {
 
   const hasPage = id => !!document.getElementById('pg-' + id);
   const activeMods = active.filter(m => hasPage(m.id));
-  const dash = { id:'dashboard', n:'Dashboard', ic:'📊' };
+  const dash = { id:'dashboard', n:'Home', ic:'📊' };
   const first4 = [dash, ...activeMods.slice(0, 3)];
   const overflow = activeMods.slice(3);
   const moreItem = { id:'__more__', n:'More', ic:'⋯' };

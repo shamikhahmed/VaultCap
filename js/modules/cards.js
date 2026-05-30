@@ -52,11 +52,12 @@ const Cards={
     const bankName=c.issuer||((c.cardName||'').split(' ')[0]);
     const typeLabel=(c.cardType||'CARD').toUpperCase();
 
-    // Bank logo — pill with favicon
+    // Bank logo — pill with favicon + initials fallback
     const _dom=bankDomain(c.cardName||bankName,c.country);
+    const _initials=(bankName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
     const logoHtml=_dom
-      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px" onerror="this.style.display='none'"></div>`
-      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${(bankName||'?').charAt(0)}</div>`;
+      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px;display:block" onerror="this.outerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
+      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
     const chip=`<svg width="38" height="30" viewBox="0 0 38 30" class="wcard-chip-svg">
@@ -134,16 +135,18 @@ const Cards={
     const overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;z-index:2000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
     overlay.innerHTML=[
-      '<div style="position:relative;width:100%;max-width:400px">',
-      '<video id="_scanVid" autoplay playsinline style="width:100%;border-radius:12px;display:block"></video>',
+      '<style>@keyframes scan{from{top:20%}to{top:80%}}</style>',
+      '<div style="position:relative;width:100%;max-width:420px">',
+      '<video id="_scanVid" autoplay playsinline style="width:100%;max-width:420px;border-radius:12px;display:block;background:#000"></video>',
       '<div style="position:absolute;inset:0;border:2px solid rgba(255,255,255,.25);border-radius:12px;pointer-events:none"></div>',
       '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:2px solid rgba(100,200,255,.7);width:82%;height:56%;border-radius:8px;pointer-events:none"></div>',
+      '<div style="position:absolute;left:9%;width:82%;height:2px;background:linear-gradient(90deg,transparent,#0A84FF,transparent);animation:scan 2s ease-in-out infinite alternate;pointer-events:none"></div>',
       '</div>',
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
-      '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point camera at card face · QR auto-detects</div>',
+      '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;min-width:140px">📷 Capture</button>',
-      '<button onclick="Cards._stopScan()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
+      '<button id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">📷 Capture</button>',
+      '<button onclick="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -181,8 +184,8 @@ const Cards={
     const imgData=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height);
     const qr=window.jsQR&&window.jsQR(imgData.data,imgData.width,imgData.height);
     if(qr){Cards._onScanResult(qr.data);return;}
-    if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Fill in the card details manually in the form below.</span>';
-    setTimeout(function(){Cards._stopScan();Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
+    if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Fill in the card details below.</span>';
+    setTimeout(function(){Cards._stopScan();Toast.show('No QR found — fill in details below','info',3000);Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
   },
   _onScanResult(raw){
     Cards._stopScan();

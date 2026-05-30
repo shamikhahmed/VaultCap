@@ -80,19 +80,6 @@ const Dash={
     const modGrid=activeMods.map(m=>`<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
     b.innerHTML=`
-    <!-- Dynamic Island / notch spacer -->
-    <div style="height:max(0px,calc(env(safe-area-inset-top,0px) - 14px))"></div>
-    <!-- Quick Actions Bar -->
-    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;-webkit-overflow-scrolling:touch" class="qa-row">
-      ${S.modules.banks?`<button onclick="Banks.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🏦 Bank</button>`:''}
-      ${S.modules.cards?`<button onclick="Cards.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">💳 Card</button>`:''}
-      ${S.modules.cash?`<button onclick="Cash.openAdd()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">💵 Cash</button>`:''}
-      ${S.modules.loans?`<button onclick="Loans.openAdd('lent')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🤝 Loan</button>`:''}
-      <button onclick="SmartAdd.open()" style="padding:7px 14px;border-radius:99px;background:var(--glow);border:1px solid var(--accent);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--accent);touch-action:manipulation;flex-shrink:0">✨ Quick Add</button>
-      <button onclick="CMD.open()" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">🔍 Search</button>
-      <button onclick="R.goto('import')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">📊 Import</button>
-      <button onclick="R.goto('settings')" style="padding:7px 14px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;color:var(--text);touch-action:manipulation;flex-shrink:0">⚙️ Settings</button>
-    </div>
     <!-- Net Worth Card -->
     <div class="dash-card dash-hero">
       <div class="dash-label" style="display:flex;align-items:center;gap:6px">NET WORTH <button onclick="Dash.showNWBreakdown()" style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:var(--text2);font-style:italic;font-family:Georgia,serif;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;touch-action:manipulation" title="See breakdown">i</button></div>
