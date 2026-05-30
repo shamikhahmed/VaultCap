@@ -1,4 +1,19 @@
 const Loans = {
+  _friendName: '',
+
+  addFriend(btnEl) {
+    const name = this._friendName;
+    if (!name) return;
+    if (!(S.friends || []).some(f => f.name === name)) {
+      S.friends = S.friends || [];
+      S.friends.push({ id: U.id(), name, createdAt: new Date().toISOString() });
+      Store.save();
+      Toast.show(`${name} added to Friends`, 'success');
+    }
+    if (btnEl) btnEl.closest('.toast')?.remove();
+    this._friendName = '';
+  },
+
   render() {
     const el = document.getElementById('loanItems');
     if (!el) return;
@@ -144,7 +159,17 @@ const Loans = {
     Activity.log((editId ? 'Edited' : 'Added') + ' loan', `${type === 'lent' ? 'lent to' : 'borrowed from'} ${person}`);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId ? 'Updated' : 'Added'}: ${person}`, 'success');
-    if (!editId) promptAddAnother('Loan', `Loans.openAdd('${type}')`);
+    if (!editId) {
+      const alreadyFriend = (S.friends || []).some(f => f.name === person);
+      if (!alreadyFriend) {
+        Loans._friendName = person;
+        Toast.show(
+          `Save <strong>${person}</strong> to Friends? <button style="margin-left:6px;padding:2px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600" onclick="Loans.addFriend(this)">Yes</button>`,
+          'info', 8000
+        );
+      }
+      promptAddAnother('Loan', `Loans.openAdd('${type}')`);
+    }
   },
 
   edit(id) {

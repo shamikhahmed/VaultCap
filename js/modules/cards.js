@@ -27,7 +27,7 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-ic">💳</div><h3>No cards found</h3><p>Add your credit, debit, crypto and BNPL cards</p><button class="btn btn-p" style="margin-top:12px" onclick="Cards.openAdd()">💳 Add First Card</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px"><div style="width:56px;height:56px;border-radius:16px;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">💳</div><h3 style="font-size:17px;font-weight:700;margin-bottom:6px">No cards yet</h3><p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5">Add your debit, credit, or digital cards here</p><button class="btn btn-p" onclick="Cards.openAdd()" style="padding:14px 28px;font-size:15px;font-weight:700;border-radius:14px">+ Add Card</button></div>`;return;}
     const byNet={};data.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
     el.innerHTML=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
   },

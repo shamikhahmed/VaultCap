@@ -872,6 +872,7 @@ const R = {
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
       settings:    () => {
+        buildNav();
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
         } else {
@@ -1318,7 +1319,7 @@ function togglePrivacy() {
 // ===================== BUILD NAV =====================
 function buildNav() {
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
-  const extras = [{ id:'alerts', n:'Alerts', ic:'🔔' }, { id:'settings', n:'Settings', ic:'⚙️' }];
+  const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }];
   const all = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active, ...extras];
 
   const groups = { Finance:'💰 Finance', Assets:'🏠 Assets & Property', Identity:'🪪 Identity & Accounts', Tools:'⚙️ Tools & Security' };
@@ -1334,7 +1335,8 @@ function buildNav() {
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px"></div>`;
-  sbHTML += extras.map(m =>
+  const activeModIds = new Set(active.map(m => m.id));
+  sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
     `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span>${m.n}</div>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
@@ -1352,7 +1354,14 @@ function buildNav() {
   // Populate moreGrid for the More sheet
   const mg = document.getElementById('moreGrid');
   if (mg) {
-    const moreItems = [...overflow, ...extras];
+    const first5Ids = new Set(first5.map(m => m.id));
+    const seenIds = new Set();
+    const moreItems = [...overflow, ...extras].filter(m => {
+      if (first5Ids.has(m.id)) return false;
+      if (seenIds.has(m.id)) return false;
+      seenIds.add(m.id);
+      return true;
+    });
     mg.innerHTML = moreItems.map(m =>
       `<div onclick="R.goto('${m.id}');closeMore()" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
         <div style="font-size:22px;margin-bottom:5px">${m.ic}</div>
@@ -1365,7 +1374,7 @@ function buildNav() {
     `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="${m.id==='__more__'?'openMore()':'R.goto(\''+m.id+'\')'}"><div class="ti-ic">${m.ic}</div><span>${m.n.length > 7 ? m.n.slice(0, 6) + '…' : m.n}</span></div>`
   ).join('');
 
-  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles' };
+  const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [
     {id:'cash',  icon:'💵', label:'Cash',  obj:'Cash'},
     {id:'loans', icon:'🤝', label:'Loan',  obj:'Loans'},

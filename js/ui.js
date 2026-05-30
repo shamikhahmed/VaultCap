@@ -10,6 +10,42 @@ const Dash={
     const b=document.getElementById('dashBody');
     if(!b)return;
     const cur=S.user.currency||'PKR';
+    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
+    if(S.banks.length===0&&S.cards.length===0&&S.investments.length===0){
+      b.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 0 40px">
+        <div style="font-size:40px;margin-bottom:14px;animation:float 4s ease-in-out infinite">🎉</div>
+        <div style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px">${greet}, ${S.user.name||'User'}!</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;max-width:300px;line-height:1.6">Your private vault is ready. Track your financial life — all encrypted, offline, zero-knowledge.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:20px">
+          <div onclick="Banks.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+            <div style="font-size:26px;margin-bottom:8px">🏦</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add a Bank</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.4">Accounts, IBANs &amp; logins</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
+          </div>
+          <div onclick="Cards.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+            <div style="font-size:26px;margin-bottom:8px">💳</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add a Card</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.4">Debit, credit &amp; digital cards</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
+          </div>
+          <div onclick="Inv.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+            <div style="font-size:26px;margin-bottom:8px">📈</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add Investment</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.4">Stocks, funds &amp; crypto</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
+          </div>
+          <div onclick="Cash.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
+            <div style="font-size:26px;margin-bottom:8px">💵</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Track Cash</div>
+            <div style="font-size:11px;color:var(--text3);line-height:1.4">Physical cash by location</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
+          </div>
+        </div>
+        <button class="btn btn-g" onclick="Settings.loadDemo()" style="width:100%;font-size:13px">🎮 Load Demo Data — see what a full vault looks like</button>
+      </div>`;
+      return;
+    }
     const toB=(a,c)=>(a||0)*(FX[c]||1);
     const toCur=(pkr,c)=>pkr/(FX[c]||1);
     const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
@@ -31,7 +67,6 @@ const Dash={
     const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     // nw subtitle
     const nwSub=debtPKR>0?`${cur} ${fmtN(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} assets − ${fmtN(Math.round(toCur(debtPKR,cur)))} debt`:`Investments · Assets · Cash`;
-    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
     // allocation donut
     const allocData=[
       {l:'Investments',v:Math.round(toCur(invPKR,cur)),col:'var(--accent)'},
