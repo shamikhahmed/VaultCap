@@ -45,14 +45,23 @@ const Banks={
     this.bindCC();
     if(cc){setTimeout(()=>{const el=document.getElementById('bf-cc');if(el){el.value=cc;el.dispatchEvent(new Event('change'));}Banks._showBankChips(cc);},80);}
   },
+  _bankIcons:{HBL:'🏦',UBL:'🏛️','MCB Bank':'🏦','Bank Alfalah':'🔵','Allied Bank':'🟢','Askari Bank':'🪖','Meezan Bank':'🕌','Bank Al Habib':'🏦','Habib Metro Bank':'🏦','Faysal Bank':'🕌','Bank Islami':'☪️','Sadapay':'💜','NayaPay':'🔶','Zindigi':'⚡','JazzCash':'🟠','EasyPaisa':'🟢','NBP':'🏛️','Bank of Punjab':'🏛️','Monzo':'🔴','Starling Bank':'💙','Revolut':'⚫','Wise':'💚','Barclays':'🔵','HSBC':'🔴','NatWest':'🟣','Lloyds Bank':'🟢','Santander UK':'🔥','Halifax':'🏠','Nationwide':'🟡','Metro Bank':'🔴','First Direct':'🔵','Chase UK':'🔵','TSB':'🔵','Emirates NBD':'🟠','FAB':'🔷','ADCB':'🔵','Mashreq Bank':'🟦','ADIB':'🕌','Dubai Islamic Bank':'🕌','RAKBank':'🔴','Wio Bank':'🟢','Liv.':'💛','Commercial Bank of Dubai':'🏦','Chase':'🟦','Bank of America':'🔴','Wells Fargo':'🟡','Citibank':'🔵'},
   _showBankChips(cc){
-    const banks=SMART_DB.banks.filter(b=>b.country===cc).slice(0,14);
+    const banks=SMART_DB.banks.filter(b=>b.country===cc).slice(0,16);
     if(!banks.length)return;
     const inp=document.getElementById('bf-name');if(!inp)return;
-    const existing=inp.parentElement.querySelector('.bank-chips');if(existing)existing.remove();
-    const ct=document.createElement('div');ct.className='bank-chips';
-    ct.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px';
-    ct.innerHTML=banks.map(b=>`<div class="chip" style="font-size:11px;padding:4px 10px" onclick="document.getElementById('bf-name').value='${b.name}';SMART_DB.fillBank('${b.name}');this.parentElement.remove()">${b.name}</div>`).join('');
+    const existing=inp.parentElement.querySelector('.bank-tiles');if(existing)existing.remove();
+    const ct=document.createElement('div');ct.className='bank-tiles';
+    ct.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-bottom:12px';
+    ct.innerHTML=banks.map(b=>{
+      const ic=this._bankIcons[b.name]||'🏦';
+      const typeLabel={commercial:'',islamic:'Islamic',digital:'Digital',microfinance:'MFB',government:'Gov',international:'Intl'}[b.type]||'';
+      return `<div onclick="document.getElementById('bf-name').value='${b.name.replace(/'/g,"\\'")}';SMART_DB.fillBank('${b.name.replace(/'/g,"\\'")}');this.closest('.bank-tiles').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s">
+        <div style="font-size:22px;margin-bottom:4px">${ic}</div>
+        <div style="font-size:10px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div>
+        ${typeLabel?`<div style="font-size:9px;color:var(--text3);margin-top:2px">${typeLabel}</div>`:''}
+      </div>`;
+    }).join('');
     inp.parentElement.insertBefore(ct,inp);
   },
   form(b={}){

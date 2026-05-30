@@ -1379,7 +1379,7 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">♿ Accessibility</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="S.reduceMotion=this.checked;document.body.classList.toggle('reduce-motion',S.reduceMotion);Store.save();Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="S.largeText=this.checked;document.body.classList.toggle('large-text',S.largeText);Store.save();Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
     </div></div>`;
   },
 

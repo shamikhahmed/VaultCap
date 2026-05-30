@@ -45,7 +45,7 @@ input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter
 .badge {
   display: inline-flex; align-items: center;
   padding: 2px 8px; border-radius: 99px;
-  font-size: 10px; font-weight: 700; letter-spacing: .2px;
+  font-size: 11px; font-weight: 700; letter-spacing: .2px;
   white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
 }
 .b-ok    { background: rgba(0,214,143,.1);  color: var(--ok); }
@@ -99,7 +99,7 @@ select.inp option { background: #1a1a1a; }
 textarea.inp { resize: vertical; min-height: 64px; }
 
 .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-.fl { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 5px; }
+.fl { font-size: 13px; font-weight: 600; color: var(--text2); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 5px; }
 .fh { color: var(--text3); font-size: 10px; margin-top: 3px; }
 .ferr { color: var(--err); font-size: 11px; margin-top: 3px; }
 .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
@@ -314,7 +314,7 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .set-card  { background: var(--glass); border: 1px solid var(--border); border-radius: var(--card-br); overflow: hidden; }
 .si { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--border); gap: 11px; }
 .si:last-child { border: none; }
-.sil .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sil .name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sil .desc { font-size: 11px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ─ Command palette ─ */

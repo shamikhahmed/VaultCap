@@ -163,9 +163,10 @@ const Loans = {
       const alreadyFriend = (S.friends || []).some(f => f.name === person);
       if (!alreadyFriend) {
         S.friends = S.friends || [];
-        S.friends.push({ id: U.id(), name: person, createdAt: new Date().toISOString() });
+        const friendId = U.id();
+        S.friends.push({ id: friendId, name: person, createdAt: new Date().toISOString() });
         Store.save();
-        Toast.show(`${person} added to Friends`, 'info', 2500);
+        Toast.show(`${person} added to Friends. <button class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000);
       }
       promptAddAnother('Loan', `Loans.openAdd('${type}')`);
     }

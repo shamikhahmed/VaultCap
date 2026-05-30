@@ -180,42 +180,62 @@ const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eTo
 // ===================== SMART AUTOCOMPLETE DB =====================
 const SMART_DB = {
   banks:[
-    {name:'HBL',country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
-    {name:'Meezan Bank',country:'PK',currency:'PKR',type:'islamic',swift:'MEZNPKKA'},
-    {name:'UBL',country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
-    {name:'MCB Bank',country:'PK',currency:'PKR',type:'commercial',swift:'MCIBPKKA'},
-    {name:'Bank Alfalah',country:'PK',currency:'PKR',type:'commercial',swift:'ALFHPKKA'},
-    {name:'Allied Bank',country:'PK',currency:'PKR',type:'commercial',swift:'ABPAPKKA'},
-    {name:'Askari Bank',country:'PK',currency:'PKR',type:'commercial',swift:'ASCMPKKA'},
-    {name:'Bank Al Habib',country:'PK',currency:'PKR',type:'commercial',swift:'BAHLPKKA'},
-    {name:'Faysal Bank',country:'PK',currency:'PKR',type:'islamic',swift:'FAYSPKKA'},
-    {name:'Bank Islami',country:'PK',currency:'PKR',type:'islamic',swift:null},
-    {name:'Sadapay',country:'PK',currency:'PKR',type:'digital',swift:null},
-    {name:'NayaPay',country:'PK',currency:'PKR',type:'digital',swift:null},
-    {name:'Zindigi',country:'PK',currency:'PKR',type:'digital',swift:null},
-    {name:'JazzCash',country:'PK',currency:'PKR',type:'microfinance',swift:null},
-    {name:'EasyPaisa',country:'PK',currency:'PKR',type:'microfinance',swift:null},
-    {name:'NBP',country:'PK',currency:'PKR',type:'government',swift:'NBPKPKKA'},
-    {name:'Bank of Punjab',country:'PK',currency:'PKR',type:'government',swift:null},
-    {name:'Monzo',country:'GB',currency:'GBP',type:'digital',swift:'MONZGB2L'},
-    {name:'Starling Bank',country:'GB',currency:'GBP',type:'digital',swift:'SRLGGB3L'},
-    {name:'Revolut',country:'GB',currency:'GBP',type:'digital',swift:'REVOGB21'},
-    {name:'Wise',country:'GB',currency:'GBP',type:'digital',swift:'TRWIGB22'},
-    {name:'Barclays',country:'GB',currency:'GBP',type:'commercial',swift:'BARCGB22'},
-    {name:'HSBC',country:'GB',currency:'GBP',type:'commercial',swift:'MIDLGB22'},
-    {name:'NatWest',country:'GB',currency:'GBP',type:'commercial',swift:'NWBKGB2L'},
-    {name:'Lloyds Bank',country:'GB',currency:'GBP',type:'commercial',swift:'LOYDGB2L'},
-    {name:'Santander UK',country:'GB',currency:'GBP',type:'commercial',swift:'ABBYGB2L'},
-    {name:'Emirates NBD',country:'AE',currency:'AED',type:'commercial',swift:'EBILAEAD'},
-    {name:'FAB',country:'AE',currency:'AED',type:'commercial',swift:'FABEAEAD'},
-    {name:'ADCB',country:'AE',currency:'AED',type:'commercial',swift:'ADCBAEAD'},
-    {name:'Mashreq Bank',country:'AE',currency:'AED',type:'commercial',swift:'BOMLAEAD'},
-    {name:'ADIB',country:'AE',currency:'AED',type:'islamic',swift:'ADIBAEAA'},
-    {name:'Dubai Islamic Bank',country:'AE',currency:'AED',type:'islamic',swift:'DUIBAEAD'},
-    {name:'RAKBank',country:'AE',currency:'AED',type:'commercial',swift:'RAKBAEAD'},
-    {name:'Chase',country:'US',currency:'USD',type:'commercial',swift:'CHASUS33'},
-    {name:'Bank of America',country:'US',currency:'USD',type:'commercial',swift:'BOFAUS3N'},
-    {name:'Wells Fargo',country:'US',currency:'USD',type:'commercial',swift:'WFBIUS6S'},
+    {name:'HBL',aliases:['Habib Bank Limited','Habib Bank','HBL Konnect'],country:'PK',currency:'PKR',type:'commercial',swift:'HABBPKKA'},
+    {name:'Meezan Bank',aliases:['Meezan','Al Meezan Bank'],country:'PK',currency:'PKR',type:'islamic',swift:'MEZNPKKA'},
+    {name:'UBL',aliases:['United Bank Limited','United Bank','UBL Ameen'],country:'PK',currency:'PKR',type:'commercial',swift:'UNILPKKA'},
+    {name:'MCB Bank',aliases:['MCB','Muslim Commercial Bank','MCB Islamic'],country:'PK',currency:'PKR',type:'commercial',swift:'MCIBPKKA'},
+    {name:'Bank Alfalah',aliases:['Alfalah','BankAlfalah'],country:'PK',currency:'PKR',type:'commercial',swift:'ALFHPKKA'},
+    {name:'Allied Bank',aliases:['ABL','Allied Bank Limited'],country:'PK',currency:'PKR',type:'commercial',swift:'ABPAPKKA'},
+    {name:'Askari Bank',aliases:['ACBL','Askari'],country:'PK',currency:'PKR',type:'commercial',swift:'ASCMPKKA'},
+    {name:'Bank Al Habib',aliases:['BAHL','Al Habib Bank'],country:'PK',currency:'PKR',type:'commercial',swift:'BAHLPKKA'},
+    {name:'Habib Metro Bank',aliases:['Habib Metropolitan','Habib Metro'],country:'PK',currency:'PKR',type:'commercial',swift:'MPBLPKKA'},
+    {name:'Faysal Bank',aliases:['Faysal','FBL'],country:'PK',currency:'PKR',type:'islamic',swift:'FAYSPKKA'},
+    {name:'Bank Islami',aliases:['BankIslami'],country:'PK',currency:'PKR',type:'islamic',swift:null},
+    {name:'Silkbank',aliases:['Silk Bank','SILK'],country:'PK',currency:'PKR',type:'commercial',swift:null},
+    {name:'Soneri Bank',aliases:['Soneri'],country:'PK',currency:'PKR',type:'commercial',swift:'SONEPKKA'},
+    {name:'JS Bank',aliases:['JSB','JS'],country:'PK',currency:'PKR',type:'commercial',swift:'JSBLPKKA'},
+    {name:'Standard Chartered PK',aliases:['Standard Chartered','StanChart PK'],country:'PK',currency:'PKR',type:'international',swift:'SCBLPKKX'},
+    {name:'Dubai Islamic Bank PK',aliases:['DIB Pakistan','DIB PK'],country:'PK',currency:'PKR',type:'islamic',swift:null},
+    {name:'Sadapay',aliases:[],country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'NayaPay',aliases:[],country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'Zindigi',aliases:[],country:'PK',currency:'PKR',type:'digital',swift:null},
+    {name:'JazzCash',aliases:['Jazz Cash'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'EasyPaisa',aliases:['Easy Paisa','Easypaisa'],country:'PK',currency:'PKR',type:'microfinance',swift:null},
+    {name:'NBP',aliases:['National Bank of Pakistan','National Bank'],country:'PK',currency:'PKR',type:'government',swift:'NBPKPKKA'},
+    {name:'Bank of Punjab',aliases:['BOP','BoP'],country:'PK',currency:'PKR',type:'government',swift:null},
+    {name:'First Women Bank',aliases:['FWBL'],country:'PK',currency:'PKR',type:'government',swift:null},
+    {name:'Zarai Taraqiati Bank',aliases:['ZTBL','Agricultural Bank PK'],country:'PK',currency:'PKR',type:'government',swift:null},
+    {name:'Monzo',aliases:[],country:'GB',currency:'GBP',type:'digital',swift:'MONZGB2L'},
+    {name:'Starling Bank',aliases:['Starling'],country:'GB',currency:'GBP',type:'digital',swift:'SRLGGB3L'},
+    {name:'Revolut',aliases:['Revolut Bank'],country:'GB',currency:'GBP',type:'digital',swift:'REVOGB21'},
+    {name:'Wise',aliases:['TransferWise','Wise Bank'],country:'GB',currency:'GBP',type:'digital',swift:'TRWIGB22'},
+    {name:'Barclays',aliases:['Barclays Bank','Barclaycard'],country:'GB',currency:'GBP',type:'commercial',swift:'BARCGB22'},
+    {name:'HSBC',aliases:['HSBC UK','HSBC Holdings','HSBC Kinetic'],country:'GB',currency:'GBP',type:'commercial',swift:'MIDLGB22'},
+    {name:'HSBC',aliases:['HSBC Pakistan'],country:'PK',currency:'PKR',type:'international',swift:'HSBCPKKA'},
+    {name:'NatWest',aliases:['National Westminster'],country:'GB',currency:'GBP',type:'commercial',swift:'NWBKGB2L'},
+    {name:'Lloyds Bank',aliases:['Lloyds','Lloyds Banking Group','Lloyds Business'],country:'GB',currency:'GBP',type:'commercial',swift:'LOYDGB2L'},
+    {name:'Santander UK',aliases:['Santander','Abbey National'],country:'GB',currency:'GBP',type:'commercial',swift:'ABBYGB2L'},
+    {name:'Halifax',aliases:[],country:'GB',currency:'GBP',type:'commercial',swift:'HLFXGB21'},
+    {name:'Nationwide',aliases:['Nationwide Building Society'],country:'GB',currency:'GBP',type:'commercial',swift:'NAIAGB21'},
+    {name:'Metro Bank',aliases:['Metro Bank UK'],country:'GB',currency:'GBP',type:'commercial',swift:'MYMBGB2L'},
+    {name:'First Direct',aliases:['firstdirect'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'Chase UK',aliases:['Chase Bank UK'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'TSB',aliases:['TSB Bank'],country:'GB',currency:'GBP',type:'commercial',swift:'TSBSGB2A'},
+    {name:'Emirates NBD',aliases:['ENBD','Emirates NBD Bank'],country:'AE',currency:'AED',type:'commercial',swift:'EBILAEAD'},
+    {name:'FAB',aliases:['First Abu Dhabi Bank','NBAD'],country:'AE',currency:'AED',type:'commercial',swift:'FABEAEAD'},
+    {name:'ADCB',aliases:['Abu Dhabi Commercial Bank'],country:'AE',currency:'AED',type:'commercial',swift:'ADCBAEAD'},
+    {name:'Mashreq Bank',aliases:['Mashreq','Mashreq Neo'],country:'AE',currency:'AED',type:'commercial',swift:'BOMLAEAD'},
+    {name:'ADIB',aliases:['Abu Dhabi Islamic Bank'],country:'AE',currency:'AED',type:'islamic',swift:'ADIBAEAA'},
+    {name:'Dubai Islamic Bank',aliases:['DIB','DIB UAE'],country:'AE',currency:'AED',type:'islamic',swift:'DUIBAEAD'},
+    {name:'RAKBank',aliases:['RAKBANK','National Bank of Ras Al-Khaimah'],country:'AE',currency:'AED',type:'commercial',swift:'RAKBAEAD'},
+    {name:'Wio Bank',aliases:['Wio'],country:'AE',currency:'AED',type:'digital',swift:null},
+    {name:'Liv.',aliases:['Liv Bank','Emirates NBD Liv'],country:'AE',currency:'AED',type:'digital',swift:null},
+    {name:'Commercial Bank of Dubai',aliases:['CBD'],country:'AE',currency:'AED',type:'commercial',swift:'CBDUAEAD'},
+    {name:'Citibank',aliases:['Citi','Citigroup'],country:'US',currency:'USD',type:'commercial',swift:'CITIUS33'},
+    {name:'Citibank',aliases:['Citi PK','Citibank Pakistan'],country:'PK',currency:'PKR',type:'international',swift:'CITIPKKA'},
+    {name:'Chase',aliases:['JPMorgan Chase','JP Morgan'],country:'US',currency:'USD',type:'commercial',swift:'CHASUS33'},
+    {name:'Bank of America',aliases:['BofA','BoA'],country:'US',currency:'USD',type:'commercial',swift:'BOFAUS3N'},
+    {name:'Wells Fargo',aliases:[],country:'US',currency:'USD',type:'commercial',swift:'WFBIUS6S'},
   ],
   cards:[
     {name:'Sadapay Mastercard',network:'Mastercard',type:'Debit',country:'PK',category:'Digital'},
@@ -297,7 +317,12 @@ const SMART_DB = {
   ],
   // Auto-fill helpers
   fillBank(val) {
-    const match = this.banks.find(b => b.name.toLowerCase().includes(val.toLowerCase()));
+    const lv = val.toLowerCase();
+    const match = this.banks.find(b => {
+      if (b.name.toLowerCase().includes(lv)) return true;
+      if (b.aliases && b.aliases.some(a => a.toLowerCase().includes(lv))) return true;
+      return false;
+    });
     if (!match) return;
     setTimeout(() => {
       const cc = document.getElementById('bf-cc'); if (cc) cc.value = match.country;
@@ -1203,13 +1228,32 @@ const Activity = {
 
 // ===================== DUPLICATE CHECKER =====================
 const _BANK_ALIAS_GROUPS = [
-  ['hbl','habib bank limited','habib bank'],
-  ['mcb bank','mcb','muslim commercial bank'],
-  ['ubl','united bank','united bank limited'],
+  ['hbl','habib bank limited','habib bank','hbl konnect'],
+  ['mcb bank','mcb','muslim commercial bank','mcb islamic'],
+  ['ubl','united bank','united bank limited','ubl ameen'],
   ['nbp','national bank of pakistan','national bank'],
-  ['allied bank','abl'],
-  ['bank alfalah','alfalah'],
-  ['standard chartered','stanchart','standard chartered pk'],
+  ['allied bank','abl','allied bank limited'],
+  ['bank alfalah','alfalah','bankalfalah'],
+  ['standard chartered pk','standard chartered','stanchart','stanchart pk'],
+  ['bank al habib','bahl','al habib bank'],
+  ['habib metro bank','habib metropolitan','habib metro'],
+  ['meezan bank','meezan','al meezan bank'],
+  ['emirates nbd','enbd','emirates nbd bank'],
+  ['fab','first abu dhabi bank','nbad'],
+  ['adcb','abu dhabi commercial bank'],
+  ['adib','abu dhabi islamic bank'],
+  ['dubai islamic bank','dib','dib uae'],
+  ['wise','transferwise','wise bank'],
+  ['revolut','revolut bank'],
+  ['hsbc','hsbc uk','hsbc holdings','hsbc kinetic'],
+  ['lloyds bank','lloyds','lloyds banking group'],
+  ['natwest','national westminster'],
+  ['santander uk','santander','abbey national'],
+  ['chase','jpmorgan chase','jp morgan'],
+  ['citibank','citi','citigroup'],
+  ['js bank','jsb'],
+  ['silkbank','silk bank'],
+  ['faysal bank','faysal','fbl'],
 ];
 function checkDuplicate(type, data) {
   const n = s => (s||'').toLowerCase().trim();
@@ -1237,6 +1281,14 @@ function checkDuplicate(type, data) {
     const ex = (S.emails||[]).find(e => n(e.email) === n(data.email));
     if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: "${ex.email}" already exists. Save anyway?` };
   }
+  if (type === 'investment') {
+    const nm = n(data.investmentName);
+    const ex = (S.investments||[]).find(i => {
+      const iv = n(i.investmentName);
+      return iv === nm || (nm && iv && (nm.includes(iv) || iv.includes(nm)));
+    });
+    if (ex) return { isDuplicate:true, existingId:ex.id, message:`Possible duplicate: "${ex.investmentName}" already exists. Save anyway?` };
+  }
   return { isDuplicate:false };
 }
 
@@ -1245,17 +1297,29 @@ function autoTags(type, data) {
   const tags = [];
   if (type === 'bank') {
     if (data.bankType === 'islamic') { tags.push('islamic'); tags.push('halal'); }
+    if (data.bankType === 'digital') tags.push('digital');
     if (data.country === 'PK') tags.push('pakistan');
+    if (data.country === 'GB') tags.push('uk');
+    if (data.country === 'AE') tags.push('uae');
     if ((data.balance||0) > 100000) tags.push('high-value');
   } else if (type === 'card') {
     if (data.network === 'American Express') { tags.push('amex'); tags.push('travel'); }
     if ((data.cardType||'').toLowerCase() === 'credit') tags.push('credit');
+    if ((data.cardType||'').toLowerCase() === 'debit') tags.push('debit');
+    if (data.network === 'Visa') tags.push('visa');
+    if (data.network === 'Mastercard') tags.push('mastercard');
     if ((data.annualFee||0) > 0) tags.push('paid');
+    if (data.category === 'Crypto') tags.push('crypto');
+    if (data.category === 'International' || data.country !== (S.user.currency||'GBP').slice(0,2)) tags.push('international');
   } else if (type === 'investment') {
     if (data.type === 'Crypto') { tags.push('crypto'); tags.push('high-risk'); }
     if (data.type === 'Sukuk') { tags.push('islamic'); tags.push('halal'); }
+    if (data.type === 'Mutual Funds') tags.push('fund');
+    if (data.country === 'PK') tags.push('psx');
   } else if (type === 'sim') {
-    if (data.country === 'PK') tags.push('pakistan');
+    const ccMap = {PK:'pakistan',GB:'uk',AE:'uae',US:'usa',CA:'canada',AU:'australia',IN:'india'};
+    if (ccMap[data.country]) tags.push(ccMap[data.country]);
+    if (data.simType === 'eSIM') tags.push('esim');
   }
   return tags;
 }
@@ -1849,6 +1913,18 @@ function loadDemoProfile(type) {
 
 function loadDemoData() { loadDemoProfile('business'); }
 
+// ===================== LARGE TEXT =====================
+function applyLargeText(on) {
+  S.largeText = !!on;
+  document.body.classList.toggle('large-text', S.largeText);
+  if (S.largeText) {
+    document.documentElement.style.setProperty('--base-font', '17px');
+  } else {
+    document.documentElement.style.removeProperty('--base-font');
+  }
+  Store.save();
+}
+
 // ===================== SECURITY HARDENING =====================
 
 // Console suppression in production (non-localhost)
@@ -1953,7 +2029,7 @@ async function App() {
     document.body.className = document.body.className.trim() + ' fs-' + fs;
   }
   if (S.highContrast && !document.body.classList.contains('hc')) document.body.classList.add('hc');
-  if (S.largeText) document.body.classList.add('large-text');
+  if (S.largeText) applyLargeText(true);
 
   // Check if old localStorage data exists (migration)
   const oldData = Store.loadRaw();
