@@ -1242,7 +1242,6 @@ const ThemeEngine = {
       document.getElementById('themeColorMeta').content = t.ac;
       Store.save();
       this.renderDots();
-      if (window._canvasSyncColor) window._canvasSyncColor();
       // Register system preference listener once
       if (!this._mqListener) {
         this._mqListener = () => { if (S.user.theme === 'auto') ThemeEngine.apply('auto'); };
@@ -1257,7 +1256,6 @@ const ThemeEngine = {
     document.getElementById('themeColorMeta').content = t.ac;
     Store.save();
     this.renderDots();
-    if (window._canvasSyncColor) window._canvasSyncColor();
   },
   renderDots() {
     ['homeThemes'].forEach(elId => {
@@ -2995,46 +2993,6 @@ function _scheduleClipClear() {
   window.addEventListener('resize', _checkDevtools);
 })();
 
-// ===================== CANVAS BACKGROUND =====================
-function initCanvas() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const c = document.getElementById('bg-canvas');
-  if (!c) return;
-  const ctx = c.getContext('2d');
-  let W, H, rgb = '0,128,255';
-  const orbs = [];
-  function syncColor() {
-    const glow = getComputedStyle(document.documentElement).getPropertyValue('--glow').trim();
-    const m = glow.match(/[\d.]+/g);
-    if (m && m.length >= 3) rgb = `${Math.round(+m[0])},${Math.round(+m[1])},${Math.round(+m[2])}`;
-  }
-  function resize() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
-  function spawn() {
-    orbs.length = 0;
-    for (let i = 0; i < 4; i++) {
-      orbs.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*200+120,
-        vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35, primary: i < 2 });
-    }
-  }
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    orbs.forEach(o => {
-      const g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
-      g.addColorStop(0, `rgba(${rgb},${o.primary ? '0.08' : '0.05'})`);
-      g.addColorStop(1, `rgba(${rgb},0)`);
-      ctx.beginPath(); ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
-      ctx.fillStyle = g; ctx.fill();
-      o.x += o.vx; o.y += o.vy;
-      if (o.x < -o.r || o.x > W + o.r) o.vx *= -1;
-      if (o.y < -o.r || o.y > H + o.r) o.vy *= -1;
-    });
-    requestAnimationFrame(draw);
-  }
-  resize(); syncColor(); spawn(); draw();
-  window.addEventListener('resize', () => { resize(); spawn(); });
-  window._canvasSyncColor = syncColor;
-}
-
 // ===================== APP INIT =====================
 async function App() {
   document.addEventListener('click', function(e) {
@@ -3098,7 +3056,6 @@ async function App() {
 
   const startTheme = S.user.theme || 'dark';
   ThemeEngine.apply(startTheme);
-  initCanvas();
   const fs = S.fontScale || 'md';
   // Preserve theme class when adding font-scale; ThemeEngine.apply already preserves them on re-apply
   if (!document.body.className.includes('fs-')) {
