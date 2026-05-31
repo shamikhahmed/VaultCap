@@ -1,4 +1,4 @@
-const CACHE = 'vaultos-v5';
+const CACHE = 'vaultos-v6';
 const ASSETS = [
   '/',
   '/index.html',
