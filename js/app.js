@@ -17,7 +17,7 @@ const ALL_MODULES=[
   {id:'loans',   n:'Loans',       ic:'🤝', desc:'Money lent & borrowed',              group:'Finance'},
   {id:'expenses',n:'Expenses',   ic:'📋', desc:'Subscriptions & recurring bills',    group:'Finance'},
   {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, valuables',      group:'Assets'},
-  {id:'friends', n:'Friends',     ic:'👥', desc:'Contacts & people',                  group:'Identity'},
+  {id:'friends', n:'Contacts',    ic:'👥', desc:'Contacts & people',                  group:'Identity'},
   {id:'sims',   n:'SIM Cards',   ic:'📱', desc:'Mobile numbers & networks',          group:'Identity'},
   {id:'documents',n:'Documents',ic:'🪪', desc:'IDs, passports, visas, contracts',   group:'Identity'},
   {id:'emails', n:'Emails',      ic:'📧', desc:'All email identities & security',    group:'Identity'},
@@ -1490,6 +1490,7 @@ const R = {
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
       tax:         () => { if (typeof Tax !== 'undefined') Tax.render(); },
+      family:      () => { if (typeof Family !== 'undefined') Family.render(); },
       sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">🔄</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();
@@ -2458,6 +2459,9 @@ function buildNav() {
       `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span>${m.n}</div>`
     ).join('');
   });
+  if (document.getElementById('pg-family')) {
+    sbHTML += `<div class="ni${S.currentPage === 'family' ? ' on' : ''}" data-pg="family" onclick="R.goto('family')"><span class="ni-ic">👨‍👩‍👧‍👦</span>Family</div>`;
+  }
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
@@ -2471,8 +2475,9 @@ function buildNav() {
   const hasPage = id => !!document.getElementById('pg-' + id);
   const activeMods = active.filter(m => hasPage(m.id));
   const dash = { id:'dashboard', n:'Home', ic:'📊' };
-  const first4 = [dash, ...activeMods.slice(0, 3)];
-  const overflow = activeMods.slice(3);
+  const familyTab = { id:'family', n:'Family', ic:'👨‍👩‍👧‍👦' };
+  const first4 = [dash, familyTab, ...activeMods.filter(m => m.id !== 'friends').slice(0, 2)];
+  const overflow = activeMods.filter(m => m.id !== 'friends').slice(2);
   const moreItem = { id:'__more__', n:'More', ic:'⋯' };
   const tabs = [...first4, moreItem];
 

@@ -55,3 +55,4 @@ const Friends = {
     Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
   }
 };
+window.Contacts = Friends;
