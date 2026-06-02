@@ -209,28 +209,29 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
 
 <div id="deck">
 
-<!-- ─── Slide 1: Title ─── -->
+<!-- ─── s0: Title ─── -->
 <div class="slide" id="s0">
-  <div class="anim label">Personal Finance · 2025</div>
+  <div class="anim label">Personal Finance · 2026</div>
   <div class="anim" style="display:flex;gap:0;margin-bottom:16px" id="vaultLetters"></div>
   <div class="anim tagline" style="color:var(--text);font-size:clamp(16px,2.5vw,24px);font-weight:500;margin-bottom:8px">Your Private Financial OS</div>
-  <div class="anim tagline" style="font-size:clamp(13px,1.6vw,17px)">Enterprise-grade security. Zero cloud. Fully private.</div>
+  <div class="anim tagline" style="font-size:clamp(13px,1.6vw,17px)">Enterprise-grade encryption. Zero cloud. One vault for everything.</div>
+  <div class="anim" style="margin-top:28px"><a class="url-big" href="https://shamikhahmed.github.io/VaultOS" target="_blank" rel="noopener">shamikhahmed.github.io/VaultOS</a></div>
   <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:12px;color:var(--text3)">by Shamikh Ahmed</div>
 </div>
 
-<!-- ─── Slide 2: The Problem ─── -->
+<!-- ─── s1: The Problem ─── -->
 <div class="slide" id="s1" style="align-items:flex-start;">
   <div class="anim label">The Problem</div>
-  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1.1">Your financial data</div>
-  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;color:var(--err);line-height:1.1;margin-bottom:24px">is everywhere.</div>
+  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1.1">Managing money across</div>
+  <div class="anim" style="font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.04em;color:var(--err);line-height:1.1;margin-bottom:24px">PK · UK · UAE is chaos.</div>
   <div class="pain" id="painList">
-    <div class="pain-item"><span>☁️</span> Cloud apps that breach — your data, their servers.</div>
-    <div class="pain-item"><span>💔</span> No single app for PKR + GBP + AED + USD.</div>
-    <div class="pain-item"><span>👁️</span> Privacy traded for convenience. You pay with your data.</div>
+    <div class="pain-item"><span>☁️</span> Every app uploads your data to a server you don't control.</div>
+    <div class="pain-item"><span>💔</span> No single tool handles PKR + GBP + AED + Zakat + Tax.</div>
+    <div class="pain-item"><span>👁️</span> Privacy traded for convenience — you always pay with your data.</div>
   </div>
 </div>
 
-<!-- ─── Slide 3: The Solution ─── -->
+<!-- ─── s2: The Solution ─── -->
 <div class="slide" id="s2">
   <div class="anim label">The Solution</div>
   <div id="solWords" style="text-align:center">
@@ -243,21 +244,22 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
     <div class="stat"><div class="sv">0</div><div class="sk">Accounts</div></div>
     <div class="stat"><div class="sv">0</div><div class="sk">Subscriptions</div></div>
   </div>
+  <div class="anim" style="margin-top:20px;font-size:13px;color:var(--text3)">One app. Your device. Your rules. Forever.</div>
 </div>
 
-<!-- ─── Slide 4: Security ─── -->
+<!-- ─── s3: Security First ─── -->
 <div class="slide" id="s3">
-  <div class="anim label">Security</div>
+  <div class="anim label">Security First</div>
   <div class="anim" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:8px">Military-grade encryption.</div>
-  <div class="anim tagline" style="margin-bottom:28px">Your PIN never touches a server. The key exists only in memory.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Your PIN never touches a server. The key lives only in memory — never on disk.</div>
   <div class="anim flow">
-    <div class="flow-node">📱 PIN</div>
+    <div class="flow-node">📱 6-digit PIN</div>
     <div class="flow-arrow">→</div>
     <div class="flow-node">🔑 PBKDF2<br><span style="font-size:10px;color:var(--text3)">310,000 iterations</span></div>
     <div class="flow-arrow">→</div>
     <div class="flow-node">🔒 AES-256-GCM</div>
     <div class="flow-arrow">→</div>
-    <div class="flow-node">💾 IndexedDB</div>
+    <div class="flow-node">💾 localStorage</div>
   </div>
   <div class="anim pills">
     <div class="pill">310K Iterations</div>
@@ -265,24 +267,101 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
     <div class="pill">Memory-only Key</div>
     <div class="pill">Decoy Vault</div>
     <div class="pill">Panic Lock</div>
+    <div class="pill">Master Key Backup</div>
   </div>
 </div>
 
-<!-- ─── Slide 5: Modules ─── -->
+<!-- ─── s4: Zero Cloud ─── -->
 <div class="slide" id="s4">
-  <div class="anim label">Coverage</div>
-  <div class="anim" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">One app. Everything.</div>
-  <div class="anim tagline" style="margin-bottom:0">Banks · Cards · Investments · Cash · Loans · Vehicles · Assets · SIMs · Documents · Emails · Devices · Digital · Friends · Expenses · Reminders</div>
-  <div class="anim mod-grid" id="modGrid"></div>
+  <div class="anim label">Zero Cloud</div>
+  <div class="anim" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">Your data never leaves.</div>
+  <div class="anim tagline" style="margin-bottom:24px">No server. No account. No tracking. Just you and your device — fully offline.</div>
+  <div class="anim stat-row">
+    <div class="stat"><div class="sv">0</div><div class="sk">Servers</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sk">Cloud Deps</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sk">Accounts</div></div>
+  </div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%;margin-top:20px">
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">📱</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">PWA — No App Store Required</div><div style="font-size:12px;color:var(--text2)">iPhone · Android · Mac · Windows — installs in 10 seconds</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">💾</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">On-Device Storage Only</div><div style="font-size:12px;color:var(--text2)">All vault data in localStorage · AES-256 encrypted at rest · offline-first</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">🔄</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">QR Device Transfer</div><div style="font-size:12px;color:var(--text2)">Move your vault device-to-device via encrypted QR — no internet needed</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- ─── Slide 6: Wallet Cards ─── -->
+<!-- ─── s5: Dashboard ─── -->
 <div class="slide" id="s5">
+  <div class="anim label">Dashboard</div>
+  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Your complete financial picture.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Net worth hero · vault health score · expiry alerts · 5-second overview.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:680px;width:100%">
+    <div style="background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.3);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">💰</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Net Worth Hero</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">Live total across cash, investments, assets &amp; gold · currency toggle · trend arrows</div>
+    </div>
+    <div style="background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">🏥</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Vault Health Score</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">PIN · decoy · backup · name — live checklist + progress bar</div>
+    </div>
+    <div style="background:rgba(255,69,58,.1);border:1px solid rgba(255,69,58,.25);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">⚠️</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Expiry Alerts</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">Cards &amp; documents expiring within 60 days — colour-coded urgency</div>
+    </div>
+    <div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">📊</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Quick Stats</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">Banks · Cards · Docs · Investments — tap any tile to jump straight in</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s6: Banks ─── -->
+<div class="slide" id="s6">
+  <div class="anim label">Banks</div>
+  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:8px">50+ banks. Type 3 letters. Done.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Country-grouped smart search with SWIFT auto-fill — PK · UK · UAE in seconds.</div>
+  <div class="anim bar-row">
+    <div class="bar-item"><span class="bar-flag">🇵🇰</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:62%"></div></div><span class="bar-count">50+ PK</span></div>
+    <div class="bar-item"><span class="bar-flag">🇬🇧</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:51%"></div></div><span class="bar-count">40+ UK</span></div>
+    <div class="bar-item"><span class="bar-flag">🇦🇪</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:32%"></div></div><span class="bar-count">25+ UAE</span></div>
+  </div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:680px;width:100%;margin-top:20px">
+    <div class="glass" style="padding:12px;text-align:center">
+      <div style="font-size:22px;margin-bottom:4px">🇵🇰</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:4px">Pakistan</div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.7">HBL · Meezan · UBL<br>MCB · Alfalah · Faysal<br>Sadapay · JazzCash</div>
+    </div>
+    <div class="glass" style="padding:12px;text-align:center">
+      <div style="font-size:22px;margin-bottom:4px">🇬🇧</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:4px">United Kingdom</div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.7">Monzo · Starling · Revolut<br>Barclays · HSBC · NatWest<br>Wise · Lloyds · Chase</div>
+    </div>
+    <div class="glass" style="padding:12px;text-align:center">
+      <div style="font-size:22px;margin-bottom:4px">🇦🇪</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:4px">UAE</div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.7">Emirates NBD · FAB<br>ADCB · Mashreq · DIB<br>RAKBank · Wio · Liv.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s7: Cards ─── -->
+<div class="slide" id="s7">
   <div class="anim label">Cards</div>
-  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Cards that look like cards.</div>
+  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Cards that look like cards.</div>
+  <div class="anim tagline" style="margin-bottom:20px">Apple Wallet style · network auto-detection · front/back photo capture.</div>
   <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;max-width:860px">
-    <!-- HBL Card -->
-    <div class="wcard-demo" style="background:linear-gradient(135deg,#0d2147 0%,#1a3a6b 50%,#2d5aa0 100%)">
+    <div class="wcard-demo show" style="background:linear-gradient(135deg,#0d2147 0%,#1a3a6b 50%,#2d5aa0 100%)">
       <div class="wcard-inner">
         <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.2);font-size:9px;font-weight:800">HBL</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">HBL</span></div><div class="wcard-badge">DEBIT</div></div>
         <div class="wcard-chip"></div>
@@ -290,8 +369,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
         <div class="wcard-bot"><div><div class="wcard-exp-label">Card Holder</div><div class="wcard-holder">AHMED S</div></div><div style="text-align:center"><div class="wcard-exp-label">Valid Thru</div><div class="wcard-exp">09/27</div></div><svg viewBox="0 0 80 26" width="44" height="15"><text x="0" y="22" font-family="Arial" font-weight="900" font-size="26" fill="white" letter-spacing="-1" font-style="italic">VISA</text></svg></div>
       </div>
     </div>
-    <!-- Monzo Card -->
-    <div class="wcard-demo" style="background:linear-gradient(135deg,#cc1040 0%,#ff3464 50%,#ff6b8a 100%);transition-delay:.15s">
+    <div class="wcard-demo show" style="background:linear-gradient(135deg,#cc1040 0%,#ff3464 50%,#ff6b8a 100%)">
       <div class="wcard-inner">
         <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.2);font-size:9px;font-weight:800">M</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">Monzo</span></div><div class="wcard-badge">DEBIT</div></div>
         <div class="wcard-chip"></div>
@@ -299,8 +377,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
         <div class="wcard-bot"><div><div class="wcard-exp-label">Card Holder</div><div class="wcard-holder">SHAMIKH A</div></div><div style="text-align:center"><div class="wcard-exp-label">Valid Thru</div><div class="wcard-exp">12/26</div></div><div style="position:relative;width:36px;height:22px;display:flex;align-items:center"><div style="position:absolute;left:0;width:20px;height:20px;border-radius:50%;background:rgba(235,0,27,.92)"></div><div style="position:absolute;left:12px;width:20px;height:20px;border-radius:50%;background:rgba(255,95,0,.85)"></div></div></div>
       </div>
     </div>
-    <!-- Emirates NBD Card -->
-    <div class="wcard-demo" style="background:linear-gradient(135deg,#4a3500 0%,#8b6914 50%,#c8972a 100%);transition-delay:.3s">
+    <div class="wcard-demo show" style="background:linear-gradient(135deg,#4a3500 0%,#8b6914 50%,#c8972a 100%)">
       <div class="wcard-inner">
         <div class="wcard-top"><div style="display:flex;align-items:center;gap:7px"><div class="wcard-logo" style="background:rgba(255,255,255,.15);font-size:7px;font-weight:800">ENBD</div><span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">Emirates NBD</span></div><div class="wcard-badge">CREDIT</div></div>
         <div class="wcard-chip"></div>
@@ -311,394 +388,435 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
   </div>
 </div>
 
-<!-- ─── Slide 7: Import ─── -->
-<div class="slide" id="s6">
-  <div class="anim label">Import</div>
-  <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:8px">Add everything in seconds.</div>
-  <div class="anim tagline" style="margin-bottom:28px">Three ways to import your data — no typing required.</div>
-  <div class="anim steps">
-    <div class="step"><div class="step-ic">📷</div><div class="step-title">Camera Scan</div><div class="step-body">Point at any bank card. Fields auto-fill from OCR + pattern matching.</div></div>
-    <div class="step"><div class="step-ic">✨</div><div class="step-title">Quick Add</div><div class="step-body">Describe it in plain English. "HBL current PKR 125,000" — done instantly.</div></div>
-    <div class="step"><div class="step-ic">📊</div><div class="step-title">Excel / PDF Import</div><div class="step-body">Drop a spreadsheet or statement. Review every row before saving.</div></div>
-  </div>
-</div>
-
-<!-- ─── Slide 8: Bank Database ─── -->
-<div class="slide" id="s7">
-  <div class="anim label">Autocomplete</div>
-  <div class="count-num anim" id="bankCount">0</div>
-  <div class="anim" style="font-size:clamp(18px,2.5vw,28px);font-weight:600;letter-spacing:-.02em;margin:8px 0 4px">banks. Type 3 letters. Done.</div>
-  <div class="anim tagline" style="margin-bottom:24px">Country, currency, SWIFT code — all auto-filled instantly.</div>
-  <div class="anim bar-row">
-    <div class="bar-item"><span class="bar-flag">🇵🇰</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="62%"></div></div><span class="bar-count">50+ PK</span></div>
-    <div class="bar-item"><span class="bar-flag">🇬🇧</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="51%"></div></div><span class="bar-count">40+ UK</span></div>
-    <div class="bar-item"><span class="bar-flag">🇦🇪</span><div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:8px"><div class="bar-fill" style="width:0" data-w="32%"></div></div><span class="bar-count">25+ UAE</span></div>
-  </div>
-</div>
-
-<!-- ─── Slide 9: QR Sync ─── -->
+<!-- ─── s8: Documents ─── -->
 <div class="slide" id="s8">
-  <div class="anim label">Sync</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">No cloud. No account.</div>
-  <div class="anim tagline" style="margin-bottom:24px">End-to-end encrypted device sync via one-time QR code.</div>
-  <div class="anim sync-flow">
-    <div class="sync-node"><div class="sync-icon">📱</div><div class="sync-label">Source Device</div><div class="sync-sub">Your vault</div></div>
-    <div class="sync-arr">→</div>
-    <div class="sync-node"><div class="sync-icon">🔐</div><div class="sync-label">AES Encrypted</div><div class="sync-sub">QR compressed</div></div>
-    <div class="sync-arr">→</div>
-    <div class="sync-node"><div class="sync-icon">📷</div><div class="sync-label">Scan QR</div><div class="sync-sub">Target device</div></div>
-    <div class="sync-arr">→</div>
-    <div class="sync-node"><div class="sync-icon">✅</div><div class="sync-label">Vault Merged</div><div class="sync-sub">No internet</div></div>
+  <div class="anim label">Documents</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Every document. Never lost.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Passports · visas · licences — categorised, expiry-tracked, front &amp; back photos.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:620px;width:100%">
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">🪪</div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">Passports &amp; Visas</div><div style="font-size:11px;color:var(--text2)">Expiry alerts 90 days out · country flags</div></div>
+    </div>
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">🚗</div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">Driving Licences</div><div style="font-size:11px;color:var(--text2)">DVLA · NTRC · both sides stored</div></div>
+    </div>
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">📸</div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">Photo Capture</div><div style="font-size:11px;color:var(--text2)">Front &amp; back · compressed and stored locally</div></div>
+    </div>
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">⏰</div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">Expiry Alerts</div><div style="font-size:11px;color:var(--text2)">Colour-coded urgency — red &lt;30d, amber &lt;90d</div></div>
+    </div>
   </div>
-  <div class="anim" style="font-size:12px;color:var(--text3);margin-top:20px">No account · No server · Works offline · One-time transfer</div>
+  <div class="anim" style="margin-top:16px;font-size:12px;color:var(--text3)">15+ document types · CNIC · NTN · NHS · National Insurance · PAN and more</div>
 </div>
 
-<!-- ─── Slide 10: Dashboard ─── -->
+<!-- ─── s9: Family Vault ─── -->
 <div class="slide" id="s9">
-  <div class="anim label">Dashboard</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Your complete financial picture.</div>
-  <div class="anim stat-row">
-    <div class="stat" style="min-width:180px"><div class="sv" style="font-size:clamp(20px,3vw,28px)">PKR 2,450,000</div><div class="sk">Net Worth</div></div>
-    <div class="stat"><div class="sv">4</div><div class="sk">Active Cards</div></div>
-    <div class="stat"><div class="sv" style="color:var(--ok)">+12.4%</div><div class="sk">Investments P&L</div></div>
-  </div>
-  <div class="anim" style="margin-top:20px;font-size:12px;color:var(--text3);text-align:center">Net worth tracked over time · Snap history snapshots · Multi-currency</div>
-</div>
-
-<!-- ─── Slide 11: Localization ─── -->
-<div class="slide" id="s10">
-  <div class="anim label">Built for You</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:24px">Wherever you are.</div>
-  <div class="anim region-grid">
-    <div class="region-col"><div class="region-flag">🇵🇰</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Pakistan</div><div class="region-banks">HBL · Meezan · UBL<br>MCB · Bank Alfalah · Faysal<br>Sadapay · JazzCash · EasyPaisa<br>NayaPay · Zindigi · NBP</div></div>
-    <div class="region-col"><div class="region-flag">🇬🇧</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">United Kingdom</div><div class="region-banks">Monzo · Starling · Revolut<br>Barclays · HSBC · NatWest<br>Wise · Lloyds · Chase UK<br>Nationwide · Halifax · TSB</div></div>
-    <div class="region-col"><div class="region-flag">🇦🇪</div><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">UAE</div><div class="region-banks">Emirates NBD · FAB · ADCB<br>Mashreq · DIB · ADIB<br>RAKBank · Wio Bank · Liv.<br>Abu Dhabi Islamic · Etisalat</div></div>
-  </div>
-</div>
-
-<!-- ─── Slide 12: PWA ─── -->
-<div class="slide" id="s11">
-  <div class="anim label">Installation</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">No App Store.</div>
-  <div class="anim tagline" style="margin-bottom:24px">Works everywhere. Installs in 10 seconds.</div>
-  <div class="anim plat-grid">
-    <div class="plat-tile"><span class="plat-ic">📱</span><div><div class="plat-title">iPhone / iPad</div><div class="plat-sub">Safari → Share → Add to Home Screen</div></div></div>
-    <div class="plat-tile"><span class="plat-ic">🤖</span><div><div class="plat-title">Android</div><div class="plat-sub">Chrome → Install banner</div></div></div>
-    <div class="plat-tile"><span class="plat-ic">💻</span><div><div class="plat-title">Mac</div><div class="plat-sub">Chrome address bar install icon</div></div></div>
-    <div class="plat-tile"><span class="plat-ic">🖥</span><div><div class="plat-title">Windows</div><div class="plat-sub">Edge → Apps → Install this site</div></div></div>
-  </div>
-</div>
-
-<!-- ─── Slide 13: Engineering ─── -->
-<div class="slide" id="s12">
-  <div class="anim label">Engineering</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:4px">Zero dependencies.</div>
-  <div class="anim tagline" style="margin-bottom:20px">Open the URL. It runs. No build step, no npm, no framework.</div>
-  <div class="anim badge-grid">
-    <div class="tbadge">Vanilla JS</div>
-    <div class="tbadge">No npm</div>
-    <div class="tbadge">No Framework</div>
-    <div class="tbadge">&lt; 2 MB</div>
-    <div class="tbadge">WebCrypto API</div>
-    <div class="tbadge">IndexedDB</div>
-    <div class="tbadge">Service Worker</div>
-    <div class="tbadge">PWA Manifest</div>
-  </div>
-</div>
-
-<!-- ─── Slide 14: Family Tree ─── -->
-<div class="slide" id="s13">
-  <div class="anim label">People & Relationships</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Family Tree.</div>
-  <div class="anim tagline" style="margin-bottom:24px">Map every relationship. Link family to contacts. Multi-generation, fully private.</div>
-  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:580px;width:100%">
-    <div class="glass" style="padding:16px 18px">
-      <div style="font-size:22px;margin-bottom:8px">🌳</div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Family Tree</div>
-      <div style="font-size:12px;color:var(--text2)">Parents, siblings, children, grandparents — visual collapsible tree</div>
-    </div>
-    <div class="glass" style="padding:16px 18px">
-      <div style="font-size:22px;margin-bottom:8px">👥</div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Contacts</div>
-      <div style="font-size:12px;color:var(--text2)">People, relationships, contact details — link to family nodes</div>
-    </div>
-    <div class="glass" style="padding:16px 18px">
-      <div style="font-size:22px;margin-bottom:8px">💍</div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Relationship Types</div>
-      <div style="font-size:12px;color:var(--text2)">Spouse, parent, child, sibling, cousin, uncle/aunt and more</div>
-    </div>
-    <div class="glass" style="padding:16px 18px">
-      <div style="font-size:22px;margin-bottom:8px">🔒</div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Fully Encrypted</div>
-      <div style="font-size:12px;color:var(--text2)">All family data encrypted at rest in the vault. Never leaves your device.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── Slide 15: Financial Intelligence ─── -->
-<div class="slide" id="s14">
-  <div class="anim label">Financial Intelligence</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Every number. One place.</div>
-  <div class="anim tagline" style="margin-bottom:24px">Currency, gold, Zakat, credit scores, and tax — all calculated offline.</div>
-  <div class="anim" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:680px;width:100%">
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">💱</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Currency</div>
-      <div style="font-size:11px;color:var(--text2)">PKR · GBP · AED · USD · EUR</div>
-    </div>
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">🥇</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Gold & Metals</div>
-      <div style="font-size:11px;color:var(--text2)">Weight · value · Zakat flag</div>
-    </div>
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">☪️</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Zakat Calc</div>
-      <div style="font-size:11px;color:var(--text2)">Nisab · assets · 2.5% due</div>
-    </div>
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">📊</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Credit Score</div>
-      <div style="font-size:11px;color:var(--text2)">UK · PK · UAE bureaus</div>
-    </div>
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">🧾</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Tax Calc</div>
-      <div style="font-size:11px;color:var(--text2)">HMRC · FBR · UAE slabs</div>
-    </div>
-    <div class="glass" style="padding:14px 16px;text-align:center">
-      <div style="font-size:26px;margin-bottom:6px">🌐</div>
-      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Smart Context</div>
-      <div style="font-size:11px;color:var(--text2)">Auto-fills from profile country</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── Slide 16: Vehicles & Compliance ─── -->
-<div class="slide" id="s15">
-  <div class="anim label">Vehicles & Compliance</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Never miss a deadline.</div>
-  <div class="anim tagline" style="margin-bottom:24px">MOT, road tax, insurance, fuel log — tracked with automatic reminders.</div>
-  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
-    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
-      <div style="font-size:28px">🔧</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">MOT Tracker</div><div style="font-size:12px;color:var(--text2)">Expiry date · pass/fail history · reminder scheduling</div></div>
-    </div>
-    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
-      <div style="font-size:28px">🛣️</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Road Tax</div><div style="font-size:12px;color:var(--text2)">Renewal date · automatic reminder · DVLA-linked notes</div></div>
-    </div>
-    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
-      <div style="font-size:28px">⛽</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Fuel Log</div><div style="font-size:12px;color:var(--text2)">Mileage · cost · mpg calculation per fill-up</div></div>
-    </div>
-    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
-      <div style="font-size:28px">🛡️</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Insurance</div><div style="font-size:12px;color:var(--text2)">Policy number · provider · expiry · premium stored securely</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── Slide 17: Complete Platform ─── -->
-<div class="slide" id="s16">
-  <div class="anim label">Complete Platform</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">22 modules. One vault.</div>
-  <div class="anim tagline" style="margin-bottom:24px">Everything about your financial and digital life — encrypted, offline, always yours.</div>
-  <div class="anim stat-row">
-    <div class="stat"><div class="sv">22</div><div class="sk">Modules</div></div>
-    <div class="stat"><div class="sv">120+</div><div class="sk">Banks</div></div>
-    <div class="stat"><div class="sv">18</div><div class="sk">Themes</div></div>
-    <div class="stat"><div class="sv">5</div><div class="sk">Demo Profiles</div></div>
-    <div class="stat"><div class="sv">0</div><div class="sk">Cloud Deps</div></div>
-    <div class="stat"><div class="sv">3</div><div class="sk">Countries</div></div>
-  </div>
-</div>
-
-<!-- ─── Slide 19: Family Tree ─── -->
-<div class="slide" id="s17">
-  <div class="anim label">Family Tree</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">👨‍👩‍👧‍👦 Family Tree</div>
-  <div class="anim tagline" style="margin-bottom:24px">Like opening a mini-vault for each person in your family.</div>
+  <div class="anim label">Family Vault</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">A mini-vault per family member.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Head of family master view · per-member docs, banks, cards, cash, investments.</div>
   <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">👑</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Head of Family Master View</div><div style="font-size:12px;color:var(--text2)">Central profile with all family stats at a glance</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Head of Family Master View</div><div style="font-size:12px;color:var(--text2)">Unified family stats — documents, banks, investments at a glance</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🪪</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Individual Member Profiles</div><div style="font-size:12px;color:var(--text2)">Documents, banks, cards, cash, investments, notes — per member</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Individual Profiles</div><div style="font-size:12px;color:var(--text2)">Photo · documents · banks · cards · cash · investments per member</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">⚠️</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Document Expiry Alerts</div><div style="font-size:12px;color:var(--text2)">Passports, visas, licences — across the whole family, never miss a renewal</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Family Expiry Alerts</div><div style="font-size:12px;color:var(--text2)">Passports &amp; visas across the whole family — never miss a renewal</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">📈</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Family Investment Tracking</div><div style="font-size:12px;color:var(--text2)">Portfolio visibility across every member's assets</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Family Investments</div><div style="font-size:12px;color:var(--text2)">Portfolio visibility across every member's assets — multi-currency</div></div>
     </div>
   </div>
 </div>
 
-<!-- ─── Slide 20: Financial Intelligence ─── -->
+<!-- ─── s10: Finance Intelligence header ─── -->
+<div class="slide" id="s10">
+  <div class="anim label">Finance Intelligence</div>
+  <div class="anim" style="font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.03em;margin-bottom:8px">Your Money.</div>
+  <div class="anim" style="font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.03em;color:var(--accent);margin-bottom:24px">Every Angle.</div>
+  <div class="anim tagline" style="margin-bottom:32px;max-width:500px;text-align:center">Investments · Cash · Loans · Gold · Currency · Zakat · Tax · Credit — all offline, all encrypted.</div>
+  <div class="anim stat-row">
+    <div class="stat"><div class="sv">5</div><div class="sk">Currencies</div></div>
+    <div class="stat"><div class="sv">3</div><div class="sk">Tax Systems</div></div>
+    <div class="stat"><div class="sv">Full</div><div class="sk">Zakat Calc</div></div>
+    <div class="stat"><div class="sv">3</div><div class="sk">Credit Bureaus</div></div>
+  </div>
+</div>
+
+<!-- ─── s11: Investments ─── -->
+<div class="slide" id="s11">
+  <div class="anim label">Investments</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Every position. One portfolio.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Stocks · mutual funds · crypto · real estate · NSS — multi-currency, P&amp;L tracked.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:680px;width:100%">
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">📊</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Stocks &amp; ETFs</div>
+      <div style="font-size:11px;color:var(--text2)">PSX · LSE · NYSE</div>
+    </div>
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🏦</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Mutual Funds</div>
+      <div style="font-size:11px;color:var(--text2)">Meezan · NBP · UBL funds</div>
+    </div>
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">₿</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Crypto</div>
+      <div style="font-size:11px;color:var(--text2)">BTC · ETH · any coin</div>
+    </div>
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🏠</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Real Estate</div>
+      <div style="font-size:11px;color:var(--text2)">Property value tracking</div>
+    </div>
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">📜</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">NSS / Bonds</div>
+      <div style="font-size:11px;color:var(--text2)">Prize bonds · sukuk</div>
+    </div>
+    <div class="glass" style="padding:14px 16px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">💱</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:3px">Multi-Currency</div>
+      <div style="font-size:11px;color:var(--text2)">PKR · GBP · USD · AED</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s12: Cash & Loans ─── -->
+<div class="slide" id="s12">
+  <div class="anim label">Cash &amp; Loans</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Every rupee, pound, dirham.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Multi-currency cash tracking · loans with net impact · due date alerts.</div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:620px;width:100%">
+    <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">💵</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Cash Entries</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">Home safe · wallet · office · abroad — labelled, multi-currency</div>
+    </div>
+    <div style="background:rgba(255,69,58,.08);border:1px solid rgba(255,69,58,.2);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">🤝</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Loans</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">I owe / they owe — currency-converted net impact on your net worth</div>
+    </div>
+    <div style="background:rgba(123,95,255,.1);border:1px solid rgba(123,95,255,.2);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">📅</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Due Date Alerts</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">Overdue loans surface in red · settled loans archived cleanly</div>
+    </div>
+    <div style="background:rgba(0,213,255,.08);border:1px solid rgba(0,213,255,.2);border-radius:16px;padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">⚖️</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Net Position</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">I owe vs. owed me · converted to base currency · live summary bar</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s13: Precious Metals ─── -->
+<div class="slide" id="s13">
+  <div class="anim label">Precious Metals</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Gold. Silver. Platinum.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Weight · value · Zakat eligibility — tracked in grams, tola, oz, or kg.</div>
+  <div class="anim stat-row">
+    <div class="stat"><div class="sv" style="color:#f5c842">🥇</div><div class="sk">Gold</div></div>
+    <div class="stat"><div class="sv" style="color:#c0c0c0">🥈</div><div class="sk">Silver</div></div>
+    <div class="stat"><div class="sv" style="color:#e5e4e2">⬜</div><div class="sk">Platinum</div></div>
+  </div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%;margin-top:16px">
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">⚖️</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Multiple Weight Units</div><div style="font-size:12px;color:var(--text2)">Grams · tola · troy oz · kg — converts automatically</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">💰</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Live Price Per Unit</div><div style="font-size:12px;color:var(--text2)">Enter market price · vault calculates total value in your currency</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">☪️</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Zakat Nisab Flag</div><div style="font-size:12px;color:var(--text2)">Gold &amp; silver auto-included in Zakat calculation — nisab threshold tracked</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s14: Currency & Net Worth ─── -->
+<div class="slide" id="s14">
+  <div class="anim label">Currency &amp; Net Worth</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">One net worth. Any currency.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Live FX rates · toggle between PKR · GBP · USD · AED · EUR with one tap.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:680px;width:100%;margin-bottom:20px">
+    ${['🇵🇰 PKR','🇬🇧 GBP','🇺🇸 USD','🇦🇪 AED','🇪🇺 EUR'].map(c=>`<div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">${c}</div>`).join('')}
+  </div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">💱</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Live Exchange Rates</div><div style="font-size:12px;color:var(--text2)">Pulled from Currency module · tap to update · fallback to stored rate</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">📸</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Net Worth Snapshots</div><div style="font-size:12px;color:var(--text2)">Snap a point-in-time reading · trend arrows show direction since last snapshot</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s15: Zakat Calculator ─── -->
+<div class="slide" id="s15">
+  <div class="anim label">Zakat Calculator</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">☪️ Zakat. Calculated right.</div>
+  <div class="anim tagline" style="margin-bottom:24px">FBR auto-deduction mode · personal nisab · Quranic 2.5% · printable report.</div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:620px;width:100%">
+    <div style="background:rgba(0,150,100,.1);border:1px solid rgba(0,200,120,.25);border-radius:16px;padding:18px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(0,220,130,.9);margin-bottom:12px">Personal Mode</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">
+        Cash · gold · silver · stocks<br>
+        Business assets · receivables<br>
+        Nisab threshold check<br>
+        2.5% due — Quran 9:103
+      </div>
+    </div>
+    <div style="background:rgba(0,100,200,.1);border:1px solid rgba(0,150,255,.25);border-radius:16px;padding:18px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(0,180,255,.9);margin-bottom:12px">FBR Mode 🇵🇰</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">
+        Bank auto-deduction (2.5%)<br>
+        Nisab: 612g silver threshold<br>
+        Exempt: house, car, jewellery<br>
+        Printable Zakat summary
+      </div>
+    </div>
+  </div>
+  <div class="anim" style="margin-top:20px;font-size:13px;color:var(--text3);background:rgba(255,255,255,.05);border-radius:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.1)">وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ — Al-Baqarah 2:43</div>
+</div>
+
+<!-- ─── s16: Tax Calculator ─── -->
+<div class="slide" id="s16">
+  <div class="anim label">Tax Calculator</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🧾 Three countries. One tool.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Professional tax calculations — printable reports, editable rates, fully offline.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:720px;width:100%">
+    <div style="background:rgba(0,100,200,.1);border:1px solid rgba(0,150,255,.25);border-radius:16px;padding:16px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(0,180,255,.9);margin-bottom:10px">🇵🇰 Pakistan</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">
+        FBR 2024–25 &amp; 2025–26<br>
+        Salaried · Business<br>
+        Non-filer surcharge<br>
+        IT Export exemptions
+      </div>
+    </div>
+    <div style="background:rgba(200,50,50,.1);border:1px solid rgba(220,80,60,.25);border-radius:16px;padding:16px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(240,100,80,.9);margin-bottom:10px">🇬🇧 United Kingdom</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">
+        Capital Gains (18/24%)<br>
+        Inheritance Tax (IHT)<br>
+        Stamp Duty (SDLT)<br>
+        Dividend allowance
+      </div>
+    </div>
+    <div style="background:rgba(200,160,0,.1);border:1px solid rgba(220,180,0,.25);border-radius:16px;padding:16px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(230,190,0,.9);margin-bottom:10px">🇦🇪 UAE</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">
+        VAT 5% calculation<br>
+        Excise tax rates<br>
+        Free Zone CT rules<br>
+        Corporate exemptions
+      </div>
+    </div>
+  </div>
+  <div class="anim stat-row" style="margin-top:20px">
+    <div class="stat"><div class="sv">3</div><div class="sk">Tax Systems</div></div>
+    <div class="stat"><div class="sv">2</div><div class="sk">FBR Years</div></div>
+    <div class="stat"><div class="sv">0</div><div class="sk">Subscriptions</div></div>
+  </div>
+</div>
+
+<!-- ─── s17: Credit Score ─── -->
+<div class="slide" id="s17">
+  <div class="anim label">Credit Score</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Know your score. Own it.</div>
+  <div class="anim tagline" style="margin-bottom:28px">UK · Pakistan · UAE bureaus — track scores, understand factors, improve.</div>
+  <div class="anim" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:680px;width:100%">
+    <div class="glass" style="padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">🇬🇧</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">United Kingdom</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.7">Experian<br>Equifax<br>TransUnion</div>
+    </div>
+    <div class="glass" style="padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">🇵🇰</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">Pakistan</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.7">eCIB (SBP)<br>PMFBL<br>Microfinance</div>
+    </div>
+    <div class="glass" style="padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">🇦🇪</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">UAE</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.7">AECB<br>Al Etihad<br>Credit Bureau</div>
+    </div>
+  </div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:10px;max-width:560px;width:100%;margin-top:16px">
+    <div class="glass" style="padding:12px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:22px">📈</div>
+      <div style="font-size:13px;color:var(--text2)">Track score history · note factors · set improvement goals · link to bureau logins</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s18: Vehicles ─── -->
 <div class="slide" id="s18">
-  <div class="anim label">Financial Intelligence</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🧠 Financial Intelligence</div>
-  <div class="anim tagline" style="margin-bottom:24px">Pakistan · UK · UAE — professional calculations, printable reports.</div>
-  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:600px;width:100%">
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">💱</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Currency & Net Worth</div>
-      <div style="font-size:11px;color:var(--text2)">PKR · USD · GBP · AED · EUR</div>
-    </div>
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">🥇</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Gold & Silver Tracker</div>
-      <div style="font-size:11px;color:var(--text2)">Grams · tola · oz · kg</div>
-    </div>
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">🌙</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Zakat Calculator</div>
-      <div style="font-size:11px;color:var(--text2)">Individual · Business · Farmer</div>
-    </div>
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">🧾</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Tax Calculator</div>
-      <div style="font-size:11px;color:var(--text2)">UK · Pakistan · UAE</div>
-    </div>
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">📊</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Credit Score</div>
-      <div style="font-size:11px;color:var(--text2)">Experian · eCIB · AECB</div>
-    </div>
-    <div class="glass" style="padding:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:8px">💸</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">Full Asset Picture</div>
-      <div style="font-size:11px;color:var(--text2)">Property · loans · investments</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── Slide 21: Vehicles & Compliance ─── -->
-<div class="slide" id="s19">
-  <div class="anim label">Vehicles & Compliance</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🚗 Vehicles & Compliance</div>
-  <div class="anim tagline" style="margin-bottom:24px">Never get caught out by an expired MOT or road tax again.</div>
+  <div class="anim label">Vehicles</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🚗 Never miss a deadline.</div>
+  <div class="anim tagline" style="margin-bottom:24px">MOT · road tax · insurance · fuel log — tracked with colour-coded urgency.</div>
   <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🔧</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">MOT Expiry Tracking</div><div style="font-size:12px;color:var(--text2)">30-day alerts · colour-coded urgency · direct link to DVSA check</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">MOT Tracker</div><div style="font-size:12px;color:var(--text2)">30-day alerts · pass/fail history · direct link to DVSA check</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🛣️</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Road Tax Renewal</div><div style="font-size:12px;color:var(--text2)">Renewal dates stored · reminder integration · notes per vehicle</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Road Tax Renewal</div><div style="font-size:12px;color:var(--text2)">Renewal date · reminder integration · colour urgency: red / amber / green</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
-      <div style="font-size:28px">📋</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Full Vehicle Details</div><div style="font-size:12px;color:var(--text2)">Reg · make · model · colour · fuel type · purchase info</div></div>
+      <div style="font-size:28px">⛽</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Fuel Log</div><div style="font-size:12px;color:var(--text2)">Mileage · cost per fill-up · mpg calculation over time</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">🛡️</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Insurance</div><div style="font-size:12px;color:var(--text2)">Policy number · provider · expiry · premium — all encrypted</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s19: Alerts ─── -->
+<div class="slide" id="s19">
+  <div class="anim label">Alerts</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🔔 Nothing slips through.</div>
+  <div class="anim tagline" style="margin-bottom:24px">One centralised screen — every expiry, overdue loan, and deadline in one place.</div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:620px;width:100%">
+    <div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:14px;padding:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,80,70,.9);margin-bottom:8px">🔴 Critical (&lt;30 days)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">Passport expiry<br>MOT due<br>Overdue loans<br>Card expired</div>
+    </div>
+    <div style="background:rgba(255,159,10,.1);border:1px solid rgba(255,159,10,.3);border-radius:14px;padding:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,170,30,.9);margin-bottom:8px">🟡 Upcoming (&lt;90 days)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8">Visa expiry<br>Road tax renewal<br>Insurance renewal<br>Loan due date</div>
+    </div>
+  </div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:10px;max-width:560px;width:100%;margin-top:14px">
+    <div class="glass" style="padding:12px 18px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:22px">🗂️</div>
+      <div style="font-size:13px;color:var(--text2)">Pulls from: Documents · Cards · Vehicles · Loans · Reminders — one tap to fix</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s20: Tab Customisation ─── -->
+<div class="slide" id="s20">
+  <div class="anim label">Tab Customisation</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Your vault. Your rules.</div>
+  <div class="anim tagline" style="margin-bottom:24px">Show or hide any module — declutter your vault so only what matters is visible.</div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">🗂️</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Hide Unused Modules</div><div style="font-size:12px;color:var(--text2)">Toggle any Finance tab on or off — data is preserved, just hidden from view</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">👨‍👩‍👧‍👦</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Per-Member Family Tabs</div><div style="font-size:12px;color:var(--text2)">Each family profile shows only the tabs that apply to that member</div></div>
+    </div>
+    <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">🎨</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">18 Themes</div><div style="font-size:12px;color:var(--text2)">Dark glass · neon · earth · minimal — switch instantly, persisted per session</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🔔</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Integrated with Alerts</div><div style="font-size:12px;color:var(--text2)">MOT alerts surface automatically on the Alerts screen</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Reminder Frequency</div><div style="font-size:12px;color:var(--text2)">Daily · weekly · monthly reminders — custom notes per entry</div></div>
     </div>
   </div>
 </div>
 
-<!-- ─── Slide 22: Updated Metrics ─── -->
-<div class="slide" id="s20">
+<!-- ─── s21: Joint Accounts ─── -->
+<div class="slide" id="s21">
+  <div class="anim label">Joint Accounts</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">No double counting.</div>
+  <div class="anim tagline" style="margin-bottom:28px">Mark any account as shared — net worth automatically excludes duplicates.</div>
+  <div class="anim" style="display:flex;flex-direction:column;gap:14px;max-width:580px;width:100%">
+    <div style="background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.3);border-radius:16px;padding:20px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(150,120,255,.9);margin-bottom:10px">The Problem It Solves</div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.7">A joint account appears in both your vault and your spouse's profile. Without the flag, your net worth is counted twice — inflating the total by the full balance.</div>
+    </div>
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">👥</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Mark as Joint</div><div style="font-size:12px;color:var(--text2)">Toggle on any bank account — vault deducts the overlap from your net worth</div></div>
+    </div>
+    <div class="glass" style="padding:16px 18px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px">🔗</div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">Link to Contact</div><div style="font-size:12px;color:var(--text2)">Associate the joint holder with a name from your contacts or family</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s22: Security Deep Dive ─── -->
+<div class="slide" id="s22">
+  <div class="anim label">Security Deep Dive</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🔐 Built like a bank vault.</div>
+  <div class="anim tagline" style="margin-bottom:24px">AES-256-GCM encryption · PBKDF2 key derivation · decoy vault · master key backup.</div>
+  <div class="anim flow" style="margin-bottom:20px">
+    <div class="flow-node">📱 PIN</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">🔑 PBKDF2<br><span style="font-size:10px;color:var(--text3)">310K iterations</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">🔒 AES-256<br><span style="font-size:10px;color:var(--text3)">GCM mode</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">💾 Encrypted<br><span style="font-size:10px;color:var(--text3)">localStorage</span></div>
+  </div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:620px;width:100%">
+    <div class="glass" style="padding:14px 16px">
+      <div style="font-size:18px;margin-bottom:6px">🎭</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Decoy Vault</div>
+      <div style="font-size:11px;color:var(--text2)">Second PIN shows fake data — real vault invisible under duress</div>
+    </div>
+    <div class="glass" style="padding:14px 16px">
+      <div style="font-size:18px;margin-bottom:6px">🗝️</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Master Key Backup</div>
+      <div style="font-size:11px;color:var(--text2)">Generate a recovery key — restore vault even if PIN is forgotten</div>
+    </div>
+    <div class="glass" style="padding:14px 16px">
+      <div style="font-size:18px;margin-bottom:6px">🚨</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Panic Lock</div>
+      <div style="font-size:11px;color:var(--text2)">One tap — instantly blanks all sensitive values on screen</div>
+    </div>
+    <div class="glass" style="padding:14px 16px">
+      <div style="font-size:18px;margin-bottom:6px">⏱️</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Auto-Lock</div>
+      <div style="font-size:11px;color:var(--text2)">Locks on screen hide · configurable timeout · lockout after failed PINs</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── s23: By The Numbers ─── -->
+<div class="slide" id="s23">
   <div class="anim label">By The Numbers</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">By The Numbers</div>
+  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">The whole picture.</div>
   <div class="anim tagline" style="margin-bottom:32px">Everything you need. Nothing you don't.</div>
-  <div class="anim stat-row" style="flex-wrap:wrap;max-width:680px;gap:16px">
-    <div class="stat"><div class="sv">50+</div><div class="sk">Banks</div></div>
-    <div class="stat"><div class="sv">All</div><div class="sk">Networks</div></div>
+  <div class="anim stat-row" style="flex-wrap:wrap;max-width:720px;gap:16px">
+    <div class="stat"><div class="sv">120+</div><div class="sk">Banks</div></div>
+    <div class="stat"><div class="sv">22</div><div class="sk">Modules</div></div>
     <div class="stat"><div class="sv">3</div><div class="sk">Tax Systems</div></div>
     <div class="stat"><div class="sv">Full</div><div class="sk">Zakat</div></div>
-    <div class="stat"><div class="sv">Family</div><div class="sk">Profiles</div></div>
+    <div class="stat"><div class="sv">18</div><div class="sk">Themes</div></div>
+    <div class="stat"><div class="sv">5</div><div class="sk">Currencies</div></div>
     <div class="stat"><div class="sv">0</div><div class="sk">Cloud Deps</div></div>
-    <div class="stat"><div class="sv">Offline</div><div class="sk">First</div></div>
-    <div class="stat"><div class="sv">AES</div><div class="sk">Encrypted</div></div>
+    <div class="stat"><div class="sv">AES‑256</div><div class="sk">Encrypted</div></div>
   </div>
+  <div class="anim" style="margin-top:24px;font-size:13px;color:var(--text3);text-align:center">Offline-first · PWA · Zero dependencies · No npm · No framework · &lt;2 MB total</div>
 </div>
 
-<!-- ─── Slide 22: Dashboard ─── -->
-<div class="slide" id="s21">
-  <div class="anim label">Command Centre</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">📊 Command Centre</div>
-  <div class="anim tagline" style="margin-bottom:28px">Everything at a glance. Nothing hidden.</div>
-  <div class="anim" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:680px;width:100%">
-    <div style="background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.3);border-radius:16px;padding:18px">
-      <div style="font-size:22px;margin-bottom:8px">💰</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Net Worth Hero</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.5">Live total across cash, investments, assets &amp; gold · currency toggle · trend arrows</div>
-    </div>
-    <div style="background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:16px;padding:18px">
-      <div style="font-size:22px;margin-bottom:8px">📊</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Quick Stats</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.5">Banks · Cards · Documents · Investments — tap any tile to jump straight in</div>
-    </div>
-    <div style="background:rgba(255,69,58,.1);border:1px solid rgba(255,69,58,.25);border-radius:16px;padding:18px">
-      <div style="font-size:22px;margin-bottom:8px">⚠️</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Expiry Alerts</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.5">Cards &amp; documents expiring within 60 days — colour-coded urgency strip</div>
-    </div>
-    <div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);border-radius:16px;padding:18px">
-      <div style="font-size:22px;margin-bottom:8px">🛡️</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">Vault Health Score</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.5">Security checklist — PIN, decoy, backup, name set · progress bar + pill badges</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── Slide 23: Tax & Zakat Intelligence ─── -->
-<div class="slide" id="s22">
-  <div class="anim label">Tax Intelligence</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">🧾 Tax &amp; Zakat Intelligence</div>
-  <div class="anim tagline" style="margin-bottom:28px">Professional-grade calculations. Zero subscriptions.</div>
-  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px;width:100%">
-    <div style="background:rgba(0,100,200,.12);border:1px solid rgba(0,150,255,.25);border-radius:16px;padding:18px">
-      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(0,180,255,.9);margin-bottom:12px">🇵🇰 Pakistan FBR</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.8">
-        FBR 2024–25 &amp; 2025–26 slabs<br>
-        Salaried · Business · Non-filer<br>
-        IT Export &amp; exempt income<br>
-        FBR bank deduction (Zakat mode)<br>
-        Printable tax summary
-      </div>
-    </div>
-    <div style="background:rgba(200,50,50,.1);border:1px solid rgba(220,80,60,.25);border-radius:16px;padding:18px">
-      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(240,100,80,.9);margin-bottom:12px">🇬🇧 UK &amp; 🇦🇪 UAE</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.8">
-        Capital Gains Tax (18/24%)<br>
-        Inheritance Tax · IHT nil-rate<br>
-        Stamp Duty (SDLT)<br>
-        Dividend Tax allowance<br>
-        VAT · UAE Excise · Free Zone CT
-      </div>
-    </div>
-  </div>
-  <div class="anim" style="margin-top:20px;font-size:13px;color:var(--text3);background:rgba(255,255,255,.05);border-radius:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.1)">Professional calculations · Editable rates · Printable reports</div>
-</div>
-
-<!-- ─── Slide 24: Joint Accounts + Customisation ─── -->
-<div class="slide" id="s23">
-  <div class="anim label">Your Vault, Your Rules</div>
-  <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">⚙️ Your Vault, Your Rules</div>
-  <div class="anim tagline" style="margin-bottom:28px">Personalise every detail of your financial picture.</div>
-  <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:600px;width:100%">
-    ${[
-      ['👥','Joint Accounts','Mark accounts shared with family or contacts — net worth excludes duplicates automatically'],
-      ['🗂️','Tab Customisation','Show or hide any Finance module tile to declutter your view'],
-      ['👨‍👩‍👧‍👦','Family Per-Member Tabs','Hide unused tabs per family profile so each member sees only what matters'],
-      ['🌙','Zakat FBR Mode','Understand your bank auto-deduction — calculate nisab, exempt assets, and payable amount'],
-      ['🛡️','Vault Health Score','Live security checklist with progress bar and actionable fix prompts'],
-    ].map(([ic,title,desc])=>`<div style="display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px">
-      <div style="font-size:24px;flex-shrink:0">${ic}</div>
-      <div><div style="font-size:14px;font-weight:700;margin-bottom:3px">${title}</div><div style="font-size:12px;color:var(--text3);line-height:1.5">${desc}</div></div>
-    </div>`).join('')}
-  </div>
-</div>
-
-<!-- ─── Slide 25: CTA ─── -->
+<!-- ─── s24: CTA ─── -->
 <div class="slide" id="s24">
   <div class="anim label">Live Now</div>
   <a class="anim url-big" href="https://shamikhahmed.github.io/VaultOS" target="_blank" rel="noopener">shamikhahmed.github.io/VaultOS</a>

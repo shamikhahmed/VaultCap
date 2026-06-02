@@ -24,8 +24,11 @@ const Loans = {
     const borrowed = all.filter(l => l.type === 'borrowed');
     const lent     = all.filter(l => l.type === 'lent');
 
-    const totalOwe  = borrowed.filter(l => l.status !== 'Settled').reduce((a, l) => a + (l.amount || 0), 0);
-    const totalOwed = lent.filter(l => l.status !== 'Settled').reduce((a, l) => a + (l.amount || 0), 0);
+    const fx = typeof getFX === 'function' ? getFX() : (typeof FX !== 'undefined' ? FX : {PKR:1,GBP:355,AED:76,USD:280});
+    const toBaseCur = (amt, cur) => (amt||0) * (fx[cur] || 1);
+    const userCur = S.user?.currency || 'PKR';
+    const totalOwe  = borrowed.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
+    const totalOwed = lent.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
     const net       = totalOwed - totalOwe;
 
     const sm = document.getElementById('loanSummary');
@@ -79,7 +82,7 @@ const Loans = {
       const active   = loans.filter(l => l.status === 'Active' && !(l.dueDate && new Date(l.dueDate) < now));
       const settled  = loans.filter(l => l.status === 'Settled');
       const liveAll  = [...overdue, ...active];
-      const totalAmt = loans.filter(l => l.status !== 'Settled').reduce((a, l) => a + (l.amount || 0), 0);
+      const totalAmt = loans.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
       const title    = kind === 'borrowed' ? '🤲 I Owe' : '💸 They Owe Me';
       const color    = kind === 'borrowed' ? 'var(--err)' : 'var(--ok)';
       const addType  = kind;

@@ -212,7 +212,7 @@ const Family = {
 
   _tabOverview(m) {
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         ${[
   ['📄','Documents',(m.docs||[]).length,'docs'],
   ['🏦','Banks',(m.banks||[]).length,'banks'],
@@ -224,6 +224,16 @@ const Family = {
             <div style="font-size:22px;font-weight:900;color:var(--text)">${count}</div>
             <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">${label}</div>
           </div>`).join('')}
+      </div>
+      <div onclick="Family._switchTab('investments')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;touch-action:manipulation;margin-bottom:12px;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent,var(--purple))'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">📈</span>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text)">Investments</div>
+            <div style="font-size:12px;color:var(--text3)">${(m.investments||[]).length} positions</div>
+          </div>
+        </div>
+        <div style="font-size:18px;color:var(--text3)">›</div>
       </div>
       ${m.phone||m.email?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
         ${m.phone?`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:16px">📞</span><div><div style="font-size:11px;color:var(--text3)">Phone</div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(m.phone)}</div></div></div>`:''}
@@ -329,14 +339,50 @@ const Family = {
 
   _addInvestment() {
     Modal.open('📈 Add Investment',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <select id="fi-type" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
-          ${['Stocks / Shares','Mutual Fund','Property / Real Estate','Savings Account','Fixed Deposit','NSS / Prize Bond','Cryptocurrency','Business Stake','Other'].map(t=>`<option>${t}</option>`).join('')}
-        </select>
-        <input id="fi-name" placeholder="Name / Description" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
-        <input id="fi-val" type="number" placeholder="Current value (PKR)" min="0" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
+      `<div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Investment Type</div>
+          <select id="fi-type"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+            <option>Stocks / Shares</option>
+            <option>Mutual Fund</option>
+            <option>ETF</option>
+            <option>Bonds / Sukuk</option>
+            <option>Real Estate</option>
+            <option>Fixed Deposit</option>
+            <option>NSS / Prize Bond</option>
+            <option>Cryptocurrency</option>
+            <option>Business Stake</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Name / Description</div>
+          <input id="fi-name" placeholder="e.g. Apple Inc, Meezan Equity Fund"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Current Value</div>
+            <input id="fi-val" type="number" placeholder="0" min="0"
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+          </div>
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Currency</div>
+            <select id="fi-cur"
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+              ${['PKR','GBP','USD','AED','EUR'].map(c=>`<option value="${c}"${c===(typeof S!=='undefined'?S.user?.currency||'PKR':'PKR')?' selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Notes (optional)</div>
+          <input id="fi-notes" placeholder="Broker, account, strategy..."
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        </div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveInvestment()">Add</button>`
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
+       <button class="btn btn-p" onclick="if(window.Family)window.Family._saveInvestment()">Add Investment</button>`
     );
   },
 
@@ -346,11 +392,17 @@ const Family = {
     const d = this.get();
     const m = this._memberIdx==='head' ? d.head : d.members[this._memberIdx];
     if (!m.investments) m.investments = [];
-    m.investments.push({type:document.getElementById('fi-type')?.value,name:document.getElementById('fi-name')?.value,value});
+    m.investments.push({
+      type: document.getElementById('fi-type')?.value,
+      name: document.getElementById('fi-name')?.value,
+      value,
+      currency: document.getElementById('fi-cur')?.value || 'PKR',
+      notes: document.getElementById('fi-notes')?.value || '',
+    });
     this.save(d); Modal.close();
     if(window.Toast) Toast.show('Investment added','success');
     const body = document.getElementById('fm-tab-body');
-    if (body) body.innerHTML = this._tabInvestments(m);
+    if (body) body.innerHTML = this._renderTab(m);
   },
 
   _removeInvestment(i) {
@@ -896,7 +948,8 @@ const Family = {
   },
 
   _saveCard() {
-    const name = document.getElementById('fc-name')?.value?.trim();
+    const name = document.getElementById('fmc-name')?.value?.trim() ||
+                 document.getElementById('fc-name')?.value?.trim();
     if (!name) { if(window.Toast) Toast.show('Enter card name','error'); return; }
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
@@ -904,14 +957,18 @@ const Family = {
     if (!m.cards) m.cards = [];
     m.cards.push({
       name,
-      last4: document.getElementById('fc-l4')?.value || '',
-      network: document.getElementById('fc-net')?.value || '',
-      type: document.getElementById('fc-type')?.value || 'debit',
+      last4: document.getElementById('fmc-l4')?.value || document.getElementById('fc-l4')?.value || '',
+      expiry: document.getElementById('fmc-exp')?.value || '',
+      network: document.getElementById('fmc-net')?.value || document.getElementById('fc-net')?.value || '',
+      type: document.getElementById('fmc-type')?.value || document.getElementById('fc-type')?.value || 'debit',
+      holderName: document.getElementById('fmc-holder')?.value || '',
+      linkedBank: document.getElementById('fmc-bank')?.value || '',
+      notes: document.getElementById('fmc-notes')?.value || '',
     });
     this.save(d); Modal.close();
     if(window.Toast) Toast.show('Card added','success');
-    const tb = document.getElementById('fm-tab-body');
-    if (tb) tb.innerHTML = this._tabBanks(m);
+    const body = document.getElementById('fm-tab-body');
+    if (body) body.innerHTML = this._tabBanks(m);
   },
 
   _removeCard(i) {
@@ -925,13 +982,35 @@ const Family = {
 
   /* ── Cash actions ── */
   _addCash() {
+    const userCur = typeof S !== 'undefined' ? (S.user?.currency || 'PKR') : 'PKR';
     Modal.open('💵 Add Cash Entry',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <input id="fca-label" placeholder="Label (e.g. Savings, Wallet)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-        <input id="fca-amount" type="number" placeholder="Amount (PKR)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-        <input id="fca-notes" placeholder="Notes (optional)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
+      `<div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Label</div>
+          <input id="fca-label" placeholder="e.g. Home Safe, Wallet, Office"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Amount</div>
+          <input id="fca-amount" type="number" placeholder="0" min="0"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Currency</div>
+          <select id="fca-cur"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+            ${['PKR','GBP','USD','AED','EUR'].map(c=>`<option value="${c}"${c===userCur?' selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Notes (optional)</div>
+          <input id="fca-notes" placeholder="Additional notes"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        </div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveCash()">Add</button>`);
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
+       <button class="btn btn-p" onclick="if(window.Family)window.Family._saveCash()">Add Cash</button>`
+    );
   },
 
   _addBankFor(midx) { this._memberIdx = midx; this._addBank(); },
@@ -947,7 +1026,12 @@ const Family = {
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) return;
     if (!m.cash) m.cash = [];
-    m.cash.push({ label: document.getElementById('fca-label')?.value||'Cash', amount, notes: document.getElementById('fca-notes')?.value });
+    m.cash.push({
+      label: document.getElementById('fca-label')?.value||'Cash',
+      amount,
+      currency: document.getElementById('fca-cur')?.value || (typeof S !== 'undefined' ? S.user?.currency || 'PKR' : 'PKR'),
+      notes: document.getElementById('fca-notes')?.value,
+    });
     this.save(d); Modal.close();
     const tb = document.getElementById('fm-tab-body');
     if (tb) tb.innerHTML = this._tabCash(m);
