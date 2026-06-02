@@ -1,6 +1,7 @@
 const Timeline={
   render(){
     const b=document.getElementById('timelineBody');if(!b)return;
+    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">'+(S.activity||[]).length+' entries</div><button onclick="if(confirm(\'Clear all activity log?\')) { S.activity=[]; if(typeof Store!==\'undefined\') Store.save(); Timeline.render(); Toast.show(\'Activity log cleared\',\'success\'); }" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">🗑️ Clear Log</button></div>';
     const events=[];
     const now=new Date();
     const addEv=(date,label,type,icon,action)=>{
@@ -21,12 +22,12 @@ const Timeline={
     S.expenses.filter(e=>e.renewalDate&&e.active).forEach(e=>{addEv(e.renewalDate,e.name+' renewal','expense',e.icon||'🔄',()=>Exp.edit(e.id));});
     S.assets.filter(a=>a.assetType==='loan'&&a.dueDate).forEach(a=>{addEv(a.dueDate,a.name+' due','loan','💰',()=>Assets.edit(a.id));});
     events.sort((a,b_)=>a.date-b_.date);
-    if(!events.length){b.innerHTML='<div class="empty"><div class="empty-ic">📅</div><h3>No upcoming dates</h3><p>Add expiry dates to cards, documents, subscriptions, gadgets and assets to see them here</p></div>';return;}
+    if(!events.length){b.innerHTML=clearBar+'<div class="empty"><div class="empty-ic">📅</div><h3>No upcoming dates</h3><p>Add expiry dates to cards, documents, subscriptions, gadgets and assets to see them here</p></div>';return;}
     const overdue=events.filter(e=>e.overdue);
     const soon=events.filter(e=>!e.overdue&&e.diff<=30);
     const later=events.filter(e=>!e.overdue&&e.diff>30);
     const renderGroup=(title,evs,cls)=>evs.length?`<div class="sdiv">${title}</div>${evs.map(e=>`<div class="insight${cls}" style="cursor:pointer" onclick="Modal.close();${e.action.toString().replace(/\n/g,' ')}"><div class="insight-ic">${e.icon}</div><div class="insight-body"><div class="insight-title">${e.label}</div><div class="insight-sub">${e.overdue?'Overdue by '+Math.abs(e.diff)+' day'+(Math.abs(e.diff)!==1?'s':''):e.diff===0?'Today':e.diff===1?'Tomorrow':'In '+e.diff+' days — '+e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="font-size:11px;font-weight:700;color:${e.overdue?'var(--err)':e.diff<=7?'var(--warn)':'var(--text3)'}">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>`).join('')}`:'';
-    b.innerHTML=renderGroup('⚠️ Overdue',overdue,' err')+renderGroup('🔥 Next 30 Days',soon,' warn')+renderGroup('📅 Upcoming',later,' info');
+    b.innerHTML=clearBar+renderGroup('⚠️ Overdue',overdue,' err')+renderGroup('🔥 Next 30 Days',soon,' warn')+renderGroup('📅 Upcoming',later,' info');
   },
   calendarMode(){
     const b=document.getElementById('timelineBody');if(!b)return;

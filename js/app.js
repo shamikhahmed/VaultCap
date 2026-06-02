@@ -1550,6 +1550,79 @@ const R = {
   }
 };
 
+// ===================== SETTINGS — FORGOT PIN =====================
+window.Settings = window.Settings || {};
+
+window.Settings.forgotPIN = function() {
+  Modal.open('🔑 Forgot PIN',
+    '<div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">' +
+    '<div onclick="Modal.close();window.Settings.useMasterKey()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
+    '<div style="font-size:28px">🗝️</div>' +
+    '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Use Master Key</div><div style="font-size:13px;color:var(--text2)">Enter the master key you saved when setting up</div></div>' +
+    '</div>' +
+    '<div onclick="Modal.close();document.getElementById(\'importF-global\')?.click()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
+    '<div style="font-size:28px">📥</div>' +
+    '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Restore from Backup</div><div style="font-size:13px;color:var(--text2)">Import a .vault backup file to recover access</div></div>' +
+    '</div>' +
+    '<div onclick="Modal.close();window.Settings.resetVault()" style="background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
+    '<div style="font-size:28px">⚠️</div>' +
+    '<div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Last resort — permanently wipes all data</div></div>' +
+    '</div>' +
+    '</div>',
+    '<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
+  );
+};
+
+window.Settings.useMasterKey = function() {
+  Modal.open('🗝️ Enter Master Key',
+    '<div style="display:flex;flex-direction:column;gap:12px">' +
+    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultOS.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX</span></div>' +
+    '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
+    '<div id="mk-err" style="color:var(--err);font-size:12px;min-height:16px;text-align:center"></div>' +
+    '</div>',
+    '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+    '<button class="btn btn-p" onclick="window.Settings.verifyMasterKey()">Verify & Reset PIN</button>'
+  );
+};
+
+window.Settings.verifyMasterKey = function() {
+  const input = (document.getElementById('mk-in')?.value || '').trim().toUpperCase();
+  const pin = S.pin || localStorage.getItem('vo_pin') || '';
+  const name = S.user?.name || '';
+  const raw = btoa(unescape(encodeURIComponent(pin + ':' + name + ':VaultOS3')));
+  const expected = (raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6) + '-' + raw.slice(4,10).toUpperCase() + '-' + raw.slice(10,16).toUpperCase()).toUpperCase();
+  const err = document.getElementById('mk-err');
+  if (input === expected) {
+    Modal.close();
+    if (window.Settings.changePIN) {
+      window.Settings.changePIN();
+    } else {
+      const newPin = prompt('Master key verified! Enter your new 6-digit PIN:');
+      if (newPin && /^\d{6}$/.test(newPin)) {
+        S.pin = newPin;
+        if (typeof Store !== 'undefined') Store.save();
+        else localStorage.setItem('vo_pin', newPin);
+        if (window.Toast) Toast.show('PIN updated successfully', 'success');
+      }
+    }
+  } else {
+    if (err) err.textContent = 'Invalid master key — please check and try again';
+    else alert('Invalid master key');
+  }
+};
+
+window.Settings.resetVault = function() {
+  if (!confirm('⚠️ This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
+  if (!confirm('FINAL CONFIRMATION: Reset entire vault and delete all data?')) return;
+  const keys = Object.keys(localStorage).filter(k =>
+    k.startsWith('vo_') || k.startsWith('vos_') || k.startsWith('vault_') || k === 'pin'
+  );
+  keys.forEach(k => localStorage.removeItem(k));
+  if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  if (window.Toast) Toast.show('Vault reset — reloading...', 'warning', 1500);
+  setTimeout(() => location.reload(), 1600);
+};
+
 // ===================== PIN / LOCK SYSTEM =====================
 let pe = ''; let lt = null;
 const PIN = {
@@ -2970,6 +3043,10 @@ function loadDemoProfile(type) {
 }
 
 function loadDemoData() {
+  const snapshot = {};
+  Object.keys(localStorage).forEach(k => { snapshot[k] = localStorage.getItem(k); });
+  localStorage.setItem('vo_demo_snapshot', JSON.stringify(snapshot));
+  localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
   loadDemoProfile('business');
   localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
   localStorage.setItem('vo_gold', JSON.stringify([
@@ -3047,8 +3124,25 @@ function loadDemoData() {
     'zk-debts':'200000','zk-exp':'80000'
   }));
   localStorage.setItem('vo_tax_calc', JSON.stringify({ country:'PK', filing:'salaried', income:'3600000' }));
-  if (window.Toast) Toast.show('Demo data loaded for all modules!','success',3000);
+  if (window.Toast) Toast.show(
+    'Demo data loaded! <button onclick="undoDemoLoad()" style="margin-left:8px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:3px 10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">↩ Undo</button>',
+    'success', 8000
+  );
 }
+
+function undoDemoLoad() {
+  const snap = localStorage.getItem('vo_demo_snapshot');
+  if (!snap) { if(window.Toast) Toast.show('No snapshot to restore', 'warning'); return; }
+  if (!confirm('Restore your previous data? Demo data will be removed.')) return;
+  const data = JSON.parse(snap);
+  Object.keys(localStorage).forEach(k => localStorage.removeItem(k));
+  Object.entries(data).forEach(([k,v]) => { if (k !== 'vo_demo_snapshot' && k !== 'vo_demo_snapshot_time') localStorage.setItem(k,v); });
+  localStorage.removeItem('vo_demo_snapshot');
+  localStorage.removeItem('vo_demo_snapshot_time');
+  if (window.Toast) Toast.show('Previous data restored!', 'success');
+  setTimeout(() => location.reload(), 1200);
+}
+window.undoDemoLoad = undoDemoLoad;
 
 // ===================== LARGE TEXT =====================
 function applyLargeText(on) {

@@ -131,7 +131,7 @@ const Family = {
       m.cards?.length ? m.cards.length+' Cards' : null,
       totalCash > 0 ? 'PKR '+totalCash.toLocaleString() : null,
     ].filter(Boolean);
-    return `<div onclick="Family.openMember(${i})" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
+    return `<div onclick="Family.openMember(${i})" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;min-height:72px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
       <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${avatar}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:15px;font-weight:700;color:var(--text)">${_fesc(m.name)}</div>
@@ -362,11 +362,11 @@ const Family = {
     const title = isHead ? '👑 Head of Family' : (m ? '✏️ Edit Member' : '➕ Add Member');
     const formHTML = `<div style="display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:4px">
-        ${avatarOptions.map(a=>`<button onclick="this.parentElement.parentElement.querySelector('#fm-avatar').value='${a}';this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='transparent');this.style.background='rgba(123,95,255,.3)'" style="font-size:22px;padding:6px;border-radius:10px;border:1px solid var(--border);background:${(m?.avatar||'👤')===a?'rgba(123,95,255,.3)':'transparent'};cursor:pointer">${a}</button>`).join('')}
+        ${avatarOptions.map(a=>`<button class="fav-btn" data-av="${a}" onclick="document.getElementById('fm-avatar').value='${a}';document.querySelectorAll('.fav-btn').forEach(b=>b.style.outline='none');this.style.outline='2px solid var(--purple,var(--accent))'" style="font-size:22px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:transparent;cursor:pointer;outline:${(m?.avatar||'👤')===a?'2px solid var(--purple,var(--accent))':'none'}">${a}</button>`).join('')}
       </div>
       <input id="fm-avatar" value="${_fesc(m?.avatar||'👤')}" style="display:none">
       <input id="fm-name" placeholder="Full name *" value="${_fesc(m?.name||'')}" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-      <select id="fm-relation" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
+      <select id="fm-relation" onchange="(function(rel){const map={Wife:'👩',Husband:'👨',Son:'👦',Daughter:'👧',Mother:'👩‍🦳',Father:'👨‍🦳',Brother:'👱‍♂️',Sister:'👱‍♀️',Grandfather:'🧓',Grandmother:'👵',Uncle:'👨‍💼',Aunt:'👩‍💼',Cousin:'🧑',Other:'👤'};const av=map[rel];if(av){document.getElementById('fm-avatar').value=av;document.querySelectorAll('.fav-btn').forEach(b=>{b.style.outline=b.dataset.av===av?'2px solid var(--purple,var(--accent))':'none'});}})(this.value)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
         ${['Wife','Husband','Son','Daughter','Mother','Father','Brother','Sister','Grandfather','Grandmother','Uncle','Aunt','Cousin','Other'].map(r=>`<option value="${r}" ${m?.relation===r?'selected':''}>${r}</option>`).join('')}
       </select>
       <input id="fm-dob" type="date" value="${m?.dob||''}" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
@@ -498,8 +498,43 @@ const Family = {
         </div>
         <input id="fd-issuer" placeholder="Issued by (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
         <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none"></textarea>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Photos (optional)</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="Family._captureDocPhoto('front')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Front</button>
+            <button onclick="Family._captureDocPhoto('back')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Back</button>
+          </div>
+          <div id="fd-photo-preview" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveDoc()">Save Document</button>`);
+  },
+
+  _captureDocPhoto(side) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const preview = document.getElementById('fd-photo-preview');
+        if (!preview) return;
+        const img = document.createElement('div');
+        img.style.cssText = 'position:relative;display:inline-block';
+        img.dataset.side = side;
+        img.dataset.src = ev.target.result;
+        img.innerHTML = '<img src="'+ev.target.result+'" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" data-side="'+side+'">' +
+          '<div style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:4px">'+side.toUpperCase()+'</div>';
+        const existing = preview.querySelector('[data-side="'+side+'"]');
+        if (existing) existing.remove();
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
   },
 
   _saveDoc() {
@@ -509,6 +544,10 @@ const Family = {
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) return;
     if (!m.docs) m.docs = [];
+    const photos = {};
+    document.querySelectorAll('#fd-photo-preview [data-side]').forEach(el => {
+      photos[el.dataset.side] = el.dataset.src || '';
+    });
     m.docs.push({
       type,
       number: document.getElementById('fd-num')?.value || '',
@@ -516,6 +555,7 @@ const Family = {
       expiry: document.getElementById('fd-exp')?.value || '',
       issuer: document.getElementById('fd-issuer')?.value || '',
       notes: document.getElementById('fd-note')?.value || '',
+      photos: Object.keys(photos).length ? photos : undefined,
       addedAt: new Date().toISOString(),
     });
     this.save(d); Modal.close();

@@ -1,5 +1,6 @@
 function renderAlerts(){
   const b=document.getElementById('alertBody');if(!b)return;
+  if(!window._vosUnlocked){b.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3)">🔒 Unlock vault to see alerts</div>';return;}
   const expCards=S.cards.filter(c=>{const s=U.expSt(c.expiry);return s!=='ok';});
   const simR=S.sims.filter(s=>s.rechargeReminder&&s.nextRecharge);
   const insR=S.assets.filter(a=>a.assetType==='insurance'&&a.renewalDate);
