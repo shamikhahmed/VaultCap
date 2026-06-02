@@ -275,7 +275,7 @@ const Family = {
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Banks</div>
           ${!m._isVaultOwner?`<button onclick="Family._addBankFor(${JSON.stringify(midx)})" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>`:''}
         </div>
-        ${banks.length ? banks.map((b,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(b)}</div>${!m._isVaultOwner?`<button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
+        ${banks.length ? banks.map((b,i)=>{const bn=typeof b==='string'?b:(b?.name||b?.bankName||String(b));return `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(bn)}</div>${!m._isVaultOwner?`<button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div>`;}).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
       </div>
       <div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -788,9 +788,12 @@ const Family = {
     const cardSuggestions = (() => {
       if (typeof SMART_DB === 'undefined') return [];
       if (memberBanks.length > 0) {
-        const firstWord = memberBanks[0].toLowerCase().split(' ')[0];
-        const filtered = (SMART_DB.cards||[]).filter(c => c.toLowerCase().includes(firstWord));
-        return filtered.length > 0 ? filtered : (SMART_DB.cards||[]).slice(0,15);
+        const firstName = typeof memberBanks[0] === 'string' ? memberBanks[0] : (memberBanks[0]?.name || memberBanks[0]?.bankName || '');
+        if (firstName) {
+          const firstWord = firstName.toLowerCase().split(' ')[0];
+          const filtered = (SMART_DB.cards||[]).filter(c => c.toLowerCase().includes(firstWord));
+          return filtered.length > 0 ? filtered : (SMART_DB.cards||[]).slice(0,15);
+        }
       }
       return (SMART_DB.cards||[]).slice(0,15);
     })();
@@ -810,7 +813,7 @@ const Family = {
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Linked Bank</div>
           <select id="fmc-bank" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
             <option value="">Select bank (optional)</option>
-            ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
+            ${memberBanks.map(b=>{const n=typeof b==='string'?b:(b?.name||b?.bankName||String(b));return `<option value="${_fesc(n)}">${_fesc(n)}</option>`;}).join('')}
           </select>
         </div>` : ''}
         <div style="display:flex;gap:8px">
