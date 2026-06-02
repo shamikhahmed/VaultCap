@@ -1485,6 +1485,10 @@ const R = {
       reminders:   () => Reminders.render(),
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
+      currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
+      gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
+      zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
+      credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
       sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">🔄</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();
@@ -2483,6 +2487,10 @@ function buildNav() {
       { id:'timeline', n:'Timeline', ic:'📅' },
       { id:'security', n:'Security', ic:'🛡️' },
       { id:'backup', n:'Backup', ic:'💾' },
+      { id:'currency', n:'Currency', ic:'💱' },
+      { id:'gold', n:'Metals', ic:'🥇' },
+      { id:'zakat', n:'Zakat', ic:'🌙' },
+      { id:'credit', n:'Credit', ic:'📊' },
     ];
     const seenIds = new Set();
     const moreItems = [...overflow, ...permanentExtras].filter(m => {
