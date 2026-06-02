@@ -280,9 +280,13 @@ const Cards={
     const isEdit=!!c.id;
     const isVirtual=(c.category||'').toLowerCase()==='virtual'||(c.category||'').toLowerCase()==='digital';
     const cardNames=SMART_DB.cards.map(x=>'<option value="'+x.name+'">').join('');
-    return '<datalist id="cardDL">'+cardNames+'</datalist>'
+    const myBanks=(window.S?.banks||[]);
+    const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${b.bankName}">${b.bankName}</option>`).join(''):'';
+    const bankPicker=myBanks.length?'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" onchange="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
+    return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
-      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cardDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" oninput="SMART_DB.fillCard(this.value)" value="'+(c.cardName||'')+'"></div>'
+      +bankPicker
+      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" oninput="SMART_DB.fillCard(this.value)" value="'+(c.cardName||'')+'"></div>'
       +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" oninput="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
@@ -304,6 +308,20 @@ const Cards={
       +'<div class="fg"><label class="fl">Tags</label>'+U.tags(c.tags||[])+'</div>'
       +'<div style="display:flex;gap:16px;margin-top:4px"><label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-fav" '+(c.favorite?'checked':'')+'>  Favourite</label><label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-carry" '+(S.wallet.includes(c.id)?'checked':'')+'>  Carrying</label></div>'
       +'</div></details>';
+  },
+  _bankSelected(bankName){
+    const dl=document.getElementById('cfNameDL');
+    if(!dl)return;
+    const allCards=(window.SMART_DB?.cards||[]);
+    if(!bankName||bankName==='__other__'){
+      dl.innerHTML=allCards.map(c=>`<option value="${c.name}"></option>`).join('');
+      return;
+    }
+    const key=bankName.toLowerCase().split(' ')[0];
+    const filtered=allCards.filter(c=>c.name.toLowerCase().includes(key));
+    dl.innerHTML=(filtered.length?filtered:allCards).map(c=>`<option value="${c.name}"></option>`).join('');
+    const bankField=document.getElementById('cf-bank');
+    if(bankField)bankField.value=bankName;
   },
   save(editId=null){
     const name=document.getElementById('cf-name').value.trim();if(!name){Toast.show('Card name required','warning');return;}
