@@ -158,7 +158,8 @@ const Family = {
   _renderMember(body) {
     const m = this._getMemberData();
     if (!m || !m.name) { this.back(); return; }
-    const tabs = ['overview','docs','banks','cash','investments','notes'];
+    let tabs = ['overview','docs','banks','cash','investments','notes'];
+    try { const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}'); const ht=fp.hiddenTabs||[]; tabs=tabs.filter(t=>t==='overview'||!ht.includes(t)); } catch(e) {}
     const tabLabels = {overview:'📋 Overview',docs:'📄 Docs',banks:'💳 Banks & Cards',cash:'💵 Cash',investments:'📈 Investments',notes:'📝 Notes'};
     const midx = this._memberIdx;
 

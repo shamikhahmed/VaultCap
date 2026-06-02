@@ -230,6 +230,23 @@ const Settings={
       <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Changes take effect after toggling — hidden modules stay in data but don't appear in nav</div></div></div>
     </div></div>
 
+    <div class="set-sec"><div class="set-title">🗂️ Tab Customisation</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Choose which Finance tiles appear on the Finance home screen.</div></div></div>
+      ${(()=>{
+        const finMods=[{id:'banks',label:'Banks'},{id:'cards',label:'Cards'},{id:'cash',label:'Cash'},{id:'investments',label:'Investments'},{id:'loans',label:'Loans'},{id:'credit',label:'Credit Score'},{id:'zakat',label:'Zakat'},{id:'tax',label:'Tax Calculator'},{id:'currency',label:'Currency'},{id:'gold',label:'Precious Metals'}];
+        const prefs=getTabPrefs();
+        const hidden=prefs.hiddenFinance||[];
+        return finMods.map(m=>`<div class="si"><div class="sil"><div class="name">${m.label}</div><div class="desc">Finance group</div></div><label class="tog"><input type="checkbox" ${!hidden.includes(m.id)?'checked':''} onchange="(function(id,checked){const p=getTabPrefs();if(!p.hiddenFinance)p.hiddenFinance=[];if(checked){p.hiddenFinance=p.hiddenFinance.filter(x=>x!==id)}else{if(!p.hiddenFinance.includes(id))p.hiddenFinance.push(id)}saveTabPrefs(p);if(window.Toast)Toast.show(checked?id+' shown':id+' hidden','success',1500);})('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('');
+      })()}
+      <div style="height:1px;background:var(--border);margin:4px 14px"></div>
+      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Family member tab preferences</div></div></div>
+      ${(()=>{
+        const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');
+        const hidFam=fp.hiddenTabs||[];
+        return [['docs','Documents'],['banks','Banks & Cards'],['cash','Cash'],['investments','Investments'],['notes','Notes']].map(([id,label])=>`<div class="si"><div class="sil"><div class="name">${label}</div><div class="desc">Family member tabs</div></div><label class="tog"><input type="checkbox" ${!hidFam.includes(id)?'checked':''} onchange="(function(id,checked){const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');if(!fp.hiddenTabs)fp.hiddenTabs=[];if(checked){fp.hiddenTabs=fp.hiddenTabs.filter(x=>x!==id)}else{if(!fp.hiddenTabs.includes(id))fp.hiddenTabs.push(id)}localStorage.setItem('vo_family_tab_prefs',JSON.stringify(fp));if(window.Toast)Toast.show(checked?id+' tab shown':id+' tab hidden','success',1500);})('${id}',this.checked)"><span class="ts"></span></label></div>`).join('');
+      })()}
+    </div></div>
+
     <div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Theme</div><div class="desc">${THEMES.find(t=>t.id===S.user.theme)?.n||'Midnight'}</div></div><button class="btn btn-g btn-sm" onclick="ThemeEngine.openPicker()">Change</button></div>
       <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil"><div class="name">Quick Switch</div></div><div style="display:flex;gap:7px;flex-wrap:wrap">${THEMES.map(t=>`<div class="tdot${t.id===S.user.theme?' on':''}" style="background:${t.ac}" onclick="ThemeEngine.apply('${t.id}')" title="${t.n}"></div>`).join('')}</div></div>

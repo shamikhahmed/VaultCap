@@ -2,28 +2,60 @@
 const Zakat = {
   _type: 'individual',
   _nisabType: 'silver',
+  _mode: 'personal',
 
   render() {
     const body = document.getElementById('pg-zakat-body');
     if (!body) return;
     const saved = JSON.parse(localStorage.getItem('vo_zakat_calc')||'{}');
+    const mode = this._mode;
     body.innerHTML = `
     <div style="padding:16px">
-      <div style="background:linear-gradient(135deg,rgba(0,150,136,.15),rgba(76,175,80,.1));border:1px solid rgba(0,150,136,.3);border-radius:16px;padding:16px;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,rgba(0,150,136,.15),rgba(76,175,80,.1));border:1px solid rgba(0,150,136,.3);border-radius:16px;padding:16px;margin-bottom:16px">
         <div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">🌙 Zakat Calculator</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.7">Zakat is due on wealth held above nisab for one full lunar year (hawl). Rate: <strong style="color:#4caf50">2.5%</strong></div>
       </div>
 
-      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Who is this for?</div>
-      <div style="display:flex;gap:8px;margin-bottom:20px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Calculation Mode</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button onclick="Zakat._mode='personal';Zakat.render()" style="flex:1;padding:10px 6px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${mode==='personal'?'rgba(0,150,136,.6)':'var(--border)'};background:${mode==='personal'?'rgba(0,150,136,.2)':'transparent'};color:${mode==='personal'?'#4caf50':'var(--text3)'}">🏛️ Personal Calculation</button>
+        <button onclick="Zakat._mode='fbr';Zakat.render()" style="flex:1;padding:10px 6px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${mode==='fbr'?'rgba(0,150,136,.6)':'var(--border)'};background:${mode==='fbr'?'rgba(0,150,136,.2)':'transparent'};color:${mode==='fbr'?'#4caf50':'var(--text3)'}">🏦 FBR Bank Deduction</button>
+      </div>
+
+      ${mode === 'fbr' ? this._fbrMode(saved) : this._personalMode(saved)}
+    </div>`;
+  },
+
+  _fbrMode(saved) {
+    return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.8">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">🏦 FBR Automatic Bank Deduction System</div>
+      Under the Zakat &amp; Ushr Ordinance 1980, Pakistani banks automatically deduct <strong style="color:#4caf50">2.5% Zakat</strong> on the 1st of Ramadan from savings/PLS accounts with balance ≥ Nisab (PKR 135,179 in 2024-25).<br><br>
+      <strong>Tax deduction:</strong> This deduction is fully tax-deductible under Section 25 — claim under <em>Deductible Allowances</em> in your FBR IRIS return.<br><br>
+      <strong>Opt out:</strong> Submit CZ-50 Zakat Exemption Form to your bank before Ramadan if you wish to pay personally (e.g. Shia Muslims, or those who prefer self-calculation).
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Bank Balance on 1st Ramadan (PKR)</label>
+      <input id="fbr-balance" type="number" value="${saved.fbrBalance||''}" placeholder="e.g. 500000" min="0"
+        style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+    </div>
+    <button onclick="Zakat.calculateFBR()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#00897b,#4caf50);border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;margin-bottom:12px">Calculate FBR Deduction</button>
+    <div id="zk-result"></div>`;
+  },
+
+  _personalMode(saved) {
+    return `<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Who is this for?</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
         ${[['individual','👤 Individual'],['business','🏪 Business / Partnership'],['farmer','🌾 Farmer / Agriculture']].map(([v,l])=>`
           <button onclick="Zakat._type='${v}';Zakat.render()" style="flex:1;padding:10px 6px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${this._type===v?'rgba(0,150,136,.6)':'var(--border)'};background:${this._type===v?'rgba(0,150,136,.2)':'transparent'};color:${this._type===v?'#4caf50':'var(--text3)'}">${l}</button>`).join('')}
       </div>
 
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Nisab Standard</div>
-      <div style="display:flex;gap:8px;margin-bottom:20px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
         <button onclick="Zakat._nisabType='silver';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${this._nisabType==='silver'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='silver'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='silver'?'#4caf50':'var(--text3)'}">🥈 Silver (612.36g)<br><span style="font-size:10px;font-weight:400">Most common — Hanafi</span></button>
         <button onclick="Zakat._nisabType='gold';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${this._nisabType==='gold'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='gold'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='gold'?'#4caf50':'var(--text3)'}">🥇 Gold (87.48g)<br><span style="font-size:10px;font-weight:400">Conservative standard</span></button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);background:rgba(0,150,136,.06);border:1px solid rgba(0,150,136,.2);border-radius:8px;padding:8px 10px;margin-bottom:16px;line-height:1.6">
+        ℹ️ <strong>Nisab rule:</strong> If your zakatable assets include <em>only gold</em> → use Gold nisab (87.48g). For mixed assets (gold + silver + cash + savings) → use Silver nisab (612.36g). This is the standard Hanafi ruling in Pakistan.
       </div>
 
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px">
@@ -46,8 +78,35 @@ const Zakat = {
 
       ${this._assetFields(saved)}
 
+      ${this._type==='individual'?`<div style="font-size:11px;color:var(--text3);background:rgba(0,150,136,.06);border:1px solid rgba(0,150,136,.2);border-radius:8px;padding:8px 10px;margin-bottom:12px;line-height:1.6">
+        ℹ️ <strong>Notes:</strong> Primary residence (home you live in) is <em>not</em> zakatable. Long-term debts: only the current year's instalment is deductible. Short-term debts due within the year are fully deductible.
+      </div>`:''}
+
       <button onclick="Zakat.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#00897b,#4caf50);border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;margin-bottom:12px">Calculate Zakat</button>
-      <div id="zk-result"></div>
+      <div id="zk-result"></div>`;
+  },
+
+  calculateFBR() {
+    const balance = parseFloat(document.getElementById('fbr-balance')?.value||0);
+    if(!balance){ if(window.Toast) Toast.show('Enter bank balance','error'); return; }
+    const nisab = 135179;
+    const eligible = balance >= nisab;
+    const zakat = eligible ? balance * 0.025 : 0;
+    const fmt = n => 'PKR '+Math.round(n).toLocaleString();
+    const saved = JSON.parse(localStorage.getItem('vo_zakat_calc')||'{}');
+    saved.fbrBalance = balance;
+    localStorage.setItem('vo_zakat_calc', JSON.stringify(saved));
+    const res = document.getElementById('zk-result');
+    if(!res) return;
+    res.innerHTML = `<div id="zk-report" style="background:${eligible?'linear-gradient(135deg,rgba(0,150,136,.2),rgba(76,175,80,.1))':'linear-gradient(135deg,rgba(255,152,0,.1),rgba(255,193,7,.08))'};border:1px solid ${eligible?'rgba(76,175,80,.4)':'rgba(255,193,7,.4)'};border-radius:16px;padding:20px">
+      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">🏦 FBR Bank Deduction Report</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Bank Balance</span><span style="font-weight:700">${fmt(balance)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Nisab 2024-25</span><span style="font-weight:700">${fmt(nisab)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Eligible for Deduction?</span><span style="font-weight:800;color:${eligible?'#4caf50':'#ff9800'}">${eligible?'✅ Yes':'❌ Below Nisab'}</span></div>
+        ${eligible?`<div style="display:flex;justify-content:space-between;padding:12px;background:rgba(76,175,80,.15);border-radius:10px;margin-top:4px"><span style="font-size:15px;font-weight:800;color:#4caf50">Zakat Deducted (2.5%)</span><span style="font-size:24px;font-weight:900;color:#4caf50">${fmt(zakat)}</span></div>`:''}
+        ${eligible?`<div style="font-size:11px;color:var(--text3);margin-top:8px">✅ Deductible under Section 25 — claim under <strong>Deductible Allowances</strong> in FBR IRIS return.</div>`:''}
+      </div>
     </div>`;
   },
 
@@ -75,6 +134,8 @@ const Zakat = {
       ['💰','zk-cash','Cash savings'],
       ['🐄','zk-livestock','Livestock value (cattle/sheep/camels for trade)'],
       ['💸','zk-debts','− Debts & expenses (deduct)'],
+      ['🌧️','zk-ushr-rain','Ushr: Rain-fed produce (10% — enter value of harvest)'],
+      ['💧','zk-ushr-irr','Ushr: Irrigated produce (5% — enter value of harvest)'],
     ];
     const fields = this._type==='business'?business:this._type==='farmer'?farmer:individual;
     const isDeduct = id => id==='zk-debts'||id==='zk-exp';
@@ -108,12 +169,15 @@ const Zakat = {
     const netWealth = Math.max(0, totalAssets - totalDeduct);
     const eligible = nisab > 0 && netWealth >= nisab;
     const zakatDue = eligible ? netWealth * 0.025 : 0;
+    const ushrRain = this._type==='farmer' ? g('zk-ushr-rain') * 0.10 : 0;
+    const ushrIrr = this._type==='farmer' ? g('zk-ushr-irr') * 0.05 : 0;
+    const ushrTotal = ushrRain + ushrIrr;
 
     const cur = window.Currency ? Currency.get().base : 'PKR';
     const fmt = n => (cur==='GBP'?'£':cur==='USD'?'$':cur==='AED'?'AED ':'PKR ') + Math.round(n).toLocaleString();
 
     const saved = {};
-    ['zk-gprice','zk-sprice','zk-cash','zk-gold','zk-silver','zk-invest','zk-recv','zk-stock','zk-produce','zk-livestock','zk-debts','zk-exp'].forEach(id=>{
+    ['zk-gprice','zk-sprice','zk-cash','zk-gold','zk-silver','zk-invest','zk-recv','zk-stock','zk-produce','zk-livestock','zk-debts','zk-exp','zk-ushr-rain','zk-ushr-irr'].forEach(id=>{
       saved[id]=document.getElementById(id)?.value||'';
     });
     saved.goldPrice=goldPrice; saved.silverPrice=silverPrice;
@@ -137,6 +201,8 @@ const Zakat = {
           <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)"><span style="font-weight:700">Net Zakatable Wealth</span><span style="font-size:16px;font-weight:900">${fmt(netWealth)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Zakat Eligible?</span><span style="font-weight:800;color:${eligible?'#4caf50':'#ff9800'}">${eligible?'✅ Yes — Zakat is Due':'❌ Below Nisab — Not Due'}</span></div>
           ${eligible?`<div style="display:flex;justify-content:space-between;padding:12px;background:rgba(76,175,80,.15);border-radius:10px;margin-top:4px"><span style="font-size:15px;font-weight:800;color:#4caf50">Zakat Due @ 2.5%</span><span style="font-size:24px;font-weight:900;color:#4caf50">${fmt(zakatDue)}</span></div>`:''}
+          ${ushrTotal>0?`<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(76,175,80,.1);border-radius:10px;margin-top:4px"><span style="font-size:13px;font-weight:700;color:#4caf50">Ushr Due (agricultural)</span><span style="font-size:18px;font-weight:900;color:#4caf50">${fmt(ushrTotal)}</span></div>`:''}
+          ${ushrTotal>0&&(ushrRain>0||ushrIrr>0)?`<div style="font-size:11px;color:var(--text3);margin-top:4px">${ushrRain>0?`Rain-fed (10%): ${fmt(ushrRain)}`:''}${ushrRain>0&&ushrIrr>0?' · ':''}${ushrIrr>0?`Irrigated (5%): ${fmt(ushrIrr)}`:''}</div>`:''}
         </div>
         ${!eligible&&nisab===0?'<div style="margin-top:12px;font-size:12px;color:var(--warning)">⚠️ Enter gold/silver prices to calculate nisab threshold.</div>':''}
       </div>`;

@@ -2569,10 +2569,17 @@ function buildSettTabs() {
   ).join('');
 }
 
+function getTabPrefs() {
+  try { return JSON.parse(localStorage.getItem('vo_tab_prefs')||'{}'); } catch(e) { return {}; }
+}
+function saveTabPrefs(prefs) {
+  localStorage.setItem('vo_tab_prefs', JSON.stringify(prefs));
+}
+
 function renderFinanceHome() {
   const b = document.getElementById('finance-home-body');
   if (!b) return;
-  const modules = [
+  const allModules = [
     {id:'banks',icon:'🏦',label:'Banks',desc:(S.banks||[]).length+' accounts'},
     {id:'cards',icon:'💳',label:'Cards',desc:(S.cards||[]).length+' cards'},
     {id:'cash',icon:'💵',label:'Cash',desc:(S.cash||[]).length+' entries'},
@@ -2584,11 +2591,14 @@ function renderFinanceHome() {
     {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
     {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
   ];
+  const hidden = getTabPrefs().hiddenFinance || [];
+  const modules = allModules.filter(m => !hidden.includes(m.id));
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
-      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
     </div>`).join('') + '</div>';
 }
 
@@ -2603,10 +2613,11 @@ function renderVaultHome() {
     {id:'friends',icon:'👥',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
-      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
     </div>`).join('') + '</div>';
 }
 
@@ -2620,10 +2631,11 @@ function renderAssetsHome() {
     {id:'gold',icon:'🥇',label:'Precious Metals',desc:'Gold & silver'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
-      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
     </div>`).join('') + '</div>';
 }
 
