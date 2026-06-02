@@ -389,8 +389,33 @@ const Settings={
     if(!window.__vos_confirm('Load demo data? This will merge fictional data with your vault.'))return;
     Modal.close();
     loadDemoProfile(type);
-    buildNav();Toast.show('Demo data loaded!','success');
-    if(typeof SettingsNav!=='undefined')SettingsNav.show('profile');
+    // Populate new module localStorage keys not covered by loadDemoProfile
+    const isPK = (type === 'business');
+    const isAE = (type === 'family');
+    const cur = isPK ? 'PKR' : isAE ? 'AED' : 'GBP';
+    localStorage.setItem('vo_currency', JSON.stringify({base:cur, rates:{USD:280,GBP:355,AED:76,EUR:300,PKR:1}}));
+    localStorage.setItem('vo_gold', JSON.stringify([
+      {id:'dg1',type:'gold',name:'22k Wedding Set',weight:40,unit:'g',pricePerUnit:18500,currency:'PKR',createdAt:new Date().toISOString()},
+      {id:'dg2',type:'gold',name:'Gold Coins',weight:2,unit:'tola',pricePerUnit:220000,currency:'PKR',createdAt:new Date().toISOString()},
+      {id:'dg3',type:'silver',name:'Silver Cutlery',weight:500,unit:'g',pricePerUnit:250,currency:'PKR',createdAt:new Date().toISOString()}
+    ]));
+    localStorage.setItem('vo_family', JSON.stringify({
+      head:{name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1970-05-15',phone:'+92 300 1234567',email:'ahmed@example.com',docs:[{type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},{type:'Passport',number:'AB1234567',expiry:'2029-06-15'}],banks:['HBL','Standard Chartered'],cards:[{name:'HBL Prestige Visa',last4:'4821'},{name:'SCB Platinum',last4:'3390'}],notes:'Head of household. Primary income earner.'},
+      members:[
+        {id:'fm1',name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1975-08-22',phone:'+92 300 7654321',docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'}],banks:['Meezan Bank'],cards:[{name:'Meezan Infinite Visa',last4:'6677'}],notes:'Joint account holder at Meezan.',cash:[{label:'Household',amount:50000}]},
+        {id:'fm2',name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'2000-03-10',docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'CD9876543',expiry:'2031-09-20'}],banks:['UBL'],cards:[{name:'UBL Campus Card',last4:'1122'}],notes:'Student. University of Karachi.'},
+        {id:'fm3',name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'}],banks:[],cards:[],notes:'School student.'}
+      ]
+    }));
+    localStorage.setItem('vo_credit_score', JSON.stringify({country:'GB',entries:[
+      {id:'cs1',score:720,bureau:'Experian',date:'2024-01-15',notes:'After paying off credit card'},
+      {id:'cs2',score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
+      {id:'cs3',score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application check'}
+    ]}));
+    localStorage.setItem('vo_zakat_calc', JSON.stringify({'zk-cash':'850000','zk-gold-val':'740000','zk-silver-val':'125000','zk-investments':'200000','zk-receivable':'50000','zk-stock':'0','zk-debts':'100000','zk-expenses':'30000'}));
+    localStorage.setItem('vo_tax_calc', JSON.stringify({country:'PK',income:'3600000'}));
+    Toast.show('Demo data loaded — explore all features!','success');
+    setTimeout(()=>location.reload(),1500);
   },
   resetVault(){
     if(!window.__vos_confirm('⚠️ This will permanently delete ALL your vault data.'))return;
