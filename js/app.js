@@ -167,6 +167,20 @@ const CARDS_DB=[
   {n:'ADCB Traveller Visa',net:'Visa',cat:'Travel'},
   {n:'Mashreq Neo Visa',net:'Visa',cat:'Debit'},
   {n:'FAB Islamic MC',net:'Mastercard',cat:'Standard'},
+  {n:'HBL Prestige Visa Infinite',net:'Visa',cat:'Premium'},
+  {n:'Meezan Infinite Visa',net:'Visa',cat:'Premium'},
+  {n:'MCB Visa Infinite',net:'Visa',cat:'Premium'},
+  {n:'UBL Platinum Mastercard',net:'Mastercard',cat:'Premium'},
+  {n:'Faysal Islami Visa Infinite',net:'Visa',cat:'Premium'},
+  {n:'JS Bank Visa Infinite',net:'Visa',cat:'Premium'},
+  {n:'Askari Platinum Visa',net:'Visa',cat:'Premium'},
+  {n:'Yonder Credit Card',net:'Visa',cat:'Rewards'},
+  {n:'Zabel Visa',net:'Visa',cat:'Standard'},
+  {n:'HSBC Premier World Elite Mastercard',net:'Mastercard',cat:'Premium'},
+  {n:'FAB Infinite Visa',net:'Visa',cat:'Premium'},
+  {n:'DIB Infinite Visa',net:'Visa',cat:'Premium'},
+  {n:'Emirates NBD Skywards Infinite Visa',net:'Visa',cat:'Premium'},
+  {n:'Mashreq Cashback World Mastercard',net:'Mastercard',cat:'Cashback'},
 ];
 
 const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eToro','Vanguard UK','Sarwa','Baraka','Al Meezan','AKD Securities','JS Global','Binance','Coinbase','Kraken','Bybit','OKX',
@@ -279,6 +293,10 @@ const SMART_DB = {
     {name:'Monument Bank',aliases:['Monument'],country:'GB',currency:'GBP',type:'digital',swift:null},
     {name:'Zopa Bank',aliases:['Zopa'],country:'GB',currency:'GBP',type:'digital',swift:null},
     {name:'Paysend',aliases:['Dozens','Paysend UK'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'Zabel',aliases:['Zable','Zabel Visa'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'Yonder',aliases:['Yonder Credit'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'Wirex',aliases:['Wirex Visa','Wirex Bank'],country:'GB',currency:'GBP',type:'digital',swift:null},
+    {name:'Klarna',aliases:['Klarna Card','Klarna Bank'],country:'GB',currency:'GBP',type:'digital',swift:null},
     // ── UK ISLAMIC BANKS ──
     {name:'Al Rayan Bank',aliases:['Islamic Bank of Britain','Al Rayan'],country:'GB',currency:'GBP',type:'islamic',swift:null},
     {name:'Gatehouse Bank',aliases:['Gatehouse'],country:'GB',currency:'GBP',type:'islamic',swift:null},
@@ -518,6 +536,25 @@ const SMART_DB = {
     {name:'Amex Gold UAE',network:'American Express',type:'Credit',country:'AE',category:'Rewards'},
     {name:'Amex Platinum UAE',network:'American Express',type:'Credit',country:'AE',category:'Premium'},
     {name:'Amex Marriott Bonvoy UAE',network:'American Express',type:'Credit',country:'AE',category:'Premium'},
+    // ── UAE CARDS — Premium/Infinite additions ──
+    {name:'FAB Infinite Visa',network:'Visa',type:'Credit',country:'AE',category:'Premium'},
+    {name:'ADCB Traveller Visa Infinite',network:'Visa',type:'Credit',country:'AE',category:'Travel'},
+    {name:'Mashreq Cashback World Mastercard',network:'Mastercard',type:'Credit',country:'AE',category:'Cashback'},
+    {name:'DIB Infinite Visa',network:'Visa',type:'Credit',country:'AE',category:'Islamic'},
+    // ── PK CARDS — Infinite/Prestige tier ──
+    {name:'HBL Prestige Visa Infinite',network:'Visa',type:'Credit',country:'PK',category:'Premium'},
+    {name:'HBL Meezan Infinity Visa',network:'Visa',type:'Credit',country:'PK',category:'Islamic'},
+    {name:'Meezan Infinite Visa',network:'Visa',type:'Credit',country:'PK',category:'Islamic'},
+    {name:'MCB Visa Infinite',network:'Visa',type:'Credit',country:'PK',category:'Premium'},
+    {name:'UBL Platinum Mastercard',network:'Mastercard',type:'Credit',country:'PK',category:'Premium'},
+    {name:'Faysal Islami Visa Infinite',network:'Visa',type:'Credit',country:'PK',category:'Islamic'},
+    {name:'Bank Al Habib Visa Platinum',network:'Visa',type:'Credit',country:'PK',category:'Premium'},
+    {name:'JS Bank Visa Infinite',network:'Visa',type:'Credit',country:'PK',category:'Premium'},
+    // ── UK CARDS — Premium additions ──
+    {name:'Yonder Credit Card',network:'Visa',type:'Credit',country:'GB',category:'Rewards'},
+    {name:'Zabel Visa',network:'Visa',type:'Credit',country:'GB',category:'Standard'},
+    {name:'HSBC Premier World Elite Mastercard',network:'Mastercard',type:'Credit',country:'GB',category:'Premium'},
+    {name:'Virgin Money Rewards Visa',network:'Visa',type:'Credit',country:'GB',category:'Rewards'},
   ],
   sims:[
     // ── PK ──
