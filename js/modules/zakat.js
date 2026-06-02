@@ -14,6 +14,18 @@ const Zakat = {
       <div style="background:linear-gradient(135deg,rgba(0,150,136,.15),rgba(76,175,80,.1));border:1px solid rgba(0,150,136,.3);border-radius:16px;padding:16px;margin-bottom:16px">
         <div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">🌙 Zakat Calculator</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.7">Zakat is due on wealth held above nisab for one full lunar year (hawl). Rate: <strong style="color:#4caf50">2.5%</strong></div>
+        <details style="margin-top:10px">
+          <summary style="font-size:12px;font-weight:700;color:#4caf50;cursor:pointer;touch-action:manipulation;list-style:none;padding:4px 0">📖 Quranic &amp; Hadith References ▼</summary>
+          <div style="font-size:12px;color:var(--text3);line-height:1.9;margin-top:8px;padding-top:8px;border-top:1px solid rgba(76,175,80,.2)">
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Surah At-Tawbah 9:103</div><div style="font-style:italic">"Take from their wealth a charity by which you purify them and cause them increase, and invoke blessings upon them."</div></div>
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Surah Al-Baqarah 2:43</div><div style="font-style:italic">"And establish prayer and give Zakat and bow with those who bow."</div></div>
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Surah Al-Baqarah 2:277</div><div style="font-style:italic">"Those who believe, do good deeds, establish prayer and give Zakat will have their reward with their Lord."</div></div>
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Hadith — Sahih al-Bukhari 1496</div><div style="font-style:italic">The Prophet ﷺ said: "No owner of gold or silver who does not give what is due (Zakat) will be saved from punishment."</div></div>
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Nisab — Sahih Muslim 979</div><div style="font-style:italic">The Prophet ﷺ set the nisab at 5 awsuq of dates, 5 camels, 20 dinars (gold), or 200 dirhams (silver ~612g).</div></div>
+            <div style="margin-bottom:8px"><div style="font-weight:700;color:var(--text2)">Rate — Ijma (Scholarly Consensus)</div><div style="font-style:italic">2.5% (1/40th) of zakatable wealth above nisab held for one full lunar year (hawl). Established by scholarly consensus (ijma).</div></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">Calculations follow Hanafi fiqh as practised in Pakistan. Consult a qualified Islamic scholar (alim) for personal rulings.</div>
+          </div>
+        </details>
       </div>
 
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Calculation Mode</div>

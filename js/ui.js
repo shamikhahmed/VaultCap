@@ -1,4 +1,6 @@
-const FX={PKR:1,GBP:350,AED:75,USD:280,EUR:320,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
+const _FX_DEFAULTS={PKR:1,GBP:355,AED:76,USD:280,EUR:300,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
+function getFX(){try{if(typeof Currency!=='undefined'){const c=Currency.get();if(c&&c.rates&&Object.keys(c.rates).length>0)return{..._FX_DEFAULTS,...c.rates,PKR:1};}}catch(e){}return _FX_DEFAULTS;}
+const FX=new Proxy({},{get(_,key){return getFX()[key];}});
 const Dash={
   render(){
     const h=new Date().getHours();

@@ -235,7 +235,8 @@ const Family = {
   _tabDocs(m) {
     const docs = m.docs || [];
     const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Documents tab</div>' : '';
-    const addBtn = m._isVaultOwner ? '' : '<button onclick="Family._addDoc()" style="width:100%;padding:12px;border-radius:12px;background:rgba(123,95,255,.15);border:1px solid rgba(123,95,255,.3);color:rgba(123,95,255,1);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Document</button>';
+    const midx = this._memberIdx;
+    const addBtn = m._isVaultOwner ? '' : `<button onclick="Family._addDocFor(${JSON.stringify(midx)})" style="width:100%;padding:12px;border-radius:12px;background:rgba(123,95,255,.15);border:1px solid rgba(123,95,255,.3);color:rgba(123,95,255,1);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Document</button>`;
     return `
       ${liveNote}
       ${addBtn}
@@ -255,20 +256,21 @@ const Family = {
   _tabBanks(m) {
     const banks = m.banks || [];
     const cards = m.cards || [];
+    const midx = this._memberIdx;
     const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Banks/Cards tabs</div>' : '';
     return `
       ${liveNote}
       <div style="margin-bottom:20px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Banks</div>
-          ${!m._isVaultOwner?'<button onclick="Family._addBank()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>':''}
+          ${!m._isVaultOwner?`<button onclick="Family._addBankFor(${JSON.stringify(midx)})" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>`:''}
         </div>
         ${banks.length ? banks.map((b,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(b)}</div>${!m._isVaultOwner?`<button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
       </div>
       <div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Cards</div>
-          ${!m._isVaultOwner?'<button onclick="Family._addCard()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>':''}
+          ${!m._isVaultOwner?`<button onclick="Family._addCardFor(${JSON.stringify(midx)})" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>`:''}
         </div>
         ${cards.length ? cards.map((c,i)=>`
           <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
@@ -292,7 +294,8 @@ const Family = {
     const cash = m.cash || [];
     const total = cash.reduce((a,c)=>a+(c.amount||0),0);
     const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Cash tab</div>' : '';
-    const addBtn = m._isVaultOwner ? '' : '<button onclick="Family._addCash()" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--ok);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Cash Entry</button>';
+    const midx = this._memberIdx;
+    const addBtn = m._isVaultOwner ? '' : `<button onclick="Family._addCashFor(${JSON.stringify(midx)})" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--ok);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Cash Entry</button>`;
     return `
       ${liveNote}
       ${total>0?`<div style="background:linear-gradient(135deg,rgba(0,255,136,.1),rgba(0,213,255,.08));border:1px solid rgba(0,255,136,.3);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Total Cash</div><div style="font-size:28px;font-weight:900;color:var(--ok)">PKR ${total.toLocaleString()}</div></div>`:''}
@@ -310,12 +313,13 @@ const Family = {
   _tabInvestments(m) {
     const items = m.investments || [];
     const total = items.reduce((a,x)=>a+(x.value||0),0);
+    const midx = this._memberIdx;
     return `
       ${total>0?`<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px">
         <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Total Investments</div>
         <div style="font-size:26px;font-weight:900;color:var(--info)">PKR ${total.toLocaleString()}</div>
       </div>`:''}
-      <button onclick="Family._addInvestment()" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);color:var(--info);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Investment</button>
+      <button onclick="Family._addInvestmentFor(${JSON.stringify(midx)})" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);color:var(--info);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Investment</button>
       ${items.map((x,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">
         <div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(x.type||'Investment')}</div><div style="font-size:12px;color:var(--text3)">${_fesc(x.name||'')}</div></div>
         <div style="text-align:right"><div style="font-size:15px;font-weight:800;color:var(--info)">PKR ${(x.value||0).toLocaleString()}</div><button onclick="Family._removeInvestment(${i})" style="font-size:11px;color:var(--err);background:none;border:none;cursor:pointer">Remove</button></div>
@@ -454,10 +458,10 @@ const Family = {
   /* ── Doc actions ── */
   _addDoc() {
     Modal.open('📄 Add Document',
-      `<div style="display:flex;flex-direction:column;gap:10px">
+      `<div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Document Type</div>
-          <select id="fd-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          <select id="fd-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;min-height:48px">
             <optgroup label="Identity">
               <option>Passport</option>
               <option>National ID / CNIC</option>
@@ -499,17 +503,17 @@ const Family = {
             </optgroup>
           </select>
         </div>
-        <input id="fd-num" placeholder="Document number (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+        <input id="fd-num" placeholder="Document number (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Issue Date</div>
-          <input id="fd-issued" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          <input id="fd-issued" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
         </div>
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Expiry Date</div>
-          <input id="fd-exp" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          <input id="fd-exp" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
         </div>
-        <input id="fd-issuer" placeholder="Issued by (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-        <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px;resize:none"></textarea>
+        <input id="fd-issuer" placeholder="Issued by (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
+        <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;resize:none"></textarea>
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Photos (optional)</div>
           <div style="display:flex;gap:8px">
@@ -930,6 +934,12 @@ const Family = {
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveCash()">Add</button>`);
   },
 
+  _addBankFor(midx) { this._memberIdx = midx; this._addBank(); },
+  _addCardFor(midx) { this._memberIdx = midx; this._addCard(); },
+  _addDocFor(midx) { this._memberIdx = midx; this._addDoc(); },
+  _addCashFor(midx) { this._memberIdx = midx; this._addCash(); },
+  _addInvestmentFor(midx) { this._memberIdx = midx; this._addInvestment(); },
+
   _saveCash() {
     const amount = parseFloat(document.getElementById('fca-amount')?.value)||0;
     if (!amount) { Toast.show('Enter an amount','error'); return; }
@@ -968,5 +978,10 @@ window.Family._searchBankList = Family._searchBankList.bind(Family);
 window.Family._saveFamilyBank = Family._saveFamilyBank.bind(Family);
 window.Family._saveFamilyCard = Family._saveFamilyCard.bind(Family);
 window.Family._captureCardPhoto = Family._captureCardPhoto.bind(Family);
+window.Family._addBankFor = Family._addBankFor.bind(Family);
+window.Family._addCardFor = Family._addCardFor.bind(Family);
+window.Family._addDocFor = Family._addDocFor.bind(Family);
+window.Family._addCashFor = Family._addCashFor.bind(Family);
+window.Family._addInvestmentFor = Family._addInvestmentFor.bind(Family);
 
 function _fesc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
