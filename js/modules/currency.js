@@ -47,7 +47,7 @@ const Currency = {
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
               <div style="width:48px;font-size:13px;font-weight:700;color:var(--text)">${cur}</div>
               <input type="number" id="rate-${cur}" value="${c.rates[cur]||''}" placeholder="Rate" min="0" step="0.01"
-                style="flex:1;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:14px"
+                style="flex:1;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:16px"
                 oninput="Currency._rateInput('${cur}',this.value)">
               <div style="font-size:11px;color:var(--text3);width:80px">1 ${cur} = ${c.base}</div>
             </div>`).join('')}

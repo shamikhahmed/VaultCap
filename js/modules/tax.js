@@ -163,7 +163,7 @@ const Tax = {
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
         📋 ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        <button onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;font-weight:600">Edit rates ✏️</button>
+        <button onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit rates ✏️</button>
       </div>
       ${filing.isVAT ? this._vatForm(saved) : this._incomeForm(saved, cfg.symbol)}
       <div style="margin-top:20px">
@@ -237,7 +237,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 Tax Report — ${filing.name}</div>
-        <button onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer">🖨️ Print</button>
+        <button onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Gross Income</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -270,7 +270,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800">🧾 VAT Report (5%)</div>
-        <button onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer">🖨️ Print</button>
+        <button onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>AED ${amount.toLocaleString()}</span></div>
@@ -304,7 +304,7 @@ const Tax = {
       ${filing.slabs.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <div style="flex:1;font-size:13px;color:var(--text)">${s.label}</div>
         <input id="slb-${i}" type="number" value="${(s.rate*100).toFixed(2)}" min="0" max="100" step="0.01"
-          style="width:80px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);text-align:right">
+          style="width:80px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);text-align:right;font-size:16px">
         <span style="color:var(--text3)">%</span>
       </div>`).join('')}`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Tax._saveSlabs()">Save</button>`);

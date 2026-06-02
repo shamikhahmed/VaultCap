@@ -23,7 +23,7 @@ const Gold = {
             </div>
             <div style="text-align:right">
               <div style="font-size:15px;font-weight:800;color:#ffc107">${Currency.format(x.weight*x.pricePerUnit,cur.base)}</div>
-              <button onclick="Gold.del(${i})" style="font-size:11px;color:var(--danger);background:none;border:none;cursor:pointer;margin-top:4px">Remove</button>
+              <button onclick="Gold.del(${i})" style="font-size:11px;color:var(--danger);background:none;border:none;cursor:pointer;touch-action:manipulation;margin-top:4px">Remove</button>
             </div>
           </div>`).join('') : '<div style="text-align:center;padding:40px;color:var(--text3)">No precious metals added yet</div>'}
       </div>`;
@@ -37,9 +37,9 @@ const Gold = {
           <option value="silver">🥈 Silver</option>
           <option value="platinum">🪙 Platinum</option>
         </select>
-        <input id="gld-name" placeholder="Label (e.g. 22k bangles, wedding set)" style="background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text)">
+        <input id="gld-name" placeholder="Label (e.g. 22k bangles, wedding set)" style="background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:16px">
         <div style="display:flex;gap:8px">
-          <input id="gld-weight" type="number" placeholder="Weight" min="0" step="0.01" style="flex:1;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text)">
+          <input id="gld-weight" type="number" placeholder="Weight" min="0" step="0.01" style="flex:1;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:16px">
           <select id="gld-unit" style="width:80px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text)">
             <option value="g">g</option>
             <option value="tola">tola</option>
@@ -47,7 +47,7 @@ const Gold = {
             <option value="kg">kg</option>
           </select>
         </div>
-        <input id="gld-price" type="number" placeholder="Current price per unit (enter manually)" min="0" style="background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text)">
+        <input id="gld-price" type="number" placeholder="Current price per unit (enter manually)" min="0" style="background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:16px">
         <div style="font-size:11px;color:var(--text3)">Enter today's price per gram/tola/oz manually. Check your local gold rate.</div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Gold.save_item()">Save</button>`);

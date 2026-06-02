@@ -22,8 +22,8 @@ const Zakat = {
 
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Nisab Standard</div>
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button onclick="Zakat._nisabType='silver';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid ${this._nisabType==='silver'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='silver'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='silver'?'#4caf50':'var(--text3)'}">🥈 Silver (612.36g)<br><span style="font-size:10px;font-weight:400">Most common — Hanafi</span></button>
-        <button onclick="Zakat._nisabType='gold';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid ${this._nisabType==='gold'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='gold'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='gold'?'#4caf50':'var(--text3)'}">🥇 Gold (87.48g)<br><span style="font-size:10px;font-weight:400">Conservative standard</span></button>
+        <button onclick="Zakat._nisabType='silver';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${this._nisabType==='silver'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='silver'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='silver'?'#4caf50':'var(--text3)'}">🥈 Silver (612.36g)<br><span style="font-size:10px;font-weight:400">Most common — Hanafi</span></button>
+        <button onclick="Zakat._nisabType='gold';Zakat.render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${this._nisabType==='gold'?'rgba(0,150,136,.6)':'var(--border)'};background:${this._nisabType==='gold'?'rgba(0,150,136,.2)':'transparent'};color:${this._nisabType==='gold'?'#4caf50':'var(--text3)'}">🥇 Gold (87.48g)<br><span style="font-size:10px;font-weight:400">Conservative standard</span></button>
       </div>
 
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px">
@@ -33,13 +33,13 @@ const Zakat = {
             <span style="font-size:20px">🥇</span>
             <div style="flex:1;font-size:13px;color:var(--text)">Gold per gram</div>
             <input id="zk-gprice" type="number" value="${saved.goldPrice||''}" placeholder="e.g. 18500"
-              style="width:130px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:right">
+              style="width:130px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:right;font-size:16px">
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:20px">🥈</span>
             <div style="flex:1;font-size:13px;color:var(--text)">Silver per gram</div>
             <input id="zk-sprice" type="number" value="${saved.silverPrice||''}" placeholder="e.g. 250"
-              style="width:130px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:right">
+              style="width:130px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:right;font-size:16px">
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ const Zakat = {
             <span style="font-size:18px;flex-shrink:0">${icon}</span>
             <div style="flex:1;font-size:13px;color:${isDeduct(id)?'var(--danger)':'var(--text)'}">${label}</div>
             <input id="${id}" type="number" value="${saved[id]||''}" placeholder="0" min="0"
-              style="width:130px;background:var(--input);border:1px solid ${isDeduct(id)?'rgba(255,69,58,.3)':'var(--border)'};border-radius:8px;padding:10px;color:var(--text);text-align:right">
+              style="width:130px;background:var(--input);border:1px solid ${isDeduct(id)?'rgba(255,69,58,.3)':'var(--border)'};border-radius:8px;padding:10px;color:var(--text);text-align:right;font-size:16px">
           </div>`).join('')}
       </div>
     </div>`;
