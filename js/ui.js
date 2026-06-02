@@ -215,6 +215,7 @@ const Dash={
 const Settings={
   render(){
     const b=document.getElementById('settBody');if(!b)return;
+    const mk=this.getMasterKey();
     b.innerHTML=`
     <div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
@@ -236,7 +237,18 @@ const Settings={
 
     <div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
-      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()">View</button></div>
+      <div style="padding:14px">
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🗝️ Your Master Key</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6">This key can reset your PIN if you forget it. It is derived from your PIN and name — not stored anywhere. Write it down and keep it safe.</div>
+        <div id="mk-display" onclick="this.style.filter='none';document.getElementById('mk-actions').style.display='flex'"
+          style="font-size:18px;font-weight:900;letter-spacing:4px;color:var(--accent);text-align:center;padding:16px;background:rgba(0,0,0,.3);border-radius:10px;font-family:var(--mono);filter:blur(8px);cursor:pointer;transition:filter .3s"
+          title="Tap to reveal">${mk}</div>
+        <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:6px">Tap to reveal · Keep this private</div>
+        <div id="mk-actions" style="display:none;gap:8px;margin-top:12px">
+          <button class="btn btn-s btn-sm" style="flex:1" onclick="navigator.clipboard?.writeText('${mk}').then(()=>Toast.show('Copied','success'))">📋 Copy</button>
+          <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings._printMasterKey('${mk}')">🖨️ Print Card</button>
+        </div>
+      </div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
       <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
@@ -315,15 +327,22 @@ const Settings={
     });
   },
   showMasterKey(){
-    const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));
-    const key=(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
+    const key=this.getMasterKey();
     Modal.open('🗝️ Master Emergency Key',`
     <div style="text-align:center;padding:8px 0">
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">This key can bypass lockouts and reset your PIN. It is derived from your PIN + name — it is NOT stored anywhere. Write it down and keep it somewhere physically safe.</p>
       <div style="font-size:22px;font-weight:900;letter-spacing:4px;color:var(--accent);background:var(--glass2);padding:18px;border-radius:var(--r);font-family:var(--mono);margin-bottom:14px;word-break:break-all">${key}</div>
-      <button class="btn btn-s btn-full" onclick="U.copy('${key}','Master key')">📋 Copy Key</button>
-      <p style="font-size:11px;color:var(--text3);margin-top:10px">If your PIN or name changes, this key changes too. Re-view it after any changes.</p>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn btn-s" style="flex:1" onclick="U.copy('${key}','Master key')">📋 Copy Key</button>
+        <button class="btn btn-s" style="flex:1" onclick="Settings._printMasterKey('${key}')">🖨️ Print Card</button>
+      </div>
+      <p style="font-size:11px;color:var(--text3)">If your PIN or name changes, this key changes too. Re-view it after any changes.</p>
     </div>`,`<button class="btn btn-p btn-full" onclick="Modal.close()">✅ I've stored it safely</button>`);
+  },
+  _printMasterKey(key){
+    const w=window.open('','_blank');
+    w.document.write(`<html><head><title>VaultOS Master Key</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:400px;margin:0 auto;text-align:center}.card{border:2px solid #333;border-radius:16px;padding:24px;margin:20px 0}.key{font-size:22px;font-weight:900;letter-spacing:4px;font-family:monospace;color:#1a237e;margin:16px 0}.warn{font-size:12px;color:#666;margin-top:16px}</style></head><body><h2>🔐 VaultOS Emergency Master Key</h2><div class="card"><div style="font-size:13px;color:#666;margin-bottom:8px">Keep this card safe and private</div><div class="key">${key}</div><div style="font-size:12px;color:#666">Generated: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="warn">⚠️ This key can reset your PIN. Do not share it with anyone.<br>Store in a safe place separate from your device.</div></body></html>`);
+    w.document.close();w.print();
   },
   setDecoyPIN(){
     Modal.open('🎭 Set Decoy PIN',`
@@ -342,29 +361,52 @@ const Settings={
     Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
   },
   forgotPIN(){
-    Modal.open('🔑 Forgot PIN',`
-    <p style="font-size:13px;line-height:1.6;color:var(--text2)">VaultOS does not store your PIN anywhere. If you forget it, your vault cannot be unlocked — this is by design for maximum security.</p>
-    <p style="font-size:13px;line-height:1.6;color:var(--text2);margin-top:10px">If you have a <strong>Master Key</strong> (visible in Settings → Security → Master Key), you can use it instead of your PIN.</p>
-    <p style="font-size:13px;line-height:1.6;color:var(--text2);margin-top:10px">If you have a recent <strong>.vos backup file</strong>, delete the app data and restore from backup with the correct PIN.</p>
-    <div style="background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:var(--r);padding:12px;margin-top:14px;font-size:12px;color:var(--err)">⚠️ Without your PIN or Master Key, the encrypted vault cannot be recovered. This protects your data from anyone — including us.</div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer" onclick="Settings.useMasterKey()"><div style="font-weight:600;font-size:13px;margin-bottom:3px">🗝️ Use Master Key</div><div style="font-size:11px;color:var(--text2)">Enter the emergency master key from Settings</div></div>
-      <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:12px;cursor:pointer" onclick="Settings.resetVault()"><div style="font-weight:600;font-size:13px;color:var(--err);margin-bottom:3px">⚠️ Reset Vault</div><div style="font-size:11px;color:var(--text2)">Last resort — wipes all data permanently</div></div>
-    </div>`,
-    `<button class="btn btn-p btn-full" onclick="Modal.close()">Understood</button>`);
+    Modal.open('🔑 Forgot PIN',
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();Settings.useMasterKey()">
+          <div style="font-weight:700;margin-bottom:4px">🗝️ Use Master Key</div>
+          <div style="font-size:12px;color:var(--text2)">Enter the master key you saved when setting up your vault</div>
+        </div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();document.getElementById('importF-global')?.click()">
+          <div style="font-weight:700;margin-bottom:4px">📥 Restore from Backup</div>
+          <div style="font-size:12px;color:var(--text2)">Import a .vault backup file to recover access</div>
+        </div>
+        <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();Settings.resetVault()">
+          <div style="font-weight:700;color:var(--err);margin-bottom:4px">⚠️ Reset Vault</div>
+          <div style="font-size:12px;color:var(--text2)">Last resort — permanently wipes all vault data</div>
+        </div>
+      </div>`,
+      `<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`
+    );
   },
   useMasterKey(){
-    Modal.open('🗝️ Enter Master Key',`
-    <div class="fg"><label class="fl">Your Master Key</label><input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:2px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
-    <div class="ferr" id="mk-err"></div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Settings.verifyMasterKey()">Verify & Reset PIN</button>`);
+    Modal.open('🗝️ Enter Master Key',
+      `<div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">Enter the master key that was shown when you first set up your vault. Format: XXXXXX-XXXXXX-XXXXXX</div>
+        <input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX"
+          style="font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;font-size:16px;text-align:center"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')">
+        <div class="ferr" id="mk-err" style="color:var(--err);font-size:12px;min-height:16px"></div>
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
+       <button class="btn btn-p" onclick="Settings.verifyMasterKey()">Verify & Reset PIN</button>`
+    );
   },
   verifyMasterKey(){
-    const input=document.getElementById('mk-in').value.trim().toUpperCase();
-    const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));
+    const input=(document.getElementById('mk-in')?.value||'').trim().toUpperCase();
+    const pin=S.pin||localStorage.getItem('vo_pin')||'';
+    const name=S.user?.name||'';
+    const raw=btoa(unescape(encodeURIComponent(pin+':'+name+':VaultOS3')));
     const expected=(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
-    if(input===expected){Modal.close();this.changePIN();Toast.show('Master key verified — set your new PIN','success');}
-    else{document.getElementById('mk-err').textContent='Invalid master key — check and try again';}
+    const err=document.getElementById('mk-err');
+    if(input===expected){Modal.close();Settings.changePIN();if(window.Toast)Toast.show('Master key verified — set your new PIN','success');}
+    else{if(err)err.textContent='Invalid master key — check and try again';}
+  },
+  getMasterKey(){
+    const pin=S.pin||'';
+    const name=S.user?.name||'';
+    const raw=btoa(unescape(encodeURIComponent(pin+':'+name+':VaultOS3')));
+    return(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
   },
   loadDemo(){
     const profiles=[

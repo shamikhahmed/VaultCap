@@ -101,8 +101,8 @@ const Family = {
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) { this.back(); return; }
-    const tabs = ['overview','docs','banks','cash','notes'];
-    const tabLabels = {overview:'📋 Overview',docs:'📄 Docs',banks:'💳 Banks & Cards',cash:'💵 Cash',notes:'📝 Notes'};
+    const tabs = ['overview','docs','banks','cash','investments','notes'];
+    const tabLabels = {overview:'📋 Overview',docs:'📄 Docs',banks:'💳 Banks & Cards',cash:'💵 Cash',investments:'📈 Investments',notes:'📝 Notes'};
     const midx = this._memberIdx;
 
     body.innerHTML = `
@@ -146,8 +146,9 @@ const Family = {
       case 'overview': return this._tabOverview(m);
       case 'docs':     return this._tabDocs(m);
       case 'banks':    return this._tabBanks(m);
-      case 'cash':     return this._tabCash(m);
-      case 'notes':    return this._tabNotes(m);
+      case 'cash':        return this._tabCash(m);
+      case 'investments': return this._tabInvestments(m);
+      case 'notes':       return this._tabNotes(m);
       default: return '';
     }
   },
@@ -218,6 +219,57 @@ const Family = {
     return `
       <textarea id="fm-notes-area" rows="10" placeholder="Add notes about ${_fesc(m.name)}..." style="width:100%;background:var(--glass2);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);font-size:14px;line-height:1.6;resize:none;box-sizing:border-box">${_fesc(m.notes||'')}</textarea>
       <button onclick="Family._saveNotes()" style="width:100%;margin-top:10px;padding:12px;border-radius:12px;background:rgba(123,95,255,1);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation">Save Notes</button>`;
+  },
+
+  _tabInvestments(m) {
+    const items = m.investments || [];
+    const total = items.reduce((a,x)=>a+(x.value||0),0);
+    return `
+      ${total>0?`<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Total Investments</div>
+        <div style="font-size:26px;font-weight:900;color:var(--info)">PKR ${total.toLocaleString()}</div>
+      </div>`:''}
+      <button onclick="Family._addInvestment()" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);color:var(--info);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Investment</button>
+      ${items.map((x,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">
+        <div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(x.type||'Investment')}</div><div style="font-size:12px;color:var(--text3)">${_fesc(x.name||'')}</div></div>
+        <div style="text-align:right"><div style="font-size:15px;font-weight:800;color:var(--info)">PKR ${(x.value||0).toLocaleString()}</div><button onclick="Family._removeInvestment(${i})" style="font-size:11px;color:var(--err);background:none;border:none;cursor:pointer">Remove</button></div>
+      </div>`).join('')}
+      ${!items.length?'<div style="text-align:center;padding:30px;color:var(--text3)">No investments added yet</div>':''}`;
+  },
+
+  _addInvestment() {
+    Modal.open('📈 Add Investment',
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        <select id="fi-type" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
+          ${['Stocks / Shares','Mutual Fund','Property / Real Estate','Savings Account','Fixed Deposit','NSS / Prize Bond','Cryptocurrency','Business Stake','Other'].map(t=>`<option>${t}</option>`).join('')}
+        </select>
+        <input id="fi-name" placeholder="Name / Description" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
+        <input id="fi-val" type="number" placeholder="Current value (PKR)" min="0" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)">
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveInvestment()">Add</button>`
+    );
+  },
+
+  _saveInvestment() {
+    const value = parseFloat(document.getElementById('fi-val')?.value||0);
+    if (!value) { if(window.Toast) Toast.show('Enter value','error'); return; }
+    const d = this.get();
+    const m = this._memberIdx==='head' ? d.head : d.members[this._memberIdx];
+    if (!m.investments) m.investments = [];
+    m.investments.push({type:document.getElementById('fi-type')?.value,name:document.getElementById('fi-name')?.value,value});
+    this.save(d); Modal.close();
+    if(window.Toast) Toast.show('Investment added','success');
+    const body = document.getElementById('fm-tab-body');
+    if (body) body.innerHTML = this._tabInvestments(m);
+  },
+
+  _removeInvestment(i) {
+    const d = this.get();
+    const m = this._memberIdx==='head' ? d.head : d.members[this._memberIdx];
+    if (m.investments) m.investments.splice(i,1);
+    this.save(d);
+    const body = document.getElementById('fm-tab-body');
+    if (body) body.innerHTML = this._tabInvestments(m);
   },
 
   /* ── Member form ── */

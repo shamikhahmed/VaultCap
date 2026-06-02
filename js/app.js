@@ -2969,7 +2969,86 @@ function loadDemoProfile(type) {
   if (S.unlocked) { buildNav(); R.goto('dashboard'); }
 }
 
-function loadDemoData() { loadDemoProfile('business'); }
+function loadDemoData() {
+  loadDemoProfile('business');
+  localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
+  localStorage.setItem('vo_gold', JSON.stringify([
+    {type:'gold',name:'22k Wedding Set',weight:40,unit:'g',pricePerUnit:18500,addedAt:new Date().toISOString()},
+    {type:'gold',name:'Gold Coins (10)',weight:20,unit:'tola',pricePerUnit:220000,addedAt:new Date().toISOString()},
+    {type:'silver',name:'Silver Cutlery Set',weight:500,unit:'g',pricePerUnit:250,addedAt:new Date().toISOString()},
+    {type:'gold',name:'Gold Bangles',weight:15,unit:'g',pricePerUnit:18500,addedAt:new Date().toISOString()}
+  ]));
+  localStorage.setItem('vo_family', JSON.stringify({
+    head:{
+      name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1968-05-15',
+      phone:'+92 300 1234567',email:'ahmed.khan@example.com',
+      notes:'Head of household. Director at logistics company. Based in Karachi.',
+      docs:[
+        {type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},
+        {type:'Passport',number:'AB1234567',expiry:'2029-06-15'},
+        {type:'NTN',number:'1234567-8',expiry:''}
+      ],
+      banks:['HBL','Standard Chartered','Meezan Bank'],
+      cards:[{name:'HBL Prestige Visa Infinite',last4:'4821',network:'Visa'},{name:'SCB Platinum Mastercard',last4:'3390',network:'Mastercard'}],
+      cash:[{label:'Home Safe',amount:150000,notes:'Emergency cash'},{label:'Office Petty Cash',amount:50000,notes:'Business expenses'}]
+    },
+    members:[
+      {
+        name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1972-08-22',
+        phone:'+92 300 7654321',email:'sara.ahmed@example.com',
+        notes:'Joint account holder. Manages household finances.',
+        docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'},{type:'Passport',number:'CD7654321',expiry:'2028-11-20'}],
+        banks:['Meezan Bank','HBL'],
+        cards:[{name:'Meezan Infinite Visa',last4:'6677',network:'Visa'}],
+        cash:[{label:'Household Budget',amount:80000,notes:'Monthly expenses'},{label:'Savings Jar',amount:30000,notes:'Personal savings'}]
+      },
+      {
+        name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'1998-03-10',
+        phone:'+92 321 1234567',email:'ali.ahmed@student.com',
+        notes:'Studying at IBA Karachi. Final year MBA.',
+        docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'EF9876543',expiry:'2031-09-20'}],
+        banks:['UBL','NayaPay'],
+        cards:[{name:'UBL Campus Visa Debit',last4:'1122',network:'Visa'}],
+        cash:[{label:'Pocket Money',amount:15000,notes:'Monthly allowance'}]
+      },
+      {
+        name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',
+        phone:'+92 321 9876543',email:'fatima.ahmed@school.com',
+        notes:'A-Levels student. Karachi Grammar School.',
+        docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'},{type:'Birth Certificate',number:'KHI-2003-11789',expiry:''}],
+        banks:['EasyPaisa Bank'],
+        cards:[],
+        cash:[{label:'Savings',amount:25000,notes:'Birthday gifts savings'}]
+      },
+      {
+        name:'Khalid Khan',avatar:'👨‍🦳',relation:'Father',dob:'1940-02-28',
+        phone:'+92 300 1111111',email:'',
+        notes:'Retired. Lives in Lahore. Property owner.',
+        docs:[{type:'CNIC',number:'42101-0001111-9',expiry:'2025-12-31'},{type:'Passport',number:'GH0001111',expiry:'2026-03-10'}],
+        banks:['NBP','HBL'],
+        cards:[],
+        cash:[{label:'Pension',amount:45000,notes:'Monthly pension'}]
+      }
+    ]
+  }));
+  localStorage.setItem('vo_credit_score', JSON.stringify({
+    country:'GB',
+    entries:[
+      {score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
+      {score:720,bureau:'Experian',date:'2024-01-15',notes:'After clearing credit card'},
+      {score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application'},
+      {score:755,bureau:'Experian',date:'2025-01-20',notes:'Annual check — improving trend'}
+    ]
+  }));
+  localStorage.setItem('vo_zakat_calc', JSON.stringify({
+    goldPrice:18500,silverPrice:250,
+    'zk-cash':'850000','zk-gold':'740000','zk-silver':'125000',
+    'zk-invest':'500000','zk-recv':'150000','zk-stock':'200000',
+    'zk-debts':'200000','zk-exp':'80000'
+  }));
+  localStorage.setItem('vo_tax_calc', JSON.stringify({ country:'PK', filing:'salaried', income:'3600000' }));
+  if (window.Toast) Toast.show('Demo data loaded for all modules!','success',3000);
+}
 
 // ===================== LARGE TEXT =====================
 function applyLargeText(on) {
