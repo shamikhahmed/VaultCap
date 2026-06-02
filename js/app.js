@@ -1516,7 +1516,10 @@ const R = {
         } else {
           Settings.render();
         }
-      }
+      },
+      'finance-home': () => renderFinanceHome(),
+      'vault-home':   () => renderVaultHome(),
+      'assets-home':  () => renderAssetsHome(),
     };
     if (renders[pg]) renders[pg]();
     if (prev !== pg) buildNav();
@@ -2497,13 +2500,41 @@ const SmartSuggest = {
 
 // ===================== MORE SHEET =====================
 function openMore() {
-  const el = document.getElementById('moreSheet');
-  if (el) { el.style.display = 'block'; }
+  document.getElementById('moreOverlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'moreOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:0 0 100px';
+  const allMore = [
+    {id:'alerts',     ic:'🔔', n:'Alerts'},
+    {id:'reminders',  ic:'⏰', n:'Reminders'},
+    {id:'timeline',   ic:'📅', n:'Timeline'},
+    {id:'search',     ic:'🔍', n:'Search'},
+    {id:'expenses',   ic:'📋', n:'Expenses'},
+    {id:'trash',      ic:'🗑️', n:'Trash'},
+    {id:'ai-import',  ic:'🤖', n:'AI Import'},
+    {id:'backup',     ic:'💾', n:'Backup'},
+    {id:'security',   ic:'🛡️', n:'Security'},
+    {id:'settings',   ic:'⚙️', n:'Settings'},
+  ];
+  overlay.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px">' +
+    '<div style="font-size:16px;font-weight:800;color:var(--text)">More</div>' +
+    '<button onclick="document.getElementById(\'moreOverlay\')?.remove()" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1">×</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px">' +
+    allMore.map(m =>
+      `<div onclick="document.getElementById('moreOverlay')?.remove();R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px"><div style="font-size:24px">${m.ic}</div><div style="font-size:14px;font-weight:600;color:var(--text)">${m.n}</div></div>`
+    ).join('') +
+    '</div>';
+  document.body.appendChild(overlay);
 }
 function closeMore() {
+  document.getElementById('moreOverlay')?.remove();
   const el = document.getElementById('moreSheet');
-  if (el) { el.style.display = 'none'; }
+  if (el) el.style.display = 'none';
 }
+window.openMore = openMore;
+window.closeMore = closeMore;
 
 // ===================== PRIVACY MODE =====================
 function togglePrivacy() {
@@ -2536,6 +2567,64 @@ function buildSettTabs() {
   el.innerHTML = tabs.map(([id, label]) =>
     `<div class="tab-pill${cur === id ? ' on' : ''}" onclick="SettingsNav.show('${id}')">${label}</div>`
   ).join('');
+}
+
+function renderFinanceHome() {
+  const b = document.getElementById('finance-home-body');
+  if (!b) return;
+  const modules = [
+    {id:'banks',icon:'🏦',label:'Banks',desc:(S.banks||[]).length+' accounts'},
+    {id:'cards',icon:'💳',label:'Cards',desc:(S.cards||[]).length+' cards'},
+    {id:'cash',icon:'💵',label:'Cash',desc:(S.cash||[]).length+' entries'},
+    {id:'investments',icon:'📈',label:'Investments',desc:(S.investments||[]).length+' positions'},
+    {id:'loans',icon:'🤝',label:'Loans',desc:(S.loans||[]).length+' loans'},
+    {id:'credit',icon:'📊',label:'Credit Score',desc:'Track scores'},
+    {id:'zakat',icon:'🌙',label:'Zakat',desc:'Calculate'},
+    {id:'tax',icon:'🧾',label:'Tax',desc:'UK · PK · UAE'},
+    {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
+    {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
+  ];
+  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
+      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+    </div>`).join('') + '</div>';
+}
+
+function renderVaultHome() {
+  const b = document.getElementById('vault-home-body');
+  if (!b) return;
+  const modules = [
+    {id:'documents',icon:'📄',label:'Documents',desc:(S.documents||[]).length+' docs'},
+    {id:'digital',icon:'💻',label:'Digital',desc:'Accounts & subscriptions'},
+    {id:'emails',icon:'📧',label:'Emails',desc:(S.emails||[]).length+' identities'},
+    {id:'sims',icon:'📱',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
+    {id:'friends',icon:'👥',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
+  ];
+  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
+      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+    </div>`).join('') + '</div>';
+}
+
+function renderAssetsHome() {
+  const b = document.getElementById('assets-home-body');
+  if (!b) return;
+  const modules = [
+    {id:'vehicles',icon:'🚗',label:'Vehicles',desc:(S.vehicles||[]).length+' vehicles'},
+    {id:'assets',icon:'🏠',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
+    {id:'gadgets',icon:'📱',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
+    {id:'gold',icon:'🥇',label:'Precious Metals',desc:'Gold & silver'},
+  ];
+  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;touch-action:manipulation">
+      <div style="font-size:28px;margin-bottom:8px">${m.icon}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${m.label}</div>
+      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
+    </div>`).join('') + '</div>';
 }
 
 function buildNav() {
@@ -2572,61 +2661,17 @@ function buildNav() {
   const nameEl = document.getElementById('sbUser');
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
 
-  const hasPage = id => !!document.getElementById('pg-' + id);
-  const activeMods = active.filter(m => hasPage(m.id));
-  const dash = { id:'dashboard', n:'Home', ic:'📊' };
-  const familyTab = { id:'family', n:'Family', ic:'👨‍👩‍👧‍👦' };
-  const first4 = [dash, familyTab, ...activeMods.filter(m => m.id !== 'friends').slice(0, 2)];
-  const overflow = activeMods.filter(m => m.id !== 'friends').slice(2);
-  const moreItem = { id:'__more__', n:'More', ic:'⋯' };
-  const tabs = [...first4, moreItem];
+  const PRIMARY_TABS = [
+    { id: 'dashboard',    n: 'Home',    ic: '📊' },
+    { id: 'finance-home', n: 'Finance', ic: '💰' },
+    { id: 'vault-home',   n: 'Vault',   ic: '🔐' },
+    { id: 'assets-home',  n: 'Assets',  ic: '🏠' },
+    { id: 'family',       n: 'Family',  ic: '👨‍👩‍👧‍👦' },
+    { id: '__more__',     n: 'More',    ic: '⋯' },
+  ];
 
-  // Populate moreGrid — always includes overflow + permanent extras
-  const mg = document.getElementById('moreGrid');
-  if (mg) {
-    const first4Ids = new Set(first4.map(m => m.id));
-    const permanentExtras = [
-      { id:'settings', n:'Settings', ic:'⚙️' },
-      { id:'trash', n:'Trash', ic:'🗑️' },
-      { id:'reminders', n:'Reminders', ic:'🔔' },
-      { id:'sync', n:'Sync', ic:'🔄' },
-      { id:'timeline', n:'Timeline', ic:'📅' },
-      { id:'security', n:'Security', ic:'🛡️' },
-      { id:'backup', n:'Backup', ic:'💾' },
-      { id:'currency', n:'Currency', ic:'💱' },
-      { id:'gold', n:'Metals', ic:'🥇' },
-      { id:'zakat', n:'Zakat', ic:'🌙' },
-      { id:'credit', n:'Credit', ic:'📊' },
-      { id:'tax', n:'Tax Calc', ic:'🧾' },
-    ];
-    const seenIds = new Set();
-    const moreItems = [...overflow, ...permanentExtras].filter(m => {
-      if (first4Ids.has(m.id)) return false;
-      if (seenIds.has(m.id)) return false;
-      seenIds.add(m.id);
-      return true;
-    });
-    if (moreItems.length === 0) {
-      [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }].forEach(m => moreItems.push(m));
-    }
-    const getItemCount = id => {
-      if (id === 'trash') return (S.trash || []).length;
-      if (id === 'reminders') return (S.reminders || []).filter(r => !r.done && r.date && new Date(r.date) <= new Date()).length;
-      const arr = S[id];
-      return Array.isArray(arr) ? arr.length : 0;
-    };
-    mg.innerHTML = moreItems.map(m => {
-      const cnt = getItemCount(m.id);
-      const badge = cnt > 0 ? `<span style="position:absolute;top:-4px;right:-5px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;padding:0 4px;border-radius:5px;min-width:14px;text-align:center;line-height:16px">${cnt}</span>` : '';
-      return `<div onclick="R.goto('${m.id}');closeMore()" style="text-align:center;padding:12px 4px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
-        <div style="position:relative;display:inline-block;margin-bottom:5px"><span style="font-size:22px">${m.ic}</span>${badge}</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text2)">${m.n}</div>
-      </div>`;
-    }).join('');
-  }
-
-  document.getElementById('btabs').innerHTML = tabs.map(m =>
-    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="${m.id==='__more__'?'openMore()':'R.goto(\''+m.id+'\')'}"><div class="ti-ic">${m.ic}</div><span>${m.n.length > 7 ? m.n.slice(0, 6) + '…' : m.n}</span></div>`
+  document.getElementById('btabs').innerHTML = PRIMARY_TABS.map(m =>
+    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="${m.id==='__more__'?'openMore()':'R.goto(\''+m.id+'\')'}"><div class="ti-ic">${m.ic}</div><span>${m.n}</span></div>`
   ).join('');
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };

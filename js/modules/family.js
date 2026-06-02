@@ -212,8 +212,13 @@ const Family = {
   _tabOverview(m) {
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        ${[['📄','Documents',(m.docs||[]).length],['🏦','Banks',(m.banks||[]).length],['💳','Cards',(m.cards||[]).length],['💵','Cash entries',(m.cash||[]).length]].map(([icon,label,count])=>`
-          <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center">
+        ${[
+  ['📄','Documents',(m.docs||[]).length,'docs'],
+  ['🏦','Banks',(m.banks||[]).length,'banks'],
+  ['💳','Cards',(m.cards||[]).length,'banks'],
+  ['💵','Cash entries',(m.cash||[]).length,'cash']
+].map(([icon,label,count,tab])=>`
+          <div onclick="Family._switchTab('${tab}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;touch-action:manipulation;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent,var(--purple))'" onmouseleave="this.style.borderColor='var(--border)'">
             <div style="font-size:24px;margin-bottom:4px">${icon}</div>
             <div style="font-size:22px;font-weight:900;color:var(--text)">${count}</div>
             <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">${label}</div>
@@ -575,46 +580,59 @@ const Family = {
 
   /* ── Bank actions ── */
   _addBank() {
-    const myBanks = typeof S !== 'undefined' ? (S.banks||[]).map(b=>b.bankName).filter(Boolean) : [];
-    const smartBanks = typeof SMART_DB !== 'undefined' ?
-      SMART_DB.banks.filter(b => ['PK','GB','AE'].includes(b.country)).map(b=>b.name) : [];
-    const allBanks = [...new Set([...myBanks, ...smartBanks])];
+    const userCountry = (typeof S !== 'undefined' && S.user?.country) || 'PK';
+    const allBanks = typeof SMART_DB !== 'undefined' ?
+      [...SMART_DB.banks].sort((a,b) => {
+        if(a.country === userCountry && b.country !== userCountry) return -1;
+        if(b.country === userCountry && a.country !== userCountry) return 1;
+        return a.name.localeCompare(b.name);
+      }) : [];
+    const byCountry = {};
+    allBanks.forEach(b => {
+      const cc = b.country || 'Other';
+      if(!byCountry[cc]) byCountry[cc] = [];
+      byCountry[cc].push(b);
+    });
+    const flags = {PK:'🇵🇰',GB:'🇬🇧',AE:'🇦🇪',US:'🇺🇸'};
+    const countryNames = {PK:'Pakistan',GB:'United Kingdom',AE:'UAE',US:'USA'};
     Modal.open('🏦 Add Bank',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Select Bank</div>
         <input id="fb-search" placeholder="Search banks..."
           style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
-          oninput="Family._filterBankList(this.value)">
-        <div id="fb-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
-          ${allBanks.slice(0,20).map(b=>`
-            <div onclick="document.getElementById('fb-selected').value='${b.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
-              class="fb-item"
-              style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);transition:background .15s">
-              🏦 ${b}
-            </div>`).join('')}
+          oninput="if(window.Family)window.Family._filterBankList(this.value)">
+        <div id="fb-list" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:4px">
+          ${Object.entries(byCountry).map(([cc, banks]) => `
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:8px 4px 4px">${flags[cc]||'🌐'} ${countryNames[cc]||cc}</div>
+            ${banks.map(b => `
+              <div onclick="document.getElementById('fb-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>{el.style.background='transparent';el.style.border='1px solid var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.border='1px solid rgba(123,95,255,.5)'"
+                class="fb-item"
+                style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;transition:all .15s">
+                <div style="width:32px;height:32px;border-radius:8px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${b.logo||'🏦'}</div>
+                <div><div style="font-weight:600">${b.name}</div><div style="font-size:11px;color:var(--text3)">${b.type||'Commercial'}</div></div>
+              </div>`).join('')}
+          `).join('')}
         </div>
         <input id="fb-selected" placeholder="Or type bank name manually"
           style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveBank()">Add Bank</button>`
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="if(window.Family)window.Family._saveBank()">Add Bank</button>`
     );
   },
 
   _filterBankList(query) {
-    const myBanks = typeof S !== 'undefined' ? (S.banks||[]).map(b=>b.bankName).filter(Boolean) : [];
-    const smartBanks = typeof SMART_DB !== 'undefined' ?
-      SMART_DB.banks.filter(b => ['PK','GB','AE'].includes(b.country)).map(b=>b.name) : [];
-    const allBanks = [...new Set([...myBanks, ...smartBanks])];
+    const allBanks = typeof SMART_DB !== 'undefined' ? SMART_DB.banks : [];
     const q = (query||'').toLowerCase();
-    const filtered = q ? allBanks.filter(b=>b.toLowerCase().includes(q)) : allBanks.slice(0,20);
+    const filtered = q ? allBanks.filter(b=>b.name.toLowerCase().includes(q)) : allBanks.slice(0,40);
     const list = document.getElementById('fb-list');
     if (!list) return;
-    list.innerHTML = filtered.slice(0,20).map(b=>`
-      <div onclick="document.getElementById('fb-selected').value='${b.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
+    if (!filtered.length) { list.innerHTML = '<div style="padding:12px;color:var(--text3);font-size:13px;text-align:center">No banks found</div>'; return; }
+    list.innerHTML = filtered.map(b=>`
+      <div onclick="document.getElementById('fb-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>{el.style.background='transparent';el.style.border='1px solid var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.border='1px solid rgba(123,95,255,.5)'"
         class="fb-item"
-        style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);transition:background .15s">
-        🏦 ${b}
-      </div>`).join('') || '<div style="padding:12px;color:var(--text3);font-size:13px">No banks found</div>';
+        style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;transition:all .15s">
+        <div style="width:32px;height:32px;border-radius:8px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${b.logo||'🏦'}</div>
+        <div><div style="font-weight:600">${b.name}</div><div style="font-size:11px;color:var(--text3)">${b.country||''}</div></div>
+      </div>`).join('');
   },
 
   _saveBank() {
@@ -658,7 +676,7 @@ const Family = {
         ${memberBanks.length > 0 ? `
           <div>
             <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Filter by Bank</div>
-            <select id="fc-bank-filter" onchange="Family._filterCardList(this.value,'')"
+            <select id="fc-bank-filter" onchange="if(window.Family)window.Family._filterCardList(this.value,'')"
               style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
               <option value="">All Cards</option>
               ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
@@ -668,7 +686,7 @@ const Family = {
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Select Card</div>
           <input id="fc-search" placeholder="Search or type card name..."
             style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
-            oninput="Family._filterCardList(document.getElementById('fc-bank-filter')?.value||'',this.value)">
+            oninput="if(window.Family)window.Family._filterCardList(document.getElementById('fc-bank-filter')?.value||'',this.value)">
         </div>
         <div id="fc-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
           ${initialCards.map(c=>`
