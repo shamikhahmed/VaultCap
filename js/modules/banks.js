@@ -1,4 +1,5 @@
 const Banks={
+  _showArchived: false,
   render(){
     const q=(document.getElementById('bQ')?.value||'').toLowerCase();
     const sort=document.getElementById('bSort')?.value||'name';
@@ -8,7 +9,9 @@ const Banks={
     const ci=document.getElementById('bChips');
     if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.bF='${v}';Banks.render()">${l}</div>`).join('');ci.dataset.built='1';}
     else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('on',chips[i][0]===f));
+    const archivedCount=(S.banks||[]).filter(b=>b.archived).length;
     let data=S.banks.filter(b=>{
+      if(b.archived&&!Banks._showArchived)return false;
       if(f==='fav'&&!b.favorite)return false;
       if(['PK','GB','AE','US'].includes(f)&&b.country!==f)return false;
       if(f==='islamic'&&b.bankType!=='islamic')return false;
@@ -21,9 +24,10 @@ const Banks={
     else if(sort==='fav')data.sort((a,b)=>b.favorite-a.favorite);
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('bItems');if(!el)return;
-    if(!data.length){el.innerHTML=this.emptyState();return;}
+    if(!data.length&&!archivedCount){el.innerHTML=this.emptyState();return;}
+    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button class="btn btn-g btn-sm" onclick="Banks._showArchived=!Banks._showArchived;Banks.render()">${Banks._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const byCC={};data.forEach(b=>{const k=b.country||'OTHER';(byCC[k]=byCC[k]||[]).push(b);});
-    el.innerHTML=Object.entries(byCC).map(([cc,items])=>`<div><div class="csec-h"><span style="font-size:18px">${U.flag(cc)}</span><span class="csec-name">${U.cname(cc)}</span><span class="csec-cnt">${items.length}</span></div>${items.map(b=>this.row(b)).join('')}</div>`).join('');
+    el.innerHTML=archiveToggle+Object.entries(byCC).map(([cc,items])=>`<div><div class="csec-h"><span style="font-size:18px">${U.flag(cc)}</span><span class="csec-name">${U.cname(cc)}</span><span class="csec-cnt">${items.length}</span></div>${items.map(b=>this.row(b)).join('')}</div>`).join('');
     initSwipeDelete(el);
     initLongPress(el, id => {
       const b = S.banks.find(x => x.id === id); if (!b) return [];
@@ -40,7 +44,7 @@ const Banks={
     const color=brandColor(b.bankName);
     const initials=b.bankName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const logoHtml=`<div class="b-logo-wrap" style="width:36px;height:36px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:13px;font-weight:800;color:#fff">${dom?`<img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" width="36" height="36" style="border-radius:8px;object-fit:cover" onerror="this.parentElement.innerHTML='${initials}'">`:`${initials}`}</div>`;
-    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="background:${color};padding:3px;overflow:hidden;border-radius:10px">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
+    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="background:${color};padding:3px;overflow:hidden;border-radius:10px">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb" onclick="Banks.archive('${b.id}')" title="${b.archived?'Unarchive':'Archive'}">${b.archived?'📦':'🗂️'}</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
   },
   emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button class="btn btn-g" onclick="Settings.loadDemo()">🎮 Try Demo</button></div></div>`;},
   _showExample(){Modal.open('🏦 Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:#1a3a6b;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏦</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
@@ -170,6 +174,7 @@ const Banks={
   edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
   detail(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open(`🏦 ${b.bankName}`,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}</div>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Banks.edit('${id}');Modal.close()">Edit</button>`);},
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
+  archive(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.archived=!b.archived;b.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(b.archived?'Archived':'Unarchived','info');},
   del(id,fm=false){
     if(!window.__vos_confirm('Move to Trash?'))return;
     const b=S.banks.find(x=>x.id===id);if(!b)return;

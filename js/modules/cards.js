@@ -1,4 +1,5 @@
 const Cards={
+  _showArchived: false,
   render(){
     const q=(document.getElementById('cQ')?.value||'').toLowerCase();
     const sort=document.getElementById('cSort')?.value||'name';
@@ -9,7 +10,9 @@ const Cards={
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
     if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
+      if(c.archived&&!Cards._showArchived)return false;
       if(f==='fav'&&!c.favorite)return false;
       if(f==='credit'&&c.cardType!=='Credit')return false;
       if(f==='debit'&&c.cardType!=='Debit')return false;
@@ -27,7 +30,8 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`;return;}
+    if(!data.length&&!archivedCount){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`;return;}
+    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimit=S.cards.filter(c=>c.cardType==='Credit'&&c.limit).reduce((a,c)=>a+(c.limit||0),0);
     const _cur=S.user.currency||'GBP';
     const limitBanner=totalLimit>0?`<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)">${U.fmt(Math.round(totalLimit))} ${_cur}</span></div>`:'';
@@ -36,7 +40,7 @@ const Cards={
     const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
     const carrySection=carrying.length?`<div class="sdiv">💳 Carrying Today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
     const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
-    el.innerHTML=limitBanner+carrySection+restSection;
+    el.innerHTML=archiveToggle+limitBanner+carrySection+restSection;
     initSwipeDelete(el);
     initLongPress(el, id => {
       const c = S.cards.find(x => x.id === id); if (!c) return [];
@@ -111,6 +115,7 @@ const Cards={
   <div class="wcard-actions">
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
+    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.archive('${c.id}')" title="${c.archived?'Unarchive':'Archive'}">${c.archived?'📦':'🗂️'}</button>
     <button class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
   </div>
 </div>`;
@@ -337,7 +342,8 @@ const Cards={
     const prev=editId?S.cards.find(x=>x.id===editId):null;
     const frontPhoto=(frontEl&&frontEl.dataset&&frontEl.dataset.photo)||prev&&prev.frontPhoto||'';
     const backPhoto=(backEl&&backEl.dataset&&backEl.dataset.photo)||prev&&prev.backPhoto||'';
-    const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:_l4v,cardNumber:fullNumRaw||'',expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,limit:parseFloat(document.getElementById('cf-limit')?.value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,jointAccount:document.getElementById('cf-joint')?.checked||false,jointWith:document.getElementById('cf-joint-person')?.value||'',issuer:name.split(' ')[0],frontPhoto,backPhoto,createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const _linkedBankName=document.getElementById('cf-bank')?.value||document.getElementById('cf-mybank')?.value||'';
+    const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:_l4v,cardNumber:fullNumRaw||'',expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,limit:parseFloat(document.getElementById('cf-limit')?.value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,jointAccount:document.getElementById('cf-joint')?.checked||false,jointWith:document.getElementById('cf-joint-person')?.value||'',issuer:name.split(' ')[0],linkedBankId:(_linkedBankName?(S.banks.find(b=>b.bankName===_linkedBankName)?.id||''):''),frontPhoto,backPhoto,createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId)S.cards=S.cards.map(x=>x.id===editId?item:x);else S.cards.push(item);
     const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
@@ -372,6 +378,7 @@ const Cards={
     Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',c.limit?U.fmt(Math.round(c.limit))+' '+(S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
+  archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},
   del(id,fm=false){
     if(!window.__vos_confirm('Move to Trash?'))return;
     const c=S.cards.find(x=>x.id===id);if(!c)return;

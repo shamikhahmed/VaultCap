@@ -36,6 +36,41 @@ const ALL_MODULES=[
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
 ];
 
+// ── Universal Entity Factory ──
+function mkEntity(type, fields = {}) {
+  return {
+    id: fields.id || U.id(),
+    type,
+    createdAt: fields.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    tags: fields.tags || [],
+    linkedEntities: fields.linkedEntities || [],
+    archived: fields.archived || false,
+    favorite: fields.favorite || false,
+    ...fields,
+  };
+}
+
+// ── Tag Utilities ──
+const Tags = {
+  chips(tags = [], opts = {}) {
+    if (!tags.length) return '';
+    return tags.map(t => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--r-pill,999px);background:rgba(123,95,255,.15);color:rgba(150,120,255,1);border:1px solid rgba(123,95,255,.25)">${t}${opts.removable ? `<span onclick="${opts.onRemove}('${t}')" style="cursor:pointer;margin-left:2px;opacity:.7">×</span>` : ''}</span>`).join(' ');
+  },
+  parse(str) {
+    return (str || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+  },
+  input(id, existing = []) {
+    return `<div>
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Tags (optional)</div>
+      <input id="${id}" placeholder="e.g. uk, business, halal" value="${existing.join(', ')}"
+        style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+      <div style="font-size:10px;color:var(--text3);margin-top:4px">Separate with commas · e.g. urgent, uk, business</div>
+    </div>`;
+  },
+  PRESETS: ['personal', 'business', 'uk', 'pakistan', 'uae', 'halal', 'urgent', 'archived', 'family', 'tax-related', 'investment'],
+};
+
 const COUNTRIES=[
   {c:'PK',n:'Pakistan',f:'🇵🇰',p:'+92'},{c:'GB',n:'United Kingdom',f:'🇬🇧',p:'+44'},
   {c:'AE',n:'UAE',f:'🇦🇪',p:'+971'},{c:'US',n:'United States',f:'🇺🇸',p:'+1'},
@@ -1164,7 +1199,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 const Migrate = {
   run() {
@@ -1190,6 +1225,33 @@ const Migrate = {
     if (sv < 5) {
       const newMods = ['credit','zakat','tax','currency','gold'];
       if (stored.modules) newMods.forEach(id => { if (stored.modules[id] === undefined) stored.modules[id] = true; });
+    }
+    if (sv < 6) {
+      const backfill = (arr, type) => (arr || []).map(item => ({
+        id: item.id || Math.random().toString(36).slice(2),
+        type: item.type || type,
+        createdAt: item.createdAt || new Date().toISOString(),
+        updatedAt: item.updatedAt || new Date().toISOString(),
+        tags: item.tags || [],
+        linkedEntities: item.linkedEntities || [],
+        archived: item.archived || false,
+        favorite: item.favorite || false,
+        ...item,
+      }));
+      stored.banks        = backfill(stored.banks,        'bank');
+      stored.cards        = backfill(stored.cards,        'card');
+      stored.documents    = backfill(stored.documents,    'document');
+      stored.investments  = backfill(stored.investments,  'investment');
+      stored.cash         = backfill(stored.cash,         'cash');
+      stored.loans        = backfill(stored.loans,        'loan');
+      stored.vehicles     = backfill(stored.vehicles,     'vehicle');
+      stored.assets       = backfill(stored.assets,       'asset');
+      stored.friends      = backfill(stored.friends,      'contact');
+      stored.sims         = backfill(stored.sims,         'sim');
+      stored.emails       = backfill(stored.emails,       'email');
+      stored.gadgets      = backfill(stored.gadgets,      'gadget');
+      stored.digital      = backfill(stored.digital,      'digital');
+      stored.expenses     = backfill(stored.expenses,     'expense');
     }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)

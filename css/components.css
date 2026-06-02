@@ -145,12 +145,12 @@ textarea.inp { resize: vertical; min-height: 64px; }
   max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 40px);
   overflow: hidden;
   display: flex; flex-direction: column; box-shadow: var(--shadowlg);
-  animation: slideup .28s var(--spring);
+  animation: slideup var(--anim-slow, 340ms) var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1));
 }
 @keyframes slideup { from { transform: translateY(48px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (min-width: 769px) {
   .modal {
-    border-radius: 20px; animation: scalein .22s var(--spring);
+    border-radius: 20px; animation: scalein var(--anim-normal, 220ms) var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1));
     max-width: 580px; margin: auto;
     border-radius: 20px; top: 50%; left: 50%; right: auto; bottom: auto;
     transform: translate(-50%,-50%); position: fixed;
