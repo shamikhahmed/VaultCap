@@ -16,6 +16,11 @@ const ALL_MODULES=[
   {id:'cash',    n:'Cash',        ic:'💵', desc:'Physical cash by location',          group:'Finance'},
   {id:'loans',   n:'Loans',       ic:'🤝', desc:'Money lent & borrowed',              group:'Finance'},
   {id:'expenses',n:'Expenses',   ic:'📋', desc:'Subscriptions & recurring bills',    group:'Finance'},
+  {id:'credit',  n:'Credit Score',ic:'📊', desc:'Credit score tracker',              group:'Finance'},
+  {id:'zakat',   n:'Zakat',       ic:'🌙', desc:'Annual zakat calculator',           group:'Finance'},
+  {id:'tax',     n:'Tax',         ic:'🧾', desc:'Income tax calculator',             group:'Finance'},
+  {id:'currency',n:'Currency',    ic:'💱', desc:'Live exchange rates',               group:'Finance'},
+  {id:'gold',    n:'Precious Metals',ic:'🥇',desc:'Gold & silver prices',            group:'Finance'},
   {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, valuables',      group:'Assets'},
   {id:'friends', n:'Contacts',    ic:'👥', desc:'Contacts & people',                  group:'Identity'},
   {id:'sims',   n:'SIM Cards',   ic:'📱', desc:'Mobile numbers & networks',          group:'Identity'},
@@ -1157,7 +1162,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 
 const Migrate = {
   run() {
@@ -1180,6 +1185,10 @@ const Migrate = {
       if (stored.assets)  stored.assets  = stored.assets.map(a => ({ ...a, assetType: a.assetType || 'other' }));
       if (stored.cards)   stored.cards   = stored.cards.map(c => ({ ...c, issuer: c.issuer || (c.cardName || '').split(' ')[0] }));
     }
+    if (sv < 5) {
+      const newMods = ['credit','zakat','tax','currency','gold'];
+      if (stored.modules) newMods.forEach(id => { if (stored.modules[id] === undefined) stored.modules[id] = true; });
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
@@ -1191,7 +1200,7 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
+  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[], trash:[],
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
