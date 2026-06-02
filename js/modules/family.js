@@ -451,7 +451,7 @@ const Family = {
       `<div style="display:flex;flex-direction:column;gap:10px">
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Document Type</div>
-          <select id="fd-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+          <select id="fd-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
             <optgroup label="Identity">
               <option>Passport</option>
               <option>National ID / CNIC</option>
@@ -496,19 +496,19 @@ const Family = {
         <input id="fd-num" placeholder="Document number (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Issue Date</div>
-          <input id="fd-issued" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+          <input id="fd-issued" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
         </div>
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Expiry Date</div>
-          <input id="fd-exp" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+          <input id="fd-exp" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
         </div>
         <input id="fd-issuer" placeholder="Issued by (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-        <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none"></textarea>
+        <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px;resize:none"></textarea>
         <div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Photos (optional)</div>
           <div style="display:flex;gap:8px">
-            <button onclick="Family._captureDocPhoto('front')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Front</button>
-            <button onclick="Family._captureDocPhoto('back')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Back</button>
+            <button onclick="Family._captureDocPhoto('front')" style="flex:1;padding:12px 14px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Front</button>
+            <button onclick="Family._captureDocPhoto('back')" style="flex:1;padding:12px 14px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Back</button>
           </div>
           <div id="fd-photo-preview" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
         </div>
@@ -533,7 +533,7 @@ const Family = {
         img.dataset.side = side;
         img.dataset.src = ev.target.result;
         img.innerHTML = '<img src="'+ev.target.result+'" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" data-side="'+side+'">' +
-          '<div style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:4px">'+side.toUpperCase()+'</div>';
+          '<div style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 4px;border-radius:4px">'+side.toUpperCase()+'</div>';
         const existing = preview.querySelector('[data-side="'+side+'"]');
         if (existing) existing.remove();
         preview.appendChild(img);
@@ -734,7 +734,7 @@ const Family = {
           <div>
             <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Filter by Bank</div>
             <select id="fc-bank-filter" onchange="if(window.Family)window.Family._filterCardList(this.value,'')"
-              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
               <option value="">All Cards</option>
               ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
             </select>
@@ -758,13 +758,13 @@ const Family = {
         <div style="display:flex;gap:8px">
           <input id="fc-l4" placeholder="Last 4 digits" maxlength="4"
             style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-          <select id="fc-type" style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+          <select id="fc-type" style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
             <option value="debit">Debit</option>
             <option value="credit">Credit</option>
             <option value="prepaid">Prepaid</option>
           </select>
         </div>
-        <select id="fc-net" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+        <select id="fc-net" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
           <option value="">Network (optional)</option>
           <option>Visa</option><option>Mastercard</option><option>Amex</option>
           <option>UnionPay</option><option>PayPak</option><option>JCB</option>
