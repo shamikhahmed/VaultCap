@@ -1,7 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="114" fill="#0A84FF"/>
-  <rect x="152" y="220" width="208" height="180" rx="32" fill="white"/>
-  <path d="M192 220v-52a64 64 0 0 1 128 0v52" stroke="white" stroke-width="28" stroke-linecap="round" fill="none"/>
-  <circle cx="256" cy="306" r="28" fill="#0A84FF"/>
-  <rect x="242" y="306" width="28" height="44" rx="14" fill="#0A84FF"/>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d0d1f"/>
+      <stop offset="100%" style="stop-color:#1a0a2e"/>
+    </linearGradient>
+    <linearGradient id="icon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7b5fff"/>
+      <stop offset="100%" style="stop-color:#00d5ff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+  <rect x="60" y="60" width="392" height="392" rx="80" fill="rgba(123,95,255,0.08)"/>
+  <!-- Shield body -->
+  <path d="M256 120 L340 155 L340 270 C340 320 256 380 256 380 C256 380 172 320 172 270 L172 155 Z" fill="url(#icon)" filter="url(#glow)" opacity="0.95"/>
+  <!-- Lock shackle -->
+  <rect x="226" y="228" width="60" height="50" rx="10" fill="#0a0a1f" opacity="0.9"/>
+  <path d="M236 235 L236 220 C236 204 276 204 276 220 L276 235" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+  <!-- Keyhole -->
+  <circle cx="256" cy="252" r="10" fill="rgba(255,255,255,0.9)"/>
+  <rect x="251" y="256" width="10" height="14" rx="3" fill="rgba(255,255,255,0.9)"/>
 </svg>

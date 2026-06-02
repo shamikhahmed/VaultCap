@@ -1093,6 +1093,22 @@ const DOC_TYPES=Object.keys(DOC_SCHEMAS);
 
 'use strict';
 
+// ── User context helper — derives name/country/currency from stored vault ──
+function getUserContext() {
+  try {
+    const state = JSON.parse(localStorage.getItem('vos3') || '{}');
+    const user = state.user || {};
+    const currency = user.currency || 'PKR';
+    const currencyToCountry = { GBP: 'GB', PKR: 'PK', AED: 'AE', USD: 'US', EUR: 'GB' };
+    return {
+      name: user.name || '',
+      country: user.country || currencyToCountry[currency] || 'GB',
+      baseCurrency: currency
+    };
+  } catch(e) { return { name: '', country: 'GB', baseCurrency: 'PKR' }; }
+}
+window.getUserContext = getUserContext;
+
 // ── VaultOS safe confirm — works in sandboxed iframe and native ──
 window.__vos_confirm = function(msg) {
   try { return window.confirm(msg); }

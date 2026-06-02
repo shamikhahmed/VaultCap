@@ -1,5 +1,11 @@
 const CreditScore = {
-  get() { return JSON.parse(localStorage.getItem('vo_credit_score')||'{"entries":[],"country":"GB"}'); },
+  get() {
+    const raw = localStorage.getItem('vo_credit_score');
+    if (raw) return JSON.parse(raw);
+    const ctx = typeof getUserContext === 'function' ? getUserContext() : { country: 'GB' };
+    const defaultCountry = ['GB','PK','AE'].includes(ctx.country) ? ctx.country : 'GB';
+    return { entries: [], country: defaultCountry };
+  },
   save(d) { localStorage.setItem('vo_credit_score',JSON.stringify(d)); },
 
   ranges: {

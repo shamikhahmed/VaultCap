@@ -1,7 +1,13 @@
 const Currency = {
   defaults: { PKR: 1, USD: 280, GBP: 355, AED: 76, EUR: 300 },
 
-  get() { return JSON.parse(localStorage.getItem('vo_currency') || 'null') || { base: 'PKR', rates: { USD: 280, GBP: 355, AED: 76, EUR: 300 } }; },
+  get() {
+    const raw = localStorage.getItem('vo_currency');
+    if (raw) return JSON.parse(raw);
+    const ctx = typeof getUserContext === 'function' ? getUserContext() : { baseCurrency: 'PKR' };
+    const base = ctx.baseCurrency || 'PKR';
+    return { base, rates: { USD: 280, GBP: 355, AED: 76, EUR: 300 } };
+  },
   save(d) { localStorage.setItem('vo_currency', JSON.stringify(d)); },
 
   convert(amount, from, to) {

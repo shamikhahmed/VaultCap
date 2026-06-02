@@ -45,8 +45,10 @@ const Tax = {
   render() {
     const body = document.getElementById('pg-tax-body');
     if (!body) return;
-    const saved = JSON.parse(localStorage.getItem('vo_tax_calc') || '{"country":"GB"}');
-    const c = saved.country || 'GB';
+    const _taxRaw = localStorage.getItem('vo_tax_calc');
+    const _ctx = typeof getUserContext === 'function' ? getUserContext() : { country: 'GB' };
+    const saved = JSON.parse(_taxRaw || JSON.stringify({ country: _ctx.country }));
+    const c = saved.country || _ctx.country || 'GB';
     const country = this.countries[c];
     body.innerHTML = `
       <div style="padding:16px">
