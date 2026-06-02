@@ -27,7 +27,7 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No Cards Yet</div><div class="ei-sub">Add your debit, credit, or digital cards here</div><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()" style="width:100%;max-width:260px;margin-top:10px">See example</button></div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`;return;}
     const totalLimit=S.cards.filter(c=>c.cardType==='Credit'&&c.limit).reduce((a,c)=>a+(c.limit||0),0);
     const _cur=S.user.currency||'GBP';
     const limitBanner=totalLimit>0?`<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)">${U.fmt(Math.round(totalLimit))} ${_cur}</span></div>`:'';

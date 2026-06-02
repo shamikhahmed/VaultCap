@@ -16,7 +16,7 @@ const DocsModule={
     const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
     const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||JSON.stringify(d).toLowerCase().includes(q)));
     if(!docs.length){
-      el.innerHTML=`<div class="empty"><div class="empty-ic">🪪</div><h3>No documents yet</h3><p>Store your IDs, passports, visas and more</p><button class="btn btn-p" style="margin-top:12px" onclick="DocsModule.openAdd()">+ Add Document</button></div>`;
+      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🪪</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;
     }
     const now=new Date();

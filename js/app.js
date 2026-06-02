@@ -20,7 +20,7 @@ const ALL_MODULES=[
   {id:'zakat',   n:'Zakat',       ic:'🌙', desc:'Annual zakat calculator',           group:'Finance'},
   {id:'tax',     n:'Tax',         ic:'🧾', desc:'Income tax calculator',             group:'Finance'},
   {id:'currency',n:'Currency',    ic:'💱', desc:'Live exchange rates',               group:'Finance'},
-  {id:'gold',    n:'Precious Metals',ic:'🥇',desc:'Gold & silver prices',            group:'Finance'},
+  {id:'gold',    n:'Precious Metals',ic:'🥇',desc:'Gold & silver prices',            group:'Assets'},
   {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, valuables',      group:'Assets'},
   {id:'friends', n:'Contacts',    ic:'👥', desc:'Contacts & people',                  group:'Identity'},
   {id:'sims',   n:'SIM Cards',   ic:'📱', desc:'Mobile numbers & networks',          group:'Identity'},
@@ -29,7 +29,9 @@ const ALL_MODULES=[
   {id:'gadgets',n:'Gadgets',     ic:'💻', desc:'Devices, IMEI, warranty',            group:'Identity'},
   {id:'digital',n:'Digital',     ic:'💼', desc:'Logins, wallets, social media',      group:'Identity'},
   {id:'vehicles',n:'Vehicles',   ic:'🚗', desc:'Cars, fuel, service, insurance',     group:'Assets'},
-  {id:'reminders',  n:'Reminders',  ic:'🔔', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
+  {id:'alerts',     n:'Alerts',     ic:'🔔', desc:'Expiry & urgent alerts',             group:'Tools'},
+  {id:'timeline',   n:'Timeline',   ic:'📅', desc:'Activity history',                   group:'Tools'},
+  {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
   {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
 ];
@@ -2657,7 +2659,12 @@ function buildNav() {
   const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
   const all = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active, ...extras];
 
-  const groups = { Finance:'💰 Finance', Assets:'🏠 Assets & Property', Identity:'🪪 Identity & Accounts', Tools:'⚙️ Tools & Security' };
+  const groups = {
+    Finance:  '💰 Finance',
+    Assets:   '🏠 Assets & Property',
+    Identity: '🪪 Vault & Identity',
+    Tools:    '⚙️ Tools',
+  };
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
@@ -2685,14 +2692,13 @@ function buildNav() {
   const PRIMARY_TABS = [
     { id: 'dashboard',    n: 'Home',    ic: '📊' },
     { id: 'finance-home', n: 'Finance', ic: '💰' },
-    { id: 'vault-home',   n: 'Identity', ic: '🪪' },
+    { id: 'vault-home',   n: 'Vault',   ic: '🪪' },
     { id: 'assets-home',  n: 'Assets',  ic: '🏠' },
     { id: 'family',       n: 'Family',  ic: '👨‍👩‍👧‍👦' },
-    { id: '__more__',     n: 'More',    ic: '⋯' },
   ];
 
   document.getElementById('btabs').innerHTML = PRIMARY_TABS.map(m =>
-    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="${m.id==='__more__'?'openMore()':'R.goto(\''+m.id+'\')'}"><div class="ti-ic">${m.ic}</div><span>${m.n}</span></div>`
+    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><div class="ti-ic">${m.ic}</div><span>${m.n}</span></div>`
   ).join('');
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
@@ -2707,6 +2713,9 @@ function buildNav() {
     '<div class="fmi" onclick="SmartAdd.open();FAB.close()">✨ Smart Add</div>',
     '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">🤖 AI Import</div>',
     '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
+    '<div class="fmi" onclick="R.goto(\'alerts\');FAB.close()">🔔 Alerts</div>',
+    '<div class="fmi" onclick="R.goto(\'timeline\');FAB.close()">📅 Timeline</div>',
+    '<div class="fmi" onclick="R.goto(\'settings\');FAB.close()">⚙️ Settings</div>',
     '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
   ];
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
