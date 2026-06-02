@@ -2503,7 +2503,7 @@ function openMore() {
   document.getElementById('moreOverlay')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'moreOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:0 0 100px';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
   const allMore = [
     {id:'alerts',     ic:'🔔', n:'Alerts'},
     {id:'reminders',  ic:'⏰', n:'Reminders'},
@@ -2517,7 +2517,7 @@ function openMore() {
     {id:'settings',   ic:'⚙️', n:'Settings'},
   ];
   overlay.innerHTML =
-    '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0) + 20px) 16px 12px;position:sticky;top:0;background:var(--bg);z-index:1;border-bottom:1px solid var(--border)">' +
     '<div style="font-size:16px;font-weight:800;color:var(--text)">More</div>' +
     '<button onclick="document.getElementById(\'moreOverlay\')?.remove()" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1">×</button>' +
     '</div>' +
@@ -2664,7 +2664,7 @@ function buildNav() {
   const PRIMARY_TABS = [
     { id: 'dashboard',    n: 'Home',    ic: '📊' },
     { id: 'finance-home', n: 'Finance', ic: '💰' },
-    { id: 'vault-home',   n: 'Vault',   ic: '🔐' },
+    { id: 'vault-home',   n: 'Identity', ic: '🪪' },
     { id: 'assets-home',  n: 'Assets',  ic: '🏠' },
     { id: 'family',       n: 'Family',  ic: '👨‍👩‍👧‍👦' },
     { id: '__more__',     n: 'More',    ic: '⋯' },

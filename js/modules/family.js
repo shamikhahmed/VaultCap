@@ -580,43 +580,99 @@ const Family = {
 
   /* ── Bank actions ── */
   _addBank() {
+    const midx = this._memberIdx;
     const userCountry = (typeof S !== 'undefined' && S.user?.country) || 'PK';
-    const allBanks = typeof SMART_DB !== 'undefined' ?
-      [...SMART_DB.banks].sort((a,b) => {
-        if(a.country === userCountry && b.country !== userCountry) return -1;
-        if(b.country === userCountry && a.country !== userCountry) return 1;
-        return a.name.localeCompare(b.name);
-      }) : [];
-    const byCountry = {};
-    allBanks.forEach(b => {
-      const cc = b.country || 'Other';
-      if(!byCountry[cc]) byCountry[cc] = [];
-      byCountry[cc].push(b);
-    });
+    const allBanks = typeof SMART_DB !== 'undefined' ? SMART_DB.banks : [];
+    const countryBanks = allBanks.filter(b => b.country === userCountry);
     const flags = {PK:'🇵🇰',GB:'🇬🇧',AE:'🇦🇪',US:'🇺🇸'};
-    const countryNames = {PK:'Pakistan',GB:'United Kingdom',AE:'UAE',US:'USA'};
+    const cnames = {PK:'Pakistan',GB:'United Kingdom',AE:'UAE',US:'USA'};
     Modal.open('🏦 Add Bank',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <input id="fb-search" placeholder="Search banks..."
-          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
-          oninput="if(window.Family)window.Family._filterBankList(this.value)">
-        <div id="fb-list" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:4px">
-          ${Object.entries(byCountry).map(([cc, banks]) => `
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:8px 4px 4px">${flags[cc]||'🌐'} ${countryNames[cc]||cc}</div>
-            ${banks.map(b => `
-              <div onclick="document.getElementById('fb-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>{el.style.background='transparent';el.style.border='1px solid var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.border='1px solid rgba(123,95,255,.5)'"
-                class="fb-item"
-                style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;transition:all .15s">
-                <div style="width:32px;height:32px;border-radius:8px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${b.logo||'🏦'}</div>
-                <div><div style="font-weight:600">${b.name}</div><div style="font-size:11px;color:var(--text3)">${b.type||'Commercial'}</div></div>
-              </div>`).join('')}
-          `).join('')}
+      `<div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Country</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="fam-country-chips">
+          ${['PK','GB','AE','US'].map(cc=>`
+            <button onclick="Family._loadBanksForCountry('${cc}','fam-bank-list')"
+              id="fcc-${cc}"
+              style="padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===userCountry?'var(--accent,var(--purple))':'var(--border)'};background:${cc===userCountry?'rgba(123,95,255,.2)':'transparent'};color:${cc===userCountry?'var(--accent,var(--purple))':'var(--text3)'}"
+            >${flags[cc]||'🌐'} ${cnames[cc]||cc}</button>`).join('')}
         </div>
-        <input id="fb-selected" placeholder="Or type bank name manually"
+        <input id="fam-bank-search" placeholder="Search banks..."
+          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
+          oninput="if(window.Family)window.Family._searchBankList(this.value,'fam-bank-list')">
+        <div id="fam-bank-list" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
+          ${countryBanks.map(b=>`
+            <div onclick="document.getElementById('fam-bank-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#fam-bank-list .fbl-item').forEach(el=>{el.style.background='transparent';el.style.borderColor='var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.borderColor='rgba(123,95,255,.5)'"
+              class="fbl-item"
+              style="padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;transition:all .15s">
+              <div style="width:36px;height:36px;border-radius:10px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${b.logo||'🏦'}</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--text)">${b.name}</div>
+                <div style="font-size:11px;color:var(--text3)">${b.type||'Commercial'}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <input id="fam-bank-selected" placeholder="Or type bank name manually"
           style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="if(window.Family)window.Family._saveBank()">Add Bank</button>`
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="if(window.Family)window.Family._saveFamilyBank(${JSON.stringify(midx)})">Add Bank</button>`
     );
+  },
+
+  _loadBanksForCountry(cc, listId) {
+    ['PK','GB','AE','US'].forEach(c => {
+      const btn = document.getElementById('fcc-'+c);
+      if (!btn) return;
+      btn.style.border = c===cc ? '1px solid rgba(123,95,255,.6)' : '1px solid var(--border)';
+      btn.style.background = c===cc ? 'rgba(123,95,255,.2)' : 'transparent';
+      btn.style.color = c===cc ? 'var(--accent,var(--purple))' : 'var(--text3)';
+    });
+    const banks = (typeof SMART_DB !== 'undefined' ? SMART_DB.banks : []).filter(b => b.country === cc);
+    const list = document.getElementById(listId);
+    if (!list) return;
+    list.innerHTML = banks.map(b=>`
+      <div onclick="document.getElementById('fam-bank-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#${listId} .fbl-item').forEach(el=>{el.style.background='transparent';el.style.borderColor='var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.borderColor='rgba(123,95,255,.5)'"
+        class="fbl-item"
+        style="padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;transition:all .15s">
+        <div style="width:36px;height:36px;border-radius:10px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${b.logo||'🏦'}</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">${b.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${b.type||'Commercial'}</div>
+        </div>
+      </div>`).join('') || '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No banks found for this country</div>';
+  },
+
+  _searchBankList(query, listId) {
+    const all = typeof SMART_DB !== 'undefined' ? SMART_DB.banks : [];
+    const q = (query||'').toLowerCase();
+    const filtered = q ? all.filter(b=>b.name.toLowerCase().includes(q)) : all.slice(0,20);
+    const list = document.getElementById(listId);
+    if (!list) return;
+    list.innerHTML = filtered.map(b=>`
+      <div onclick="document.getElementById('fam-bank-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#${listId} .fbl-item').forEach(el=>{el.style.background='transparent';el.style.borderColor='var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.borderColor='rgba(123,95,255,.5)'"
+        class="fbl-item"
+        style="padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;transition:all .15s">
+        <div style="width:36px;height:36px;border-radius:10px;background:${b.color||'rgba(123,95,255,.2)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${b.logo||'🏦'}</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">${b.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${b.type||'Commercial'} · ${b.country||''}</div>
+        </div>
+      </div>`).join('') || '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No banks found</div>';
+  },
+
+  _saveFamilyBank(midx) {
+    const name = (document.getElementById('fam-bank-selected')?.value || '').trim();
+    if (!name) { if(window.Toast) Toast.show('Select or enter a bank','error'); return; }
+    const d = this.get();
+    const m = midx === 'head' ? d.head : d.members[midx];
+    if (!m) return;
+    if (!m.banks) m.banks = [];
+    if (m.banks.includes(name)) { if(window.Toast) Toast.show('Bank already added','warning'); return; }
+    m.banks.push(name);
+    this.save(d);
+    Modal.close();
+    if(window.Toast) Toast.show('Bank added','success');
+    const body = document.getElementById('fm-tab-body');
+    if (body) body.innerHTML = this._tabBanks(m);
   },
 
   _filterBankList(query) {
@@ -809,5 +865,8 @@ const Family = {
 window.Family = Family;
 window.Family._filterBankList = Family._filterBankList.bind(Family);
 window.Family._filterCardList = Family._filterCardList.bind(Family);
+window.Family._loadBanksForCountry = Family._loadBanksForCountry.bind(Family);
+window.Family._searchBankList = Family._searchBankList.bind(Family);
+window.Family._saveFamilyBank = Family._saveFamilyBank.bind(Family);
 
 function _fesc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
