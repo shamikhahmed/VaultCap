@@ -275,7 +275,13 @@ const Family = {
             <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💳</div>
             <div style="flex:1;min-width:0">
               <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_fesc(c.name)}</div>
-              <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.last4?'**** '+c.last4:''}${c.network?' · '+c.network:''}${c.type?' · '+c.type:''}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">
+                ${c.last4?'**** '+c.last4:''}
+                ${c.network?' · '+c.network:''}
+                ${c.type?' · '+c.type:''}
+                ${c.expiry?' · Exp: '+c.expiry:''}
+              </div>
+              ${(c.frontPhoto||c.backPhoto)?'<div style="font-size:10px;color:var(--info);margin-top:2px">📷 Photo saved</div>':''}
             </div>
             ${!m._isVaultOwner?`<button onclick="Family._removeCard(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation;flex-shrink:0">×</button>`:''}
           </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No cards added</div>'}
@@ -721,57 +727,148 @@ const Family = {
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     const memberBanks = m?.banks || [];
-    const getCardSuggestions = (bankName) => {
-      if (!bankName || typeof SMART_DB === 'undefined') return [];
-      const firstWord = bankName.toLowerCase().split(' ')[0];
-      return (SMART_DB.cards || []).filter(c => c.toLowerCase().includes(firstWord)).slice(0,8);
-    };
-    const initialCards = memberBanks.length > 0 ? getCardSuggestions(memberBanks[0]) :
-      (typeof SMART_DB !== 'undefined' ? (SMART_DB.cards||[]).slice(0,10) : []);
+    const midx = this._memberIdx;
+
+    const cardSuggestions = (() => {
+      if (typeof SMART_DB === 'undefined') return [];
+      if (memberBanks.length > 0) {
+        const firstWord = memberBanks[0].toLowerCase().split(' ')[0];
+        const filtered = (SMART_DB.cards||[]).filter(c => c.toLowerCase().includes(firstWord));
+        return filtered.length > 0 ? filtered : (SMART_DB.cards||[]).slice(0,15);
+      }
+      return (SMART_DB.cards||[]).slice(0,15);
+    })();
+
     Modal.open('💳 Add Card',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        ${memberBanks.length > 0 ? `
-          <div>
-            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Filter by Bank</div>
-            <select id="fc-bank-filter" onchange="if(window.Family)window.Family._filterCardList(this.value,'')"
-              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-              <option value="">All Cards</option>
-              ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
-            </select>
-          </div>` : ''}
         <div>
-          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Select Card</div>
-          <input id="fc-search" placeholder="Search or type card name..."
-            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
-            oninput="if(window.Family)window.Family._filterCardList(document.getElementById('fc-bank-filter')?.value||'',this.value)">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Card Name</div>
+          <input id="fmc-name" list="fmc-name-dl" placeholder="e.g. HBL Prestige Visa Infinite"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          <datalist id="fmc-name-dl">
+            ${cardSuggestions.map(c=>`<option value="${c}">`).join('')}
+          </datalist>
         </div>
-        <div id="fc-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
-          ${initialCards.map(c=>`
-            <div onclick="document.getElementById('fc-name').value='${c.replace(/'/g,"\\'")}';document.querySelectorAll('#fc-list .fc-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
-              class="fc-item"
-              style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:13px;color:var(--text);transition:background .15s">
-              💳 ${c}
-            </div>`).join('')}
-        </div>
-        <input id="fc-name" placeholder="Card name"
-          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-        <div style="display:flex;gap:8px">
-          <input id="fc-l4" placeholder="Last 4 digits" maxlength="4"
-            style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-          <select id="fc-type" style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-            <option value="debit">Debit</option>
-            <option value="credit">Credit</option>
-            <option value="prepaid">Prepaid</option>
+        ${memberBanks.length > 0 ? `
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Linked Bank</div>
+          <select id="fmc-bank" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+            <option value="">Select bank (optional)</option>
+            ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
           </select>
+        </div>` : ''}
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Last 4 Digits</div>
+            <input id="fmc-l4" placeholder="1234" maxlength="4" inputmode="numeric"
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          </div>
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Expiry (MM/YY)</div>
+            <input id="fmc-exp" placeholder="12/28" maxlength="5"
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          </div>
         </div>
-        <select id="fc-net" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
-          <option value="">Network (optional)</option>
-          <option>Visa</option><option>Mastercard</option><option>Amex</option>
-          <option>UnionPay</option><option>PayPak</option><option>JCB</option>
-        </select>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Network</div>
+            <select id="fmc-net" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+              <option value="">Auto-detect</option>
+              <option>Visa</option><option>Mastercard</option><option>Amex</option>
+              <option>UnionPay</option><option>PayPak</option><option>JCB</option><option>Discover</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Type</div>
+            <select id="fmc-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+              <option value="debit">Debit</option>
+              <option value="credit">Credit</option>
+              <option value="prepaid">Prepaid</option>
+              <option value="crypto">Crypto</option>
+              <option value="bnpl">BNPL</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Cardholder Name</div>
+          <input id="fmc-holder" placeholder="Name on card"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Photos (optional)</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="Family._captureCardPhoto('front','fmc')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Front</button>
+            <button onclick="Family._captureCardPhoto('back','fmc')" style="flex:1;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;touch-action:manipulation">📷 Back</button>
+          </div>
+          <div id="fmc-photo-preview" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Notes</div>
+          <textarea id="fmc-notes" placeholder="Benefits, rewards, PIN hint..." rows="2"
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none"></textarea>
+        </div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveCard()">Add Card</button>`
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
+       <button class="btn btn-p" onclick="if(window.Family)window.Family._saveFamilyCard(${JSON.stringify(midx)})">Add Card</button>`
     );
+  },
+
+  _captureCardPhoto(side, prefix) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const preview = document.getElementById((prefix||'fmc')+'-photo-preview');
+        if (!preview) return;
+        const existing = preview.querySelector('[data-side="'+side+'"]');
+        if (existing) existing.remove();
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'position:relative;display:inline-block';
+        wrap.dataset.side = side;
+        wrap.dataset.src = ev.target.result;
+        wrap.innerHTML = `<img src="${ev.target.result}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+          <div style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:4px">${side.toUpperCase()}</div>`;
+        preview.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  },
+
+  _saveFamilyCard(midx) {
+    const name = document.getElementById('fmc-name')?.value?.trim();
+    if (!name) { if(window.Toast) Toast.show('Enter card name','error'); return; }
+    const photos = {};
+    document.querySelectorAll('#fmc-photo-preview [data-side]').forEach(el => {
+      photos[el.dataset.side] = el.dataset.src || '';
+    });
+    const d = this.get();
+    const m = midx === 'head' ? d.head : d.members[midx];
+    if (!m) return;
+    if (!m.cards) m.cards = [];
+    m.cards.push({
+      name,
+      last4: document.getElementById('fmc-l4')?.value || '',
+      expiry: document.getElementById('fmc-exp')?.value || '',
+      network: document.getElementById('fmc-net')?.value || '',
+      type: document.getElementById('fmc-type')?.value || 'debit',
+      holderName: document.getElementById('fmc-holder')?.value || '',
+      linkedBank: document.getElementById('fmc-bank')?.value || '',
+      notes: document.getElementById('fmc-notes')?.value || '',
+      frontPhoto: photos.front || '',
+      backPhoto: photos.back || '',
+      addedAt: new Date().toISOString()
+    });
+    this.save(d);
+    Modal.close();
+    if(window.Toast) Toast.show('Card added','success');
+    const body = document.getElementById('fm-tab-body');
+    if (body) body.innerHTML = this._tabBanks(m);
   },
 
   _filterCardList(bankName, searchQuery) {
@@ -869,5 +966,7 @@ window.Family._filterCardList = Family._filterCardList.bind(Family);
 window.Family._loadBanksForCountry = Family._loadBanksForCountry.bind(Family);
 window.Family._searchBankList = Family._searchBankList.bind(Family);
 window.Family._saveFamilyBank = Family._saveFamilyBank.bind(Family);
+window.Family._saveFamilyCard = Family._saveFamilyCard.bind(Family);
+window.Family._captureCardPhoto = Family._captureCardPhoto.bind(Family);
 
 function _fesc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }

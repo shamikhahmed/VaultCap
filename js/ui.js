@@ -7,131 +7,199 @@ const Dash={
     if(el)el.innerHTML=`<span>${greet}, <strong>${S.user.name||'User'}</strong></span>`;
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const b=document.getElementById('dashBody');
-    if(!b)return;
-    const cur=S.user.currency||'PKR';
-    const btn=document.getElementById('currBtn');if(btn)btn.textContent=cur;
-    if(S.banks.length===0&&S.cards.length===0&&S.investments.length===0){
-      b.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 0 40px">
-        <div style="font-size:40px;margin-bottom:14px;animation:float 4s ease-in-out infinite">🎉</div>
-        <div style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px">${greet}, ${S.user.name||'User'}!</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;max-width:300px;line-height:1.6">Your private vault is ready. Track your financial life — all encrypted, offline, zero-knowledge.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:20px">
-          <div onclick="Banks.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
-            <div style="font-size:26px;margin-bottom:8px">🏦</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add a Bank</div>
-            <div style="font-size:11px;color:var(--text3);line-height:1.4">Accounts, IBANs &amp; logins</div>
-            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
-          </div>
-          <div onclick="Cards.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
-            <div style="font-size:26px;margin-bottom:8px">💳</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add a Card</div>
-            <div style="font-size:11px;color:var(--text3);line-height:1.4">Debit, credit &amp; digital cards</div>
-            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
-          </div>
-          <div onclick="Inv.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
-            <div style="font-size:26px;margin-bottom:8px">📈</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Add Investment</div>
-            <div style="font-size:11px;color:var(--text3);line-height:1.4">Stocks, funds &amp; crypto</div>
-            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
-          </div>
-          <div onclick="Cash.openAdd()" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;text-align:left;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
-            <div style="font-size:26px;margin-bottom:8px">💵</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:3px">Track Cash</div>
-            <div style="font-size:11px;color:var(--text3);line-height:1.4">Physical cash by location</div>
-            <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:700">+ Add →</div>
-          </div>
-        </div>
-        <button class="btn btn-g" onclick="Settings.loadDemo()" style="width:100%;font-size:13px">🎮 Load Demo Data — see what a full vault looks like</button>
-      </div>`;
-      return;
-    }
-    const toB=(a,c)=>(a||0)*(FX[c]||1);
-    const toCur=(pkr,c)=>pkr/(FX[c]||1);
-    const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
-    const asPKR=S.assets.reduce((a,x)=>a+toB(x.currentValue||0,x.currency||cur),0);
-    const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
-    const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
-    const nwPKR=invPKR+asPKR+cashPKR-debtPKR;
-    const nwDisplay=Math.round(toCur(nwPKR,cur));
-    const exp=S.cards.filter(c=>{const s=U.expSt(c.expiry);return s!=='ok';});
-    const wCards=S.cards.filter(c=>S.wallet.includes(c.id));
-    const monthlyExp=S.expenses.filter(e=>e.active).reduce((a,e)=>a+(parseFloat(e.amount)||0),0);
-    const simRem=S.sims.filter(s=>s.rechargeReminder&&s.status==='Active');
-    const secScore=this.security();
-    // trend
-    const hist=S.user.nwHistory||[];
-    const prevV=hist.length>=2?hist[hist.length-1].v:null;
-    const trendDir=prevV!==null?(nwDisplay>prevV?1:nwDisplay<prevV?-1:0):0;
-    const trendArrow=trendDir>0?`<span class="dash-nw-trend up">↑</span>`:trendDir<0?`<span class="dash-nw-trend down">↓</span>`:'';
-    const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
-    // nw subtitle
-    const nwSub=debtPKR>0?`${cur} ${fmtN(Math.round(toCur(invPKR+asPKR+cashPKR,cur)))} assets − ${fmtN(Math.round(toCur(debtPKR,cur)))} debt`:`Investments · Assets · Cash`;
-    // allocation donut
-    const allocData=[
-      {l:'Investments',v:Math.round(toCur(invPKR,cur)),col:'var(--accent)'},
-      {l:'Assets',v:Math.round(toCur(asPKR,cur)),col:'var(--ok)'},
-      {l:'Cash',v:Math.round(toCur(cashPKR,cur)),col:'var(--warn)'},
-    ].filter(d=>d.v>0);
-    const totAlloc=allocData.reduce((a,d)=>a+d.v,0)||1;
-    const donutSVG=this.donut(allocData,totAlloc);
-    // active modules grid
-    const activeMods=ALL_MODULES.filter(m=>S.modules[m.id]&&S[m.id]);
-    const modGrid=activeMods.map(m=>`<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
+    const b = document.getElementById('dashBody');
+    if (!b) return;
 
-    b.innerHTML=`
-    <!-- Net Worth Card -->
-    <div class="dash-card dash-hero">
-      <div class="dash-label" style="display:flex;align-items:center;gap:6px">NET WORTH <button onclick="Dash.showNWBreakdown()" style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:var(--text2);font-style:italic;font-family:Georgia,serif;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;touch-action:manipulation" title="See breakdown">i</button></div>
-      <div class="dash-nw-amount sens">${trendArrow}${cur} ${fmtN(nwDisplay)}</div>
-      <div class="dash-nw-sub sens">${nwSub}</div>
-      <div class="dash-hero-acts">
-        <button class="btn btn-g btn-sm" onclick="Dash.toggleCurrency()">${cur}</button>
+    const cur = S.user.currency || 'PKR';
+    const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
+
+    const toB = (a,c) => (a||0) * (FX[c] || 1);
+    const toCur = (pkr, c) => pkr / (FX[c] || 1);
+    const fmtN = n => cur === 'PKR' ? U.fmtPKR(n) : U.fmt(n);
+    const fmt = n => {
+      const sym = cur === 'GBP' ? '£' : cur === 'USD' ? '$' : cur === 'AED' ? 'AED ' : 'PKR ';
+      const v = Math.round(toCur(n, cur));
+      if (v >= 1000000) return sym + (v/1000000).toFixed(2) + 'M';
+      if (v >= 1000) return sym + (v/1000).toFixed(1) + 'K';
+      return sym + v.toLocaleString();
+    };
+
+    const invPKR = S.investments.reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
+    const asPKR = S.assets.reduce((a,x) => a + toB(x.currentValue||0, x.currency||cur), 0);
+    const cashPKR = S.cash.reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
+    const vehPKR = S.vehicles.reduce((a,v) => a + toB(v.currentValue||v.purchasePrice||0, v.currency||cur), 0);
+    const debtPKR = S.loans.filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
+    let goldPKR = 0;
+    try { const gold = JSON.parse(localStorage.getItem('vo_gold')||'[]'); goldPKR = gold.reduce((a,g) => a + (g.weight||0)*(g.pricePerUnit||0), 0); } catch(e) {}
+    const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR - debtPKR;
+
+    const hist = S.user.nwHistory || [];
+    const prevV = hist.length >= 2 ? hist[hist.length-1].v : null;
+    const nwDisplay = Math.round(toCur(nwPKR, cur));
+    const trendDir = prevV !== null ? (nwDisplay > prevV ? 1 : nwDisplay < prevV ? -1 : 0) : 0;
+    const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
+
+    // Expiry alerts
+    const now = new Date();
+    const in60 = new Date(now.getTime() + 60*24*60*60*1000);
+    const expiringCards = (S.cards||[]).filter(c => {
+      if (!c.expiry) return false;
+      const parts = c.expiry.split('/');
+      if (parts.length !== 2) return false;
+      const exp = new Date('20'+parts[1]+'-'+parts[0]+'-01');
+      return exp <= in60 && exp >= now;
+    });
+    const expiringDocs = (S.documents||[]).filter(d => {
+      if (!d.expiry) return false;
+      const exp = new Date(d.expiry);
+      return exp <= in60 && exp >= now;
+    });
+    const allExpiring = [
+      ...expiringCards.map(c => ({name:c.cardName||c.name, type:'card', days:Math.round((new Date('20'+c.expiry.split('/')[1]+'-'+c.expiry.split('/')[0]+'-01')-now)/(1000*60*60*24))})),
+      ...expiringDocs.map(d => ({name:d.title||d.type, type:'doc', days:Math.round((new Date(d.expiry)-now)/(1000*60*60*24))}))
+    ].sort((a,b) => a.days-b.days);
+
+    // Vault health
+    const checks = [
+      !!S.user?.name,
+      S.pin !== '123456',
+      !!S.decoyPin,
+      !!S.user?.lastBackup,
+      (S.banks||[]).length > 0,
+      (S.documents||[]).length > 0,
+    ];
+    const health = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    const healthColor = health >= 80 ? 'var(--ok)' : health >= 50 ? 'var(--warn)' : 'var(--err)';
+
+    const stats = [
+      {icon:'🏦', label:'Banks', value:(S.banks||[]).length, page:'banks'},
+      {icon:'💳', label:'Cards', value:(S.cards||[]).length, page:'cards'},
+      {icon:'📄', label:'Docs', value:(S.documents||[]).length, page:'documents'},
+      {icon:'📈', label:'Invested', value:(S.investments||[]).length, page:'investments'},
+    ];
+
+    const wCards = S.cards.filter(c => S.wallet.includes(c.id));
+    const activeMods = ALL_MODULES.filter(m => S.modules[m.id] && S[m.id]);
+    const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
+
+    b.innerHTML = `
+    <!-- NET WORTH HERO -->
+    <div style="background:linear-gradient(135deg,rgba(123,95,255,.2),rgba(0,213,255,.1));border:1px solid rgba(123,95,255,.3);border-radius:20px;padding:24px 20px;margin:16px;text-align:center;position:relative">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">Total Net Worth</div>
+      <div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:4px" class="sens">${trendArrow}${fmtN(nwDisplay)}</div>
+      <div style="font-size:12px;color:var(--text3)">in ${cur} · <button onclick="Dash.toggleCurrency()" style="background:none;border:none;color:var(--accent,var(--purple));font-size:12px;cursor:pointer;padding:0;font-weight:600">switch →</button></div>
+      <div style="display:flex;justify-content:space-around;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(123,95,255,.2)">
+        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(cashPKR)}</div><div style="font-size:10px;color:var(--text3)">Cash</div></div>
+        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(invPKR)}</div><div style="font-size:10px;color:var(--text3)">Invested</div></div>
+        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(asPKR+vehPKR)}</div><div style="font-size:10px;color:var(--text3)">Assets</div></div>
+        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(goldPKR)}</div><div style="font-size:10px;color:var(--text3)">Gold</div></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
         <button class="btn btn-g btn-sm" onclick="Dash.snap()">Snapshot</button>
+        <button class="btn btn-g btn-sm" onclick="Dash.showNWBreakdown()">Breakdown</button>
         <button class="btn btn-g btn-sm" onclick="ExIm.export('vault')">Backup</button>
       </div>
     </div>
 
-    <!-- 2-column quick stats -->
-    <div class="dash-stats">
-      <div class="dash-stat" onclick="R.goto('banks')">
-        <div class="dash-stat-n">${S.banks.length}</div>
-        <div class="dash-stat-l">Banks</div>
+    <!-- QUICK STATS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px;margin-bottom:16px">
+      ${stats.map(s => `
+        <div onclick="R.goto('${s.page}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;touch-action:manipulation">
+          <div style="font-size:22px;margin-bottom:4px">${s.icon}</div>
+          <div style="font-size:18px;font-weight:900;color:var(--text)">${s.value}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">${s.label}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- WALLET -->
+    ${S.modules.cards && wCards.length > 0 ? `
+    <div style="margin:0 16px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">👝 Today's Wallet</div>
+        <button onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
       </div>
-      <div class="dash-stat" onclick="R.goto('cards')">
-        <div class="dash-stat-n">${S.cards.length}</div>
-        <div class="dash-stat-l">Cards</div>
-      </div>
-      <div class="dash-stat" onclick="R.goto('investments')">
-        <div class="dash-stat-n sens">${fmtN(Math.round(toCur(invPKR,cur)))}</div>
-        <div class="dash-stat-l">Invested (${cur})</div>
-      </div>
-      <div class="dash-stat" onclick="R.goto('cash')">
-        <div class="dash-stat-n sens">${fmtN(Math.round(toCur(cashPKR,cur)))}</div>
-        <div class="dash-stat-l">Cash (${cur})</div>
+      <div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>
+    </div>` : ''}
+
+    <!-- EXPIRY ALERTS -->
+    ${allExpiring.length ? `
+    <div style="margin:0 16px 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">⚠️ Expiring Soon</div>
+      ${allExpiring.slice(0,3).map(x => `
+        <div style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">${x.type==='card'?'💳':'📄'}</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">${x.name||'Document'}</div>
+              <div style="font-size:11px;color:${x.days<=30?'var(--err)':'var(--warn)'}">Expires in ${x.days} days</div>
+            </div>
+          </div>
+          <div style="font-size:18px;color:var(--text3)">›</div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- VAULT HEALTH -->
+    <div style="margin:0 16px 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">🛡️ Vault Health</div>
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Security Score</div>
+          <div style="font-size:20px;font-weight:900;color:${healthColor}">${health}%</div>
+        </div>
+        <div style="height:6px;background:var(--glass2);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          ${[
+            [!!S.user?.name,'Name set'],
+            [S.pin!=='123456','Custom PIN'],
+            [!!S.decoyPin,'Decoy PIN'],
+            [!!S.user?.lastBackup,'Backed up'],
+            [(S.banks||[]).length>0,'Banks added'],
+            [(S.documents||[]).length>0,'Docs added'],
+          ].map(([ok,label]) => `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:${ok?'rgba(0,255,136,.1)':'rgba(255,69,58,.1)'};color:${ok?'var(--ok)':'var(--err)'};">${ok?'✓':'+'} ${label}</div>`).join('')}
+        </div>
       </div>
     </div>
 
-    <!-- Wallet -->
-    ${S.modules.cards?`<div class="widget"><div class="wh">Wallet<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div>${wCards.length>0?`<div class="wallet-row">${wCards.map(c=>this.miniCard(c,80)).join('')}</div>`:`<div style="font-size:12px;color:var(--text3);padding:2px 0">No cards selected — tap Edit to choose today's cards</div>`}</div>`:''}
+    <!-- QUICK ACTIONS -->
+    <div style="margin:0 16px 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${[
+          {icon:'🏦',label:'Add Bank',action:"Banks.openAdd()"},
+          {icon:'💳',label:'Add Card',action:"Cards.openAdd()"},
+          {icon:'📄',label:'Add Document',action:"R.goto('documents')"},
+          {icon:'💵',label:'Add Cash',action:"Cash.openAdd()"},
+        ].map(a => `
+          <button onclick="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text)">
+            <span style="font-size:22px">${a.icon}</span>${a.label}
+          </button>`).join('')}
+      </div>
+    </div>
 
-    <!-- Alerts -->
-    ${exp.length>0||simRem.length>0?`<div class="widget"><div class="wh">Alerts</div>${exp.map(c=>`<div class="insight err"><div class="insight-ic">💳</div><div class="insight-body"><div class="insight-title">${c.cardName}</div><div class="insight-sub">Expires ${c.expiry}</div></div>${U.expBadge(c.expiry)}</div>`).join('')}${simRem.map(s=>`<div class="insight warn"><div class="insight-ic">📱</div><div class="insight-body"><div class="insight-title">${s.network}</div><div class="insight-sub">Recharge by ${s.nextRecharge||'soon'}</div></div></div>`).join('')}</div>`:''}
+    <!-- MODULE GRID -->
+    ${activeMods.length > 0 ? `<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>` : ''}
 
-    <!-- Allocation -->
-    ${allocData.length>0?`<div class="widget"><div class="wh">Asset Allocation</div><div class="donut-wrap"><svg width="84" height="84" viewBox="0 0 84 84">${donutSVG}</svg><div class="dl">${allocData.map(d=>`<div class="dli"><div class="dld" style="background:${d.col}"></div><div class="dlk">${d.l}</div><div class="dlv">${((d.v/totAlloc)*100).toFixed(0)}%</div></div>`).join('')}</div></div></div>`:''}
-
-    <!-- Monthly expenses -->
-    ${S.modules.expenses&&monthlyExp>0?`<div class="widget"><div class="wh">Monthly Expenses</div><div style="font-size:26px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums">${U.fmt(Math.round(monthlyExp))} <span style="font-size:13px;color:var(--text3);font-weight:400">${S.user.currency}/mo</span></div><div style="font-size:11px;color:var(--text3);margin-top:3px">${U.fmt(Math.round(monthlyExp*12))}/year · ${S.expenses.filter(e=>e.active).length} active</div></div>`:''}
-
-    <!-- Security -->
-    <div class="widget"><div class="wh">Security Score</div><div style="display:flex;gap:14px;align-items:center"><div class="sring"><svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="28" fill="none" stroke="var(--border2)" stroke-width="6"/><circle cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${secScore*1.759} 1000" transform="rotate(-90 36 36)"/></svg><div class="snum">${secScore}</div></div><div style="flex:1;font-size:12px;color:var(--text2);line-height:1.7">${secScore>=85?'Excellent — vault fully secured':secScore>=70?'Good — consider enabling more protections':'Review your security settings'}</div></div></div>
-
-    <!-- Recent activity -->
-    ${S.activity.length>0?`<div class="widget" style="margin-bottom:12px"><div class="wh">Recent Activity</div>${S.activity.slice(0,6).map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:500">${a.a}</div>${a.d?`<div style="font-size:11px;color:var(--text3)">${a.d}</div>`:''}</div><div style="font-size:10px;color:var(--text3)">${Activity.ago(a.t)}</div></div>`).join('')}</div>`:''}
-
-    <!-- Module grid -->
-    ${activeMods.length>0?`<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>`:''}`;
+    <!-- RECENT ACTIVITY -->
+    ${S.activity.length > 0 ? `
+    <div style="margin:16px 16px 24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
+        <button onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
+      </div>
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+        ${S.activity.slice(0,5).map((a,i) => `
+          <div style="padding:12px 16px;${i<Math.min(S.activity.length,5)-1?'border-bottom:1px solid var(--border)':''};display:flex;align-items:center;gap:12px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent,var(--purple));flex-shrink:0"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.a||'Activity'}</div>
+              <div style="font-size:11px;color:var(--text3)">${Activity.ago(a.t)}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
   },
   donut(data,total){
     const r=30,cx=42,cy=42;let angle=-Math.PI/2;let paths='';
