@@ -1369,9 +1369,9 @@ const R = {
     this.startClock();
     const sub = document.getElementById('lkSub');
     if (sub && S.user.name) sub.textContent = `Welcome back, ${S.user.name}`;
-    // Forgot PIN only shows before first successful unlock this session
+    // Forgot PIN shows only after failed attempts
     const fp = document.getElementById('forgotPinLink');
-    if (fp) fp.style.display = window._vosUnlocked ? 'none' : 'inline';
+    if (fp) fp.style.display = 'none';
   },
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
@@ -1575,6 +1575,10 @@ const PIN = {
           if (msg) msg.textContent = `Wrong PIN — ${3 - Math.min(S.fails, 2)} attempts left`;
         }
         Activity.log('Failed PIN #' + S.fails);
+        if (S.fails >= 2) {
+          const fpl = document.getElementById('forgotPinLink');
+          if (fpl) fpl.style.display = 'inline';
+        }
         setTimeout(() => {
           [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
           this.dots();
@@ -2995,6 +2999,17 @@ function _scheduleClipClear() {
 
 // ===================== APP INIT =====================
 async function App() {
+  const splash = document.getElementById('splashScreen');
+  const bar = document.getElementById('splashBar');
+  if (splash) {
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 100);
+    setTimeout(() => {
+      splash.style.transition = 'opacity 0.4s ease';
+      splash.style.opacity = '0';
+      setTimeout(() => { splash.style.display = 'none'; }, 400);
+    }, 1800);
+  }
+
   document.addEventListener('click', function(e) {
     const ni = e.target.closest('[data-pg]');
     if (ni && ni.dataset.pg) R.goto(ni.dataset.pg);

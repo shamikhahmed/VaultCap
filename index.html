@@ -16,6 +16,10 @@
 <link rel="stylesheet" href="css/layout.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/themes.css">
+<style>
+@keyframes splashPop{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes splashFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 <body>
 <input type="file" id="importF-global" accept=".vos,.vault,.json,.csv,.xlsx,.xls,.docx,.doc,.pdf,.txt,image/*" style="display:none" onchange="if(window.ExIm)ExIm.import(event)">
@@ -27,6 +31,16 @@
 <!-- CMD PALETTE -->
 <div id="cmdPal"><div class="cmd-bg" onclick="CMD.close()"></div>
 <div class="cmd-box"><input class="cmd-in" id="cmdIn" placeholder="Search everything..." oninput="CMD.search(this.value)" onkeydown="CMD.key(event)"><div class="cmd-list" id="cmdList"></div><div class="cmd-hint"><span>↑↓ navigate</span><span>⏎ select</span><span>Esc close</span><span style="margin-left:auto">⌘K open · ⌘N add · ⌘L lock</span></div></div></div>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 50%,#0a1a2e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0">
+  <div style="width:90px;height:90px;border-radius:28px;background:linear-gradient(135deg,#7b5fff,#00d5ff);display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 20px 60px rgba(123,95,255,0.5);animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both">🔐</div>
+  <div style="margin-top:24px;font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;animation:splashFade 0.6s 0.3s both">VaultOS</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px;letter-spacing:0.15em;text-transform:uppercase;animation:splashFade 0.6s 0.5s both">Your Personal Vault</div>
+  <div style="margin-top:48px;width:40px;height:3px;border-radius:2px;background:rgba(255,255,255,0.1);overflow:hidden;animation:splashFade 0.6s 0.6s both">
+    <div id="splashBar" style="width:0%;height:100%;background:linear-gradient(90deg,#7b5fff,#00d5ff);border-radius:2px;transition:width 1.2s ease"></div>
+  </div>
+</div>
 
 <!-- LOCK -->
 <div id="pgLock" style="display:none">
