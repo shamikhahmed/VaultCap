@@ -2439,6 +2439,17 @@ function togglePrivacy() {
   document.getElementById('privBtn').textContent = S.privacyMode ? '👁️ Visible' : '🙈 Privacy';
 }
 
+function toggleSidebar() {
+  const collapsed = document.body.classList.toggle('sidebar-collapsed');
+  localStorage.setItem('vo_sidebar_collapsed', collapsed ? '1' : '0');
+}
+
+function initSidebar() {
+  if (localStorage.getItem('vo_sidebar_collapsed') === '1') {
+    document.body.classList.add('sidebar-collapsed');
+  }
+}
+
 // ===================== BUILD NAV =====================
 function buildSettTabs() {
   const el = document.getElementById('settTabs');
@@ -3067,6 +3078,7 @@ function _scheduleClipClear() {
 
 // ===================== APP INIT =====================
 async function App() {
+  initSidebar();
   const splash = document.getElementById('splashScreen');
   const bar = document.getElementById('splashBar');
   if (splash) {

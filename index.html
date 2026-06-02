@@ -252,8 +252,8 @@
 
 <!-- MAIN APP -->
 <div class="app" id="app" style="display:none">
-<div class="sidebar">
-<div class="sb-logo"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><div class="mark" style="font-size:22px">🔐</div><h1 style="font-size:16px">VAULT OS</h1></div><p id="sbUser" style="font-size:10px;color:var(--text3)">by Shamikh Ahmed</p></div>
+<div class="sidebar" id="sidebar">
+<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px"><div class="mark" style="font-size:22px">🔐</div><h1 style="font-size:16px">VAULT OS</h1></div><button class="sb-tog" onclick="toggleSidebar()" title="Collapse sidebar">☰</button></div><p id="sbUser" style="font-size:10px;color:var(--text3);margin-top:3px">by Shamikh Ahmed</p></div>
 <nav class="sb-nav" id="sbNav"></nav>
 <div class="sb-bot">
 <button class="btn btn-g btn-full btn-sm" onclick="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:11px">Search everything</span></button>

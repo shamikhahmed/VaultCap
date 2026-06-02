@@ -11,11 +11,40 @@
 .sidebar {
   width: var(--sbw); background: var(--bg2); border-right: 1px solid var(--border);
   display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+  transition: width 0.25s var(--ease);
 }
 @media (min-width: 900px) { .sidebar { min-width: 220px; max-width: 240px; } }
 @media (min-width: 1400px) { .sidebar { min-width: 260px; } }
 @media (max-width: 768px) { .sidebar { display: none; } }
 @media (min-width: 769px) { .sidebar { overflow-y: auto; } }
+
+/* ─ Sidebar collapse toggle ─ */
+.sb-tog {
+  display: none; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+  color: var(--text3); font-size: 16px; transition: var(--t);
+  background: transparent; border: none; flex-shrink: 0;
+}
+.sb-tog:hover { background: var(--glass2); color: var(--text); }
+@media (min-width: 769px) { .sb-tog { display: flex; } }
+
+.sb-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+
+/* Collapsed sidebar */
+body.sidebar-collapsed .sidebar { width: 60px; min-width: 60px !important; }
+body.sidebar-collapsed .sb-logo h1,
+body.sidebar-collapsed .sb-logo p,
+body.sidebar-collapsed .sb-bot .btn span,
+body.sidebar-collapsed .sb-bot .btn:first-child { display: none; }
+body.sidebar-collapsed .sb-bot { padding: 10px 8px; }
+body.sidebar-collapsed .sb-bot > div { flex-direction: column; gap: 6px; }
+body.sidebar-collapsed .sb-logo { padding: 12px 8px; }
+body.sidebar-collapsed .ni { padding: 10px; justify-content: center; gap: 0; margin: 1px 4px; }
+body.sidebar-collapsed .ni-ic { width: auto; font-size: 17px; }
+body.sidebar-collapsed .ni-badge { display: none; }
+body.sidebar-collapsed .sb-nav [style*="letter-spacing"] { display: none; }
+body.sidebar-collapsed .sb-nav [style*="height:1px"] { margin: 4px 8px; }
+body.sidebar-collapsed .ni.on::before { left: -4px; }
 
 /* Fold posture: book mode */
 @media (spanning: single-fold-vertical) {
