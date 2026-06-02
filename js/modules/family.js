@@ -10,8 +10,66 @@ const Family = {
   render() {
     const body = document.getElementById('pg-family-body');
     if (!body) return;
+    this._syncHeadFromVault();
     if (this._view === 'member') { this._renderMember(body); return; }
     this._renderList(body);
+  },
+
+  _syncHeadFromVault() {
+    if (typeof S === 'undefined' || !S.user?.name) return;
+    const d = this.get();
+    d.head = {
+      name: S.user.name || d.head?.name || '',
+      avatar: S.user.avatar || d.head?.avatar || '👤',
+      relation: 'Head of Family',
+      dob: S.user.dob || d.head?.dob || '',
+      phone: S.user.phone || d.head?.phone || '',
+      email: S.user.email || d.head?.email || '',
+      notes: d.head?.notes || '',
+      docs: d.head?.docs || [],
+      banks: d.head?.banks || [],
+      cards: d.head?.cards || [],
+      cash: d.head?.cash || [],
+      _liveData: true,
+    };
+    this.save(d);
+  },
+
+  _getMemberData() {
+    const d = this.get();
+    if (this._memberIdx === 'head') {
+      const head = d.head || {};
+      return {
+        ...head,
+        _isVaultOwner: true,
+        docs: typeof S !== 'undefined' ? (S.documents || []).map(doc => ({
+          type: doc.type || doc.category || 'Document',
+          number: doc.number || doc.docNum || '',
+          expiry: doc.expiry || doc.expiryDate || '',
+          issued: doc.issued || doc.issueDate || '',
+          issuer: doc.issuer || doc.issuedBy || '',
+          notes: doc.notes || '',
+        })) : (head.docs || []),
+        banks: typeof S !== 'undefined' ? (S.banks || []).map(b => b.bankName).filter(Boolean) : (head.banks || []),
+        cards: typeof S !== 'undefined' ? (S.cards || []).map(c => ({
+          name: c.cardName || c.name || '',
+          last4: c.last4 || '',
+          network: c.network || '',
+          type: c.cardType || c.type || 'debit',
+        })) : (head.cards || []),
+        cash: typeof S !== 'undefined' ? (S.cash || []).map(c => ({
+          label: c.label || c.name || 'Cash',
+          amount: c.amount || c.balance || 0,
+          notes: c.notes || '',
+        })) : (head.cash || []),
+        investments: typeof S !== 'undefined' ? (S.investments || []).map(inv => ({
+          type: inv.type || inv.assetType || 'Investment',
+          name: inv.name || inv.ticker || '',
+          value: inv.value || inv.currentValue || inv.amount || 0,
+        })) : (head.investments || []),
+      };
+    }
+    return d.members[this._memberIdx] || {};
   },
 
   _renderList(body) {
@@ -98,9 +156,8 @@ const Family = {
   },
 
   _renderMember(body) {
-    const d = this.get();
-    const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
-    if (!m) { this.back(); return; }
+    const m = this._getMemberData();
+    if (!m || !m.name) { this.back(); return; }
     const tabs = ['overview','docs','banks','cash','investments','notes'];
     const tabLabels = {overview:'📋 Overview',docs:'📄 Docs',banks:'💳 Banks & Cards',cash:'💵 Cash',investments:'📈 Investments',notes:'📝 Notes'};
     const midx = this._memberIdx;
@@ -128,8 +185,7 @@ const Family = {
 
   _switchTab(t) {
     this._tab = t;
-    const d = this.get();
-    const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
+    const m = this._getMemberData();
     const body = document.getElementById('fm-tab-body');
     if (body && m) body.innerHTML = this._renderTab(m);
     document.querySelectorAll('#pg-family-body button[onclick*="_switchTab"]').forEach(b=>{
@@ -172,46 +228,64 @@ const Family = {
 
   _tabDocs(m) {
     const docs = m.docs || [];
+    const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Documents tab</div>' : '';
+    const addBtn = m._isVaultOwner ? '' : '<button onclick="Family._addDoc()" style="width:100%;padding:12px;border-radius:12px;background:rgba(123,95,255,.15);border:1px solid rgba(123,95,255,.3);color:rgba(123,95,255,1);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Document</button>';
     return `
-      <button onclick="Family._addDoc()" style="width:100%;padding:12px;border-radius:12px;background:rgba(123,95,255,.15);border:1px solid rgba(123,95,255,.3);color:rgba(123,95,255,1);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Document</button>
+      ${liveNote}
+      ${addBtn}
       ${docs.length ? docs.map((doc,i)=>`
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--text)">${_fesc(doc.type)}</div>
             ${doc.number?`<div style="font-size:12px;color:var(--text3);margin-top:2px">${_fesc(doc.number)}</div>`:''}
+            ${doc.issued?`<div style="font-size:11px;color:var(--text3);margin-top:2px">Issued: ${doc.issued}</div>`:''}
+            ${doc.issuer?`<div style="font-size:11px;color:var(--text3)">By: ${_fesc(doc.issuer)}</div>`:''}
             ${doc.expiry?`<div style="font-size:11px;color:${new Date(doc.expiry)<new Date(Date.now()+30*24*60*60*1000)?'var(--err)':'var(--text3)'};margin-top:2px">Exp: ${doc.expiry}</div>`:''}
           </div>
-          <button onclick="Family._removeDoc(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation">×</button>
+          ${!m._isVaultOwner?`<button onclick="Family._removeDoc(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation">×</button>`:''}
         </div>`).join('') : '<div style="text-align:center;padding:30px;color:var(--text3)">No documents yet</div>'}`;
   },
 
   _tabBanks(m) {
     const banks = m.banks || [];
     const cards = m.cards || [];
+    const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Banks/Cards tabs</div>' : '';
     return `
+      ${liveNote}
       <div style="margin-bottom:20px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Banks</div>
-          <button onclick="Family._addBank()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>
+          ${!m._isVaultOwner?'<button onclick="Family._addBank()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>':''}
         </div>
-        ${banks.length ? banks.map((b,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(b)}</div><button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
+        ${banks.length ? banks.map((b,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(b)}</div>${!m._isVaultOwner?`<button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
       </div>
       <div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Cards</div>
-          <button onclick="Family._addCard()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>
+          ${!m._isVaultOwner?'<button onclick="Family._addCard()" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>':''}
         </div>
-        ${cards.length ? cards.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600;color:var(--text)">💳 ${_fesc(c.name)}</div>${c.last4?`<div style="font-size:12px;color:var(--text3)">**** ${c.last4}</div>`:''}</div><button onclick="Family._removeCard(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No cards added</div>'}
+        ${cards.length ? cards.map((c,i)=>`
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💳</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_fesc(c.name)}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.last4?'**** '+c.last4:''}${c.network?' · '+c.network:''}${c.type?' · '+c.type:''}</div>
+            </div>
+            ${!m._isVaultOwner?`<button onclick="Family._removeCard(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation;flex-shrink:0">×</button>`:''}
+          </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No cards added</div>'}
       </div>`;
   },
 
   _tabCash(m) {
     const cash = m.cash || [];
     const total = cash.reduce((a,c)=>a+(c.amount||0),0);
+    const liveNote = m._isVaultOwner ? '<div style="font-size:12px;color:var(--text3);background:rgba(0,213,255,.06);border:1px solid rgba(0,213,255,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px">📡 Live data from your vault — manage in Cash tab</div>' : '';
+    const addBtn = m._isVaultOwner ? '' : '<button onclick="Family._addCash()" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--ok);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Cash Entry</button>';
     return `
+      ${liveNote}
       ${total>0?`<div style="background:linear-gradient(135deg,rgba(0,255,136,.1),rgba(0,213,255,.08));border:1px solid rgba(0,255,136,.3);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Total Cash</div><div style="font-size:28px;font-weight:900;color:var(--ok)">PKR ${total.toLocaleString()}</div></div>`:''}
-      <button onclick="Family._addCash()" style="width:100%;padding:12px;border-radius:12px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--ok);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:14px">+ Add Cash Entry</button>
-      ${cash.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(c.label||'Cash')}</div>${c.notes?`<div style="font-size:12px;color:var(--text3)">${_fesc(c.notes)}</div>`:''}</div><div style="text-align:right"><div style="font-size:15px;font-weight:800;color:var(--ok)">PKR ${(c.amount||0).toLocaleString()}</div><button onclick="Family._removeCash(${i})" style="font-size:11px;color:var(--err);background:none;border:none;cursor:pointer;margin-top:2px">Remove</button></div></div>`).join('')}
+      ${addBtn}
+      ${cash.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(c.label||'Cash')}</div>${c.notes?`<div style="font-size:12px;color:var(--text3)">${_fesc(c.notes)}</div>`:''}</div><div style="text-align:right"><div style="font-size:15px;font-weight:800;color:var(--ok)">PKR ${(c.amount||0).toLocaleString()}</div>${!m._isVaultOwner?`<button onclick="Family._removeCash(${i})" style="font-size:11px;color:var(--err);background:none;border:none;cursor:pointer;margin-top:2px">Remove</button>`:''}</div></div>`).join('')}
       ${!cash.length?'<div style="text-align:center;padding:30px;color:var(--text3)">No cash entries yet</div>':''}`;
   },
 
@@ -369,25 +443,85 @@ const Family = {
   _addDoc() {
     Modal.open('📄 Add Document',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <select id="fd-type" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-          ${['Passport','National ID','Driving Licence','Visa','Birth Certificate','Marriage Certificate','NTN','CNIC','Iqama','Emirates ID','Other'].map(t=>`<option>${t}</option>`).join('')}
-        </select>
-        <input id="fd-number" placeholder="Document number" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-        <input id="fd-expiry" type="date" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Document Type</div>
+          <select id="fd-type" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+            <optgroup label="Identity">
+              <option>Passport</option>
+              <option>National ID / CNIC</option>
+              <option>Driving Licence</option>
+              <option>Iqama / Resident Permit</option>
+              <option>Emirates ID</option>
+              <option>PAN Card</option>
+              <option>Voter ID</option>
+            </optgroup>
+            <optgroup label="Finance">
+              <option>NTN Certificate</option>
+              <option>Tax Return</option>
+              <option>Bank Statement</option>
+              <option>Salary Certificate</option>
+            </optgroup>
+            <optgroup label="Travel">
+              <option>Visa</option>
+              <option>Travel Permit</option>
+              <option>Vehicle Registration</option>
+            </optgroup>
+            <optgroup label="Legal">
+              <option>Birth Certificate</option>
+              <option>Marriage Certificate</option>
+              <option>Divorce Certificate</option>
+              <option>Death Certificate</option>
+              <option>Will / Testament</option>
+              <option>Power of Attorney</option>
+              <option>Property Deed</option>
+            </optgroup>
+            <optgroup label="Education">
+              <option>Degree Certificate</option>
+              <option>Transcript</option>
+              <option>School Certificate</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option>Insurance Policy</option>
+              <option>Medical Record</option>
+              <option>Other</option>
+            </optgroup>
+          </select>
+        </div>
+        <input id="fd-num" placeholder="Document number (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Issue Date</div>
+          <input id="fd-issued" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Expiry Date</div>
+          <input id="fd-exp" type="date" style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+        </div>
+        <input id="fd-issuer" placeholder="Issued by (optional)" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+        <textarea id="fd-note" placeholder="Notes (optional)" rows="2" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none"></textarea>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveDoc()">Add</button>`);
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveDoc()">Save Document</button>`);
   },
 
   _saveDoc() {
+    const type = document.getElementById('fd-type')?.value;
+    if (!type) { if(window.Toast) Toast.show('Select document type','error'); return; }
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) return;
     if (!m.docs) m.docs = [];
-    m.docs.push({ type: document.getElementById('fd-type')?.value, number: document.getElementById('fd-number')?.value, expiry: document.getElementById('fd-expiry')?.value });
+    m.docs.push({
+      type,
+      number: document.getElementById('fd-num')?.value || '',
+      issued: document.getElementById('fd-issued')?.value || '',
+      expiry: document.getElementById('fd-exp')?.value || '',
+      issuer: document.getElementById('fd-issuer')?.value || '',
+      notes: document.getElementById('fd-note')?.value || '',
+      addedAt: new Date().toISOString(),
+    });
     this.save(d); Modal.close();
     const tb = document.getElementById('fm-tab-body');
     if (tb) tb.innerHTML = this._tabDocs(m);
-    Toast.show('Document added','success');
+    Toast.show('Document saved','success');
   },
 
   _removeDoc(i) {
@@ -401,20 +535,59 @@ const Family = {
 
   /* ── Bank actions ── */
   _addBank() {
+    const myBanks = typeof S !== 'undefined' ? (S.banks||[]).map(b=>b.bankName).filter(Boolean) : [];
+    const smartBanks = typeof SMART_DB !== 'undefined' ?
+      SMART_DB.banks.filter(b => ['PK','GB','AE'].includes(b.country)).map(b=>b.name) : [];
+    const allBanks = [...new Set([...myBanks, ...smartBanks])];
     Modal.open('🏦 Add Bank',
-      `<input id="fb-name" placeholder="Bank name" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveBank()">Add</button>`);
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Select Bank</div>
+        <input id="fb-search" placeholder="Search banks..."
+          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
+          oninput="Family._filterBankList(this.value)">
+        <div id="fb-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
+          ${allBanks.slice(0,20).map(b=>`
+            <div onclick="document.getElementById('fb-selected').value='${b.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
+              class="fb-item"
+              style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);transition:background .15s">
+              🏦 ${b}
+            </div>`).join('')}
+        </div>
+        <input id="fb-selected" placeholder="Or type bank name manually"
+          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveBank()">Add Bank</button>`
+    );
+  },
+
+  _filterBankList(query) {
+    const myBanks = typeof S !== 'undefined' ? (S.banks||[]).map(b=>b.bankName).filter(Boolean) : [];
+    const smartBanks = typeof SMART_DB !== 'undefined' ?
+      SMART_DB.banks.filter(b => ['PK','GB','AE'].includes(b.country)).map(b=>b.name) : [];
+    const allBanks = [...new Set([...myBanks, ...smartBanks])];
+    const q = (query||'').toLowerCase();
+    const filtered = q ? allBanks.filter(b=>b.toLowerCase().includes(q)) : allBanks.slice(0,20);
+    const list = document.getElementById('fb-list');
+    if (!list) return;
+    list.innerHTML = filtered.slice(0,20).map(b=>`
+      <div onclick="document.getElementById('fb-selected').value='${b.replace(/'/g,"\\'")}';document.querySelectorAll('#fb-list .fb-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
+        class="fb-item"
+        style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:14px;color:var(--text);transition:background .15s">
+        🏦 ${b}
+      </div>`).join('') || '<div style="padding:12px;color:var(--text3);font-size:13px">No banks found</div>';
   },
 
   _saveBank() {
-    const name = document.getElementById('fb-name')?.value?.trim();
-    if (!name) return;
+    const name = (document.getElementById('fb-selected')?.value || document.getElementById('fb-name')?.value || '').trim();
+    if (!name) { if(window.Toast) Toast.show('Select or enter a bank','error'); return; }
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) return;
     if (!m.banks) m.banks = [];
+    if (m.banks.includes(name)) { if(window.Toast) Toast.show('Bank already added','warning'); return; }
     m.banks.push(name);
     this.save(d); Modal.close();
+    if(window.Toast) Toast.show('Bank added','success');
     const tb = document.getElementById('fm-tab-body');
     if (tb) tb.innerHTML = this._tabBanks(m);
   },
@@ -430,23 +603,97 @@ const Family = {
 
   /* ── Card actions ── */
   _addCard() {
+    const d = this.get();
+    const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
+    const memberBanks = m?.banks || [];
+    const getCardSuggestions = (bankName) => {
+      if (!bankName || typeof SMART_DB === 'undefined') return [];
+      const firstWord = bankName.toLowerCase().split(' ')[0];
+      return (SMART_DB.cards || []).filter(c => c.toLowerCase().includes(firstWord)).slice(0,8);
+    };
+    const initialCards = memberBanks.length > 0 ? getCardSuggestions(memberBanks[0]) :
+      (typeof SMART_DB !== 'undefined' ? (SMART_DB.cards||[]).slice(0,10) : []);
     Modal.open('💳 Add Card',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <input id="fc-name" placeholder="Card name" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
-        <input id="fc-last4" placeholder="Last 4 digits (optional)" maxlength="4" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);width:100%;box-sizing:border-box">
+        ${memberBanks.length > 0 ? `
+          <div>
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Filter by Bank</div>
+            <select id="fc-bank-filter" onchange="Family._filterCardList(this.value,'')"
+              style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+              <option value="">All Cards</option>
+              ${memberBanks.map(b=>`<option value="${_fesc(b)}">${_fesc(b)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Select Card</div>
+          <input id="fc-search" placeholder="Search or type card name..."
+            style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
+            oninput="Family._filterCardList(document.getElementById('fc-bank-filter')?.value||'',this.value)">
+        </div>
+        <div id="fc-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
+          ${initialCards.map(c=>`
+            <div onclick="document.getElementById('fc-name').value='${c.replace(/'/g,"\\'")}';document.querySelectorAll('#fc-list .fc-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
+              class="fc-item"
+              style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:13px;color:var(--text);transition:background .15s">
+              💳 ${c}
+            </div>`).join('')}
+        </div>
+        <input id="fc-name" placeholder="Card name"
+          style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+        <div style="display:flex;gap:8px">
+          <input id="fc-l4" placeholder="Last 4 digits" maxlength="4"
+            style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">
+          <select id="fc-type" style="flex:1;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+            <option value="debit">Debit</option>
+            <option value="credit">Credit</option>
+            <option value="prepaid">Prepaid</option>
+          </select>
+        </div>
+        <select id="fc-net" style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
+          <option value="">Network (optional)</option>
+          <option>Visa</option><option>Mastercard</option><option>Amex</option>
+          <option>UnionPay</option><option>PayPak</option><option>JCB</option>
+        </select>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveCard()">Add</button>`);
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Family._saveCard()">Add Card</button>`
+    );
+  },
+
+  _filterCardList(bankName, searchQuery) {
+    const q = (searchQuery||'').toLowerCase();
+    let cards = [];
+    if (bankName && typeof SMART_DB !== 'undefined') {
+      const firstWord = bankName.toLowerCase().split(' ')[0];
+      cards = (SMART_DB.cards||[]).filter(c => c.toLowerCase().includes(firstWord));
+    } else if (typeof SMART_DB !== 'undefined') {
+      cards = SMART_DB.cards || [];
+    }
+    if (q) cards = cards.filter(c => c.toLowerCase().includes(q));
+    const list = document.getElementById('fc-list');
+    if (!list) return;
+    list.innerHTML = cards.slice(0,10).map(c=>`
+      <div onclick="document.getElementById('fc-name').value='${c.replace(/'/g,"\\'")}';document.querySelectorAll('#fc-list .fc-item').forEach(el=>el.style.background='transparent');this.style.background='rgba(123,95,255,.15)'"
+        class="fc-item"
+        style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;touch-action:manipulation;font-size:13px;color:var(--text);transition:background .15s">
+        💳 ${c}
+      </div>`).join('') || '<div style="padding:12px;color:var(--text3);font-size:13px">No cards found — type name manually above</div>';
   },
 
   _saveCard() {
     const name = document.getElementById('fc-name')?.value?.trim();
-    if (!name) return;
+    if (!name) { if(window.Toast) Toast.show('Enter card name','error'); return; }
     const d = this.get();
     const m = this._memberIdx === 'head' ? d.head : d.members[this._memberIdx];
     if (!m) return;
     if (!m.cards) m.cards = [];
-    m.cards.push({ name, last4: document.getElementById('fc-last4')?.value });
+    m.cards.push({
+      name,
+      last4: document.getElementById('fc-l4')?.value || '',
+      network: document.getElementById('fc-net')?.value || '',
+      type: document.getElementById('fc-type')?.value || 'debit',
+    });
     this.save(d); Modal.close();
+    if(window.Toast) Toast.show('Card added','success');
     const tb = document.getElementById('fm-tab-body');
     if (tb) tb.innerHTML = this._tabBanks(m);
   },
@@ -502,5 +749,7 @@ const Family = {
   },
 };
 window.Family = Family;
+window.Family._filterBankList = Family._filterBankList.bind(Family);
+window.Family._filterCardList = Family._filterCardList.bind(Family);
 
 function _fesc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
