@@ -1,4 +1,19 @@
 const Vehicles = {
+  _days(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr); if (isNaN(d)) return null;
+    const t = new Date(); t.setHours(0,0,0,0); d.setHours(0,0,0,0);
+    return Math.round((d - t) / 86400000);
+  },
+
+  _statusBadge(days, label) {
+    if (days === null) return '';
+    if (days < 0) return `<span class="badge b-err">⚠️ ${label} EXPIRED</span>`;
+    if (days < 30) return `<span class="badge b-err">🔴 ${label}: ${days}d</span>`;
+    if (days < 60) return `<span class="badge b-warn">🟠 ${label}: ${days}d</span>`;
+    return `<span class="badge b-ok">✅ ${label}: ${days}d</span>`;
+  },
+
   render() {
     const el = document.getElementById('vItems');
     if (!el) return;
@@ -7,9 +22,17 @@ const Vehicles = {
       el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🚗</div><div class="ei-title">No Vehicles</div><div class="ei-sub">Track cars, fuel logs, service history, insurance and documents</div><button class="btn btn-p" onclick="Vehicles.openAdd()">🚗 Add Vehicle</button></div>`;
       return;
     }
-    el.innerHTML = data.map(v => {
+    const expiring = data.filter(v => {
+      const md = v.motExpiry ? this._days(v.motExpiry) : null;
+      const td = v.taxExpiry ? this._days(v.taxExpiry) : null;
+      return (md !== null && md <= 30) || (td !== null && td <= 30);
+    });
+    const banner = expiring.length ? `<div style="background:rgba(255,59,48,.12);border:1px solid rgba(255,59,48,.35);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--err);line-height:1.5">⚠️ <strong>${expiring.length} vehicle${expiring.length>1?'s':''}</strong> with MOT or road tax expiring within 30 days — check the Reminders page</div>` : '';
+    el.innerHTML = banner + data.map(v => {
       const ins = v.insurance || [];
       const hasIns = ins.some(i => i.expiryDate && new Date(i.expiryDate) >= new Date());
+      const motDays = v.motExpiry ? this._days(v.motExpiry) : null;
+      const taxDays = v.taxExpiry ? this._days(v.taxExpiry) : null;
       return `<div class="entry" onclick="Vehicles.detail('${v.id}')">
         <div class="entry-main">
           <div class="entry-ic">🚗</div>
@@ -20,6 +43,8 @@ const Vehicles = {
               ${v.currentValue ? `<span class="badge b-acc">${v.currency || ''} ${U.fmt(v.currentValue)}</span>` : ''}
               <span class="badge ${hasIns ? 'b-ok' : 'b-err'}">${hasIns ? 'Insured' : 'No Insurance'}</span>
               ${(v.fuelLog||[]).length ? `<span class="badge b-muted">⛽ ${(v.fuelLog||[]).length} logs</span>` : ''}
+              ${this._statusBadge(motDays, 'MOT')}
+              ${this._statusBadge(taxDays, 'Tax')}
             </div>
           </div>
           <div class="entry-acts">
@@ -40,6 +65,7 @@ const Vehicles = {
     const yr = new Date().getFullYear();
     const makeModel = v.make ? (v.make + (v.model ? ' ' + v.model : '')) : '';
     const hasExtra = !!(v.regNumber || v.vinNumber || v.fuelType || v.engineCC || v.transmission || v.purchaseDate || v.purchasePrice || v.currentValue);
+    const hasUK = !!(v.motExpiry || v.taxExpiry);
     return `
       <div class="fg"><label class="fl">Make &amp; Model *</label>
         <datalist id="vModelDL">
@@ -84,6 +110,16 @@ const Vehicles = {
           </div>
           <div class="fg"><label class="fl">Currency</label><select class="inp" id="vf-cur">${U.currencies()}</select></div>
         </div>
+      </details>
+      <details${hasUK?' open':''} style="margin-top:10px">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">🇬🇧 UK Documents (MOT &amp; Road Tax)</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>
+        <div style="padding-top:10px">
+          <div class="fr">
+            <div class="fg"><label class="fl">MOT Expiry</label><input class="inp" id="vf-mot" type="date" value="${v.motExpiry||''}"></div>
+            <div class="fg"><label class="fl">Road Tax Expiry</label><input class="inp" id="vf-vtax" type="date" value="${v.taxExpiry||''}"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Reminders auto-created 30 days before expiry</div>
+        </div>
       </details>`;
   },
 
@@ -106,6 +142,8 @@ const Vehicles = {
       purchasePrice: parseFloat(document.getElementById('vf-pp')?.value) || 0,
       currentValue: parseFloat(document.getElementById('vf-cv')?.value) || 0,
       currency: document.getElementById('vf-cur')?.value || S.user.currency || 'PKR',
+      motExpiry: document.getElementById('vf-mot')?.value || '',
+      taxExpiry: document.getElementById('vf-vtax')?.value || '',
     };
     if (!S.vehicles) S.vehicles = [];
     if (editId) {
@@ -177,7 +215,11 @@ const Vehicles = {
   },
 
   _tabContent(v, tab) {
-    if (tab === 'Overview') return `
+    if (tab === 'Overview') {
+      const motDays = v.motExpiry ? this._days(v.motExpiry) : null;
+      const taxDays = v.taxExpiry ? this._days(v.taxExpiry) : null;
+      const dayLabel = d => d < 0 ? `<span style="color:var(--err)">EXPIRED ${Math.abs(d)}d ago ⚠️</span>` : d < 30 ? `<span style="color:var(--err)">${d}d remaining 🔴</span>` : d < 60 ? `<span style="color:var(--warn)">${d}d remaining 🟠</span>` : `<span style="color:var(--ok)">${d}d remaining ✅</span>`;
+      return `
       ${v.color ? `<div class="dr"><div class="dk">Color</div><div class="dv">${v.color}</div></div>` : ''}
       ${v.regNumber ? `<div class="dr"><div class="dk">Reg No.</div><div class="dv sens">${v.regNumber}</div></div>` : ''}
       ${v.vinNumber ? `<div class="dr"><div class="dk">VIN</div><div class="dv sens" style="font-size:11px">${v.vinNumber}</div></div>` : ''}
@@ -186,7 +228,10 @@ const Vehicles = {
       ${v.transmission ? `<div class="dr"><div class="dk">Transmission</div><div class="dv">${v.transmission}</div></div>` : ''}
       ${v.purchaseDate ? `<div class="dr"><div class="dk">Purchase Date</div><div class="dv">${v.purchaseDate}</div></div>` : ''}
       ${v.purchasePrice ? `<div class="dr"><div class="dk">Purchase Price</div><div class="dv sens">${v.currency} ${U.fmt(v.purchasePrice)}</div></div>` : ''}
-      ${v.currentValue ? `<div class="dr"><div class="dk">Current Value</div><div class="dv sens">${v.currency} ${U.fmt(v.currentValue)}</div></div>` : ''}`;
+      ${v.currentValue ? `<div class="dr"><div class="dk">Current Value</div><div class="dv sens">${v.currency} ${U.fmt(v.currentValue)}</div></div>` : ''}
+      ${v.motExpiry ? `<div class="dr"><div class="dk">MOT Expiry</div><div class="dv">${v.motExpiry} &nbsp; ${motDays !== null ? dayLabel(motDays) : ''}</div></div>` : ''}
+      ${v.taxExpiry ? `<div class="dr"><div class="dk">Road Tax Expiry</div><div class="dv">${v.taxExpiry} &nbsp; ${taxDays !== null ? dayLabel(taxDays) : ''}</div></div>` : ''}`;
+    }
 
     if (tab === 'Fuel') {
       const logs = (v.fuelLog || []).slice().reverse();

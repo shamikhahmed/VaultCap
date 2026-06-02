@@ -99,6 +99,18 @@ const Reminders = {
           items.push({ icon:'🚗', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle' });
         }
       }
+      if (v.motExpiry) {
+        const days = this._daysLeft(v.motExpiry);
+        if (days !== null && days < 30) {
+          items.push({ icon:'🔧', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle' });
+        }
+      }
+      if (v.taxExpiry) {
+        const days = this._daysLeft(v.taxExpiry);
+        if (days !== null && days < 30) {
+          items.push({ icon:'🚘', title:`${name} road tax due`, sub:`Road tax expires ${v.taxExpiry}`, daysLeft:days, category:'Vehicle' });
+        }
+      }
     });
 
     // Subscriptions renewing within 7 days

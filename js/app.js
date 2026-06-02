@@ -1489,6 +1489,7 @@ const R = {
       gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
+      tax:         () => { if (typeof Tax !== 'undefined') Tax.render(); },
       sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">🔄</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();
@@ -2491,6 +2492,7 @@ function buildNav() {
       { id:'gold', n:'Metals', ic:'🥇' },
       { id:'zakat', n:'Zakat', ic:'🌙' },
       { id:'credit', n:'Credit', ic:'📊' },
+      { id:'tax', n:'Tax Calc', ic:'🧾' },
     ];
     const seenIds = new Set();
     const moreItems = [...overflow, ...permanentExtras].filter(m => {
