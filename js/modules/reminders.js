@@ -152,6 +152,23 @@ const Reminders = {
       }
     });
 
+    // SIM cards — contract/expiry within 30 days
+    (S.sims || []).forEach(function(sim) {
+      const expField = sim.contractEnd || sim.expiryDate || sim.renewalDate;
+      if (!expField) return;
+      const days = Reminders._daysLeft(expField);
+      if (days !== null && days <= 30) {
+        items.push({
+          icon: '📱',
+          title: (sim.network || 'SIM') + ' — Contract ending',
+          sub: 'Expires ' + new Date(expField).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
+          daysLeft: days,
+          page: 'sims',
+          category: 'SIM',
+        });
+      }
+    });
+
     // Subscriptions renewing within 7 days
     (S.expenses || []).filter(e => e.active && e.renewalDate).forEach(e => {
       const days = this._daysLeft(e.renewalDate);

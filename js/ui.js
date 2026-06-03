@@ -109,6 +109,17 @@ const Dash={
     const trendDir = prevV !== null ? (nwDisplay > prevV ? 1 : nwDisplay < prevV ? -1 : 0) : 0;
     const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
 
+    // Auto-save today's net worth to history
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      if (!hist.length || hist[hist.length-1].d !== today) {
+        hist.push({v: nwDisplay, d: today});
+        if (hist.length > 180) hist.splice(0, hist.length - 180);
+        S.user.nwHistory = hist;
+        Store.save();
+      }
+    } catch(e) {}
+
     // Expiry alerts
     const now = new Date();
     const in60 = new Date(now.getTime() + 60*24*60*60*1000);
