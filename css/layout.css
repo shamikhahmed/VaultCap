@@ -124,7 +124,7 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid var(--border); z-index: 200;
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px);
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
 }
 .btabs-in { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); scrollbar-width: none; }
 .btabs-in::-webkit-scrollbar { display: none; }

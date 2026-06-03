@@ -156,6 +156,24 @@ const DataIntegrity = {
   },
 };
 
+function compressImage(dataUrl, maxWidth = 800, quality = 0.7) {
+  return new Promise((resolve) => {
+    if (!dataUrl || !dataUrl.startsWith('data:image')) { resolve(dataUrl); return; }
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(1, maxWidth / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
 const COUNTRIES=[
   {c:'PK',n:'Pakistan',f:'🇵🇰',p:'+92'},{c:'GB',n:'United Kingdom',f:'🇬🇧',p:'+44'},
   {c:'AE',n:'UAE',f:'🇦🇪',p:'+971'},{c:'US',n:'United States',f:'🇺🇸',p:'+1'},
@@ -1540,6 +1558,9 @@ const Modal = {
     modal.style.transform = '';
     modal.style.transition = '';
     document.getElementById('overlay').classList.remove('on');
+    ['cf-cvv','cf-cpin','bf-pin','bf-appPin','cf-pwd','bf-pwd'].forEach(id => {
+      const f = document.getElementById(id); if (f) f.value = '';
+    });
   },
   _initSwipe() {
     const modal = document.getElementById('modal');
@@ -1635,7 +1656,16 @@ const R = {
     S.currentPage = pg;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
     const el = document.getElementById('pg-' + pg);
-    if (el) el.classList.add('on');
+    if (el) {
+      el.classList.add('on');
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(8px)';
+      requestAnimationFrame(() => {
+        el.style.transition = 'opacity var(--anim-fast,140ms) var(--ease-smooth,ease), transform var(--anim-fast,140ms) var(--ease-smooth,ease)';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
     if (prev === pg && !force) return;
     const renders = {
@@ -1688,7 +1718,7 @@ const R = {
     if (renders[pg]) renders[pg]();
     if (prev !== pg) buildNav();
     // Pull-to-refresh on module page bodies
-    const ptrMap = {banks:'bList',cards:'cItems',investments:'invItems',cash:'cashItems',loans:'loanItems',sims:'simItems',assets:'aItems',expenses:'expItems',emails:'emailItems',gadgets:'gItems',digital:'digItems',friends:'friendItems'};
+    const ptrMap = {banks:'bList',cards:'cItems',investments:'invItems',cash:'cashItems',loans:'loanItems',sims:'simItems',assets:'aItems',expenses:'expItems',emails:'emailItems',gadgets:'gItems',digital:'digItems',friends:'friendItems',documents:'docsItems',vehicles:'vItems'};
     if (ptrMap[pg]) {
       const ptrEl = document.getElementById(ptrMap[pg])?.closest('.pb') || document.getElementById('pg-'+pg)?.querySelector('.pb');
       if (ptrEl && typeof pullToRefresh === 'function') pullToRefresh(ptrEl, () => { if (renders[pg]) renders[pg](); });
@@ -2754,6 +2784,7 @@ function renderFinanceHome() {
     {id:'tax',icon:'🧾',label:'Tax',desc:'UK · PK · UAE'},
     {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
     {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
+    {id:'expenses',icon:'💸',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
   ];
   const hidden = getTabPrefs().hiddenFinance || [];
   const modules = allModules.filter(m => !hidden.includes(m.id));
@@ -2775,6 +2806,7 @@ function renderVaultHome() {
     {id:'emails',icon:'📧',label:'Emails',desc:(S.emails||[]).length+' identities'},
     {id:'sims',icon:'📱',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
     {id:'friends',icon:'👥',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
+    {id:'gadgets',icon:'🖥️',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
@@ -2791,7 +2823,6 @@ function renderAssetsHome() {
   const modules = [
     {id:'vehicles',icon:'🚗',label:'Vehicles',desc:(S.vehicles||[]).length+' vehicles'},
     {id:'assets',icon:'🏠',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
-    {id:'gadgets',icon:'📱',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
     {id:'gold',icon:'🥇',label:'Precious Metals',desc:'Gold & silver'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
