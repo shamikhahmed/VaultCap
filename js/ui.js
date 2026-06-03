@@ -55,7 +55,9 @@ const Dash={
     const debtPKR = S.loans.filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
     let goldPKR = 0;
     try { const gold = JSON.parse(localStorage.getItem('vo_gold')||'[]'); goldPKR = gold.reduce((a,g) => a + (g.weight||0)*(g.pricePerUnit||0), 0); } catch(e) {}
-    const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR - debtPKR;
+    const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
+    const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
+    const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR + bcPKR + bondsPKR - debtPKR;
 
     const hist = S.user.nwHistory || [];
     const prevV = hist.length >= 2 ? hist[hist.length-1].v : null;
@@ -311,13 +313,17 @@ const Dash={
     const asPKR=S.assets.reduce((a,x)=>a+toB(x.currentValue||0,x.currency||cur),0);
     const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
     const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
-    const nwPKR=invPKR+asPKR+cashPKR-debtPKR;
+    const bcPKR2=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
+    const bondsPKR2=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
+    const nwPKR=invPKR+asPKR+cashPKR+bcPKR2+bondsPKR2-debtPKR;
     const row=(ic,label,val,col,prefix='')=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>${ic}</span>${label}</div><div style="font-size:14px;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
     Modal.open('💰 Net Worth Breakdown',`
     <div style="padding:0 2px">
       ${row('📈','Investments',invPKR,'var(--accent)')}
       ${row('🏠','Assets',asPKR,'var(--accent)')}
       ${row('💵','Cash',cashPKR,'var(--accent)')}
+      ${bcPKR2>0?row('🤝','BC Receivables',bcPKR2,'var(--accent)'):''}
+      ${bondsPKR2>0?row('📜','Bonds / Securities',bondsPKR2,'var(--accent)'):''}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>💸</span>Loans (owed)</div><div style="font-size:14px;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div style="font-size:14px;font-weight:700">Net Worth</div><div style="font-size:20px;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
     </div>
@@ -418,6 +424,19 @@ const Settings={
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+    </div></div>
+
+    <div class="set-sec"><div class="set-title">🔔 Notifications</div><div class="set-card">
+      <div class="si">
+        <div class="sil">
+          <div class="name">Browser Notifications</div>
+          <div class="desc">${'Notification' in window ? (Notification.permission === 'granted' ? '✓ Enabled — alerts for expiring docs, cards & loans' : Notification.permission === 'denied' ? '✗ Blocked — allow in browser settings' : 'Not yet enabled') : 'Not supported in this browser'}</div>
+        </div>
+        ${'Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'
+          ? '<button class="btn btn-p btn-sm" onclick="Reminders.requestPermission().then(granted=>{if(granted)Toast.show(\'Notifications enabled\',\'success\');else Toast.show(\'Blocked by browser\',\'warn\');Settings.render()})">Enable</button>'
+          : ''}
+      </div>
+      <div class="si"><div class="sil"><div class="name">What you'll be notified about</div><div class="desc">Documents expiring in 7 days · Cards expiring in 30 days · Loans due in 7 days · BC payments (3 days notice)</div></div></div>
     </div></div>
 
     <div class="set-sec"><div class="set-title">💾 Backup & Export</div><div class="set-card">

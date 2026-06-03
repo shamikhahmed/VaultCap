@@ -685,10 +685,15 @@ const Onboarding = {
       S.user.currency = country.currency;
       S.user.secondaryCountries = this._secondaryCountries;
     }
-    if (!this._prefs.zakat) {
+    {
+      const zakatOn = this._prefs.zakat || this._modules.zakat;
       const prefs = getTabPrefs();
       prefs.hiddenFinance = [...(prefs.hiddenFinance || [])];
-      if (!prefs.hiddenFinance.includes('zakat')) prefs.hiddenFinance.push('zakat');
+      if (zakatOn) {
+        prefs.hiddenFinance = prefs.hiddenFinance.filter(m => m !== 'zakat');
+      } else {
+        if (!prefs.hiddenFinance.includes('zakat')) prefs.hiddenFinance.push('zakat');
+      }
       saveTabPrefs(prefs);
     }
     if (!this._prefs.family) S.modules.family = false;
@@ -2309,6 +2314,9 @@ const R = {
       if (typeof VaultRecovery !== 'undefined') VaultRecovery.check();
     }, 1500);
     setTimeout(() => {
+      if (typeof Reminders !== 'undefined' && Reminders.checkAndNotify) Reminders.checkAndNotify();
+    }, 2500);
+    setTimeout(() => {
       if (!window._backupPrompted) {
         window._backupPrompted = true;
         const _lb = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
@@ -2337,6 +2345,7 @@ const R = {
   },
   lock() {
     S.unlocked = false; clearTimeout(S._timer);
+    S._bankFilterInit = false;
     VaultDB.sessionKey = null;           // clear in-memory key on lock
     if (navigator.vibrate) navigator.vibrate(50);
     document.getElementById('app').style.display = 'none';
@@ -3850,6 +3859,37 @@ const FAB = {
 };
 
 // ===================== PANIC LOCK =====================
+const WorkspaceManager = {
+  render() {
+    const el = document.getElementById('workspaceBody');
+    if (!el) return;
+    const presets = Object.entries(WORKSPACE_PRESETS);
+    const current = S.workspace || 'default';
+    el.innerHTML = `<div style="font-size:11px;color:var(--text3);padding:0 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Switch between pre-configured module layouts</div>` +
+      presets.map(([id, p]) => `
+        <div class="entry" style="${current===id?'border-left:3px solid var(--accent)':''}" onclick="WorkspaceManager.apply('${id}')">
+          <div class="entry-main">
+            <div class="entry-ic">${p.ic}</div>
+            <div class="entry-body">
+              <div class="entry-name">${p.name}</div>
+              <div class="entry-sub">${p.desc}</div>
+            </div>
+            ${current===id?'<span class="badge b-ok">Active</span>':''}
+          </div>
+        </div>`).join('');
+  },
+  apply(id) {
+    const preset = WORKSPACE_PRESETS[id];
+    if (!preset) return;
+    S.workspace = id;
+    Object.assign(S.modules, preset.modules);
+    Store.save();
+    buildNav();
+    this.render();
+    Toast.show(`Workspace: ${preset.name}`, 'success');
+  },
+};
+
 const PanicLock = {
   trigger() {
     if (!window.__vos_confirm('⚠️ PANIC LOCK: This will immediately lock the vault and clear the screen. Continue?')) return;

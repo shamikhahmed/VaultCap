@@ -2,14 +2,17 @@ const Reminders = {
   render() {
     const body = document.getElementById('reminderBody');
     if (!body) return;
+    const notifBanner = ('Notification' in window && Notification.permission === 'default')
+      ? `<button onclick="Reminders.requestPermission().then(()=>Reminders.render())" class="btn btn-g" style="width:100%;margin-bottom:14px">🔔 Enable Notifications</button>`
+      : '';
     const items = this._collect();
     if (!items.length) {
-      body.innerHTML = `<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items. Add cards, documents, loans and vehicles to get alerts.</div></div>`;
+      body.innerHTML = notifBanner + `<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items. Add cards, documents, loans and vehicles to get alerts.</div></div>`;
       this._badge(0);
       return;
     }
     const urgentCount = items.filter(r => r.daysLeft <= 7).length;
-    body.innerHTML = `<div style="font-size:11px;color:var(--text3);padding:0 0 12px;font-weight:600">${items.length} reminder${items.length !== 1 ? 's' : ''} — sorted by urgency${urgentCount ? ` · <span style="color:var(--err)">${urgentCount} urgent</span>` : ''}</div>` +
+    body.innerHTML = notifBanner + `<div style="font-size:11px;color:var(--text3);padding:0 0 12px;font-weight:600">${items.length} reminder${items.length !== 1 ? 's' : ''} — sorted by urgency${urgentCount ? ` · <span style="color:var(--err)">${urgentCount} urgent</span>` : ''}</div>` +
       items.map(r => {
         const col = r.daysLeft < 0 ? 'var(--err)' : r.daysLeft <= 7 ? 'var(--err)' : r.daysLeft <= 30 ? 'var(--warn)' : 'var(--ok)';
         const badge = r.daysLeft < 0 ? 'b-err' : r.daysLeft <= 7 ? 'b-err' : r.daysLeft <= 30 ? 'b-warn' : 'b-ok';
@@ -147,5 +150,70 @@ const Reminders = {
 
   count() {
     return this._collect().filter(r => r.daysLeft <= 7).length;
+  },
+
+  async requestPermission() {
+    if (!('Notification' in window)) return false;
+    if (Notification.permission === 'granted') return true;
+    if (Notification.permission === 'denied') return false;
+    const result = await Notification.requestPermission();
+    return result === 'granted';
+  },
+
+  checkAndNotify() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const now = Date.now();
+    const in7 = now + 7 * 24 * 60 * 60 * 1000;
+    const items = [];
+
+    (S.documents || []).forEach(function(d) {
+      if (!d.expiryDate) return;
+      const exp = new Date(d.expiryDate).getTime();
+      if (exp > now && exp < in7) {
+        const days = Math.ceil((exp - now) / 86400000);
+        items.push({ title: d.holderName ? d.holderName + ' · ' + (d.docType||'Document') : (d.docType||'Document'), days: days, type: 'document' });
+      }
+    });
+
+    (S.cards || []).forEach(function(c) {
+      if (!c.expiry) return;
+      try {
+        const parts = c.expiry.split('/');
+        const exp = new Date(2000 + parseInt(parts[1]), parseInt(parts[0]), 0).getTime();
+        if (exp > now && exp < in7 + 23 * 24 * 60 * 60 * 1000) {
+          const days = Math.ceil((exp - now) / 86400000);
+          items.push({ title: c.cardName || 'Card', days: days, type: 'card' });
+        }
+      } catch(e) {}
+    });
+
+    (S.loans || []).forEach(function(l) {
+      if (!l.dueDate || l.status === 'Settled') return;
+      const exp = new Date(l.dueDate).getTime();
+      if (exp > now && exp < in7) {
+        const days = Math.ceil((exp - now) / 86400000);
+        items.push({ title: 'Loan with ' + (l.person || 'contact'), days: days, type: 'loan' });
+      }
+    });
+
+    (S.bc || []).forEach(function(bc) {
+      if (!bc.paymentDay) return;
+      const daysToPayment = typeof BCModule !== 'undefined' ? BCModule._daysToPaymentDay(bc.paymentDay) : null;
+      if (daysToPayment !== null && daysToPayment <= 3) {
+        items.push({ title: (bc.name || 'BC') + ' payment due', days: daysToPayment, type: 'bc' });
+      }
+    });
+
+    const icons = { document: '🪪', card: '💳', loan: '🤝', bc: '🤝', vehicle: '🚗' };
+    items.slice(0, 3).forEach(function(item) {
+      try {
+        new Notification('VaultOS Alert', {
+          body: (icons[item.type] || '⚠️') + ' ' + item.title + ' — ' + (item.days === 0 ? 'today' : 'in ' + item.days + ' day' + (item.days > 1 ? 's' : '')),
+          icon: '/icons/icon-192.png',
+          tag: 'vaultos-' + item.type + '-' + item.title,
+          silent: false,
+        });
+      } catch(e) {}
+    });
   },
 };
