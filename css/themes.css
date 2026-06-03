@@ -1,29 +1,21 @@
 /* ═══════════ THEMES: accent / palette overrides per body class ═══════════ */
 
-/* ─ Dark accent themes ─ */
-body.ocean   { --accent: #0ea5e9; --glow: rgba(14,165,233,0.2); }
-body.forest  { --accent: #10b981; --glow: rgba(16,185,129,0.2); --bg: #040e08; --bg2: #081510; }
-body.aurora  { --accent: #d946ef; --glow: rgba(217,70,239,0.2); --bg: #08040e; --bg2: #100818; }
-body.ironman { --accent: #ff6b00; --glow: rgba(255,107,0,0.2);  --bg: #050200; --bg2: #0a0400; }
-
-/* ─ Premium dark palette ─ */
-body.rosegold {
-  --bg: #1a0f0e; --bg2: #130b0a;
-  --accent: #e8a598; --glow: rgba(232,165,152,.2);
-}
-body.titanium {
-  --bg: #0d0f11; --bg2: #080a0c;
-  --accent: #b4bcc8; --glow: rgba(180,188,200,.15);
+/* ─ Graphite dark theme ─ */
+body.graphite {
+  --bg: #1a1a1a; --bg2: #242424; --bg3: #2e2e2e;
+  --glass: rgba(255,255,255,.05); --glass2: rgba(255,255,255,.08); --glass3: rgba(255,255,255,.12);
+  --border: rgba(255,255,255,.1); --border2: rgba(255,255,255,.15); --border3: rgba(255,255,255,.2);
+  --text: #f0ede8; --text2: #c8c4bc; --text3: #8a8680;
+  --accent: #c9a84c; --accent2: #e8c96a; --glow: rgba(201,168,76,.18);
+  --ok: #6fba7f; --warn: #d4924a; --err: #e05c5c; --info: #6aabcc;
+  --purple: #a07cc8; --input: rgba(255,255,255,.06); --r: 14px;
 }
 
-/* ─ Light theme ─ */
+/* ─ Light base (shared by cloud + ivory) ─ */
 body.light {
-  --accent: #0080ff; --glow: rgba(0,128,255,.12);
-  --bg: #f5f5f7; --bg2: #ffffff; --bg3: #e8e8ed;
   --glass: rgba(255,255,255,0.8); --glass2: rgba(0,0,0,0.04); --glass3: rgba(0,0,0,0.08);
   --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18); --border3: rgba(0,0,0,0.26);
   --text: #1d1d1f; --text2: #4a4a50; --text3: #8e8e93;
-  --ok: #34c759; --warn: #ff9500; --err: #ff3b30; --info: #007aff;
   --shadow: 0 4px 24px rgba(0,0,0,.08);
   --shadowlg: 0 16px 56px rgba(0,0,0,.16);
 }
@@ -33,5 +25,27 @@ body.light .pd        { border-color: rgba(0,0,0,0.35); }
 body.light .pd.on     { background: #1d1d1f; border-color: #1d1d1f; }
 body.light input, body.light textarea, body.light select { color: #1d1d1f; }
 body.light .inp       { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
-body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,128,255,.15); }
+body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb,37,99,235),.15); }
 body.light select.inp option { background: #ffffff; color: #1d1d1f; }
+
+/* ─ Cloud light theme ─ */
+body.light.cloud {
+  --bg: #ffffff; --bg2: #f3f4f6; --bg3: #e5e7eb;
+  --glass: rgba(0,0,0,.04); --glass2: rgba(0,0,0,.06); --glass3: rgba(0,0,0,.09);
+  --border: rgba(0,0,0,.1); --border2: rgba(0,0,0,.15); --border3: rgba(0,0,0,.22);
+  --text: #111827; --text2: #374151; --text3: #6b7280;
+  --accent: #2563eb; --accent2: #3b82f6; --glow: rgba(37,99,235,.12);
+  --ok: #16a34a; --warn: #d97706; --err: #dc2626; --info: #0284c7;
+  --purple: #7c3aed; --on-accent: #ffffff; --input: rgba(0,0,0,.05); --r: 14px;
+}
+
+/* ─ Ivory light theme ─ */
+body.light.ivory {
+  --bg: #faf9f7; --bg2: #f0ede8; --bg3: #e4e0d9;
+  --glass: rgba(0,0,0,.04); --glass2: rgba(0,0,0,.07); --glass3: rgba(0,0,0,.1);
+  --border: rgba(0,0,0,.1); --border2: rgba(0,0,0,.15); --border3: rgba(0,0,0,.22);
+  --text: #1a1a16; --text2: #3d3d30; --text3: #78776a;
+  --accent: #2d6a4f; --accent2: #40916c; --glow: rgba(45,106,79,.12);
+  --ok: #2d6a4f; --warn: #b45309; --err: #b91c1c; --info: #1e6091;
+  --purple: #6d4c8e; --on-accent: #ffffff; --input: rgba(0,0,0,.05); --r: 14px;
+}

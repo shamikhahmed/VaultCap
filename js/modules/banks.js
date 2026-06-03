@@ -17,6 +17,10 @@ const _fuzz = (str, q) => {
 const Banks={
   _showArchived: false,
   render(){
+    if (!S._bankFilterInit && S.user?.country && ['PK','GB','AE','US'].includes(S.user.country)) {
+      S.bF = S.user.country;
+      S._bankFilterInit = true;
+    }
     const q=(document.getElementById('bQ')?.value||'').toLowerCase();
     const sort=document.getElementById('bSort')?.value||'name';
     const f=S.bF;

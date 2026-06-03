@@ -346,8 +346,34 @@ const Settings={
     </div></div>
 
     <div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Theme</div><div class="desc">${THEMES.find(t=>t.id===S.user.theme)?.n||'Midnight'}</div></div><button class="btn btn-g btn-sm" onclick="ThemeEngine.openPicker()">Change</button></div>
-      <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil"><div class="name">Quick Switch</div></div><div style="display:flex;gap:7px;flex-wrap:wrap">${THEMES.map(t=>`<div class="tdot${t.id===S.user.theme?' on':''}" style="background:${t.ac}" onclick="ThemeEngine.apply('${t.id}')" title="${t.n}"></div>`).join('')}</div></div>
+      <div style="padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">🌙 Dark</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+          ${THEMES.filter(t=>t.g==='dark').map(t=>`
+            <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
+              <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px">
+                <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
+                <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.4"></div>
+              </div>
+              <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">☀️ Light</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${THEMES.filter(t=>t.g==='light').map(t=>`
+            <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
+              <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:1px solid rgba(0,0,0,.08)">
+                <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
+                <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.5"></div>
+              </div>
+              <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
     </div></div>
 
     <div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
@@ -1614,7 +1640,8 @@ const SettingsNav = {
   },
 
   _profile() {
-    return `<div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
+    return `${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
+    <div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
       </div>
@@ -1663,8 +1690,36 @@ const SettingsNav = {
 
   _appearance() {
     return `<div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Theme</div><div class="desc">${THEMES.find(t=>t.id===S.user.theme)?.n||'Midnight'}</div></div><button class="btn btn-g btn-sm" onclick="ThemeEngine.openPicker()">Change</button></div>
-      <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil"><div class="name">Quick Switch</div></div><div style="display:flex;gap:7px;flex-wrap:wrap">${THEMES.map(t=>`<div class="tdot${t.id===S.user.theme?' on':''}" style="background:${t.ac}" onclick="ThemeEngine.apply('${t.id}')" title="${t.n}"></div>`).join('')}</div></div>
+      <div style="padding:14px 16px">
+        <div style="margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">🌙 Dark</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            ${THEMES.filter(t=>t.g==='dark').map(t=>`
+              <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
+                <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px">
+                  <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
+                  <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.4"></div>
+                </div>
+                <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
+                  <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">☀️ Light</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${THEMES.filter(t=>t.g==='light').map(t=>`
+              <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
+                <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:1px solid rgba(0,0,0,.08)">
+                  <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
+                  <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.5"></div>
+                </div>
+                <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
+                  <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
     </div></div>`;
   },
 

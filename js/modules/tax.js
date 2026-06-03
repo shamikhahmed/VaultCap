@@ -233,6 +233,12 @@ const Tax = {
   render() {
     const body = document.getElementById('pg-tax-body');
     if(!body) return;
+    if (!this._countryInit && S.user?.country) {
+      this._countryInit = true;
+      if (S.user.country === 'GB') this._country = 'GB';
+      else if (S.user.country === 'AE') this._country = 'AE';
+      else if (S.user.country === 'PK') this._country = 'PK';
+    }
     const saved = JSON.parse(localStorage.getItem('vo_tax_calc')||'{}');
     if(saved.country) this._country = saved.country;
     if(saved.taxYear) this._taxYear = saved.taxYear;

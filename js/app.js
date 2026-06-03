@@ -1,13 +1,9 @@
 // VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
 const THEMES=[
-  {id:'dark',     n:'Midnight',  g:'dark',  bg:'#080808', ac:'#0080ff', gl:'rgba(0,128,255,.2)',    cls:''},
-  {id:'ocean',    n:'Ocean',     g:'dark',  bg:'#04101e', ac:'#0ea5e9', gl:'rgba(14,165,233,.2)',   cls:'ocean'},
-  {id:'forest',   n:'Forest',    g:'dark',  bg:'#040e08', ac:'#10b981', gl:'rgba(16,185,129,.2)',   cls:'forest'},
-  {id:'aurora',   n:'Aurora',    g:'dark',  bg:'#08040e', ac:'#d946ef', gl:'rgba(217,70,239,.2)',   cls:'aurora'},
-  {id:'ironman',  n:'Iron Man',  g:'bold',  bg:'#050200', ac:'#ff6b00', gl:'rgba(255,107,0,.2)',    cls:'ironman'},
-  {id:'light',    n:'Light',     g:'light', bg:'#f5f5f7', ac:'#0080ff', gl:'rgba(0,128,255,.12)',   cls:'light'},
-  {id:'rosegold', n:'Rose Gold', g:'dark',  bg:'#1a0f0e', ac:'#e8a598', gl:'rgba(232,165,152,.2)', cls:'rosegold'},
-  {id:'titanium', n:'Titanium',  g:'dark',  bg:'#0d0f11', ac:'#b4bcc8', gl:'rgba(180,188,200,.15)',cls:'titanium'},
+  {id:'dark',     n:'Midnight', g:'dark',  bg:'#080808', ac:'#5b8dee', gl:'rgba(91,141,238,.18)',  cls:''},
+  {id:'graphite', n:'Graphite', g:'dark',  bg:'#1a1a1a', ac:'#c9a84c', gl:'rgba(201,168,76,.18)', cls:'graphite'},
+  {id:'cloud',    n:'Cloud',    g:'light', bg:'#ffffff', ac:'#2563eb', gl:'rgba(37,99,235,.12)',   cls:'light cloud'},
+  {id:'ivory',    n:'Ivory',    g:'light', bg:'#faf9f7', ac:'#2d6a4f', gl:'rgba(45,106,79,.12)',   cls:'light ivory'},
 ];
 
 const ALL_MODULES=[
@@ -466,6 +462,178 @@ const VaultRecovery = {
       `<button class="btn btn-g" onclick="Modal.close()">Dismiss</button><button class="btn btn-p" onclick="ExIm.export('vos');Modal.close()">Export Backup</button>`
     );
     return true;
+  },
+};
+
+const Onboarding = {
+  _step: 0,
+
+  shouldShow() {
+    return S.unlocked && !S.user.onboardingComplete;
+  },
+
+  show() {
+    this._step = 0;
+    this._render();
+  },
+
+  _countries: [
+    { code: 'PK', name: 'Pakistan',        flag: '🇵🇰', currency: 'PKR', zakat: true  },
+    { code: 'GB', name: 'United Kingdom',  flag: '🇬🇧', currency: 'GBP', zakat: false },
+    { code: 'AE', name: 'UAE',             flag: '🇦🇪', currency: 'AED', zakat: false },
+    { code: 'US', name: 'United States',   flag: '🇺🇸', currency: 'USD', zakat: false },
+    { code: 'CA', name: 'Canada',          flag: '🇨🇦', currency: 'CAD', zakat: false },
+    { code: 'AU', name: 'Australia',       flag: '🇦🇺', currency: 'AUD', zakat: false },
+    { code: 'SA', name: 'Saudi Arabia',    flag: '🇸🇦', currency: 'SAR', zakat: true  },
+    { code: 'QA', name: 'Qatar',           flag: '🇶🇦', currency: 'QAR', zakat: false },
+    { code: 'OTHER', name: 'Other',        flag: '🌍', currency: 'USD', zakat: false },
+  ],
+
+  _primaryCountry: '',
+  _secondaryCountries: [],
+  _prefs: { zakat: false, family: false, business: false, investments: false },
+
+  _render() {
+    const existing = document.getElementById('onboarding-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'onboarding-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto;animation:fadeIn .3s ease';
+
+    const steps = ['welcome', 'country', 'secondary', 'prefs'];
+    const progress = `
+      <div style="display:flex;gap:6px;margin-bottom:32px">
+        ${steps.map((_, i) => `<div style="height:3px;flex:1;border-radius:2px;background:${i <= this._step ? 'var(--accent)' : 'var(--border)'}"></div>`).join('')}
+      </div>`;
+
+    let content = '';
+
+    if (this._step === 0) {
+      content = `
+        <div style="font-size:40px;margin-bottom:16px">🔐</div>
+        <div style="font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultOS</div>
+        <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;margin-bottom:32px">Your private financial vault. Takes 30 seconds to personalise.</div>
+        <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:320px;padding:16px;font-size:15px;font-weight:700">Get Started →</button>
+        <button onclick="Onboarding._skip()" style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip for now</button>`;
+    } else if (this._step === 1) {
+      content = `
+        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">Where do you primarily live?</div>
+        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Sets your currency, tax system, and banks</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+          ${this._countries.map(c => `
+            <div onclick="Onboarding._primaryCountry='${c.code}';document.querySelectorAll('.ob-country').forEach(el=>el.style.borderColor='var(--border)');this.style.borderColor='var(--accent)'"
+              class="ob-country"
+              style="padding:14px 12px;border-radius:14px;background:var(--glass);border:2px solid ${this._primaryCountry===c.code?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px">
+              <span style="font-size:20px">${c.flag}</span>
+              <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+            </div>`).join('')}
+        </div>
+        <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:14px;font-weight:700">Continue →</button>
+        <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+    } else if (this._step === 2) {
+      content = `
+        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">Any other countries?</div>
+        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Multi-country support — add relevant banks</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+          ${this._countries.filter(c=>c.code!==this._primaryCountry).map(c => `
+            <div onclick="(()=>{const i=Onboarding._secondaryCountries.indexOf('${c.code}');if(i>-1)Onboarding._secondaryCountries.splice(i,1);else Onboarding._secondaryCountries.push('${c.code}');this.style.borderColor=Onboarding._secondaryCountries.includes('${c.code}')?'var(--accent)':'var(--border)';this.style.background=Onboarding._secondaryCountries.includes('${c.code}')?'var(--glass2)':'var(--glass)';})()"
+              style="padding:14px 12px;border-radius:14px;background:${this._secondaryCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${this._secondaryCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px">
+              <span style="font-size:20px">${c.flag}</span>
+              <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+            </div>`).join('')}
+        </div>
+        <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:14px;font-weight:700">Continue →</button>
+        <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+    } else if (this._step === 3) {
+      const prefs = [
+        { key: 'zakat',       icon: '🌙', label: 'Zakat Calculator', desc: 'Islamic annual wealth obligation' },
+        { key: 'family',      icon: '👨‍👩‍👧‍👦', label: 'Family Vault',    desc: 'Manage finances for your family' },
+        { key: 'business',    icon: '🏢', label: 'Business Accounts', desc: 'Separate business finances' },
+        { key: 'investments', icon: '📈', label: 'Investments',       desc: 'Track stocks, funds, crypto' },
+      ];
+      content = `
+        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you use?</div>
+        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Personalise your vault — hide what you don't need</div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+          ${prefs.map(p => `
+            <div onclick="Onboarding._prefs['${p.key}']=!Onboarding._prefs['${p.key}'];this.style.borderColor=Onboarding._prefs['${p.key}']?'var(--accent)':'var(--border)';this.querySelector('.pref-check').textContent=Onboarding._prefs['${p.key}']?'✓':''"
+              style="padding:14px 16px;border-radius:14px;background:var(--glass);border:2px solid ${this._prefs[p.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">${p.icon}</span>
+              <div style="flex:1">
+                <div style="font-size:14px;font-weight:600;color:var(--text)">${p.label}</div>
+                <div style="font-size:12px;color:var(--text3)">${p.desc}</div>
+              </div>
+              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent)">${this._prefs[p.key]?'✓':''}</div>
+            </div>`).join('')}
+        </div>
+        <button onclick="Onboarding._finish()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Start Using VaultOS ✓</button>
+        <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+    }
+
+    overlay.innerHTML = `
+      <div style="width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center">
+        ${progress}
+        ${content}
+      </div>`;
+
+    document.body.appendChild(overlay);
+  },
+
+  _next() {
+    if (this._step === 1 && !this._primaryCountry) {
+      Toast.show('Please select your primary country', 'warning');
+      return;
+    }
+    this._step = Math.min(this._step + 1, 3);
+    this._render();
+  },
+
+  _back() {
+    this._step = Math.max(this._step - 1, 0);
+    this._render();
+  },
+
+  _skip() {
+    S.user.onboardingComplete = true;
+    Store.save();
+    document.getElementById('onboarding-overlay')?.remove();
+    Toast.show('You can personalise anytime in Settings → Profile', 'info', 4000);
+  },
+
+  _finish() {
+    const country = this._countries.find(c => c.code === this._primaryCountry);
+    if (country) {
+      S.user.country = country.code;
+      S.user.currency = country.currency;
+      S.user.secondaryCountries = this._secondaryCountries;
+    }
+    if (!this._prefs.zakat) {
+      const prefs = getTabPrefs();
+      prefs.hiddenFinance = [...(prefs.hiddenFinance || [])];
+      if (!prefs.hiddenFinance.includes('zakat')) prefs.hiddenFinance.push('zakat');
+      saveTabPrefs(prefs);
+    }
+    if (!this._prefs.family) S.modules.family = false;
+    S.user.onboardingComplete = true;
+    S.user.showZakat = this._prefs.zakat;
+    S.user.hasBusiness = this._prefs.business;
+    Store.save();
+    buildNav();
+    document.getElementById('onboarding-overlay')?.remove();
+    Toast.show('Vault personalised ✓', 'success');
+    if (country) {
+      Toast.show(`Currency set to ${country.currency} · Banks filtered to ${country.name}`, 'info', 4000);
+    }
+  },
+
+  showSettingsCard() {
+    return `
+      <div style="background:rgba(91,141,238,.08);border:1px solid rgba(91,141,238,.2);border-radius:14px;padding:16px;margin:0 0 16px">
+        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">⚡ Personalise Your Vault</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:12px">Set your country, currency, and preferences for a tailored experience.</div>
+        <button onclick="Onboarding._primaryCountry=S.user.country||'';Onboarding._secondaryCountries=S.user.secondaryCountries||[];Onboarding.show()" class="btn btn-p btn-sm">Run Setup →</button>
+      </div>`;
   },
 };
 
@@ -1848,14 +2016,19 @@ const ThemeEngine = {
     });
   },
   openPicker() {
-    const gs = { dark:'🌙 Dark', bold:'⚡ Bold', light:'🌸 Light' };
+    const gs = { dark:'🌙 Dark', light:'☀️ Light' };
     document.getElementById('themePicker').innerHTML = Object.entries(gs).map(([g, label]) => `
       <div style="margin-bottom:16px"><div class="set-title">${label}</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         ${THEMES.filter(t => t.g === g).map(t =>
-          `<div onclick="ThemeEngine.apply('${t.id}');ThemeEngine.closePicker()" style="background:${t.bg};border:2px solid ${t.id === S.user.theme ? t.ac : 'rgba(255,255,255,0.08)'};border-radius:var(--r);padding:12px;cursor:pointer;transition:var(--t)">
-            <div style="width:16px;height:16px;border-radius:50%;background:${t.ac};margin-bottom:6px;box-shadow:0 0 8px ${t.gl}"></div>
-            <div style="font-size:11px;font-weight:600;color:${t.ac}">${t.n}</div>
+          `<div onclick="ThemeEngine.apply('${t.id}');ThemeEngine.closePicker()" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${t.id === S.user.theme ? 'var(--accent)' : 'var(--border)'}">
+            <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px${g==='light'?';border-bottom:1px solid rgba(0,0,0,.08)':''}">
+              <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
+              <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.4"></div>
+            </div>
+            <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
+              <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
+            </div>
           </div>`
         ).join('')}
       </div></div>`
@@ -2011,6 +2184,9 @@ const R = {
     if (S.trash.length < before) Store.save();
     if (S.autoLock) this.resetTimer();
     setTimeout(() => WhatsNew.check(), 800);
+    setTimeout(() => {
+      if (typeof Onboarding !== 'undefined' && Onboarding.shouldShow()) Onboarding.show();
+    }, 600);
     if (S._clockTimer) clearInterval(S._clockTimer);
   },
   lock() {
@@ -3160,7 +3336,11 @@ function renderFinanceHome() {
     {id:'expenses',icon:'💸',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
   ];
   const hidden = getTabPrefs().hiddenFinance || [];
-  const modules = allModules.filter(m => !hidden.includes(m.id));
+  const modules = allModules.filter(m => {
+    if (hidden.includes(m.id)) return false;
+    if (m.id === 'zakat' && S.user?.showZakat === false) return false;
+    return true;
+  });
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
@@ -3401,10 +3581,10 @@ const CMD = {
     {icon:'⚙️',label:'Settings',action:()=>R.goto('settings')},
     {icon:'🔒',label:'Lock Vault',action:()=>R.lock()},
     {icon:'🚨',label:'Panic Lock',action:()=>PanicLock.trigger()},
-    {icon:'🎨',label:'Theme Dark',action:()=>ThemeEngine.apply('dark')},
-    {icon:'🎨',label:'Theme Light',action:()=>ThemeEngine.apply('light')},
-    {icon:'🎨',label:'Theme Ocean',action:()=>ThemeEngine.apply('ocean')},
-    {icon:'🎨',label:'Theme Forest',action:()=>ThemeEngine.apply('forest')},
+    {icon:'🎨',label:'Theme Midnight',action:()=>ThemeEngine.apply('dark')},
+    {icon:'🎨',label:'Theme Graphite',action:()=>ThemeEngine.apply('graphite')},
+    {icon:'🎨',label:'Theme Cloud',action:()=>ThemeEngine.apply('cloud')},
+    {icon:'🎨',label:'Theme Ivory',action:()=>ThemeEngine.apply('ivory')},
     {icon:'🎨',label:'Change Theme',action:()=>ThemeEngine.openPicker()},
     {icon:'📤',label:'Export Vault',action:()=>ExIm.export('vault')},
     {icon:'📸',label:'Net Worth Snapshot',action:()=>Dash.snap()},
