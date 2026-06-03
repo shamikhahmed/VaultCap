@@ -34,6 +34,7 @@ const ALL_MODULES=[
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
   {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
+  {id:'emergency',  n:'Emergency',  ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
 ];
 
 // ── Universal Entity Factory ──
@@ -143,6 +144,9 @@ const DataIntegrity = {
   },
   showReport() {
     const r = this.run();
+    const dupBanks = this.findDuplicateBanks();
+    const dupCards = this.findDuplicateCards();
+    const hasDups = dupBanks.length + dupCards.length > 0;
     const lines = [
       r.orphanedLinks > 0 ? `✅ Fixed ${r.orphanedLinks} orphaned card-bank link(s)` : '✅ No orphaned links',
       r.dupBanks > 0 ? `⚠️ ${r.dupBanks} possible duplicate bank(s) found` : '✅ No duplicate banks',
@@ -154,7 +158,144 @@ const DataIntegrity = {
         ${lines.map(l => `<div style="padding:12px 14px;background:var(--glass);border-radius:10px;font-size:13px;color:var(--text)">${l}</div>`).join('')}
         ${r.issues === 0 ? '<div style="text-align:center;margin-top:8px;font-size:13px;color:var(--ok)">Vault is clean ✓</div>' : ''}
       </div>`,
-      `<button class="btn btn-p" onclick="Modal.close()">Done</button>`
+      `${hasDups ? '<button class="btn btn-g" onclick="Modal.close();DataIntegrity.showDuplicates()">View Duplicates →</button>' : ''}<button class="btn btn-p" onclick="Modal.close()">Done</button>`
+    );
+  },
+  showDuplicates() {
+    const dupBanks = this.findDuplicateBanks();
+    const dupCards = this.findDuplicateCards();
+    if (!dupBanks.length && !dupCards.length) { Toast.show('No duplicates found ✓', 'success'); return; }
+    const bankRows = dupBanks.map(b => `
+      <div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.25);border-radius:12px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">🏦 ${b.bankName}</div><div style="font-size:11px;color:var(--text3)">${b.country||''} · ${b.accountType||''} · ${b.currency||''}</div></div>
+          <button onclick="Banks.del('${b.id}');Modal.close();DataIntegrity.showDuplicates()" style="background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.3);color:var(--err);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;touch-action:manipulation">Remove</button>
+        </div>
+      </div>`).join('');
+    const cardRows = dupCards.map(c => `
+      <div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.25);border-radius:12px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">💳 ${c.cardName}</div><div style="font-size:11px;color:var(--text3)">**** ${c.last4||''} · ${c.network||''}</div></div>
+          <button onclick="Cards.del('${c.id}');Modal.close();DataIntegrity.showDuplicates()" style="background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.3);color:var(--err);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;touch-action:manipulation">Remove</button>
+        </div>
+      </div>`).join('');
+    Modal.open('⚠️ Possible Duplicates',
+      `<div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.6">These entries appear to be duplicates based on name and country (banks) or last 4 digits and network (cards). Review and remove if needed.</div>
+        ${dupBanks.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Duplicate Banks (${dupBanks.length})</div>${bankRows}` : ''}
+        ${dupCards.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;margin-top:${dupBanks.length?'12px':'0'}">Duplicate Cards (${dupCards.length})</div>${cardRows}` : ''}
+      </div>`,
+      `<button class="btn btn-p" onclick="Modal.close();DataIntegrity.showReport()">Done</button>`
+    );
+  },
+};
+
+const Audit = {
+  log(item, action, changes = {}) {
+    if (!item) return;
+    if (!item._audit) item._audit = [];
+    item._audit.unshift({ action, at: new Date().toISOString(), changes });
+    item._audit = item._audit.slice(0, 10);
+    item.updatedAt = new Date().toISOString();
+  },
+  render(item) {
+    if (!item?._audit?.length) return '<div style="font-size:12px;color:var(--text3);padding:8px 0">No edit history yet</div>';
+    return `<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Edit History</div>
+      ${item._audit.map(a => `
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--accent,var(--purple,#7b5fff));flex-shrink:0;margin-top:5px"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text)">${a.action}</div>
+            <div style="font-size:10px;color:var(--text3)">${new Date(a.at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  },
+};
+
+const Emergency = {
+  render() {
+    const e = S.emergency || {};
+    const b = document.getElementById('pg-emergency-body');
+    if (!b) return;
+    b.innerHTML = `
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:16px;padding:16px">
+          <div style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:4px">🆘 Emergency Access</div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.6">This information can be shown on the lock screen for first responders. Keep it accurate and updated.</div>
+        </div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">Show on Lock Screen</div>
+            <div style="font-size:12px;color:var(--text3)">Accessible without PIN</div>
+          </div>
+          <label class="tog"><input type="checkbox" ${e.showOnLockscreen?'checked':''} onchange="Emergency.toggleLockscreen(this.checked)"><span class="ts"></span></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${[
+            {id:'em-name',label:'Full Name',val:e.name||'',placeholder:'Your legal name'},
+            {id:'em-phone',label:'Emergency Contact',val:e.phone||'',placeholder:'+44 7700 000000',type:'tel'},
+            {id:'em-blood',label:'Blood Type',val:e.bloodType||'',placeholder:'A+, B-, O+...'},
+            {id:'em-allergies',label:'Allergies / Medications',val:e.allergies||'',placeholder:'Penicillin allergy, Metformin 500mg...',area:true},
+            {id:'em-note',label:'Emergency Note',val:e.emergencyNote||'',placeholder:'In case of emergency contact...',area:true},
+          ].map(f=>`<div>
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">${f.label}</div>
+            ${f.area
+              ?`<textarea id="${f.id}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none">${f.val}</textarea>`
+              :`<input id="${f.id}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">`
+            }
+          </div>`).join('')}
+        </div>
+        <button class="btn btn-p" onclick="Emergency.save()" style="width:100%">Save Emergency Info</button>
+        ${e.showOnLockscreen?`
+        <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
+          <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">🆘 ${e.name||'Name not set'}</div>
+          <div style="font-size:13px;color:var(--text2)">${e.phone?'📞 '+e.phone:''}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'🩸 '+e.bloodType:''}${e.allergies?' · ⚠️ '+e.allergies.split('\n')[0]:''}</div>
+        </div>`:''}
+      </div>`;
+  },
+  save() {
+    if (!S.emergency) S.emergency = {};
+    S.emergency.name = document.getElementById('em-name')?.value.trim() || '';
+    S.emergency.phone = document.getElementById('em-phone')?.value.trim() || '';
+    S.emergency.bloodType = document.getElementById('em-blood')?.value.trim() || '';
+    S.emergency.allergies = document.getElementById('em-allergies')?.value.trim() || '';
+    S.emergency.emergencyNote = document.getElementById('em-note')?.value.trim() || '';
+    Store.save();
+    Toast.show('Emergency info saved', 'success');
+    this.render();
+    this.updateLockscreenButton();
+  },
+  toggleLockscreen(enabled) {
+    if (!S.emergency) S.emergency = {};
+    S.emergency.showOnLockscreen = enabled;
+    Store.save();
+    this.render();
+    this.updateLockscreenButton();
+  },
+  updateLockscreenButton() {
+    const e = S.emergency || {};
+    const lockEl = document.getElementById('emergencyLockBtn');
+    if (lockEl) lockEl.style.display = (e.showOnLockscreen && e.name) ? 'block' : 'none';
+  },
+  showLockscreen() {
+    const e = S.emergency || {};
+    if (!e.name && !e.phone) { Toast.show('No emergency info set', 'warn'); return; }
+    Modal.open('🆘 Emergency Information',
+      `<div style="display:flex;flex-direction:column;gap:12px">
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:32px;margin-bottom:8px">🆘</div>
+          <div style="font-size:20px;font-weight:800;color:var(--text)">${e.name||''}</div>
+        </div>
+        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${e.phone}</div></div>`:''}
+        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${e.bloodType}</div></div>`:''}
+        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${e.allergies}</div></div>`:''}
+        ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${e.emergencyNote}</div></div>`:''}
+      </div>`,
+      `<button class="btn btn-p" onclick="Modal.close()">Close</button>`
     );
   },
 };
@@ -1305,7 +1446,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7;
 
 const Migrate = {
   run() {
@@ -1359,6 +1500,10 @@ const Migrate = {
       stored.digital      = backfill(stored.digital,      'digital');
       stored.expenses     = backfill(stored.expenses,     'expense');
     }
+    if (sv < 7) {
+      if (stored.modules && stored.modules.emergency === undefined) stored.modules.emergency = true;
+      if (!stored.emergency) stored.emergency = { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false };
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
@@ -1370,8 +1515,9 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true },
+  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[], trash:[],
+  emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
   wallet:[],
@@ -1614,6 +1760,7 @@ const R = {
     const hw = document.getElementById('hWelcome');
     if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}! 👋`;
     ThemeEngine.renderDots();
+    setTimeout(() => Emergency.updateLockscreenButton(), 200);
   },
   unlock() {
     S.unlocked = true; S.decoy = false;
@@ -1698,6 +1845,7 @@ const R = {
       reminders:   () => Reminders.render(),
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
+      emergency:   () => Emergency.render(),
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
       gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },

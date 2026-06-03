@@ -23,15 +23,22 @@ const GlobalSearch={
     if(idx<0)return text;
     return text.slice(0,idx)+'<mark class="hl">'+text.slice(idx,idx+q.length)+'</mark>'+text.slice(idx+q.length);
   },
+  _match(text,q,ql){
+    if(!q)return true;
+    if(!text)return false;
+    const tl=text.toLowerCase();
+    if(tl.includes(ql))return true;
+    if(typeof CMD!=='undefined'&&CMD.fuzzyMatch)return CMD.fuzzyMatch(text,q);
+    return false;
+  },
   search(q){
     const el=document.getElementById('gs-results');if(!el)return;
-    const ql=q.toLowerCase();
+    const ql=q.toLowerCase().trim();
     const f=this.activeFilter;
     const matches=[];
-    const match=(text)=>!q||text.toLowerCase().includes(ql);
     const addM=(type,icon,name,sub,id,action)=>{
       if(f!=='all'&&f!==type)return;
-      if(!match(name)&&!match(sub||''))return;
+      if(!this._match(name,q,ql)&&!this._match(sub||'',q,ql))return;
       matches.push({type,icon,name:this.highlight(name,q),sub:this.highlight(sub||'',q),id,action});
     };
     S.banks.forEach(b=>addM('bank','🏦',b.bankName||'',b.currency+' '+b.country+(b.last4?' ****'+b.last4:''),b.id,()=>Banks.detail(b.id)));
