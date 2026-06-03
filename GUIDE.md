@@ -384,3 +384,102 @@ Transfer your vault to another device without cloud storage:
 4. Scan the same QR codes — data merges automatically
 
 Data is compressed and transferred as base64 chunks. No internet required.
+
+---
+
+## Credit Score Tracker
+
+VaultOS tracks your credit score history across agencies.
+
+**Adding your score:**
+1. Go to Finance → Credit Score
+2. Tap **📊 Update Score**
+3. Enter your score, select the reporting agency, and the date checked
+4. VaultOS shows a live preview of your rating (Excellent/Good/Fair/Poor)
+
+**Supported agencies:** Experian (UK), Equifax (UK), TransUnion (UK), ECIB (Pakistan), AECB (UAE)
+
+**Score ranges:** Each agency uses different scales — VaultOS shows the correct range bars so you know where you stand.
+
+**Reminder:** VaultOS reminds you to check your credit score every 30 days.
+
+**Free credit report links:** ClearScore (Equifax), Credit Karma (TransUnion), Experian UK, ECIB Pakistan, AECB UAE — all accessible from within the Credit Score module.
+
+---
+
+## Vehicle Reminders
+
+VaultOS tracks three vehicle expiry dates and alerts you in advance:
+
+- **MOT:** 60-day advance warning (or calculated from MOT test date + 12 months)
+- **Road Tax:** 30-day advance warning
+- **Insurance:** 30-day advance warning
+
+These appear automatically in the **Reminders** module timeline.
+
+---
+
+## PDF Financial Summary
+
+Export a complete snapshot of your vault as a print-ready PDF.
+
+**How to export:**
+1. Go to Settings → Backup & Export
+2. Tap **📄 Export Financial Summary PDF**
+3. A new tab opens with your full financial summary
+4. Tap **🖨️ Print / Save PDF** and choose "Save as PDF" from your printer options
+
+**What's included:** Net worth breakdown, banks, cards, active loans, investments with P&L, gold/silver holdings, BC committees, prize bonds, documents expiring in the next 90 days.
+
+**Privacy:** The PDF is generated entirely on your device — nothing is sent to any server.
+
+---
+
+## Loan Payment Tracking
+
+VaultOS tracks partial payments on loans.
+
+**Recording a payment:**
+1. Go to Finance → Loans
+2. Tap the **💰** button on any active loan
+3. Enter the amount paid and date
+4. VaultOS deducts from the remaining balance
+5. When fully paid, the loan auto-marks as **Settled**
+
+**Overdue alerts:** Loans past their due date show a red **⚠️ OVERDUE X days** badge. Loans due within 7 days show an orange **⏰ Due in X days** badge.
+
+---
+
+## Smart Add (AI)
+
+Smart Add uses Claude AI to detect what you're describing and pre-fill the right form.
+
+**How to use:**
+1. Tap the **+** FAB button
+2. Tap **✨ Smart Add**
+3. Describe what you want to add in plain English
+4. Claude detects the type and opens the pre-filled form
+
+**Examples:**
+- "HBL account with PKR 500,000 balance" → opens Bank form pre-filled
+- "Lent £500 to Ahmed, due June 2026" → opens Loan form pre-filled
+- "Netflix £17.99 monthly subscription" → opens Expense form pre-filled
+- "My Jazz SIM +92 300 1234567" → opens SIM form pre-filled
+
+**Requires:** Claude API key set in Settings → AI Import. Falls back to pattern matching if no key is set.
+
+---
+
+## AI Import
+
+AI Import reads unstructured text and extracts structured financial data.
+
+**How to use:**
+1. Go to Finance → Import (or Settings → AI Import)
+2. Paste bank statement text, screenshot text, or any description
+3. Claude detects up to 9 data types with confidence indicators
+4. Review and confirm each detected item
+
+**Supported types:** Banks, Cards, Loans, Cash, Investments, Documents, Expenses, BC committees, Prize bonds
+
+**Confidence colours:** 🟢 Green = high confidence · 🟡 Yellow = medium · 🔴 Red = low (review carefully)
