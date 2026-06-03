@@ -529,6 +529,7 @@ const Settings={
         <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
         <input type="file" id="importF" accept=".vault,.json" style="display:none" onchange="ExIm.import(event)">
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
       </div>
     </div></div>
 
@@ -545,7 +546,7 @@ const Settings={
     </div></div>
 
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
-      ${[['Version','v4.0 — Enterprise Edition'],['Storage','Local device only — never sent anywhere'],['Encryption','Client-side (localStorage)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','Client-side (localStorage)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
       <div class="si" style="cursor:pointer" onclick="window.open('widget.html','_blank')"><div class="sil"><div class="name">📊 Home Screen Widget</div><div class="desc">View net worth without opening the app</div></div><span style="color:var(--accent)">›</span></div>
       <div class="si"><div class="name" style="font-size:11px;color:var(--text3);line-height:1.6">iPhone: Long-press home screen → + → VaultOS<br>Android: Long-press app icon → Widget</div></div>
@@ -819,6 +820,73 @@ const ExIm={
       }catch(err){Toast.show('Failed to read file: '+err.message,'error');}
     };
     r.readAsText(file);ev.target.value='';
+  },
+  exportPDF(){
+    const cur=S.user.currency||'PKR';
+    const fmt=(n,c)=>(c||cur)+' '+Math.round(n||0).toLocaleString();
+    const now=new Date();
+    const dateStr=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    const toB=(a,c)=>typeof RatesEngine!=='undefined'?RatesEngine.convert(a,c||cur,'PKR'):(a||0);
+    const invPKR=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
+    const asPKR=(S.assets||[]).reduce((a,x)=>a+toB(x.currentValue||0,x.currency),0);
+    const cashPKR=(S.cash||[]).reduce((a,c)=>a+toB(c.amount||0,c.currency),0);
+    const bankPKR=(S.banks||[]).reduce((a,b)=>a+toB(b.balance||0,b.currency),0);
+    const debtPKR=(S.loans||[]).filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
+    let goldPKR=0;
+    try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');goldPKR=gi.reduce((a,g)=>{let ppg=typeof RatesEngine!=='undefined'?(g.metal==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram')):0;let grams=g.weight||0;if(g.unit==='tola')grams*=11.6638;else if(g.unit==='oz')grams*=31.1035;else if(g.unit==='kg')grams*=1000;return a+grams*ppg;},0);}catch(e){}
+    const bcPKR=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
+    const bondsPKR=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
+    const toCur=(v)=>typeof RatesEngine!=='undefined'?RatesEngine.convert(v,'PKR',cur):v;
+    const nwTotal=toCur(invPKR+asPKR+cashPKR+bankPKR+goldPKR+bcPKR+bondsPKR-debtPKR);
+    const in90=Date.now()+90*86400000;
+    const expiringDocs=(S.documents||[]).filter(d=>d.expiryDate&&new Date(d.expiryDate)>new Date()&&new Date(d.expiryDate)<in90);
+    const section=(title,content)=>'<div class="section"><h2>'+title+'</h2>'+content+'</div>';
+    const row=(label,value)=>'<div class="row"><span class="label">'+label+'</span><span class="value">'+value+'</span></div>';
+    const table=(headers,rows)=>'<table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+(c||'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+    const gold=JSON.parse(localStorage.getItem('vo_gold')||'[]');
+    const activeLent=(S.loans||[]).filter(l=>l.type==='lent'&&l.status!=='Settled');
+    const activeBorrowed=(S.loans||[]).filter(l=>l.type==='borrowed'&&l.status!=='Settled');
+    const lentTotal=activeLent.reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
+    const borrowedTotal=activeBorrowed.reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
+    const investedTotal=(S.investments||[]).reduce((a,i)=>a+toB(i.amountInvested||0,i.currency),0);
+    const investCurrent=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
+    const investPL=investCurrent-investedTotal;
+    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultOS Financial Summary</title>'+
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f0f4ff;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#1a1a2e}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#1a1a2e;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
+    '<div class="no-print"><button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
+    '<div class="header"><h1>🔐 VaultOS Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
+    '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmt(nwTotal)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
+    section('Net Worth Breakdown',
+      row('Cash & Banks',fmt(toCur(cashPKR+bankPKR)))+
+      row('Investments',fmt(toCur(invPKR)))+
+      row('Assets',fmt(toCur(asPKR)))+
+      row('Gold & Silver',fmt(toCur(goldPKR)))+
+      (bcPKR>0?row('BC Receivables',fmt(toCur(bcPKR))):'')+
+      (bondsPKR>0?row('Prize Bonds',fmt(toCur(bondsPKR))):'')+
+      row('Loans Owed','− '+fmt(toCur(debtPKR)))
+    )+
+    ((S.banks||[]).length?section('Bank Accounts',table(['Bank','Type','Balance'],(S.banks||[]).map(b=>[b.bankName||'Bank',b.accountType||'',b.currency+' '+(Math.round(b.balance||0)).toLocaleString()]))):'')+
+    ((S.cards||[]).length?section('Cards',table(['Card','Last 4','Expiry','Limit'],(S.cards||[]).map(c=>[c.cardName||'Card',c.last4?'****'+c.last4:'—',c.expiry||'—',c.creditLimit?(c.currency+' '+Math.round(c.creditLimit).toLocaleString()):'—']))):'')+
+    ((S.loans||[]).filter(l=>l.status!=='Settled').length?section('Loans',
+      row('Total Lent Out',fmt(toCur(lentTotal)))+
+      row('Total Owed',fmt(toCur(borrowedTotal)))+
+      table(['Person','Type','Amount','Due Date'],(S.loans||[]).filter(l=>l.status!=='Settled').map(l=>[l.person||'—',l.type||'—',l.currency+' '+Math.round(l.amount||0).toLocaleString(),l.dueDate||'—']))
+    ):'')+
+    ((S.investments||[]).length?section('Investments',
+      row('Total Invested',fmt(toCur(investedTotal)))+
+      row('Current Value',fmt(toCur(investCurrent)))+
+      row('P&L','<span class="'+(investPL>=0?'positive':'negative')+'">'+(investPL>=0?'+':'')+fmt(toCur(investPL))+'</span>')+
+      table(['Investment','Type','Invested','Current'],(S.investments||[]).map(i=>[i.investmentName||'—',i.type||'—',i.currency+' '+Math.round(i.amountInvested||0).toLocaleString(),i.currency+' '+Math.round(i.currentValue||0).toLocaleString()]))
+    ):'')+
+    (gold.length?section('Precious Metals',table(['Label','Metal','Weight','Est. Value'],gold.map(g=>{let grams=g.weight||0;if(g.unit==='tola')grams*=11.6638;else if(g.unit==='oz')grams*=31.1035;else if(g.unit==='kg')grams*=1000;const ppg=typeof RatesEngine!=='undefined'?(g.metal==='silver'?RatesEngine.silverInCurrency(cur,'gram'):RatesEngine.goldInCurrency(cur,'gram')):0;const val=Math.round(grams*ppg);return [g.label||g.metal||'—',g.metal||'gold',(g.weight||0)+' '+(g.unit||'g'),val?cur+' '+val.toLocaleString():'—'];}))):'')+
+    ((S.bc||[]).length?section('Committees (BC)',table(['Name','Type','Contribution','Pot','Status'],(S.bc||[]).map(b=>{const pot=(b.members||1)*(b.contribution||0);const myTurnDone=b.myTurnRound&&(b.currentRound||1)>=b.myTurnRound;return [b.name||'BC',b.type||'ballot',b.currency+' '+Math.round(b.contribution||0).toLocaleString()+'/round',b.currency+' '+pot.toLocaleString(),myTurnDone?'Received':'Round '+(b.currentRound||1)+' of '+(b.totalRounds||b.members||'?')];})))):'')+
+    ((S.bonds||[]).length?section('Prize Bonds & Securities',table(['Name','Type','Quantity','Face Value'],(S.bonds||[]).map(b=>[b.name||'Bond',b.typeId||'—',String(b.quantity||1),b.currency+' '+Math.round((b.quantity||1)*(b.faceValue||0)).toLocaleString()]))):'')+
+    (expiringDocs.length?section('Documents Expiring (next 90 days)',table(['Document','Holder','Expires'],expiringDocs.map(d=>[d.docType||'Document',d.holderName||'—',d.expiryDate?new Date(d.expiryDate).toLocaleDateString('en-GB'):'—']))):'')+
+    '<div class="footer">Generated by VaultOS · Private & Encrypted · All data is stored locally on your device<br>'+dateStr+'</div>'+
+    '</div></body></html>';
+    const w=window.open('','_blank');
+    if(w){w.document.write(html);w.document.close();}
+    else Toast.show('Allow pop-ups to export PDF','warn');
   }
 };
 
@@ -1955,6 +2023,7 @@ const SettingsNav = {
         <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
         <button class="btn btn-g btn-full btn-sm" onclick="R.goto('sync')">🔄 Sync Devices</button>
         <button class="btn btn-g btn-full btn-sm" onclick="QRSync.exportQR()">📱 Sync to Another Device (QR)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="QRSync.importQR()">📷 Scan from Another Device</button>
@@ -1985,7 +2054,7 @@ const SettingsNav = {
 
   _about() {
     return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
-      ${[['Version','v4.0 — Enterprise Edition'],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>

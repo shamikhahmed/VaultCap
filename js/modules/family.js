@@ -239,7 +239,28 @@ const Family = {
         ${m.phone?`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:16px">📞</span><div><div style="font-size:11px;color:var(--text3)">Phone</div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(m.phone)}</div></div></div>`:''}
         ${m.email?`<div style="display:flex;align-items:center;gap:10px;padding:8px 0"><span style="font-size:16px">✉️</span><div><div style="font-size:11px;color:var(--text3)">Email</div><div style="font-size:14px;font-weight:600;color:var(--text)">${_fesc(m.email)}</div></div></div>`:''}
       </div>`:''}
-      ${m.notes?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Notes</div><div style="font-size:14px;color:var(--text2);line-height:1.6">${_fesc(m.notes)}</div></div>`:''}`;
+      ${m.notes?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Notes</div><div style="font-size:14px;color:var(--text2);line-height:1.6">${_fesc(m.notes)}</div></div>`:''}
+      ${this._bcLinks(m)}`;
+  },
+
+  _bcLinks(m) {
+    if (typeof S === 'undefined' || !S.bc || !S.bc.length || !m.name) return '';
+    const mName = m.name.toLowerCase();
+    const linked = S.bc.filter(bc => bc.organiser && bc.organiser.toLowerCase().includes(mName));
+    if (!linked.length) return '';
+    return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:10px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">🤝 Committees (BC)</div>
+      ${linked.map(bc => {
+        const pot = (bc.members||1) * (bc.contribution||0);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${_fesc(bc.name||'BC')}</div>
+            <div style="font-size:11px;color:var(--text3)">${bc.currency||''} ${Math.round(bc.contribution||0).toLocaleString()}/round · Pot: ${bc.currency||''} ${pot.toLocaleString()}</div>
+          </div>
+          <span class="badge b-warn">Organiser</span>
+        </div>`;
+      }).join('')}
+    </div>`;
   },
 
   _tabDocs(m) {

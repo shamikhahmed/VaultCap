@@ -20,6 +20,7 @@ const Loans = {
 
     const all = S.loans || [];
     const now = new Date();
+    const msPerDay = 86400000;
 
     const borrowed = all.filter(l => l.type === 'borrowed');
     const lent     = all.filter(l => l.type === 'lent');
@@ -50,15 +51,41 @@ const Loans = {
     }
 
     const renderCard = l => {
-      const overdue = l.status === 'Active' && l.dueDate && new Date(l.dueDate) < now;
+      const dueDate = l.dueDate ? new Date(l.dueDate) : null;
+      const overdue = l.status === 'Active' && dueDate && dueDate < now;
+      const daysOverdue = overdue ? Math.round((now - dueDate) / msPerDay) : 0;
+      const daysUntilDue = dueDate && !overdue && l.status === 'Active' ? Math.round((dueDate - now) / msPerDay) : null;
+      const soonDue = daysUntilDue !== null && daysUntilDue <= 7;
+
       const status  = l.status === 'Settled' ? 'Settled' : overdue ? 'Overdue' : 'Active';
       const badge   = { Active: 'b-ok', Overdue: 'b-err', Settled: 'b-muted' }[status] || 'b-muted';
-      const duePart = l.dueDate
-        ? `<span class="badge ${overdue ? 'b-err' : 'b-warn'}">Due ${l.dueDate}</span>`
-        : '';
+
+      let duePart = '';
+      if (l.status !== 'Settled' && dueDate) {
+        if (overdue) {
+          duePart = `<span class="badge b-err">⚠️ OVERDUE ${daysOverdue} day${daysOverdue !== 1 ? 's' : ''}</span>`;
+        } else if (soonDue) {
+          duePart = `<span class="badge b-warn">⏰ Due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}</span>`;
+        } else {
+          duePart = `<span class="badge b-warn">Due ${l.dueDate}</span>`;
+        }
+      } else if (l.status === 'Settled') {
+        duePart = `<span class="badge b-muted">✓ Settled</span>`;
+      }
+
+      const payments = l.payments || [];
+      const paid = payments.reduce((a, p) => a + (p.amount || 0), 0);
+      const remaining = Math.max(0, (l.amount || 0) - paid);
+      const hasPaid = paid > 0;
+      const cur = l.currency || userCur;
+
       const settle  = status !== 'Settled'
         ? `<button class="icb" title="Mark settled" onclick="Loans.settle('${l.id}')">✔</button>`
         : '';
+      const payBtn = status !== 'Settled'
+        ? `<button class="icb" title="Record payment" onclick="Loans.recordPayment('${l.id}')">💰</button>`
+        : '';
+
       return `<div class="entry" data-id="${l.id}">
         <div class="entry-main">
           <div class="entry-ic">${l.type === 'lent' ? '💸' : '🤲'}</div>
@@ -66,13 +93,14 @@ const Loans = {
             <div class="entry-name">${l.person || 'Unknown'}</div>
             <div class="entry-sub">${l.date || ''}</div>
             <div class="entry-meta">
-              <span class="badge b-acc sens">${U.fmt(l.amount || 0)} ${l.currency || ''}</span>
+              <span class="badge b-acc sens">${cur} ${Math.round(l.amount || 0).toLocaleString()}</span>
               <span class="badge ${badge}">${status}</span>
               ${duePart}
               ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}
             </div>
+            ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens" style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
-          <div class="entry-acts">${settle}<button class="icb" onclick="Loans.edit('${l.id}')">✏️</button><button class="icb del" onclick="Loans.del('${l.id}')">🗑️</button></div>
+          <div class="entry-acts">${payBtn}${settle}<button class="icb" onclick="Loans.edit('${l.id}')">✏️</button><button class="icb del" onclick="Loans.del('${l.id}')">🗑️</button></div>
         </div>
         ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${l.notes}</div>` : ''}
       </div>`;
@@ -152,6 +180,7 @@ const Loans = {
     const item = {
       id: editId || U.id(), person, type,
       status:   existing?.status || 'Active',
+      payments: existing?.payments || [],
       amount:   amt,
       currency: document.getElementById('lf-cur').value,
       date:     document.getElementById('lf-date').value,
@@ -197,8 +226,56 @@ const Loans = {
     }, 60);
   },
 
+  recordPayment(id) {
+    const l = (S.loans || []).find(x => x.id === id); if (!l) return;
+    const payments = l.payments || [];
+    const paid = payments.reduce((a, p) => a + (p.amount || 0), 0);
+    const remaining = Math.max(0, (l.amount || 0) - paid);
+    const cur = l.currency || S.user?.currency || 'PKR';
+    Modal.open('💰 Record Payment',
+      `<div class="fg"><label class="fl">Amount Paid *</label><input class="inp num-inp" id="lp-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" placeholder="0"></div>
+      <div class="fg"><label class="fl">Date</label><input class="inp" id="lp-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="fg"><label class="fl">Notes (optional)</label><input class="inp" id="lp-notes" placeholder="Transfer, cash…"></div>
+      <div style="background:var(--glass);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text2);margin-top:4px">
+        <div>Original: <strong>${cur} ${Math.round(l.amount||0).toLocaleString()}</strong></div>
+        <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
+        <div>Remaining: <strong style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Loans.savePayment('${id}')">Record</button>`
+    );
+    setTimeout(() => {
+      const amtEl = document.getElementById('lp-amt');
+      if (amtEl) U.numInput(amtEl, cur);
+    }, 60);
+  },
+
+  savePayment(id) {
+    const rawAmt = (document.getElementById('lp-amt')?.value || '').replace(/,/g, '');
+    const amt = parseFloat(rawAmt) || 0;
+    if (!amt) { Toast.show('Enter an amount', 'warning'); return; }
+    const l = (S.loans || []).find(x => x.id === id); if (!l) return;
+    if (!l.payments) l.payments = [];
+    l.payments.push({
+      amount: amt,
+      date: document.getElementById('lp-date')?.value || new Date().toISOString().split('T')[0],
+      notes: (document.getElementById('lp-notes')?.value || '').trim(),
+      recordedAt: new Date().toISOString()
+    });
+    const totalPaid = l.payments.reduce((a, p) => a + (p.amount || 0), 0);
+    if (totalPaid >= (l.amount || 0)) {
+      l.status = 'Settled';
+      Toast.show(`🎉 Fully paid! Settled with ${l.person}`, 'success');
+    } else {
+      const remaining = Math.round((l.amount || 0) - totalPaid);
+      Toast.show(`Payment recorded. Remaining: ${l.currency || ''} ${remaining.toLocaleString()}`, 'success');
+    }
+    Activity.log('Recorded payment', l.person);
+    Store.save(); Modal.close(); this.render();
+  },
+
   settle(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
+    if (!window.__vos_confirm(`Mark loan with ${l.person} as fully settled?`)) return;
     l.status = 'Settled';
     Activity.log('Settled loan', l.person);
     Store.save(); this.render();
