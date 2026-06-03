@@ -23,6 +23,30 @@ function getFX(){
   return _FX_DEFAULTS;
 }
 const FX=new Proxy({},{get(_,key){return getFX()[key];}});
+function _sparkLine(history) {
+  if (!history || history.length < 2) return '';
+  const vals = history.map(function(h) { return h.v || 0; });
+  const min = Math.min.apply(null, vals);
+  const max = Math.max.apply(null, vals);
+  const range = max - min || 1;
+  const w = 200, h = 40, pad = 4;
+  const pts = vals.map(function(v, i) {
+    const x = pad + (i / (vals.length - 1)) * (w - 2 * pad);
+    const y = h - pad - ((v - min) / range) * (h - 2 * pad);
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  const trend = vals[vals.length - 1] >= vals[0];
+  const color = trend ? '#34c759' : '#ff453a';
+  const firstDate = history[0].d ? new Date(history[0].d).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }) : '';
+  const lastDate = history[history.length - 1].d ? new Date(history[history.length - 1].d).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }) : '';
+  return '<div style="margin-top:10px">' +
+    '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:40px;display:block">' +
+      '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>' +
+    (firstDate && lastDate ? '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:2px"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>' : '') +
+  '</div>';
+}
+
 const Dash={
   render(){
     const h=new Date().getHours();
@@ -54,7 +78,27 @@ const Dash={
     const vehPKR = S.vehicles.reduce((a,v) => a + toB(v.currentValue||v.purchasePrice||0, v.currency||cur), 0);
     const debtPKR = S.loans.filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
     let goldPKR = 0;
-    try { const gold = JSON.parse(localStorage.getItem('vo_gold')||'[]'); goldPKR = gold.reduce((a,g) => a + (g.weight||0)*(g.pricePerUnit||0), 0); } catch(e) {}
+    try {
+      const goldItems = JSON.parse(localStorage.getItem('vo_gold') || '[]');
+      goldPKR = goldItems.reduce(function(a, g) {
+        let pricePerGram = 0;
+        if (g.useManualPrice && g.pricePerUnit) {
+          const userCur = S.user.currency || 'PKR';
+          pricePerGram = typeof RatesEngine !== 'undefined'
+            ? RatesEngine.convert(g.pricePerUnit, userCur, 'PKR')
+            : g.pricePerUnit;
+        } else if (typeof RatesEngine !== 'undefined') {
+          pricePerGram = g.metal === 'silver'
+            ? RatesEngine.silverInCurrency('PKR', 'gram')
+            : RatesEngine.goldInCurrency('PKR', 'gram');
+        }
+        let grams = g.weight || 0;
+        if (g.unit === 'tola') grams *= 11.6638;
+        else if (g.unit === 'oz') grams *= 31.1035;
+        else if (g.unit === 'kg') grams *= 1000;
+        return a + grams * pricePerGram;
+      }, 0);
+    } catch(e) {}
     const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
     const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
     const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR + bcPKR + bondsPKR - debtPKR;
@@ -120,11 +164,14 @@ const Dash={
       <div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:4px" class="sens">${trendArrow}${fmtN(nwDisplay)}</div>
       <div style="font-size:12px;color:var(--text3)">in ${cur} · <button onclick="Dash.toggleCurrency()" style="background:none;border:none;color:var(--accent,var(--purple));font-size:12px;cursor:pointer;padding:0;font-weight:600">switch →</button></div>
       <div style="margin-top:6px">${typeof RatesEngine !== 'undefined' ? RatesEngine.lastUpdatedBadge() : ''}</div>
+      ${_sparkLine(S.user.nwHistory || [])}
       <div style="display:flex;justify-content:space-around;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(123,95,255,.2)">
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(cashPKR)}</div><div style="font-size:10px;color:var(--text3)">Cash</div></div>
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(invPKR)}</div><div style="font-size:10px;color:var(--text3)">Invested</div></div>
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(asPKR+vehPKR)}</div><div style="font-size:10px;color:var(--text3)">Assets</div></div>
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(goldPKR)}</div><div style="font-size:10px;color:var(--text3)">Gold</div></div>
+        ${(S.bc||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bcPKR)}</div><div style="font-size:10px;color:var(--text3)">Committees</div></div>` : ''}
+        ${(S.bonds||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bondsPKR)}</div><div style="font-size:10px;color:var(--text3)">Bonds</div></div>` : ''}
       </div>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
         <button class="btn btn-g btn-sm" onclick="Dash.snap()">Snapshot</button>
@@ -315,13 +362,17 @@ const Dash={
     const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
     const bcPKR2=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
     const bondsPKR2=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
-    const nwPKR=invPKR+asPKR+cashPKR+bcPKR2+bondsPKR2-debtPKR;
+    const vehPKR2=S.vehicles.reduce((a,v)=>a+toB(v.currentValue||v.purchasePrice||0,v.currency||cur),0);
+    let goldPKR2=0;try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');goldPKR2=gi.reduce(function(a,g){let ppg=0;if(g.useManualPrice&&g.pricePerUnit){ppg=typeof RatesEngine!=='undefined'?RatesEngine.convert(g.pricePerUnit,cur,'PKR'):g.pricePerUnit;}else if(typeof RatesEngine!=='undefined'){ppg=g.metal==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');}let gr=g.weight||0;if(g.unit==='tola')gr*=11.6638;else if(g.unit==='oz')gr*=31.1035;else if(g.unit==='kg')gr*=1000;return a+gr*ppg;},0);}catch(e){}
+    const nwPKR=invPKR+asPKR+cashPKR+vehPKR2+goldPKR2+bcPKR2+bondsPKR2-debtPKR;
     const row=(ic,label,val,col,prefix='')=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>${ic}</span>${label}</div><div style="font-size:14px;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
     Modal.open('💰 Net Worth Breakdown',`
     <div style="padding:0 2px">
       ${row('📈','Investments',invPKR,'var(--accent)')}
       ${row('🏠','Assets',asPKR,'var(--accent)')}
       ${row('💵','Cash',cashPKR,'var(--accent)')}
+      ${vehPKR2>0?row('🚗','Vehicles',vehPKR2,'var(--accent)'):''}
+      ${goldPKR2>0?row('🥇','Precious Metals',goldPKR2,'var(--accent)'):''}
       ${bcPKR2>0?row('🤝','BC Receivables',bcPKR2,'var(--accent)'):''}
       ${bondsPKR2>0?row('📜','Bonds / Securities',bondsPKR2,'var(--accent)'):''}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>💸</span>Loans (owed)</div><div style="font-size:14px;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>

@@ -6,29 +6,46 @@ const Reminders = {
       ? `<button onclick="Reminders.requestPermission().then(()=>Reminders.render())" class="btn btn-g" style="width:100%;margin-bottom:14px">🔔 Enable Notifications</button>`
       : '';
     const items = this._collect();
-    if (!items.length) {
-      body.innerHTML = notifBanner + `<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items. Add cards, documents, loans and vehicles to get alerts.</div></div>`;
-      this._badge(0);
-      return;
-    }
-    const urgentCount = items.filter(r => r.daysLeft <= 7).length;
-    body.innerHTML = notifBanner + `<div style="font-size:11px;color:var(--text3);padding:0 0 12px;font-weight:600">${items.length} reminder${items.length !== 1 ? 's' : ''} — sorted by urgency${urgentCount ? ` · <span style="color:var(--err)">${urgentCount} urgent</span>` : ''}</div>` +
-      items.map(r => {
-        const col = r.daysLeft < 0 ? 'var(--err)' : r.daysLeft <= 7 ? 'var(--err)' : r.daysLeft <= 30 ? 'var(--warn)' : 'var(--ok)';
+
+    const groups = [
+      { key: 'overdue', label: '🔴 Overdue',   filter: function(r) { return r.daysLeft < 0; } },
+      { key: 'week',    label: '🟠 This Week',  filter: function(r) { return r.daysLeft >= 0 && r.daysLeft <= 7; } },
+      { key: 'month',   label: '🟡 This Month', filter: function(r) { return r.daysLeft > 7 && r.daysLeft <= 30; } },
+      { key: 'later',   label: '🟢 Later',      filter: function(r) { return r.daysLeft > 30; } },
+    ];
+
+    let html = notifBanner;
+    let totalCount = 0;
+
+    groups.forEach(function(group) {
+      const groupItems = items.filter(group.filter);
+      if (!groupItems.length) return;
+      totalCount += groupItems.length;
+      html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:14px 0 6px">' + group.label + '</div>';
+      html += groupItems.map(function(r) {
         const badge = r.daysLeft < 0 ? 'b-err' : r.daysLeft <= 7 ? 'b-err' : r.daysLeft <= 30 ? 'b-warn' : 'b-ok';
-        const label = r.daysLeft < 0 ? `${Math.abs(r.daysLeft)}d overdue` : r.daysLeft === 0 ? 'Today!' : `${r.daysLeft}d left`;
-        return `<div class="entry" style="border-left:3px solid ${col}">
-          <div class="entry-main">
-            <div class="entry-ic">${r.icon}</div>
-            <div class="entry-body">
-              <div class="entry-name">${r.title}</div>
-              <div class="entry-sub">${r.sub}</div>
-              <div class="entry-meta"><span class="badge ${badge}">${label}</span><span class="badge b-muted">${r.category}</span></div>
-            </div>
-          </div>
-        </div>`;
+        const col = r.daysLeft < 0 ? 'var(--err)' : r.daysLeft <= 7 ? 'var(--err)' : r.daysLeft <= 30 ? 'var(--warn)' : 'var(--ok)';
+        const daysLabel = r.daysLeft < 0 ? Math.abs(r.daysLeft) + 'd overdue' : r.daysLeft === 0 ? 'Today' : r.daysLeft + 'd left';
+        return '<div class="entry" style="border-left:3px solid ' + col + '">' +
+          '<div class="entry-main">' +
+            '<div class="entry-ic">' + (r.icon || '⚠️') + '</div>' +
+            '<div class="entry-body">' +
+              '<div class="entry-name">' + (r.title || r.label || '') + '</div>' +
+              '<div class="entry-sub">' + (r.sub || '') + '</div>' +
+              '<div class="entry-meta"><span class="badge ' + badge + '">' + daysLabel + '</span><span class="badge b-muted">' + (r.category || '') + '</span></div>' +
+            '</div>' +
+            (r.page ? '<button class="icb" onclick="R.goto(\'' + r.page + '\')" title="Go to">›</button>' : '') +
+          '</div>' +
+        '</div>';
       }).join('');
-    this._badge(urgentCount);
+    });
+
+    if (totalCount === 0) {
+      html += '<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items.</div></div>';
+    }
+
+    body.innerHTML = html;
+    this._badge(items.filter(function(r) { return r.daysLeft <= 7; }).length);
   },
 
   _daysLeft(dateStr) {
@@ -129,6 +146,44 @@ const Reminders = {
       if (days !== null && days < 7) {
         const sub = SUBS_DB ? (SUBS_DB.find(s => s.n === a.name) || {}) : {};
         items.push({ icon:sub.ic||'🔄', title:`${a.name} renewing soon`, sub:`${a.currency||''} ${U.fmt(a.monthlyCost||0)}/mo · Renews ${a.renewalDate}`, daysLeft:days, category:'Subscription' });
+      }
+    });
+
+    // BC committee payments
+    (S.bc || []).forEach(function(bc) {
+      if (!bc.paymentDay) return;
+      const daysToPayment = typeof BCModule !== 'undefined' ? BCModule._daysToPaymentDay(bc.paymentDay) : null;
+      if (daysToPayment === null) return;
+      items.push({
+        icon: '🤝',
+        title: (bc.name || 'BC') + ' payment',
+        sub: (bc.currency || 'PKR') + ' ' + (bc.contribution || 0).toLocaleString() + ' due',
+        daysLeft: daysToPayment,
+        page: 'bc',
+        category: 'BC',
+      });
+    });
+
+    // Prize bond draws
+    (S.bonds || []).forEach(function(b) {
+      if (typeof BondsModule === 'undefined') return;
+      const type = BondsModule._getType ? BondsModule._getType(b.typeId) : null;
+      if (!type || !type.drawMonths || !type.drawMonths.length) return;
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const nextDrawMonth = type.drawMonths.find(function(m) { return m >= month; }) || type.drawMonths[0];
+      const nextDrawYear = nextDrawMonth >= month ? now.getFullYear() : now.getFullYear() + 1;
+      const drawDate = new Date(nextDrawYear, nextDrawMonth - 1, 15);
+      const daysLeft = Math.ceil((drawDate.getTime() - now.getTime()) / 86400000);
+      if (daysLeft <= 30) {
+        items.push({
+          icon: '🎫',
+          title: b.name || 'Prize Bond Draw',
+          sub: 'Draw date approaching',
+          daysLeft: daysLeft,
+          page: 'bonds',
+          category: 'Bonds',
+        });
       }
     });
 
