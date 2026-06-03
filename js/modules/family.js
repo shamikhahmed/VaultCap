@@ -791,7 +791,7 @@ const Family = {
         const firstName = typeof memberBanks[0] === 'string' ? memberBanks[0] : (memberBanks[0]?.name || memberBanks[0]?.bankName || '');
         if (firstName) {
           const firstWord = firstName.toLowerCase().split(' ')[0];
-          const filtered = (SMART_DB.cards||[]).filter(c => c.toLowerCase().includes(firstWord));
+          const filtered = (SMART_DB.cards||[]).filter(c => String(c?.cardName||c?.name||c||'').toLowerCase().includes(firstWord));
           return filtered.length > 0 ? filtered : (SMART_DB.cards||[]).slice(0,15);
         }
       }
