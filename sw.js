@@ -16,6 +16,7 @@ const ASSETS = [
   '/js/core/schema.js',
   '/js/core/utils.js',
   '/js/core/validators.js',
+  '/js/modules/rates.js',
   '/js/modules/banks.js',
   '/js/modules/cards.js',
   '/js/modules/sims.js',

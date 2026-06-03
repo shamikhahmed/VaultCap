@@ -1,6 +1,27 @@
 // VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
 const _FX_DEFAULTS={PKR:1,GBP:355,AED:76,USD:280,EUR:300,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
-function getFX(){try{if(typeof Currency!=='undefined'){const c=Currency.get();if(c&&c.rates&&Object.keys(c.rates).length>0)return{..._FX_DEFAULTS,...c.rates,PKR:1};}}catch(e){}return _FX_DEFAULTS;}
+function getFX(){
+  // Priority: RatesEngine (live, USD-based) → Currency module → hardcoded fallback
+  // FX proxy uses PKR-based rates: FX[USD]=280 means 1 USD = 280 PKR
+  try {
+    if (typeof RatesEngine !== 'undefined') {
+      const rx = RatesEngine.getFX(); // USD-based: { PKR:278.5, GBP:0.787, ... }
+      if (rx && rx.PKR) {
+        const pkr = rx.PKR;
+        const out = { PKR: 1 };
+        Object.keys(rx).forEach(c => { if (c !== 'PKR' && rx[c]) out[c] = +(pkr / rx[c]).toFixed(4); });
+        return { ..._FX_DEFAULTS, ...out };
+      }
+    }
+  } catch(e) {}
+  try {
+    if (typeof Currency !== 'undefined') {
+      const c = Currency.get();
+      if (c && c.rates && Object.keys(c.rates).length > 0) return { ..._FX_DEFAULTS, ...c.rates, PKR: 1 };
+    }
+  } catch(e) {}
+  return _FX_DEFAULTS;
+}
 const FX=new Proxy({},{get(_,key){return getFX()[key];}});
 const Dash={
   render(){
@@ -96,6 +117,7 @@ const Dash={
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">Total Net Worth</div>
       <div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:4px" class="sens">${trendArrow}${fmtN(nwDisplay)}</div>
       <div style="font-size:12px;color:var(--text3)">in ${cur} · <button onclick="Dash.toggleCurrency()" style="background:none;border:none;color:var(--accent,var(--purple));font-size:12px;cursor:pointer;padding:0;font-weight:600">switch →</button></div>
+      <div style="margin-top:6px">${typeof RatesEngine !== 'undefined' ? RatesEngine.lastUpdatedBadge() : ''}</div>
       <div style="display:flex;justify-content:space-around;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(123,95,255,.2)">
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(cashPKR)}</div><div style="font-size:10px;color:var(--text3)">Cash</div></div>
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(invPKR)}</div><div style="font-size:10px;color:var(--text3)">Invested</div></div>

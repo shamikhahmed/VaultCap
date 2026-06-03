@@ -2279,6 +2279,11 @@ const R = {
     buildNav();
     this.goto('dashboard');
     Activity.log('Vault unlocked');
+    if (typeof RatesEngine !== 'undefined') {
+      RatesEngine.init().then(() => {
+        if (S.currentPage === 'dashboard' && typeof Dash !== 'undefined') Dash.render();
+      });
+    }
     setTimeout(() => {
       const dashPb = document.getElementById('dashBody');
       if (dashPb) pullToRefresh(dashPb, () => Dash.render());
