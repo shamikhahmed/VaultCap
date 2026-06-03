@@ -75,6 +75,8 @@ const Tags = {
   PRESETS: ['personal', 'business', 'uk', 'pakistan', 'uae', 'halal', 'urgent', 'archived', 'family', 'tax-related', 'investment'],
 };
 
+const escHtml = str => String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
 // ===================== VAULT RELATIONS =====================
 const VaultRelations = {
   cardsForBank(bankId) {
@@ -1558,6 +1560,22 @@ const Store = {
 
   loadPrefs() { try { return JSON.parse(localStorage.getItem('vos_prefs')); } catch(e) {} return null; },
 
+  _saveCount: 0,
+
+  checkQuota() {
+    try {
+      let total = 0;
+      for (const key of Object.keys(localStorage)) {
+        total += (localStorage.getItem(key) || '').length * 2;
+      }
+      const MB = total / (1024 * 1024);
+      if (MB > 4) {
+        Toast.show(`Storage is ${MB.toFixed(1)}MB — consider removing old photos or exporting a backup.`, 'warn', 8000);
+      }
+      return MB;
+    } catch(e) { return 0; }
+  },
+
   // Fire-and-forget: encrypt and persist to IndexedDB.
   // Callers remain synchronous — VaultDB.save runs in background.
   save() {
@@ -1567,6 +1585,8 @@ const Store = {
       VaultDB.save(data).catch(e => console.warn('[VaultDB] save error:', e));
     }
     this._saveWidgetSnapshot();
+    this._saveCount++;
+    if (this._saveCount % 10 === 0) this.checkQuota();
   },
 
   _saveWidgetSnapshot() {
@@ -3225,11 +3245,11 @@ const CMD = {
       const weighted = [];
       this._allCmds.filter(c => fm(c.label, ql)).slice(0, 5).forEach(c => weighted.push({...c, cat:'Actions', _score:score(c.label,ql)+5}));
       (S.banks||[]).filter(b => fm(b.bankName || '', ql) || fm(b.notes || '', ql) || (b.tags||[]).some(t=>fm(t,ql))).forEach(b => {
-        const s = score(b.bankName,ql) + (fm(b.notes||'',ql)?1:0); weighted.push({ icon:'🏦', label:b.bankName, subtitle:b.currency+(b.last4?' · ****'+b.last4:''), badge:'Bank', cat:'Banks', action:()=>Banks.detail(b.id), _score:s });
+        const s = score(b.bankName,ql) + (fm(b.notes||'',ql)?1:0); weighted.push({ icon:'🏦', label:escHtml(b.bankName), subtitle:escHtml(b.currency+(b.last4?' · ****'+b.last4:'')), badge:'Bank', cat:'Banks', action:()=>Banks.detail(b.id), _score:s });
       });
       (S.cards||[]).filter(cv => fm(cv.cardName || '', ql) || fm(cv.last4 || '', ql) || (cv.tags||[]).some(t=>fm(t,ql))).forEach(cv => {
         const linkedBank = cv.linkedBankId ? (S.banks||[]).find(b=>b.id===cv.linkedBankId)?.bankName : cv.linkedBank;
-        const s = score(cv.cardName,ql) + (fm(cv.last4||'',ql)?2:0); weighted.push({ icon:'💳', label:cv.cardName+(cv.last4?' ****'+cv.last4:''), subtitle:linkedBank?'Linked to: '+linkedBank:(cv.network||''), badge:'Card', cat:'Cards', action:()=>Cards.openDetail(cv.id), _score:s });
+        const s = score(cv.cardName,ql) + (fm(cv.last4||'',ql)?2:0); weighted.push({ icon:'💳', label:escHtml(cv.cardName+(cv.last4?' ****'+cv.last4:'')), subtitle:escHtml(linkedBank?'Linked to: '+linkedBank:(cv.network||'')), badge:'Card', cat:'Cards', action:()=>Cards.openDetail(cv.id), _score:s });
       });
       (S.investments||[]).filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).forEach(i => weighted.push({ icon:'📈', label:i.investmentName||i.broker, subtitle:i.broker||'', badge:'Investment', cat:'Investments', action:()=>Inv.edit(i.id), _score:score(i.investmentName||i.broker,ql) }));
       (S.loans||[]).filter(l => fm(l.person||'',ql) || fm(l.description||'',ql)).forEach(l => weighted.push({ icon:'🤝', label:l.person||'Loan', subtitle:(l.type==='lent'?'Lent':'Borrowed')+' · '+(l.currency||'')+(l.amount?' '+l.amount:''), badge:'Loan', cat:'Loans', action:()=>Loans.openAdd(), _score:score(l.person||'',ql) }));
@@ -3497,6 +3517,7 @@ function loadDemoProfile(type) {
 function loadDemoData() {
   const snapshot = {};
   Object.keys(localStorage).forEach(k => { snapshot[k] = localStorage.getItem(k); });
+  // NOTE: demo snapshot is stored unencrypted temporarily for undo — cleared after 30s
   localStorage.setItem('vo_demo_snapshot', JSON.stringify(snapshot));
   localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
   loadDemoProfile('business');
@@ -3580,13 +3601,15 @@ function loadDemoData() {
     'Demo data loaded! <button onclick="undoDemoLoad()" style="margin-left:8px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:3px 10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">↩ Undo</button>',
     'success', 8000
   );
+  setTimeout(() => localStorage.removeItem('vo_demo_snapshot'), 30000);
 }
 
 function undoDemoLoad() {
   const snap = localStorage.getItem('vo_demo_snapshot');
   if (!snap) { if(window.Toast) Toast.show('No snapshot to restore', 'warning'); return; }
   if (!confirm('Restore your previous data? Demo data will be removed.')) return;
-  const data = JSON.parse(snap);
+  let data;
+  try { data = JSON.parse(snap); } catch(e) { if(window.Toast) Toast.show('Snapshot is corrupted — cannot restore', 'error'); return; }
   Object.keys(localStorage).forEach(k => localStorage.removeItem(k));
   Object.entries(data).forEach(([k,v]) => { if (k !== 'vo_demo_snapshot' && k !== 'vo_demo_snapshot_time') localStorage.setItem(k,v); });
   localStorage.removeItem('vo_demo_snapshot');
@@ -3614,6 +3637,7 @@ function debounce(fn, ms) {
   let t;
   return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
 }
+window._dbSearch = debounce((fn) => fn(), 200);
 
 // Wire debounced handlers to all search inputs after page renders
 function _wireSearchDebounce() {

@@ -79,7 +79,7 @@ const Family = {
         ${d.head ? this._headCard(d.head) : this._addHeadPrompt()}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
-          <button onclick="Family.openAddMember()" style="background:rgba(123,95,255,1);color:#fff;border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+          <button onclick="Family.openAddMember()" style="background:var(--accent,rgba(123,95,255,1));color:var(--on-accent,#fff);border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
         </div>
         ${d.members.length ? d.members.map((m,i)=>this._memberRow(m,i)).join('') : `
           <div style="text-align:center;padding:40px 20px;color:var(--text3)">
@@ -106,7 +106,7 @@ const Family = {
       head.cash?.length ? head.cash.length+' Cash' : null,
     ].filter(Boolean);
     return `<div onclick="Family.openMember('head')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden">
-      <div style="position:absolute;top:10px;right:12px;font-size:11px;background:rgba(123,95,255,.4);color:#fff;padding:3px 10px;border-radius:10px;font-weight:700">HEAD OF FAMILY 👑</div>
+      <div style="position:absolute;top:10px;right:12px;font-size:11px;background:var(--accent-dim,rgba(123,95,255,.4));color:var(--on-accent,#fff);padding:3px 10px;border-radius:10px;font-weight:700">HEAD OF FAMILY 👑</div>
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
         <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;box-shadow:0 4px 20px rgba(123,95,255,.4)">${head.avatar||'👤'}</div>
         <div>
@@ -317,7 +317,7 @@ const Family = {
   _tabNotes(m) {
     return `
       <textarea id="fm-notes-area" rows="10" placeholder="Add notes about ${_fesc(m.name)}..." style="width:100%;background:var(--glass2);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);font-size:14px;line-height:1.6;resize:none;box-sizing:border-box">${_fesc(m.notes||'')}</textarea>
-      <button onclick="Family._saveNotes()" style="width:100%;margin-top:10px;padding:12px;border-radius:12px;background:rgba(123,95,255,1);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation">Save Notes</button>`;
+      <button onclick="Family._saveNotes()" style="width:100%;margin-top:10px;padding:12px;border-radius:12px;background:var(--accent,rgba(123,95,255,1));color:var(--on-accent,#fff);border:none;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation">Save Notes</button>`;
   },
 
   _tabInvestments(m) {
@@ -661,7 +661,7 @@ const Family = {
         </div>
         <input id="fam-bank-search" placeholder="Search banks..."
           style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px"
-          oninput="if(window.Family)window.Family._searchBankList(this.value,'fam-bank-list')">
+          oninput="window._dbSearch(()=>Family._searchBankList(this.value,'fam-bank-list'))">
         <div id="fam-bank-list" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
           ${countryBanks.map(b=>`
             <div onclick="document.getElementById('fam-bank-selected').value='${b.name.replace(/'/g,"\\'")}';document.querySelectorAll('#fam-bank-list .fbl-item').forEach(el=>{el.style.background='transparent';el.style.borderColor='var(--border)'});this.style.background='rgba(123,95,255,.15)';this.style.borderColor='rgba(123,95,255,.5)'"

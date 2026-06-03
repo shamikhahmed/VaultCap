@@ -573,7 +573,7 @@ const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'&&Crypto.available()){
       const pw=S.pin+'_vos4_'+S.user.name;
-      const data={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
+      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
       S.user.lastBackup=new Date().toISOString();Store.save();
       Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
         this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
@@ -617,6 +617,7 @@ const ExIm={
           try{
             const data=JSON.parse(raw2);
             if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file','error');return;}
+            if(data._vaultVersion&&typeof SCHEMA_VERSION!=='undefined'&&data._vaultVersion>SCHEMA_VERSION){Toast.show('This backup was created with a newer version of VaultOS. Some data may not display correctly.','warn',6000);}
             const counts=[`${(data.banks||[]).length} banks`,`${(data.cards||[]).length} cards`,`${(data.emails||[]).length} emails`,`${(data.gadgets||[]).length} devices`,`${(data.expenses||[]).length} expenses`].join(', ');
             if(!window.__vos_confirm(`Import vault?\n\n${counts}\n\nMerges with existing data.`))return;
             ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});

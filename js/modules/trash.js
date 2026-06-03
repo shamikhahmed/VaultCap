@@ -63,7 +63,7 @@ const Trash = {
   },
   emptyAll() {
     if (!window.__vos_confirm('Permanently delete all items in Trash?')) return;
-    S.trash = [];
+    S.trash.length = 0;
     Store.save(); this.render();
     Toast.show('Trash emptied', 'info');
   }
