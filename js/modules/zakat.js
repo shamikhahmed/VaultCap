@@ -201,6 +201,11 @@ const Zakat = {
     const mOther = hasSavedManual.other || 0;
     const mDeductions = hasSavedManual.deductions || 0;
 
+    const bcZakatable = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount(cur) : 0;
+    const bondsZakatable = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount(cur) : 0;
+    const mBc = hasSavedManual.bc !== undefined ? hasSavedManual.bc : Math.round(bcZakatable);
+    const mBonds = hasSavedManual.bonds !== undefined ? hasSavedManual.bonds : Math.round(bondsZakatable);
+
     const investments = typeof S !== 'undefined' ? (S.investments || []) : [];
 
     body.innerHTML =
@@ -258,6 +263,8 @@ const Zakat = {
         this._zakatField('Silver', 'z-silver', mSilver, 'Silver holdings from your vault', Math.round(silverTotal) === mSilver) +
         this._zakatField('Loans given out', 'z-loans-given', mLoansGiven, 'Money owed TO you that is likely to be repaid', Math.round(loansGiven) === mLoansGiven) +
         this._zakatField('Business inventory', 'z-business', mBusiness, 'Goods/stock held for sale (manual entry)', false) +
+        this._zakatField('BC / Committee (paid in)', 'z-bc', mBc, 'Money paid into rotating committees (receivable)', Math.round(bcZakatable) === mBc) +
+        this._zakatField('Prize Bonds & Savings', 'z-bonds', mBonds, 'Prize bonds and govt securities at face value', Math.round(bondsZakatable) === mBonds) +
         this._zakatField('Other zakatable assets', 'z-other', mOther, 'Any other zakatable wealth not listed above', false) +
         '<div style="border-top:1px solid var(--border);margin:10px 0"></div>' +
         '<div style="font-size:11px;font-weight:700;color:var(--err);margin-bottom:8px">Deductions</div>' +
@@ -320,6 +327,7 @@ const Zakat = {
         'z-cash': 'cash', 'z-invest': 'invest', 'z-gold': 'gold',
         'z-silver': 'silver', 'z-loans-given': 'loansGiven',
         'z-loans-owed': 'loansOwed', 'z-business': 'business',
+        'z-bc': 'bc', 'z-bonds': 'bonds',
         'z-other': 'other', 'z-deductions': 'deductions',
       };
       const key = fieldMap[id];
@@ -349,11 +357,13 @@ const Zakat = {
     const silver = g('z-silver');
     const loansGiven = g('z-loans-given');
     const business = g('z-business');
+    const bc = g('z-bc');
+    const bonds = g('z-bonds');
     const other = g('z-other');
     const loansOwed = g('z-loans-owed');
     const deductions = g('z-deductions');
 
-    const total = cash + invest + gold + silver + loansGiven + business + other;
+    const total = cash + invest + gold + silver + loansGiven + business + bc + bonds + other;
     const netZakatable = total - loansOwed - deductions;
     const aboveNisab = netZakatable >= nisabValue;
     const hawl = this._hawlStatus();
@@ -441,11 +451,13 @@ const Zakat = {
       'Silver: ' + cur + ' ' + g('z-silver').toLocaleString(),
       'Loans given: ' + cur + ' ' + g('z-loans-given').toLocaleString(),
       'Business: ' + cur + ' ' + g('z-business').toLocaleString(),
+      'BC / Committee: ' + cur + ' ' + g('z-bc').toLocaleString(),
+      'Prize Bonds & Savings: ' + cur + ' ' + g('z-bonds').toLocaleString(),
       'Other: ' + cur + ' ' + g('z-other').toLocaleString(),
       'Loans owed: -' + cur + ' ' + g('z-loans-owed').toLocaleString(),
       'Immediate liabilities: -' + cur + ' ' + g('z-deductions').toLocaleString(),
       '',
-      'Net Zakatable: ' + cur + ' ' + (g('z-cash') + g('z-invest') + g('z-gold') + g('z-silver') + g('z-loans-given') + g('z-business') + g('z-other') - g('z-loans-owed') - g('z-deductions')).toLocaleString(),
+      'Net Zakatable: ' + cur + ' ' + (g('z-cash') + g('z-invest') + g('z-gold') + g('z-silver') + g('z-loans-given') + g('z-business') + g('z-bc') + g('z-bonds') + g('z-other') - g('z-loans-owed') - g('z-deductions')).toLocaleString(),
     ];
     const amountEl = document.getElementById('zakat-due-amount');
     if (amountEl) lines.push('Zakat Due (2.5%): ' + amountEl.textContent);

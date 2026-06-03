@@ -42,6 +42,8 @@ const ASSETS = [
   '/js/modules/currency.js',
   '/js/modules/gold.js',
   '/js/modules/zakat.js',
+  '/js/modules/bc.js',
+  '/js/modules/bonds.js',
   '/js/modules/tax.js',
   '/js/modules/creditScore.js',
   '/manifest.json',

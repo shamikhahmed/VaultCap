@@ -13,6 +13,8 @@ const ALL_MODULES=[
   {id:'investments',n:'Investments',ic:'📈',desc:'Stocks, funds, bonds, crypto',      group:'Finance'},
   {id:'cash',    n:'Cash',        ic:'💵', desc:'Physical cash by location',          group:'Finance'},
   {id:'loans',   n:'Loans',       ic:'🤝', desc:'Money lent & borrowed',              group:'Finance'},
+  {id:'bc',      n:'Committee (BC)', ic:'🤝', desc:'Rotating savings committees',    group:'Finance'},
+  {id:'bonds',   n:'Prize Bonds & Savings', ic:'🎫', desc:'Prize bonds, NSS, govt securities', group:'Finance'},
   {id:'expenses',n:'Expenses',   ic:'📋', desc:'Subscriptions & recurring bills',    group:'Finance'},
   {id:'credit',  n:'Credit Score',ic:'📊', desc:'Credit score tracker',              group:'Finance'},
   {id:'zakat',   n:'Zakat',       ic:'🌙', desc:'Annual zakat calculator',           group:'Finance'},
@@ -1877,7 +1879,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 
 const Migrate = {
   run() {
@@ -1935,6 +1937,15 @@ const Migrate = {
       if (stored.modules && stored.modules.emergency === undefined) stored.modules.emergency = true;
       if (!stored.emergency) stored.emergency = { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false };
     }
+    if (sv < 8) {
+      if (!stored.bc) stored.bc = [];
+      if (!stored.bonds) stored.bonds = [];
+      if (stored.modules) {
+        if (stored.modules.bc === undefined) stored.modules.bc = true;
+        if (stored.modules.bonds === undefined) stored.modules.bonds = true;
+      }
+      stored.schemaVersion = 8;
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
@@ -1946,8 +1957,8 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true },
-  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], activity:[], tags:[], trash:[],
+  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true },
+  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
   emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
@@ -2383,6 +2394,8 @@ const R = {
       'help':      () => { if (typeof HelpCenter !== 'undefined') HelpCenter.render(); },
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
       gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
+      bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
+      bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
       tax:         () => { if (typeof Tax !== 'undefined') Tax.render(); },
@@ -3472,6 +3485,8 @@ function renderFinanceHome() {
     {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
     {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
     {id:'expenses',icon:'💸',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
+    {id:'bc',    icon:'🤝', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
+    {id:'bonds', icon:'🎫', label:'Prize Bonds & Savings', desc:(S.bonds||[]).length+' holdings'},
   ];
   const hidden = getTabPrefs().hiddenFinance || [];
   const modules = allModules.filter(m => {
