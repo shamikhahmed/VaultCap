@@ -1,126 +1,102 @@
-# VaultOS — Personal Finance & Identity Vault
+# VaultOS — Private Life Operating System
 
-**Privacy-first. Local-first. Offline-first. Your data, your device, your rules.**
+[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
+[![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
+[![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)
 
-🔗 **Live:** https://shamikhahmed.github.io/VaultOS
+> **Your entire financial and personal life. Encrypted. Offline. Always with you.**
 
-VaultOS is a personal vault app that stores your financial and identity information entirely on your device. No accounts. No servers. No tracking. Everything encrypted with your PIN.
-
-Built for people who manage finances across Pakistan, UK, and UAE.
+VaultOS is a zero-knowledge personal life operating system built as a PWA. No servers. No accounts. No subscriptions. All data stays on your device, encrypted with AES-256-GCM.
 
 ---
 
-## Why VaultOS?
+## What It Does
 
-Most finance apps upload your data to servers you don't control. VaultOS is different:
+VaultOS replaces a dozen fragmented apps with one encrypted vault — managing banks, cards, investments, loans, documents, family, identity, and more across Pakistan, the UK, and the UAE.
 
-- **Local-first** — data lives on your device, works fully offline
-- **Encrypted** — AES-256-GCM encryption with your PIN as the key
-- **Transparent** — open source, no hidden cloud sync, no analytics
-- **Recoverable** — export encrypted .vos backups you own forever
-- **Multi-country** — built for PKR, GBP, AED, USD across PK/UK/UAE
+### Finance
+- Banks & accounts across PK/UK/UAE with IBAN tracking
+- Cards with expiry alerts and camera OCR scan
+- Investments with P&L tracking (stocks, crypto, mutual funds, sukuk)
+- Loans with partial payment tracking and overdue alerts
+- Cash in multiple currencies
+- Expenses & subscriptions
+- BC/Committee (rotating savings) with turn tracking
+- Prize bonds & savings certificates
+- Credit score tracking (Experian, Equifax, TransUnion, ECIB)
+- Zakat calculator with live nisab and hawl tracking
+- Income tax calculator (UK, Pakistan, UAE)
+- Live FX rates and precious metals prices
+
+### Identity & Documents
+- Passport, NIC, driving licence, visa — 12 document types with expiry alerts
+- SIM cards, email accounts, digital logins, gadgets with warranty tracking
+
+### Family Vault
+- Family profiles with linked documents, banks, and cards
+- BC committee organiser with member tracking
+
+### Assets
+- Property, vehicles with MOT/road tax/insurance expiry alerts
+- Gadgets and personal assets with P&L
+
+---
+
+## Security
+
+- **AES-256-GCM** encryption via Web Crypto API
+- **PBKDF2** key derivation (310,000 iterations, SHA-256)
+- **IndexedDB** encrypted storage — never leaves your device
+- PIN brute-force lockout (30s → 5 min → vault wipe)
+- **Decoy PIN** — shows empty vault to protect under duress
+- Fully offline — no internet required after install
 
 ---
 
 ## Features
 
-### Security
-- 6-digit PIN with lockout after failed attempts
-- Decoy PIN — secondary PIN shows a blank vault
-- AES-256-GCM encrypted `.vos` backup/restore (PBKDF2, 310 000 iterations)
-- Auto-lock on screen hide with configurable timeout
-- Panic lock — one tap blanks all sensitive values
-- Privacy mode — blurs all sensitive fields
-
-### Banks & Cards
-- 50+ banks across Pakistan, UK, UAE, USA, Canada, EU
-- Includes HBL, Meezan, UBL, Monzo, Revolut, Starling, Yonder, Wirex, Klarna, Emirates NBD, FAB, Mashreq, ADCB
-- Cards with full details — network (Visa, Mastercard, Amex, UnionPay, PayPak), type, limit, expiry
-- Smart bank shortlist when adding cards
-- Credit limit overview across all cards
-- Today's wallet — pin which cards you're carrying
-
-### Family Vault
-- Family head master profile + individual member profiles
-- Per-member tabs: Documents, Banks & Cards, Cash, Investments, Notes
-- Expiry alerts for family documents
-- Photo storage for cards and documents
-
-### Currency & Net Worth
-- Live FX rates from your own Currency module — no stale defaults
-- Base currency: PKR, USD, GBP, AED, EUR
-- Total net worth aggregated across all asset classes in your chosen currency
-- Dashboard toggle between currencies
-
-### Precious Metals (Gold & Silver)
-- Weight in grams, tola, ounce, kilogram
-- Gold, silver, platinum tracking
-- Manual spot price entry
-- Portfolio value in base currency
-
-### Zakat Calculator
-- Personal, Business/AOP, and FBR bank-deduction modes
-- Silver (612.36g) and gold (87.48g) nisab standards
-- Full zakatable asset and liability breakdown
-- **Quranic & Hadith references** with scholarly sources (Surah At-Tawbah 9:103, Sahih al-Bukhari 1496, etc.)
-- Follows Hanafi fiqh as practised in Pakistan
-- Printable Zakat statement
-
-### Tax Calculator
-**Pakistan** — 2025–26 slabs:
-- Salaried / Non-salaried / AOP / Company
-- Non-filer surcharges, freelancer IT-export exemptions
-- Super Tax, Zakat deduction, property tax (FBR)
-
-**United Kingdom** — 2024/25:
-- Employed (PAYE), Self-Employed (Class 2/4 NI), Landlord
-- Capital Gains Tax (basic/higher rate, annual exempt £3 000)
-- Inheritance Tax (£325 000 nil-rate band, 40%)
-- Dividend Tax, SDLT (residential/first-time buyer), VAT
-
-**UAE**:
-- Individual (0% income tax)
-- Corporate Tax (9% above AED 375 000 threshold, free zone rules)
-- VAT (5% standard, 0% exempt categories), excise tax
-
-Printable report with monthly/weekly/daily breakdowns.
-
-### Credit Score Tracker
-- UK: Experian (0–999), Equifax (0–1 000), TransUnion (0–710)
-- Pakistan: eCIB (SECP/SBP scale)
-- UAE: AECB (300–900)
-- Manual entry with trend history and band labels
-
-### Other Modules
-| Module | What it tracks |
-|--------|---------------|
-| Investments | Stocks, funds, crypto, property — value + currency |
-| Assets | Physical assets with current value |
-| Cash | Cash positions across accounts and currencies |
-| Loans | Money lent and borrowed, per-currency amounts, settlement status |
-| Vehicles | MOT & road tax expiry alerts, full vehicle details |
-| Documents | Passports, IDs, visas, licences with expiry tracking |
-| SIM Cards | Numbers, networks, plans across countries |
-| Digital | Subscriptions and digital services |
-| Gadgets | Device inventory |
-| Expenses | Spending log |
-| Emails | Important email archive |
-| Reminders | Custom alerts with due dates |
-| Timeline | Full activity history |
-| Friends | Contact book linked to loans |
-| Search | Full-text search across all modules |
-
-### Import / Export
-- `.vos` — AES-256-GCM encrypted full backup
-- `.vault` — legacy format
-- `.json` — plain JSON
-- `.csv` — spreadsheet export
-- AI-assisted smart import from screenshots, PDFs, and spreadsheets
+- **Smart Add** — describe what to add, Claude AI detects and pre-fills the form
+- **AI Import** — paste any text, Claude extracts structured financial data
+- **Live rates** — real-time FX (PKR/GBP/AED/USD) and gold/silver prices
+- **PDF export** — full financial summary as print-ready PDF
+- **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
+- **Multi-country** — filter by Pakistan, UK, UAE
+- **18 themes** — Midnight, Graphite, Cloud, Ivory, Blossom, and more
+- **60+ bank logos** with real favicons
+- **QR sync** — transfer vault between devices via QR code
 
 ---
 
-## Running Locally
+## Architecture
 
+```
+VaultOS/
+├── index.html           # App shell
+├── js/
+│   ├── app.js           # Core engine — routing, security, all data modules
+│   └── ui.js            # Dashboard, Settings, Export, AI Import
+├── css/                 # 4 CSS files — base, layout, components, themes
+├── pitch.html           # 20-slide pitch deck
+├── widget.html          # Standalone net worth widget
+├── GUIDE.md             # User documentation
+└── sw.js                # Service worker (offline PWA)
+```
+
+**Stack:** Vanilla JS · Web Crypto API · localStorage · Tesseract.js · Claude API (optional)
+
+---
+
+## Getting Started
+
+**Live:** https://shamikhahmed.github.io/VaultOS
+
+**iPhone:** Safari → Share → Add to Home Screen
+
+**Android:** Chrome → Menu → Add to Home Screen
+
+**Demo PIN:** `123456` — load demo data from Settings → Load Demo
+
+**Local:**
 ```bash
 git clone https://github.com/shamikhahmed/VaultOS.git
 cd VaultOS
@@ -128,27 +104,33 @@ python3 -m http.server 8080
 # open http://localhost:8080
 ```
 
-Demo PIN: **123456**
+---
 
-For iPhone: Safari → Share → Add to Home Screen
+## Roadmap
+
+- [ ] Expenses — category charts
+- [ ] Assets — purchase vs current value P&L
+- [ ] Cash — multi-currency totals
+- [ ] SIMs — contract expiry reminders
 
 ---
 
-## Tech Stack
+## About
 
-- Vanilla HTML, CSS, JavaScript — zero dependencies, zero build step
-- Web Crypto API — AES-256-GCM encryption, PBKDF2 key derivation
-- localStorage — all data on-device
-- Service Worker — full offline support
-- PWA manifest — installable on iOS and Android
-
----
-
-## Author
-
-**Shamikh Ahmed**  
-Director, NEWS Logistics · Founder, TheSolution360  
+**Shamikh Ahmed**
+Director, NEWS Logistics · Founder, TheSolution360
+MSc Logistics & Operations Management, Cardiff University
+MSc Accounting & Finance, BPP University London
 Karachi, Pakistan
 
+VaultOS was built to solve a personal problem: managing finances across three countries with no single app that understood BC committees, prize bonds, Pakistani banks, UK accounts, zakat, and expat financial complexity.
+
 ---
-*Built with Claude Code*
+
+## License
+
+Source-available. See [LICENSE](./LICENSE).
+
+---
+
+*VaultOS © 2026 Shamikh Ahmed*
