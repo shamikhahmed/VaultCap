@@ -27,68 +27,85 @@ function getBankLogo(bankName, size) {
   size = size || 36;
   if (!bankName) return _initialsLogo('BK', '#5b8dee', size);
   const name = bankName.toUpperCase();
-  const fs = (size <= 28 ? Math.round(size * 0.32) : Math.round(size * 0.35)) + 'px';
-  const fs3 = Math.round(size * 0.28) + 'px';
-  // Pakistan
-  if (name.includes('HBL') || name.includes('HABIB')) return _svgLogo(size, '#006837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">HBL</text>`);
-  if (name.includes('UBL') || name.includes('UNITED BANK')) return _svgLogo(size, '#003087', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">UBL</text>`);
-  if (name.includes('MCB')) return _svgLogo(size, '#c41e3a', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MCB</text>`);
-  if (name.includes('ABL') || name.includes('ALLIED')) return _svgLogo(size, '#1a237e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ABL</text>`);
-  if (name.includes('NBP') || name.includes('NATIONAL BANK')) return _svgLogo(size, '#004d40', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NBP</text>`);
-  if (name.includes('MEEZAN')) return _svgLogo(size, '#00695c', `<rect x="20%" y="20%" width="60%" height="60%" rx="4" fill="none" stroke="white" stroke-width="2"/><text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">MBL</text>`);
-  if (name.includes('FAYSAL')) return _svgLogo(size, '#e65100', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">FYS</text>`);
-  if (name.includes('ASKARI')) return _svgLogo(size, '#37474f', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ASK</text>`);
-  if (name.includes('ALFALAH') || name.includes('BANK ALFALAH')) return _svgLogo(size, '#880e4f', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BAF</text>`);
-  if (name.includes('SUMMIT')) return _svgLogo(size, '#4a148c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SBL</text>`);
-  if (name.includes('SILK')) return _svgLogo(size, '#1565c0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SILK</text>`);
-  if (name.includes('JAZZCASH') || name.includes('JAZZ CASH')) return _svgLogo(size, '#e53935', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">JCH</text>`);
-  if (name.includes('EASYPAISA')) return _svgLogo(size, '#00897b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">EP</text>`);
-  if (name.includes('SADAQAT') || name.includes('SAMBA') || name.includes('SADAPAY')) return _svgLogo(size, '#b71c1c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SBP</text>`);
-  if (name.includes('NAYAPAY')) return _svgLogo(size, '#e65100', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NYP</text>`);
-  if (name.includes('ZINDIGI')) return _svgLogo(size, '#1a237e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ZDG</text>`);
-  // UK
-  if (name.includes('BARCLAYS')) return _svgLogo(size, '#00aeef', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BARC</text>`);
-  if (name.includes('LLOYDS')) return _svgLogo(size, '#006a4e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">LYDS</text>`);
-  if (name.includes('NATWEST') || name.includes('NAT WEST')) return _svgLogo(size, '#5a1958', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NWB</text>`);
-  if (name.includes('HSBC')) return _svgLogo(size, '#db0011', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">HSBC</text>`);
-  if (name.includes('SANTANDER')) return _svgLogo(size, '#ec0000', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SAN</text>`);
-  if (name.includes('NATIONWIDE')) return _svgLogo(size, '#0e2f5b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NBS</text>`);
-  if (name.includes('MONZO')) return _svgLogo(size, '#ff6b6b', `<circle cx="50%" cy="50%" r="35%" fill="none" stroke="white" stroke-width="3"/><text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">M</text>`);
-  if (name.includes('STARLING')) return _svgLogo(size, '#6200ea', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SB</text>`);
-  if (name.includes('REVOLUT')) return _svgLogo(size, '#1a1a2e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">REV</text>`);
-  if (name.includes('WISE')) return _svgLogo(size, '#9fe870', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="#1a1a1a">W</text>`);
-  if (name.includes('MONESE')) return _svgLogo(size, '#6c47ff', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MNS</text>`);
-  if (name.includes('HALIFAX')) return _svgLogo(size, '#009fdb', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">HFX</text>`);
-  if (name.includes('FIRST DIRECT')) return _svgLogo(size, '#000000', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">1st</text>`);
-  if (name.includes('METRO')) return _svgLogo(size, '#ed1c24', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MBK</text>`);
-  if (name.includes('TSB')) return _svgLogo(size, '#2b6cb0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">TSB</text>`);
-  if (name.includes('CO-OP') || name.includes('COOP')) return _svgLogo(size, '#007dc5', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">COP</text>`);
-  if (name.includes('VIRGIN')) return _svgLogo(size, '#e10a0a', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">VM</text>`);
-  if (name.includes('STANDARD CHARTERED') || name.includes('SCB')) return _svgLogo(size, '#0000a0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SCB</text>`);
-  if (name.includes('CHASE UK') || (name.includes('CHASE') && !name.includes('JPMORGAN'))) return _svgLogo(size, '#117ec9', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CHK</text>`);
-  // UAE
-  if (name.includes('EMIRATES NBD') || name.includes('ENBD')) return _svgLogo(size, '#e31837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ENBD</text>`);
-  if (name.includes('FAB') || name.includes('FIRST ABU DHABI')) return _svgLogo(size, '#006835', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">FAB</text>`);
-  if (name.includes('ADCB')) return _svgLogo(size, '#ef7d00', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ADCB</text>`);
-  if (name.includes('RAKBANK') || name.includes('RAK BANK')) return _svgLogo(size, '#e4002b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">RAK</text>`);
-  if (name.includes('MASHREQ')) return _svgLogo(size, '#e4002b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">MASH</text>`);
-  if (name.includes('DIB') || name.includes('DUBAI ISLAMIC')) return _svgLogo(size, '#005a9c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">DIB</text>`);
-  if (name.includes('ADIB') || name.includes('ABU DHABI ISLAMIC')) return _svgLogo(size, '#c8a951', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ADIB</text>`);
-  if (name.includes('CBD') || name.includes('COMMERCIAL BANK DUBAI')) return _svgLogo(size, '#00538b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CBD</text>`);
-  if (name.includes('NOOR')) return _svgLogo(size, '#4caf50', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NOOR</text>`);
-  if (name.includes('WIO')) return _svgLogo(size, '#00897b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">WIO</text>`);
-  // International
-  if (name.includes('CITI')) return _svgLogo(size, '#003b8e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CITI</text>`);
-  if (name.includes('DEUTSCHE')) return _svgLogo(size, '#0018a8', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">DB</text>`);
-  if (name.includes('JPMORGAN') || name.includes('JP MORGAN')) return _svgLogo(size, '#117ec9', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">JPM</text>`);
-  if (name.includes('AMEX') || name.includes('AMERICAN EXPRESS')) return _svgLogo(size, '#016fd0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">AMEX</text>`);
-  if (name.includes('BANK OF AMERICA')) return _svgLogo(size, '#e31837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BOA</text>`);
-  if (name.includes('WELLS FARGO')) return _svgLogo(size, '#d4a017', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">WF</text>`);
-  // Fallback: colored initials
+  const s = size + 'px';
+  const r = Math.round(size * 0.28) + 'px';
+
+  const DOMAINS = {
+    // Pakistan
+    'HBL': 'hbl.com', 'HABIB': 'hbl.com',
+    'UBL': 'ubl.com.pk', 'UNITED BANK': 'ubl.com.pk',
+    'MCB': 'mcb.com.pk',
+    'ABL': 'abl.com', 'ALLIED': 'abl.com',
+    'NBP': 'nbp.com.pk', 'NATIONAL BANK': 'nbp.com.pk',
+    'MEEZAN': 'meezanbank.com',
+    'FAYSAL': 'faysalbank.com',
+    'ASKARI': 'askaribank.com.pk',
+    'BANK ALFALAH': 'bankalfalah.com', 'ALFALAH': 'bankalfalah.com',
+    'SUMMIT': 'summitbank.com.pk',
+    'SILK': 'silkbank.com.pk',
+    'JAZZCASH': 'jazzcash.com.pk', 'JAZZ CASH': 'jazzcash.com.pk',
+    'EASYPAISA': 'easypaisa.com.pk',
+    'NAYAPAY': 'nayapay.com',
+    'SADAPAY': 'sadapay.com',
+    'ZINDIGI': 'zindigi.com',
+    'STANDARD CHARTERED': 'sc.com',
+    // UK
+    'BARCLAYS': 'barclays.co.uk',
+    'LLOYDS': 'lloydsbank.com',
+    'NATWEST': 'natwest.com', 'NAT WEST': 'natwest.com',
+    'HSBC': 'hsbc.co.uk',
+    'SANTANDER': 'santander.co.uk',
+    'NATIONWIDE': 'nationwide.co.uk',
+    'MONZO': 'monzo.com',
+    'STARLING': 'starlingbank.com',
+    'REVOLUT': 'revolut.com',
+    'WISE': 'wise.com',
+    'MONESE': 'monese.com',
+    'HALIFAX': 'halifax.co.uk',
+    'FIRST DIRECT': 'firstdirect.com',
+    'METRO': 'metrobankonline.co.uk',
+    'TSB': 'tsb.co.uk',
+    'CO-OP': 'co-operativebank.co.uk', 'COOP': 'co-operativebank.co.uk',
+    'VIRGIN': 'virginmoney.com',
+    'CHASE': 'chase.co.uk',
+    // UAE
+    'EMIRATES NBD': 'emiratesnbd.com', 'ENBD': 'emiratesnbd.com',
+    'FAB': 'bankfab.com', 'FIRST ABU DHABI': 'bankfab.com',
+    'ADCB': 'adcb.com',
+    'RAKBANK': 'rakbank.ae', 'RAK BANK': 'rakbank.ae',
+    'MASHREQ': 'mashreq.com',
+    'DIB': 'dib.ae', 'DUBAI ISLAMIC': 'dib.ae',
+    'ADIB': 'adib.ae', 'ABU DHABI ISLAMIC': 'adib.ae',
+    'CBD': 'cbd.ae',
+    'NOOR': 'noorbank.com',
+    'WIO': 'wio.io',
+    // International
+    'CITI': 'citibank.com',
+    'DEUTSCHE': 'db.com',
+    'JPMORGAN': 'jpmorgan.com', 'JP MORGAN': 'jpmorgan.com',
+    'AMEX': 'americanexpress.com', 'AMERICAN EXPRESS': 'americanexpress.com',
+    'BANK OF AMERICA': 'bankofamerica.com',
+    'WELLS FARGO': 'wellsfargo.com',
+  };
+
+  let domain = null;
+  for (const key of Object.keys(DOMAINS)) {
+    if (name.includes(key)) { domain = DOMAINS[key]; break; }
+  }
+
   const initials = bankName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
   const colors = ['#5b8dee','#e91e8c','#00897b','#e65100','#6200ea','#c62828','#1565c0'];
-  const color = colors[bankName.charCodeAt(0) % colors.length];
-  return _initialsLogo(initials, color, size);
+  const fallbackColor = colors[bankName.charCodeAt(0) % colors.length];
+
+  if (domain) {
+    const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.35)) + 'px';
+    return `<div style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0;background:${fallbackColor};display:flex;align-items:center;justify-content:center">` +
+      `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" width="${size}" height="${size}" style="border-radius:${r};object-fit:cover" ` +
+      `onerror="this.parentElement.innerHTML='<div style=\\'font-size:${fs};font-weight:900;color:#fff;font-family:Arial\\'>${initials}</div>'"` +
+      `></div>`;
+  }
+
+  return _initialsLogo(initials, fallbackColor, size);
 }
 
 const Banks={
