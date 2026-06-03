@@ -4,7 +4,7 @@ const AIImport = {
   _results: [],
 
   render() {
-    const body = document.getElementById('aiImportBody');
+    const body = document.getElementById('aiImportBody') || document.getElementById('importBody');
     if (!body) return;
     body.innerHTML =
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +

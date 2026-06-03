@@ -2388,7 +2388,7 @@ const R = {
       alerts:      () => renderAlerts(),
       documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
       search:      () => GlobalSearch.render(),
-      import:      () => ImportEngine.render(),
+      import:      () => { if (typeof AIImport !== 'undefined') AIImport.render(); else ImportEngine.render(); },
       timeline:    () => Timeline.render(),
       security:    () => SecurityCenter.render(),
       backup:      () => BackupCenter.render(),

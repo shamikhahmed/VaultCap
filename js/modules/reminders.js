@@ -104,31 +104,50 @@ const Reminders = {
 
     // Vehicle insurance / registration expiring within 30 days
     (S.vehicles || []).forEach(v => {
-      const name = `${v.make} ${v.model}`;
+      const name = v.make ? (v.make + ' ' + (v.model || '')).trim() : (v.nickname || 'Vehicle');
+      // Insurance — array format
       (v.insurance || []).forEach(ins => {
         if (!ins.expiryDate) return;
         const days = this._daysLeft(ins.expiryDate);
         if (days !== null && days < 30) {
-          items.push({ icon:'🛡️', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle' });
+          items.push({ icon:'🛡️', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       });
+      // Insurance — flat field
+      if (v.insuranceExpiry) {
+        const days = this._daysLeft(v.insuranceExpiry);
+        if (days !== null && days <= 30) {
+          items.push({ icon:'🛡️', title:`${name} — Insurance`, sub:`Expires ${new Date(v.insuranceExpiry).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+        }
+      }
       const d = v.documents || {};
       if (d.regExpiry) {
         const days = this._daysLeft(d.regExpiry);
         if (days !== null && days < 30) {
-          items.push({ icon:'🚗', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle' });
+          items.push({ icon:'🚗', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
+      // MOT — explicit expiry (60-day window)
       if (v.motExpiry) {
         const days = this._daysLeft(v.motExpiry);
-        if (days !== null && days < 30) {
-          items.push({ icon:'🔧', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle' });
+        if (days !== null && days <= 60) {
+          items.push({ icon:'🔧', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+        }
+      } else if (v.motDate) {
+        // Fallback: MOT lasts 12 months from test date
+        const motExp = new Date(v.motDate);
+        motExp.setFullYear(motExp.getFullYear() + 1);
+        const days = this._daysLeft(motExp.toISOString());
+        if (days !== null && days <= 60) {
+          items.push({ icon:'🚗', title:`${name} — MOT`, sub:`Due ${motExp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
-      if (v.taxExpiry) {
-        const days = this._daysLeft(v.taxExpiry);
-        if (days !== null && days < 30) {
-          items.push({ icon:'🚘', title:`${name} road tax due`, sub:`Road tax expires ${v.taxExpiry}`, daysLeft:days, category:'Vehicle' });
+      // Road tax — taxExpiry or taxDue
+      const taxField = v.taxExpiry || v.taxDue;
+      if (taxField) {
+        const days = this._daysLeft(taxField);
+        if (days !== null && days <= 30) {
+          items.push({ icon:'📋', title:`${name} road tax due`, sub:`Road tax expires ${taxField}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
     });
@@ -186,6 +205,24 @@ const Reminders = {
         });
       }
     });
+
+    // Credit score — remind to check every 30 days
+    try {
+      const cs = JSON.parse(localStorage.getItem('vo_credit_score') || '{}');
+      if (cs.lastChecked) {
+        const daysSince = Math.floor((Date.now() - new Date(cs.lastChecked).getTime()) / 86400000);
+        if (daysSince >= 30) {
+          items.push({
+            icon: '📊',
+            title: 'Check Credit Score',
+            sub: 'Last checked ' + daysSince + ' days ago',
+            daysLeft: -(daysSince - 30),
+            page: 'credit',
+            category: 'Credit',
+          });
+        }
+      }
+    } catch(e) {}
 
     items.sort((a, b) => a.daysLeft - b.daysLeft);
     return items;

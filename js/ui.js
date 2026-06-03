@@ -490,6 +490,36 @@ const Settings={
       <div class="si"><div class="sil"><div class="name">What you'll be notified about</div><div class="desc">Documents expiring in 7 days · Cards expiring in 30 days · Loans due in 7 days · BC payments (3 days notice)</div></div></div>
     </div></div>
 
+    <div class="set-sec"><div class="set-title">🤖 AI Import</div><div class="set-card">
+      <div class="si">
+        <div class="sil">
+          <div class="name">Claude API Key</div>
+          <div class="desc">Required for AI Import to work. Get your key from console.anthropic.com → API Keys. Stored locally only, never sent anywhere except Anthropic.</div>
+        </div>
+      </div>
+      <div style="padding:10px 14px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="password" id="claude-api-key-input"
+            class="inp"
+            placeholder="sk-ant-..."
+            value="${localStorage.getItem('vo_claude_key') || ''}"
+            style="flex:1;font-family:monospace;font-size:13px"
+            oninput="localStorage.setItem('vo_claude_key',this.value.trim())">
+          <button onclick="const el=document.getElementById('claude-api-key-input');el.type=el.type==='password'?'text':'password'"
+            style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text2);cursor:pointer;font-size:13px;white-space:nowrap">
+            👁
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:6px">
+          ${localStorage.getItem('vo_claude_key') ? '✓ Key saved — AI Import is ready' : '⚠️ No key set — AI Import will not work'}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-g btn-sm" onclick="window.open('https://console.anthropic.com/settings/keys','_blank')">Get API Key →</button>
+          <button class="btn btn-sm" style="background:rgba(255,69,58,.1);color:var(--err);border:1px solid rgba(255,69,58,.3)" onclick="localStorage.removeItem('vo_claude_key');Settings.render();Toast.show('API key removed','info')">Remove Key</button>
+        </div>
+      </div>
+    </div></div>
+
     <div class="set-sec"><div class="set-title">💾 Backup & Export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never backed up'}</div></div></div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
