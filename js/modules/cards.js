@@ -207,11 +207,46 @@ const Cards={
     if(!vid||!vid.videoWidth||!canvas)return;
     canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
     canvas.getContext('2d').drawImage(vid,0,0);
+    // Try jsQR first for cards with QR codes
     const imgData=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height);
     const qr=window.jsQR&&window.jsQR(imgData.data,imgData.width,imgData.height);
     if(qr){Cards._onScanResult(qr.data);return;}
-    if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">No QR detected.</span><br><span style="font-size:12px;opacity:.8">Fill in the card details below.</span>';
-    setTimeout(function(){Cards._stopScan();Toast.show('No QR found — fill in details below','info',3000);Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
+    // Run Tesseract OCR
+    if(typeof Tesseract!=='undefined'){
+      if(statusEl)statusEl.innerHTML='<span style="color:#60a5fa">🔍 Reading card…</span>';
+      if(btn)btn.disabled=true;
+      Tesseract.recognize(canvas,'eng',{logger:function(){}}).then(function(result){
+        Cards._stopScan();
+        const parsed=Cards._parseCardOCR(result.data.text);
+        Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
+        setTimeout(function(){Cards._fillFromOCR(parsed);},200);
+      }).catch(function(){
+        Cards._stopScan();
+        Toast.show('OCR failed — fill in details below','warning',3000);
+        Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
+      });
+    } else {
+      if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">Tap Capture again or fill below.</span>';
+      setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
+    }
+  },
+  _parseCardOCR(text){
+    const out={};
+    const numMatch=text.match(/\b(\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b/);
+    if(numMatch){
+      const digits=numMatch[1].replace(/\D/g,'');
+      out.cardNumber=digits;out.last4=digits.slice(-4);
+      const f=digits.charAt(0);
+      out.network=f==='4'?'Visa':f==='5'?'Mastercard':(digits.startsWith('34')||digits.startsWith('37'))?'American Express':f==='6'?'Discover':'';
+    }
+    const expMatch=text.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*(\d{2,4})\b/);
+    if(expMatch){out.expiryDate=expMatch[1]+'/'+(expMatch[2].length===4?expMatch[2].slice(-2):expMatch[2]);}
+    const lines=text.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;});
+    for(var i=0;i<lines.length;i++){
+      const line=lines[i];
+      if(/^[A-Z][A-Z\s\.]{5,}$/.test(line)&&!/\d/.test(line)&&line.split(' ').length>=2){out.cardholderName=line.trim();break;}
+    }
+    return out;
   },
   _onScanResult(raw){
     Cards._stopScan();

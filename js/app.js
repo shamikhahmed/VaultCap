@@ -2276,6 +2276,7 @@ const R = {
     // Forgot PIN shows only after failed attempts
     const fp = document.getElementById('forgotPinLink');
     if (fp) fp.style.display = 'none';
+    ThemeEngine.renderDots();
   },
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
@@ -3602,7 +3603,7 @@ function buildNav() {
     { id: 'finance-home', n: 'Finance',  ic: '💰' },
     { id: 'vault-home',   n: 'Identity', ic: '🪪' },
     { id: 'assets-home',  n: 'Assets',   ic: '🏠' },
-    { id: 'settings',     n: 'Settings', ic: '⚙️' },
+    { id: 'family',       n: 'Family',   ic: '👨‍👩‍👧‍👦' },
   ];
 
   document.getElementById('btabs').innerHTML = PRIMARY_TABS.map(m =>
@@ -3633,32 +3634,65 @@ function buildNav() {
 const SmartAdd = {
   open() {
     Modal.open('✨ Quick Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. The engine will detect and pre-fill the form — no API key needed.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. Claude AI will detect and pre-fill the form.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
-        <textarea class="inp" id="sa-text" rows="4" placeholder="I have 50000 rupees in HBL savings&#10;Lent 5000 to Ahmed&#10;My Jazz SIM is 0300-1234567&#10;Netflix 1499 per month" style="font-size:13px;line-height:1.6"></textarea>
+        <textarea class="inp" id="sa-text" rows="4" placeholder="HBL account with PKR 500,000 balance&#10;Lent £500 to Ahmed, due June&#10;Netflix £17.99 monthly subscription" style="font-size:13px;line-height:1.6"></textarea>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "I have 50,000 PKR in HBL savings" · "Lent 5000 to Ahmed" · "Netflix 1499/month"</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "HBL account PKR 500K" · "Lent £500 to Ahmed due June" · "Netflix £17.99/month"</div>
     `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
 
-  run() {
+  async run() {
     const text = (document.getElementById('sa-text')?.value || '').trim();
-    if (!text) { Toast.show('Describe what to add', 'warning'); return; }
-    const items = (typeof AIImport !== 'undefined') ? AIImport.parse(text) : [];
-    if (!items.length) { Toast.show('Could not detect entry type — try more detail (e.g. mention bank name, amount, currency)', 'warning'); return; }
-    const best = items[0];
-    Modal.close();
-    if (navigator.vibrate) navigator.vibrate(30);
-    this._openForm({ module: best.type, fields: best.fields });
+    if (!text) { Toast.show('Describe what you want to add', 'warning'); return; }
+    const btn = document.getElementById('sa-run-btn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Detecting...'; }
+    try {
+      const userCur = S.user?.currency || 'PKR';
+      const userCountry = S.user?.country || 'PK';
+      const apiKey = localStorage.getItem('vo_claude_key') || '';
+      const headers = { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-allow-browser': 'true' };
+      if (apiKey) headers['x-api-key'] = apiKey;
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6', max_tokens: 500,
+          system: `You are a financial data parser. Extract ONE financial item from the user's description.\nReturn ONLY valid JSON: {"module":"bank|card|loan|cash|investment|expense|document|sim|bc|bond","fields":{...}}\nUser context: currency=${userCur}, country=${userCountry}\n\nFor bank: fields = {bankName, balance, currency, accountType, last4}\nFor card: fields = {cardName, last4, expiry, network, creditLimit, currency}\nFor loan: fields = {person, amount, currency, type:"lent|borrowed", dueDate, notes}\nFor cash: fields = {label, amount, currency, location}\nFor investment: fields = {investmentName, broker, type, amountInvested, currency}\nFor expense: fields = {name, amount, currency, category, frequency:"monthly|yearly"}\nFor document: fields = {docType, holderName, docNumber, expiryDate}\nFor sim: fields = {network, phone, country, simType:"Physical|eSIM"}\nFor bc: fields = {name, members, contribution, currency, type:"ballot|fixed"}\nFor bond: fields = {name, faceValue, quantity, currency, typeId}\nReturn ONLY JSON, no explanation.`,
+          messages: [{ role: 'user', content: text }]
+        })
+      });
+      if (!response.ok) throw new Error('API error ' + response.status);
+      const data = await response.json();
+      const raw = (data.content || []).map(c => c.text || '').join('');
+      let parsed;
+      try { parsed = JSON.parse(raw.replace(/```json|```/g, '').trim()); }
+      catch(e) { throw new Error('Could not parse response'); }
+      Modal.close();
+      if (navigator.vibrate) navigator.vibrate(30);
+      this._dispatch(parsed.module, parsed.fields || {});
+    } catch(e) {
+      const t2 = document.getElementById('sa-text')?.value || '';
+      const items = typeof AIImport !== 'undefined' ? AIImport.parse(t2) : [];
+      Modal.close();
+      if (items.length) {
+        const best = items[0];
+        if (navigator.vibrate) navigator.vibrate(30);
+        this._dispatch(best.type, best.fields || {});
+        Toast.show('Smart Add: using pattern match (AI unavailable)', 'info', 3000);
+      } else {
+        Toast.show('Could not detect — try describing more specifically', 'warning', 4000);
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '✨ Detect & Pre-fill'; }
+    }
   },
 
-  _openForm(parsed) {
-    if (!parsed || !parsed.module) { Toast.show('Smart Add: could not detect module type', 'warning'); return; }
-    const f = parsed.fields || {};
+  _dispatch(module, f) {
+    if (!module) { Toast.show('Smart Add: could not detect module type', 'warning'); return; }
     const delay = 220;
-    switch (parsed.module) {
+    switch (module) {
       case 'bank':
         typeof Banks !== 'undefined' && Banks.openAdd && Banks.openAdd();
         setTimeout(() => { this._fill({ 'bf-name':f.bankName, 'bf-bal':f.balance, 'bf-iban':f.iban }); Toast.show('Smart Add: bank pre-filled — review and save', 'success', 3000); }, delay); break;
@@ -3681,7 +3715,7 @@ const SmartAdd = {
         typeof Exp !== 'undefined' && Exp.openAdd && Exp.openAdd();
         setTimeout(() => { this._fill({ 'exp-name':f.name, 'exp-amt':f.amount }); Toast.show('Smart Add: expense pre-filled — review and save', 'success', 3000); }, delay); break;
       default:
-        Toast.show(`Smart Add detected "${parsed.module}" — open the form manually`, 'info', 4000);
+        Toast.show(`Smart Add detected "${module}" — open the form manually`, 'info', 4000);
     }
   },
 

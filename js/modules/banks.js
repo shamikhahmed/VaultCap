@@ -14,6 +14,83 @@ const _fuzz = (str, q) => {
   });
 };
 
+function _svgLogo(size, bg, content) {
+  const s = size + 'px', r = Math.round(size * 0.28) + 'px';
+  return `<div style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><rect width="${size}" height="${size}" rx="${Math.round(size*0.28)}" fill="${bg}"/>${content}</svg></div>`;
+}
+function _initialsLogo(initials, color, size) {
+  const s = size + 'px', r = Math.round(size * 0.28) + 'px';
+  const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.35)) + 'px';
+  return `<div style="width:${s};height:${s};border-radius:${r};background:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:${fs};font-weight:900;color:#fff;font-family:Arial;letter-spacing:-0.5px">${initials}</div>`;
+}
+function getBankLogo(bankName, size) {
+  size = size || 36;
+  if (!bankName) return _initialsLogo('BK', '#5b8dee', size);
+  const name = bankName.toUpperCase();
+  const fs = (size <= 28 ? Math.round(size * 0.32) : Math.round(size * 0.35)) + 'px';
+  const fs3 = Math.round(size * 0.28) + 'px';
+  // Pakistan
+  if (name.includes('HBL') || name.includes('HABIB')) return _svgLogo(size, '#006837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">HBL</text>`);
+  if (name.includes('UBL') || name.includes('UNITED BANK')) return _svgLogo(size, '#003087', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">UBL</text>`);
+  if (name.includes('MCB')) return _svgLogo(size, '#c41e3a', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MCB</text>`);
+  if (name.includes('ABL') || name.includes('ALLIED')) return _svgLogo(size, '#1a237e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ABL</text>`);
+  if (name.includes('NBP') || name.includes('NATIONAL BANK')) return _svgLogo(size, '#004d40', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NBP</text>`);
+  if (name.includes('MEEZAN')) return _svgLogo(size, '#00695c', `<rect x="20%" y="20%" width="60%" height="60%" rx="4" fill="none" stroke="white" stroke-width="2"/><text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">MBL</text>`);
+  if (name.includes('FAYSAL')) return _svgLogo(size, '#e65100', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">FYS</text>`);
+  if (name.includes('ASKARI')) return _svgLogo(size, '#37474f', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ASK</text>`);
+  if (name.includes('ALFALAH') || name.includes('BANK ALFALAH')) return _svgLogo(size, '#880e4f', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BAF</text>`);
+  if (name.includes('SUMMIT')) return _svgLogo(size, '#4a148c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SBL</text>`);
+  if (name.includes('SILK')) return _svgLogo(size, '#1565c0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SILK</text>`);
+  if (name.includes('JAZZCASH') || name.includes('JAZZ CASH')) return _svgLogo(size, '#e53935', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">JCH</text>`);
+  if (name.includes('EASYPAISA')) return _svgLogo(size, '#00897b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">EP</text>`);
+  if (name.includes('SADAQAT') || name.includes('SAMBA') || name.includes('SADAPAY')) return _svgLogo(size, '#b71c1c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SBP</text>`);
+  if (name.includes('NAYAPAY')) return _svgLogo(size, '#e65100', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NYP</text>`);
+  if (name.includes('ZINDIGI')) return _svgLogo(size, '#1a237e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">ZDG</text>`);
+  // UK
+  if (name.includes('BARCLAYS')) return _svgLogo(size, '#00aeef', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BARC</text>`);
+  if (name.includes('LLOYDS')) return _svgLogo(size, '#006a4e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">LYDS</text>`);
+  if (name.includes('NATWEST') || name.includes('NAT WEST')) return _svgLogo(size, '#5a1958', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NWB</text>`);
+  if (name.includes('HSBC')) return _svgLogo(size, '#db0011', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">HSBC</text>`);
+  if (name.includes('SANTANDER')) return _svgLogo(size, '#ec0000', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SAN</text>`);
+  if (name.includes('NATIONWIDE')) return _svgLogo(size, '#0e2f5b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NBS</text>`);
+  if (name.includes('MONZO')) return _svgLogo(size, '#ff6b6b', `<circle cx="50%" cy="50%" r="35%" fill="none" stroke="white" stroke-width="3"/><text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">M</text>`);
+  if (name.includes('STARLING')) return _svgLogo(size, '#6200ea', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SB</text>`);
+  if (name.includes('REVOLUT')) return _svgLogo(size, '#1a1a2e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">REV</text>`);
+  if (name.includes('WISE')) return _svgLogo(size, '#9fe870', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="#1a1a1a">W</text>`);
+  if (name.includes('MONESE')) return _svgLogo(size, '#6c47ff', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MNS</text>`);
+  if (name.includes('HALIFAX')) return _svgLogo(size, '#009fdb', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">HFX</text>`);
+  if (name.includes('FIRST DIRECT')) return _svgLogo(size, '#000000', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">1st</text>`);
+  if (name.includes('METRO')) return _svgLogo(size, '#ed1c24', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">MBK</text>`);
+  if (name.includes('TSB')) return _svgLogo(size, '#2b6cb0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">TSB</text>`);
+  if (name.includes('CO-OP') || name.includes('COOP')) return _svgLogo(size, '#007dc5', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">COP</text>`);
+  if (name.includes('VIRGIN')) return _svgLogo(size, '#e10a0a', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">VM</text>`);
+  if (name.includes('STANDARD CHARTERED') || name.includes('SCB')) return _svgLogo(size, '#0000a0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">SCB</text>`);
+  if (name.includes('CHASE UK') || (name.includes('CHASE') && !name.includes('JPMORGAN'))) return _svgLogo(size, '#117ec9', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CHK</text>`);
+  // UAE
+  if (name.includes('EMIRATES NBD') || name.includes('ENBD')) return _svgLogo(size, '#e31837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ENBD</text>`);
+  if (name.includes('FAB') || name.includes('FIRST ABU DHABI')) return _svgLogo(size, '#006835', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">FAB</text>`);
+  if (name.includes('ADCB')) return _svgLogo(size, '#ef7d00', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ADCB</text>`);
+  if (name.includes('RAKBANK') || name.includes('RAK BANK')) return _svgLogo(size, '#e4002b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">RAK</text>`);
+  if (name.includes('MASHREQ')) return _svgLogo(size, '#e4002b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">MASH</text>`);
+  if (name.includes('DIB') || name.includes('DUBAI ISLAMIC')) return _svgLogo(size, '#005a9c', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">DIB</text>`);
+  if (name.includes('ADIB') || name.includes('ABU DHABI ISLAMIC')) return _svgLogo(size, '#c8a951', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">ADIB</text>`);
+  if (name.includes('CBD') || name.includes('COMMERCIAL BANK DUBAI')) return _svgLogo(size, '#00538b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CBD</text>`);
+  if (name.includes('NOOR')) return _svgLogo(size, '#4caf50', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">NOOR</text>`);
+  if (name.includes('WIO')) return _svgLogo(size, '#00897b', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">WIO</text>`);
+  // International
+  if (name.includes('CITI')) return _svgLogo(size, '#003b8e', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">CITI</text>`);
+  if (name.includes('DEUTSCHE')) return _svgLogo(size, '#0018a8', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">DB</text>`);
+  if (name.includes('JPMORGAN') || name.includes('JP MORGAN')) return _svgLogo(size, '#117ec9', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">JPM</text>`);
+  if (name.includes('AMEX') || name.includes('AMERICAN EXPRESS')) return _svgLogo(size, '#016fd0', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs3}" font-weight="900" font-family="Arial" fill="white">AMEX</text>`);
+  if (name.includes('BANK OF AMERICA')) return _svgLogo(size, '#e31837', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">BOA</text>`);
+  if (name.includes('WELLS FARGO')) return _svgLogo(size, '#d4a017', `<text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle" font-size="${fs}" font-weight="900" font-family="Arial" fill="white">WF</text>`);
+  // Fallback: colored initials
+  const initials = bankName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
+  const colors = ['#5b8dee','#e91e8c','#00897b','#e65100','#6200ea','#c62828','#1565c0'];
+  const color = colors[bankName.charCodeAt(0) % colors.length];
+  return _initialsLogo(initials, color, size);
+}
+
 const Banks={
   _showArchived: false,
   render(){
@@ -61,11 +138,8 @@ const Banks={
     });
   },
   row(b){
-    const color=brandColor(b.bankName);
-    const initials=b.bankName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3);
-    const fs=initials.length>2?'10px':initials.length>1?'12px':'15px';
-    const logoHtml=`<div class="b-logo-wrap" style="width:36px;height:36px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:${fs};font-weight:900;color:#fff;letter-spacing:-.5px">${initials}</div>`;
-    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="background:${color};padding:3px;overflow:hidden;border-radius:10px">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb" onclick="Banks.archive('${b.id}')" title="${b.archived?'Unarchive':'Archive'}">${b.archived?'📦':'🗂️'}</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
+    const logoHtml=getBankLogo(b.bankName,36);
+    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb" onclick="Banks.archive('${b.id}')" title="${b.archived?'Unarchive':'Archive'}">${b.archived?'📦':'🗂️'}</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
   },
   emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button class="btn btn-g" onclick="Settings.loadDemo()">🎮 Try Demo</button></div></div>`;},
   _showExample(){Modal.open('🏦 Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏦</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
@@ -123,11 +197,8 @@ const Banks={
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px" id="bf-tiles-grid">
           ${tiles.map(b=>{
             const safeName=b.name.replace(/'/g,"\\'");
-            const color=brandColor(b.name);
-            const initials=b.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3);
-            const fs=initials.length>2?'9px':initials.length>1?'10px':'13px';
-            const logoEl=`<div class="b-logo-wrap" style="width:28px;height:28px;border-radius:6px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:${fs};font-weight:900;color:#fff;letter-spacing:-.5px">${initials}</div>`;
-            return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:2px">${logoEl}</div><div style="font-size:9px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
+            const logoEl=getBankLogo(b.name,32);
+            return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px">${logoEl}<div style="font-size:9px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
           }).join('')}
         </div>
       </details>`;
