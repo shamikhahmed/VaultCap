@@ -303,6 +303,172 @@ const Emergency = {
   },
 };
 
+// ===================== DEVELOPER DIAGNOSTICS =====================
+const DevDiag = {
+  _renderTimings: {},
+
+  trackRender(module, ms) {
+    this._renderTimings[module] = ms;
+  },
+
+  storageUsage() {
+    try {
+      let total = 0, breakdown = {};
+      for (const key of Object.keys(localStorage)) {
+        const size = (localStorage.getItem(key) || '').length * 2;
+        total += size;
+        breakdown[key] = (size / 1024).toFixed(1) + 'KB';
+      }
+      return { totalMB: (total / (1024*1024)).toFixed(2), breakdown };
+    } catch(e) { return { totalMB: '?', breakdown: {} }; }
+  },
+
+  entityCounts() {
+    return {
+      banks: (S.banks||[]).length,
+      cards: (S.cards||[]).length,
+      documents: (S.documents||[]).length,
+      investments: (S.investments||[]).length,
+      loans: (S.loans||[]).length,
+      cash: (S.cash||[]).length,
+      vehicles: (S.vehicles||[]).length,
+      assets: (S.assets||[]).length,
+      friends: (S.friends||[]).length,
+      sims: (S.sims||[]).length,
+      emails: (S.emails||[]).length,
+      gadgets: (S.gadgets||[]).length,
+      expenses: (S.expenses||[]).length,
+      activity: (S.activity||[]).length,
+      trash: (S.trash||[]).length,
+      total: Object.values({
+        banks:S.banks, cards:S.cards, documents:S.documents,
+        investments:S.investments, loans:S.loans, cash:S.cash,
+        vehicles:S.vehicles, assets:S.assets, friends:S.friends,
+      }).reduce((a, arr) => a + (arr||[]).length, 0),
+    };
+  },
+
+  backupAge() {
+    if (!S.user?.lastBackup) return { days: null, label: 'Never backed up', ok: false };
+    const days = Math.floor((Date.now() - new Date(S.user.lastBackup)) / (1000*60*60*24));
+    return {
+      days,
+      label: days === 0 ? 'Today' : `${days} day${days>1?'s':''} ago`,
+      ok: days <= 14,
+      fingerprint: S.user.lastBackupFingerprint || 'N/A',
+    };
+  },
+
+  run() {
+    const el = document.getElementById('dev-diag-results');
+    if (!el) return;
+    el.innerHTML = '<div style="color:var(--text3)">Running...</div>';
+
+    setTimeout(() => {
+      const storage = this.storageUsage();
+      const counts = this.entityCounts();
+      const backup = this.backupAge();
+      const integrity = typeof DataIntegrity !== 'undefined' ? DataIntegrity.run() : null;
+      const schemaVer = typeof SCHEMA_VERSION !== 'undefined' ? SCHEMA_VERSION : '?';
+      const appVer = typeof VER !== 'undefined' ? VER : '?';
+      const failedOps = JSON.parse(localStorage.getItem('vos_failed_ops') || '[]');
+
+      const row = (label, value, ok = null) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text3)">${label}</span>
+          <span style="font-size:12px;font-weight:600;color:${ok === true ? 'var(--ok)' : ok === false ? 'var(--err)' : 'var(--text)'}">${value}</span>
+        </div>`;
+
+      el.innerHTML = `
+        <div style="display:flex;flex-direction:column">
+          ${row('App Version', appVer)}
+          ${row('Schema Version', `v${schemaVer}`)}
+          ${row('Total Storage', `${storage.totalMB} MB`, parseFloat(storage.totalMB) < 4)}
+          ${row('Total Entities', counts.total)}
+          ${row('Banks', counts.banks)} ${row('Cards', counts.cards)}
+          ${row('Documents', counts.documents)} ${row('Investments', counts.investments)}
+          ${row('Loans', counts.loans)} ${row('Vehicles', counts.vehicles)}
+          ${row('Friends', counts.friends)} ${row('Activity log', counts.activity)}
+          ${row('Trash', counts.trash)} ${row('Emails', counts.emails)}
+          ${row('Last Backup', backup.label, backup.ok)}
+          ${row('Backup Fingerprint', backup.fingerprint)}
+          ${integrity ? row('Integrity Issues', integrity.issues === 0 ? 'None ✓' : `${integrity.issues} found`, integrity.issues === 0) : ''}
+          ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None ✓', true)}
+          ${Object.entries(this._renderTimings).slice(0,5).map(([k,v]) => row(`Render: ${k}`, `${v}ms`)).join('')}
+        </div>
+        <button class="btn btn-g" onclick="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:11px">Copy Report</button>
+      `;
+    }, 50);
+  },
+
+  copyReport() {
+    const storage = this.storageUsage();
+    const counts = this.entityCounts();
+    const backup = this.backupAge();
+    const report = [
+      `VaultOS Diagnostics — ${new Date().toLocaleString()}`,
+      `Schema: v${typeof SCHEMA_VERSION !== 'undefined' ? SCHEMA_VERSION : '?'}`,
+      `Storage: ${storage.totalMB}MB`,
+      `Entities: ${JSON.stringify(counts)}`,
+      `Last Backup: ${backup.label}`,
+      `Fingerprint: ${backup.fingerprint}`,
+    ].join('\n');
+    navigator.clipboard?.writeText(report).then(() => Toast.show('Report copied', 'success'));
+  },
+};
+
+// ===================== VAULT RECOVERY =====================
+const VaultRecovery = {
+  validate() {
+    const issues = [];
+    if (!S || typeof S !== 'object') { issues.push('State object missing'); return issues; }
+    if (!Array.isArray(S.banks)) issues.push('banks is not an array');
+    if (!Array.isArray(S.cards)) issues.push('cards is not an array');
+    if (!Array.isArray(S.documents)) issues.push('documents is not an array');
+    if (!Array.isArray(S.investments)) issues.push('investments is not an array');
+    if (!Array.isArray(S.cash)) issues.push('cash is not an array');
+    if (!Array.isArray(S.loans)) issues.push('loans is not an array');
+    if (!Array.isArray(S.activity)) issues.push('activity is not an array');
+    const allIds = [...(S.banks||[]), ...(S.cards||[]), ...(S.documents||[])].map(x => x.id).filter(Boolean);
+    const uniqueIds = new Set(allIds);
+    if (uniqueIds.size < allIds.length) issues.push(`${allIds.length - uniqueIds.size} duplicate entity IDs found`);
+    return issues;
+  },
+
+  repair() {
+    let fixed = 0;
+    ['banks','cards','documents','investments','cash','loans','vehicles','assets','friends','sims','emails','gadgets','digital','expenses','activity','trash','tags'].forEach(k => {
+      if (!Array.isArray(S[k])) { S[k] = []; fixed++; }
+    });
+    ['banks','cards','documents','investments'].forEach(k => {
+      const seen = new Set();
+      const before = (S[k]||[]).length;
+      S[k] = (S[k]||[]).filter(x => { if (!x.id || seen.has(x.id)) return false; seen.add(x.id); return true; });
+      fixed += before - S[k].length;
+    });
+    if (fixed > 0) Store.save();
+    return fixed;
+  },
+
+  check() {
+    const issues = this.validate();
+    if (!issues.length) return false;
+    const fixed = this.repair();
+    Modal.open('🔧 Vault Recovery',
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px">
+          <div style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">⚠️ Issues Detected</div>
+          ${issues.map(i => `<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${i}</div>`).join('')}
+        </div>
+        ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">✓ Auto-repaired ${fixed} issue(s)</div>` : ''}
+        <div style="font-size:12px;color:var(--text3);line-height:1.6">If problems persist, export a backup and restore from a previous .vos file.</div>
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Dismiss</button><button class="btn btn-p" onclick="ExIm.export('vos');Modal.close()">Export Backup</button>`
+    );
+    return true;
+  },
+};
+
 function compressImage(dataUrl, maxWidth = 800, quality = 0.7) {
   return new Promise((resolve) => {
     if (!dataUrl || !dataUrl.startsWith('data:image')) { resolve(dataUrl); return; }
@@ -1583,11 +1749,28 @@ const Store = {
     const data = this._data();
     this._savePrefs();
     if (VaultDB.sessionKey) {
-      VaultDB.save(data).catch(e => console.warn('[VaultDB] save error:', e));
+      VaultDB.save(data).catch(e => {
+        console.warn('[VaultDB] save error:', e);
+        try {
+          const fails = JSON.parse(localStorage.getItem('vos_failed_ops') || '[]');
+          fails.unshift({ op: 'save', at: new Date().toISOString(), err: String(e).slice(0, 100) });
+          localStorage.setItem('vos_failed_ops', JSON.stringify(fails.slice(0, 20)));
+        } catch(_) {}
+      });
     }
     this._saveWidgetSnapshot();
     this._saveCount++;
     if (this._saveCount % 10 === 0) this.checkQuota();
+    // Monthly cleanup of oversized activity and trash
+    try {
+      const lastClean = localStorage.getItem('vos_last_clean');
+      const monthAgo = Date.now() - 30*24*60*60*1000;
+      if (!lastClean || parseInt(lastClean) < monthAgo) {
+        if (S.activity && S.activity.length > 500) S.activity = S.activity.slice(0, 200);
+        if (S.trash && S.trash.length > 100) S.trash = S.trash.slice(0, 50);
+        localStorage.setItem('vos_last_clean', Date.now().toString());
+      }
+    } catch(_) {}
   },
 
   _saveWidgetSnapshot() {
@@ -1804,6 +1987,9 @@ const R = {
       }
     }, 2000);
     setTimeout(() => {
+      if (typeof VaultRecovery !== 'undefined') VaultRecovery.check();
+    }, 1500);
+    setTimeout(() => {
       if (!window._backupPrompted) {
         window._backupPrompted = true;
         const _lb = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
@@ -1856,12 +2042,12 @@ const R = {
     if (prev === pg && !force) return;
     const renders = {
       dashboard:   () => Dash.render(),
-      banks:       () => Banks.render(),
-      cards:       () => Cards.render(),
-      investments: () => Inv.render(),
+      banks:       () => { const t=Date.now(); Banks.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('banks',Date.now()-t); },
+      cards:       () => { const t=Date.now(); Cards.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('cards',Date.now()-t); },
+      investments: () => { const t=Date.now(); Inv.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('investments',Date.now()-t); },
       cash:        () => Cash.render(),
-      loans:       () => Loans.render(),
-      friends:     () => Friends.render(),
+      loans:       () => { const t=Date.now(); Loans.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('loans',Date.now()-t); },
+      friends:     () => { const t=Date.now(); Friends.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('friends',Date.now()-t); },
       sims:        () => Sims.render(),
       assets:      () => Assets.render(),
       expenses:    () => Exp.render(),
@@ -1869,7 +2055,7 @@ const R = {
       gadgets:     () => Gadgets.render(),
       digital:     () => Digital.render(),
       alerts:      () => renderAlerts(),
-      documents:   () => DocsModule.render(),
+      documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
       search:      () => GlobalSearch.render(),
       import:      () => ImportEngine.render(),
       timeline:    () => Timeline.render(),

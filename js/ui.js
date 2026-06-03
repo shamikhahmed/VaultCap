@@ -642,9 +642,12 @@ const ExIm={
             const previewCounts={Banks:(data.banks||[]).length,Cards:(data.cards||[]).length,Documents:(data.documents||[]).length,Investments:(data.investments||[]).length,Emails:(data.emails||[]).length,Devices:(data.gadgets||[]).length,Expenses:(data.expenses||[]).length};
             const previewLines=Object.entries(previewCounts).filter(([,v])=>v>0).map(([k,v])=>`  ${k}: ${v}`).join('\n');
             if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
-            ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
-            if(data.modules)Object.assign(S.modules,data.modules);
-            Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
+            const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
+            try{
+              ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
+              if(data.modules)Object.assign(S.modules,data.modules);
+              Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
+            }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}
           }catch(err){Toast.show('Failed: '+err.message,'error');}
         };
         if(raw.startsWith('VAULTOS_AES256::')&&Crypto.available()){
@@ -1517,7 +1520,7 @@ const RecoveryCenter={
       ].map(({done,label,tip})=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">✓</span>':'<span style="color:var(--err);font-size:11px">Needed</span>'}</div>`).join('')}
     </div></div>
     <!-- VAULT HEALTH -->
-    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Vault Diagnostics</div><div class="set-card">
+    <div class="set-sec"><div class="set-title">Vault Diagnostics</div><div class="set-card">
       ${[
         {label:'Schema version',val:'v'+SCHEMA_VERSION},
         {label:'Encryption',val:Crypto.available()?'AES-256-GCM ✅':'Basic'},
@@ -1526,6 +1529,13 @@ const RecoveryCenter={
         {label:'Last backup',val:S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never'},
         {label:'App version',val:'VaultOS v'+VER},
       ].map(({label,val})=>`<div class="si"><div class="name">${label}</div><div style="color:var(--text2);font-size:12px">${val}</div></div>`).join('')}
+    </div></div>
+    <!-- DEVELOPER DIAGNOSTICS -->
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">🔧 Developer Diagnostics</div><div class="set-card">
+      <div id="dev-diag-body" style="padding:14px">
+        <button class="btn btn-g" onclick="DevDiag.run()" style="width:100%;margin-bottom:10px">Run Diagnostics</button>
+        <div id="dev-diag-results" style="font-size:12px;color:var(--text3);text-align:center">Tap to run diagnostics</div>
+      </div>
     </div></div>`;
   },
   printKey(key){

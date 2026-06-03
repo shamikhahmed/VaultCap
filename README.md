@@ -1,19 +1,24 @@
 # VaultOS — Personal Finance & Identity Vault
 
-**The most complete offline-first personal vault for Pakistan, UK & UAE. Zero cloud. Zero accounts. Encrypted on your device.**
+**Privacy-first. Local-first. Offline-first. Your data, your device, your rules.**
 
 🔗 **Live:** https://shamikhahmed.github.io/VaultOS
 
+VaultOS is a personal vault app that stores your financial and identity information entirely on your device. No accounts. No servers. No tracking. Everything encrypted with your PIN.
+
+Built for people who manage finances across Pakistan, UK, and UAE.
+
 ---
 
-## What makes it unique
+## Why VaultOS?
 
-- **Truly offline** — no servers, no accounts, no internet required after install
-- **AES-256-GCM encrypted backups** — export your entire vault as an encrypted `.vos` file
-- **Multi-country** — built for people living across PK, UK, and UAE simultaneously
-- **Decoy mode** — enter a secondary PIN under coercion to show an empty vault
-- **Installable PWA** — works like a native app on iPhone and Android
-- **Zero dependencies** — pure HTML/CSS/JS, no frameworks, no npm
+Most finance apps upload your data to servers you don't control. VaultOS is different:
+
+- **Local-first** — data lives on your device, works fully offline
+- **Encrypted** — AES-256-GCM encryption with your PIN as the key
+- **Transparent** — open source, no hidden cloud sync, no analytics
+- **Recoverable** — export encrypted .vos backups you own forever
+- **Multi-country** — built for PKR, GBP, AED, USD across PK/UK/UAE
 
 ---
 
