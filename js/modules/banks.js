@@ -176,7 +176,7 @@ const Banks={
   _toggleJoint(checked){const s=document.getElementById('b-joint-section');if(s)s.style.display=checked?'block':'none';},
   bindCC(){setTimeout(()=>{const cur=document.getElementById('bf-cur');if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
   save(editId=null){
-    const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
+    const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;} // TODO: formalize via Validators.run(item,'bank') in js/core/validators.js
     if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const lf=U.getLF();
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};

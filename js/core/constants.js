@@ -1,0 +1,12 @@
+// VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
+// Centralised constants — future migration target from app.js
+
+const VAULT_VERSION = 7;
+const APP_VERSION = typeof VER !== 'undefined' ? VER : '4.0';
+const MAX_STORAGE_MB = 5;
+const BACKUP_REMINDER_DAYS = 30;
+const MAX_AUDIT_ENTRIES = 10;
+const MAX_SEARCH_RESULTS = 50;
+const PIN_MIN_LENGTH = 6;
+const PIN_MAX_ATTEMPTS = 5;
+const PBKDF2_ITERATIONS = 310000;

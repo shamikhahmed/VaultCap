@@ -1,3 +1,4 @@
+// VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
 const THEMES=[
   {id:'dark',     n:'Midnight',  g:'dark',  bg:'#080808', ac:'#0080ff', gl:'rgba(0,128,255,.2)',    cls:''},
   {id:'ocean',    n:'Ocean',     g:'dark',  bg:'#04101e', ac:'#0ea5e9', gl:'rgba(14,165,233,.2)',   cls:'ocean'},
@@ -1802,6 +1803,21 @@ const R = {
         if (r.issues > 0) Toast.show(`🔍 Vault scan: ${r.issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
       }
     }, 2000);
+    setTimeout(() => {
+      if (!window._backupPrompted) {
+        window._backupPrompted = true;
+        const _lb = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
+        const _days = _lb ? Math.floor((Date.now() - _lb) / (1000*60*60*24)) : 999;
+        if (_days > 14) {
+          Toast.show(
+            _days >= 999
+              ? '⚠️ You have never backed up your vault. <button class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
+              : `⚠️ Last backup was ${_days} days ago. <button class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>`,
+            'warn', 8000
+          );
+        }
+      }
+    }, 3000);
     // Auto-purge trash items older than 30 days
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const before = (S.trash||[]).length;

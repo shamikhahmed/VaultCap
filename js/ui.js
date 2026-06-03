@@ -1,3 +1,4 @@
+// VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
 const _FX_DEFAULTS={PKR:1,GBP:355,AED:76,USD:280,EUR:300,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
 function getFX(){try{if(typeof Currency!=='undefined'){const c=Currency.get();if(c&&c.rates&&Object.keys(c.rates).length>0)return{..._FX_DEFAULTS,...c.rates,PKR:1};}}catch(e){}return _FX_DEFAULTS;}
 const FX=new Proxy({},{get(_,key){return getFX()[key];}});
@@ -61,12 +62,17 @@ const Dash={
       ...expiringDocs.map(d => ({name:d.title||d.type, type:'doc', days:Math.round((new Date(d.expiry)-now)/(1000*60*60*24))}))
     ].sort((a,b) => a.days-b.days);
 
+    // Backup reminder
+    const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
+    const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
+    const backupNeeded = daysSinceBackup > 30;
+
     // Vault health
     const checks = [
       !!S.user?.name,
       S.pin !== '123456',
       !!S.decoyPin,
-      !!S.user?.lastBackup,
+      !!S.user?.lastBackup && daysSinceBackup <= 30,
       (S.banks||[]).length > 0,
       (S.documents||[]).length > 0,
     ];
@@ -156,13 +162,24 @@ const Dash={
             [!!S.user?.name,'Name set'],
             [S.pin!=='123456','Custom PIN'],
             [!!S.decoyPin,'Decoy PIN'],
-            [!!S.user?.lastBackup,'Backed up'],
+            [!!S.user?.lastBackup && daysSinceBackup <= 30, daysSinceBackup >= 999 ? 'Never backed up' : daysSinceBackup === 0 ? 'Backed up today' : `Backed up ${daysSinceBackup}d ago`],
             [(S.banks||[]).length>0,'Banks added'],
             [(S.documents||[]).length>0,'Docs added'],
           ].map(([ok,label]) => `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:${ok?'rgba(0,255,136,.1)':'rgba(255,69,58,.1)'};color:${ok?'var(--ok)':'var(--err)'};">${ok?'✓':'+'} ${label}</div>`).join('')}
         </div>
       </div>
     </div>
+
+    <!-- BACKUP REMINDER -->
+    ${backupNeeded ? `
+    <div onclick="ExIm.export('vos')" style="margin:0 16px 16px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:14px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
+      <span style="font-size:24px">💾</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--warn)">${daysSinceBackup >= 999 ? 'Never backed up' : `Last backup: ${daysSinceBackup} days ago`}</div>
+        <div style="font-size:11px;color:var(--text3)">Tap to export encrypted backup — protect your data</div>
+      </div>
+      <div style="font-size:18px;color:var(--text3)">›</div>
+    </div>` : ''}
 
     <!-- QUICK ACTIONS -->
     <div style="margin:0 16px 16px">
@@ -575,10 +592,14 @@ const ExIm={
       const pw=S.pin+'_vos4_'+S.user.name;
       const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
       S.user.lastBackup=new Date().toISOString();Store.save();
-      Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
+      Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
+        const fp = btoa(String.fromCharCode(...new Uint8Array(
+          await crypto.subtle.digest('SHA-256', new TextEncoder().encode(enc.slice(0, 1000)))
+        ))).slice(0, 8).toUpperCase();
+        S.user.lastBackupFingerprint = fp; Store.save();
         this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
         Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show('Exported — AES-256-GCM encrypted','success');
+        Toast.show(`Backup saved ✓ Fingerprint: ${fp} — note this for verification`, 'success', 6000);
       }).catch(()=>{this._exportPlain(data);});
       return;
     }
@@ -618,8 +639,9 @@ const ExIm={
             const data=JSON.parse(raw2);
             if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file','error');return;}
             if(data._vaultVersion&&typeof SCHEMA_VERSION!=='undefined'&&data._vaultVersion>SCHEMA_VERSION){Toast.show('This backup was created with a newer version of VaultOS. Some data may not display correctly.','warn',6000);}
-            const counts=[`${(data.banks||[]).length} banks`,`${(data.cards||[]).length} cards`,`${(data.emails||[]).length} emails`,`${(data.gadgets||[]).length} devices`,`${(data.expenses||[]).length} expenses`].join(', ');
-            if(!window.__vos_confirm(`Import vault?\n\n${counts}\n\nMerges with existing data.`))return;
+            const previewCounts={Banks:(data.banks||[]).length,Cards:(data.cards||[]).length,Documents:(data.documents||[]).length,Investments:(data.investments||[]).length,Emails:(data.emails||[]).length,Devices:(data.gadgets||[]).length,Expenses:(data.expenses||[]).length};
+            const previewLines=Object.entries(previewCounts).filter(([,v])=>v>0).map(([k,v])=>`  ${k}: ${v}`).join('\n');
+            if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
             if(data.modules)Object.assign(S.modules,data.modules);
             Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
@@ -1690,6 +1712,15 @@ const SettingsNav = {
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>
         <button class="btn btn-g btn-full btn-sm" onclick="WhatsNew.show()">✨ What's New</button>
+      </div>
+      <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:16px;margin:0 14px 14px">
+        <div style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:8px">🔒 Your Data Guarantee</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8">
+          • Your vault lives <strong>on this device only</strong> — never on any server<br>
+          • Even if this URL stops working, your data is safe in your <strong>.vos backup</strong><br>
+          • Any browser can open a .vos file — just visit the app from any device<br>
+          • Export a backup regularly: Settings → Backup &amp; Export
+        </div>
       </div>
     </div></div>`;
   }
