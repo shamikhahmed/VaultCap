@@ -120,7 +120,8 @@ const Vehicles = {
           </div>
           <div style="font-size:11px;color:var(--text3);margin-top:4px">Reminders auto-created 30 days before expiry</div>
         </div>
-      </details>`;
+      </details>
+      <div class="fg"><label class="fl">Tags</label>${U.tags(v.tags||[])}</div>`;
   },
 
   save(editId = null) {
@@ -144,6 +145,7 @@ const Vehicles = {
       currency: document.getElementById('vf-cur')?.value || S.user.currency || 'PKR',
       motExpiry: document.getElementById('vf-mot')?.value || '',
       taxExpiry: document.getElementById('vf-vtax')?.value || '',
+      tags: U.getTags(),
     };
     if (!S.vehicles) S.vehicles = [];
     if (editId) {

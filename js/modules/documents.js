@@ -1,3 +1,19 @@
+const _fuzzD = (str, q) => {
+  if (!q) return true;
+  const s = (str || '').toLowerCase();
+  const ql = q.toLowerCase();
+  if (s.includes(ql)) return true;
+  if (ql.length < 3) return false;
+  const maxD = ql.length <= 5 ? 1 : 2;
+  return s.split(/\s+/).some(word => {
+    if (Math.abs(word.length - ql.length) > maxD + 1) return false;
+    const m = word.length, n = ql.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) dp[i][j] = word[i-1] === ql[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n] <= maxD;
+  });
+};
+
 const DocsModule={
   filter:'all',
   // Doc types that need front+back capture (physical ID cards)
@@ -14,7 +30,7 @@ const DocsModule={
     const cats=[['all','All'],['passport','📘 Passport'],['nic','🪪 ID'],['driving_license','🚗 Driving'],['visa','✈️ Visa'],['property_doc','🏠 Property'],['insurance_doc','🛡️ Insurance'],['vehicle_reg','🚗 Vehicle Reg'],['tax','📋 Tax'],['medical','🏥 Medical'],['warranty','🧾 Warranty'],['contract','📝 Contract'],['certificate','🎓 Certificate'],['other','📄 Other']];
     ci.innerHTML=cats.map(([v,l])=>`<div class="chip${this.filter===v?' on':''}" onclick="DocsModule.filter='${v}';DocsModule.render()">${l}</div>`).join('');
     const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
-    const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||JSON.stringify(d).toLowerCase().includes(q)));
+    const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
     if(!docs.length){
       el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🪪</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;

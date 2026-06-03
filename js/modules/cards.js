@@ -1,3 +1,19 @@
+const _fuzzC = (str, q) => {
+  if (!q) return true;
+  const s = (str || '').toLowerCase();
+  const ql = q.toLowerCase();
+  if (s.includes(ql)) return true;
+  if (ql.length < 3) return false;
+  const maxD = ql.length <= 5 ? 1 : 2;
+  return s.split(/\s+/).some(word => {
+    if (Math.abs(word.length - ql.length) > maxD + 1) return false;
+    const m = word.length, n = ql.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) dp[i][j] = word[i-1] === ql[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n] <= maxD;
+  });
+};
+
 const Cards={
   _showArchived: false,
   render(){
@@ -23,7 +39,7 @@ const Cards={
       if(f==='crypto'&&c.category!=='Crypto')return false;
       if(f==='bnpl'&&c.category!=='BNPL')return false;
       if(f==='expiring'){const s=U.expSt(c.expiry);if(s==='ok')return false;}
-      return !q||JSON.stringify(c).toLowerCase().includes(q);
+      return !q||_fuzzC(c.cardName,q)||_fuzzC(c.last4,q)||_fuzzC(c.network,q)||_fuzzC(c.cardType,q)||_fuzzC(c.linkedBank,q)||_fuzzC(c.notes,q)||(c.tags||[]).some(t=>_fuzzC(t,q));
     });
     if(sort==='name')data.sort((a,b)=>a.cardName.localeCompare(b.cardName));
     else if(sort==='expiry')data.sort((a,b)=>(a.expiry||'99/99').localeCompare(b.expiry||'99/99'));

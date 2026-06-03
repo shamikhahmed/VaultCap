@@ -24,7 +24,7 @@ const Cash = {
     }
     const locIc = { Wallet:'👛', Home:'🏠', Office:'🏢', Car:'🚗', Other:'📦' };
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span></div></div><div class="entry-acts"><button class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}</div></div><div class="entry-acts"><button class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
   },
   openAdd() {
     Modal.open('💵 Add Cash', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);
@@ -33,7 +33,8 @@ const Cash = {
   form(c = {}) {
     return `<div class="fg"><label class="fl">Location *</label><select class="inp" id="cf-loc"><option value="Wallet">👛 Wallet</option><option value="Home">🏠 Home</option><option value="Office">🏢 Office</option><option value="Car">🚗 Car</option><option value="Other">📦 Other</option></select></div>
     <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="cf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${c.amount || ''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
-    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${c.notes || ''}</textarea></div>`;
+    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${c.notes || ''}</textarea></div>
+    <div class="fg"><label class="fl">Tags</label>${U.tags(c.tags||[])}</div>`;
   },
   save(editId = null) {
     const loc = document.getElementById('cf-loc').value;
@@ -42,7 +43,7 @@ const Cash = {
     const cur = document.getElementById('cf-cur').value;
     const notes = document.getElementById('cf-notes').value.trim();
     const prev = (S.cash || []).find(x => x.id === editId);
-    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, createdAt: editId ? prev?.createdAt : new Date().toISOString() };
+    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, tags: U.getTags(), createdAt: editId ? prev?.createdAt : new Date().toISOString() };
     if (!S.cash) S.cash = [];
     if (editId) S.cash = S.cash.map(x => x.id === editId ? item : x); else S.cash.push(item);
     Activity.log((editId ? 'Edited' : 'Added') + ' cash', loc);

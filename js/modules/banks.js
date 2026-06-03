@@ -1,3 +1,19 @@
+const _fuzz = (str, q) => {
+  if (!q) return true;
+  const s = (str || '').toLowerCase();
+  const ql = q.toLowerCase();
+  if (s.includes(ql)) return true;
+  if (ql.length < 3) return false;
+  const maxD = ql.length <= 5 ? 1 : 2;
+  return s.split(/\s+/).some(word => {
+    if (Math.abs(word.length - ql.length) > maxD + 1) return false;
+    const m = word.length, n = ql.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) dp[i][j] = word[i-1] === ql[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n] <= maxD;
+  });
+};
+
 const Banks={
   _showArchived: false,
   render(){
@@ -17,7 +33,7 @@ const Banks={
       if(f==='islamic'&&b.bankType!=='islamic')return false;
       if(f==='digital'&&b.bankType!=='digital')return false;
       if(f==='microfinance'&&b.bankType!=='microfinance')return false;
-      return !q||JSON.stringify(b).toLowerCase().includes(q);
+      return !q||_fuzz(b.bankName,q)||_fuzz(b.accountType,q)||_fuzz(b.country,q)||_fuzz(b.bankType,q)||_fuzz(b.notes,q)||_fuzz(b.holderName,q)||(b.tags||[]).some(t=>_fuzz(t,q));
     });
     if(sort==='name')data.sort((a,b)=>a.bankName.localeCompare(b.bankName));
     else if(sort==='country')data.sort((a,b)=>a.country.localeCompare(b.country));

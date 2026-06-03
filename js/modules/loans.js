@@ -69,6 +69,7 @@ const Loans = {
               <span class="badge b-acc sens">${U.fmt(l.amount || 0)} ${l.currency || ''}</span>
               <span class="badge ${badge}">${status}</span>
               ${duePart}
+              ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}
             </div>
           </div>
           <div class="entry-acts">${settle}<button class="icb" onclick="Loans.edit('${l.id}')">✏️</button><button class="icb del" onclick="Loans.del('${l.id}')">🗑️</button></div>
@@ -136,7 +137,8 @@ const Loans = {
     <div class="fg"><label class="fl">Person *</label><input class="inp" id="lf-person" value="${l.person || ''}" list="loanFriendsDL" placeholder="Who did you borrow from / lend to?"></div>
     <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="lf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${l.amount || ''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="lf-cur">${U.currencies()}</select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Date</label><input class="inp" id="lf-date" type="date" value="${l.date || today}"></div><div class="fg"><label class="fl">Due Date (optional)</label><input class="inp" id="lf-due" type="date" value="${l.dueDate || ''}"></div></div>
-    <div class="fg"><label class="fl">Notes (optional)</label><textarea class="inp" id="lf-notes" rows="2">${l.notes || ''}</textarea></div>`;
+    <div class="fg"><label class="fl">Notes (optional)</label><textarea class="inp" id="lf-notes" rows="2">${l.notes || ''}</textarea></div>
+    <div class="fg"><label class="fl">Tags</label>${U.tags(l.tags||[])}</div>`;
   },
 
   save(editId = null) {
@@ -155,6 +157,7 @@ const Loans = {
       date:     document.getElementById('lf-date').value,
       dueDate:  document.getElementById('lf-due').value,
       notes:    document.getElementById('lf-notes').value.trim(),
+      tags:     U.getTags(),
       createdAt: editId ? existing?.createdAt : new Date().toISOString()
     };
     if (!S.loans) S.loans = [];

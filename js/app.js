@@ -60,12 +60,15 @@ const Tags = {
   parse(str) {
     return (str || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
   },
-  input(id, existing = []) {
+  input(id, existing = [], presets = null) {
+    const p = presets || this.PRESETS.slice(0, 8);
     return `<div>
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Tags (optional)</div>
       <input id="${id}" placeholder="e.g. uk, business, halal" value="${existing.join(', ')}"
-        style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px">
-      <div style="font-size:10px;color:var(--text3);margin-top:4px">Separate with commas · e.g. urgent, uk, business</div>
+        style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;margin-bottom:6px">
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${p.map(t => `<span onclick="(()=>{const el=document.getElementById('${id}');const cur=el.value.split(',').map(x=>x.trim()).filter(Boolean);if(!cur.includes('${t}')){cur.push('${t}');el.value=cur.join(', ');}else{el.value=cur.filter(x=>x!=='${t}').join(', ');}})()" style="font-size:10px;padding:2px 8px;border-radius:999px;background:var(--glass2);border:1px solid var(--border);color:var(--text3);cursor:pointer;touch-action:manipulation">${t}</span>`).join('')}
+      </div>
     </div>`;
   },
   PRESETS: ['personal', 'business', 'uk', 'pakistan', 'uae', 'halal', 'urgent', 'archived', 'family', 'tax-related', 'investment'],
@@ -2981,11 +2984,32 @@ const CMD = {
   },
   close() { document.getElementById('cmdPal').classList.remove('on'); cmdIdx = -1; },
   fuzzyMatch(str, q) {
-    str = str.toLowerCase(); q = q.toLowerCase();
-    if (str.includes(q)) return true;
-    let si = 0;
-    for (let qi = 0; qi < q.length; qi++) { const idx = str.indexOf(q[qi], si); if (idx === -1) return false; si = idx + 1; }
-    return true;
+    if (!str || !q) return false;
+    const s = str.toLowerCase().trim();
+    const ql = q.toLowerCase().trim();
+    if (s.includes(ql)) return true;
+    if (ql.length < 2) return false;
+    const maxDist = ql.length <= 2 ? 0 : ql.length <= 5 ? 1 : 2;
+    return this._levenshtein(s, ql) <= maxDist || this._substringLevenshtein(s, ql, maxDist);
+  },
+  _levenshtein(a, b) {
+    if (Math.abs(a.length - b.length) > 3) return 99;
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+      }
+    }
+    return dp[m][n];
+  },
+  _substringLevenshtein(str, query, maxDist) {
+    if (str.length < query.length) return false;
+    for (let i = 0; i <= str.length - query.length; i++) {
+      const sub = str.slice(i, i + query.length);
+      if (this._levenshtein(sub, query) <= maxDist) return true;
+    }
+    return false;
   },
   recentActions: [],
   addRecent(action) { this.recentActions = [action, ...this.recentActions.filter(a => a.label !== action.label)].slice(0, 8); },
