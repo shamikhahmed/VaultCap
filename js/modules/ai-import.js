@@ -1,778 +1,279 @@
-// Smart pattern-matching import engine — no external API required
-
-const AIImport = (() => {
-
-  // ── Pattern libraries ──────────────────────────────────────────────────────
-
-  const BANK_NAMES = BANKS_DB.map(b => b.n.toLowerCase());
-  const BROKER_NAMES = BROKERS_DB.map(b => b.toLowerCase());
-
-  const CURRENCY_RE   = /\b(PKR|GBP|USD|AED|EUR|SAR|CAD|AUD|SGD|INR|QAR|BTC|ETH|USDT)\b/gi;
-  const AMOUNT_RE     = /(?:PKR|GBP|£|\$|€|AED|USD|INR|SAR)?\s*([\d,]+(?:\.\d{1,2})?)/g;
-  const CARD_NUM_RE   = /\b(\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}|\*{4}\s?\d{4}|\d{4})\b/g;
-  const DATE_RE       = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.](\d{2}|\d{4})|\d{2}\/\d{2}|\d{4}-\d{2}-\d{2})\b/g;
-  const IBAN_RE       = /\b(PK\d{2}[A-Z0-9]{18}|GB\d{2}[A-Z]{4}\d{14})\b/gi;
-  const PHONE_RE      = /(?:\+?\d{1,3}[\s\-]?)?\(?\d{2,4}\)?[\s\-]?\d{3,4}[\s\-]?\d{4,7}/g;
-  const EMAIL_RE      = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-  const ACCOUNT_RE    = /\b\d{8,18}\b/g;
-  const NAME_RE       = /\b([A-Z][a-z]{2,}(?:\s[A-Z][a-z]{2,}){1,3})\b/g;
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  function _clean(t) { return (t || '').replace(/\s+/g, ' ').trim(); }
-
-  function _firstMatch(text, re) {
-    re.lastIndex = 0;
-    const m = re.exec(text);
-    return m ? _clean(m[0]) : null;
-  }
-
-  function _allMatches(text, re) {
-    re.lastIndex = 0;
-    const out = []; let m;
-    while ((m = re.exec(text)) !== null) out.push(_clean(m[0]));
-    return [...new Set(out)];
-  }
-
-  function _matchBank(text) {
-    const lower = text.toLowerCase();
-    for (const bn of BANK_NAMES) {
-      if (lower.includes(bn)) return BANKS_DB[BANK_NAMES.indexOf(bn)]?.n || bn;
-    }
-    return null;
-  }
-
-  function _matchBroker(text) {
-    const lower = text.toLowerCase();
-    for (const br of BROKER_NAMES) {
-      if (lower.includes(br)) return BROKERS_DB[BROKER_NAMES.indexOf(br)] || br;
-    }
-    return null;
-  }
-
-  function _detectCurrencies(text) {
-    return _allMatches(text, CURRENCY_RE).map(c => c.toUpperCase());
-  }
-
-  function _detectAmounts(text) {
-    const out = [];
-    AMOUNT_RE.lastIndex = 0;
-    let m;
-    while ((m = AMOUNT_RE.exec(text)) !== null) {
-      const n = parseFloat(m[1].replace(/,/g, ''));
-      if (!isNaN(n) && n > 0) out.push(n);
-    }
-    return out;
-  }
-
-  function _detectLast4(text) {
-    const nums = _allMatches(text, CARD_NUM_RE);
-    for (const n of nums) {
-      const digits = n.replace(/\D/g, '');
-      if (digits.length === 16) return digits.slice(-4);
-      if (digits.length === 4)  return digits;
-    }
-    return null;
-  }
-
-  function _confidence(detected, required) {
-    const found = required.filter(k => !!detected[k]);
-    return +(found.length / required.length).toFixed(2);
-  }
-
-  // ── Core parser ────────────────────────────────────────────────────────────
-
-  function parse(rawText) {
-    const text   = rawText || '';
-    const lower  = text.toLowerCase();
-    const items  = [];
-
-    const bankName   = _matchBank(text);
-    const currencies = _detectCurrencies(text);
-    const amounts    = _detectAmounts(text);
-    const dates      = _allMatches(text, DATE_RE);
-    const ibans      = _allMatches(text, IBAN_RE);
-    const phones     = _allMatches(text, PHONE_RE).slice(0, 4);
-    const emails     = _allMatches(text, EMAIL_RE).slice(0, 4);
-    const names      = _allMatches(text, NAME_RE).slice(0, 3);
-    const last4      = _detectLast4(text);
-    const broker     = _matchBroker(text);
-
-    // ── Bank ──────────────────────────────────────────────────────────────────
-    if (bankName || ibans.length || (lower.includes('account') && (amounts.length || currencies.length))) {
-      const fields = {
-        bankName:    bankName || '',
-        iban:        ibans[0] || '',
-        currency:    currencies[0] || 'GBP',
-        balance:     amounts[0] || '',
-        last4:       last4 || '',
-        holderName:  names[0] || '',
-        phone:       phones[0] || '',
-        email:       emails[0] || '',
-      };
-      items.push({
-        type: 'bank',
-        label: `Bank — ${fields.bankName || 'Unknown'}`,
-        confidence: _confidence(fields, ['bankName', 'currency']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── Card ──────────────────────────────────────────────────────────────────
-    if (last4 || lower.includes('card') || lower.includes('visa') || lower.includes('mastercard') || lower.includes('amex')) {
-      const network = /mastercard/i.test(text) ? 'Mastercard' : /visa/i.test(text) ? 'Visa' : /amex|american express/i.test(text) ? 'American Express' : '';
-      const cardType = /credit/i.test(text) ? 'Credit' : /debit/i.test(text) ? 'Debit' : '';
-      const fields = {
-        cardName:   bankName ? bankName + ' ' + (cardType || 'Card') : '',
-        network,
-        cardType,
-        last4:      last4 || '',
-        expiry:     dates.find(d => /^\d{2}\/\d{2}$/.test(d)) || dates[0] || '',
-        holderName: names[0] || '',
-        currency:   currencies[0] || 'GBP',
-      };
-      items.push({
-        type: 'card',
-        label: `Card — ${fields.cardName || network || 'Unknown'}`,
-        confidence: _confidence(fields, ['last4', 'network']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── Investment ─────────────────────────────────────────────────────────────
-    if (broker || lower.includes('stock') || lower.includes('fund') || lower.includes('portfolio') || lower.includes('invest')) {
-      const ticker = (_firstMatch(text, /\b([A-Z]{2,5})\b/g) || '');
-      const fields = {
-        investmentName: names[0] || ticker || '',
-        broker:         broker || '',
-        type:           /crypto/i.test(text) ? 'Crypto' : /fund/i.test(text) ? 'Fund' : 'Stocks',
-        currency:       currencies[0] || 'GBP',
-        amountInvested: amounts[0] || '',
-        currentValue:   amounts[1] || amounts[0] || '',
-        ticker,
-      };
-      items.push({
-        type: 'investment',
-        label: `Investment — ${fields.investmentName || broker || 'Unknown'}`,
-        confidence: _confidence(fields, ['amountInvested', 'type']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── SIM ────────────────────────────────────────────────────────────────────
-    if (lower.includes('sim') || lower.includes('mobile') || lower.includes('network') || phones.length > 0) {
-      const network = NETWORKS_DB.find(n => lower.includes(n.n.toLowerCase()))?.n || '';
-      const fields = {
-        phone:    phones[0] || '',
-        network,
-        simType:  /esim/i.test(text) ? 'eSIM' : 'Physical',
-        status:   /active/i.test(text) ? 'Active' : 'Inactive',
-        country:  /uk|united kingdom/i.test(text) ? 'GB' : /pak/i.test(text) ? 'PK' : /uae/i.test(text) ? 'AE' : 'GB',
-      };
-      items.push({
-        type: 'sim',
-        label: `SIM — ${fields.phone || network || 'Unknown'}`,
-        confidence: _confidence(fields, ['phone', 'network']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── Cash ───────────────────────────────────────────────────────────────────
-    if (lower.includes('cash') || lower.includes('wallet') || lower.includes('pocket')) {
-      const fields = {
-        label:    'Cash',
-        amount:   amounts[0] || '',
-        currency: currencies[0] || 'GBP',
-        location: /wallet/i.test(text) ? 'Wallet' : /safe/i.test(text) ? 'Safe' : 'Wallet',
-      };
-      items.push({
-        type: 'cash',
-        label: `Cash — ${fields.currency} ${fields.amount || '?'}`,
-        confidence: _confidence(fields, ['amount', 'currency']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── Loan ───────────────────────────────────────────────────────────────────
-    if (lower.includes('loan') || lower.includes('lent') || lower.includes('owe') || lower.includes('borrow')) {
-      const fields = {
-        personName: names[0] || '',
-        amount:     amounts[0] || '',
-        currency:   currencies[0] || 'GBP',
-        type:       /owe|borrowed/i.test(text) ? 'borrowed' : 'lent',
-        dueDate:    dates[0] || '',
-      };
-      items.push({
-        type: 'loan',
-        label: `Loan — ${fields.personName || 'Unknown'} ${fields.type}`,
-        confidence: _confidence(fields, ['amount', 'personName']),
-        fields,
-        raw: text.slice(0, 200)
-      });
-    }
-
-    // ── Expense ────────────────────────────────────────────────────────────────────
-    if (lower.includes('month') || lower.includes('/mo') || lower.includes('per month') || lower.includes('subscription') || lower.includes('bill') || lower.includes('monthly') || lower.includes('yearly') || lower.includes('annual')) {
-      const sub = (typeof SUBS_DB !== 'undefined') ? SUBS_DB.find(s => lower.includes(s.n.toLowerCase())) : null;
-      const expName = sub?.n || names[0] || (_firstMatch(text, /\b([A-Z][a-z]{2,}(?:\+)?)\b/g) || '');
-      const fields = {
-        name:     expName,
-        amount:   amounts[0] || '',
-        currency: currencies[0] || 'GBP',
-        category: sub?.c || 'Other',
-        icon:     sub?.ic || '📋',
-      };
-      if (fields.name || fields.amount) {
-        items.push({
-          type: 'expense',
-          label: `Expense — ${fields.name || 'Subscription'}`,
-          confidence: _confidence(fields, ['name', 'amount']),
-          fields,
-          raw: text.slice(0, 200)
-        });
-      }
-    }
-
-    // ── Enhanced loan from natural language ("lent X to Ahmed", "I owe X") ──────
-    if (!items.find(i => i.type === 'loan')) {
-      const lentMatch = text.match(/(?:lent|gave|loaned|sent)\s+(?:PKR|GBP|AED|USD|Rs\.?)?\s*([\d,]+)\s+(?:rupees?|gbp|usd|aed)?\s*(?:to|from)\s+([A-Z][a-z]{2,}(?:\s[A-Z][a-z]{2,})?)/i);
-      const oweMatch  = text.match(/(?:owe|borrowed|borrowed from)\s+([A-Z][a-z]{2,}(?:\s[A-Z][a-z]{2,})?)\s+(?:PKR|GBP|AED|USD|Rs\.?)?\s*([\d,]+)/i);
-      if (lentMatch) {
-        items.push({ type:'loan', label:`Loan — lent to ${lentMatch[2]}`, confidence:0.85, fields:{ personName:lentMatch[2], amount:lentMatch[1].replace(/,/g,''), currency:currencies[0]||'PKR', type:'lent', dueDate:'' }, raw:text.slice(0,200) });
-      } else if (oweMatch) {
-        items.push({ type:'loan', label:`Loan — borrowed from ${oweMatch[1]}`, confidence:0.85, fields:{ personName:oweMatch[1], amount:oweMatch[2].replace(/,/g,''), currency:currencies[0]||'PKR', type:'borrowed', dueDate:'' }, raw:text.slice(0,200) });
-      }
-    }
-
-    // ── Enhanced SIM from "My Jazz SIM is 0300-..." ────────────────────────────
-    if (!items.find(i => i.type === 'sim')) {
-      const simMatch = text.match(/(?:my\s+)?([A-Za-z]+)\s+(?:SIM|sim|number|no\.?)\s+(?:is\s+)?(\+?[\d\s\-]{10,15})/i);
-      if (simMatch) {
-        const netName = simMatch[1];
-        const matched = (typeof NETWORKS_DB !== 'undefined') ? NETWORKS_DB.find(n => n.n.toLowerCase().includes(netName.toLowerCase())) : null;
-        items.push({ type:'sim', label:`SIM — ${matched?.n||netName}`, confidence:0.9, fields:{ network:matched?.n||netName, phone:simMatch[2].trim(), country:matched?.c||'PK', simType:'Physical', status:'Active' }, raw:text.slice(0,200) });
-      }
-    }
-
-    // Deduplicate: keep best-confidence item per type
-    const best = {};
-    items.forEach(it => {
-      if (!best[it.type] || it.confidence > best[it.type].confidence) best[it.type] = it;
-    });
-
-    return Object.values(best).sort((a, b) => b.confidence - a.confidence);
-  }
-
-  // ── CSV / plain-text parser ────────────────────────────────────────────────
-
-  function parseCSV(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim());
-    return lines.map(line => parse(line)).flat().filter(it => it.confidence > 0.1);
-  }
-
-  // ── Module save router ─────────────────────────────────────────────────────
-
-  function _saveItem(item) {
-    const f = item.fields;
-    try {
-      if (item.type === 'bank' && typeof Banks !== 'undefined') {
-        const rec = { id: U.id(), bankName: f.bankName, country: 'GB', bankType: 'commercial', currency: f.currency || 'GBP', iban: f.iban, last4: f.last4, balance: parseFloat(f.balance) || 0, holderName: f.holderName, phone: f.phone, email: f.email, tags: ['AI Import'], createdAt: new Date().toISOString() };
-        S.banks.push(rec); Activity.log('AI Import: bank', f.bankName); Store.save();
-        return true;
-      }
-      if (item.type === 'card' && typeof Cards !== 'undefined') {
-        const rec = { id: U.id(), cardName: f.cardName, network: f.network, cardType: f.cardType, last4: f.last4, expiry: f.expiry, holderName: f.holderName, currency: f.currency || 'GBP', tags: ['AI Import'], createdAt: new Date().toISOString() };
-        S.cards.push(rec); Activity.log('AI Import: card', f.cardName); Store.save();
-        return true;
-      }
-      if (item.type === 'investment' && typeof Inv !== 'undefined') {
-        const rec = { id: U.id(), investmentName: f.investmentName, broker: f.broker, type: f.type, ticker: f.ticker, currency: f.currency || 'GBP', amountInvested: parseFloat(f.amountInvested) || 0, currentValue: parseFloat(f.currentValue) || 0, riskLevel: 'Medium', ownership: 'personal', tags: ['AI Import'], createdAt: new Date().toISOString() };
-        S.investments.push(rec); Activity.log('AI Import: investment', f.investmentName); Store.save();
-        return true;
-      }
-      if (item.type === 'sim' && typeof Sims !== 'undefined') {
-        const rec = { id: U.id(), network: f.network, country: f.country, simType: f.simType, status: f.status, phone: f.phone, tags: ['AI Import'], createdAt: new Date().toISOString() };
-        S.sims.push(rec); Activity.log('AI Import: SIM', f.phone); Store.save();
-        return true;
-      }
-      if (item.type === 'cash' && typeof Cash !== 'undefined') {
-        const rec = { id: U.id(), label: f.label || 'Cash', amount: parseFloat(f.amount) || 0, currency: f.currency || 'GBP', location: f.location, createdAt: new Date().toISOString() };
-        S.cash.push(rec); Activity.log('AI Import: cash'); Store.save();
-        return true;
-      }
-      if (item.type === 'loan' && typeof Loans !== 'undefined') {
-        const rec = { id: U.id(), personName: f.personName, amount: parseFloat(f.amount) || 0, currency: f.currency || 'GBP', type: f.type, dueDate: f.dueDate, status: 'Active', tags: ['AI Import'], createdAt: new Date().toISOString() };
-        S.loans.push(rec); Activity.log('AI Import: loan', f.personName); Store.save();
-        return true;
-      }
-    } catch(e) { console.warn('AI Import save error:', e); }
-    return false;
-  }
-
-  // ── Confirmation modal ─────────────────────────────────────────────────────
-
-  function showConfirmation(items) {
-    if (!items.length) { Toast.show('Nothing detected — try more text', 'warning'); return; }
-
-    const typeIcons = { bank:'🏦', card:'💳', investment:'📈', sim:'📱', cash:'💵', loan:'🤝' };
-    const confColor = c => c >= 0.7 ? 'var(--ok)' : c >= 0.4 ? 'var(--warn)' : 'var(--err)';
-
-    const rows = items.map((it, idx) => {
-      const ic = typeIcons[it.type] || '📋';
-      const confPct = Math.round(it.confidence * 100);
-      const fields = Object.entries(it.fields).filter(([,v]) => v).map(([k, v]) =>
-        `<div class="fr" style="margin-bottom:4px"><div class="fg"><label class="fl" style="font-size:10px">${k}</label><input class="inp" id="ai-f-${idx}-${k}" value="${String(v).replace(/"/g,'&quot;')}" style="padding:6px 8px;font-size:12px"></div></div>`
-      ).join('');
-      return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <input type="checkbox" id="ai-chk-${idx}" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          <span style="font-size:20px">${ic}</span>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">${it.label}</div><div style="font-size:11px;color:${confColor(it.confidence)};margin-top:2px">Confidence: ${confPct}%</div></div>
-        </div>
-        ${fields}
-      </div>`;
-    }).join('');
-
-    Modal.open('🤖 AI Import — Review', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Review and edit detected fields below. Uncheck items you don't want to import.</p>
-      ${rows}
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
-        <button class="btn btn-p" onclick="AIImport.confirmSelected(${JSON.stringify(items).replace(/"/g,'&quot;')})">✅ Import Selected</button>`);
-
-    // Patch: pass items reference via closure stored on window
-    window._aiImportItems = items;
-    document.querySelector('.mf .btn-p').onclick = () => confirmSelected(items);
-  }
-
-  function confirmSelected(items) {
-    let saved = 0;
-    items.forEach((it, idx) => {
-      const chk = document.getElementById('ai-chk-' + idx);
-      if (!chk || !chk.checked) return;
-      // Read back edited field values
-      Object.keys(it.fields).forEach(k => {
-        const el = document.getElementById(`ai-f-${idx}-${k}`);
-        if (el) it.fields[k] = el.value;
-      });
-      if (_saveItem(it)) saved++;
-    });
-    Modal.close();
-    Toast.show(`Imported ${saved} item${saved !== 1 ? 's' : ''}`, 'success');
-    // Refresh current page if applicable
-    const pg = S.currentPage;
-    if (pg && typeof R !== 'undefined') setTimeout(() => R.goto(pg), 300);
-  }
-
-  // ── Main import modal ──────────────────────────────────────────────────────
-
-  function openImportModal() {
-    Modal.open('🤖 AI Import', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
-        Paste any text — bank statements, SMS, screenshots, spreadsheet data — and the engine will detect banks, cards, investments, SIMs, cash and loans automatically.
-      </p>
-      <div class="fg">
-        <label class="fl">Paste text or bank statement</label>
-        <textarea class="inp" id="ai-paste" rows="7" placeholder="Paste anything here…&#10;&#10;Bank: HBL&#10;IBAN: PK36HABB0000000000000000&#10;Balance: PKR 45,000&#10;&#10;Card: **** 4321 Visa Mastercard expiry 03/28&#10;…" style="font-family:var(--mono);font-size:12px"></textarea>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;margin:10px 0">
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-        <span style="font-size:11px;color:var(--text3)">OR</span>
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>
-      <div id="ai-drop-zone" style="border:2px dashed var(--border2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:var(--t)" onclick="document.getElementById('ai-file-in').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="AIImport.handleDrop(event)">
-        <div style="font-size:28px;margin-bottom:8px">📂</div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Drop CSV or text file here</div>
-        <div style="font-size:11px;color:var(--text3)">.csv · .txt supported</div>
-      </div>
-      <input type="file" id="ai-file-in" accept=".csv,.txt,.tsv" style="display:none" onchange="AIImport.handleFile(event)">
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
-        <button class="btn btn-p" onclick="AIImport.runParse()">🔍 Detect & Import</button>`);
-  }
-
-  function runParse() {
-    const text = document.getElementById('ai-paste')?.value || '';
-    if (!text.trim()) { Toast.show('Paste some text first', 'warning'); return; }
-    const items = parse(text);
-    showConfirmation(items);
-  }
-
-  function handleFile(e) {
-    const file = e.target.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const text = ev.target.result;
-      const items = parseCSV(text);
-      showConfirmation(items);
-    };
-    reader.readAsText(file);
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0]; if (!file) return;
-    document.getElementById('ai-drop-zone').style.borderColor = '';
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const items = parseCSV(ev.target.result);
-      showConfirmation(items);
-    };
-    reader.readAsText(file);
-  }
-
-  // ── Page render ────────────────────────────────────────────────────────────
-
-  function render() {
-    const el = document.getElementById('aiImportBody'); if (!el) return;
-    el.innerHTML = `
-      <div style="max-width:600px">
-        <div style="background:linear-gradient(135deg,var(--glass),var(--glass2));border:1px solid var(--border);border-radius:var(--rlg);padding:20px;margin-bottom:16px;text-align:center">
-          <div style="font-size:48px;margin-bottom:12px">🤖</div>
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Smart Import Engine</h3>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">Paste text from bank statements, SMS messages, or any document. The engine detects banks, cards, investments, SIMs, cash and loans automatically — no external API needed.</p>
-          <button class="btn btn-p" onclick="AIImport.openImportModal()" style="width:100%;max-width:280px;padding:14px;font-size:16px">📋 Start Import</button>
-          <button class="btn btn-s" onclick="ExcelImport.open()" style="width:100%;max-width:280px;padding:12px;font-size:14px;margin-top:8px">📊 Import Excel / Spreadsheet</button>
-        </div>
-
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">What it detects</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-            ${[['🏦','Banks & IBANs'],['💳','Cards & last 4'],['📈','Investments'],['📱','SIM cards'],['💵','Cash amounts'],['🤝','Loans']].map(([ic,l])=>`<div style="text-align:center;padding:10px 6px;background:var(--glass2);border-radius:var(--rsm)"><div style="font-size:20px;margin-bottom:4px">${ic}</div><div style="font-size:11px;color:var(--text2)">${l}</div></div>`).join('')}
-          </div>
-        </div>
-
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Example input</div>
-          <pre style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.6;white-space:pre-wrap">HBL Account — IBAN: PK36HABB0000000000000000
-Balance: PKR 45,000 · Currency: PKR
-
-Monzo Card **** 4829 Visa Debit expiry 09/27
-Holder: John Smith
-
-Jazz +92 300 1234567 Active SIM Pakistan</pre>
-        </div>
-      </div>`;
-  }
-
-  // ── Public ─────────────────────────────────────────────────────────────────
-
-  return { parse, parseCSV, showConfirmation, confirmSelected, openImportModal, runParse, handleFile, handleDrop, render };
-
-})();
-
-// ===================== EXCEL IMPORT =====================
-const ExcelImport = (() => {
-
-  const TYPE_KEYWORDS = {
-    bank:       ['bank','account','iban','sort','balance','swift'],
-    card:       ['card','visa','mastercard','amex','expiry','cvv','last4'],
-    investment: ['invest','stock','fund','portfolio','broker','ticker','shares'],
-    cash:       ['cash','wallet','pocket','notes','location'],
-    loan:       ['loan','lent','borrow','debt','owe','repay'],
-    sim:        ['sim','network','mobile','phone','number','plan'],
-    expense:    ['expense','subscription','bill','recurring','monthly'],
-  };
-
-  const TYPE_ICONS = { bank:'🏦', card:'💳', investment:'📈', cash:'💵', loan:'🤝', sim:'📱', expense:'📋' };
-
-  function _detectSheetType(headers, rows) {
-    const txt = headers.join(' ').toLowerCase() + ' ' + (rows[0] || []).join(' ').toLowerCase();
-    let best = null, bestScore = 0;
-    for (const [type, kws] of Object.entries(TYPE_KEYWORDS)) {
-      const score = kws.reduce((a, k) => a + (txt.includes(k) ? 1 : 0), 0);
-      if (score > bestScore) { bestScore = score; best = type; }
-    }
-    return bestScore > 0 ? best : 'unknown';
-  }
-
-  function _mapRow(type, headers, row) {
-    const get = (keys) => {
-      for (const k of keys) {
-        const idx = headers.findIndex(h => h && h.toLowerCase().includes(k));
-        if (idx >= 0 && row[idx] !== undefined && row[idx] !== '') return String(row[idx]).trim();
-      }
-      return '';
-    };
-    if (type === 'bank') return {
-      bankName:    get(['bank','name','account name']),
-      country:     get(['country','cc']),
-      currency:    get(['currency','cur']),
-      balance:     get(['balance','amount','bal']),
-      iban:        get(['iban','account number','acc no']),
-      bankType:    get(['type','bank type']),
-      holderName:  get(['holder','name','owner']),
-    };
-    if (type === 'card') return {
-      cardName:  get(['card name','name','card']),
-      network:   get(['network','type','brand','visa','mc','mastercard']),
-      cardType:  get(['card type','type']),
-      last4:     get(['last 4','last4','ending','xxxx']),
-      expiry:    get(['expiry','expiration','exp']),
-      currency:  get(['currency']),
-    };
-    if (type === 'investment') return {
-      investmentName: get(['name','investment','stock','fund','asset']),
-      broker:         get(['broker','platform','exchange']),
-      type:           get(['type','category','asset type']),
-      ticker:         get(['ticker','symbol']),
-      currency:       get(['currency']),
-      amountInvested: get(['invested','cost','purchase','amount invested']),
-      currentValue:   get(['current','value','current value']),
-    };
-    if (type === 'cash') return {
-      label:    get(['label','name','location','wallet']),
-      amount:   get(['amount','cash','balance']),
-      currency: get(['currency','cur']),
-      location: get(['location','place','where']),
-    };
-    if (type === 'loan') return {
-      personName: get(['person','name','who','contact']),
-      amount:     get(['amount','sum']),
-      currency:   get(['currency']),
-      type:       get(['type','direction','lent','borrowed']),
-      dueDate:    get(['due','due date','repay']),
-    };
-    if (type === 'sim') return {
-      network:  get(['network','carrier','operator','provider']),
-      phone:    get(['phone','number','mobile']),
-      country:  get(['country','cc']),
-      simType:  get(['type','sim type']),
-      status:   get(['status','active']),
-    };
-    if (type === 'expense') return {
-      name:     get(['name','service','subscription']),
-      amount:   get(['amount','cost','price']),
-      currency: get(['currency']),
-      category: get(['category','type']),
-    };
-    return {};
-  }
-
-  // ── File hash helpers ──────────────────────────────────────────────────────
-
-  function _fileHash(file) {
-    return file.name + '|' + file.size + '|' + file.lastModified;
-  }
-
-  function _checkFileHash(file) {
-    const hash = _fileHash(file);
-    S.importedFiles = S.importedFiles || [];
-    return S.importedFiles.find(f => f.hash === hash) || null;
-  }
-
-  function _recordFileHash(file) {
-    const hash = _fileHash(file);
-    S.importedFiles = S.importedFiles || [];
-    if (!S.importedFiles.find(f => f.hash === hash)) {
-      S.importedFiles.push({ hash, name: file.name, importedAt: new Date().toISOString() });
-    }
-  }
-
-  // ── Row save with duplicate check ──────────────────────────────────────────
-
-  function _saveRow(type, data) {
-    const dup = (typeof checkDuplicate === 'function') ? checkDuplicate(type, data) : { isDuplicate: false };
-    if (dup.isDuplicate) return { saved: false, skipped: true };
-    const id = U.id(), ts = new Date().toISOString();
-    try {
-      if (type === 'bank' && data.bankName) {
-        S.banks.push({ id, bankName:data.bankName, country:data.country||'', bankType:data.bankType||'commercial', currency:data.currency||'', balance:parseFloat(data.balance)||0, iban:data.iban||'', holderName:data.holderName||'', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'card' && data.cardName) {
-        S.cards.push({ id, cardName:data.cardName, network:data.network||'', cardType:data.cardType||'', last4:data.last4||'', expiry:data.expiry||'', currency:data.currency||'', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'investment' && data.investmentName) {
-        S.investments.push({ id, investmentName:data.investmentName, broker:data.broker||'', type:data.type||'Stocks', ticker:data.ticker||'', currency:data.currency||'', amountInvested:parseFloat(data.amountInvested)||0, currentValue:parseFloat(data.currentValue)||0, riskLevel:'Medium', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'cash' && data.amount) {
-        S.cash = S.cash || [];
-        S.cash.push({ id, label:data.label||'Cash', location:data.location||'Wallet', amount:parseFloat(data.amount)||0, currency:data.currency||'', createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'loan' && data.personName && data.amount) {
-        S.loans = S.loans || [];
-        const ltype = (data.type||'').toLowerCase().includes('lent') ? 'lent' : 'borrowed';
-        S.loans.push({ id, person:data.personName, type:ltype, amount:parseFloat(data.amount)||0, currency:data.currency||'', dueDate:data.dueDate||'', status:'Active', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'sim' && data.network) {
-        S.sims = S.sims || [];
-        S.sims.push({ id, network:data.network, phone:data.phone||'', country:data.country||'', simType:data.simType||'Physical', status:data.status||'Active', tags:['Excel Import'], createdAt:ts }); return { saved:true, skipped:false };
-      }
-      if (type === 'expense' && data.name) {
-        S.expenses = S.expenses || [];
-        S.expenses.push({ id, name:data.name, amount:parseFloat(data.amount)||0, currency:data.currency||'', category:data.category||'Other', active:true, createdAt:ts }); return { saved:true, skipped:false };
-      }
-    } catch(e) { console.warn('Excel import row error:', e); }
-    return { saved: false, skipped: false };
-  }
-
-  // ── Modal open ─────────────────────────────────────────────────────────────
-
-  function open() {
-    if (typeof XLSX === 'undefined') {
-      Toast.show('Excel library not loaded — check your connection', 'error'); return;
-    }
-    Modal.open('📊 Import Excel', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Upload a .xlsx or .xls file. VaultOS will show each row for review before importing.</p>
-      <div id="xl-drop" style="border:2px dashed var(--border2);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('xl-file').click()" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="ExcelImport._onDrop(event)">
-        <div style="font-size:32px;margin-bottom:8px">📊</div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Drop .xlsx / .xls here or tap to browse</div>
-        <div style="font-size:11px;color:var(--text3)">.xlsx · .xls supported</div>
-      </div>
-      <input type="file" id="xl-file" accept=".xlsx,.xls" style="display:none" onchange="ExcelImport._onFile(this.files[0])">
-      <div id="xl-preview" style="margin-top:14px"></div>
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="xl-confirm" style="display:none" onclick="ExcelImport._confirmImportRows()">✅ Import Selected</button>`);
-  }
-
-  function _onDrop(e) {
-    e.preventDefault();
-    document.getElementById('xl-drop').style.borderColor = '';
-    const f = e.dataTransfer.files[0]; if (f) _onFile(f);
-  }
-
-  function _onFile(file) {
+'use strict';
+// VaultOS AI Import Engine — © 2026 Shamikh Ahmed
+const AIImport = {
+  _results: [],
+
+  render() {
+    const body = document.getElementById('aiImportBody');
+    if (!body) return;
+    body.innerHTML =
+      '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+
+      '<div style="background:linear-gradient(135deg,rgba(91,141,238,.15),rgba(91,141,238,.05));border:1px solid rgba(91,141,238,.25);border-radius:16px;padding:16px">' +
+        '<div style="font-size:15px;font-weight:800;color:var(--accent);margin-bottom:4px">🤖 AI Import</div>' +
+        '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from a bank statement, screenshot description, or any financial document. AI will detect and extract the data automatically.</div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-top:6px">Supports: Banks · Cards · Loans · Documents · Cash · Investments · Gold · Committees · Prize Bonds</div>' +
+      '</div>' +
+
+      '<div class="fg">' +
+        '<label class="fl">Paste text, screenshot content, or describe your financial data</label>' +
+        '<textarea class="inp" id="ie-paste" rows="6" placeholder="Examples:&#10;• HBL Current Account - Balance PKR 245,000&#10;• Barclays Visa ending 4521, expires 09/26, limit £5000&#10;• Lent £500 to Ahmed on 15 Jan, due back in March&#10;• 5 tola gold jewellery (wedding set)&#10;• Prize bonds: 200 denomination, numbers 123456 789012 345678"></textarea>' +
+      '</div>' +
+
+      '<div id="ie-drop" style="border:2px dashed var(--border);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:all .2s" ' +
+        'ondragover="event.preventDefault();this.style.borderColor=\'var(--accent)\'" ' +
+        'ondragleave="this.style.borderColor=\'var(--border)\'" ' +
+        'ondrop="AIImport.handleDrop(event)" ' +
+        'onclick="document.getElementById(\'ie-file\').click()">' +
+        '<div style="font-size:28px;margin-bottom:8px">📎</div>' +
+        '<div style="font-size:13px;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-top:4px">PDF, image, CSV, or any document</div>' +
+        '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" onchange="AIImport.handleFile(this.files[0])">' +
+      '</div>' +
+
+      '<button class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">🔍 Detect &amp; Extract Data</button>' +
+
+      '<div id="ie-results"></div>' +
+
+      '</div>';
+  },
+
+  async handleFile(file) {
     if (!file) return;
-    const prev = _checkFileHash(file);
-    if (prev) {
-      const prevDate = new Date(prev.importedAt).toLocaleDateString();
-      if (!window.__vos_confirm(`"${file.name}" was already imported on ${prevDate}. Import again?`)) return;
+    const paste = document.getElementById('ie-paste');
+    if (!paste) return;
+    if (file.type.startsWith('text') || file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+      const text = await file.text();
+      paste.value = text.slice(0, 3000);
+      Toast.show('File loaded — click Detect to extract data', 'info');
+    } else {
+      paste.value = (paste.value ? paste.value + '\n\n' : '') + '[File: ' + file.name + ' — ' + file.type + ']';
+      Toast.show('File noted — add any text context and click Detect', 'info');
     }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const wb = XLSX.read(ev.target.result, { type: 'array' });
-        _preview(wb, file);
-      } catch(e) { Toast.show('Failed to read file: ' + e.message, 'error'); }
-    };
-    reader.readAsArrayBuffer(file);
-  }
+  },
 
-  // ── Row-by-row preview ─────────────────────────────────────────────────────
+  handleDrop(event) {
+    event.preventDefault();
+    const drop = document.getElementById('ie-drop');
+    if (drop) drop.style.borderColor = 'var(--border)';
+    const file = event.dataTransfer.files[0];
+    if (file) this.handleFile(file);
+  },
 
-  window._xlRows = [];
-  window._xlCurrentFile = null;
+  async detect() {
+    const pasteEl = document.getElementById('ie-paste');
+    const text = (pasteEl ? pasteEl.value : '').trim();
+    if (!text) { Toast.show('Paste some text first', 'warn'); return; }
 
-  function _preview(wb, file) {
-    window._xlCurrentFile = file || null;
-    const allRows = [];
-    let rowIdx = 0;
+    const btn = document.getElementById('ie-detect-btn');
+    const resultsEl = document.getElementById('ie-results');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Analysing...'; }
+    if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">🤖 AI is reading your data...</div>';
 
-    wb.SheetNames.forEach(sheetName => {
-      const ws = wb.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' }).filter(r => r.some(c => c !== ''));
-      if (!rows.length) return;
-      const headers = (rows[0] || []).map(h => String(h||'').trim());
-      const dataRows = rows.slice(1).filter(r => r.some(c => c !== ''));
-      const type = _detectSheetType(headers, dataRows);
-      if (!type || type === 'unknown') return;
+    try {
+      const userCur = (typeof S !== 'undefined' && S.user && S.user.currency) ? S.user.currency : 'PKR';
+      const userCountry = (typeof S !== 'undefined' && S.user && S.user.country) ? S.user.country : 'PK';
 
-      dataRows.forEach(row => {
-        const data = _mapRow(type, headers, row);
-        if (!Object.values(data).some(v => v)) return;
-        const dup = (typeof checkDuplicate === 'function') ? checkDuplicate(type, data) : { isDuplicate:false };
-        allRows.push({ idx: rowIdx++, sheetName, type, data, isDuplicate: dup.isDuplicate, dupMsg: dup.message || '' });
+      const systemPrompt = `You are a financial data extraction AI for VaultOS, a personal finance vault app. Extract ALL financial items from the user's text.
+
+User context: currency=${userCur}, country=${userCountry}
+
+Return ONLY a valid JSON object with NO markdown, NO explanation, NO backticks. Format:
+{"detected":[{"type":"TYPE","data":{...},"confidence":0.0-1.0}]}
+
+Types and required data fields:
+
+"bank": {"bankName":"","accountType":"current|savings|isa|basic","accountNumber":"last 4 digits only","balance":0,"currency":"${userCur}","country":"${userCountry}"}
+
+"card": {"cardName":"","last4":"","expiry":"MM/YY","type":"Visa|Mastercard|Amex|Other","creditLimit":0,"currency":"${userCur}","bank":""}
+
+"loan": {"person":"","amount":0,"currency":"${userCur}","type":"lent|borrowed","dueDate":"YYYY-MM-DD or empty","notes":""}
+
+"document": {"docType":"Passport|NIC|CNIC|Driving Licence|Visa|Insurance|Other","holderName":"","docNumber":"show only last 4 chars","expiry":"YYYY-MM-DD or empty","country":"${userCountry}"}
+
+"cash": {"location":"wallet|home|office|safe|other","amount":0,"currency":"${userCur}","notes":""}
+
+"investment": {"investmentName":"","type":"Stocks|Crypto|Mutual Fund|Sukuk|Fixed Deposit|ETF|Other","currentValue":0,"currency":"${userCur}","broker":"","notes":""}
+
+"gold": {"label":"","metal":"gold|silver","weight":0,"unit":"g|tola|oz|kg","notes":""}
+
+"bc": {"name":"","type":"ballot|fixed|bid|auto","members":0,"contribution":0,"currency":"${userCur}","myTurnRound":null,"frequency":"monthly","organiser":"","notes":""}
+
+"bond": {"name":"","typeId":"pb_200|pb_750|pb_1500|pb_7500|pb_15000|pb_25000|pb_40000|premium|nsi_fixed|generic","quantity":1,"faceValue":0,"currency":"${userCur}","country":"${userCountry}","bondNumbers":[],"notes":""}
+
+confidence: 1.0=all fields clear and explicit, 0.8=most fields clear, 0.6=some fields inferred, 0.4=guessed from context
+
+Rules:
+- NEVER store full account/card/document numbers — only last 4 digits
+- If currency not mentioned, use ${userCur}
+- If country not mentioned, use ${userCountry}
+- Extract ALL items you can find, even if confidence is low
+- For gold: 1 tola = 11.66g, common in PK; oz = troy ounce
+- For BC: if user says "committee" or "BC" or "pardner" treat as bc type
+- For prize bonds: detect denomination from amount mentioned`;
+
+      const apiKey = localStorage.getItem('vo_claude_key') || '';
+      const headers = { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-allow-browser': 'true' };
+      if (apiKey) headers['x-api-key'] = apiKey;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1500,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: 'Extract all financial data from this text:\n\n' + text }],
+        }),
       });
-    });
 
-    window._xlRows = allRows;
-    _showRowReview(allRows);
-  }
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        if (response.status === 401) throw new Error('API key required — set your Claude API key in Settings → AI Import Key');
+        throw new Error((err.error && err.error.message) || 'API error ' + response.status);
+      }
 
-  function _showRowReview(rows) {
-    const pr = document.getElementById('xl-preview');
-    if (!pr) return;
+      const data = await response.json();
+      const raw = (data.content || []).map(function(c) { return c.text || ''; }).join('');
 
-    if (!rows.length) {
-      pr.innerHTML = '<div style="color:var(--err);font-size:12px;padding:12px;text-align:center">No importable rows found in this file</div>';
-      return;
+      let parsed;
+      try {
+        const clean = raw.replace(/```json|```/g, '').trim();
+        parsed = JSON.parse(clean);
+      } catch(e) {
+        throw new Error('AI returned invalid JSON. Try rephrasing your input.');
+      }
+
+      const detected = parsed.detected || [];
+      if (!detected.length) {
+        if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">No financial data detected. Try being more specific.</div>';
+        return;
+      }
+
+      this._results = detected;
+      this._renderResults(detected, resultsEl);
+
+    } catch(e) {
+      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(255,69,58,.1);border:1px solid rgba(255,69,58,.3);border-radius:12px;padding:14px;color:var(--err);font-size:13px">❌ ' + (e.message || 'Detection failed') + '</div>';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '🔍 Detect & Extract Data'; }
     }
+  },
 
-    const dupCount = rows.filter(r => r.isDuplicate).length;
-    const summary = `<div style="background:var(--glass2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span style="flex:1"><strong>${rows.length} row${rows.length!==1?'s':''}</strong> detected${dupCount ? ` · <span style="color:var(--warn)">${dupCount} possible duplicate${dupCount!==1?'s':''}</span>` : ''}</span>
-      <button class="btn btn-sm" style="padding:3px 10px;font-size:11px" onclick="ExcelImport._toggleAll(true)">All</button>
-      <button class="btn btn-sm" style="padding:3px 10px;font-size:11px" onclick="ExcelImport._toggleAll(false)">None</button>
-    </div>`;
+  _renderResults(detected, container) {
+    if (!container) return;
+    const typeLabels = { bank:'🏦 Bank', card:'💳 Card', loan:'🤝 Loan', document:'🪪 Document', cash:'💵 Cash', investment:'📈 Investment', gold:'🥇 Metal', bc:'🤝 Committee', bond:'🎫 Bond' };
+    const typeColors = { bank:'rgba(91,141,238,.15)', card:'rgba(52,199,89,.15)', loan:'rgba(255,159,10,.15)', document:'rgba(91,141,238,.15)', cash:'rgba(52,199,89,.15)', investment:'rgba(122,168,245,.15)', gold:'rgba(201,168,76,.15)', bc:'rgba(91,141,238,.15)', bond:'rgba(201,168,76,.15)' };
 
-    const cards = rows.map(r => {
-      const icon = TYPE_ICONS[r.type] || '📋';
-      const dupBadge = r.isDuplicate
-        ? `<span style="background:rgba(255,180,0,0.15);color:var(--warn);border:1px solid rgba(255,180,0,0.4);border-radius:99px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0">⚠️ Duplicate</span>`
-        : '';
-      const fieldsHtml = Object.entries(r.data).filter(([,v])=>v).map(([k,v])=>
-        `<div style="display:flex;gap:6px;margin-bottom:2px;font-size:11px"><span style="color:var(--text3);min-width:80px;flex-shrink:0">${k}</span><span style="color:var(--text);font-weight:500;word-break:break-all">${v}</span></div>`
-      ).join('');
+    let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+      '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
+      '<button class="btn btn-p btn-sm" onclick="AIImport.importSelected()">✅ Import Selected</button>' +
+    '</div>';
 
-      return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:7px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-          <input type="checkbox" id="xlr-chk-${r.idx}" ${r.isDuplicate ? '' : 'checked'} style="width:15px;height:15px;accent-color:var(--accent);flex-shrink:0">
-          <span style="font-size:18px;flex-shrink:0">${icon}</span>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12px;font-weight:700;text-transform:capitalize">${r.type}</div>
-            <div style="font-size:10px;color:var(--text3)">${r.sheetName}</div>
-          </div>
-          ${dupBadge}
-        </div>
-        <div style="padding-left:24px">${fieldsHtml}</div>
-      </div>`;
+    html += detected.map(function(item, i) {
+      const conf = item.confidence || 0;
+      const borderColor = conf >= 0.9 ? 'rgba(52,199,89,.5)' : conf >= 0.7 ? 'rgba(255,159,10,.5)' : 'rgba(255,69,58,.5)';
+      const confLabel = conf >= 0.9 ? '✓ High confidence' : conf >= 0.7 ? '~ Medium confidence' : '? Low confidence — please verify';
+      const confColor = conf >= 0.9 ? 'var(--ok)' : conf >= 0.7 ? 'var(--warn)' : 'var(--err)';
+      const fields = Object.entries(item.data || {}).filter(function(e) { return e[1] !== null && e[1] !== '' && e[1] !== 0 && !(Array.isArray(e[1]) && !e[1].length); });
+
+      return '<div style="background:' + (typeColors[item.type] || 'var(--glass)') + ';border:1px solid ' + borderColor + ';border-radius:14px;padding:14px;margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
+          '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1">' +
+            '<input type="checkbox" id="ie-chk-' + i + '" checked style="width:18px;height:18px;cursor:pointer">' +
+            '<div style="font-size:14px;font-weight:700;color:var(--text)">' + (typeLabels[item.type] || item.type) + '</div>' +
+          '</label>' +
+          '<div style="font-size:10px;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px">' +
+          fields.map(function(e) {
+            const key = e[0], val = e[1];
+            const displayVal = Array.isArray(val) ? val.join(', ') : String(val);
+            return '<div style="display:flex;align-items:center;gap:8px">' +
+              '<div style="font-size:11px;color:var(--text3);min-width:100px;text-transform:capitalize">' + key.replace(/([A-Z])/g, ' $1').trim() + '</div>' +
+              '<input style="flex:1;background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px" ' +
+                'value="' + displayVal.replace(/"/g, '&quot;') + '" ' +
+                'oninput="AIImport._results[' + i + '].data[\'' + key + '\']=this.value">' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
     }).join('');
 
-    pr.innerHTML = summary + cards;
+    html += '<button class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">✅ Import All Selected Items</button>';
+    container.innerHTML = html;
+  },
 
-    const btn = document.getElementById('xl-confirm');
-    if (btn) btn.style.display = '';
-  }
+  importSelected() {
+    const results = this._results;
+    if (!results || !results.length) { Toast.show('Nothing to import', 'warn'); return; }
 
-  function _toggleAll(state) {
-    (window._xlRows || []).forEach(r => {
-      const el = document.getElementById('xlr-chk-' + r.idx);
-      if (el) el.checked = state;
-    });
-  }
+    let count = 0;
+    const now = new Date().toISOString();
 
-  // ── Confirm import ─────────────────────────────────────────────────────────
+    results.forEach(function(item, i) {
+      const chk = document.getElementById('ie-chk-' + i);
+      if (chk && !chk.checked) return;
 
-  function _confirmImportRows() {
-    const rows = window._xlRows || [];
-    if (!rows.length) return;
+      const d = item.data || {};
+      const id = Math.random().toString(36).slice(2);
 
-    let saved = 0, skipped = 0;
-    const byType = {};
-
-    rows.forEach(r => {
-      const chk = document.getElementById('xlr-chk-' + r.idx);
-      if (!chk || !chk.checked) return;
-      const result = _saveRow(r.type, r.data);
-      if (result.saved) {
-        saved++;
-        byType[r.type] = (byType[r.type] || 0) + 1;
-      } else if (result.skipped) {
-        skipped++;
+      if (item.type === 'bank') {
+        if (!S.banks) S.banks = [];
+        S.banks.push({ id, bankName: d.bankName||'', accountType: d.accountType||'current', accountNumber: d.accountNumber||'', balance: parseFloat(d.balance)||0, currency: d.currency||'PKR', country: d.country||'PK', createdAt: now });
+        count++;
+      } else if (item.type === 'card') {
+        if (!S.cards) S.cards = [];
+        S.cards.push({ id, cardName: d.cardName||'', last4: d.last4||'', expiry: d.expiry||'', type: d.type||'Visa', creditLimit: parseFloat(d.creditLimit)||0, currency: d.currency||'PKR', bank: d.bank||'', createdAt: now });
+        count++;
+      } else if (item.type === 'loan') {
+        if (!S.loans) S.loans = [];
+        S.loans.push({ id, person: d.person||'', amount: parseFloat(d.amount)||0, currency: d.currency||'PKR', type: d.type||'lent', dueDate: d.dueDate||'', notes: d.notes||'', status: 'Active', createdAt: now });
+        count++;
+      } else if (item.type === 'document') {
+        if (!S.documents) S.documents = [];
+        S.documents.push({ id, docType: d.docType||'Other', holderName: d.holderName||'', docNumber: d.docNumber||'', expiryDate: d.expiry||'', country: d.country||'PK', createdAt: now });
+        count++;
+      } else if (item.type === 'cash') {
+        if (!S.cash) S.cash = [];
+        S.cash.push({ id, location: d.location||'wallet', amount: parseFloat(d.amount)||0, currency: d.currency||'PKR', notes: d.notes||'', createdAt: now });
+        count++;
+      } else if (item.type === 'investment') {
+        if (!S.investments) S.investments = [];
+        S.investments.push({ id, investmentName: d.investmentName||'', type: d.type||'Stocks', currentValue: parseFloat(d.currentValue)||0, amountInvested: parseFloat(d.currentValue)||0, currency: d.currency||'PKR', broker: d.broker||'', notes: d.notes||'', createdAt: now });
+        count++;
+      } else if (item.type === 'gold') {
+        const goldItems = JSON.parse(localStorage.getItem('vo_gold') || '[]');
+        goldItems.push({ label: d.label||'', metal: d.metal||'gold', weight: parseFloat(d.weight)||0, unit: d.unit||'g', useManualPrice: false, pricePerUnit: 0, notes: d.notes||'', updatedAt: now });
+        localStorage.setItem('vo_gold', JSON.stringify(goldItems));
+        count++;
+      } else if (item.type === 'bc') {
+        if (!S.bc) S.bc = [];
+        S.bc.push({ id, name: d.name||'', type: d.type||'ballot', members: parseInt(d.members)||0, contribution: parseFloat(d.contribution)||0, currency: d.currency||'PKR', frequency: d.frequency||'monthly', myTurnRound: d.myTurnRound||null, totalRounds: parseInt(d.members)||0, currentRound: 1, organiser: d.organiser||'', notes: d.notes||'', memberList: [], paymentHistory: [], createdAt: now, updatedAt: now });
+        count++;
+      } else if (item.type === 'bond') {
+        if (!S.bonds) S.bonds = [];
+        S.bonds.push({ id, name: d.name||'Bond', typeId: d.typeId||'generic', quantity: parseInt(d.quantity)||1, faceValue: parseFloat(d.faceValue)||0, amount: parseFloat(d.faceValue)||0, currency: d.currency||'PKR', country: d.country||'PK', bondNumbers: Array.isArray(d.bondNumbers) ? d.bondNumbers : [], notes: d.notes||'', purchaseDate: '', maturityDate: '', annualRate: 0, createdAt: now, updatedAt: now });
+        count++;
       }
     });
 
-    if (saved > 0) {
+    if (count > 0) {
       Store.save();
       if (typeof buildNav === 'function') buildNav();
-      if (window._xlCurrentFile) _recordFileHash(window._xlCurrentFile);
+      Toast.show('Imported ' + count + ' item' + (count > 1 ? 's' : '') + ' ✓', 'success');
+      this._results = [];
+      const resultsEl = document.getElementById('ie-results');
+      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.3);border-radius:12px;padding:14px;text-align:center;color:var(--ok);font-size:14px;font-weight:700">✓ ' + count + ' item' + (count > 1 ? 's' : '') + ' imported successfully</div>';
+    } else {
+      Toast.show('No items selected', 'warn');
     }
+  },
 
-    const typeSummary = Object.entries(byType).map(([t, n]) => `${n} ${t}${n!==1?'s':''}`).join(', ');
-    const msg = saved > 0
-      ? `Imported ${saved} item${saved!==1?'s':''} (${typeSummary})${skipped>0?' · skipped '+skipped+' duplicate'+(skipped!==1?'s':''):''}`
-      : skipped > 0 ? `All ${skipped} row${skipped!==1?'s were':' was'} duplicate${skipped!==1?'s':''} — nothing imported`
-      : 'Nothing imported';
-
-    Activity.log('Excel Import', msg);
-    Modal.close();
-    Toast.show(msg, saved > 0 ? 'success' : 'warning', 5000);
-    const pg = S.currentPage;
-    if (pg) setTimeout(() => R.goto(pg), 300);
-  }
-
-  return { open, _onFile, _onDrop, _confirmImportRows, _toggleAll };
-})();
-
+  parseText(text) {
+    const el = document.getElementById('ie-paste');
+    if (el) el.value = text;
+    this.detect();
+  },
+};
+window.AIImport = AIImport;

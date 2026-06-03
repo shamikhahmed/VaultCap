@@ -251,3 +251,136 @@ VaultOS is built by Shamikh Ahmed — independently, with no company or investor
 ---
 
 *VaultOS © 2026 Shamikh Ahmed. Source-available. See LICENSE.*
+
+---
+
+## Committee (BC) — Rotating Savings Groups
+
+VaultOS tracks **ballot committees (BC)**, known as BC in Pakistan, pardner in the UK, jamiya in the Middle East, and susu in West Africa.
+
+### Adding a BC
+Go to **Finance → Committee (BC) → + Join / Create a BC**. Fill in:
+- **Name** — e.g. "Family BC 2026"
+- **Role** — Participant (you're a member) or Organiser (you manage it)
+- **Type** — Ballot (random draw), Fixed Order (pre-agreed), Bid-based (premium), Auto-deduction
+- **Members & Contribution** — the pot is calculated automatically
+- **My Turn (Round #)** — which round you receive the pot (leave blank if not drawn yet)
+- **Payment Day** — which day of the month payments are due
+
+### Ballot Draw
+If you're the organiser and the type is Ballot, open the committee detail and tap **Run Ballot Draw** to randomly assign the next round's winner.
+
+### Islamic Ruling on BC
+Pure rotating committees (no premium, no interest) are generally permissible per contemporary scholars including Mufti Taqi Usmani. Bid-based BCs are flagged with a warning as scholars differ on their permissibility.
+
+### Zakat on BC Money
+Money you've paid into a BC that you haven't yet received is **zakatable as a receivable** — it's your money held by the group. This is auto-added to your Zakat calculator.
+
+---
+
+## Prize Bonds & Government Securities
+
+Track prize bonds, premium bonds, NSS certificates, and government securities across Pakistan, UK, and UAE.
+
+### Adding Bonds
+Go to **Finance → Prize Bonds & Savings → + Add Bond / Security**. Select the bond type — VaultOS knows the draw months for each denomination automatically.
+
+### Bulk Import
+Tap **Bulk Import Bond Numbers** to paste a list of bond numbers (one per line). Select the denomination and they're all imported at once.
+
+### Upcoming Draws
+VaultOS shows when your next draw is and links directly to the official results page (CDNS for Pakistan, NS&I for UK).
+
+### Zakat on Prize Bonds
+Prize bonds are zakatable at **face value** — the total value of all your bonds is automatically added to your Zakat calculator.
+
+---
+
+## Live Rates (Gold, Silver & Currency)
+
+VaultOS fetches live exchange rates and metal prices automatically when you unlock your vault.
+
+- **Exchange rates** — updated from open.er-api.com (free, USD-based)
+- **Gold & Silver prices** — updated from api.metals.live (per troy ounce)
+- **Cache** — rates are cached for 6 hours. If offline, the last cached rates are used.
+- **Manual override** — in the Currency module, tap any rate field to override it manually. Tap "Use live ↺" to revert.
+
+### Gold Net Worth
+If you've added gold or silver holdings, VaultOS values them at the **live market price** automatically. Your dashboard net worth reflects the current market value.
+
+---
+
+## Zakat Calculator
+
+VaultOS includes a comprehensive Zakat calculator built on AAOIFI standards and classical fiqh.
+
+### Nisab
+Two standards are supported:
+- **Silver nisab** — 612.36g of silver (52.5 tola) — default, recommended by Hanafi scholars for mixed assets
+- **Gold nisab** — 87.48g of gold (7.5 tola) — stricter standard
+
+Both thresholds are calculated at **live market prices** and shown in your currency.
+
+### Hawl Tracker
+Enter the date your wealth first crossed the nisab threshold. VaultOS tracks the 354-day lunar year and shows how many days remain until Zakat becomes due.
+
+### Auto-Fill from Vault
+All your vault data is automatically read:
+- Cash and bank balances
+- Investments (with trading vs long-term type selector — AAOIFI: trading=100%, long-term=25%)
+- Gold and silver at live prices
+- Loans given out (receivables)
+- BC committee money paid in (receivable)
+- Prize bonds at face value
+
+All fields are editable — tap any field to adjust before calculating.
+
+### Multi-Currency Result
+Zakat due is shown in your currency plus GBP, AED, and PKR equivalents.
+
+---
+
+## Tax Calculator
+
+Go to **Finance → Tax** and select your country tab:
+
+- **🇵🇰 Pakistan** — FBR income tax slabs 2024-25, effective rate, monthly take-home
+- **🇬🇧 UK** — Income tax bands + National Insurance (2024-25), your tax band, take-home
+- **🇦🇪 UAE** — No personal income tax; corporate tax calculator (9% above AED 375,000)
+
+---
+
+## Widget (Home Screen Snapshot)
+
+Go to **Settings → Home Screen Widget** to open the widget page. Add it to your iPhone/Android home screen:
+- **iPhone**: Safari → Share → Add to Home Screen
+- **Android**: Chrome → Menu → Add to Home Screen
+
+The widget shows your net worth, vault health, expiring items, and backup status — all read from a local snapshot updated every time you unlock.
+
+---
+
+## Notifications
+
+Go to **Settings → Notifications** and tap **Enable** to allow browser notifications.
+
+VaultOS will alert you when:
+- Documents expire in the next 7 days
+- Cards expire in the next 30 days
+- Loans are due in the next 7 days
+- BC payments are due in 3 days
+
+Notifications fire automatically 2.5 seconds after you unlock your vault.
+
+---
+
+## QR Sync
+
+Transfer your vault to another device without cloud storage:
+
+1. On the **source device**: Settings → Sync → Export via QR
+2. Scan all QR codes shown (large vaults split into multiple chunks)
+3. On the **receiving device**: Settings → Sync → Import via QR
+4. Scan the same QR codes — data merges automatically
+
+Data is compressed and transferred as base64 chunks. No internet required.

@@ -10,7 +10,7 @@ const GlobalSearch={
         <button onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
       </div>
       <div style="display:flex;overflow-x:auto;gap:6px;scrollbar-width:none;padding-bottom:2px">
-        ${['all','bank','card','investment','sim','asset','expense','email','gadget','digital'].map(f=>`<div class="search-chip${GlobalSearch.activeFilter===f?' on':''}" onclick="GlobalSearch.setFilter('${f}')">${{all:'All',bank:'🏦 Banks',card:'💳 Cards',investment:'📈 Invest',sim:'📱 SIMs',asset:'🏠 Assets',expense:'🔄 Subs',email:'📧 Emails',gadget:'💻 Devices',digital:'💼 Logins'}[f]}</div>`).join('')}
+        ${['all','bank','card','investment','sim','asset','expense','email','gadget','digital','bc','bond','gold'].map(f=>`<div class="search-chip${GlobalSearch.activeFilter===f?' on':''}" onclick="GlobalSearch.setFilter('${f}')">${{all:'All',bank:'🏦 Banks',card:'💳 Cards',investment:'📈 Invest',sim:'📱 SIMs',asset:'🏠 Assets',expense:'🔄 Subs',email:'📧 Emails',gadget:'💻 Devices',digital:'💼 Logins',bc:'🤝 BC',bond:'🎫 Bonds',gold:'🥇 Metals'}[f]}</div>`).join('')}
       </div>
     </div>
     <div id="gs-results" style="padding:8px 0"></div>`;
@@ -50,7 +50,10 @@ const GlobalSearch={
     S.emails.forEach(e=>addM('email','📧',e.email||'',e.provider+' · '+e.purpose+(e.mfaEnabled?' · 2FA✓':''),e.id,()=>Emails.detail(e.id)));
     S.gadgets.forEach(g=>addM('gadget',g.ic||'💻',g.name||'',g.brand+(g.storage?' · '+g.storage:'')+(g.serialNum?' · S/N '+g.serialNum:''),g.id,()=>Gadgets.detail(g.id)));
     S.digital.forEach(d=>addM('digital','💼',d.serviceName||'',(d.username?'@'+d.username:'')+' '+d.category,d.id,()=>Digital.detail(d.id)));
-    const label={bank:'Bank',card:'Card',investment:'Investment',sim:'SIM',asset:'Asset',expense:'Subscription',email:'Email',gadget:'Device',digital:'Login'};
+    (S.bc||[]).forEach(bc=>addM('bc','🤝',bc.name||'BC',(bc.currency||'PKR')+' '+(bc.contribution||0).toLocaleString()+'/round · '+(bc.members||0)+' members',bc.id,()=>R.goto('bc')));
+    (S.bonds||[]).forEach(b=>addM('bond','🎫',b.name||'Bond',(b.typeId||'Bond')+' · '+(b.currency||'PKR')+' '+((b.quantity||1)*(b.faceValue||0)).toLocaleString()+' · '+(b.quantity||1)+' bond'+(b.quantity>1?'s':''),b.id,()=>R.goto('bonds')));
+    try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');gi.forEach((g,i)=>addM('gold',g.metal==='silver'?'🥈':'🥇',g.label||(g.metal==='silver'?'Silver':'Gold'),(g.metal==='silver'?'Silver':'Gold')+' · '+g.weight+' '+(g.unit||'g'),'gold_'+i,()=>R.goto('gold')));}catch(e){}
+    const label={bank:'Bank',card:'Card',investment:'Investment',sim:'SIM',asset:'Asset',expense:'Subscription',email:'Email',gadget:'Device',digital:'Login',bc:'Committee',bond:'Bond',gold:'Metal'};
     if(!matches.length){
       el.innerHTML=`<div class="empty"><div class="empty-ic">🔍</div><h3>${q?'Nothing found for "'+q+'"':'Your vault is empty'}</h3><p>${q?'Try different keywords or change the filter':'Add entries from the + button or any module tab'}</p></div>`;
       return;
