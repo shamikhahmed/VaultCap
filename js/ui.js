@@ -183,6 +183,17 @@ const Dash={
     <!-- MODULE GRID -->
     ${activeMods.length > 0 ? `<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>` : ''}
 
+    <!-- SMART COLLECTIONS -->
+    ${(() => {
+      const cols = [
+        { label:'Expiring Soon', icon:'⚠️', count:allExpiring.length, action:"R.goto('alerts')", color:'rgba(255,152,0,.1)', border:'rgba(255,152,0,.3)' },
+        { label:'Archived', icon:'📦', count:[...(S.banks||[]),...(S.cards||[])].filter(x=>x.archived).length, action:"R.goto('banks')", color:'rgba(123,95,255,.1)', border:'rgba(123,95,255,.3)' },
+        { label:'Loans Active', icon:'🤝', count:(S.loans||[]).filter(l=>l.status!=='Settled').length, action:"R.goto('loans')", color:'rgba(255,69,58,.1)', border:'rgba(255,69,58,.3)' },
+        { label:'Investments', icon:'📈', count:(S.investments||[]).length, action:"R.goto('investments')", color:'rgba(0,213,255,.1)', border:'rgba(0,213,255,.3)' },
+      ].filter(c => c.count > 0);
+      return cols.length ? `<div style="margin:0 16px 16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div onclick="${c.action}" style="background:${c.color};border:1px solid ${c.border};border-radius:12px;padding:12px 14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px"><span style="font-size:20px">${c.icon}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
+    })()}
+
     <!-- RECENT ACTIVITY -->
     ${S.activity.length > 0 ? `
     <div style="margin:16px 16px 24px">
@@ -1603,6 +1614,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
     </div></div>
+    <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.showReport()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
       ${[
         {label:'Encryption',val:'AES-256-GCM ✅',ok:true},

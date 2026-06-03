@@ -71,6 +71,91 @@ const Tags = {
   PRESETS: ['personal', 'business', 'uk', 'pakistan', 'uae', 'halal', 'urgent', 'archived', 'family', 'tax-related', 'investment'],
 };
 
+// ===================== VAULT RELATIONS =====================
+const VaultRelations = {
+  cardsForBank(bankId) {
+    return (S.cards || []).filter(c => c.linkedBankId === bankId || c.linkedBank === (S.banks||[]).find(b => b.id === bankId)?.bankName);
+  },
+  loansForContact(contactId) {
+    return (S.loans || []).filter(l => {
+      const contact = (S.friends || []).find(f => f.id === contactId);
+      return contact && l.person === contact.name;
+    });
+  },
+  docsForMember(memberId) {
+    const family = typeof Family !== 'undefined' ? Family.get() : null;
+    if (!family) return [];
+    const member = memberId === 'head' ? family.head : family.members?.[memberId];
+    return member?.docs || [];
+  },
+  bankSummary(bankId) {
+    const bank = (S.banks || []).find(b => b.id === bankId);
+    if (!bank) return null;
+    const cards = this.cardsForBank(bankId);
+    return { bank, cards, cardCount: cards.length, jointWith: bank.jointWith || null };
+  },
+  byTag(tag) {
+    const results = [];
+    const search = (arr, type) => (arr || []).filter(x => (x.tags || []).includes(tag)).forEach(x => results.push({...x, _type: type}));
+    search(S.banks, 'bank'); search(S.cards, 'card'); search(S.documents, 'document');
+    search(S.investments, 'investment'); search(S.loans, 'loan'); search(S.cash, 'cash');
+    return results;
+  },
+  loanNetImpact() {
+    const fx = typeof getFX === 'function' ? getFX() : {PKR:1,GBP:355,USD:280,AED:76};
+    const toBase = (amt, cur) => (amt || 0) * (fx[cur] || 1);
+    const owe = (S.loans || []).filter(l => l.type === 'borrowed' && l.status !== 'Settled').reduce((a, l) => a + toBase(l.amount, l.currency || 'PKR'), 0);
+    const owed = (S.loans || []).filter(l => l.type === 'lent' && l.status !== 'Settled').reduce((a, l) => a + toBase(l.amount, l.currency || 'PKR'), 0);
+    return { owe, owed, net: owed - owe };
+  },
+};
+
+// ===================== DATA INTEGRITY =====================
+const DataIntegrity = {
+  cleanOrphanedBankLinks() {
+    const bankIds = new Set((S.banks || []).map(b => b.id));
+    let fixed = 0;
+    (S.cards || []).forEach(c => { if (c.linkedBankId && !bankIds.has(c.linkedBankId)) { c.linkedBankId = ''; fixed++; } });
+    return fixed;
+  },
+  findDuplicateBanks() {
+    const seen = {};
+    return (S.banks || []).filter(b => { const key = (b.bankName || '').toLowerCase() + '|' + (b.country || ''); if (seen[key]) return true; seen[key] = true; return false; });
+  },
+  findDuplicateCards() {
+    const seen = {};
+    return (S.cards || []).filter(c => { if (!c.last4) return false; const key = (c.last4 || '') + '|' + (c.network || '').toLowerCase(); if (seen[key]) return true; seen[key] = true; return false; });
+  },
+  expiredDocs() {
+    const now = new Date();
+    return (S.documents || []).filter(d => d.expiry && new Date(d.expiry) < now);
+  },
+  run() {
+    const orphanedLinks = this.cleanOrphanedBankLinks();
+    const dupBanks = this.findDuplicateBanks();
+    const dupCards = this.findDuplicateCards();
+    const expiredDocs = this.expiredDocs();
+    if (orphanedLinks > 0) Store.save();
+    return { orphanedLinks, dupBanks: dupBanks.length, dupCards: dupCards.length, expiredDocs: expiredDocs.length, issues: orphanedLinks + dupBanks.length + dupCards.length };
+  },
+  showReport() {
+    const r = this.run();
+    const lines = [
+      r.orphanedLinks > 0 ? `✅ Fixed ${r.orphanedLinks} orphaned card-bank link(s)` : '✅ No orphaned links',
+      r.dupBanks > 0 ? `⚠️ ${r.dupBanks} possible duplicate bank(s) found` : '✅ No duplicate banks',
+      r.dupCards > 0 ? `⚠️ ${r.dupCards} possible duplicate card(s) found` : '✅ No duplicate cards',
+      r.expiredDocs > 0 ? `⚠️ ${r.expiredDocs} expired document(s)` : '✅ No expired documents',
+    ];
+    Modal.open('🔍 Vault Integrity Check',
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        ${lines.map(l => `<div style="padding:12px 14px;background:var(--glass);border-radius:10px;font-size:13px;color:var(--text)">${l}</div>`).join('')}
+        ${r.issues === 0 ? '<div style="text-align:center;margin-top:8px;font-size:13px;color:var(--ok)">Vault is clean ✓</div>' : ''}
+      </div>`,
+      `<button class="btn btn-p" onclick="Modal.close()">Done</button>`
+    );
+  },
+};
+
 const COUNTRIES=[
   {c:'PK',n:'Pakistan',f:'🇵🇰',p:'+92'},{c:'GB',n:'United Kingdom',f:'🇬🇧',p:'+44'},
   {c:'AE',n:'UAE',f:'🇦🇪',p:'+971'},{c:'US',n:'United States',f:'🇺🇸',p:'+1'},
@@ -1520,6 +1605,12 @@ const R = {
       const dashPb = document.getElementById('dashBody');
       if (dashPb) pullToRefresh(dashPb, () => Dash.render());
     }, 500);
+    setTimeout(() => {
+      if (typeof DataIntegrity !== 'undefined') {
+        const r = DataIntegrity.run();
+        if (r.issues > 0) Toast.show(`🔍 Vault scan: ${r.issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
+      }
+    }, 2000);
     // Auto-purge trash items older than 30 days
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const before = (S.trash||[]).length;
@@ -2921,16 +3012,35 @@ const CMD = {
       ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ icon:i, label:l, action:a, cat })));
     } else {
       const fm = this.fuzzyMatch.bind(this);
-      this._allCmds.filter(c => fm(c.label, ql)).slice(0, 5).forEach(c => cmdRes.push({...c, cat:'Actions'}));
-      S.banks.filter(b => fm(b.bankName || '', ql)).slice(0, 4).forEach(b => cmdRes.push({ icon:'🏦', label:b.bankName + ' · ' + b.currency + (b.last4 ? ' ****' + b.last4 : ''), cat:'Banks', action:()=>Banks.detail(b.id) }));
-      S.cards.filter(cv => fm(cv.cardName || '', ql) || fm(cv.last4 || '', ql)).slice(0, 4).forEach(cv => cmdRes.push({ icon:'💳', label:cv.cardName + (cv.last4 ? ' ****' + cv.last4 : ''), cat:'Cards', action:()=>Cards.openDetail(cv.id) }));
-      S.investments.filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).slice(0, 3).forEach(i => cmdRes.push({ icon:'📈', label:i.investmentName || i.broker, cat:'Investments', action:()=>Inv.edit(i.id) }));
-      S.emails.filter(e => fm(e.email, ql) || fm(e.provider || '', ql)).slice(0, 3).forEach(e => cmdRes.push({ icon:'📧', label:e.email, cat:'Emails', action:()=>Emails.detail(e.id) }));
-      S.gadgets.filter(g => fm(g.name, ql) || fm(g.brand || '', ql) || fm(g.serialNum || '', ql)).slice(0, 3).forEach(g => cmdRes.push({ icon:g.ic || '💻', label:g.name + (g.storage ? ' · ' + g.storage : ''), cat:'Devices', action:()=>Gadgets.detail(g.id) }));
-      S.digital.filter(d => fm(d.serviceName, ql) || fm(d.username || '', ql)).slice(0, 3).forEach(d => cmdRes.push({ icon:'💼', label:d.serviceName + (d.username ? ' · @' + d.username : ''), cat:'Logins', action:()=>Digital.detail(d.id) }));
-      S.expenses.filter(e => fm(e.name, ql)).slice(0, 3).forEach(e => cmdRes.push({ icon:e.icon || '📋', label:e.name + ' · ' + e.currency + ' ' + e.amount + '/mo', cat:'Expenses', action:()=>Exp.edit(e.id) }));
-      S.assets.filter(a => fm(a.name, ql) || fm(a.assetType || '', ql)).slice(0, 3).forEach(a => cmdRes.push({ icon:'🏠', label:a.name, cat:'Assets', action:()=>Assets.edit(a.id) }));
-      S.sims.filter(s => fm(s.network, ql) || fm(s.phone || '', ql)).slice(0, 3).forEach(s => cmdRes.push({ icon:'📱', label:s.network + ' ' + U.flag(s.country), cat:'SIMs', action:()=>Sims.detail(s.id) }));
+      const score = (name, q) => {
+        const nl = (name||'').toLowerCase();
+        if (nl === q) return 10;
+        if (nl.startsWith(q)) return 7;
+        if (nl.includes(q)) return 3;
+        return 1;
+      };
+      const weighted = [];
+      this._allCmds.filter(c => fm(c.label, ql)).slice(0, 5).forEach(c => weighted.push({...c, cat:'Actions', _score:score(c.label,ql)+5}));
+      (S.banks||[]).filter(b => fm(b.bankName || '', ql) || fm(b.notes || '', ql) || (b.tags||[]).some(t=>fm(t,ql))).forEach(b => {
+        const s = score(b.bankName,ql) + (fm(b.notes||'',ql)?1:0); weighted.push({ icon:'🏦', label:b.bankName, subtitle:b.currency+(b.last4?' · ****'+b.last4:''), badge:'Bank', cat:'Banks', action:()=>Banks.detail(b.id), _score:s });
+      });
+      (S.cards||[]).filter(cv => fm(cv.cardName || '', ql) || fm(cv.last4 || '', ql) || (cv.tags||[]).some(t=>fm(t,ql))).forEach(cv => {
+        const linkedBank = cv.linkedBankId ? (S.banks||[]).find(b=>b.id===cv.linkedBankId)?.bankName : cv.linkedBank;
+        const s = score(cv.cardName,ql) + (fm(cv.last4||'',ql)?2:0); weighted.push({ icon:'💳', label:cv.cardName+(cv.last4?' ****'+cv.last4:''), subtitle:linkedBank?'Linked to: '+linkedBank:(cv.network||''), badge:'Card', cat:'Cards', action:()=>Cards.openDetail(cv.id), _score:s });
+      });
+      (S.investments||[]).filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).forEach(i => weighted.push({ icon:'📈', label:i.investmentName||i.broker, subtitle:i.broker||'', badge:'Investment', cat:'Investments', action:()=>Inv.edit(i.id), _score:score(i.investmentName||i.broker,ql) }));
+      (S.loans||[]).filter(l => fm(l.person||'',ql) || fm(l.description||'',ql)).forEach(l => weighted.push({ icon:'🤝', label:l.person||'Loan', subtitle:(l.type==='lent'?'Lent':'Borrowed')+' · '+(l.currency||'')+(l.amount?' '+l.amount:''), badge:'Loan', cat:'Loans', action:()=>Loans.openAdd(), _score:score(l.person||'',ql) }));
+      (S.documents||[]).filter(d => fm(d.title||d.type||'',ql) || fm(d.docNumber||'',ql)).forEach(d => weighted.push({ icon:'🪪', label:d.title||d.type||'Document', subtitle:d.docNumber?'#'+d.docNumber:'', badge:'Doc', cat:'Documents', action:()=>DocsModule.render(), _score:score(d.title||d.type||'',ql) }));
+      (S.emails||[]).filter(e => fm(e.email, ql) || fm(e.provider || '', ql)).slice(0, 3).forEach(e => weighted.push({ icon:'📧', label:e.email, subtitle:e.provider||'', badge:'Email', cat:'Emails', action:()=>Emails.detail(e.id), _score:score(e.email,ql) }));
+      (S.gadgets||[]).filter(g => fm(g.name, ql) || fm(g.brand || '', ql) || fm(g.serialNum || '', ql)).slice(0, 3).forEach(g => weighted.push({ icon:g.ic || '💻', label:g.name+(g.storage?' · '+g.storage:''), subtitle:g.brand||'', badge:'Device', cat:'Devices', action:()=>Gadgets.detail(g.id), _score:score(g.name,ql) }));
+      (S.digital||[]).filter(d => fm(d.serviceName, ql) || fm(d.username || '', ql)).slice(0, 3).forEach(d => weighted.push({ icon:'💼', label:d.serviceName+(d.username?' · @'+d.username:''), subtitle:'', badge:'Login', cat:'Logins', action:()=>Digital.detail(d.id), _score:score(d.serviceName,ql) }));
+      (S.expenses||[]).filter(e => fm(e.name, ql)).slice(0, 3).forEach(e => weighted.push({ icon:e.icon || '📋', label:e.name, subtitle:e.currency+' '+e.amount+'/mo', badge:'Expense', cat:'Expenses', action:()=>Exp.edit(e.id), _score:score(e.name,ql) }));
+      (S.assets||[]).filter(a => fm(a.name, ql) || fm(a.assetType || '', ql)).slice(0, 3).forEach(a => weighted.push({ icon:'🏠', label:a.name, subtitle:a.assetType||'', badge:'Asset', cat:'Assets', action:()=>Assets.edit(a.id), _score:score(a.name,ql) }));
+      (S.sims||[]).filter(s => fm(s.network, ql) || fm(s.phone || '', ql)).slice(0, 3).forEach(s => weighted.push({ icon:'📱', label:s.network+' '+U.flag(s.country), subtitle:s.phone||'', badge:'SIM', cat:'SIMs', action:()=>Sims.detail(s.id), _score:score(s.network,ql) }));
+      (S.cash||[]).filter(c => fm(c.currency||'',ql) || fm(c.note||'',ql)).slice(0,3).forEach(c => weighted.push({ icon:'💵', label:c.currency+(c.amount?' · '+c.amount:''), subtitle:c.note||'', badge:'Cash', cat:'Cash', action:()=>Cash.openAdd(), _score:score(c.currency||'',ql) }));
+      (S.friends||[]).filter(f => fm(f.name||'',ql) || fm(f.phone||'',ql)).slice(0,3).forEach(f => weighted.push({ icon:'👤', label:f.name, subtitle:f.phone||'', badge:'Contact', cat:'Contacts', action:()=>Friends.render(), _score:score(f.name||'',ql) }));
+      weighted.sort((a,b) => (b._score||0)-(a._score||0));
+      weighted.forEach(r => cmdRes.push(r));
       if (!cmdRes.length) cmdRes.push({ icon:'🔍', label:`No results for "${q}"`, cat:'', action:null });
     }
     cmdIdx = -1;
@@ -2950,7 +3060,9 @@ const CMD = {
       if (!r.action) {
         html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${r.icon}</span><span>${labelHtml}</span></div>`;
       } else {
-        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})"><span class="ci-ic">${r.icon}</span><span>${labelHtml}</span></div>`;
+        const badgeHtml = r.badge ? `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(123,95,255,.15);color:rgba(150,120,255,1);border:1px solid rgba(123,95,255,.2);margin-left:auto;flex-shrink:0">${r.badge}</span>` : '';
+        const subHtml = r.subtitle ? `<div style="font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.subtitle}</div>` : '';
+        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${r.icon}</span><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
       }
     });
     document.getElementById('cmdList').innerHTML = html;
