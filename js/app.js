@@ -4,6 +4,7 @@ const THEMES=[
   {id:'graphite', n:'Graphite', g:'dark',  bg:'#1a1a1a', ac:'#c9a84c', gl:'rgba(201,168,76,.18)', cls:'graphite'},
   {id:'cloud',    n:'Cloud',    g:'light', bg:'#ffffff', ac:'#2563eb', gl:'rgba(37,99,235,.12)',   cls:'light cloud'},
   {id:'ivory',    n:'Ivory',    g:'light', bg:'#faf9f7', ac:'#2d6a4f', gl:'rgba(45,106,79,.12)',   cls:'light ivory'},
+  {id:'blossom',  n:'Blossom',  g:'light', bg:'#fff5f7', ac:'#e91e8c', gl:'rgba(233,30,140,.12)', cls:'light blossom'},
 ];
 
 const ALL_MODULES=[

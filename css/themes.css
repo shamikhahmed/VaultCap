@@ -49,3 +49,30 @@ body.light.ivory {
   --ok: #2d6a4f; --warn: #b45309; --err: #b91c1c; --info: #1e6091;
   --purple: #6d4c8e; --on-accent: #ffffff; --input: rgba(0,0,0,.05); --r: 14px;
 }
+
+/* ─ Blossom pink light theme ─ */
+body.light.blossom {
+  --bg: #fff5f7;
+  --bg2: #ffe8f0;
+  --bg3: #ffd6e7;
+  --glass: rgba(233,30,140,.04);
+  --glass2: rgba(233,30,140,.07);
+  --glass3: rgba(233,30,140,.12);
+  --border: rgba(233,30,140,.15);
+  --border2: rgba(233,30,140,.25);
+  --border3: rgba(233,30,140,.35);
+  --text: #1a0a0f;
+  --text2: #4a1a2e;
+  --text3: #9a6a7e;
+  --accent: #e91e8c;
+  --accent2: #f06292;
+  --glow: rgba(233,30,140,.2);
+  --ok: #2e7d32;
+  --warn: #e65100;
+  --err: #c62828;
+  --info: #1565c0;
+  --purple: #7b1fa2;
+  --on-accent: #ffffff;
+  --input: rgba(233,30,140,.05);
+  --r: 14px;
+}

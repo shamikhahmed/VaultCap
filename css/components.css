@@ -104,7 +104,7 @@ button, .icb, .key, .ti, .ni, .chip, .wc-act-btn { touch-action: manipulation; }
 .inp[type="date"]  { color-scheme: dark; }
 .inp.valid   { border-color: var(--ok) !important;  box-shadow: 0 0 0 3px rgba(0,200,100,.15) !important; }
 .inp.invalid { border-color: var(--err) !important; box-shadow: 0 0 0 3px rgba(255,64,64,.15) !important; }
-select.inp option { background: #1a1a1a; }
+select.inp option { background: var(--bg, #1a1a1a); color: var(--text, #f0f0f0); }
 textarea.inp { resize: vertical; min-height: 64px; }
 
 .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
@@ -751,7 +751,7 @@ body.light .dash-card {
   background: radial-gradient(ellipse 80% 90% at 15% 70%, var(--glow), transparent 60%);
   pointer-events: none;
 }
-body.light .dash-hero { background: #fff; }
+body.light .dash-hero { background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(37,99,235,.04)); border: 1px solid rgba(37,99,235,.15); }
 body.light .dash-hero::before { background: radial-gradient(ellipse 80% 90% at 15% 70%, rgba(0,128,255,.06), transparent 60%); }
 .dash-label {
   font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
@@ -873,3 +873,136 @@ body.light .dash-mod-item { background: #fff; border-color: rgba(0,0,0,.07); }
 .empty-ios .ei-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
 .empty-ios .ei-sub { font-size: 15px; color: var(--text2); max-width: 260px; line-height: 1.5; margin-bottom: 24px; }
 .empty-ios .btn-p { width: 100%; max-width: 260px; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 700; }
+
+/* ══════════ LIGHT MODE COMPREHENSIVE FIXES ══════════ */
+
+/* Sidebar */
+body.light .sidebar { background: var(--bg2); border-right: 1px solid var(--border); }
+body.light .ni { color: var(--text2); }
+body.light .ni:hover { background: var(--glass2); color: var(--text); }
+body.light .ni.on { background: rgba(37,99,235,.1); color: var(--accent); }
+body.light .sb-logo h1 { color: var(--text); }
+body.light .sb-logo p { color: var(--text3); }
+body.light .sb-logo { border-bottom-color: var(--border); }
+
+/* Pages & content */
+body.light .page { background: var(--bg); }
+body.light .ph { background: var(--bg); border-bottom: 1px solid var(--border); }
+body.light .ph h2 { color: var(--text); }
+body.light .pb { background: var(--bg); }
+
+/* Bottom tabs */
+body.light .btabs { background: var(--bg); border-top: 1px solid var(--border); }
+body.light .ti { color: var(--text3); }
+body.light .ti.on { color: var(--accent); }
+body.light .ti-ic { color: inherit; }
+
+/* Modal */
+body.light .modal { background: var(--bg); border: 1px solid var(--border); box-shadow: 0 8px 40px rgba(0,0,0,.15); }
+body.light .modal-header { background: var(--bg); border-bottom: 1px solid var(--border); color: var(--text); }
+body.light .modal-footer { background: var(--bg2); border-top: 1px solid var(--border); }
+body.light .overlay { background: rgba(0,0,0,.4); }
+
+/* Entry cards */
+body.light .entry { background: var(--bg); border-color: var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+body.light .entry:hover { background: var(--bg2); border-color: var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+body.light .entry-name { color: var(--text); }
+body.light .entry-sub { color: var(--text2); }
+body.light .entry-ic { background: var(--glass2); }
+body.light .icb { color: var(--text3); }
+body.light .icb:hover { background: var(--glass2); color: var(--text); }
+
+/* Buttons */
+body.light .btn-g { background: var(--glass2); border-color: var(--border2); color: var(--text); }
+body.light .btn-g:hover { background: var(--glass3); }
+
+/* Form elements */
+body.light .fg .fl { color: var(--text2); }
+body.light .inp { background: var(--bg); border-color: var(--border); color: var(--text); }
+body.light textarea.inp { background: var(--bg); color: var(--text); }
+body.light select.inp { background: var(--bg); color: var(--text); }
+body.light select.inp option { background: var(--bg); color: var(--text); }
+
+/* Widget / glass cards */
+body.light .widget { background: var(--bg); border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+body.light .wh { color: var(--text); border-bottom-color: var(--border); }
+body.light .glass { background: var(--bg); border: 1px solid var(--border); }
+
+/* Chips & badges */
+body.light .chip { background: var(--glass2); border-color: var(--border); color: var(--text2); }
+body.light .chip.on { background: rgba(37,99,235,.12); border-color: rgba(37,99,235,.3); color: var(--accent); }
+body.light .badge { background: var(--glass2); color: var(--text2); }
+body.light .badge.b-ok { background: rgba(22,163,74,.12); color: #16a34a; }
+body.light .badge.b-err { background: rgba(220,38,38,.12); color: #dc2626; }
+body.light .badge.b-warn { background: rgba(217,119,6,.12); color: #d97706; }
+body.light .badge.b-acc { background: rgba(37,99,235,.12); color: #2563eb; }
+body.light .badge.b-muted { background: var(--glass2); color: var(--text3); }
+body.light .badge.b-info { background: rgba(2,132,199,.12); color: #0284c7; }
+
+/* Search inputs */
+body.light .sq { background: var(--bg2); border-color: var(--border); }
+body.light .sq input { color: var(--text); background: transparent; }
+body.light .sq-ic { color: var(--text3); }
+
+/* Settings */
+body.light .set-card { background: var(--bg); border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+body.light .set-title { color: var(--text3); }
+body.light .si { border-bottom-color: var(--border); }
+body.light .si .name { color: var(--text); }
+body.light .si .desc { color: var(--text3); }
+
+/* FAB */
+body.light .fab { background: var(--accent); box-shadow: 0 4px 16px rgba(37,99,235,.3); }
+body.light .fmi { background: var(--bg); border: 1px solid var(--border); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+
+/* Dashboard sections */
+body.light .dash-sec-label { color: var(--text3); }
+body.light .dash-mod-item { background: var(--bg); border: 1px solid var(--border); }
+body.light .dmi-name { color: var(--text2); }
+body.light .dash-stat { background: var(--bg); border: 1px solid var(--border); }
+
+/* CMD palette */
+body.light #cmdPal { background: rgba(255,255,255,.95); backdrop-filter: blur(20px); }
+body.light .ci { color: var(--text); }
+body.light .ci:hover, body.light .ci.sel { background: rgba(37,99,235,.08); }
+body.light #cmdInput { background: var(--bg2); color: var(--text); border-color: var(--border); }
+
+/* Timeline / activity */
+body.light .tl-dot { background: var(--accent); }
+body.light .tl-line { background: var(--border); }
+
+/* Scrollbars */
+body.light ::-webkit-scrollbar-track { background: var(--bg2); }
+body.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); }
+
+/* Swipe delete */
+body.light .sd-del { color: #fff; }
+
+/* Nav items on light */
+body.light .ni-ic { color: inherit; }
+
+/* Stat rows on dashboard */
+body.light .stat { background: var(--bg); border: 1px solid var(--border); }
+body.light .sv { color: var(--text); }
+body.light .sk { color: var(--text3); }
+
+/* Lock screen */
+body.light #lockScreen { background: var(--bg); }
+body.light .key { background: var(--glass2); color: var(--text); }
+body.light .key:active { background: var(--glass3); }
+
+/* Card wallet */
+body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+
+/* Ivory-specific */
+body.light.ivory .ni.on { background: rgba(45,106,79,.1); color: var(--accent); }
+body.light.ivory .chip.on { background: rgba(45,106,79,.12); border-color: rgba(45,106,79,.3); color: var(--accent); }
+body.light.ivory .fab { background: var(--accent); box-shadow: 0 4px 16px rgba(45,106,79,.3); }
+body.light.ivory .dash-hero { background: linear-gradient(135deg, rgba(45,106,79,.08), rgba(45,106,79,.04)); border-color: rgba(45,106,79,.15); }
+
+/* Blossom-specific */
+body.light.blossom .ni.on { background: rgba(233,30,140,.1); color: var(--accent); }
+body.light.blossom .chip.on { background: rgba(233,30,140,.12); border-color: rgba(233,30,140,.3); color: var(--accent); }
+body.light.blossom .fab { background: var(--accent); box-shadow: 0 4px 16px rgba(233,30,140,.35); }
+body.light.blossom .btn-p { background: var(--accent); }
+body.light.blossom .dash-hero { background: linear-gradient(135deg, rgba(233,30,140,.08), rgba(233,30,140,.04)); border-color: rgba(233,30,140,.15); }
