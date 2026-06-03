@@ -2037,13 +2037,49 @@ const Store = {
 
   _saveWidgetSnapshot() {
     try {
+      const now = Date.now();
+      const in30 = now + 30 * 24 * 60 * 60 * 1000;
+
+      const healthScore = (() => {
+        let score = 0;
+        if (S.user?.name) score += 15;
+        if (S.pin !== '123456') score += 20;
+        if (S.decoyPin) score += 15;
+        const daysSince = S.user?.lastBackup ? Math.floor((now - new Date(S.user.lastBackup)) / 86400000) : 999;
+        if (daysSince <= 7) score += 30; else if (daysSince <= 30) score += 15; else if (daysSince <= 60) score += 5;
+        if ((S.banks || []).length > 0) score += 10;
+        if ((S.documents || []).length > 0) score += 10;
+        return Math.min(score, 100);
+      })();
+
+      const expiringItems = [
+        ...(S.documents || []).filter(d => d.expiry && new Date(d.expiry) > now && new Date(d.expiry) < in30)
+          .map(d => ({ name: d.title || d.docType, type: 'document', expiry: d.expiry })),
+        ...(S.cards || []).filter(c => {
+          if (!c.expiry) return false;
+          const [m, y] = c.expiry.split('/');
+          const exp = new Date(2000 + parseInt(y), parseInt(m) - 1, 1);
+          return exp > now && exp < in30;
+        }).map(c => ({ name: c.cardName, type: 'card', expiry: c.expiry })),
+      ].slice(0, 5);
+
       localStorage.setItem('vaultos_widget', JSON.stringify({
-        nw: S.user.netWorth || 0,
-        currency: S.user.currency || 'PKR',
-        cards: (S.cards || []).length,
+        nw: S.user?.netWorth || 0,
+        currency: S.user?.currency || 'PKR',
+        bankCount: (S.banks || []).length,
+        cardCount: (S.cards || []).length,
+        documentCount: (S.documents || []).length,
+        investmentCount: (S.investments || []).length,
+        loanCount: (S.loans || []).length,
+        vaultHealth: healthScore,
+        expiringItems,
+        lastBackup: S.user?.lastBackup || null,
+        name: S.user?.name || '',
+        updatedAt: new Date().toISOString(),
+        // legacy keys for older widget.html
         banks: (S.banks || []).length,
-        name: S.user.name || '',
-        updated: new Date().toISOString()
+        cards: (S.cards || []).length,
+        updated: new Date().toISOString(),
       }));
     } catch(e) {}
   },

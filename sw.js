@@ -1,7 +1,10 @@
-const CACHE = 'vaultos-v5';
+const CACHE = 'vaultos-v6';
 const ASSETS = [
   '/',
   '/index.html',
+  '/widget.html',
+  '/pitch.html',
+  '/GUIDE.md',
   '/css/base.css',
   '/css/layout.css',
   '/css/components.css',
@@ -9,6 +12,10 @@ const ASSETS = [
   '/js/storage.js',
   '/js/app.js',
   '/js/ui.js',
+  '/js/core/constants.js',
+  '/js/core/schema.js',
+  '/js/core/utils.js',
+  '/js/core/validators.js',
   '/js/modules/banks.js',
   '/js/modules/cards.js',
   '/js/modules/sims.js',
@@ -16,6 +23,7 @@ const ASSETS = [
   '/js/modules/cash.js',
   '/js/modules/loans.js',
   '/js/modules/friends.js',
+  '/js/modules/family.js',
   '/js/modules/assets.js',
   '/js/modules/expenses.js',
   '/js/modules/documents.js',
@@ -30,6 +38,11 @@ const ASSETS = [
   '/js/modules/reminders.js',
   '/js/modules/ai-import.js',
   '/js/modules/trash.js',
+  '/js/modules/currency.js',
+  '/js/modules/gold.js',
+  '/js/modules/zakat.js',
+  '/js/modules/tax.js',
+  '/js/modules/creditScore.js',
   '/manifest.json',
 ];
 

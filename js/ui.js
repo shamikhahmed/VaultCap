@@ -849,16 +849,107 @@ const QRSync = {
     if (document.getElementById('qrVideo')) setTimeout(() => this._scanLoop(), 200);
   },
 
+  _importCollected: {}, _importTotal: 0,
+
   _processQR(raw) {
     try {
       const parsed = JSON.parse(raw);
-      if (parsed.v !== 'vos1' || !parsed.enc) { Toast.show('Invalid QR code', 'error'); return; }
-      Modal.open('🔐 Enter Sync Code', `
-        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Enter the 6-digit code shown on the other device.</p>
-        <div class="fg"><label class="fl">Sync Code</label><input class="inp" id="qrCodeIn" maxlength="6" inputmode="numeric" placeholder="123456" style="text-align:center;font-size:24px;letter-spacing:8px;font-family:var(--mono)"></div>
-        <div class="ferr" id="qrCodeErr"></div>
-      `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
+
+      // v2 multi-chunk format (matches current exportQR)
+      if (parsed.v === 'vos2') {
+        const { i, t, d } = parsed;
+        if (typeof i !== 'number' || typeof t !== 'number' || !d) { Toast.show('Invalid QR chunk', 'error'); return; }
+        QRSync._importCollected[i] = d;
+        QRSync._importTotal = t;
+        const collected = Object.keys(QRSync._importCollected).length;
+        if (collected >= t) {
+          QRSync._importAllChunks();
+        } else {
+          // update status and re-open camera for next chunk
+          const status = document.getElementById('qrStatus');
+          if (status) status.textContent = `Got ${collected} of ${t} — scan the next QR code`;
+          setTimeout(() => QRSync._startCamera(), 400);
+        }
+        return;
+      }
+
+      // v1 legacy encrypted format
+      if (parsed.v === 'vos1' && parsed.enc) {
+        Modal.open('🔐 Enter Sync Code', `
+          <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Enter the 6-digit code shown on the other device.</p>
+          <div class="fg"><label class="fl">Sync Code</label><input class="inp" id="qrCodeIn" maxlength="6" inputmode="numeric" placeholder="123456" style="text-align:center;font-size:24px;letter-spacing:8px;font-family:var(--mono)"></div>
+          <div class="ferr" id="qrCodeErr"></div>
+        `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
+        return;
+      }
+
+      Toast.show('Unrecognised QR format', 'error');
     } catch(e) { Toast.show('Failed to read QR code', 'error'); }
+  },
+
+  async _importAllChunks() {
+    try {
+      const t = QRSync._importTotal;
+      const parts = [];
+      for (let i = 0; i < t; i++) {
+        if (!QRSync._importCollected[i]) { Toast.show(`Missing chunk ${i+1} of ${t}`, 'error'); return; }
+        parts.push(QRSync._importCollected[i]);
+      }
+      QRSync._importCollected = {}; QRSync._importTotal = 0;
+      const joined = parts.join('');
+
+      // URL-safe base64 → standard base64
+      const b64 = joined.replace(/-/g,'+').replace(/_/g,'/');
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+      let payload;
+      if (typeof DecompressionStream !== 'undefined') {
+        try {
+          const ds = new DecompressionStream('deflate-raw');
+          const writer = ds.writable.getWriter();
+          writer.write(bytes); writer.close();
+          const chunks = []; const reader = ds.readable.getReader();
+          while (true) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); }
+          const out = new Uint8Array(chunks.reduce((a,b)=>a+b.length,0));
+          let off = 0; for (const c of chunks) { out.set(c, off); off += c.length; }
+          payload = new TextDecoder().decode(out);
+        } catch(e) {
+          payload = decodeURIComponent(escape(binary));
+        }
+      } else {
+        payload = decodeURIComponent(escape(binary));
+      }
+
+      const data = JSON.parse(payload);
+      const counts = ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','documents','vehicles']
+        .map(k => `${(data[k]||[]).length} ${k}`).filter(s=>!s.startsWith('0')).join(', ');
+
+      Modal.open('📥 Import from QR', `
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Successfully decoded vault data from QR codes.</p>
+        <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
+        <p style="font-size:12px;color:var(--warn)">⚠ Existing items with matching IDs will be merged.</p>
+      `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
+    } catch(e) { Toast.show('Failed to decode QR data', 'error'); }
+  },
+
+  _applyImport(encoded) {
+    try {
+      const data = JSON.parse(decodeURIComponent(encoded));
+      const now = t => t ? new Date(t).getTime() : 0;
+      ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital','documents','vehicles'].forEach(k => {
+        if (!Array.isArray(data[k])) return;
+        data[k].forEach(item => {
+          const existing = (S[k]||[]).find(x => x.id === item.id);
+          if (!existing) { if (!S[k]) S[k]=[]; S[k].push(item); }
+          else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
+        });
+      });
+      Store.save(); buildNav(); Modal.close();
+      Toast.show('Vault imported from QR!', 'success');
+      R.goto(S.currentPage || 'dashboard');
+    } catch(e) { Toast.show('Import failed', 'error'); }
   },
 
   renderPage() {
