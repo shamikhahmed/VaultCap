@@ -1790,3 +1790,241 @@ const SettingsNav = {
     </div></div>`;
   }
 };
+
+const VaultHealthCenter = {
+  render() {
+    const el = document.getElementById('pg-recovery-body');
+    if (!el) return;
+    const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
+    const daysSince = lastBackup ? Math.floor((Date.now()-lastBackup)/(1000*60*60*24)) : 999;
+    const fp = S.user?.lastBackupFingerprint || null;
+    const healthScore = this._healthScore(daysSince);
+    const ring = this._ring(healthScore);
+    el.innerHTML = `
+    <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:20px;text-align:center">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Vault Backup Health</div>
+        <div style="position:relative;width:100px;height:100px;margin:0 auto 12px">
+          <svg viewBox="0 0 100 100" style="width:100px;height:100px;transform:rotate(-90deg)">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="${ring.color}" stroke-width="8"
+              stroke-dasharray="${ring.dash} 264" stroke-linecap="round"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-size:24px;font-weight:900;color:var(--text)">${healthScore}</div>
+            <div style="font-size:9px;color:var(--text3)">/ 100</div>
+          </div>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:${ring.color}">${ring.label}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">${daysSince >= 999 ? 'You have never backed up your vault' : daysSince === 0 ? 'Backed up today — excellent' : `Last backup: ${daysSince} day${daysSince>1?'s':''} ago`}</div>
+        ${fp ? `<div style="margin-top:8px;font-size:11px;color:var(--text3)">Fingerprint: <code style="background:var(--glass2);padding:2px 6px;border-radius:4px;color:var(--accent)">${fp}</code></div>` : ''}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onclick="ExIm.export('vault')" class="btn btn-p" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
+          <span style="font-size:24px">💾</span>
+          <span style="font-size:12px;font-weight:700">Export Backup</span>
+          <span style="font-size:10px;opacity:.7">Encrypted .vos file</span>
+        </button>
+        <button onclick="document.getElementById('importF-global').click()" class="btn btn-g" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
+          <span style="font-size:24px">📂</span>
+          <span style="font-size:12px;font-weight:700">Restore Backup</span>
+          <span style="font-size:10px;opacity:.7">Import .vos file</span>
+        </button>
+      </div>
+      <details style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">What is a .vos backup file? <span style="color:var(--text3)">▾</span></summary>
+        <div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">
+          A <strong>.vos file</strong> is your entire vault — encrypted and compressed into a single file.<br><br>
+          • It contains all your banks, cards, documents, and identity data<br>
+          • It is encrypted with AES-256-GCM using your PIN as the key<br>
+          • Without your PIN, the file is unreadable — even by us<br>
+          • You can restore it on any device by visiting this app and importing the file<br>
+          • Store it in iCloud, Google Drive, email, or a USB drive for safety
+        </div>
+      </details>
+      <details style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">What if I lose my phone? <span style="color:var(--text3)">▾</span></summary>
+        <div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">
+          <strong>Step 1:</strong> Get a new phone or open any browser<br>
+          <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultOS</strong><br>
+          <strong>Step 3:</strong> Tap Settings → Import → select your .vos backup file<br>
+          <strong>Step 4:</strong> Enter your PIN to decrypt<br>
+          <strong>Step 5:</strong> Your entire vault is restored ✓<br><br>
+          <em style="color:var(--text3)">This is why regular backups are essential — without a backup file, your data cannot be recovered from a lost device.</em>
+        </div>
+      </details>
+      <details style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">How does encryption work? <span style="color:var(--text3)">▾</span></summary>
+        <div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">
+          • Your PIN never leaves your device — it is used locally as an encryption key<br>
+          • Encryption algorithm: <strong>AES-256-GCM</strong> — the same standard used by banks and governments<br>
+          • Key derivation: <strong>PBKDF2 with 310,000 iterations</strong> — makes brute-force attacks computationally expensive<br>
+          • Each backup uses a unique random salt and IV — two backups of the same data produce completely different encrypted files<br>
+          • No server ever receives your data, PIN, or encryption key<br><br>
+          <em style="color:var(--text3)">In simple terms: your data is scrambled using your PIN, and only your PIN can unscramble it.</em>
+        </div>
+      </details>
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">✓ Recovery Checklist</div>
+        ${[
+          [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently ✓' : `Back up again — ${daysSince}d since last backup`],
+          [!!fp, 'Backup fingerprint saved'],
+          [!!(S.pin && S.pin !== '123456'), 'Custom PIN set'],
+          [!!(S.user?.name), 'Profile name set'],
+          [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
+        ].map(([ok, label]) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">${ok?'✓':'!'}</div>
+            <div style="font-size:12px;color:${ok?'var(--text2)':'var(--warn)'};">${label}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  },
+  _healthScore(daysSince) {
+    if (daysSince >= 999) return 20;
+    if (daysSince === 0) return 100;
+    if (daysSince <= 7) return 90;
+    if (daysSince <= 14) return 75;
+    if (daysSince <= 30) return 55;
+    if (daysSince <= 60) return 35;
+    return 20;
+  },
+  _ring(score) {
+    const dash = Math.round((score / 100) * 264);
+    const color = score >= 75 ? 'var(--ok)' : score >= 45 ? 'var(--warn)' : 'var(--err)';
+    const label = score >= 75 ? 'Healthy' : score >= 45 ? 'Needs Attention' : 'At Risk';
+    return { dash, color, label };
+  },
+};
+
+const HelpCenter = {
+  _section: 'getting-started',
+
+  render() {
+    const el = document.getElementById('pg-help-body');
+    if (!el) return;
+    const sections = [
+      { id:'getting-started', icon:'🚀', label:'Getting Started' },
+      { id:'banks-cards',     icon:'🏦', label:'Banks & Cards' },
+      { id:'documents',       icon:'🪪', label:'Documents & ID' },
+      { id:'family',          icon:'👨‍👩‍👧‍👦', label:'Family Vault' },
+      { id:'backup',          icon:'💾', label:'Backup & Restore' },
+      { id:'security',        icon:'🔒', label:'Security & PIN' },
+      { id:'search',          icon:'🔍', label:'Search & Tags' },
+      { id:'themes',          icon:'🎨', label:'Themes' },
+      { id:'faq',             icon:'❓', label:'FAQ' },
+    ];
+    el.innerHTML = `
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+        ${sections.map(s => `
+          <div onclick="HelpCenter._section='${s.id}';HelpCenter._renderContent()"
+            class="chip${this._section===s.id?' on':''}"
+            style="white-space:nowrap;padding:6px 14px;cursor:pointer;touch-action:manipulation">
+            ${s.icon} ${s.label}
+          </div>`).join('')}
+      </div>
+      <div id="help-content"></div>
+    </div>`;
+    this._renderContent();
+  },
+
+  _renderContent() {
+    const el = document.getElementById('help-content');
+    if (!el) return;
+    const content = {
+      'getting-started': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🔐', 'What is VaultOS?', 'VaultOS is your private financial operating system. It stores all your financial and identity information — banks, cards, documents, passports, investments, loans — in one encrypted place on your device. No accounts. No servers. No one else can see your data.')}
+          ${this._card('1️⃣', 'Step 1 — Set your PIN', 'Your PIN is the key to your vault. Choose something memorable but not obvious. It encrypts all your data. Without it, your backup file cannot be opened. Go to Settings → Security to change it.')}
+          ${this._card('2️⃣', 'Step 2 — Add your first bank', 'Tap the Finance tab → Banks → + Add Bank. Choose your country, enter your bank name, account type, and currency. You can add as many banks as you have accounts.')}
+          ${this._card('3️⃣', 'Step 3 — Link cards to banks', 'In Finance → Cards → + Add Card, you can link a card to a bank. This creates a relationship — tap a bank, scroll down to see all linked cards instantly.')}
+          ${this._card('4️⃣', 'Step 4 — Add key documents', 'In Identity → Documents, add your passport, driving licence, or NIC. You can photograph the document inside the app. Expiry alerts will appear automatically.')}
+          ${this._card('5️⃣', 'Step 5 — Export a backup', 'Go to Settings → Backup & Export → Export Vault. Save the .vos file somewhere safe — iCloud, Google Drive, or email it to yourself. Do this regularly.')}
+          ${this._card('💡', 'Pro tip — use the Command Palette', 'Tap Cmd+K (desktop) or the search icon to instantly jump to anything in your vault. Search by name, type tags, or run actions like "lock vault" or "export".')}
+        </div>`,
+      'banks-cards': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🏦', 'Adding a bank account', 'Finance → Banks → + Add Bank. Fill in: bank name, country, account type (current/savings/islamic), currency, and optionally your IBAN, sort code, balance, and account holder name. You can also store your online banking PIN and app PIN securely.')}
+          ${this._card('💳', 'Adding a card', 'Finance → Cards → + Add Card. Fill in manually. Store the last 4 digits, expiry, CVV hint, and link it to a bank account. Front and back photos can be captured.')}
+          ${this._card('🔗', 'Linking cards to banks', 'When adding a card, select the bank it belongs to in the "Linked Bank" field. Tap any bank entry and scroll down to see all linked cards automatically displayed.')}
+          ${this._card('🗂️', 'Archiving accounts', 'Tap the archive icon (🗂️) on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
+          ${this._card('🔍', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by Pakistan, UK, or UAE. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
+          ${this._card('⭐', 'Favouriting entries', 'Tap the star icon on any bank, card, or investment to mark it as a favourite. Favourites appear at the top of their list and in smart collections on the dashboard.')}
+        </div>`,
+      'documents': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🪪', 'Supported document types', 'Passport, National ID (NIC/CNIC), Driving Licence, Visa, Emirates ID, Property Documents, Insurance, Vehicle Registration, Tax Documents, Medical Records, Warranties, Contracts, Certificates.')}
+          ${this._card('📸', 'Photographing documents', 'When adding a document, tap "Capture Front" and "Capture Back" to photograph using your camera. Images are compressed and stored encrypted inside your vault. Useful for passports and ID cards.')}
+          ${this._card('⏰', 'Expiry alerts', 'Documents with expiry dates automatically appear in the Timeline and generate reminders 30 days before expiry. The dashboard also shows an "Expiring Soon" smart collection.')}
+          ${this._card('🔎', 'Finding documents', 'Use the search bar at the top of the Documents page, or use Cmd+K to search globally. You can search by document name, holder name, document number, or country.')}
+          ${this._card('🏷️', 'Tagging documents', 'Add tags like "uk", "urgent", "family", "business" to any document. Use the preset chips in the form or type your own. Filter and search by tag across the whole vault.')}
+        </div>`,
+      'family': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('👨‍👩‍👧‍👦', 'What is the Family Vault?', 'The Family Vault lets you manage finances for your entire family in one place. Add family members — spouse, children, parents — and each gets their own banks, cards, cash, investments, and documents.')}
+          ${this._card('👑', 'Head of Family', 'The first member added becomes the Head of Family. This is usually you. The head\'s details are shown prominently at the top of the family page.')}
+          ${this._card('➕', 'Adding a family member', 'Tap Family → + Add Member. Enter their name, relationship, and avatar. Then tap their card to add their banks, cards, documents, and more.')}
+          ${this._card('💳', 'Family member cards', 'Each family member can have their own cards and bank accounts stored separately. This keeps your data organised by person, not just by account type.')}
+          ${this._card('📝', 'Notes per member', 'Each family member has a Notes tab where you can store free-form information — medical conditions, important contacts, or any other private notes.')}
+        </div>`,
+      'backup': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('💾', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
+          ${this._card('📂', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
+          ${this._card('🔑', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
+          ${this._card('📱', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultOS. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('⏰', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
+          ${this._card('☁️', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
+        </div>`,
+      'security': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🔐', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
+          ${this._card('🔒', 'Encryption standard', 'VaultOS uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
+          ${this._card('🕵️', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a completely empty vault. Your real data remains hidden.')}
+          ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
+          ${this._card('❌', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
+          ${this._card('🧹', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
+        </div>`,
+      'search': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🔍', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
+          ${this._card('🧠', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
+          ${this._card('🏷️', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
+          ${this._card('⚡', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "theme midnight", "add bank". Weighted results show best matches first.')}
+          ${this._card('📊', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
+        </div>`,
+      'themes': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('🌑', 'Midnight (Dark)', 'Pure black background with blue accent. The default theme. Ideal for OLED screens — saves battery and looks stunning at night.')}
+          ${this._card('⬛', 'Graphite (Dark)', 'Dark grey background with warm gold accent. Softer than Midnight, easier on the eyes for long sessions. Premium notebook aesthetic.')}
+          ${this._card('☁️', 'Cloud (Light)', 'Clean white background with blue accent. Apple-style light mode. Best for bright environments and daytime use.')}
+          ${this._card('🟡', 'Ivory (Light)', 'Warm cream background with forest green accent. Notion-inspired warmth. Gentle on the eyes, great for reading.')}
+          ${this._card('🌸', 'Blossom (Light)', 'Rose pink background with hot pink accent. Warm, expressive, and beautiful. Switch themes anytime in Settings → Appearance.')}
+          ${this._card('💡', 'Switching themes', 'Settings → Appearance → tap any theme card. Or open the Command Palette (Cmd+K) and type "theme" to switch instantly.')}
+        </div>`,
+      'faq': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          ${this._card('❓', 'Is my data safe?', 'Yes. Your data never leaves your device. It is encrypted with AES-256-GCM using your PIN. No server, no cloud, no account required. The only way to access your data is with your PIN and your device (or a backup file).')}
+          ${this._card('❓', 'What happens if this website goes down?', 'Your data is stored on your device, not on any server. Even if the URL disappears, your data is safe. Export a .vos backup and you can open it on any device using any browser, anytime.')}
+          ${this._card('❓', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
+          ${this._card('❓', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
+          ${this._card('❓', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
+          ${this._card('❓', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+          ${this._card('❓', 'Who built this?', 'VaultOS is built by Shamikh Ahmed — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
+        </div>`,
+    };
+    el.innerHTML = content[this._section] || content['getting-started'];
+  },
+
+  _card(icon, title, body) {
+    return `
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="font-size:18px">${icon}</span>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${title}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">${body}</div>
+      </div>`;
+  },
+};

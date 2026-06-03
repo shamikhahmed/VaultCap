@@ -32,7 +32,9 @@ const ALL_MODULES=[
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
   {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
-  {id:'emergency',  n:'Emergency',  ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
+  {id:'emergency',     n:'Emergency',       ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
+  {id:'recovery-center',n:'Recovery Center',ic:'🛡️', desc:'Backup health, restore guide, verification',  group:'Tools'},
+  {id:'help',          n:'Help & Guide',    ic:'📖', desc:'How to use VaultOS',                           group:'Tools'},
 ];
 
 // ── Universal Entity Factory ──
@@ -466,6 +468,39 @@ const VaultRecovery = {
   },
 };
 
+const ContextSwitcher = {
+  get() { return S.user.activeContext || 'ALL'; },
+  set(code) {
+    S.user.activeContext = code;
+    Store.save();
+    const renders = { 'finance-home': renderFinanceHome, 'banks': ()=>Banks.render(), 'cards': ()=>Cards.render(), 'dashboard': ()=>Dash.render() };
+    if (renders[S.currentPage]) renders[S.currentPage]();
+  },
+  bar(currentPage) {
+    const primary = S.user.country || 'PK';
+    const secondary = S.user.secondaryCountries || [];
+    const allCountries = [primary, ...secondary].filter(Boolean);
+    if (allCountries.length < 2) return '';
+    const flags = { PK:'🇵🇰', GB:'🇬🇧', AE:'🇦🇪', US:'🇺🇸', CA:'🇨🇦', AU:'🇦🇺', SA:'🇸🇦', QA:'🇶🇦' };
+    const names = { PK:'Pakistan', GB:'UK', AE:'UAE', US:'USA', CA:'Canada', AU:'Australia', SA:'Saudi', QA:'Qatar' };
+    const active = this.get();
+    const pills = [...allCountries, 'ALL'].map(code => {
+      const isActive = active === code;
+      const flag = code === 'ALL' ? '🌍' : (flags[code] || '🌍');
+      const name = code === 'ALL' ? 'All' : (names[code] || code);
+      return `<div onclick="ContextSwitcher.set('${code}')" style="display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:${isActive?'var(--accent)':'var(--glass2)'};color:${isActive?'#fff':'var(--text2)'};border:1px solid ${isActive?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;white-space:nowrap;font-size:12px;font-weight:${isActive?'700':'500'};transition:all .15s ease">
+        <span>${flag}</span><span>${name}</span>
+      </div>`;
+    }).join('');
+    return `<div style="padding:10px 16px 6px;overflow-x:auto;display:flex;gap:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)">${pills}</div>`;
+  },
+  filter(arr, countryField = 'country') {
+    const ctx = this.get();
+    if (ctx === 'ALL') return arr;
+    return (arr || []).filter(item => (item[countryField] || '').toUpperCase() === ctx);
+  },
+};
+
 const Onboarding = {
   _step: 0,
 
@@ -493,6 +528,7 @@ const Onboarding = {
   _primaryCountry: '',
   _secondaryCountries: [],
   _prefs: { zakat: false, family: false, business: false, investments: false },
+  _modules: { banking:true, documents:true, family:false, investments:false, vehicles:false, expenses:false, zakat:false, tax:true, currency:false, loans:false },
 
   _render() {
     const existing = document.getElementById('onboarding-overlay');
@@ -502,7 +538,7 @@ const Onboarding = {
     overlay.id = 'onboarding-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto;animation:fadeIn .3s ease';
 
-    const steps = ['welcome', 'country', 'secondary', 'prefs'];
+    const steps = ['welcome', 'country', 'secondary', 'modules', 'prefs'];
     const progress = `
       <div style="display:flex;gap:6px;margin-bottom:32px">
         ${steps.map((_, i) => `<div style="height:3px;flex:1;border-radius:2px;background:${i <= this._step ? 'var(--accent)' : 'var(--border)'}"></div>`).join('')}
@@ -537,16 +573,54 @@ const Onboarding = {
         <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">Any other countries?</div>
         <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Multi-country support — add relevant banks</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+          <div id="ob-none-card" onclick="Onboarding._secondaryCountries=[];document.querySelectorAll('.ob-sec').forEach(el=>{el.style.borderColor='var(--border)';el.style.background='var(--glass)'});this.style.borderColor='var(--accent)';this.style.background='var(--glass2)'"
+            class="ob-sec"
+            style="padding:14px 12px;border-radius:14px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;grid-column:1/-1">
+            <span style="font-size:20px">🚫</span>
+            <span style="font-size:13px;font-weight:600;color:var(--text)">None — I only manage money in one country</span>
+          </div>
           ${this._countries.filter(c=>c.code!==this._primaryCountry).map(c => `
-            <div onclick="(()=>{const i=Onboarding._secondaryCountries.indexOf('${c.code}');if(i>-1)Onboarding._secondaryCountries.splice(i,1);else Onboarding._secondaryCountries.push('${c.code}');this.style.borderColor=Onboarding._secondaryCountries.includes('${c.code}')?'var(--accent)':'var(--border)';this.style.background=Onboarding._secondaryCountries.includes('${c.code}')?'var(--glass2)':'var(--glass)';})()"
+            <div onclick="(()=>{const i=Onboarding._secondaryCountries.indexOf('${c.code}');if(i>-1)Onboarding._secondaryCountries.splice(i,1);else Onboarding._secondaryCountries.push('${c.code}');this.style.borderColor=Onboarding._secondaryCountries.includes('${c.code}')?'var(--accent)':'var(--border)';this.style.background=Onboarding._secondaryCountries.includes('${c.code}')?'var(--glass2)':'var(--glass)';const nc=document.getElementById('ob-none-card');if(nc){nc.style.borderColor='var(--border)';nc.style.background='var(--glass)';}})()"
+              class="ob-sec"
               style="padding:14px 12px;border-radius:14px;background:${this._secondaryCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${this._secondaryCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px">
               <span style="font-size:20px">${c.flag}</span>
               <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
             </div>`).join('')}
         </div>
         <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:14px;font-weight:700">Continue →</button>
+        <button onclick="Onboarding._secondaryCountries=[];Onboarding._next()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip this step →</button>
         <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
     } else if (this._step === 3) {
+      const moduleOptions = [
+        { key:'banking',     icon:'🏦', label:'Banking & Cards',    desc:'Banks, cards, cash, credit' },
+        { key:'documents',   icon:'🪪', label:'Documents & ID',     desc:'Passport, licence, visas' },
+        { key:'family',      icon:'👨‍👩‍👧‍👦', label:'Family Vault',       desc:'Finance for family members' },
+        { key:'investments', icon:'📈', label:'Investments',         desc:'Stocks, funds, crypto, bonds' },
+        { key:'vehicles',    icon:'🚗', label:'Vehicles & Assets',   desc:'Cars, property, gadgets' },
+        { key:'expenses',    icon:'💸', label:'Expenses',            desc:'Daily spending tracker' },
+        { key:'zakat',       icon:'🌙', label:'Zakat',               desc:'Islamic wealth calculator' },
+        { key:'tax',         icon:'🧾', label:'Tax Calculator',      desc:'PK, UK, UAE tax tools' },
+        { key:'currency',    icon:'💱', label:'Currency & Metals',   desc:'Exchange rates, gold, silver' },
+        { key:'loans',       icon:'🤝', label:'Loans & Debts',       desc:'Money lent or borrowed' },
+      ];
+      content = `
+        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you want to manage?</div>
+        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px">You can change this anytime in Settings</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px;margin-bottom:20px;max-height:55vh;overflow-y:auto;padding:2px">
+          ${moduleOptions.map(m => `
+            <div onclick="Onboarding._modules['${m.key}']=!Onboarding._modules['${m.key}'];this.style.borderColor=Onboarding._modules['${m.key}']?'var(--accent)':'var(--border)';this.querySelector('.mod-check').style.background=Onboarding._modules['${m.key}']?'var(--accent)':'transparent';this.querySelector('.mod-check').textContent=Onboarding._modules['${m.key}']?'✓':''"
+              style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:20px">${m.icon}</span>
+                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}">${this._modules[m.key]?'✓':''}</div>
+              </div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.3">${m.desc}</div>
+            </div>`).join('')}
+        </div>
+        <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:440px;padding:14px;font-weight:700">Continue →</button>
+        <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+    } else if (this._step === 4) {
       const prefs = [
         { key: 'zakat',       icon: '🌙', label: 'Zakat Calculator', desc: 'Islamic annual wealth obligation' },
         { key: 'family',      icon: '👨‍👩‍👧‍👦', label: 'Family Vault',    desc: 'Manage finances for your family' },
@@ -586,7 +660,7 @@ const Onboarding = {
       Toast.show('Please select your primary country', 'warning');
       return;
     }
-    this._step = Math.min(this._step + 1, 3);
+    this._step = Math.min(this._step + 1, 4);
     this._render();
   },
 
@@ -616,8 +690,27 @@ const Onboarding = {
       saveTabPrefs(prefs);
     }
     if (!this._prefs.family) S.modules.family = false;
+
+    // Apply module step selections
+    const mtp = getTabPrefs();
+    mtp.hiddenFinance = mtp.hiddenFinance || [];
+    mtp.hiddenVault = mtp.hiddenVault || [];
+    mtp.hiddenAssets = mtp.hiddenAssets || [];
+    if (!this._modules.banking) { ['banks','cards','cash','credit'].forEach(m => { if(!mtp.hiddenFinance.includes(m)) mtp.hiddenFinance.push(m); }); }
+    if (!this._modules.investments) { if(!mtp.hiddenFinance.includes('investments')) mtp.hiddenFinance.push('investments'); }
+    if (!this._modules.expenses) { if(!mtp.hiddenFinance.includes('expenses')) mtp.hiddenFinance.push('expenses'); }
+    if (!this._modules.zakat) { if(!mtp.hiddenFinance.includes('zakat')) mtp.hiddenFinance.push('zakat'); }
+    if (!this._modules.tax) { if(!mtp.hiddenFinance.includes('tax')) mtp.hiddenFinance.push('tax'); }
+    if (!this._modules.currency) { ['currency','gold'].forEach(m => { if(!mtp.hiddenFinance.includes(m)) mtp.hiddenFinance.push(m); }); }
+    if (!this._modules.loans) { if(!mtp.hiddenFinance.includes('loans')) mtp.hiddenFinance.push('loans'); }
+    if (!this._modules.family) S.modules.family = false;
+    if (!this._modules.vehicles) { if(!mtp.hiddenAssets.includes('vehicles')) mtp.hiddenAssets.push('vehicles'); }
+    if (!this._modules.documents) { if(!mtp.hiddenVault.includes('documents')) mtp.hiddenVault.push('documents'); }
+    saveTabPrefs(mtp);
+    S.user.modulePrefs = this._modules;
+
     S.user.onboardingComplete = true;
-    S.user.showZakat = this._prefs.zakat;
+    S.user.showZakat = this._prefs.zakat || this._modules.zakat;
     S.user.hasBusiness = this._prefs.business;
     Store.save();
     buildNav();
@@ -2245,6 +2338,8 @@ const R = {
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
       emergency:   () => Emergency.render(),
+      'recovery-center': () => { if (typeof VaultHealthCenter !== 'undefined') VaultHealthCenter.render(); },
+      'help':      () => { if (typeof HelpCenter !== 'undefined') HelpCenter.render(); },
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
       gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
@@ -3323,6 +3418,7 @@ function saveTabPrefs(prefs) {
 function renderFinanceHome() {
   const b = document.getElementById('finance-home-body');
   if (!b) return;
+  const ctxBar = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.bar('finance-home') : '';
   const allModules = [
     {id:'banks',icon:'🏦',label:'Banks',desc:(S.banks||[]).length+' accounts'},
     {id:'cards',icon:'💳',label:'Cards',desc:(S.cards||[]).length+' cards'},
@@ -3342,7 +3438,7 @@ function renderFinanceHome() {
     if (m.id === 'zakat' && S.user?.showZakat === false) return false;
     return true;
   });
-  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+  b.innerHTML = ctxBar + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
@@ -3400,7 +3496,7 @@ function buildNav() {
   const groups = {
     Finance:  '💰 Finance',
     Assets:   '🏠 Assets & Property',
-    Identity: '🪪 Vault & Identity',
+    Identity: '🪪 Identity',
     Tools:    '⚙️ Tools',
   };
   const grouped = {};
@@ -3430,7 +3526,7 @@ function buildNav() {
   const PRIMARY_TABS = [
     { id: 'dashboard',    n: 'Home',    ic: '📊' },
     { id: 'finance-home', n: 'Finance', ic: '💰' },
-    { id: 'vault-home',   n: 'Vault',   ic: '🪪' },
+    { id: 'vault-home',   n: 'Identity',   ic: '🪪' },
     { id: 'assets-home',  n: 'Assets',  ic: '🏠' },
     { id: 'family',       n: 'Family',  ic: '👨‍👩‍👧‍👦' },
   ];

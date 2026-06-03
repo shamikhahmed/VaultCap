@@ -39,6 +39,7 @@ const Banks={
       if(f==='microfinance'&&b.bankType!=='microfinance')return false;
       return !q||_fuzz(b.bankName,q)||_fuzz(b.accountType,q)||_fuzz(b.country,q)||_fuzz(b.bankType,q)||_fuzz(b.notes,q)||_fuzz(b.holderName,q)||(b.tags||[]).some(t=>_fuzz(t,q));
     });
+    if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(b=>(b.country||'').toUpperCase()===ContextSwitcher.get());}
     if(sort==='name')data.sort((a,b)=>a.bankName.localeCompare(b.bankName));
     else if(sort==='country')data.sort((a,b)=>a.country.localeCompare(b.country));
     else if(sort==='fav')data.sort((a,b)=>b.favorite-a.favorite);
