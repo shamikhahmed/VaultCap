@@ -2294,6 +2294,7 @@ const R = {
     document.getElementById('fab').style.display = 'flex';
     buildNav();
     this.goto('dashboard');
+    setTimeout(() => Dash.render(), 50);
     Activity.log('Vault unlocked');
     if (typeof RatesEngine !== 'undefined') {
       RatesEngine.init().then(() => {
@@ -2361,7 +2362,6 @@ const R = {
     const el = document.getElementById('pg-' + pg);
     if (el) {
       el.classList.add('on');
-      el.scrollTop = 0;
       el.style.opacity = '0';
       el.style.transform = 'translateY(8px)';
       requestAnimationFrame(() => {
@@ -3962,136 +3962,126 @@ function loadDecoyData() {
 
 // ===================== DEMO PROFILES =====================
 function loadDemoProfile(type) {
-  const id = U.id, ts = new Date().toISOString();
+  const id = U.id;
+  const ts = new Date().toISOString();
+  const now = new Date();
+  const daysAgo = d => new Date(now - d*86400000).toISOString().split('T')[0];
+  const daysFromNow = d => new Date(now.getTime() + d*86400000).toISOString().split('T')[0];
+
   // Reset all arrays
-  ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents'].forEach(k => { if (!S[k]) S[k]=[]; });
+  ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents','bc','bonds'].forEach(k => { S[k]=[]; });
 
-  if (type === 'business') {
-    S.user.name = 'Ahmed Karimi'; S.user.currency = 'PKR';
-    S.banks.push({id:id(),bankName:'HBL',country:'PK',bankType:'commercial',accountType:'Current',currency:'PKR',last4:'4821',balance:450000,holderName:'Ahmed Karimi',tags:['Primary','Business'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Meezan Bank',country:'PK',bankType:'islamic',accountType:'Savings',currency:'PKR',last4:'3310',balance:850000,holderName:'Ahmed Karimi',tags:['Savings','Islamic'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Bank Alfalah',country:'PK',bankType:'commercial',accountType:'Business',currency:'PKR',last4:'7734',balance:1200000,holderName:'Ahmed Karimi',tags:['Business'],createdAt:ts});
-    S.cards.push({id:id(),cardName:'HBL Premier World Elite',network:'Mastercard',cardType:'Credit',category:'Premium',country:'PK',last4:'4821',expiry:'09/27',holderName:'AHMED KARIMI',createdAt:ts});
-    S.cards.push({id:id(),cardName:'Meezan Visa Debit',network:'Visa',cardType:'Debit',category:'Islamic',country:'PK',last4:'3310',expiry:'11/26',holderName:'AHMED KARIMI',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Engro Corporation',broker:'Arif Habib Limited',type:'Stocks',ticker:'ENGRO',country:'PK',currency:'PKR',amountInvested:500000,currentValue:567000,riskLevel:'Medium',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Al Meezan Islamic Fund',broker:'Al Meezan Investments',type:'Mutual Funds',country:'PK',currency:'PKR',amountInvested:300000,currentValue:328500,riskLevel:'Low',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:15000,currency:'PKR',createdAt:ts});
-    S.cash.push({id:id(),location:'Office',amount:50000,currency:'PKR',createdAt:ts});
-    S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 9876543',createdAt:ts});
-    S.sims.push({id:id(),network:'Zong',country:'PK',simType:'Physical',status:'Active',phone:'+92 311 2345678',createdAt:ts});
-    S.loans.push({id:id(),person:'Bilal Sheikh',type:'lent',amount:75000,currency:'PKR',status:'Active',date:'2024-01-15',createdAt:ts});
-    S.friends.push({id:id(),name:'Bilal Sheikh',createdAt:ts});
-    S.vehicles.push({id:id(),make:'Toyota',model:'Corolla',year:'2021',regPlate:'LHR-1234',fuel:'Petrol',createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPhone 15 Pro',brand:'Apple',category:'Phone',serialNum:'F2K3L8M9P2',purchasePrice:350000,currency:'PKR',warranty:'2025-10',createdAt:ts});
-    S.gadgets.push({id:id(),name:'MacBook Pro 14" M3',brand:'Apple',category:'Laptop',purchasePrice:580000,currency:'PKR',warranty:'2026-03',createdAt:ts});
-    S.expenses.push({id:id(),name:'Netflix',amount:1200,currency:'PKR',category:'Streaming',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'ChatGPT Plus',amount:7000,currency:'PKR',category:'AI',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'iCloud+ 2TB',amount:1600,currency:'PKR',category:'Cloud',active:true,createdAt:ts});
-    S.emails.push({id:id(),email:'ahmed.karimi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
-    S.emails.push({id:id(),email:'ahmed@karimiconsulting.pk',provider:'Custom Domain',purpose:'Business',mfaEnabled:true,createdAt:ts});
+  // ── Alex Khan — UK-based Pakistani professional (full demo) ──
+  S.user.name = 'Alex Khan';
+  S.user.currency = 'GBP';
+  S.user.avatar = '👨‍💼';
+  S.user.theme = 'dark';
+  S.user.email = 'alex.khan@gmail.com';
+  S.user.phone = '+44 7700 123456';
+  S.user.dob = '1988-04-15';
+  S.user.nwHistory = [
+    {v:42000,d:'2025-12-01'},{v:44500,d:'2026-01-01'},{v:43800,d:'2026-02-01'},
+    {v:46200,d:'2026-03-01'},{v:47800,d:'2026-04-01'},{v:51200,d:'2026-05-01'}
+  ];
 
-  } else if (type === 'student') {
-    S.user.name = 'Zara Khan'; S.user.currency = 'GBP';
-    S.banks.push({id:id(),bankName:'Monzo',country:'GB',bankType:'digital',accountType:'Current',currency:'GBP',last4:'7821',balance:2340,holderName:'Zara Khan',tags:['Primary'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Barclays',country:'GB',bankType:'commercial',accountType:'Student',currency:'GBP',last4:'4456',balance:500,holderName:'Zara Khan',tags:['Backup'],createdAt:ts});
-    S.cards.push({id:id(),cardName:'Monzo Visa',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'7821',expiry:'08/28',holderName:'ZARA KHAN',createdAt:ts});
-    S.cards.push({id:id(),cardName:'Barclaycard Mastercard',network:'Mastercard',cardType:'Credit',category:'Standard',country:'GB',last4:'4456',expiry:'05/27',holderName:'ZARA KHAN',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Vanguard Global Index',broker:'Trading 212',type:'Mutual Funds',country:'GB',currency:'GBP',amountInvested:500,currentValue:542,riskLevel:'Medium',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Bitcoin',ticker:'BTC',broker:'Coinbase',type:'Crypto',currency:'USD',amountInvested:200,currentValue:380,riskLevel:'High',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:120,currency:'GBP',createdAt:ts});
-    S.sims.push({id:id(),network:'giffgaff',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 234567',createdAt:ts});
-    S.loans.push({id:id(),person:'Parents',type:'borrowed',amount:3000,currency:'GBP',status:'Active',date:'2023-09-01',notes:'Tuition support',createdAt:ts});
-    S.gadgets.push({id:id(),name:'MacBook Air M2 13"',brand:'Apple',category:'Laptop',purchasePrice:1099,currency:'GBP',warranty:'2026-06',createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPhone 15',brand:'Apple',category:'Phone',purchasePrice:799,currency:'GBP',warranty:'2026-09',createdAt:ts});
-    S.expenses.push({id:id(),name:'Spotify',amount:11.99,currency:'GBP',category:'Music',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'Amazon Prime',amount:8.99,currency:'GBP',category:'Streaming',active:true,createdAt:ts});
-    S.emails.push({id:id(),email:'zara.khan@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
-    S.emails.push({id:id(),email:'z.khan@university.ac.uk',provider:'Custom Domain',purpose:'University',mfaEnabled:false,createdAt:ts});
-    S.friends.push({id:id(),name:'Aisha Malik',createdAt:ts});
-    S.friends.push({id:id(),name:'Omar Hassan',createdAt:ts});
+  // Banks (6)
+  S.banks.push({id:id(),bankName:'Barclays',country:'GB',bankType:'commercial',accountType:'Current',currency:'GBP',last4:'4821',balance:8450,holderName:'Alex Khan',tags:['Primary','UK'],favorite:true,createdAt:ts});
+  S.banks.push({id:id(),bankName:'Monzo',country:'GB',bankType:'digital',accountType:'Current',currency:'GBP',last4:'7732',balance:3120,holderName:'Alex Khan',tags:['Digital'],createdAt:ts});
+  S.banks.push({id:id(),bankName:'Lloyds Bank',country:'GB',bankType:'commercial',accountType:'Savings',currency:'GBP',last4:'5519',balance:22000,holderName:'Alex Khan',tags:['Savings'],createdAt:ts});
+  S.banks.push({id:id(),bankName:'HBL',country:'PK',bankType:'commercial',accountType:'Current',currency:'PKR',last4:'3310',balance:680000,holderName:'Alex Khan',tags:['Pakistan','Family'],createdAt:ts});
+  S.banks.push({id:id(),bankName:'MCB Bank',country:'PK',bankType:'commercial',accountType:'Savings',currency:'PKR',last4:'9901',balance:1250000,holderName:'Alex Khan',tags:['Pakistan','Savings'],createdAt:ts});
+  S.banks.push({id:id(),bankName:'Emirates NBD',country:'AE',bankType:'commercial',accountType:'Savings',currency:'AED',last4:'6644',balance:18500,holderName:'Alex Khan',tags:['UAE'],createdAt:ts});
 
-  } else if (type === 'family') {
-    S.user.name = 'Tariq Al-Rashidi'; S.user.currency = 'AED';
-    S.banks.push({id:id(),bankName:'Emirates NBD',country:'AE',bankType:'commercial',accountType:'Current',currency:'AED',last4:'9912',balance:85000,holderName:'Tariq Al-Rashidi',tags:['Primary'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'ADCB',country:'AE',bankType:'commercial',accountType:'Savings',currency:'AED',last4:'3344',balance:220000,holderName:'Tariq Al-Rashidi',tags:['Savings'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'HSBC',country:'GB',bankType:'commercial',accountType:'Current',currency:'GBP',last4:'5577',balance:15000,holderName:'Tariq Al-Rashidi',tags:['UK'],createdAt:ts});
-    S.cards.push({id:id(),cardName:'Emirates NBD Visa',network:'Visa',cardType:'Credit',category:'Premium',country:'AE',last4:'9912',expiry:'12/27',holderName:'TARIQ AL-RASHIDI',createdAt:ts});
-    S.cards.push({id:id(),cardName:'ADCB Visa',network:'Visa',cardType:'Debit',category:'Standard',country:'AE',last4:'3344',expiry:'04/28',holderName:'TARIQ AL-RASHIDI',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Dubai Real Estate Fund',broker:'Sarwa',type:'Mutual Funds',country:'AE',currency:'AED',amountInvested:50000,currentValue:58500,riskLevel:'Medium',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Saudi Aramco',ticker:'2222',broker:'Sarwa',type:'Stocks',country:'AE',currency:'AED',amountInvested:15000,currentValue:17800,riskLevel:'Low',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:3000,currency:'AED',createdAt:ts});
-    S.cash.push({id:id(),location:'Home',amount:10000,currency:'AED',createdAt:ts});
-    S.sims.push({id:id(),network:'du',country:'AE',simType:'Physical',status:'Active',phone:'+971 50 234 5678',createdAt:ts});
-    S.loans.push({id:id(),person:'Ahmad (Brother)',type:'lent',amount:20000,currency:'AED',status:'Active',date:'2023-06-01',createdAt:ts});
-    S.vehicles.push({id:id(),make:'BMW',model:'X5',year:'2022',regPlate:'Dubai B 12345',fuel:'Petrol',createdAt:ts});
-    S.assets.push({id:id(),name:'Dubai Apartment',assetType:'property',currentValue:1200000,currency:'AED',purchasePrice:950000,createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPhone 16 Pro',brand:'Apple',category:'Phone',purchasePrice:4500,currency:'AED',warranty:'2026-10',createdAt:ts});
-    S.expenses.push({id:id(),name:'Netflix',amount:55,currency:'AED',category:'Streaming',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'iCloud+ 2TB',amount:39,currency:'AED',category:'Cloud',active:true,createdAt:ts});
-    S.emails.push({id:id(),email:'tariq.rashidi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
-    S.friends.push({id:id(),name:'Ahmad Al-Rashidi',createdAt:ts});
-    S.friends.push({id:id(),name:'Fatima Hassan',createdAt:ts});
+  // Cards (5)
+  S.cards.push({id:id(),cardName:'Barclays Visa Debit',network:'Visa',cardType:'Debit',category:'Standard',country:'GB',last4:'4821',expiry:'09/28',holderName:'ALEX KHAN',currency:'GBP',createdAt:ts});
+  S.cards.push({id:id(),cardName:'Barclaycard Avios Mastercard',network:'Mastercard',cardType:'Credit',category:'Rewards',country:'GB',last4:'3391',expiry:'04/27',holderName:'ALEX KHAN',currency:'GBP',creditLimit:8000,createdAt:ts});
+  S.cards.push({id:id(),cardName:'Monzo Visa Debit',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'7732',expiry:'11/28',holderName:'ALEX KHAN',currency:'GBP',createdAt:ts});
+  S.cards.push({id:id(),cardName:'HBL Visa Debit',network:'Visa',cardType:'Debit',category:'Standard',country:'PK',last4:'3310',expiry:'07/27',holderName:'ALEX KHAN',currency:'PKR',createdAt:ts});
+  S.cards.push({id:id(),cardName:'Lloyds Platinum Mastercard',network:'Mastercard',cardType:'Credit',category:'Premium',country:'GB',last4:'5519',expiry:'02/29',holderName:'ALEX KHAN',currency:'GBP',creditLimit:12000,createdAt:ts});
 
-  } else if (type === 'expat') {
-    S.user.name = 'Sana Mirza'; S.user.currency = 'GBP';
-    S.banks.push({id:id(),bankName:'Revolut',country:'GB',bankType:'digital',accountType:'Premium',currency:'GBP',last4:'2291',balance:12500,holderName:'Sana Mirza',tags:['Primary','Multi-currency'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Wise',country:'GB',bankType:'digital',accountType:'Multi-currency',currency:'GBP',last4:'8844',balance:8000,holderName:'Sana Mirza',tags:['Transfer'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'HBL',country:'PK',bankType:'commercial',accountType:'Current',currency:'PKR',last4:'5512',balance:350000,holderName:'Sana Mirza',tags:['Pakistan'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Emirates NBD',country:'AE',bankType:'commercial',accountType:'Savings',currency:'AED',last4:'7733',balance:45000,holderName:'Sana Mirza',tags:['UAE'],createdAt:ts});
-    S.cards.push({id:id(),cardName:'Revolut Visa',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'2291',expiry:'07/28',holderName:'SANA MIRZA',createdAt:ts});
-    S.cards.push({id:id(),cardName:'Wise Mastercard',network:'Mastercard',cardType:'Debit',category:'Digital',country:'GB',last4:'8844',expiry:'03/27',holderName:'SANA MIRZA',createdAt:ts});
-    S.cards.push({id:id(),cardName:'Meezan Visa Debit',network:'Visa',cardType:'Debit',category:'Islamic',country:'PK',last4:'5512',expiry:'11/26',holderName:'SANA MIRZA',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Vanguard S&P 500',broker:'Freetrade',type:'Stocks',country:'GB',currency:'GBP',amountInvested:8000,currentValue:9650,riskLevel:'Medium',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Bitcoin',ticker:'BTC',broker:'Coinbase',type:'Crypto',currency:'USD',amountInvested:2000,currentValue:3840,riskLevel:'High',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'NBP Income Fund',broker:'NBP Funds',type:'Mutual Funds',country:'PK',currency:'PKR',amountInvested:200000,currentValue:228000,riskLevel:'Low',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:200,currency:'GBP',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:5000,currency:'PKR',createdAt:ts});
-    S.cash.push({id:id(),location:'Wallet',amount:500,currency:'AED',createdAt:ts});
-    S.sims.push({id:id(),network:'EE',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',createdAt:ts});
-    S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPhone 15 Pro Max',brand:'Apple',category:'Phone',purchasePrice:1199,currency:'GBP',warranty:'2026-10',createdAt:ts});
-    S.emails.push({id:id(),email:'sana.mirza@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
-    S.emails.push({id:id(),email:'sana@protonmail.com',provider:'ProtonMail',purpose:'Private',mfaEnabled:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'Revolut Premium',amount:9.99,currency:'GBP',category:'Finance',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'NordVPN',amount:3.99,currency:'GBP',category:'VPN',active:true,createdAt:ts});
-    S.friends.push({id:id(),name:'Rania Shah',createdAt:ts});
-    S.friends.push({id:id(),name:'Hassan Malik',createdAt:ts});
-    S.friends.push({id:id(),name:'Meera Patel',createdAt:ts});
+  // Cash (3)
+  S.cash.push({id:id(),label:'Home Safe',location:'Home',amount:15000,currency:'PKR',notes:'Emergency PKR',createdAt:ts});
+  S.cash.push({id:id(),label:'Wallet',location:'Wallet',amount:180,currency:'GBP',createdAt:ts});
+  S.cash.push({id:id(),label:'Office Drawer',location:'Office',amount:25000,currency:'PKR',createdAt:ts});
 
-  } else if (type === 'entrepreneur') {
-    S.user.name = 'Omar Qureshi'; S.user.currency = 'GBP';
-    S.banks.push({id:id(),bankName:'Barclays',country:'GB',bankType:'commercial',accountType:'Business',currency:'GBP',last4:'3301',balance:45000,holderName:'Omar Qureshi',tags:['Business','UK'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Monzo',country:'GB',bankType:'digital',accountType:'Current',currency:'GBP',last4:'9922',balance:8500,holderName:'Omar Qureshi',tags:['Personal'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'MCB Bank',country:'PK',bankType:'commercial',accountType:'Business',currency:'PKR',last4:'7744',balance:2500000,holderName:'Omar Qureshi',tags:['Pakistan','Business'],createdAt:ts});
-    S.banks.push({id:id(),bankName:'Meezan Bank',country:'PK',bankType:'islamic',accountType:'Current',currency:'PKR',last4:'1133',balance:900000,holderName:'Omar Qureshi',tags:['Pakistan','Islamic'],createdAt:ts});
-    S.cards.push({id:id(),cardName:'Barclaycard Mastercard',network:'Mastercard',cardType:'Credit',category:'Business',country:'GB',last4:'3301',expiry:'06/27',holderName:'OMAR QURESHI',annualFee:195,createdAt:ts});
-    S.cards.push({id:id(),cardName:'Amex Gold',network:'American Express',cardType:'Credit',category:'Premium',country:'GB',last4:'8812',expiry:'04/28',holderName:'OMAR QURESHI',annualFee:160,createdAt:ts});
-    S.cards.push({id:id(),cardName:'MCB Visa',network:'Visa',cardType:'Credit',category:'Standard',country:'PK',last4:'7744',expiry:'10/26',holderName:'OMAR QURESHI',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'HSBC Holdings',ticker:'HSBA',broker:'Hargreaves Lansdown',type:'Stocks',country:'GB',currency:'GBP',amountInvested:12000,currentValue:13800,riskLevel:'Low',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Ethereum',ticker:'ETH',broker:'Binance',type:'Crypto',currency:'USD',amountInvested:5000,currentValue:8200,riskLevel:'High',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'Systems Ltd',ticker:'SYS',broker:'Topline Securities',type:'Stocks',country:'PK',currency:'PKR',amountInvested:800000,currentValue:1040000,riskLevel:'Medium',createdAt:ts});
-    S.investments.push({id:id(),investmentName:'USDT',ticker:'USDT',broker:'Binance',type:'Crypto',currency:'USD',amountInvested:10000,currentValue:10000,riskLevel:'Low',createdAt:ts});
-    S.cash.push({id:id(),location:'Office',amount:5000,currency:'GBP',createdAt:ts});
-    S.cash.push({id:id(),location:'Home',amount:100000,currency:'PKR',createdAt:ts});
-    S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7800 567890',createdAt:ts});
-    S.sims.push({id:id(),network:'Zong',country:'PK',simType:'Physical',status:'Active',phone:'+92 310 9876543',createdAt:ts});
-    S.vehicles.push({id:id(),make:'Tesla',model:'Model 3',year:'2023',regPlate:'BM23 XYZ',fuel:'Electric',createdAt:ts});
-    S.gadgets.push({id:id(),name:'MacBook Pro 16" M4 Max',brand:'Apple',category:'Laptop',purchasePrice:3499,currency:'GBP',warranty:'2027-01',createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPhone 16 Pro Max',brand:'Apple',category:'Phone',purchasePrice:1199,currency:'GBP',warranty:'2026-10',createdAt:ts});
-    S.gadgets.push({id:id(),name:'iPad Pro 13" M4',brand:'Apple',category:'Tablet',purchasePrice:1299,currency:'GBP',warranty:'2026-05',createdAt:ts});
-    S.expenses.push({id:id(),name:'Microsoft 365',amount:9.99,currency:'GBP',category:'Productivity',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'Adobe CC',amount:54.99,currency:'GBP',category:'Design',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'ChatGPT Plus',amount:20,currency:'GBP',category:'AI',active:true,createdAt:ts});
-    S.expenses.push({id:id(),name:'LinkedIn Premium',amount:39.99,currency:'GBP',category:'Business',active:true,createdAt:ts});
-    S.emails.push({id:id(),email:'omar@qureshi.co.uk',provider:'Custom Domain',purpose:'Business',mfaEnabled:true,createdAt:ts});
-    S.emails.push({id:id(),email:'omar.qureshi@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,createdAt:ts});
-    S.emails.push({id:id(),email:'omar@protonmail.com',provider:'ProtonMail',purpose:'Private',mfaEnabled:true,createdAt:ts});
-    S.friends.push({id:id(),name:'Nadia Hussain',createdAt:ts});
-    S.friends.push({id:id(),name:'Kamran Akhtar',createdAt:ts});
-    S.friends.push({id:id(),name:'Sophie Williams',createdAt:ts});
-    S.assets.push({id:id(),name:'Manchester Apartment',assetType:'property',currentValue:285000,currency:'GBP',purchasePrice:220000,createdAt:ts});
-    S.loans.push({id:id(),person:'Kamran Akhtar',type:'lent',amount:5000,currency:'GBP',status:'Active',date:'2024-03-10',createdAt:ts});
-  }
+  // Investments (6)
+  S.investments.push({id:id(),investmentName:'Vanguard S&P 500 ETF',broker:'Hargreaves Lansdown',type:'Stocks',ticker:'VUSA',country:'GB',currency:'GBP',amountInvested:12000,currentValue:15840,riskLevel:'Medium',ownership:'personal',tags:['ISA','Index'],createdAt:ts});
+  S.investments.push({id:id(),investmentName:'Bitcoin',broker:'Coinbase',type:'Crypto',ticker:'BTC',country:'GB',currency:'USD',amountInvested:3500,currentValue:6720,riskLevel:'High',ownership:'personal',tags:['Crypto'],createdAt:ts});
+  S.investments.push({id:id(),investmentName:'Meezan Islamic Fund',broker:'Al Meezan Investments',type:'Mutual Funds',country:'PK',currency:'PKR',amountInvested:500000,currentValue:578000,riskLevel:'Low',ownership:'personal',tags:['Islamic'],createdAt:ts});
+  S.investments.push({id:id(),investmentName:'UK Premium Bonds',broker:'NS&I',type:'Bonds',country:'GB',currency:'GBP',amountInvested:5000,currentValue:5000,riskLevel:'Low',ownership:'personal',tags:['NSANDI'],createdAt:ts});
+  S.investments.push({id:id(),investmentName:'Tesla Inc',broker:'Trading 212',type:'Stocks',ticker:'TSLA',country:'GB',currency:'GBP',amountInvested:2200,currentValue:1980,riskLevel:'High',ownership:'personal',tags:['GIA'],createdAt:ts});
+  S.investments.push({id:id(),investmentName:'iShares Gold ETF',broker:'Hargreaves Lansdown',type:'Stocks',ticker:'SGLN',country:'GB',currency:'GBP',amountInvested:3000,currentValue:3510,riskLevel:'Low',ownership:'personal',tags:['Commodities','ISA'],createdAt:ts});
+
+  // Loans (4: 2 lent, 2 borrowed)
+  S.loans.push({id:id(),person:'Usman Malik',type:'lent',amount:2500,currency:'GBP',status:'Active',date:'2025-09-10',dueDate:'2026-09-10',notes:'For car repairs',createdAt:ts});
+  S.loans.push({id:id(),person:'Tariq (Brother)',type:'lent',amount:350000,currency:'PKR',status:'Active',date:'2025-06-01',dueDate:'2026-06-01',notes:'Business loan',createdAt:ts});
+  S.loans.push({id:id(),person:'Barclays Mortgage',type:'borrowed',amount:185000,currency:'GBP',status:'Active',date:'2021-03-15',dueDate:'2046-03-15',notes:'Home mortgage — monthly £920',createdAt:ts});
+  S.loans.push({id:id(),person:'HSBC Personal Loan',type:'borrowed',amount:8000,currency:'GBP',status:'Active',date:'2024-07-01',dueDate:'2027-07-01',notes:'Home renovation — £250/month',createdAt:ts});
+
+  // Documents (5) — mix of expiring and not
+  S.documents.push({id:id(),docType:'passport',docNumber:'P12345678',issuingCountry:'United Kingdom',nationality:'British',holderName:'Alex Khan',dob:'1988-04-15',issueDate:'2019-06-10',expiryDate:'2029-06-10',storageLocation:'Home safe',notes:'',tags:[],frontPhoto:'',backPhoto:'',createdAt:ts});
+  S.documents.push({id:id(),docType:'nic',docNumber:'42301-7890123-4',issuingCountry:'Pakistan',holderName:'Alex Khan',dob:'1988-04-15',issueDate:'2018-03-01',expiryDate:daysFromNow(43),storageLocation:'Wallet',notes:'Expiring soon — renew at NADRA',tags:['urgent'],frontPhoto:'',backPhoto:'',createdAt:ts});
+  S.documents.push({id:id(),docType:'driving_license',docNumber:'KHANA880415AX9XM',issuingCountry:'United Kingdom',holderName:'Alex Khan',dob:'1988-04-15',issueDate:'2010-05-20',expiryDate:'2030-04-15',vehicleCategories:'B',storageLocation:'Wallet',notes:'',tags:[],frontPhoto:'',backPhoto:'',createdAt:ts});
+  S.documents.push({id:id(),docType:'visa',docNumber:'GBR-2024-78923',visaType:'Indefinite Leave to Remain',issuingCountry:'United Kingdom',holderName:'Alex Khan',issueDate:'2020-01-15',expiryDate:'',validEntries:'ILR — no expiry',linkedPassportNum:'P12345678',storageLocation:'Home safe',notes:'',tags:['ILR'],frontPhoto:'',backPhoto:'',createdAt:ts});
+  S.documents.push({id:id(),docType:'nic',docNumber:'NI WC 12 34 56 A',issuingCountry:'United Kingdom',holderName:'Alex Khan',dob:'1988-04-15',issueDate:'2006-09-01',expiryDate:'',storageLocation:'Home safe',notes:'National Insurance card',tags:['NI'],frontPhoto:'',backPhoto:'',createdAt:ts});
+
+  // Assets (3)
+  S.assets.push({id:id(),name:'London Flat — East Ham',assetType:'property',currentValue:340000,currency:'GBP',purchasePrice:265000,purchaseDate:'2021-03-15',notes:'Primary residence. 2BR flat.',createdAt:ts});
+  S.assets.push({id:id(),name:'Toyota Hilux (2022)',assetType:'vehicle',currentValue:22000,currency:'GBP',purchasePrice:28000,notes:'Paid off in 2025.',createdAt:ts});
+  S.assets.push({id:id(),name:'MacBook Pro 16" M4',assetType:'gadget',currentValue:2800,currency:'GBP',purchasePrice:3499,notes:'Work machine.',createdAt:ts});
+
+  // Vehicles (1) — MOT due in 60 days
+  S.vehicles.push({id:id(),make:'Toyota',model:'Hilux',year:'2022',regPlate:'EH22 KHN',fuel:'Diesel',mileage:38000,motExpiry:daysFromNow(60),taxExpiry:daysFromNow(28),insuranceExpiry:daysFromNow(92),insuranceProvider:'Admiral',createdAt:ts});
+
+  // SIMs (2)
+  S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',dataPlan:30,planType:'Monthly',createdAt:ts});
+  S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',dataPlan:10,planType:'Monthly',createdAt:ts});
+
+  // Expenses (4)
+  S.expenses.push({id:id(),name:'Netflix',amount:17.99,currency:'GBP',category:'Streaming',frequency:'monthly',active:true,createdAt:ts});
+  S.expenses.push({id:id(),name:'PureGym',amount:22.99,currency:'GBP',category:'Fitness',frequency:'monthly',active:true,createdAt:ts});
+  S.expenses.push({id:id(),name:'Council Tax',amount:142,currency:'GBP',category:'Housing',frequency:'monthly',active:true,createdAt:ts});
+  S.expenses.push({id:id(),name:'O2 Phone Bill',amount:35,currency:'GBP',category:'Telecom',frequency:'monthly',active:true,createdAt:ts});
+
+  // Friends (3)
+  S.friends.push({id:id(),name:'Usman Malik',phone:'+44 7700 987654',notes:'Old uni friend, Manchester',createdAt:ts});
+  S.friends.push({id:id(),name:'Tariq Khan',phone:'+92 321 9876543',notes:'Brother — in Lahore',createdAt:ts});
+  S.friends.push({id:id(),name:'Sophie Williams',phone:'+44 7800 234567',notes:'Work colleague',createdAt:ts});
+
+  // BC / Committees (2)
+  S.bc.push({id:id(),name:'Family BC 2026',role:'participant',type:'ballot',members:10,contribution:10000,currency:'PKR',frequency:'monthly',totalRounds:10,myTurnRound:7,currentRound:4,startDate:'2026-01-01',paymentDay:5,organiser:'Ammi',notes:'Family rotating committee',memberList:[],paymentHistory:[],createdAt:ts,updatedAt:ts});
+  S.bc.push({id:id(),name:'Office Pardner',role:'participant',type:'ballot',members:6,contribution:200,currency:'GBP',frequency:'monthly',totalRounds:6,myTurnRound:3,currentRound:2,startDate:'2026-04-01',paymentDay:1,organiser:'James (PM)',notes:'Office savings committee',memberList:[],paymentHistory:[],createdAt:ts,updatedAt:ts});
+
+  // Prize Bonds (2)
+  S.bonds.push({id:id(),name:'Prize Bond PKR 7500',typeId:'prize_bond',quantity:5,faceValue:7500,amount:7500,currency:'PKR',country:'PK',purchaseDate:'2025-01-10',maturityDate:'',annualRate:0,bondNumbers:['PB-001234','PB-001235','PB-001236','PB-001237','PB-001238'],notes:'Bought in Lahore',createdAt:ts,updatedAt:ts});
+  S.bonds.push({id:id(),name:'UK Premium Bonds',typeId:'premium_bonds',quantity:500,faceValue:1,amount:1,currency:'GBP',country:'GB',purchaseDate:'2023-06-01',maturityDate:'',annualRate:0,bondNumbers:[],notes:'NS&I — eligible for monthly prize draw',createdAt:ts,updatedAt:ts});
+
+  // Emails (2)
+  S.emails.push({id:id(),email:'alex.khan@gmail.com',provider:'Gmail',purpose:'Personal',mfaEnabled:true,recoveryEmail:'tariq.khan@gmail.com',createdAt:ts});
+  S.emails.push({id:id(),email:'a.khan@techcorp.co.uk',provider:'Microsoft 365',purpose:'Work',mfaEnabled:true,createdAt:ts});
+
+  // Gadgets (2)
+  S.gadgets.push({id:id(),name:'MacBook Pro 16" M4 Max',brand:'Apple',category:'Laptop',serialNum:'C02Z9ABCDE12',purchasePrice:3499,currency:'GBP',warranty:'2027-01',purchaseDate:'2025-01-15',insured:true,createdAt:ts});
+  S.gadgets.push({id:id(),name:'iPhone 16 Pro Max',brand:'Apple',category:'Phone',serialNum:'F7X8K9M2P5',purchasePrice:1199,currency:'GBP',warranty:'2026-10',purchaseDate:'2024-10-05',insured:true,createdAt:ts});
+
+  // Digital logins (2)
+  S.digital.push({id:id(),serviceName:'LinkedIn',username:'alexkhan88',url:'linkedin.com',category:'Professional',mfaEnabled:true,passwordStrength:'strong',createdAt:ts});
+  S.digital.push({id:id(),serviceName:'Barclays Online Banking',username:'alexkhan',url:'barclays.co.uk',category:'Banking',mfaEnabled:true,passwordStrength:'strong',createdAt:ts});
+
+  // Gold (stored in localStorage by loadDemoData, but set here too for completeness)
+  try {
+    localStorage.setItem('vo_gold', JSON.stringify([
+      {id:id(),label:'Gold Jewellery Set',metal:'gold',weight:5,unit:'tola',purity:'22k',notes:'Wife\'s jewellery',addedAt:ts},
+      {id:id(),label:'Gold Bars',metal:'gold',weight:10,unit:'tola',purity:'24k',notes:'Investment — stored at home',addedAt:ts}
+    ]));
+    localStorage.setItem('vo_credit_score', JSON.stringify({
+      score:742,agency:'Experian',lastChecked:daysAgo(45),
+      history:[{score:698,date:'2025-09-01'},{score:715,date:'2025-12-01'},{score:742,date:'2026-03-01'}]
+    }));
+    localStorage.setItem('vo_zakat_state', JSON.stringify({
+      nisabType:'silver',hawlDate:daysAgo(250),includeJewellery:true,mode:'personal'
+    }));
+  } catch(e) {}
 
   S.user.netWorth = 0;
   Store.save();
@@ -4106,12 +4096,6 @@ function loadDemoData() {
   localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
   loadDemoProfile('business');
   localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
-  localStorage.setItem('vo_gold', JSON.stringify([
-    {type:'gold',name:'22k Wedding Set',weight:40,unit:'g',pricePerUnit:18500,addedAt:new Date().toISOString()},
-    {type:'gold',name:'Gold Coins (10)',weight:20,unit:'tola',pricePerUnit:220000,addedAt:new Date().toISOString()},
-    {type:'silver',name:'Silver Cutlery Set',weight:500,unit:'g',pricePerUnit:250,addedAt:new Date().toISOString()},
-    {type:'gold',name:'Gold Bangles',weight:15,unit:'g',pricePerUnit:18500,addedAt:new Date().toISOString()}
-  ]));
   localStorage.setItem('vo_family', JSON.stringify({
     head:{
       name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1968-05-15',
