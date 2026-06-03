@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VaultOS — Pitch Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent: #5b8dee;
+  --pink: #e91e8c;
+  --gold: #c9a84c;
+  --ok: #30d158;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,.5);
+  --dim: rgba(255,255,255,.25);
+  font-size: 16px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+::selection { background: rgba(91,141,238,.35); }
+
+/* ── Section Base ─────────────────────────────────────────────── */
+.slide {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 80px 48px;
+}
+@media(max-width:600px){ .slide { padding: 64px 24px; } }
+
+/* Animated entry states */
+.reveal { opacity: 0; transform: translateY(48px) scale(0.97); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
+.reveal-left.visible { opacity: 1; transform: none; }
+.reveal-right { opacity: 0; transform: translateX(60px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
+.reveal-right.visible { opacity: 1; transform: none; }
+.reveal-scale { opacity: 0; transform: scale(0.8); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+.delay-1 { transition-delay: .1s; }
+.delay-2 { transition-delay: .2s; }
+.delay-3 { transition-delay: .35s; }
+.delay-4 { transition-delay: .5s; }
+.delay-5 { transition-delay: .65s; }
+.delay-6 { transition-delay: .8s; }
+
+/* ── Fixed UI ─────────────────────────────────────────────────── */
+#nav-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.25);
+  cursor: pointer;
+  transition: all .3s;
+  border: none;
+}
+.nav-dot.active { background: #fff; transform: scale(1.4); }
+.nav-dot:hover { background: rgba(255,255,255,.6); }
+
+#export-btn {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 1000;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  letter-spacing: .04em;
+  transition: background .2s;
+  font-family: inherit;
+}
+#export-btn:hover { background: rgba(255,255,255,.15); }
+
+@media(max-width:600px){
+  #nav-dots { right: 10px; }
+  .nav-dot { width: 6px; height: 6px; }
+  #export-btn { display: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 1 — OPENER */
+/* ─────────────────────────────────────────────────────────────── */
+#s1 {
+  background: #000;
+  text-align: center;
+  flex-direction: column;
+}
+#s1-gradient {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(30,40,120,.6) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 70% 20%, rgba(91,141,238,.2) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(233,30,140,.15) 0%, transparent 60%);
+  animation: gradshift 8s ease-in-out infinite alternate;
+}
+@keyframes gradshift {
+  0%   { opacity: .7; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+#canvas-particles { position: absolute; inset: 0; z-index: 1; }
+.s1-content { position: relative; z-index: 2; }
+.s1-logo-icon { font-size: clamp(4rem, 10vw, 8rem); animation: float 4s ease-in-out infinite; display: block; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.s1-logo-text {
+  font-size: clamp(4rem, 14vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 30%, rgba(91,141,238,.9) 70%, rgba(233,30,140,.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: .1em 0 .3em;
+}
+.s1-sub {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: .05em;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadein 1s ease .9s forwards;
+}
+@keyframes fadein { to { opacity: 1; } }
+.s1-scroll {
+  font-size: .85rem;
+  color: var(--dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 2 — THE PROBLEM */
+/* ─────────────────────────────────────────────────────────────── */
+#s2 {
+  background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(80,20,0,.8) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 50% at 80% 20%, rgba(180,60,0,.25) 0%, transparent 60%),
+              #0a0505;
+  flex-direction: column;
+  text-align: center;
+}
+.s2-headline {
+  font-size: clamp(1.8rem, 5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+}
+.s2-headline span { color: #f97316; }
+.s2-sub {
+  max-width: 580px;
+  color: var(--muted);
+  font-size: clamp(.9rem, 2vw, 1.1rem);
+  line-height: 1.7;
+  margin: 0 auto 3rem;
+}
+.s2-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  max-width: 760px;
+}
+.s2-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,100,50,.2);
+  border-radius: 20px;
+  padding: 24px 28px;
+  min-width: 160px;
+  flex: 1;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+.s2-card-emoji { font-size: 2rem; display: block; margin-bottom: .5rem; }
+.s2-card-label { font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.8); }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 3 — CURRENT REALITY */
+/* ─────────────────────────────────────────────────────────────── */
+#s3 {
+  background: #040404;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+#s3-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(200,30,30,.07) 0%, transparent 70%);
+  animation: throb 3s ease-in-out infinite alternate;
+}
+@keyframes throb { 0% { opacity: .5; } 100% { opacity: 1; } }
+.s3-cycle-wrap {
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 2.5rem;
+  padding: 0 24px;
+}
+#s3-cycler {
+  font-size: clamp(1.4rem, 4.5vw, 3rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.03em;
+  transition: opacity .4s, transform .4s;
+  max-width: 800px;
+  text-align: center;
+}
+#s3-cycler.fade-out { opacity: 0; transform: translateY(-20px); }
+.s3-bottom {
+  position: relative; z-index: 2;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+/* glitch effect for cycler */
+.glitch { position: relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+}
+.glitch::before {
+  color: var(--pink);
+  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  animation: glitch1 .8s steps(1) infinite;
+  opacity: .6;
+}
+.glitch::after {
+  color: var(--accent);
+  clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+  animation: glitch2 1.2s steps(1) infinite;
+  opacity: .5;
+}
+@keyframes glitch1 {
+  0%,100% { transform: translate(0); } 20% { transform: translate(-3px, 1px); }
+  40% { transform: translate(3px, -1px); } 60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+@keyframes glitch2 {
+  0%,100% { transform: translate(0); } 15% { transform: translate(3px, 2px); }
+  35% { transform: translate(-3px, -1px); } 55% { transform: translate(2px, 1px); }
+  75% { transform: translate(-2px, -2px); }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 4 — PHILOSOPHICAL PIVOT */
+/* ─────────────────────────────────────────────────────────────── */
+#s4 {
+  background: #000;
+  flex-direction: column;
+  text-align: center;
+}
+.s4-line {
+  font-size: clamp(1.3rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.3;
+  max-width: 700px;
+  margin: .5rem auto;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
+}
+.s4-line.visible { opacity: 1; transform: none; }
+.s4-line .accent { color: var(--accent); }
+.s4-line .pink { color: var(--pink); }
+.s4-line .gold { color: var(--gold); }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 5 — INTRODUCING VAULTOS */
+/* ─────────────────────────────────────────────────────────────── */
+#s5 {
+  background: #000;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+#s5-nebula {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(30,60,180,.35) 0%, rgba(91,141,238,.1) 40%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 70% 30%, rgba(130,60,220,.15) 0%, transparent 60%);
+  animation: nebula 6s ease-in-out infinite alternate;
+}
+@keyframes nebula {
+  0%   { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.08) rotate(3deg); }
+}
+.s5-icon-wrap {
+  position: relative; display: inline-block; z-index: 2;
+  margin-bottom: .5rem;
+}
+.s5-icon { font-size: clamp(3rem, 8vw, 6rem); display: block; }
+.s5-icon-glow {
+  position: absolute; inset: -30px;
+  background: radial-gradient(circle, rgba(91,141,238,.5) 0%, transparent 70%);
+  animation: glow-pulse 2.5s ease-in-out infinite alternate;
+  border-radius: 50%;
+  pointer-events: none;
+}
+@keyframes glow-pulse { 0% { opacity: .4; transform: scale(.8); } 100% { opacity: 1; transform: scale(1.2); } }
+.s5-name {
+  position: relative; z-index: 2;
+  font-size: clamp(3.5rem, 14vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -.05em;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 80px rgba(91,141,238,.5), 0 0 160px rgba(91,141,238,.2);
+}
+.s5-tagline {
+  position: relative; z-index: 2;
+  font-size: clamp(.9rem, 2.2vw, 1.2rem);
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin: 1rem 0 2.5rem;
+}
+.s5-badges {
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+}
+.s5-badge {
+  background: rgba(91,141,238,.12);
+  border: 1px solid rgba(91,141,238,.35);
+  border-radius: 100px;
+  padding: 10px 22px;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.9);
+  backdrop-filter: blur(8px);
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 6 — HOW IT WORKS */
+/* ─────────────────────────────────────────────────────────────── */
+#s6 {
+  background: #060810;
+  flex-direction: column;
+  text-align: center;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  margin-bottom: 3rem;
+}
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  justify-content: center;
+  max-width: 900px;
+  position: relative;
+}
+.step {
+  flex: 1;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 32px 24px;
+  position: relative;
+  text-align: center;
+}
+.step::after {
+  content: '→';
+  position: absolute; right: -12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--dim);
+  font-size: 1.5rem;
+  display: block;
+}
+.step:last-child::after { display: none; }
+@media(max-width:700px){
+  .step::after { display: none; }
+}
+.step-num {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  opacity: .25;
+  line-height: 1;
+  letter-spacing: -.04em;
+  margin-bottom: .5rem;
+}
+.step-icon { font-size: 2rem; margin-bottom: .75rem; display: block; }
+.step h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: .5rem; }
+.step p { font-size: .9rem; color: var(--muted); line-height: 1.6; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 7 — FINANCE FEATURES */
+/* ─────────────────────────────────────────────────────────────── */
+#s7 {
+  background: radial-gradient(ellipse 100% 80% at 20% 80%, rgba(10,30,100,.6) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 60% at 80% 20%, rgba(20,50,140,.4) 0%, transparent 60%),
+              #030510;
+  flex-direction: column;
+  text-align: center;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 840px;
+}
+@media(max-width:700px){ .feature-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:420px){ .feature-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+.feat-card {
+  background: rgba(91,141,238,.06);
+  border: 1px solid rgba(91,141,238,.18);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: left;
+  transition: border-color .3s, background .3s, transform .3s;
+  cursor: default;
+}
+.feat-card:hover {
+  border-color: rgba(91,141,238,.5);
+  background: rgba(91,141,238,.1);
+  transform: translateY(-4px);
+}
+.feat-card-icon { font-size: 1.8rem; display: block; margin-bottom: .75rem; }
+.feat-card-title { font-size: .95rem; font-weight: 700; margin-bottom: .35rem; }
+.feat-card-sub { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 8 — IDENTITY FEATURES */
+/* ─────────────────────────────────────────────────────────────── */
+#s8 {
+  background: radial-gradient(ellipse 80% 70% at 50% 40%, rgba(80,20,140,.35) 0%, transparent 70%),
+              #050208;
+  flex-direction: column;
+  text-align: center;
+}
+.id-cards-fan {
+  position: relative;
+  height: 200px;
+  width: 300px;
+  margin: 0 auto 2.5rem;
+}
+.id-card {
+  position: absolute;
+  width: 220px;
+  height: 130px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.15);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  left: 50%; top: 50%;
+  transform-origin: center bottom;
+  backdrop-filter: blur(4px);
+  transition: transform .6s cubic-bezier(.22,1,.36,1);
+}
+.id-card:nth-child(1) { background: rgba(91,141,238,.15); transform: translate(-50%,-50%) rotate(-10deg) translateY(-10px); }
+.id-card:nth-child(2) { background: rgba(233,30,140,.12); transform: translate(-50%,-50%) rotate(-4deg); }
+.id-card:nth-child(3) { background: rgba(201,168,76,.12); transform: translate(-50%,-50%) rotate(3deg); }
+.id-card:nth-child(4) { background: rgba(48,209,88,.12); transform: translate(-50%,-50%) rotate(9deg) translateY(-5px); }
+.id-cards-fan.visible .id-card:nth-child(1) { transform: translate(-130px,-80px) rotate(-22deg); }
+.id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-80px,-40px) rotate(-8deg); }
+.id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-20px,-40px) rotate(6deg); }
+.id-cards-fan.visible .id-card:nth-child(4) { transform: translate(30px,-80px) rotate(20deg); }
+.id-card-icon { font-size: 1.8rem; flex-shrink: 0; }
+.id-card-label { font-size: .8rem; font-weight: 600; line-height: 1.4; }
+.id-features-list {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+  max-width: 600px;
+}
+.id-feat {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: .9rem;
+  font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.id-feat-icon { font-size: 1.3rem; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 9 — MULTI-COUNTRY */
+/* ─────────────────────────────────────────────────────────────── */
+#s9 {
+  background: #030408;
+  flex-direction: column;
+  text-align: center;
+}
+#s9-globe-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; overflow: hidden;
+}
+.globe-circle {
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  border: 1px solid rgba(91,141,238,.08);
+  position: absolute;
+  animation: globe-spin 20s linear infinite;
+}
+.globe-circle:nth-child(2) { width: 380px; height: 380px; animation-duration: 14s; animation-direction: reverse; border-color: rgba(91,141,238,.05); }
+.globe-circle:nth-child(3) { width: 260px; height: 260px; animation-duration: 9s; border-color: rgba(233,30,140,.06); }
+@keyframes globe-spin { from { transform: rotate(0deg) rotateX(30deg); } to { transform: rotate(360deg) rotateX(30deg); } }
+.s9-content { position: relative; z-index: 2; width: 100%; max-width: 900px; }
+.country-blocks {
+  display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 2.5rem;
+}
+.country-block {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 24px;
+  padding: 28px 24px;
+  flex: 1; min-width: 220px; max-width: 260px;
+  text-align: left;
+  transition: border-color .3s, transform .3s;
+}
+.country-block:hover { border-color: rgba(91,141,238,.4); transform: translateY(-6px); }
+.country-flag { font-size: 2.5rem; margin-bottom: .75rem; display: block; }
+.country-name { font-size: 1.1rem; font-weight: 800; margin-bottom: .75rem; }
+.country-details { list-style: none; }
+.country-details li {
+  font-size: .82rem; color: var(--muted); padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.country-details li:last-child { border: none; }
+.country-details li::before { content: '· '; color: var(--accent); }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 10 — SECURITY */
+/* ─────────────────────────────────────────────────────────────── */
+#s10 {
+  background: #000;
+  flex-direction: column;
+  text-align: center;
+}
+#matrix-canvas { position: absolute; inset: 0; opacity: .12; z-index: 1; }
+.s10-content { position: relative; z-index: 2; }
+.s10-title { color: #30d158; text-shadow: 0 0 20px rgba(48,209,88,.5); }
+.sec-specs { display: flex; flex-direction: column; gap: 16px; max-width: 560px; margin: 2rem auto 0; }
+.spec-item {
+  background: rgba(48,209,88,.04);
+  border: 1px solid rgba(48,209,88,.15);
+  border-radius: 16px;
+  padding: 18px 24px;
+  display: flex; align-items: center; gap: 16px;
+  text-align: left;
+  transition: border-color .3s, background .3s;
+}
+.spec-item:hover { border-color: rgba(48,209,88,.4); background: rgba(48,209,88,.08); }
+.spec-check { font-size: 1.4rem; flex-shrink: 0; }
+.spec-text { font-size: .95rem; font-weight: 600; }
+.spec-detail { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 11 — BACKUP & TRUST */
+/* ─────────────────────────────────────────────────────────────── */
+#s11 {
+  background: radial-gradient(ellipse 80% 60% at 30% 60%, rgba(0,50,80,.5) 0%, transparent 70%),
+              #030508;
+  flex-direction: column;
+  text-align: center;
+}
+.backup-flow {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0; max-width: 800px; margin: 2rem auto;
+}
+.backup-node {
+  background: rgba(91,141,238,.08);
+  border: 1px solid rgba(91,141,238,.25);
+  border-radius: 16px;
+  padding: 20px 22px;
+  min-width: 140px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.backup-node-icon { font-size: 1.8rem; display: block; margin-bottom: .5rem; }
+.backup-node-label { font-size: .8rem; font-weight: 700; }
+.backup-node-sub { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+.backup-arrow {
+  color: rgba(91,141,238,.5);
+  font-size: 1.5rem;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+@media(max-width:600px){ .backup-arrow { display: none; } .backup-node { margin: 6px; } }
+.trust-statement {
+  max-width: 560px;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  line-height: 1.6;
+  margin: 2rem auto 0;
+  border: 1px solid rgba(91,141,238,.2);
+  border-radius: 20px;
+  padding: 24px 28px;
+  background: rgba(91,141,238,.05);
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 12 — FAMILY VAULT */
+/* ─────────────────────────────────────────────────────────────── */
+#s12 {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(60,20,100,.4) 0%, transparent 70%),
+              #040206;
+  flex-direction: column;
+  text-align: center;
+}
+.family-tree {
+  position: relative; margin: 2rem auto; max-width: 600px; min-height: 300px;
+}
+.family-node {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  position: absolute;
+  min-width: 120px;
+}
+.family-node.head {
+  background: rgba(91,141,238,.12);
+  border-color: rgba(91,141,238,.4);
+  left: 50%; transform: translateX(-50%);
+  top: 0;
+}
+.family-node.child1 { left: 0; top: 180px; }
+.family-node.child2 { left: 50%; transform: translateX(-50%); top: 180px; }
+.family-node.child3 { right: 0; top: 180px; }
+.family-node-icon { font-size: 1.6rem; display: block; margin-bottom: .4rem; }
+.family-node-name { font-size: .8rem; font-weight: 700; }
+.family-node-sub { font-size: .7rem; color: var(--muted); margin-top: 3px; }
+.family-tree svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: visible; }
+.family-tree-line { stroke: rgba(91,141,238,.25); stroke-width: 1; fill: none; stroke-dasharray: 4 4; }
+.family-modules { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 600px; margin-top: 2rem; }
+.fmod {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 13 — THEMES */
+/* ─────────────────────────────────────────────────────────────── */
+#s13 {
+  background: #000;
+  flex-direction: column;
+  text-align: center;
+}
+.themes-panels {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  height: 260px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  margin-top: 2rem;
+}
+.theme-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: flex .5s cubic-bezier(.22,1,.36,1);
+  padding: 16px 8px;
+  position: relative;
+  overflow: hidden;
+}
+.theme-panel:hover { flex: 2; }
+.theme-panel.midnight { background: linear-gradient(160deg, #0d0f14 0%, #1a1d26 100%); }
+.theme-panel.graphite { background: linear-gradient(160deg, #1c1c1e 0%, #2c2c2e 100%); }
+.theme-panel.cloud   { background: linear-gradient(160deg, #e8ecf0 0%, #d0d5dc 100%); }
+.theme-panel.ivory   { background: linear-gradient(160deg, #f5f0e8 0%, #ede5d5 100%); }
+.theme-panel.blossom { background: linear-gradient(160deg, #1a0d15 0%, #2d1525 100%); }
+.theme-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.2);
+}
+.midnight .theme-dot { background: #5b8dee; }
+.graphite .theme-dot { background: #aaaaaa; }
+.cloud    .theme-dot { background: #4a90d9; border-color: rgba(0,0,0,.15); }
+.ivory    .theme-dot { background: #8b7355; border-color: rgba(0,0,0,.15); }
+.blossom  .theme-dot { background: #e91e8c; }
+.theme-name {
+  font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  writing-mode: vertical-rl; text-orientation: mixed;
+}
+.cloud .theme-name, .ivory .theme-name { color: rgba(0,0,0,.6); }
+.blossom-sparkle {
+  position: absolute; pointer-events: none; width: 100%; height: 100%;
+}
+.sparkle {
+  position: absolute; font-size: .7rem;
+  animation: sparkle-float 3s ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes sparkle-float {
+  0%,100% { opacity: 0; transform: translateY(0) scale(0); }
+  30%,70% { opacity: 1; transform: translateY(-20px) scale(1); }
+}
+.mini-app {
+  width: 80px; height: 100px;
+  border-radius: 10px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(255,255,255,.1);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.mini-bar { height: 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.mini-item { height: 14px; margin: 5px 6px; border-radius: 3px; background: rgba(255,255,255,.1); }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 14 — WHO IT'S FOR */
+/* ─────────────────────────────────────────────────────────────── */
+#s14 {
+  background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(40,20,60,.35) 0%, transparent 70%),
+              #040305;
+  flex-direction: column;
+  text-align: center;
+}
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 780px;
+}
+@media(max-width:600px){ .persona-grid { grid-template-columns: 1fr; } }
+.persona-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  padding: 26px 24px;
+  text-align: left;
+  transition: border-color .3s, transform .3s;
+}
+.persona-card:hover { border-color: rgba(91,141,238,.35); transform: translateY(-4px); }
+.persona-emoji { font-size: 2rem; display: block; margin-bottom: .75rem; }
+.persona-role { font-size: 1rem; font-weight: 800; margin-bottom: .5rem; }
+.persona-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 15 — BUILT BY */
+/* ─────────────────────────────────────────────────────────────── */
+#s15 {
+  background: #020205;
+  flex-direction: column;
+  text-align: center;
+}
+#constellation-canvas { position: absolute; inset: 0; z-index: 1; opacity: .6; }
+.s15-content { position: relative; z-index: 2; }
+.avatar-circle {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(91,141,238,.3), rgba(233,30,140,.2));
+  border: 2px solid rgba(91,141,238,.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; font-weight: 800; letter-spacing: -.02em;
+  color: rgba(255,255,255,.9);
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 40px rgba(91,141,238,.25), 0 0 80px rgba(91,141,238,.1);
+}
+.founder-name { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -.03em; margin-bottom: .75rem; }
+.founder-credentials {
+  font-size: .85rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 2rem;
+}
+.founder-credentials span { color: rgba(255,255,255,.75); font-weight: 600; }
+.founder-quote {
+  max-width: 600px;
+  font-size: clamp(.95rem, 2vw, 1.15rem);
+  font-style: italic;
+  color: rgba(255,255,255,.7);
+  line-height: 1.8;
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  text-align: left;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* SECTION 16 — CTA */
+/* ─────────────────────────────────────────────────────────────── */
+#s16 {
+  background: #000;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+#s16-gradient {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(40,20,100,.7) 0%, transparent 70%);
+  animation: cta-shift 5s ease-in-out infinite alternate;
+}
+@keyframes cta-shift {
+  0%   { background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(40,20,100,.7) 0%, transparent 70%); }
+  33%  { background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(80,20,100,.65) 0%, transparent 70%); }
+  66%  { background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(40,20,80,.65) 0%, transparent 70%); }
+  100% { background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(20,20,120,.7) 0%, transparent 70%); }
+}
+.s16-content { position: relative; z-index: 2; }
+.cta-big {
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 900;
+  letter-spacing: -.05em;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+.cta-sub {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+}
+.cta-buttons { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 3rem; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), rgba(91,141,238,.7));
+  color: #fff;
+  border: none;
+  padding: 18px 36px;
+  border-radius: 100px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: transform .2s, box-shadow .2s;
+  display: inline-flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 32px rgba(91,141,238,.3);
+  font-family: inherit;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(91,141,238,.45); }
+.btn-secondary {
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 18px 36px;
+  border-radius: 100px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: background .2s, transform .2s;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: inherit;
+  backdrop-filter: blur(8px);
+}
+.btn-secondary:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+.qr-section {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.qr-box {
+  width: 90px; height: 90px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  grid-template-rows: repeat(6,1fr);
+  gap: 2px;
+}
+.qr-cell {
+  border-radius: 2px;
+}
+.qr-cell.b { background: #000; }
+.qr-cell.w { background: #fff; }
+.qr-label { font-size: .75rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.cta-copyright {
+  margin-top: 3rem;
+  font-size: .75rem;
+  color: var(--dim);
+  letter-spacing: .08em;
+}
+.cta-copyright a { color: var(--accent); text-decoration: none; }
+
+/* ─────────────────────────────────────────────────────────────── */
+/* Print */
+/* ─────────────────────────────────────────────────────────────── */
+@media print {
+  .slide {
+    page-break-after: always;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 60px 48px;
+    display: block;
+  }
+  #nav-dots, #export-btn { display: none !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1 !important; transform: none !important; }
+  canvas { display: none !important; }
+  #s1-gradient, #s5-nebula, #s9-globe-wrap, #s3-bg, #s16-gradient { display: block; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation dots -->
+<div id="nav-dots"></div>
+
+<!-- PDF Export button -->
+<button id="export-btn" onclick="window.print()">⬇ Export PDF</button>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — CINEMATIC OPENER
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s1">
+  <div id="s1-gradient"></div>
+  <canvas id="canvas-particles"></canvas>
+  <div class="s1-content">
+    <span class="s1-logo-icon reveal">🔐</span>
+    <div class="s1-logo-text reveal delay-1">VaultOS</div>
+    <p class="s1-sub">Your financial life. Finally private.</p>
+    <p class="s1-scroll reveal delay-3">Scroll to explore ↓</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — THE PROBLEM
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s2">
+  <div class="content-inner" style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
+    <h2 class="s2-headline reveal">Managing money across countries<br><span>is broken.</span></h2>
+    <p class="s2-sub reveal delay-1">Most people manage their financial life across spreadsheets, notes apps, and memory. That's not good enough.</p>
+    <div class="s2-cards">
+      <div class="s2-card reveal-left delay-1">
+        <span class="s2-card-emoji">🌍</span>
+        <span class="s2-card-label">3 countries<br>🇵🇰 🇬🇧 🇦🇪</span>
+      </div>
+      <div class="s2-card reveal delay-2">
+        <span class="s2-card-emoji">🏦</span>
+        <span class="s2-card-label">7+ bank<br>accounts</span>
+      </div>
+      <div class="s2-card reveal delay-3">
+        <span class="s2-card-emoji">📁</span>
+        <span class="s2-card-label">Scattered<br>documents</span>
+      </div>
+      <div class="s2-card reveal-right delay-4">
+        <span class="s2-card-emoji">💱</span>
+        <span class="s2-card-label">Multiple<br>currencies</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — CURRENT REALITY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s3">
+  <div id="s3-bg"></div>
+  <div class="content-inner" style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:800px;z-index:2;position:relative;">
+    <div class="s3-cycle-wrap">
+      <div id="s3-cycler" class="glitch reveal">Your bank app sells your data.</div>
+    </div>
+    <p class="s3-bottom reveal delay-2">There had to be a better way.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — PHILOSOPHICAL PIVOT
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s4">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:.75rem;max-width:740px;z-index:2;position:relative;">
+    <div class="s4-line delay-1">What if your data <span class="accent">never left your device?</span></div>
+    <div class="s4-line delay-3">What if encryption was <span class="pink">the default</span>, not the exception?</div>
+    <div class="s4-line delay-5">What if you owned your financial identity — <span class="gold">completely?</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — INTRODUCING VAULTOS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <div id="s5-nebula"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;z-index:2;position:relative;">
+    <div class="s5-icon-wrap reveal">
+      <span class="s5-icon">🔐</span>
+      <div class="s5-icon-glow"></div>
+    </div>
+    <div class="s5-name reveal delay-1">VaultOS</div>
+    <p class="s5-tagline reveal delay-2">Privacy-first · Local-first · Offline-first</p>
+    <div class="s5-badges">
+      <span class="s5-badge reveal-left delay-2">🔒 Zero Servers</span>
+      <span class="s5-badge reveal delay-3">📱 Works Offline</span>
+      <span class="s5-badge reveal-right delay-4">🔑 Your PIN Only</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — HOW IT WORKS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
+    <h2 class="section-title reveal">Simple by design.</h2>
+    <div class="steps">
+      <div class="step reveal-left delay-1">
+        <div class="step-num">01</div>
+        <span class="step-icon">➕</span>
+        <h3>Add</h3>
+        <p>Add your banks, cards, documents — takes minutes</p>
+      </div>
+      <div class="step reveal delay-2">
+        <div class="step-num">02</div>
+        <span class="step-icon">🔐</span>
+        <h3>Encrypt</h3>
+        <p>Everything encrypted with YOUR PIN. Locally. No servers involved.</p>
+      </div>
+      <div class="step reveal-right delay-3">
+        <div class="step-num">03</div>
+        <span class="step-icon">♾️</span>
+        <h3>Access</h3>
+        <p>Access anywhere. Export. Restore. Own your data forever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7 — FINANCE FEATURES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s7">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
+    <h2 class="section-title reveal">Your complete financial picture.</h2>
+    <div class="feature-grid">
+      <div class="feat-card reveal-left delay-1">
+        <span class="feat-card-icon">🏦</span>
+        <div class="feat-card-title">Banks</div>
+        <div class="feat-card-sub">Every account, every country</div>
+      </div>
+      <div class="feat-card reveal delay-2">
+        <span class="feat-card-icon">💳</span>
+        <div class="feat-card-title">Cards</div>
+        <div class="feat-card-sub">Debit, credit, crypto — with photo capture</div>
+      </div>
+      <div class="feat-card reveal-right delay-3">
+        <span class="feat-card-icon">📈</span>
+        <div class="feat-card-title">Investments</div>
+        <div class="feat-card-sub">Stocks, funds, Sukuk, bonds</div>
+      </div>
+      <div class="feat-card reveal-left delay-3">
+        <span class="feat-card-icon">🤝</span>
+        <div class="feat-card-title">Loans</div>
+        <div class="feat-card-sub">Money lent and borrowed</div>
+      </div>
+      <div class="feat-card reveal delay-4">
+        <span class="feat-card-icon">💸</span>
+        <div class="feat-card-title">Expenses</div>
+        <div class="feat-card-sub">Daily spending tracked</div>
+      </div>
+      <div class="feat-card reveal-right delay-5">
+        <span class="feat-card-icon">📊</span>
+        <div class="feat-card-title">Credit Score</div>
+        <div class="feat-card-sub">UK, UAE scores in one place</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 8 — IDENTITY FEATURES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s8">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
+    <h2 class="section-title reveal">Your identity. Secured.</h2>
+    <div class="id-cards-fan reveal-scale">
+      <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="id-card">
+        <span class="id-card-icon">🪪</span>
+        <span class="id-card-label">Passport &<br>National ID</span>
+      </div>
+      <div class="id-card">
+        <span class="id-card-icon">🚗</span>
+        <span class="id-card-label">Driving<br>Licence</span>
+      </div>
+      <div class="id-card">
+        <span class="id-card-icon">🇦🇪</span>
+        <span class="id-card-label">Emirates<br>ID</span>
+      </div>
+      <div class="id-card">
+        <span class="id-card-icon">📱</span>
+        <span class="id-card-label">SIM Cards<br>Worldwide</span>
+      </div>
+    </div>
+    <div class="id-features-list">
+      <div class="id-feat reveal-left delay-2">
+        <span class="id-feat-icon">📧</span>
+        <span>Email identities</span>
+      </div>
+      <div class="id-feat reveal delay-3">
+        <span class="id-feat-icon">🆘</span>
+        <span>Emergency lock-screen access</span>
+      </div>
+      <div class="id-feat reveal-right delay-4">
+        <span class="id-feat-icon">🔒</span>
+        <span>All docs encrypted locally</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 9 — MULTI-COUNTRY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s9">
+  <div id="s9-globe-wrap">
+    <div class="globe-circle"></div>
+    <div class="globe-circle"></div>
+    <div class="globe-circle"></div>
+  </div>
+  <div class="s9-content">
+    <h2 class="section-title reveal">Built for the world's<br>most connected people.</h2>
+    <div class="country-blocks">
+      <div class="country-block reveal-left delay-1">
+        <span class="country-flag">🇵🇰</span>
+        <div class="country-name">Pakistan</div>
+        <ul class="country-details">
+          <li>FBR Tax returns</li>
+          <li>PKR currency</li>
+          <li>HBL, Meezan, UBL</li>
+          <li>Zakat calculator</li>
+        </ul>
+      </div>
+      <div class="country-block reveal delay-2">
+        <span class="country-flag">🇬🇧</span>
+        <div class="country-name">United Kingdom</div>
+        <ul class="country-details">
+          <li>HMRC self-assessment</li>
+          <li>GBP currency</li>
+          <li>Monzo, Barclays, Lloyds</li>
+          <li>Experian credit score</li>
+        </ul>
+      </div>
+      <div class="country-block reveal-right delay-3">
+        <span class="country-flag">🇦🇪</span>
+        <div class="country-name">UAE</div>
+        <ul class="country-details">
+          <li>VAT calculator</li>
+          <li>AED currency</li>
+          <li>ENBD, FAB, Mashreq</li>
+          <li>Al Etihad score</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 10 — SECURITY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s10">
+  <canvas id="matrix-canvas"></canvas>
+  <div class="s10-content" style="width:100%;max-width:700px;">
+    <h2 class="section-title s10-title reveal">Military-grade privacy.<br>Human-grade simplicity.</h2>
+    <div class="sec-specs">
+      <div class="spec-item reveal delay-1">
+        <span class="spec-check">🔐</span>
+        <div>
+          <div class="spec-text">AES-256-GCM Encryption</div>
+          <div class="spec-detail">Industry standard used by governments and banks</div>
+        </div>
+      </div>
+      <div class="spec-item reveal delay-2">
+        <span class="spec-check">🔑</span>
+        <div>
+          <div class="spec-text">PBKDF2 · 310,000 Iterations</div>
+          <div class="spec-detail">SHA-256 key derivation — your PIN is never stored</div>
+        </div>
+      </div>
+      <div class="spec-item reveal delay-3">
+        <span class="spec-check">🎭</span>
+        <div>
+          <div class="spec-text">Decoy Vault Mode</div>
+          <div class="spec-detail">Second PIN shows a clean, empty vault</div>
+        </div>
+      </div>
+      <div class="spec-item reveal delay-4">
+        <span class="spec-check">🆘</span>
+        <div>
+          <div class="spec-text">Emergency Lock Screen</div>
+          <div class="spec-detail">First-responder info visible without unlocking</div>
+        </div>
+      </div>
+      <div class="spec-item reveal delay-5">
+        <span class="spec-check">🛡️</span>
+        <div>
+          <div class="spec-text">Zero Cloud · Zero Servers · Zero Tracking</div>
+          <div class="spec-detail">No account. No analytics. No backdoors.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 11 — BACKUP & TRUST
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s11">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
+    <h2 class="section-title reveal">Your data survives anything.</h2>
+    <div class="backup-flow">
+      <div class="backup-node reveal-left delay-1">
+        <span class="backup-node-icon">📦</span>
+        <div class="backup-node-label">Export .vos</div>
+        <div class="backup-node-sub">Encrypted backup file</div>
+      </div>
+      <span class="backup-arrow reveal delay-1">→</span>
+      <div class="backup-node reveal delay-2">
+        <span class="backup-node-icon">🔏</span>
+        <div class="backup-node-label">SHA-256 Hash</div>
+        <div class="backup-node-sub">Tamper-proof fingerprint</div>
+      </div>
+      <span class="backup-arrow reveal delay-2">→</span>
+      <div class="backup-node reveal delay-3">
+        <span class="backup-node-icon">📱</span>
+        <div class="backup-node-label">Any Device</div>
+        <div class="backup-node-sub">Phone, tablet, laptop</div>
+      </div>
+      <span class="backup-arrow reveal delay-3">→</span>
+      <div class="backup-node reveal-right delay-4">
+        <span class="backup-node-icon">✅</span>
+        <div class="backup-node-label">Restored in 30s</div>
+        <div class="backup-node-sub">Full vault, instantly</div>
+      </div>
+    </div>
+    <div class="trust-statement reveal delay-4">
+      Even if this URL disappears tomorrow, your data is safe forever. You own the encrypted file. You hold the key.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 12 — FAMILY VAULT
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s12">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
+    <h2 class="section-title reveal">One vault. Your entire family.</h2>
+    <div class="family-tree reveal-scale delay-1">
+      <svg>
+        <line x1="50%" y1="80" x2="15%" y2="180" class="family-tree-line"/>
+        <line x1="50%" y1="80" x2="50%" y2="180" class="family-tree-line"/>
+        <line x1="50%" y1="80" x2="85%" y2="180" class="family-tree-line"/>
+      </svg>
+      <div class="family-node head">
+        <span class="family-node-icon">👨‍💼</span>
+        <div class="family-node-name">Head of Family</div>
+        <div class="family-node-sub">Full access</div>
+      </div>
+      <div class="family-node child1">
+        <span class="family-node-icon">👩</span>
+        <div class="family-node-name">Spouse</div>
+        <div class="family-node-sub">Banks · Cards</div>
+      </div>
+      <div class="family-node child2">
+        <span class="family-node-icon">👧</span>
+        <div class="family-node-name">Children</div>
+        <div class="family-node-sub">Docs · Notes</div>
+      </div>
+      <div class="family-node child3">
+        <span class="family-node-icon">👴</span>
+        <div class="family-node-name">Parents</div>
+        <div class="family-node-sub">ID · Assets</div>
+      </div>
+    </div>
+    <div class="family-modules reveal delay-3">
+      <span class="fmod">🏦 Banks</span>
+      <span class="fmod">💳 Cards</span>
+      <span class="fmod">🪪 Documents</span>
+      <span class="fmod">📝 Notes</span>
+      <span class="fmod">🏠 Assets</span>
+      <span class="fmod">📈 Investments</span>
+      <span class="fmod">📱 SIMs</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 13 — THEMES SHOWCASE
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s13">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
+    <h2 class="section-title reveal">Five themes. One aesthetic.</h2>
+    <div class="themes-panels reveal-scale delay-1">
+      <div class="theme-panel midnight">
+        <div class="mini-app">
+          <div class="mini-bar" style="background:rgba(91,141,238,.3)"></div>
+          <div class="mini-item"></div>
+          <div class="mini-item" style="width:60%;background:rgba(91,141,238,.2)"></div>
+          <div class="mini-item"></div>
+        </div>
+        <div class="theme-dot"></div>
+        <div class="theme-name">Midnight</div>
+      </div>
+      <div class="theme-panel graphite">
+        <div class="mini-app">
+          <div class="mini-bar" style="background:rgba(180,180,180,.3)"></div>
+          <div class="mini-item"></div>
+          <div class="mini-item" style="width:60%;background:rgba(160,160,160,.2)"></div>
+          <div class="mini-item"></div>
+        </div>
+        <div class="theme-dot"></div>
+        <div class="theme-name">Graphite</div>
+      </div>
+      <div class="theme-panel cloud">
+        <div class="mini-app" style="background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.1)">
+          <div class="mini-bar" style="background:rgba(74,144,217,.3)"></div>
+          <div class="mini-item" style="background:rgba(0,0,0,.08)"></div>
+          <div class="mini-item" style="width:60%;background:rgba(74,144,217,.2)"></div>
+          <div class="mini-item" style="background:rgba(0,0,0,.08)"></div>
+        </div>
+        <div class="theme-dot"></div>
+        <div class="theme-name" style="color:rgba(0,0,0,.5)">Cloud</div>
+      </div>
+      <div class="theme-panel ivory">
+        <div class="mini-app" style="background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.1)">
+          <div class="mini-bar" style="background:rgba(139,115,85,.3)"></div>
+          <div class="mini-item" style="background:rgba(0,0,0,.07)"></div>
+          <div class="mini-item" style="width:60%;background:rgba(139,115,85,.2)"></div>
+          <div class="mini-item" style="background:rgba(0,0,0,.07)"></div>
+        </div>
+        <div class="theme-dot"></div>
+        <div class="theme-name" style="color:rgba(0,0,0,.5)">Ivory</div>
+      </div>
+      <div class="theme-panel blossom">
+        <div class="blossom-sparkle">
+          <span class="sparkle" style="left:20%;top:30%;animation-delay:0s">🌸</span>
+          <span class="sparkle" style="left:60%;top:60%;animation-delay:.8s">💗</span>
+          <span class="sparkle" style="left:80%;top:25%;animation-delay:1.6s">✨</span>
+        </div>
+        <div class="mini-app" style="border-color:rgba(233,30,140,.2)">
+          <div class="mini-bar" style="background:rgba(233,30,140,.3)"></div>
+          <div class="mini-item"></div>
+          <div class="mini-item" style="width:60%;background:rgba(233,30,140,.2)"></div>
+          <div class="mini-item"></div>
+        </div>
+        <div class="theme-dot"></div>
+        <div class="theme-name">Blossom</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 14 — WHO IT'S FOR
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s14">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
+    <h2 class="section-title reveal">Built for the globally mobile.</h2>
+    <div class="persona-grid">
+      <div class="persona-card reveal-left delay-1">
+        <span class="persona-emoji">🧳</span>
+        <div class="persona-role">The Diaspora Professional</div>
+        <div class="persona-desc">Pakistani in London managing money across three countries and five currencies simultaneously.</div>
+      </div>
+      <div class="persona-card reveal-right delay-2">
+        <span class="persona-emoji">👨‍👩‍👧‍👦</span>
+        <div class="persona-role">The Family Guardian</div>
+        <div class="persona-desc">Tracking finances, documents, and insurance for spouse, children, and parents in one encrypted vault.</div>
+      </div>
+      <div class="persona-card reveal-left delay-3">
+        <span class="persona-emoji">💼</span>
+        <div class="persona-role">The Business Owner</div>
+        <div class="persona-desc">Cleanly separating personal and business finances while staying tax-ready for multiple jurisdictions.</div>
+      </div>
+      <div class="persona-card reveal-right delay-4">
+        <span class="persona-emoji">🌍</span>
+        <div class="persona-role">The Privacy-First User</div>
+        <div class="persona-desc">Done trusting apps with their financial identity. Ready to own their data completely.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 15 — BUILT BY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s15">
+  <canvas id="constellation-canvas"></canvas>
+  <div class="s15-content" style="display:flex;flex-direction:column;align-items:center;max-width:700px;width:100%;">
+    <div class="avatar-circle reveal-scale">SA</div>
+    <h2 class="founder-name reveal delay-1">Shamikh Ahmed</h2>
+    <p class="founder-credentials reveal delay-2">
+      <span>Director</span>, NEWS Logistics &nbsp;·&nbsp; <span>Founder</span>, TheSolution360<br>
+      <span>MSc Logistics</span>, Cardiff University<br>
+      <span>MSc Accounting & Finance</span>, BPP University
+    </p>
+    <blockquote class="founder-quote reveal delay-3">
+      "I built VaultOS because I was managing money across Pakistan, UK, and UAE — and nothing existed that respected both my privacy and my lifestyle."
+    </blockquote>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 16 — CALL TO ACTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s16">
+  <div id="s16-gradient"></div>
+  <div class="s16-content" style="display:flex;flex-direction:column;align-items:center;">
+    <p class="cta-big reveal">Your vault<br>awaits.</p>
+    <p class="cta-sub reveal delay-1">Private. Encrypted. Yours.</p>
+    <div class="cta-buttons">
+      <a class="btn-primary reveal-left delay-2" href="https://shamikhahmed.github.io/VaultOS" target="_blank">🔐 Open VaultOS</a>
+      <a class="btn-secondary reveal-right delay-2" href="https://github.com/shamikhahmed/VaultOS/blob/main/GUIDE.md" target="_blank">📖 Read the Guide</a>
+    </div>
+    <div class="qr-section reveal delay-3">
+      <div class="qr-box" id="qr-pattern"></div>
+      <span class="qr-label">Scan to open on your phone</span>
+    </div>
+    <p class="cta-copyright reveal delay-4">
+      © 2026 Shamikh Ahmed &nbsp;·&nbsp;
+      <a href="https://shamikhahmed.github.io/VaultOS">VaultOS</a>
+      &nbsp;·&nbsp; Source-available
+    </p>
+  </div>
+</section>
+
+<script>
+// ─── Navigation Dots ──────────────────────────────────────────────────
+const slides = document.querySelectorAll('.slide');
+const navDots = document.getElementById('nav-dots');
+let currentSlide = 0;
+
+slides.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.title = `Section ${i + 1}`;
+  dot.onclick = () => slides[i].scrollIntoView({ behavior: 'smooth' });
+  navDots.appendChild(dot);
+});
+
+function updateDots() {
+  const dots = navDots.querySelectorAll('.nav-dot');
+  let idx = 0;
+  slides.forEach((s, i) => {
+    const rect = s.getBoundingClientRect();
+    if (Math.abs(rect.top) < window.innerHeight / 2) idx = i;
+  });
+  currentSlide = idx;
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+window.addEventListener('scroll', updateDots, { passive: true });
+
+// ─── Keyboard navigation ──────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+  } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault();
+    if (currentSlide > 0) slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// ─── Touch/swipe navigation ───────────────────────────────────────────
+let touchStartY = 0;
+document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 50) {
+    if (dy > 0 && currentSlide < slides.length - 1) slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+    else if (dy < 0 && currentSlide > 0) slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+  }
+}, { passive: true });
+
+// ─── Intersection Observer (reveal animations) ────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+  revealObserver.observe(el);
+});
+
+// Section visibility for special triggers
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      if (id === 's3') startCycler();
+      if (id === 's4') triggerS4Lines();
+      if (id === 's10') startMatrix();
+      if (id === 's15') startConstellation();
+    } else {
+      if (entry.target.id === 's10') stopMatrix();
+    }
+  });
+}, { threshold: 0.3 });
+
+slides.forEach(s => sectionObserver.observe(s));
+
+// ─── Section 1: Particle System ───────────────────────────────────────
+(function () {
+  const canvas = document.getElementById('canvas-particles');
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  let raf;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for (let i = 0; i < 70; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - .5) * .4,
+      vy: (Math.random() - .5) * .4,
+      r: Math.random() * 1.5 + .5,
+      alpha: Math.random() * .5 + .2
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+      ctx.fill();
+    });
+    raf = requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── Section 3: Text cycler ───────────────────────────────────────────
+const cyclerTexts = [
+  'Your bank app sells your data.',
+  'Your notes aren\'t encrypted.',
+  'Cloud apps can be hacked.',
+  'You don\'t own your financial identity.'
+];
+let cyclerIdx = 0, cyclerRunning = false;
+
+function startCycler() {
+  if (cyclerRunning) return;
+  cyclerRunning = true;
+  function cycle() {
+    if (!cyclerRunning) return;
+    const el = document.getElementById('s3-cycler');
+    el.classList.add('fade-out');
+    setTimeout(() => {
+      cyclerIdx = (cyclerIdx + 1) % cyclerTexts.length;
+      el.textContent = cyclerTexts[cyclerIdx];
+      el.setAttribute('data-text', cyclerTexts[cyclerIdx]);
+      el.classList.remove('fade-out');
+    }, 400);
+    setTimeout(cycle, 2500);
+  }
+  setTimeout(cycle, 2500);
+}
+
+// ─── Section 4: Line triggers ─────────────────────────────────────────
+function triggerS4Lines() {
+  document.querySelectorAll('.s4-line').forEach(el => {
+    setTimeout(() => el.classList.add('visible'), parseInt(el.className.match(/delay-(\d)/)?.[1] || 0) * 200);
+  });
+}
+
+// ─── Section 10: Matrix Rain ──────────────────────────────────────────
+let matrixRaf = null;
+function startMatrix() {
+  const canvas = document.getElementById('matrix-canvas');
+  if (!canvas || matrixRaf) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const cols = Math.floor(canvas.width / 18);
+  const drops = Array(cols).fill(1);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&@!?アイウエオ';
+
+  function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#30d158';
+    ctx.font = '13px monospace';
+    drops.forEach((y, i) => {
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(ch, i * 18, y * 18);
+      if (y * 18 > canvas.height && Math.random() > .975) drops[i] = 0;
+      drops[i]++;
+    });
+    matrixRaf = requestAnimationFrame(draw);
+  }
+  draw();
+}
+function stopMatrix() {
+  if (matrixRaf) { cancelAnimationFrame(matrixRaf); matrixRaf = null; }
+}
+
+// ─── Section 15: Constellation ────────────────────────────────────────
+function startConstellation() {
+  const canvas = document.getElementById('constellation-canvas');
+  if (!canvas || canvas.dataset.drawn) return;
+  canvas.dataset.drawn = '1';
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const stars = Array.from({length: 60}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.5 + .5,
+    alpha: Math.random() * .6 + .2
+  }));
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    ctx.fill();
+  });
+  stars.forEach((a, i) => {
+    stars.slice(i + 1).forEach(b => {
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(91,141,238,${0.15 * (1 - d / 120)})`;
+        ctx.lineWidth = .8;
+        ctx.stroke();
+      }
+    });
+  });
+}
+
+// ─── QR Pattern (decorative) ──────────────────────────────────────────
+(function () {
+  const qr = document.getElementById('qr-pattern');
+  if (!qr) return;
+  const pattern = [
+    1,1,1,1,1,1,0,
+    1,0,0,0,0,1,0,
+    1,0,1,1,0,1,1,
+    1,0,0,0,0,1,0,
+    1,1,1,1,1,1,0,
+    0,1,0,1,0,0,1,
+    1,0,1,0,1,1,0,
+  ];
+  // Build a 6x6 grid from the 7x7 pattern
+  for (let i = 0; i < 36; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'qr-cell ' + (pattern[i] ? 'b' : 'w');
+    qr.appendChild(cell);
+  }
+})();
+
+// ─── S8: ID Cards fan on scroll ───────────────────────────────────────
+const fanObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+    else e.target.classList.remove('visible');
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.id-cards-fan').forEach(el => fanObserver.observe(el));
+
+// ─── Section 1: auto-trigger reveals ─────────────────────────────────
+setTimeout(() => {
+  document.querySelectorAll('#s1 .reveal, #s1 .reveal-left, #s1 .reveal-right, #s1 .reveal-scale').forEach(el => el.classList.add('visible'));
+}, 100);
+</script>
+</body>
+</html>
