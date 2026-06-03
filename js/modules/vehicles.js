@@ -33,6 +33,11 @@ const Vehicles = {
       const hasIns = ins.some(i => i.expiryDate && new Date(i.expiryDate) >= new Date());
       const motDays = v.motExpiry ? this._days(v.motExpiry) : null;
       const taxDays = v.taxExpiry ? this._days(v.taxExpiry) : null;
+      const vpp = v.purchasePrice || 0;
+      const vcv = v.currentValue || 0;
+      const vpnl = (vpp > 0 && vcv > 0) ? vcv - vpp : null;
+      const vpnlPct = vpnl !== null ? (vpnl / vpp * 100).toFixed(1) : null;
+      const vpnlHtml = vpnl !== null ? `<span class="badge" style="color:${vpnl>=0?'var(--ok)':'var(--err)'}">${vpnl>=0?'+':''}${v.currency||''} ${Math.abs(Math.round(vpnl)).toLocaleString()} (${vpnl>=0?'+':''}${vpnlPct}%)</span>` : '';
       return `<div class="entry" onclick="Vehicles.detail('${v.id}')">
         <div class="entry-main">
           <div class="entry-ic">🚗</div>
@@ -41,6 +46,7 @@ const Vehicles = {
             <div class="entry-sub">${[v.color, v.regNumber, v.fuelType].filter(Boolean).join(' · ')}</div>
             <div class="entry-meta">
               ${v.currentValue ? `<span class="badge b-acc">${v.currency || ''} ${U.fmt(v.currentValue)}</span>` : ''}
+              ${vpnlHtml}
               <span class="badge ${hasIns ? 'b-ok' : 'b-err'}">${hasIns ? 'Insured' : 'No Insurance'}</span>
               ${(v.fuelLog||[]).length ? `<span class="badge b-muted">⛽ ${(v.fuelLog||[]).length} logs</span>` : ''}
               ${this._statusBadge(motDays, 'MOT')}
@@ -58,7 +64,12 @@ const Vehicles = {
 
   openAdd() {
     Modal.open('🚗 Add Vehicle', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Vehicles.save()">Save</button>`);
-    setTimeout(() => { const c = document.getElementById('vf-cur'); if (c) c.value = S.user.currency || 'PKR'; }, 50);
+    setTimeout(() => {
+      const c = document.getElementById('vf-cur'); if (c) c.value = S.user.currency || 'PKR';
+      const cur = (S.user && S.user.currency) || 'PKR';
+      const pp = document.getElementById('vf-pp'); if (pp) U.numInput(pp, cur);
+      const cv = document.getElementById('vf-cv'); if (cv) U.numInput(cv, cur);
+    }, 50);
   },
 
   form(v = {}) {
@@ -105,8 +116,8 @@ const Vehicles = {
             <div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="vf-date" type="date" value="${v.purchaseDate||''}"></div>
           </div>
           <div class="fr">
-            <div class="fg"><label class="fl">Purchase Price</label><input class="inp" id="vf-pp" type="number" value="${v.purchasePrice||''}" placeholder="0"></div>
-            <div class="fg"><label class="fl">Current Value</label><input class="inp" id="vf-cv" type="number" value="${v.currentValue||''}" placeholder="0"></div>
+            <div class="fg"><label class="fl">Purchase Price</label><input class="inp num-inp" id="vf-pp" type="text" inputmode="decimal" pattern="[0-9,\.]*" value="${v.purchasePrice||''}" placeholder="0"></div>
+            <div class="fg"><label class="fl">Current Value</label><input class="inp num-inp" id="vf-cv" type="text" inputmode="decimal" pattern="[0-9,\.]*" value="${v.currentValue||''}" placeholder="0"></div>
           </div>
           <div class="fg"><label class="fl">Currency</label><select class="inp" id="vf-cur">${U.currencies()}</select></div>
         </div>
@@ -140,8 +151,8 @@ const Vehicles = {
       engineCC: parseInt(document.getElementById('vf-cc')?.value) || null,
       transmission: document.getElementById('vf-trans')?.value.trim() || '',
       purchaseDate: document.getElementById('vf-date')?.value || '',
-      purchasePrice: parseFloat(document.getElementById('vf-pp')?.value) || 0,
-      currentValue: parseFloat(document.getElementById('vf-cv')?.value) || 0,
+      purchasePrice: parseFloat((document.getElementById('vf-pp')?.value || '').replace(/,/g, '')) || 0,
+      currentValue: parseFloat((document.getElementById('vf-cv')?.value || '').replace(/,/g, '')) || 0,
       currency: document.getElementById('vf-cur')?.value || S.user.currency || 'PKR',
       motExpiry: document.getElementById('vf-mot')?.value || '',
       taxExpiry: document.getElementById('vf-vtax')?.value || '',
@@ -179,6 +190,9 @@ const Vehicles = {
     setTimeout(() => {
       const c = document.getElementById('vf-cur'); if (c) c.value = v.currency || 'PKR';
       const mm = document.getElementById('vf-makemodel'); if (mm) mm.value = v.make + (v.model ? ' ' + v.model : '');
+      const cur = v.currency || (S.user && S.user.currency) || 'PKR';
+      const pp = document.getElementById('vf-pp'); if (pp) U.numInput(pp, cur);
+      const cv = document.getElementById('vf-cv'); if (cv) U.numInput(cv, cur);
     }, 50);
   },
 

@@ -306,6 +306,11 @@ const Zakat = {
 
       '</div>';
 
+    setTimeout(function() {
+      document.querySelectorAll('#zakat-body .num-inp, #zakat-body input[inputmode="decimal"]').forEach(function(el) {
+        if (el.id && typeof U !== 'undefined' && U.numInput) U.numInput(el, (typeof S !== 'undefined' && S.user && S.user.currency) || 'PKR');
+      });
+    }, 80);
     this._recalculate();
   },
 
@@ -313,7 +318,7 @@ const Zakat = {
     const badge = isAuto ? '<span style="font-size:9px;background:rgba(91,141,238,.15);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px">Auto</span>' : '';
     return '<div style="margin-bottom:10px">' +
       '<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:4px">' + label + badge + '</label>' +
-      '<input class="inp num-inp" type="number" id="' + id + '" value="' + Math.round(value) + '" min="0" step="1" ' +
+      '<input class="inp num-inp" type="text" inputmode="decimal" id="' + id + '" value="' + Math.round(value) + '" ' +
         'style="width:100%" oninput="Zakat._onFieldChange(\'' + id + '\')" placeholder="0">' +
       '<div style="font-size:10px;color:var(--text3);margin-top:3px">' + hint + '</div>' +
     '</div>';
@@ -333,7 +338,7 @@ const Zakat = {
       const key = fieldMap[id];
       if (key) {
         const el = document.getElementById(id);
-        saved[key] = parseFloat(el ? el.value : 0) || 0;
+        saved[key] = parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
         localStorage.setItem('vo_zakat_calc', JSON.stringify(saved));
       }
     } catch(e) {}
@@ -349,7 +354,7 @@ const Zakat = {
 
     const g = function(id) {
       const el = document.getElementById(id);
-      return parseFloat(el ? el.value : 0) || 0;
+      return parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
     };
     const cash = g('z-cash');
     const invest = g('z-invest');
@@ -413,7 +418,7 @@ const Zakat = {
         '<div style="font-size:13px;color:var(--text2);line-height:1.8">FBR Wealth Tax applies to net movable assets above PKR 5 crore (50 million). Rate: 1% of excess above threshold.<br><br>' +
         'Enter your total taxable wealth below for a quick estimate.</div>' +
         '<div class="fg" style="margin-top:12px"><label class="fl">Total Net Wealth (PKR)</label>' +
-          '<input class="inp num-inp" type="number" id="fbr-wealth" placeholder="0" oninput="Zakat._calcFBR()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" id="fbr-wealth" placeholder="0" oninput="Zakat._calcFBR()"></div>' +
         '<div id="fbr-result" style="margin-top:12px;display:none;padding:14px;background:rgba(2,132,199,.1);border:1px solid rgba(2,132,199,.3);border-radius:12px;text-align:center"></div>' +
       '</div>' +
       '</div>';
@@ -421,7 +426,7 @@ const Zakat = {
 
   _calcFBR() {
     const el = document.getElementById('fbr-wealth');
-    const wealth = parseFloat(el ? el.value : 0) || 0;
+    const wealth = parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
     const res = document.getElementById('fbr-result');
     if (!res) return;
     const threshold = 50000000;
@@ -438,7 +443,7 @@ const Zakat = {
     const cur = this._userCur();
     const g = function(id) {
       const el = document.getElementById(id);
-      return parseFloat(el ? el.value : 0) || 0;
+      return parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
     };
     const lines = [
       'VaultOS Zakat Report — ' + new Date().toLocaleDateString(),

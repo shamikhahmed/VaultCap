@@ -148,7 +148,7 @@ const CreditScore = {
     const agencies = ['Experian', 'Equifax', 'TransUnion', 'ECIB (PK)', 'AECB (AE)', 'Other'];
     Modal.open('📊 Update Credit Score',
       '<div class="fg"><label class="fl">Your Credit Score</label>' +
-        '<input class="inp num-inp" type="number" id="cs-score" min="0" max="999" value="' + (d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
+        '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + (d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
       '<div id="cs-preview" style="text-align:center;padding:10px;font-size:24px;font-weight:900;color:var(--text3)"></div>' +
       '<div class="fg"><label class="fl">Reporting Agency</label>' +
         '<select class="inp" id="cs-agency">' +
