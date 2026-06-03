@@ -101,10 +101,13 @@ const Dash={
     } catch(e) {}
     const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
     const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
+    const bankPKR = (S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
     const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR + bcPKR + bondsPKR - debtPKR;
 
     const hist = S.user.nwHistory || [];
-    const prevV = hist.length >= 2 ? hist[hist.length-1].v : null;
+    const todayStr = new Date().toISOString().split('T')[0];
+    const prevEntry = [...hist].reverse().find(h => h.d !== todayStr);
+    const prevV = prevEntry ? prevEntry.v : null;
     const nwDisplay = Math.round(toCur(nwPKR, cur));
     const trendDir = prevV !== null ? (nwDisplay > prevV ? 1 : nwDisplay < prevV ? -1 : 0) : 0;
     const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
@@ -168,6 +171,9 @@ const Dash={
     const activeMods = ALL_MODULES.filter(m => S.modules[m.id] && S[m.id]);
     const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
+    const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR+vehPKR,color:'#ff9f0a',icon:'🏠'},{label:'Gold',value:goldPKR,color:'#c9a84c',icon:'🥇'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-bottom:16px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+
     b.innerHTML = `
     <!-- NET WORTH HERO -->
     <div style="background:linear-gradient(135deg,rgba(123,95,255,.2),rgba(0,213,255,.1));border:1px solid rgba(123,95,255,.3);border-radius:20px;padding:24px 20px;margin:16px;text-align:center;position:relative">
@@ -200,6 +206,8 @@ const Dash={
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">${s.label}</div>
         </div>`).join('')}
     </div>
+
+    ${breakdownHtml}
 
     <!-- WALLET -->
     ${S.modules.cards && wCards.length > 0 ? `
