@@ -143,7 +143,7 @@ const BCModule = {
         '<div class="fg"><label class="fl">Total Members</label>' +
           '<input class="inp num-inp" type="number" id="bc-members" min="2" value="' + (bc.members || '') + '" placeholder="e.g. 10" oninput="BCModule._updatePot()"></div>' +
         '<div class="fg"><label class="fl">Contribution/Round</label>' +
-          '<input class="inp num-inp" type="number" id="bc-contribution" min="1" value="' + (bc.contribution || '') + '" placeholder="e.g. 10000" oninput="BCModule._updatePot()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bc-contribution" value="' + (bc.contribution || '') + '" placeholder="e.g. 10,000" oninput="BCModule._updatePot()"></div>' +
       '</div>' +
 
       '<div class="fr">' +
@@ -189,7 +189,11 @@ const BCModule = {
       '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button class="btn btn-p" onclick="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
-    setTimeout(function() { BCModule._updatePot(); }, 50);
+    setTimeout(function() {
+      BCModule._updatePot();
+      var contrib = document.getElementById('bc-contribution');
+      if (contrib) U.numInput(contrib, document.getElementById('bc-currency')?.value || (S.user && S.user.currency) || 'PKR');
+    }, 50);
   },
 
   _onTypeChange() {
@@ -200,7 +204,7 @@ const BCModule = {
 
   _updatePot() {
     const members = parseInt((document.getElementById('bc-members') || {}).value) || 0;
-    const contribution = parseFloat((document.getElementById('bc-contribution') || {}).value) || 0;
+    const contribution = parseFloat(((document.getElementById('bc-contribution') || {}).value || '').replace(/,/g,'')) || 0;
     const currency = (document.getElementById('bc-currency') || {}).value || 'PKR';
     const el = document.getElementById('bc-pot-display');
     if (el && members && contribution) {
@@ -213,7 +217,7 @@ const BCModule = {
     const name = ((document.getElementById('bc-name') || {}).value || '').trim();
     if (!name) { Toast.show('BC name is required', 'error'); return; }
     const members = parseInt((document.getElementById('bc-members') || {}).value) || 0;
-    const contribution = parseFloat((document.getElementById('bc-contribution') || {}).value) || 0;
+    const contribution = parseFloat(((document.getElementById('bc-contribution') || {}).value || '').replace(/,/g,'')) || 0;
     if (!members || !contribution) { Toast.show('Members and contribution amount are required', 'error'); return; }
 
     const existing = editIdx != null ? (S.bc || [])[editIdx] : null;

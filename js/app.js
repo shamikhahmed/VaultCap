@@ -3144,7 +3144,61 @@ const U = {
   setLF(obj) { setTimeout(() => { const t = document.getElementById('lf-2fa'); if (t) t.value = obj.twoFA || ''; }, 60); },
   numInput(el, currency) {
     if (!el) return;
-    el.addEventListener('input', () => formatNumberInput(el, currency || S.user.currency || 'PKR'));
+    el.addEventListener('input', () => { formatNumberInput(el, currency || S.user.currency || 'PKR'); U.showWords(el, currency); });
+    U.showWords(el, currency);
+  },
+  numInWords(n, currency) {
+    if (!n || isNaN(n)) return '';
+    const num = Math.round(Math.abs(parseFloat(String(n).replace(/,/g,''))));
+    if (num === 0) return '';
+    const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine',
+      'Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    const toHundred = x => x < 20 ? ones[x] : tens[Math.floor(x/10)] + (x%10 ? ' ' + ones[x%10] : '');
+    const cur = (currency || S.user?.currency || '').toUpperCase();
+    const isPKR = cur === 'PKR' || cur === 'RS' || cur === 'RS.' || cur === '';
+    if (isPKR && num >= 100) {
+      const crore = Math.floor(num / 10000000);
+      const lakh  = Math.floor((num % 10000000) / 100000);
+      const thou  = Math.floor((num % 100000) / 1000);
+      const hund  = Math.floor((num % 1000) / 100);
+      const rem   = num % 100;
+      const parts = [];
+      if (crore) parts.push(toHundred(crore) + ' Crore');
+      if (lakh)  parts.push(toHundred(lakh)  + ' Lakh');
+      if (thou)  parts.push(toHundred(thou)  + ' Thousand');
+      if (hund)  parts.push(ones[hund]        + ' Hundred');
+      if (rem)   parts.push(toHundred(rem));
+      return parts.join(' ');
+    }
+    const toThree = x => {
+      if (x === 0) return '';
+      const h = Math.floor(x/100), r = x%100;
+      return (h ? ones[h] + ' Hundred' + (r?' ':'') : '') + (r < 20 ? ones[r] : tens[Math.floor(r/10)] + (r%10?' '+ones[r%10]:''));
+    };
+    const bill = Math.floor(num / 1000000000);
+    const mill = Math.floor((num % 1000000000) / 1000000);
+    const thou = Math.floor((num % 1000000) / 1000);
+    const rem  = num % 1000;
+    const parts = [];
+    if (bill) parts.push(toThree(bill) + ' Billion');
+    if (mill) parts.push(toThree(mill) + ' Million');
+    if (thou) parts.push(toThree(thou) + ' Thousand');
+    if (rem)  parts.push(toThree(rem));
+    return parts.join(' ') || 'Zero';
+  },
+  showWords(inputEl, currency) {
+    if (!inputEl) return;
+    const hintId = inputEl.id + '-words';
+    let hint = document.getElementById(hintId);
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.id = hintId;
+      hint.style.cssText = 'font-size:10px;color:var(--text3);margin-top:2px;min-height:14px;font-style:italic;transition:opacity .2s';
+      inputEl.parentNode && inputEl.parentNode.insertBefore(hint, inputEl.nextSibling);
+    }
+    const num = parseFloat((inputEl.value || '').replace(/,/g,''));
+    hint.textContent = num > 0 ? U.numInWords(num, currency) : '';
   }
 };
 

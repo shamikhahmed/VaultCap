@@ -282,6 +282,13 @@ const Tax = {
         ${slabs.map(s=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text2)">${s.label}</span><span style="font-weight:700;color:${s.rate===0?'var(--success)':s.rate<=0.2?'var(--info)':s.rate<=0.3?'var(--warning)':'var(--danger)'}">${(s.rate*100).toFixed(2).replace(/\.?0+$/,'')}%</span></div>`).join('')}
       </div>` : ''}
     </div>`;
+    setTimeout(function() {
+      const cur = (S.user && S.user.currency) || 'PKR';
+      ['tax-income','iht-estate','iht-home','sdlt-price'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) U.numInput(el, cur);
+      });
+    }, 80);
   },
 
   _incomeForm(saved, symbol, filing) {
@@ -294,7 +301,7 @@ const Tax = {
     const isFlat = filing && filing.isFlat;
     return `${yearToggle}<div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">${isFlat?'IT Export Proceeds / Remittances':'Annual Income'} (${(symbol||'').trim()})</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter amount" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
@@ -304,7 +311,7 @@ const Tax = {
   _vatForm(saved) {
     return `<div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Amount (AED) — exclusive of VAT</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter amount" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
@@ -322,7 +329,7 @@ const Tax = {
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Net Amount (£) — exclusive of VAT</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter amount" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
@@ -349,7 +356,7 @@ const Tax = {
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Total Capital Gain (£)</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter total gain" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter total gain"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
@@ -367,7 +374,7 @@ const Tax = {
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Total Dividend Income (£)</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter dividend income" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter dividend income"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
@@ -378,10 +385,10 @@ const Tax = {
     const sp = saved.ihtSpouse||'no';
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Estate Value (£)</label>
-      <input id="iht-estate" type="number" value="${saved.ihtEstate||''}" placeholder="Total estate value" min="0"
+      <input id="iht-estate" type="text" inputmode="decimal" value="${saved.ihtEstate||''}" placeholder="Total estate value"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Primary Home Value (£) — for Residence NRB</label>
-      <input id="iht-home" type="number" value="${saved.ihtHome||''}" placeholder="Value of primary residence" min="0"
+      <input id="iht-home" type="text" inputmode="decimal" value="${saved.ihtHome||''}" placeholder="Value of primary residence"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px">
@@ -397,7 +404,7 @@ const Tax = {
     const ft = saved.sdltFtb||'no', ad = saved.sdltAdd||'no';
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Property Purchase Price (£)</label>
-      <input id="sdlt-price" type="number" value="${saved.sdltPrice||''}" placeholder="Enter purchase price" min="0"
+      <input id="sdlt-price" type="text" inputmode="decimal" value="${saved.sdltPrice||''}" placeholder="Enter purchase price"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px">
@@ -422,7 +429,7 @@ const Tax = {
         ${ex.rates.map(r=>`<option value="${r.rate}">${r.label} (${(r.rate*100).toFixed(0)}%)</option>`).join('')}
       </select>
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Amount (AED) — exclusive of excise</label>
-      <input id="tax-income" type="number" value="${saved.income||''}" placeholder="Enter amount" min="0"
+      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button onclick="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
@@ -446,7 +453,7 @@ const Tax = {
     const cc = this._country;
     const cfg = this.config[cc];
     const filing = cfg.filings[this._filing];
-    const income = parseFloat(document.getElementById('tax-income')?.value||0);
+    const income = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!income){ if(window.Toast) Toast.show('Enter income','error'); return; }
     const sym = cfg.symbol;
     const fmt = n => sym + Math.round(n).toLocaleString();
@@ -531,7 +538,7 @@ const Tax = {
   },
 
   calculateVAT() {
-    const amount = parseFloat(document.getElementById('tax-income')?.value||0);
+    const amount = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!amount){ if(window.Toast) Toast.show('Enter amount','error'); return; }
     const vat = amount * 0.05;
     const total = amount + vat;
@@ -551,7 +558,7 @@ const Tax = {
   },
 
   calculateGbVAT() {
-    const amount = parseFloat(document.getElementById('tax-income')?.value||0);
+    const amount = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!amount){ if(window.Toast) Toast.show('Enter amount','error'); return; }
     const rateKey = document.getElementById('gbvat-rate')?.value || 'standard';
     const rateMap = {standard:0.20, reduced:0.05, zero:0};
@@ -575,7 +582,7 @@ const Tax = {
   },
 
   calculateCGT() {
-    const gain = parseFloat(document.getElementById('tax-income')?.value||0);
+    const gain = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!gain){ if(window.Toast) Toast.show('Enter gain amount','error'); return; }
     const filing = this.config.GB.filings.cgt;
     const band = document.getElementById('cgt-band')?.value || 'basic';
@@ -609,7 +616,7 @@ const Tax = {
   },
 
   calculateDividend() {
-    const income = parseFloat(document.getElementById('tax-income')?.value||0);
+    const income = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!income){ if(window.Toast) Toast.show('Enter dividend income','error'); return; }
     const filing = this.config.GB.filings.dividend;
     const band = document.getElementById('div-band')?.value || 'basic';
@@ -642,10 +649,10 @@ const Tax = {
   },
 
   calculateIHT() {
-    const estate = parseFloat(document.getElementById('iht-estate')?.value||0);
+    const estate = parseFloat((document.getElementById('iht-estate')?.value||'').replace(/,/g,''))||0;
     if(!estate){ if(window.Toast) Toast.show('Enter estate value','error'); return; }
     const filing = this.config.GB.filings.iht;
-    const homeVal = parseFloat(document.getElementById('iht-home')?.value||0);
+    const homeVal = parseFloat((document.getElementById('iht-home')?.value||'').replace(/,/g,''))||0;
     const spouse = document.getElementById('iht-spouse')?.value === 'yes';
     const mult = spouse ? 2 : 1;
     const nrb = filing.nilRateBand * mult;
@@ -680,7 +687,7 @@ const Tax = {
   },
 
   calculateSDLT() {
-    const price = parseFloat(document.getElementById('sdlt-price')?.value||0);
+    const price = parseFloat((document.getElementById('sdlt-price')?.value||'').replace(/,/g,''))||0;
     if(!price){ if(window.Toast) Toast.show('Enter property price','error'); return; }
     const filing = this.config.GB.filings.stampduty;
     const ftb = document.getElementById('sdlt-ftb')?.value === 'yes';
@@ -726,7 +733,7 @@ const Tax = {
   },
 
   calculateExcise() {
-    const amount = parseFloat(document.getElementById('tax-income')?.value||0);
+    const amount = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!amount){ if(window.Toast) Toast.show('Enter amount','error'); return; }
     const catEl = document.getElementById('excise-cat');
     const rate = parseFloat(catEl?.value||1.0);

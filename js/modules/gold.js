@@ -124,7 +124,7 @@ const Gold = {
         '<input class="inp" id="gm-label" value="' + (x.label || '') + '" placeholder="e.g. Wedding jewellery, Coin collection"></div>' +
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Weight</label>' +
-          '<input class="inp num-inp" id="gm-weight" type="number" min="0" step="0.001" value="' + (x.weight || '') + '" placeholder="0"></div>' +
+          '<input class="inp num-inp" id="gm-weight" type="text" inputmode="decimal" value="' + (x.weight || '') + '" placeholder="0"></div>' +
         '<div class="fg"><label class="fl">Unit</label>' +
           '<select class="inp" id="gm-unit" onchange="Gold._updatePriceHint()">' +
             '<option value="g"' + ((x.unit || 'g') === 'g' ? ' selected' : '') + '>Grams (g)</option>' +
@@ -141,7 +141,7 @@ const Gold = {
         '<label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:12px;color:var(--text3)">' +
           '<input type="checkbox" id="gm-manual"' + (x.useManualPrice ? ' checked' : '') + ' onchange="Gold._toggleManual(this.checked)"> Enter manually' +
         '</label></label>' +
-        '<input class="inp num-inp" id="gm-price" type="number" min="0" step="0.01" ' +
+        '<input class="inp num-inp" id="gm-price" type="text" inputmode="decimal" ' +
           'value="' + (x.useManualPrice ? (x.pricePerUnit || '') : '') + '" ' +
           'placeholder="Leave blank to use live price"' +
           (x.useManualPrice ? '' : ' style="opacity:.5" readonly') + '></div>' +
@@ -150,6 +150,10 @@ const Gold = {
       '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button class="btn btn-p" onclick="Gold.save_item(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
+    setTimeout(function() {
+      var priceEl = document.getElementById('gm-price');
+      if (priceEl) U.numInput(priceEl, Gold._userCur());
+    }, 50);
   },
 
   _updatePriceHint() {
@@ -182,7 +186,7 @@ const Gold = {
     var weight = parseFloat(((document.getElementById('gm-weight') || {}).value) || 0);
     var unit = ((document.getElementById('gm-unit') || {}).value) || 'g';
     var useManualPrice = ((document.getElementById('gm-manual') || {}).checked) || false;
-    var pricePerUnit = useManualPrice ? (parseFloat(((document.getElementById('gm-price') || {}).value) || 0)) : 0;
+    var pricePerUnit = useManualPrice ? (parseFloat((((document.getElementById('gm-price') || {}).value) || '').replace(/,/g,'')) || 0) : 0;
     var notes = (((document.getElementById('gm-notes') || {}).value) || '').trim();
     if (!weight) { Toast.show('Weight is required', 'error'); return; }
     var items = this.get();

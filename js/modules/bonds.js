@@ -170,7 +170,7 @@ const BondsModule = {
         '<div class="fg"><label class="fl">Quantity</label>' +
           '<input class="inp num-inp" type="number" id="bnd-qty" min="1" value="' + (b.quantity || 1) + '" oninput="BondsModule._updateTotal()"></div>' +
         '<div class="fg"><label class="fl">Face Value Each</label>' +
-          '<input class="inp num-inp" type="number" id="bnd-fv" min="0" value="' + (b.faceValue || b.amount || '') + '" placeholder="0" oninput="BondsModule._updateTotal()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bnd-fv" value="' + (b.faceValue || b.amount || '') + '" placeholder="0" oninput="BondsModule._updateTotal()"></div>' +
       '</div>' +
 
       '<div class="fr">' +
@@ -208,7 +208,11 @@ const BondsModule = {
       '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button class="btn btn-p" onclick="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
-    setTimeout(function() { BondsModule._updateTotal(); }, 50);
+    setTimeout(function() {
+      BondsModule._updateTotal();
+      var fv = document.getElementById('bnd-fv');
+      if (fv) U.numInput(fv, document.getElementById('bnd-currency')?.value || (S.user && S.user.currency) || 'PKR');
+    }, 50);
   },
 
   _onTypeChange() {
@@ -224,7 +228,7 @@ const BondsModule = {
 
   _updateTotal() {
     const qty = parseInt((document.getElementById('bnd-qty') || {}).value) || 0;
-    const fv = parseFloat((document.getElementById('bnd-fv') || {}).value) || 0;
+    const fv = parseFloat(((document.getElementById('bnd-fv') || {}).value || '').replace(/,/g,'')) || 0;
     const cur = (document.getElementById('bnd-currency') || {}).value || 'PKR';
     const el = document.getElementById('bnd-total');
     if (el && qty && fv) {
@@ -235,7 +239,7 @@ const BondsModule = {
   save(editIdx) {
     const name = ((document.getElementById('bnd-name') || {}).value || '').trim();
     const qty = parseInt((document.getElementById('bnd-qty') || {}).value) || 1;
-    const fv = parseFloat((document.getElementById('bnd-fv') || {}).value) || 0;
+    const fv = parseFloat(((document.getElementById('bnd-fv') || {}).value || '').replace(/,/g,'')) || 0;
     if (!name) { Toast.show('Name is required', 'error'); return; }
     if (!fv) { Toast.show('Face value is required', 'error'); return; }
 
