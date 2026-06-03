@@ -3688,12 +3688,12 @@ function buildNav() {
 const SmartAdd = {
   open() {
     Modal.open('✨ Quick Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what you want to add in plain English. Claude AI will detect and pre-fill the form.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. Claude AI detects and pre-fills the form — add your API key in Settings → AI Import to enable.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
         <textarea class="inp" id="sa-text" rows="4" placeholder="HBL account with PKR 500,000 balance&#10;Lent £500 to Ahmed, due June&#10;Netflix £17.99 monthly subscription" style="font-size:13px;line-height:1.6"></textarea>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "HBL account PKR 500K" · "Lent £500 to Ahmed due June" · "Netflix £17.99/month"</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "HBL account PKR 500,000" · "Lent £500 to Ahmed, due June" · "Netflix £17.99/month" · "Jazz SIM +92 300 1234567"</div>
     `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
