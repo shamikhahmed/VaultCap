@@ -61,10 +61,10 @@ const Banks={
     });
   },
   row(b){
-    const dom=bankDomain(b.bankName);
     const color=brandColor(b.bankName);
-    const initials=b.bankName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const logoHtml=`<div class="b-logo-wrap" style="width:36px;height:36px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:13px;font-weight:800;color:#fff">${dom?`<img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" width="36" height="36" style="border-radius:8px;object-fit:cover" onerror="this.parentElement.innerHTML='${initials}'">`:`${initials}`}</div>`;
+    const initials=b.bankName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3);
+    const fs=initials.length>2?'10px':initials.length>1?'12px':'15px';
+    const logoHtml=`<div class="b-logo-wrap" style="width:36px;height:36px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:${fs};font-weight:900;color:#fff;letter-spacing:-.5px">${initials}</div>`;
     return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="background:${color};padding:3px;overflow:hidden;border-radius:10px">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts"><button class="icb fav${b.favorite?' on':''}" onclick="Banks.fav('${b.id}')">⭐</button><button class="icb" onclick="Banks.detail('${b.id}')">👁️</button><button class="icb" onclick="Banks.edit('${b.id}')">✏️</button><button class="icb" onclick="Banks.archive('${b.id}')" title="${b.archived?'Unarchive':'Archive'}">${b.archived?'📦':'🗂️'}</button><button class="icb del" onclick="Banks.del('${b.id}')">🗑️</button></div></div></div>`;
   },
   emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button class="btn btn-g" onclick="Settings.loadDemo()">🎮 Try Demo</button></div></div>`;},
@@ -123,10 +123,10 @@ const Banks={
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px" id="bf-tiles-grid">
           ${tiles.map(b=>{
             const safeName=b.name.replace(/'/g,"\\'");
-            const dom=bankDomain(b.name);
             const color=brandColor(b.name);
-            const initials=b.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-            const logoEl=`<div class="b-logo-wrap" style="width:28px;height:28px;border-radius:6px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:11px;font-weight:800;color:#fff">${dom?`<img src="https://www.google.com/s2/favicons?domain=${dom}&sz=64" width="28" height="28" style="border-radius:6px;object-fit:cover" onerror="this.parentElement.innerHTML='${initials}'">`:`${initials}`}</div>`;
+            const initials=b.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3);
+            const fs=initials.length>2?'9px':initials.length>1?'10px':'13px';
+            const logoEl=`<div class="b-logo-wrap" style="width:28px;height:28px;border-radius:6px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:${fs};font-weight:900;color:#fff;letter-spacing:-.5px">${initials}</div>`;
             return `<div onclick="document.getElementById('bf-name').value='${safeName}';const s=document.getElementById('bf-bank-sel');if(s)s.value='${safeName}';SMART_DB.fillBank('${safeName}','${safeCC}');document.getElementById('bf-tiles-grid')&&document.getElementById('bf-tiles-grid').querySelectorAll('div').forEach(t=>t.style.borderColor='');this.style.borderColor='var(--accent)'" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:8px;background:${color};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:2px">${logoEl}</div><div style="font-size:9px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
           }).join('')}
         </div>

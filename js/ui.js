@@ -552,7 +552,14 @@ const Settings={
       <div class="si"><div class="name" style="font-size:11px;color:var(--text3);line-height:1.6">iPhone: Long-press home screen → + → VaultOS<br>Android: Long-press app icon → Widget</div></div>
     </div></div>`;
   },
-  toggleMod(id,v){S.modules[id]=v;Store.save();buildNav();Toast.show(`${v?'Enabled':'Hidden'}: ${ALL_MODULES.find(m=>m.id===id)?.n}`,'info',1500);},
+  toggleMod(id,v){
+    S.modules[id]=v;Store.save();buildNav();
+    const tp=getTabPrefs();tp.hiddenFinance=tp.hiddenFinance||[];
+    const finIds=['banks','cards','cash','credit','investments','loans','expenses','tax','currency','gold','zakat','bc','bonds'];
+    if(finIds.includes(id)){if(!v){if(!tp.hiddenFinance.includes(id))tp.hiddenFinance.push(id);}else{tp.hiddenFinance=tp.hiddenFinance.filter(x=>x!==id);}}
+    saveTabPrefs(tp);
+    Toast.show(`${v?'Enabled':'Hidden'}: ${ALL_MODULES.find(m=>m.id===id)?.n}`,'info',1500);
+  },
   editProfile(){
     Modal.open('👤 Edit Profile',`
     <div class="fr"><div class="fg"><label class="fl">Your Name</label><input class="inp" id="pp-name" value="${S.user.name||''}"></div><div class="fg"><label class="fl">Avatar Emoji</label><input class="inp" id="pp-avatar" value="${S.user.avatar||'💼'}" style="font-size:22px;text-align:center"></div></div>
@@ -1574,17 +1581,24 @@ const ImportEngine={
   },
   parseOCRText(text){
     const results=[];const all=text.replace(/\n/g,' ');
-    // Card number detection
+    const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+    // Card number detection — 16 digits in groups of 4
     const cardNums=all.match(/\b\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b/g)||[];
     cardNums.forEach(cn=>{
-      const last4=cn.replace(/[\s\-]/g,'').slice(-4);
-      const exp=all.match(/(0[1-9]|1[0-2])[\/\-](\d{2,4})/);
-      let net='',name='';
+      const digits=cn.replace(/[\s\-]/g,'');
+      const last4=digits.slice(-4);
+      const exp=all.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*(\d{2}|\d{4})\b/);
+      let net='',name='',holder='';
       if(/amex|american express/i.test(all))net='American Express';
-      else if(/visa/i.test(all))net='Visa';
       else if(/mastercard|master card/i.test(all))net='Mastercard';
-      BANKS_DB.forEach(b=>{if(new RegExp(b.n.split(' ')[0],'i').test(all)&&b.n.split(' ')[0].length>2)name=b.n;});
-      results.push({type:'card',confidence:'high',data:{cardName:(name||'Detected')+' Card',network:net,last4,expiry:exp?exp[1]+'/'+(exp[2].length===4?exp[2].slice(-2):exp[2]):'',cardType:'Credit'}});
+      else if(/visa/i.test(all))net='Visa';
+      // Cardholder: ALL CAPS line, 2+ words, not a skip word
+      const skipW=['VISA','MASTERCARD','AMEX','DEBIT','CREDIT','BANK','VALID','THRU','GOOD','MEMBER','SINCE'];
+      const holderLine=lines.find(l=>/^[A-Z][A-Z\s]{4,28}$/.test(l)&&!skipW.includes(l.trim())&&!/^\d/.test(l)&&!l.includes('/'));
+      if(holderLine)holder=holderLine.trim();
+      if(typeof BANKS_DB!=='undefined')BANKS_DB.forEach(b=>{if(new RegExp(b.n.split(' ')[0],'i').test(all)&&b.n.split(' ')[0].length>2)name=b.n;});
+      const expStr=exp?exp[1]+'/'+(exp[2].length===4?exp[2].slice(-2):exp[2]):'';
+      results.push({type:'card',confidence:'high',data:{cardName:(name||'Detected')+' Card',network:net,last4,expiry:expStr,holderName:holder,cardType:'Credit'}});
     });
     // IBAN / account number
     const ibans=all.match(/\b[A-Z]{2}\d{2}[\sA-Z0-9]{4,30}\b/g)||[];

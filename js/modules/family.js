@@ -272,7 +272,7 @@ const Family = {
       ${liveNote}
       ${addBtn}
       ${docs.length ? docs.map((doc,i)=>`
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <div onclick="Family._showDocDetail(${JSON.stringify(doc).replace(/"/g,'&quot;')})" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;touch-action:manipulation">
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--text)">${_fesc(doc.type)}</div>
             ${doc.number?`<div style="font-size:12px;color:var(--text3);margin-top:2px">${_fesc(doc.number)}</div>`:''}
@@ -280,7 +280,10 @@ const Family = {
             ${doc.issuer?`<div style="font-size:11px;color:var(--text3)">By: ${_fesc(doc.issuer)}</div>`:''}
             ${doc.expiry?`<div style="font-size:11px;color:${new Date(doc.expiry)<new Date(Date.now()+30*24*60*60*1000)?'var(--err)':'var(--text3)'};margin-top:2px">Exp: ${doc.expiry}</div>`:''}
           </div>
-          ${!m._isVaultOwner?`<button onclick="Family._removeDoc(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation">×</button>`:''}
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:var(--text3);font-size:16px">›</span>
+            ${!m._isVaultOwner?`<button onclick="event.stopPropagation();Family._removeDoc(${i})" style="background:none;border:none;color:var(--err);font-size:20px;cursor:pointer;touch-action:manipulation">×</button>`:''}
+          </div>
         </div>`).join('') : '<div style="text-align:center;padding:30px;color:var(--text3)">No documents yet</div>'}`;
   },
 
@@ -296,7 +299,7 @@ const Family = {
           <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Banks</div>
           ${!m._isVaultOwner?`<button onclick="Family._addBankFor(${JSON.stringify(midx)})" style="font-size:13px;color:rgba(123,95,255,1);background:none;border:none;cursor:pointer;font-weight:600">+ Add</button>`:''}
         </div>
-        ${banks.length ? banks.map((b,i)=>{const bn=typeof b==='string'?b:(b?.name||b?.bankName||String(b));return `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(bn)}</div>${!m._isVaultOwner?`<button onclick="Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div>`;}).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
+        ${banks.length ? banks.map((b,i)=>{const bn=typeof b==='string'?b:(b?.name||b?.bankName||String(b));return `<div onclick="Modal.open('🏦 Bank',\`<div style='padding:8px 0'><div style='font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px'>🏦 ${_fesc(bn)}</div></div>\`,\`<button class='btn btn-g btn-full' onclick='Modal.close()'>Close</button>\`)" style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--glass);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;touch-action:manipulation"><div style="font-size:14px;font-weight:600;color:var(--text)">🏦 ${_fesc(bn)}</div><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3)">›</span>${!m._isVaultOwner?`<button onclick="event.stopPropagation();Family._removeBank(${i})" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer">×</button>`:''}</div></div>`;}).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0">No banks added</div>'}
       </div>
       <div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -1040,6 +1043,19 @@ const Family = {
   _addBankFor(midx) { this._memberIdx = midx; this._addBank(); },
   _addCardFor(midx) { this._memberIdx = midx; this._addCard(); },
   _addDocFor(midx) { this._memberIdx = midx; this._addDoc(); },
+
+  _showDocDetail(doc) {
+    const rows = [
+      ['Type', doc.type],['Number', doc.number],['Issued', doc.issued],
+      ['Issuer', doc.issuer],['Expiry', doc.expiry],['Notes', doc.notes],
+    ].filter(([,v])=>v);
+    Modal.open('📄 Document',
+      '<div style="display:flex;flex-direction:column;gap:10px;padding:4px 0">' +
+      rows.map(([k,v])=>`<div style="background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px">${k}</div><div style="font-size:14px;font-weight:600;color:var(--text)">${v}</div></div>`).join('') +
+      '</div>',
+      '<button class="btn btn-g btn-full" onclick="Modal.close()">Close</button>'
+    );
+  },
   _addCashFor(midx) { this._memberIdx = midx; this._addCash(); },
   _addInvestmentFor(midx) { this._memberIdx = midx; this._addInvestment(); },
 

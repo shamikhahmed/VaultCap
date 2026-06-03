@@ -2361,12 +2361,15 @@ const R = {
     const el = document.getElementById('pg-' + pg);
     if (el) {
       el.classList.add('on');
+      el.scrollTop = 0;
       el.style.opacity = '0';
       el.style.transform = 'translateY(8px)';
       requestAnimationFrame(() => {
         el.style.transition = 'opacity var(--anim-fast,140ms) var(--ease-smooth,ease), transform var(--anim-fast,140ms) var(--ease-smooth,ease)';
         el.style.opacity = '1';
         el.style.transform = 'none';
+        const pb = el.querySelector('.pb');
+        if (pb) pb.scrollTop = 0;
       });
     }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
@@ -2612,7 +2615,7 @@ const PIN = {
           if (msg) msg.textContent = `Wrong PIN — ${3 - Math.min(S.fails, 2)} attempts left`;
         }
         Activity.log('Failed PIN #' + S.fails);
-        if (S.fails >= 2) {
+        if (S.fails >= 3) {
           const fpl = document.getElementById('forgotPinLink');
           if (fpl) fpl.style.display = 'inline';
         }
@@ -3490,7 +3493,7 @@ function renderFinanceHome() {
     {id:'loans',icon:'🤝',label:'Loans',desc:(S.loans||[]).length+' loans'},
     {id:'credit',icon:'📊',label:'Credit Score',desc:'Track scores'},
     {id:'zakat',icon:'🌙',label:'Zakat',desc:'Calculate'},
-    {id:'tax',icon:'🧾',label:'Tax',desc:'UK · PK · UAE'},
+    {id:'tax',icon:'🧾',label:'Tax',desc:'Income tax calculator'},
     {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
     {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
     {id:'expenses',icon:'💸',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
@@ -3501,6 +3504,12 @@ function renderFinanceHome() {
   const modules = allModules.filter(m => {
     if (hidden.includes(m.id)) return false;
     if (m.id === 'zakat' && S.user?.showZakat === false) return false;
+    if (S.modules) {
+      const modKey = { banks:'banks', cards:'banks', cash:'banks', credit:'banks',
+        investments:'investments', loans:'loans', expenses:'expenses', tax:'tax',
+        currency:'currency', gold:'currency', zakat:'zakat', bc:'bc', bonds:'bonds' }[m.id];
+      if (modKey && S.modules[modKey] === false) return false;
+    }
     return true;
   });
   b.innerHTML = ctxBar + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
@@ -3589,11 +3598,11 @@ function buildNav() {
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
 
   const PRIMARY_TABS = [
-    { id: 'dashboard',    n: 'Home',    ic: '📊' },
-    { id: 'finance-home', n: 'Finance', ic: '💰' },
-    { id: 'vault-home',   n: 'Identity',   ic: '🪪' },
-    { id: 'assets-home',  n: 'Assets',  ic: '🏠' },
-    { id: 'family',       n: 'Family',  ic: '👨‍👩‍👧‍👦' },
+    { id: 'dashboard',    n: 'Home',     ic: '📊' },
+    { id: 'finance-home', n: 'Finance',  ic: '💰' },
+    { id: 'vault-home',   n: 'Identity', ic: '🪪' },
+    { id: 'assets-home',  n: 'Assets',   ic: '🏠' },
+    { id: 'settings',     n: 'Settings', ic: '⚙️' },
   ];
 
   document.getElementById('btabs').innerHTML = PRIMARY_TABS.map(m =>
