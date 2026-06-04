@@ -73,6 +73,14 @@ const VaultDB = (() => {
     );
   }
 
+  // ── Master-key derivation (SHA-256 based, fast — for recovery slot only) ───
+
+  async function _deriveMasterKey(masterKey) {
+    const enc = new TextEncoder().encode(masterKey + ':vaultos-recovery-v1');
+    const hash = await crypto.subtle.digest('SHA-256', enc);
+    return crypto.subtle.importKey('raw', hash, 'AES-GCM', false, ['encrypt', 'decrypt']);
+  }
+
   // ── Encrypt / Decrypt ──────────────────────────────────────────────────────
 
   async function _encrypt(key, data) {
@@ -200,6 +208,42 @@ const VaultDB = (() => {
       document.body.appendChild(a);
       a.click();
       setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+    },
+
+    // Wipe all vault data and clear session key.
+    async wipe() {
+      _key = null;
+      _db = null;
+      try { await _idbClearAll(); } catch(e) {}
+    },
+
+    // Save a recovery copy of current vault data encrypted with master key.
+    async saveRecovery(masterKey) {
+      const data = await this.load();
+      if (!data) return;
+      const rkey = await _deriveMasterKey(masterKey);
+      const buf = await _encrypt(rkey, data);
+      await _idbPut('recovery', buf);
+    },
+
+    // Load and decrypt recovery slot with master key. Returns data or null.
+    async loadRecovery(masterKey) {
+      try {
+        const buf = await _idbGet('recovery');
+        if (!buf) return null;
+        const rkey = await _deriveMasterKey(masterKey);
+        return await _decrypt(rkey, buf);
+      } catch(e) {
+        return null;
+      }
+    },
+
+    // Decrypt recovery slot with master key, re-encrypt with new PIN.
+    async recoverAccess(masterKey, newPin) {
+      const data = await this.loadRecovery(masterKey);
+      if (!data) throw new Error('Recovery slot not found or master key incorrect');
+      _key = await _deriveKey(newPin);
+      await this.save(data);
     },
 
     // Import a .vos file, decrypt with given PIN, store as new 'main', return data.
