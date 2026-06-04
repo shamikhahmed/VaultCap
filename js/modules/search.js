@@ -64,15 +64,16 @@ const GlobalSearch = {
     return false;
   },
 
-  _ownerLabel(ownerId) {
-    if (!ownerId || ownerId === 'self') return '';
-    if (typeof Family === 'undefined') return ownerId;
+  _ownerLabel(item) {
+    const owners = item.owners || (item.ownerId ? [item.ownerId] : ['self']);
+    const nonSelf = owners.filter(o => o && o !== 'self');
+    if (!nonSelf.length) return '';
+    if (typeof Family === 'undefined') return nonSelf.join(', ');
     try {
       const fam = Family.get();
       const all = [...(fam.head ? [fam.head] : []), ...(fam.members || [])];
-      const m = all.find(x => x.id === ownerId);
-      return m ? m.name : ownerId;
-    } catch(e) { return ownerId; }
+      return nonSelf.map(id => { const m = all.find(x => x.id === id); return m ? m.name : id; }).join(', ');
+    } catch(e) { return nonSelf.join(', '); }
   },
 
   _primaryField(item, fields) {
@@ -118,7 +119,7 @@ const GlobalSearch = {
         if (!hit) return;
         const primary = this._primaryField(item, t.fields);
         const secondary = this._secondaryField(item, t.fields);
-        const owner = this._ownerLabel(item.ownerId);
+        const owner = this._ownerLabel(item);
         results.push({ _label: t.label, _icon: t.icon, _key: t.key, _primary: primary, _secondary: secondary, _owner: owner, _id: item.id });
       });
     });

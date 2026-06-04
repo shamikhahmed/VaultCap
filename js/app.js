@@ -1948,7 +1948,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 11;
+const SCHEMA_VERSION = 12;
 
 const Migrate = {
   run() {
@@ -2106,6 +2106,18 @@ const Migrate = {
         console.log('[VaultOS] Migrated family data v10 → v11');
       } catch(e) {}
       stored.schemaVersion = 11;
+    }
+    if (sv < 12) {
+      const _entityArrays12 = ['banks','cards','investments','cash','loans','documents','assets','friends','sims','emails','gadgets','digital','bc','bonds','expenses'];
+      _entityArrays12.forEach(key => {
+        if (!Array.isArray(stored[key])) return;
+        stored[key] = stored[key].map(item => ({
+          ...item,
+          owners: item.owners || (item.ownerId ? [item.ownerId] : ['self']),
+        }));
+      });
+      stored.schemaVersion = 12;
+      console.log('[VaultOS] Migrated schema v11 → v12: owners array backfilled');
     }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
@@ -3533,7 +3545,7 @@ const U = {
 
 function entityDefaults(country) {
   const now = new Date().toISOString();
-  return { ownerId: 'self', country: country || (S.user && S.user.country) || 'PK', tags: [], createdAt: now, updatedAt: now };
+  return { ownerId: 'self', owners: ['self'], country: country || (S.user && S.user.country) || 'PK', tags: [], createdAt: now, updatedAt: now };
 }
 window.entityDefaults = entityDefaults;
 
