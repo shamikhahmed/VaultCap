@@ -749,14 +749,15 @@ const Settings={
       {id:'dg2',type:'gold',name:'Gold Coins',weight:2,unit:'tola',pricePerUnit:220000,currency:'PKR',createdAt:new Date().toISOString()},
       {id:'dg3',type:'silver',name:'Silver Cutlery',weight:500,unit:'g',pricePerUnit:250,currency:'PKR',createdAt:new Date().toISOString()}
     ]));
-    localStorage.setItem('vo_family', JSON.stringify({
+    S.family = {
       head:{name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1970-05-15',phone:'+92 300 1234567',email:'ahmed@example.com',docs:[{type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},{type:'Passport',number:'AB1234567',expiry:'2029-06-15'}],banks:['HBL','Standard Chartered'],cards:[{name:'HBL Prestige Visa',last4:'4821'},{name:'SCB Platinum',last4:'3390'}],notes:'Head of household. Primary income earner.'},
       members:[
         {id:'fm1',name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1975-08-22',phone:'+92 300 7654321',docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'}],banks:['Meezan Bank'],cards:[{name:'Meezan Infinite Visa',last4:'6677'}],notes:'Joint account holder at Meezan.',cash:[{label:'Household',amount:50000}]},
         {id:'fm2',name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'2000-03-10',docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'CD9876543',expiry:'2031-09-20'}],banks:['UBL'],cards:[{name:'UBL Campus Card',last4:'1122'}],notes:'Student. University of Karachi.'},
         {id:'fm3',name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'}],banks:[],cards:[],notes:'School student.'}
       ]
-    }));
+    };
+    Store.save();
     localStorage.setItem('vo_credit_score', JSON.stringify({country:'GB',entries:[
       {id:'cs1',score:720,bureau:'Experian',date:'2024-01-15',notes:'After paying off credit card'},
       {id:'cs2',score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},

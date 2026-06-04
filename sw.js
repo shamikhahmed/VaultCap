@@ -1,4 +1,4 @@
-const CACHE = 'vaultos-v8';
+const CACHE = 'vaultos-v9';
 const ASSETS = [
   '/',
   '/index.html',
@@ -40,6 +40,7 @@ const ASSETS = [
   '/js/modules/ai-import.js',
   '/js/modules/trash.js',
   '/js/modules/currency.js',
+  '/js/modules/currency-engine.js',
   '/js/modules/gold.js',
   '/js/modules/zakat.js',
   '/js/modules/bc.js',

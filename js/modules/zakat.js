@@ -208,8 +208,15 @@ const Zakat = {
 
     const investments = typeof S !== 'undefined' ? (S.investments || []) : [];
 
+    const zakatDueDate = this._hawlDate ? new Date(new Date(this._hawlDate).getTime() + 354 * 86400000) : null;
+    const zakatDaysLeft = zakatDueDate ? Math.ceil((zakatDueDate - Date.now()) / 86400000) : null;
+    const zakatReminder = (zakatDaysLeft !== null && zakatDaysLeft <= 30 && zakatDaysLeft >= 0)
+      ? '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.4);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">🌙</div><div><div style="font-size:14px;font-weight:700;color:var(--text)">Zakat Due in ' + zakatDaysLeft + ' day' + (zakatDaysLeft !== 1 ? 's' : '') + '</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Review your zakatable assets below</div></div></div>'
+      : '';
+
     body.innerHTML =
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+      zakatReminder +
 
       '<div style="background:linear-gradient(135deg,rgba(76,175,80,.15),rgba(0,150,136,.1));border:1px solid rgba(76,175,80,.3);border-radius:16px;padding:16px">' +
         '<div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">🌙 Zakat Calculator</div>' +

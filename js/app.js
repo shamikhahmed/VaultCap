@@ -4554,7 +4554,7 @@ function loadDemoData() {
   localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
   loadDemoProfile('business');
   localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
-  localStorage.setItem('vo_family', JSON.stringify({
+  S.family = {
     head:{
       name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1968-05-15',
       phone:'+92 300 1234567',email:'ahmed.khan@example.com',
@@ -4570,7 +4570,7 @@ function loadDemoData() {
     },
     members:[
       {
-        name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1972-08-22',
+        id:'fd1',name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1972-08-22',
         phone:'+92 300 7654321',email:'sara.ahmed@example.com',
         notes:'Joint account holder. Manages household finances.',
         docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'},{type:'Passport',number:'CD7654321',expiry:'2028-11-20'}],
@@ -4579,7 +4579,7 @@ function loadDemoData() {
         cash:[{label:'Household Budget',amount:80000,notes:'Monthly expenses'},{label:'Savings Jar',amount:30000,notes:'Personal savings'}]
       },
       {
-        name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'1998-03-10',
+        id:'fd2',name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'1998-03-10',
         phone:'+92 321 1234567',email:'ali.ahmed@student.com',
         notes:'Studying at IBA Karachi. Final year MBA.',
         docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'EF9876543',expiry:'2031-09-20'}],
@@ -4588,7 +4588,7 @@ function loadDemoData() {
         cash:[{label:'Pocket Money',amount:15000,notes:'Monthly allowance'}]
       },
       {
-        name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',
+        id:'fd3',name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',
         phone:'+92 321 9876543',email:'fatima.ahmed@school.com',
         notes:'A-Levels student. Karachi Grammar School.',
         docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'},{type:'Birth Certificate',number:'KHI-2003-11789',expiry:''}],
@@ -4597,7 +4597,7 @@ function loadDemoData() {
         cash:[{label:'Savings',amount:25000,notes:'Birthday gifts savings'}]
       },
       {
-        name:'Khalid Khan',avatar:'👨‍🦳',relation:'Father',dob:'1940-02-28',
+        id:'fd4',name:'Khalid Khan',avatar:'👨‍🦳',relation:'Father',dob:'1940-02-28',
         phone:'+92 300 1111111',email:'',
         notes:'Retired. Lives in Lahore. Property owner.',
         docs:[{type:'CNIC',number:'42101-0001111-9',expiry:'2025-12-31'},{type:'Passport',number:'GH0001111',expiry:'2026-03-10'}],
@@ -4606,7 +4606,8 @@ function loadDemoData() {
         cash:[{label:'Pension',amount:45000,notes:'Monthly pension'}]
       }
     ]
-  }));
+  };
+  Store.save();
   localStorage.setItem('vo_credit_score', JSON.stringify({
     country:'GB',
     entries:[
