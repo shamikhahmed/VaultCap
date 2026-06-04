@@ -1,8 +1,36 @@
-const GlobalSearch={
-  activeFilter:'all',
-  render(){
-    const b=document.getElementById('searchBody');if(!b)return;
-    b.innerHTML=`
+const GlobalSearch = {
+  activeFilter: 'all',
+
+  _TARGETS: [
+    { key: 'banks',       label: 'Bank',        icon: '🏦', fields: ['bankName','accountType','iban','notes','last4'] },
+    { key: 'cards',       label: 'Card',        icon: '💳', fields: ['cardName','network','last4','notes'] },
+    { key: 'investments', label: 'Investment',  icon: '📈', fields: ['investmentName','broker','ticker','type','notes'] },
+    { key: 'cash',        label: 'Cash',        icon: '💵', fields: ['label','currency','location','notes'] },
+    { key: 'loans',       label: 'Loan',        icon: '💸', fields: ['person','type','notes'] },
+    { key: 'documents',   label: 'Document',    icon: '🪪', fields: ['docType','holderName','docNumber','issuingCountry','notes'] },
+    { key: 'assets',      label: 'Asset',       icon: '🏠', fields: ['name','assetType','make','model','notes'] },
+    { key: 'friends',     label: 'Contact',     icon: '👥', fields: ['name','phone','email','notes'] },
+    { key: 'sims',        label: 'SIM',         icon: '📱', fields: ['network','phone','country','notes'] },
+    { key: 'emails',      label: 'Email',       icon: '📧', fields: ['email','provider','purpose','notes'] },
+    { key: 'expenses',    label: 'Subscription',icon: '🔄', fields: ['name','category','notes'] },
+    { key: 'gadgets',     label: 'Device',      icon: '💻', fields: ['name','brand','model','serialNum','notes'] },
+    { key: 'digital',     label: 'Login',       icon: '💼', fields: ['serviceName','username','category','notes'] },
+    { key: 'bc',          label: 'Committee',   icon: '🤝', fields: ['name','organiser','notes'] },
+    { key: 'bonds',       label: 'Bond',        icon: '🎫', fields: ['name','typeId','issuer','notes'] },
+  ],
+
+  _FILTER_KEYS: {
+    bank: 'Bank', card: 'Card', investment: 'Investment', cash: 'Cash',
+    loan: 'Loan', document: 'Document', asset: 'Asset', contact: 'Contact',
+    sim: 'SIM', email: 'Email', subscription: 'Subscription', device: 'Device',
+    login: 'Login', committee: 'Committee', bond: 'Bond', family: 'Family',
+  },
+
+  render() {
+    const b = document.getElementById('searchBody'); if (!b) return;
+    const filters = ['all','bank','card','investment','cash','loan','document','asset','contact','sim','email','subscription','device','login','committee','bond','family'];
+    const filterLabels = { all:'All', bank:'🏦 Banks', card:'💳 Cards', investment:'📈 Invest', cash:'💵 Cash', loan:'💸 Loans', document:'🪪 Docs', asset:'🏠 Assets', contact:'👥 Contacts', sim:'📱 SIMs', email:'📧 Emails', subscription:'🔄 Subs', device:'💻 Devices', login:'💼 Logins', committee:'🤝 BC', bond:'🎫 Bonds', family:'👨‍👩‍👧‍👦 Family' };
+    b.innerHTML = `
     <div style="padding:14px 14px 0;position:sticky;top:0;z-index:10;background:var(--bg2);padding-bottom:10px">
       <div style="position:relative;margin-bottom:10px">
         <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none">🔍</span>
@@ -10,62 +38,152 @@ const GlobalSearch={
         <button onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
       </div>
       <div style="display:flex;overflow-x:auto;gap:6px;scrollbar-width:none;padding-bottom:2px">
-        ${['all','bank','card','investment','sim','asset','expense','email','gadget','digital','bc','bond','gold'].map(f=>`<div class="search-chip${GlobalSearch.activeFilter===f?' on':''}" onclick="GlobalSearch.setFilter('${f}')">${{all:'All',bank:'🏦 Banks',card:'💳 Cards',investment:'📈 Invest',sim:'📱 SIMs',asset:'🏠 Assets',expense:'🔄 Subs',email:'📧 Emails',gadget:'💻 Devices',digital:'💼 Logins',bc:'🤝 BC',bond:'🎫 Bonds',gold:'🥇 Metals'}[f]}</div>`).join('')}
+        ${filters.map(f => `<div class="search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" onclick="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</div>`).join('')}
       </div>
     </div>
     <div id="gs-results" style="padding:8px 0"></div>`;
-    setTimeout(()=>this.search(''),0);
+    setTimeout(() => this.search(''), 0);
   },
-  setFilter(f){this.activeFilter=f;this.render();setTimeout(()=>document.getElementById('gs-input')?.focus(),60);},
-  highlight(text,q){
-    if(!q||!text)return text||'';
-    const idx=text.toLowerCase().indexOf(q.toLowerCase());
-    if(idx<0)return text;
-    return text.slice(0,idx)+'<mark class="hl">'+text.slice(idx,idx+q.length)+'</mark>'+text.slice(idx+q.length);
+
+  setFilter(f) { this.activeFilter = f; this.render(); setTimeout(() => document.getElementById('gs-input')?.focus(), 60); },
+
+  highlight(text, q) {
+    if (!q || !text) return escHtml(text || '');
+    const str = String(text);
+    const idx = str.toLowerCase().indexOf(q.toLowerCase());
+    if (idx < 0) return escHtml(str);
+    return escHtml(str.slice(0, idx)) + '<mark class="hl">' + escHtml(str.slice(idx, idx + q.length)) + '</mark>' + escHtml(str.slice(idx + q.length));
   },
-  _match(text,q,ql){
-    if(!q)return true;
-    if(!text)return false;
-    const tl=text.toLowerCase();
-    if(tl.includes(ql))return true;
-    if(typeof CMD!=='undefined'&&CMD.fuzzyMatch)return CMD.fuzzyMatch(text,q);
+
+  _match(text, ql) {
+    if (!ql) return true;
+    if (!text) return false;
+    const tl = text.toString().toLowerCase();
+    if (tl.includes(ql)) return true;
+    if (typeof CMD !== 'undefined' && CMD.fuzzyMatch) return CMD.fuzzyMatch(text, ql);
     return false;
   },
-  search(q){
-    const el=document.getElementById('gs-results');if(!el)return;
-    const ql=q.toLowerCase().trim();
-    const f=this.activeFilter;
-    const matches=[];
-    const addM=(type,icon,name,sub,id,action)=>{
-      if(f!=='all'&&f!==type)return;
-      if(!this._match(name,q,ql)&&!this._match(sub||'',q,ql))return;
-      matches.push({type,icon,name:this.highlight(name,q),sub:this.highlight(sub||'',q),id,action});
+
+  _ownerLabel(ownerId) {
+    if (!ownerId || ownerId === 'self') return '';
+    if (typeof Family === 'undefined') return ownerId;
+    try {
+      const fam = Family.get();
+      const all = [...(fam.head ? [fam.head] : []), ...(fam.members || [])];
+      const m = all.find(x => x.id === ownerId);
+      return m ? m.name : ownerId;
+    } catch(e) { return ownerId; }
+  },
+
+  _primaryField(item, fields) {
+    for (const f of fields) {
+      if (item[f]) return String(item[f]);
+    }
+    return '';
+  },
+
+  _secondaryField(item, fields, skipFirst) {
+    let skipped = false;
+    for (const f of fields) {
+      const v = item[f];
+      if (!v) continue;
+      if (!skipped) { skipped = true; continue; }
+      return String(v);
+    }
+    return '';
+  },
+
+  _filterKeyFor(label) {
+    const map = {
+      'Bank': 'bank', 'Card': 'card', 'Investment': 'investment', 'Cash': 'cash',
+      'Loan': 'loan', 'Document': 'document', 'Asset': 'asset', 'Contact': 'contact',
+      'SIM': 'sim', 'Email': 'email', 'Subscription': 'subscription', 'Device': 'device',
+      'Login': 'login', 'Committee': 'committee', 'Bond': 'bond', 'Family Member': 'family',
     };
-    S.banks.forEach(b=>addM('bank','🏦',b.bankName||'',b.currency+' '+b.country+(b.last4?' ****'+b.last4:''),b.id,()=>Banks.detail(b.id)));
-    S.cards.forEach(cv=>addM('card','💳',cv.cardName||'',cv.network+' '+(cv.last4?'****'+cv.last4:'')+(cv.expiry?' exp '+cv.expiry:''),cv.id,()=>Cards.openDetail(cv.id)));
-    S.investments.forEach(i=>addM('investment','📈',i.investmentName||i.broker||'',i.broker+(i.ticker?' · '+i.ticker:'')+(i.currentValue?' · '+i.currency+' '+i.currentValue:''),i.id,()=>Inv.edit(i.id)));
-    S.sims.forEach(s=>addM('sim','📱',s.network||'',s.phone||''+(s.country?' · '+s.country:''),s.id,()=>Sims.detail(s.id)));
-    S.assets.forEach(a=>addM('asset',{property:'🏠',vehicle:'🚗',watch:'⌚',document:'🪪',precious:'🥇',subscription:'🔄',insurance:'🛡️',loan:'💰',other:'📦'}[a.assetType]||'📦',a.name||'',a.assetType+(a.location?' · '+a.location:'')+(a.currentValue?' · '+a.currency+' '+a.currentValue:''),a.id,()=>Assets.edit(a.id)));
-    S.expenses.forEach(e=>addM('expense',e.icon||'🔄',e.name||'',e.category+(e.amount?' · '+e.currency+' '+e.amount+'/mo':'')+(e.from?' · '+e.from:''),e.id,()=>Exp.edit(e.id)));
-    S.emails.forEach(e=>addM('email','📧',e.email||'',e.provider+' · '+e.purpose+(e.mfaEnabled?' · 2FA✓':''),e.id,()=>Emails.detail(e.id)));
-    S.gadgets.forEach(g=>addM('gadget',g.ic||'💻',g.name||'',g.brand+(g.storage?' · '+g.storage:'')+(g.serialNum?' · S/N '+g.serialNum:''),g.id,()=>Gadgets.detail(g.id)));
-    S.digital.forEach(d=>addM('digital','💼',d.serviceName||'',(d.username?'@'+d.username:'')+' '+d.category,d.id,()=>Digital.detail(d.id)));
-    (S.bc||[]).forEach(bc=>addM('bc','🤝',bc.name||'BC',(bc.currency||'PKR')+' '+(bc.contribution||0).toLocaleString()+'/round · '+(bc.members||0)+' members',bc.id,()=>R.goto('bc')));
-    (S.bonds||[]).forEach(b=>addM('bond','🎫',b.name||'Bond',(b.typeId||'Bond')+' · '+(b.currency||'PKR')+' '+((b.quantity||1)*(b.faceValue||0)).toLocaleString()+' · '+(b.quantity||1)+' bond'+(b.quantity>1?'s':''),b.id,()=>R.goto('bonds')));
-    try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');gi.forEach((g,i)=>addM('gold',g.metal==='silver'?'🥈':'🥇',g.label||(g.metal==='silver'?'Silver':'Gold'),(g.metal==='silver'?'Silver':'Gold')+' · '+g.weight+' '+(g.unit||'g'),'gold_'+i,()=>R.goto('gold')));}catch(e){}
-    const label={bank:'Bank',card:'Card',investment:'Investment',sim:'SIM',asset:'Asset',expense:'Subscription',email:'Email',gadget:'Device',digital:'Login',bc:'Committee',bond:'Bond',gold:'Metal'};
-    if(!matches.length){
-      el.innerHTML=`<div class="empty"><div class="empty-ic">🔍</div><h3>${q?'Nothing found for "'+q+'"':'Your vault is empty'}</h3><p>${q?'Try different keywords or change the filter':'Add entries from the + button or any module tab'}</p></div>`;
+    return map[label] || 'all';
+  },
+
+  search(q) {
+    const el = document.getElementById('gs-results'); if (!el) return;
+    const ql = q.toLowerCase().trim();
+    const f = this.activeFilter;
+    const results = [];
+
+    // Search entity modules
+    this._TARGETS.forEach(t => {
+      const filterKey = this._filterKeyFor(t.label);
+      if (f !== 'all' && f !== filterKey) return;
+      (S[t.key] || []).forEach(item => {
+        const hit = !ql || t.fields.some(field => this._match(item[field], ql));
+        if (!hit) return;
+        const primary = this._primaryField(item, t.fields);
+        const secondary = this._secondaryField(item, t.fields);
+        const owner = this._ownerLabel(item.ownerId);
+        results.push({ _label: t.label, _icon: t.icon, _key: t.key, _primary: primary, _secondary: secondary, _owner: owner, _id: item.id });
+      });
+    });
+
+    // Gold (localStorage)
+    if (f === 'all' || f === 'asset') {
+      try {
+        const gi = JSON.parse(localStorage.getItem('vo_gold') || '[]');
+        gi.forEach((g, i) => {
+          const label = g.label || (g.metal === 'silver' ? 'Silver' : 'Gold');
+          const sub = (g.metal === 'silver' ? 'Silver' : 'Gold') + ' · ' + g.weight + ' ' + (g.unit || 'g');
+          if (!ql || this._match(label, ql) || this._match(sub, ql)) {
+            results.push({ _label: 'Asset', _icon: g.metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: 'gold_' + i });
+          }
+        });
+      } catch(e) {}
+    }
+
+    // Family members
+    if ((f === 'all' || f === 'family') && typeof Family !== 'undefined') {
+      try {
+        const fam = Family.get();
+        const allMembers = [...(fam.head ? [fam.head] : []), ...(fam.members || [])];
+        allMembers.forEach(m => {
+          const hit = !ql || this._match(m.name, ql) || this._match(m.phone, ql) || this._match(m.email, ql) || this._match(m.notes, ql);
+          if (!hit) return;
+          results.push({ _label: 'Family Member', _icon: '👨‍👩‍👧‍👦', _key: 'family', _primary: m.name || '', _secondary: m.relation || m.phone || '', _owner: '', _id: m.id });
+        });
+      } catch(e) {}
+    }
+
+    if (!results.length) {
+      el.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><h3>${q ? 'Nothing found for "' + escHtml(q) + '"' : 'Your vault is empty'}</h3><p>${q ? 'Try different keywords or change the filter' : 'Add entries from the + button or any module tab'}</p></div>`;
       return;
     }
-    el.innerHTML=`<div style="font-size:12px;color:var(--text3);padding:4px 14px 8px">${matches.length} result${matches.length!==1?'s':''}</div>`+
-    matches.map(m=>`<div class="search-result-row" onclick="Modal.close();(${m.action.toString()})()">
-      <div class="sr-ic">${m.icon}</div>
-      <div class="sr-body">
-        <div class="sr-name">${m.name}</div>
-        <div class="sr-meta">${m.sub}</div>
-      </div>
-      <div class="sr-type">${label[m.type]||m.type}</div>
-    </div>`).join('');
+
+    // Group by label
+    const groups = {};
+    results.forEach(r => {
+      if (!groups[r._label]) groups[r._label] = [];
+      groups[r._label].push(r);
+    });
+
+    const _navAction = { bank:'Banks', card:'Cards', investment:'Investments', cash:'Cash', loan:'Loans', document:'Documents', asset:'Assets', contact:'Friends', sim:'Sims', email:'Emails', subscription:'Exp', device:'Gadgets', login:'Digital', committee:'BC', bond:'Bonds', 'Family Member':'Family' };
+    const _gotoMap = { bank:'banks', card:'cards', investment:'investments', cash:'cash', loan:'loans', document:'documents', asset:'assets', contact:'friends', sim:'sims', email:'emails', subscription:'expenses', device:'gadgets', login:'digital', committee:'bc', bond:'bonds', 'Family Member':'family' };
+
+    let html = `<div style="font-size:12px;color:var(--text3);padding:4px 14px 8px">${results.length} result${results.length !== 1 ? 's' : ''}${ql ? ' for "' + escHtml(q) + '"' : ''}</div>`;
+
+    Object.entries(groups).forEach(([groupLabel, items]) => {
+      const gotoKey = _gotoMap[groupLabel] || items[0]._key;
+      html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 14px 4px">${escHtml(groupLabel)}s <span style="font-weight:400;opacity:.6">${items.length}</span></div>`;
+      html += items.map(item => {
+        const ownerBadge = item._owner ? ` · 👤 ${escHtml(item._owner)}` : '';
+        const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
+        return `<div onclick="R.goto('${gotoKey}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" onmouseenter="this.style.background='var(--glass2)'" onmouseleave="this.style.background='var(--glass)'">
+          <div style="font-size:26px;flex-shrink:0">${item._icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
+            ${secLine ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}
+          </div>
+          <div style="font-size:16px;color:var(--text3);flex-shrink:0">›</div>
+        </div>`;
+      }).join('');
+    });
+
+    el.innerHTML = html;
   }
 };
