@@ -46,7 +46,25 @@ const Cards={
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
     else if(sort==='recent')data.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const el=document.getElementById('cItems');if(!el)return;
-    if(!data.length&&!archivedCount){el.innerHTML=`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`;return;}
+    // Wallet strip — horizontal scroll of all cards (shown even when list is filtered)
+    const walletHtml=S.cards.length>0
+      ?'<div style="overflow-x:auto;display:flex;gap:12px;padding:4px 4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:4px">'+
+        S.cards.filter(c=>!c.archived).map(c=>{
+          const GRADS={Visa:'linear-gradient(135deg,#1a1f71,#2575fc)',Mastercard:'linear-gradient(135deg,#eb001b,#f79e1b)','American Express':'linear-gradient(135deg,#007b5e,#00b894)',UnionPay:'linear-gradient(135deg,#c0392b,#e74c3c)',PayPak:'linear-gradient(135deg,#007a3d,#00b463)'};
+          const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6))';
+          const last4=c.last4||'····';
+          return '<div onclick="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
+            '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+
+            '<div style="position:absolute;top:14px;left:14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
+            '<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
+            '<div style="position:absolute;bottom:30px;left:14px;font-size:13px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.18em;font-family:var(--mono,monospace)">**** **** **** '+escHtml(last4)+'</div>'+
+            '<div style="position:absolute;bottom:11px;left:14px;font-size:10px;color:rgba(255,255,255,.65)">'+escHtml(c.holderName||'')+'</div>'+
+            (c.expiry?'<div style="position:absolute;bottom:11px;right:12px;font-size:10px;color:rgba(255,255,255,.65)">Exp '+escHtml(c.expiry)+'</div>':'')+
+            '</div>';
+        }).join('')+
+        '</div>'
+      :'';
+    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
     const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimit=S.cards.filter(c=>c.cardType==='Credit'&&c.limit).reduce((a,c)=>a+(c.limit||0),0);
     const _cur=S.user.currency||'GBP';
@@ -56,7 +74,7 @@ const Cards={
     const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
     const carrySection=carrying.length?`<div class="sdiv">💳 Carrying Today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
     const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
-    el.innerHTML=archiveToggle+limitBanner+carrySection+restSection;
+    el.innerHTML=walletHtml+archiveToggle+limitBanner+carrySection+restSection;
     initSwipeDelete(el);
     initLongPress(el, id => {
       const c = S.cards.find(x => x.id === id); if (!c) return [];

@@ -163,45 +163,45 @@
 <div id="pgOnboard" style="display:none">
 <div class="ob-wrap">
 <div class="ob-prog" id="obProg"></div>
+
+<!-- Screen 1: Welcome -->
 <div class="ob-step on" id="ob1">
-<div class="ob-ic">👋</div>
-<h2 class="ob-title">Welcome to VaultOS</h2>
-<p class="ob-sub">Your offline-first, zero-knowledge personal life operating system. Everything stays on your device — encrypted, always.</p>
-<div style="background:var(--glass2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:left;width:100%;max-width:360px">
-<div style="font-size:12px;color:var(--text2);line-height:1.7">🔐 PIN-protected · 📴 Works offline · 🌍 Global · Offline-first · Private<br>💳 Banks · Cards · Investments · SIMs · Assets<br>📧 Emails · 💻 Gadgets · 🔄 Subscriptions · 📊 Expenses</div>
+<div style="font-size:56px;line-height:1;margin-bottom:14px;filter:drop-shadow(0 4px 16px var(--glow))">🔐</div>
+<h2 class="ob-title" style="font-size:36px;font-weight:900;letter-spacing:-1.5px;margin-bottom:6px">VaultOS</h2>
+<p class="ob-sub" style="font-size:15px;margin-bottom:28px">Your Personal Financial Vault</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:36px">
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)">🔒 Private</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)">📱 Offline</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)">🔐 Encrypted</span>
 </div>
-<input class="inp" id="ob-name" placeholder="What's your name?" maxlength="28" style="font-size:16px;text-align:center;max-width:280px;margin-top:6px">
-<button class="btn btn-p" onclick="OB.next(1)">Get Started →</button>
+<button class="btn btn-p" onclick="OB.next(1)" style="width:100%;max-width:300px;padding:16px;font-size:16px;font-weight:700;border-radius:16px">Get Started →</button>
 </div>
+
+<!-- Screen 2: Country -->
 <div class="ob-step" id="ob2">
-<div class="ob-ic">🧩</div>
-<h2 class="ob-title">Choose Your Modules</h2>
-<p class="ob-sub">Only activate what you need. You can change this anytime in Settings.</p>
-<div class="module-grid" id="modGrid"></div>
-<button class="btn btn-p" onclick="OB.next(2)" style="margin-top:6px">Continue →</button>
+<h2 class="ob-title" style="font-size:22px;margin-bottom:6px">Where do you manage finances?</h2>
+<p class="ob-sub" style="margin-bottom:20px">Select all that apply</p>
+<div id="ob-countries" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:340px;margin-bottom:10px"></div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:24px">You can change this later in Settings</p>
+<button class="btn btn-p" onclick="OB.next(2)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
+<button onclick="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
+
+<!-- Screen 3: What to track -->
 <div class="ob-step" id="ob3">
-<div class="ob-ic">🎨</div>
-<h2 class="ob-title">Choose Your Theme</h2>
-<div id="ob-themes" style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:380px"></div>
-<button class="btn btn-p" onclick="OB.next(3)" style="margin-top:6px">Continue →</button>
+<h2 class="ob-title" style="font-size:22px;margin-bottom:6px">What do you want to track?</h2>
+<p class="ob-sub" style="margin-bottom:18px">Select all that apply</p>
+<div id="ob-cats" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px;margin-bottom:24px"></div>
+<button class="btn btn-p" onclick="OB.next(3)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
+<button onclick="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
+
+<!-- Screen 4: PIN setup -->
 <div class="ob-step" id="ob4">
-<div class="ob-ic">🛡️</div>
-<h2 class="ob-title">Security Level</h2>
-<div class="sec-opts">
-<div class="so" id="so-paranoid" onclick="OB.setSec('paranoid')"><h4>🔒 Paranoid — Lock immediately</h4><p>Clear clipboard in 15s · Perfect for shared devices</p></div>
-<div class="so on" id="so-secure" onclick="OB.setSec('secure')"><h4>🛡️ Secure (Recommended)</h4><p>Lock in 10 min · Clear clipboard in 30s</p></div>
-<div class="so" id="so-relaxed" onclick="OB.setSec('relaxed')"><h4>⚖️ Relaxed — Lock in 30 min</h4><p>Clear clipboard in 60s · Convenient personal device</p></div>
-</div>
-<button class="btn btn-p" onclick="OB.next(4)">Continue →</button>
-</div>
-<div class="ob-step" id="ob5">
 <div style="font-size:48px;animation:float 3s ease-in-out infinite;line-height:1;margin-bottom:10px">🔑</div>
 <h2 class="ob-title" style="font-size:26px;margin-bottom:6px">Create Your PIN</h2>
-<p class="ob-sub" style="margin-bottom:20px">A 6-digit PIN protects your vault.<br>Only you will ever know it.</p>
+<p class="ob-sub" style="margin-bottom:20px">Minimum 6 digits. Used to encrypt your vault.</p>
 <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:0">
-  <!-- PIN input with dot preview -->
   <div style="margin-bottom:10px">
     <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">New PIN</div>
     <input class="inp" id="ob-pin" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" oninput="OB.checkPIN()">
@@ -210,46 +210,36 @@
     <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
     <input class="inp" id="ob-pin2" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" oninput="OB.checkPIN()">
   </div>
-  <!-- PIN match indicator -->
   <div id="ob-pinmatch" style="height:20px;text-align:center;font-size:12px;margin-bottom:6px"></div>
-  <!-- Divider -->
-  <div style="display:flex;align-items:center;gap:10px;margin:6px 0 14px">
-    <div style="flex:1;height:1px;background:var(--border)"></div>
-    <div style="font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px">OPTIONAL</div>
-    <div style="flex:1;height:1px;background:var(--border)"></div>
-  </div>
-  <!-- Decoy PIN section -->
-  <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:4px">
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-      <div style="font-size:20px;flex-shrink:0;margin-top:1px">🎭</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;margin-bottom:3px">Decoy PIN</div>
-        <div style="font-size:11px;color:var(--text2);line-height:1.5">Entering this PIN shows a believable fake vault with realistic data — useful if you're ever forced to open it.</div>
-      </div>
-    </div>
-    <input class="inp" id="ob-decoy" type="password" maxlength="6" inputmode="numeric" placeholder="Decoy PIN (must differ)" style="font-size:24px;text-align:center;letter-spacing:12px;padding:12px;border-radius:12px">
-  </div>
   <div class="ferr" id="ob-perr" style="text-align:center;min-height:16px;margin-bottom:4px"></div>
 </div>
-<button class="btn btn-p" onclick="OB.finish()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px;margin-top:4px">🔒 Secure My Vault</button>
-<div style="font-size:11px;color:var(--text3);margin-top:12px;text-align:center;line-height:1.5;max-width:280px">Your PIN never leaves your device.<br>No cloud. No accounts. 100% local.</div>
+<button class="btn btn-p" onclick="OB.finish()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px;margin-top:4px">Set PIN →</button>
+<div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;line-height:1.5;max-width:260px">Your PIN never leaves your device. No cloud. No accounts.</div>
+<button onclick="OB.back()" style="margin-top:10px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
+
+<!-- Screen 5: Recovery Key -->
+<div class="ob-step" id="ob5">
+<div style="font-size:48px;line-height:1;margin-bottom:12px">🔑</div>
+<h2 class="ob-title" style="font-size:24px;margin-bottom:10px">Your Recovery Key</h2>
+<div style="background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.35);border-radius:12px;padding:12px 16px;margin-bottom:16px;max-width:320px;width:100%;text-align:center">
+  <div style="font-size:13px;font-weight:700;color:#ef4444">⚠️ Write this down. You cannot view it again.</div>
+</div>
+<div id="ob-recovery-key" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;font-family:var(--mono,monospace);font-size:1.05rem;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:12px;word-break:break-all;max-width:320px;width:100%;min-height:54px;display:flex;align-items:center;justify-content:center">Generating…</div>
+<p style="font-size:11px;color:var(--text3);text-align:center;max-width:280px;line-height:1.6;margin-bottom:24px">Keep it offline and safe. If you forget your PIN, this key restores your vault.</p>
+<button class="btn btn-p" onclick="OB.next(5)" style="width:100%;max-width:300px;padding:16px;font-size:15px;font-weight:700;border-radius:16px">I've Written It Down ✓</button>
+</div>
+
+<!-- Screen 6: Ready -->
 <div class="ob-step" id="ob6">
-<div class="ob-ic">🎉</div>
-<h2 class="ob-title">Your vault is ready</h2>
-<p class="ob-sub">Everything is encrypted and stored on your device — only you hold the key.</p>
-<div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;width:100%;max-width:340px;text-align:left;margin:4px 0">
-  <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">What to add first</div>
-  <div style="display:flex;flex-direction:column;gap:9px">
-    <div style="font-size:13px;color:var(--text2)">🏦 Bank accounts &amp; cards</div>
-    <div style="font-size:13px;color:var(--text2)">🪪 ID documents &amp; passports</div>
-    <div style="font-size:13px;color:var(--text2)">📱 SIM cards &amp; phone numbers</div>
-    <div style="font-size:13px;color:var(--text2)">💻 Devices &amp; serial numbers</div>
-    <div style="font-size:13px;color:var(--text2)">📧 Email accounts &amp; 2FA status</div>
-  </div>
+<div style="font-size:64px;line-height:1;margin-bottom:14px">✅</div>
+<h2 class="ob-title" style="font-size:28px;font-weight:900;margin-bottom:6px">Vault Ready</h2>
+<p class="ob-sub" style="margin-bottom:16px">Your encrypted vault is set up.</p>
+<div id="ob-ready-stats" style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;width:100%;max-width:300px;text-align:left;margin-bottom:14px"></div>
+<input class="inp" id="ob-name" placeholder="Your name (optional)" maxlength="28" style="font-size:15px;text-align:center;max-width:300px;margin-bottom:10px">
+<button class="btn btn-p" onclick="OB.complete()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px">Enter My Vault →</button>
 </div>
-<button class="btn btn-p" onclick="OB.complete()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px;margin-top:6px">Open My Vault →</button>
-</div>
+
 </div>
 </div>
 
