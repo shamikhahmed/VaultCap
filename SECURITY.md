@@ -6,7 +6,7 @@ If you discover a security vulnerability in VaultOS, please report it responsibl
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Contact: shamikh73@gmail.com
+Contact: your-actual-email@domain.com
 
 Please include:
 - Description of the vulnerability
