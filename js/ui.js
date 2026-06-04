@@ -47,6 +47,23 @@ function _sparkLine(history) {
   '</div>';
 }
 
+function _nwSparkline(hist) {
+  const h = (hist || []).slice(-8);
+  if (h.length < 2) return '';
+  const max = Math.max(...h.map(x=>x.v)), min = Math.min(...h.map(x=>x.v));
+  const range = max - min || 1;
+  const pts = h.map((x,i) => {
+    const px = (i/(h.length-1))*240+10;
+    const py = 30 - ((x.v-min)/range)*24;
+    return px+','+py;
+  }).join(' ');
+  const last = pts.split(' ').pop().split(',');
+  return '<svg viewBox="0 0 260 40" style="width:100%;height:36px;margin-top:10px" preserveAspectRatio="none">' +
+    '<polyline points="'+pts+'" fill="none" stroke="rgba(123,95,255,.5)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<circle cx="'+last[0]+'" cy="'+last[1]+'" r="3" fill="var(--accent)"/>' +
+    '</svg>';
+}
+
 const Dash={
   render(){
     const h=new Date().getHours();
@@ -164,39 +181,54 @@ const Dash={
     const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
     const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-bottom:16px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
-    b.innerHTML = `
-    <!-- NET WORTH HERO -->
-    <div style="background:linear-gradient(135deg,rgba(123,95,255,.2),rgba(0,213,255,.1));border:1px solid rgba(123,95,255,.3);border-radius:20px;padding:24px 20px;margin:16px;text-align:center;position:relative">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">Total Net Worth</div>
-      <div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:4px" class="sens">${trendArrow}${fmtN(nwDisplay)}</div>
-      <div style="font-size:12px;color:var(--text3)">in ${cur} · <button onclick="Dash.toggleCurrency()" style="background:none;border:none;color:var(--accent,var(--purple));font-size:12px;cursor:pointer;padding:0;font-weight:600">switch →</button></div>
-      <div style="margin-top:6px">${typeof RatesEngine !== 'undefined' ? RatesEngine.lastUpdatedBadge() : ''}</div>
-      ${_sparkLine(S.user.nwHistory || [])}
-      <div style="display:flex;justify-content:space-around;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(123,95,255,.2)">
-        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(cashPKR)}</div><div style="font-size:10px;color:var(--text3)">Cash</div></div>
-        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(invPKR)}</div><div style="font-size:10px;color:var(--text3)">Invested</div></div>
-        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(asPKR)}</div><div style="font-size:10px;color:var(--text3)">Assets</div></div>
-        ${(S.bc||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bcPKR)}</div><div style="font-size:10px;color:var(--text3)">Committees</div></div>` : ''}
-        ${(S.bonds||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bondsPKR)}</div><div style="font-size:10px;color:var(--text3)">Bonds</div></div>` : ''}
-      </div>
-      <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
-        <button class="btn btn-g btn-sm" onclick="Dash.snap()">Snapshot</button>
-        <button class="btn btn-g btn-sm" onclick="Dash.showNWBreakdown()">Breakdown</button>
-        <button class="btn btn-g btn-sm" onclick="ExIm.export('vault')">Backup</button>
-      </div>
-    </div>
+    const prevNW = hist.length >= 2 ? hist[hist.length-2].v : nwDisplay;
+    const nwChange = nwDisplay - prevNW;
+    const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(nwChange));
+    const sparkline = _nwSparkline(hist);
+    const nwHero = '<div style="padding:16px 16px 0"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">Net Worth</div>' +
+      '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
+      (nwChange !== 0 ? '<div style="font-size:12px;color:'+(nwChange>=0?'var(--ok)':'var(--err)')+';margin-top:4px">'+nwChangeStr+' from last record</div>' : '') +
+      sparkline +
+      '</div></div>';
 
-    <!-- QUICK STATS -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px;margin-bottom:16px">
-      ${stats.map(s => `
-        <div onclick="R.goto('${s.page}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;touch-action:manipulation">
-          <div style="font-size:22px;margin-bottom:4px">${s.icon}</div>
-          <div style="font-size:18px;font-weight:900;color:var(--text)">${s.value}</div>
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">${s.label}</div>
-        </div>`).join('')}
-    </div>
+    const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
+    const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
+    const familyWidget = familyMC > 0
+      ? '<div style="padding:12px 16px 0"><div onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
+        '<div style="font-size:28px">👨‍👩‍👧‍👦</div>' +
+        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Family Vault</div>' +
+        '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
+        '<div style="font-size:18px;color:var(--text3)">›</div>' +
+        '</div></div>'
+      : '';
+
+    const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
+    const activeCountryLabel = (S.user?.activeCountry && S.user.activeCountry!=='ALL') ? S.user.activeCountry : '🌐';
+    const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+    const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 16px 0">' +
+      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
+      '<div style="font-size:20px;font-weight:800;color:var(--text)">'+entityTotal+'</div>' +
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Records</div></div>' +
+      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
+      '<div style="font-size:16px;font-weight:800;color:var(--text)">'+activeCountryLabel+'</div>' +
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Country</div></div>' +
+      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
+      '<div style="font-size:14px;font-weight:800;color:var(--text)">'+lastBackupLabel+'</div>' +
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Backup</div></div>' +
+      '</div>';
+
+    b.innerHTML = `
+    ${nwHero}
 
     ${breakdownHtml}
+
+    ${familyWidget}
+
+    ${quickStats}
+
+    ${activeMods.length > 0 ? `<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>` : ''}
 
     <!-- WALLET -->
     ${S.modules.cards && wCards.length > 0 ? `
@@ -275,9 +307,6 @@ const Dash={
           </button>`).join('')}
       </div>
     </div>
-
-    <!-- MODULE GRID -->
-    ${activeMods.length > 0 ? `<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>` : ''}
 
     <!-- SMART COLLECTIONS -->
     ${(() => {
