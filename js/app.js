@@ -1948,7 +1948,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 10;
+const SCHEMA_VERSION = 11;
 
 const Migrate = {
   run() {
@@ -2084,6 +2084,29 @@ const Migrate = {
       stored.schemaVersion = 10;
       console.log('[VaultOS] Migrated schema v9 → v10: vehicles/gadgets/gold consolidated into assets');
     }
+    if (sv < 11) {
+      try {
+        const fam = JSON.parse(localStorage.getItem('vo_family') || '{"head":null,"members":[]}');
+        if (!stored.family) stored.family = { head: null, members: [] };
+        if (!stored.family.head && fam.head) stored.family.head = fam.head;
+        if ((!stored.family.members || !stored.family.members.length) && fam.members && fam.members.length) {
+          stored.family.members = fam.members;
+        }
+        const now11 = new Date().toISOString();
+        if (stored.family.members) {
+          stored.family.members = stored.family.members.map(m => ({
+            ...m,
+            id: m.id || Math.random().toString(36).slice(2),
+            banks: (m.banks||[]).map(b => ({ ownerId: m.id||'member', country: b.country||(stored.user&&stored.user.country)||'PK', tags: b.tags||[], createdAt: b.createdAt||now11, updatedAt: now11, ...b })),
+            cards: (m.cards||[]).map(c => ({ ownerId: m.id||'member', country: c.country||(stored.user&&stored.user.country)||'PK', tags: c.tags||[], createdAt: c.createdAt||now11, updatedAt: now11, ...c })),
+            docs:  (m.docs||[]).map(d => ({ ownerId: m.id||'member', country: d.country||(stored.user&&stored.user.country)||'PK', tags: d.tags||[], createdAt: d.createdAt||now11, updatedAt: now11, ...d })),
+          }));
+        }
+        localStorage.setItem('vo_family_migrated', '1');
+        console.log('[VaultOS] Migrated family data v10 → v11');
+      } catch(e) {}
+      stored.schemaVersion = 11;
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
@@ -2097,6 +2120,7 @@ let S = {
   pin: '123456', decoyPin: '', noPin: false,
   modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
+  family: { head: null, members: [] },
   emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
@@ -2121,6 +2145,7 @@ const Store = {
       assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
       documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
+      family: S.family || { head: null, members: [] },
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
@@ -2252,6 +2277,7 @@ const Store = {
     S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
     S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
     S.activity=[]; S.tags=[]; S.wallet=[]; S.trash=[];
+    S.family = { head: null, members: [] };
     S.user = { name:'', avatar:'💼', theme:'dark', currency:'USD', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:null };
     S.pin=''; S.decoyPin=''; S.fails=0; S.unlocked=false; S.decoy=false;
   }
