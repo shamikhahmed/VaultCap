@@ -168,7 +168,7 @@ const Vehicles = {
       Activity.log('Updated vehicle', makeModel);
     } else {
       const vid = U.id();
-      S.vehicles.push({ id: vid, createdAt: new Date().toISOString(), fuelLog:[], serviceHistory:[], insurance:[], documents:{}, modifications:[], ...v });
+      S.vehicles.push({ id: vid, ownerId: 'self', country: (S.user && S.user.country) || 'PK', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), fuelLog:[], serviceHistory:[], insurance:[], documents:{}, modifications:[], ...v });
       Store.save(); Modal.close();
       Toast.show('Vehicle saved', 'success');
       this.render();

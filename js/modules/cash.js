@@ -43,7 +43,7 @@ const Cash = {
     const cur = document.getElementById('cf-cur').value;
     const notes = document.getElementById('cf-notes').value.trim();
     const prev = (S.cash || []).find(x => x.id === editId);
-    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, tags: U.getTags(), createdAt: editId ? prev?.createdAt : new Date().toISOString() };
+    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, tags: U.getTags(), ownerId: 'self', country: (S.user && S.user.country) || 'PK', updatedAt: new Date().toISOString(), createdAt: editId ? prev?.createdAt : new Date().toISOString() };
     if (!S.cash) S.cash = [];
     if (editId) S.cash = S.cash.map(x => x.id === editId ? item : x); else S.cash.push(item);
     Activity.log((editId ? 'Edited' : 'Added') + ' cash', loc);

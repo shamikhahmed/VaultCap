@@ -187,6 +187,9 @@ const Loans = {
       dueDate:  document.getElementById('lf-due').value,
       notes:    document.getElementById('lf-notes').value.trim(),
       tags:     U.getTags(),
+      ownerId: 'self',
+      country: (S.user && S.user.country) || 'PK',
+      updatedAt: new Date().toISOString(),
       createdAt: editId ? existing?.createdAt : new Date().toISOString()
     };
     if (!S.loans) S.loans = [];

@@ -182,7 +182,7 @@ const DocsModule={
     const prev=editId?(S.documents||[]).find(x=>x.id===editId):null;
     const frontPhoto=(frontEl&&frontEl.dataset&&frontEl.dataset.photo)||prev&&prev.frontPhoto||'';
     const backPhoto=(backEl&&backEl.dataset&&backEl.dataset.photo)||prev&&prev.backPhoto||'';
-    const data={id:editId||U.id(),docType,frontPhoto,backPhoto,createdAt:editId?(S.documents||[]).find(x=>x.id===editId)?.createdAt:new Date().toISOString(),notes:g('notes'),tags:U.getTags()};
+    const data={id:editId||U.id(),docType,frontPhoto,backPhoto,ownerId:'self',country:(S.user&&S.user.country)||'PK',updatedAt:new Date().toISOString(),createdAt:editId?(S.documents||[]).find(x=>x.id===editId)?.createdAt:new Date().toISOString(),notes:g('notes'),tags:U.getTags()};
     schema.fields.forEach(f=>{data[f.id]=g(f.id);});
     if(!S.documents)S.documents=[];
     if(editId)S.documents=S.documents.map(x=>x.id===editId?data:x);else S.documents.push(data);

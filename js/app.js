@@ -1950,7 +1950,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 8;
+const SCHEMA_VERSION = 9;
 
 const Migrate = {
   run() {
@@ -2016,6 +2016,14 @@ const Migrate = {
         if (stored.modules.bonds === undefined) stored.modules.bonds = true;
       }
       stored.schemaVersion = 8;
+    }
+    if (sv < 9) {
+      const _now9 = new Date().toISOString();
+      const _dc9 = (stored.user && stored.user.country) || 'PK';
+      ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents','bc','bonds'].forEach(k => {
+        if (!Array.isArray(stored[k])) return;
+        stored[k] = stored[k].map(item => ({ ownerId: item.ownerId || 'self', country: item.country || _dc9, ...item }));
+      });
     }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
@@ -3272,6 +3280,12 @@ const U = {
     hint.textContent = num > 0 ? U.numInWords(num, currency) : '';
   }
 };
+
+function entityDefaults(country) {
+  const now = new Date().toISOString();
+  return { ownerId: 'self', country: country || (S.user && S.user.country) || 'PK', tags: [], createdAt: now, updatedAt: now };
+}
+window.entityDefaults = entityDefaults;
 
 // ===================== NUMBER INPUT FORMATTER =====================
 function formatNumberInput(input, currency) {
