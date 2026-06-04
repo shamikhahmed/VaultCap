@@ -20,15 +20,12 @@ const ALL_MODULES=[
   {id:'zakat',   n:'Zakat',       ic:'🌙', desc:'Annual zakat calculator',           group:'Finance'},
   {id:'tax',     n:'Tax',         ic:'🧾', desc:'Income tax calculator',             group:'Finance'},
   {id:'currency',n:'Currency',    ic:'💱', desc:'Live exchange rates',               group:'Finance'},
-  {id:'gold',    n:'Precious Metals',ic:'🥇',desc:'Gold & silver prices',            group:'Assets'},
-  {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, valuables',      group:'Assets'},
+  {id:'assets', n:'Assets',      ic:'🏠', desc:'Property, vehicles, electronics, metals & valuables', group:'Assets'},
   {id:'friends', n:'Contacts',    ic:'👥', desc:'Contacts & people',                  group:'Identity'},
   {id:'sims',   n:'SIM Cards',   ic:'📱', desc:'Mobile numbers & networks',          group:'Identity'},
   {id:'documents',n:'Documents',ic:'🪪', desc:'IDs, passports, visas, contracts',   group:'Identity'},
   {id:'emails', n:'Emails',      ic:'📧', desc:'All email identities & security',    group:'Identity'},
-  {id:'gadgets',n:'Gadgets',     ic:'💻', desc:'Devices, IMEI, warranty',            group:'Identity'},
   {id:'digital',n:'Digital',     ic:'💼', desc:'Logins, wallets, social media',      group:'Identity'},
-  {id:'vehicles',n:'Vehicles',   ic:'🚗', desc:'Cars, fuel, service, insurance',     group:'Assets'},
   {id:'alerts',     n:'Alerts',     ic:'🔔', desc:'Expiry & urgent alerts',             group:'Tools'},
   {id:'timeline',   n:'Timeline',   ic:'📅', desc:'Activity history',                   group:'Tools'},
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
@@ -1950,7 +1947,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 9;
+const SCHEMA_VERSION = 10;
 
 const Migrate = {
   run() {
@@ -2024,6 +2021,67 @@ const Migrate = {
         if (!Array.isArray(stored[k])) return;
         stored[k] = stored[k].map(item => ({ ownerId: item.ownerId || 'self', country: item.country || _dc9, ...item }));
       });
+    }
+    if (sv < 10) {
+      const _now10 = new Date().toISOString();
+      const existingAssetIds = new Set((stored.assets || []).map(a => a.id));
+      // Migrate S.vehicles → S.assets with assetType:'vehicle'
+      (stored.vehicles || []).forEach(v => {
+        if (existingAssetIds.has(v.id)) return;
+        stored.assets = stored.assets || [];
+        stored.assets.push({
+          ...v,
+          assetType: 'vehicle',
+          name: v.name || ((v.year ? v.year + ' ' : '') + (v.make || '') + ' ' + (v.model || '')).trim() || 'Vehicle',
+          ownerId: v.ownerId || 'self',
+          country: v.country || (stored.user && stored.user.country) || 'PK',
+          tags: v.tags || [],
+          createdAt: v.createdAt || _now10,
+          updatedAt: _now10,
+          _migratedFrom: 'vehicles'
+        });
+      });
+      // Migrate S.gadgets → S.assets with assetType:'electronics'
+      (stored.gadgets || []).forEach(g => {
+        if (existingAssetIds.has(g.id)) return;
+        stored.assets = stored.assets || [];
+        stored.assets.push({
+          ...g,
+          assetType: 'electronics',
+          name: g.name || g.brand || 'Device',
+          currentValue: g.resaleValue || g.purchasePrice || 0,
+          ownerId: g.ownerId || 'self',
+          country: g.country || (stored.user && stored.user.country) || 'PK',
+          tags: g.tags || [],
+          createdAt: g.createdAt || _now10,
+          updatedAt: _now10,
+          _migratedFrom: 'gadgets'
+        });
+      });
+      // Migrate vo_gold (localStorage) → S.assets with assetType:'precious_metals'
+      try {
+        const goldItems = JSON.parse(localStorage.getItem('vo_gold') || '[]');
+        goldItems.forEach(g => {
+          if (existingAssetIds.has(g.id)) return;
+          stored.assets = stored.assets || [];
+          stored.assets.push({
+            ...g,
+            assetType: 'precious_metals',
+            name: g.label || g.name || ((g.metal === 'silver' ? 'Silver' : 'Gold') + (g.weight ? ' ' + g.weight + (g.unit || 'g') : '')),
+            currentValue: 0,
+            currency: (stored.user && stored.user.currency) || 'PKR',
+            ownerId: 'self',
+            country: (stored.user && stored.user.country) || 'PK',
+            tags: [],
+            createdAt: g.createdAt || _now10,
+            updatedAt: _now10,
+            _migratedFrom: 'gold'
+          });
+        });
+        localStorage.setItem('vo_gold_migrated', '1');
+      } catch(e) {}
+      stored.schemaVersion = 10;
+      console.log('[VaultOS] Migrated schema v9 → v10: vehicles/gadgets/gold consolidated into assets');
     }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
@@ -2463,7 +2521,7 @@ const R = {
       assets:      () => Assets.render(),
       expenses:    () => Exp.render(),
       emails:      () => Emails.render(),
-      gadgets:     () => Gadgets.render(),
+      gadgets:     () => { S.aF = 'electronics'; R.goto('assets'); },
       digital:     () => Digital.render(),
       alerts:      () => renderAlerts(),
       documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
@@ -2474,7 +2532,7 @@ const R = {
       backup:      () => BackupCenter.render(),
       recovery:    () => RecoveryCenter.render(),
       workspace:   () => WorkspaceManager.render(),
-      vehicles:    () => Vehicles.render(),
+      vehicles:    () => { S.aF = 'vehicle'; R.goto('assets'); },
       reminders:   () => Reminders.render(),
       'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
@@ -2482,7 +2540,7 @@ const R = {
       'recovery-center': () => { if (typeof VaultHealthCenter !== 'undefined') VaultHealthCenter.render(); },
       'help':      () => { if (typeof HelpCenter !== 'undefined') HelpCenter.render(); },
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
-      gold:        () => { if (typeof Gold !== 'undefined') Gold.render(); },
+      gold:        () => { S.aF = 'precious_metals'; R.goto('assets'); },
       bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
@@ -3918,7 +3976,7 @@ const CMD = {
     {icon:'🏠',label:'Add Asset',action:()=>Assets.openAdd()},
     {icon:'📋',label:'Add Expense',action:()=>Exp.openAdd()},
     {icon:'📧',label:'Add Email',action:()=>Emails.openAdd()},
-    {icon:'💻',label:'Add Device',action:()=>Gadgets.openAdd()},
+    {icon:'💻',label:'Add Device',action:()=>Assets.openAdd('electronics')},
     {icon:'💼',label:'Add Login',action:()=>Digital.openAdd()},
     {icon:'🪪',label:'Add Document',action:()=>DocsModule.openAdd()},
     {icon:'📊',label:'Dashboard',action:()=>R.goto('dashboard')},
@@ -3956,7 +4014,7 @@ const CMD = {
       }
       [
         { cat:'Navigate', items:[['📊','Dashboard',()=>R.goto('dashboard')],['🔔','Reminders',()=>R.goto('reminders')],['📅','Timeline',()=>R.goto('timeline')],['🛡️','Security',()=>R.goto('security')],['💾','Backup',()=>R.goto('backup')],['⚙️','Settings',()=>R.goto('settings')],['📥','Import',()=>R.goto('import')]] },
-        { cat:'Add Entry', items:[['🏦','Add Bank',()=>Banks.openAdd()],['💳','Add Card',()=>Cards.openAdd()],['📈','Add Investment',()=>Inv.openAdd()],['📱','Add SIM',()=>Sims.openAdd()],['🏠','Add Asset',()=>Assets.openAdd()],['📋','Add Expense',()=>Exp.openAdd()],['📧','Add Email',()=>Emails.openAdd()],['💻','Add Device',()=>Gadgets.openAdd()],['💼','Add Login',()=>Digital.openAdd()]] },
+        { cat:'Add Entry', items:[['🏦','Add Bank',()=>Banks.openAdd()],['💳','Add Card',()=>Cards.openAdd()],['📈','Add Investment',()=>Inv.openAdd()],['📱','Add SIM',()=>Sims.openAdd()],['🏠','Add Asset',()=>Assets.openAdd()],['📋','Add Expense',()=>Exp.openAdd()],['📧','Add Email',()=>Emails.openAdd()],['💻','Add Device',()=>Assets.openAdd('electronics')],['💼','Add Login',()=>Digital.openAdd()]] },
         { cat:'Vault Actions', items:[['🎨','Change Theme',()=>ThemeEngine.openPicker()],['📤','Export Encrypted Vault',()=>ExIm.export('vault')],['📸','Net Worth Snapshot',()=>Dash.snap()],['👝','Edit Wallet',()=>Dash.editWallet()],['🙈','Toggle Privacy Mode',()=>togglePrivacy()],['🔒','Lock Vault',()=>R.lock()],['🚨','Panic Lock',()=>PanicLock.trigger()]] },
       ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ icon:i, label:l, action:a, cat })));
     } else {

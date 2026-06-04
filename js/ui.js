@@ -73,36 +73,24 @@ const Dash={
     };
 
     const invPKR = S.investments.reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
-    const asPKR = S.assets.reduce((a,x) => a + toB(x.currentValue||0, x.currency||cur), 0);
+    const asPKR = (S.assets||[]).reduce((a,x) => {
+      if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
+        let gr=x.weight||0; const un=x.unit||x.weightUnit||'g';
+        if(un==='tola')gr*=11.6638; else if(un==='oz'||un==='troy oz')gr*=31.1035; else if(un==='kg')gr*=1000;
+        const m=(x.metal||x.metalType||'gold').toLowerCase();
+        const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');
+        return a+gr*ppg;
+      }
+      return a + toB(x.currentValue||0, x.currency||cur);
+    }, 0);
     const cashPKR = S.cash.reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
-    const vehPKR = S.vehicles.reduce((a,v) => a + toB(v.currentValue||v.purchasePrice||0, v.currency||cur), 0);
+    const vehPKR = 0; // vehicles now in S.assets via schema v10 migration
+    const goldPKR = 0; // precious metals now in S.assets via schema v10 migration
     const debtPKR = S.loans.filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
-    let goldPKR = 0;
-    try {
-      const goldItems = JSON.parse(localStorage.getItem('vo_gold') || '[]');
-      goldPKR = goldItems.reduce(function(a, g) {
-        let pricePerGram = 0;
-        if (g.useManualPrice && g.pricePerUnit) {
-          const userCur = S.user.currency || 'PKR';
-          pricePerGram = typeof RatesEngine !== 'undefined'
-            ? RatesEngine.convert(g.pricePerUnit, userCur, 'PKR')
-            : g.pricePerUnit;
-        } else if (typeof RatesEngine !== 'undefined') {
-          pricePerGram = g.metal === 'silver'
-            ? RatesEngine.silverInCurrency('PKR', 'gram')
-            : RatesEngine.goldInCurrency('PKR', 'gram');
-        }
-        let grams = g.weight || 0;
-        if (g.unit === 'tola') grams *= 11.6638;
-        else if (g.unit === 'oz') grams *= 31.1035;
-        else if (g.unit === 'kg') grams *= 1000;
-        return a + grams * pricePerGram;
-      }, 0);
-    } catch(e) {}
     const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
     const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
     const bankPKR = (S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
-    const nwPKR = invPKR + asPKR + cashPKR + vehPKR + goldPKR + bcPKR + bondsPKR - debtPKR;
+    const nwPKR = invPKR + asPKR + cashPKR + bcPKR + bondsPKR - debtPKR;
 
     const hist = S.user.nwHistory || [];
     const todayStr = new Date().toISOString().split('T')[0];
@@ -171,7 +159,7 @@ const Dash={
     const activeMods = ALL_MODULES.filter(m => S.modules[m.id] && S[m.id]);
     const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${S[m.id]?.length||0}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
-    const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR+vehPKR,color:'#ff9f0a',icon:'🏠'},{label:'Gold',value:goldPKR,color:'#c9a84c',icon:'🥇'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
+    const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
     const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-bottom:16px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     b.innerHTML = `
@@ -185,8 +173,7 @@ const Dash={
       <div style="display:flex;justify-content:space-around;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(123,95,255,.2)">
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(cashPKR)}</div><div style="font-size:10px;color:var(--text3)">Cash</div></div>
         <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(invPKR)}</div><div style="font-size:10px;color:var(--text3)">Invested</div></div>
-        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(asPKR+vehPKR)}</div><div style="font-size:10px;color:var(--text3)">Assets</div></div>
-        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(goldPKR)}</div><div style="font-size:10px;color:var(--text3)">Gold</div></div>
+        <div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(asPKR)}</div><div style="font-size:10px;color:var(--text3)">Assets</div></div>
         ${(S.bc||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bcPKR)}</div><div style="font-size:10px;color:var(--text3)">Committees</div></div>` : ''}
         ${(S.bonds||[]).length > 0 ? `<div style="text-align:center"><div style="font-size:12px;font-weight:700;color:var(--text)" class="sens">${fmt(bondsPKR)}</div><div style="font-size:10px;color:var(--text3)">Bonds</div></div>` : ''}
       </div>
@@ -376,22 +363,21 @@ const Dash={
     const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     const fmt=v=>`${cur} ${fmtN(Math.round(toCur(v,cur)))}`;
     const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
-    const asPKR=S.assets.reduce((a,x)=>a+toB(x.currentValue||0,x.currency||cur),0);
+    const asPKR=(S.assets||[]).reduce((a,x)=>{
+      if((x.assetType==='precious_metals'||x.assetType==='precious')&&x.weight&&typeof RatesEngine!=='undefined'){let gr=x.weight||0;const un=x.unit||x.weightUnit||'g';if(un==='tola')gr*=11.6638;else if(un==='oz'||un==='troy oz')gr*=31.1035;else if(un==='kg')gr*=1000;const m=(x.metal||x.metalType||'gold').toLowerCase();const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');return a+gr*ppg;}
+      return a+toB(x.currentValue||0,x.currency||cur);
+    },0);
     const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
     const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
     const bcPKR2=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
     const bondsPKR2=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
-    const vehPKR2=S.vehicles.reduce((a,v)=>a+toB(v.currentValue||v.purchasePrice||0,v.currency||cur),0);
-    let goldPKR2=0;try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');goldPKR2=gi.reduce(function(a,g){let ppg=0;if(g.useManualPrice&&g.pricePerUnit){ppg=typeof RatesEngine!=='undefined'?RatesEngine.convert(g.pricePerUnit,cur,'PKR'):g.pricePerUnit;}else if(typeof RatesEngine!=='undefined'){ppg=g.metal==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');}let gr=g.weight||0;if(g.unit==='tola')gr*=11.6638;else if(g.unit==='oz')gr*=31.1035;else if(g.unit==='kg')gr*=1000;return a+gr*ppg;},0);}catch(e){}
-    const nwPKR=invPKR+asPKR+cashPKR+vehPKR2+goldPKR2+bcPKR2+bondsPKR2-debtPKR;
+    const nwPKR=invPKR+asPKR+cashPKR+bcPKR2+bondsPKR2-debtPKR;
     const row=(ic,label,val,col,prefix='')=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>${ic}</span>${label}</div><div style="font-size:14px;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
     Modal.open('💰 Net Worth Breakdown',`
     <div style="padding:0 2px">
       ${row('📈','Investments',invPKR,'var(--accent)')}
       ${row('🏠','Assets',asPKR,'var(--accent)')}
       ${row('💵','Cash',cashPKR,'var(--accent)')}
-      ${vehPKR2>0?row('🚗','Vehicles',vehPKR2,'var(--accent)'):''}
-      ${goldPKR2>0?row('🥇','Precious Metals',goldPKR2,'var(--accent)'):''}
       ${bcPKR2>0?row('🤝','BC Receivables',bcPKR2,'var(--accent)'):''}
       ${bondsPKR2>0?row('📜','Bonds / Securities',bondsPKR2,'var(--accent)'):''}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)"><span>💸</span>Loans (owed)</div><div style="font-size:14px;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>
@@ -854,22 +840,23 @@ const ExIm={
     const dateStr=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
     const toB=(a,c)=>typeof RatesEngine!=='undefined'?RatesEngine.convert(a,c||cur,'PKR'):(a||0);
     const invPKR=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
-    const asPKR=(S.assets||[]).reduce((a,x)=>a+toB(x.currentValue||0,x.currency),0);
+    const asPKR=(S.assets||[]).reduce((a,x)=>{
+      if((x.assetType==='precious_metals'||x.assetType==='precious')&&x.weight&&typeof RatesEngine!=='undefined'){let gr=x.weight||0;const un=x.unit||x.weightUnit||'g';if(un==='tola')gr*=11.6638;else if(un==='oz'||un==='troy oz')gr*=31.1035;else if(un==='kg')gr*=1000;const m=(x.metal||x.metalType||'gold').toLowerCase();const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');return a+gr*ppg;}
+      return a+toB(x.currentValue||0,x.currency);
+    },0);
     const cashPKR=(S.cash||[]).reduce((a,c)=>a+toB(c.amount||0,c.currency),0);
     const bankPKR=(S.banks||[]).reduce((a,b)=>a+toB(b.balance||0,b.currency),0);
     const debtPKR=(S.loans||[]).filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
-    let goldPKR=0;
-    try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');goldPKR=gi.reduce((a,g)=>{let ppg=typeof RatesEngine!=='undefined'?(g.metal==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram')):0;let grams=g.weight||0;if(g.unit==='tola')grams*=11.6638;else if(g.unit==='oz')grams*=31.1035;else if(g.unit==='kg')grams*=1000;return a+grams*ppg;},0);}catch(e){}
     const bcPKR=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
     const bondsPKR=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
     const toCur=(v)=>CurrencyEngine.fromBase(v,cur);
-    const nwTotal=toCur(invPKR+asPKR+cashPKR+bankPKR+goldPKR+bcPKR+bondsPKR-debtPKR);
+    const nwTotal=toCur(invPKR+asPKR+cashPKR+bankPKR+bcPKR+bondsPKR-debtPKR);
     const in90=Date.now()+90*86400000;
     const expiringDocs=(S.documents||[]).filter(d=>d.expiryDate&&new Date(d.expiryDate)>new Date()&&new Date(d.expiryDate)<in90);
     const section=(title,content)=>'<div class="section"><h2>'+title+'</h2>'+content+'</div>';
     const row=(label,value)=>'<div class="row"><span class="label">'+label+'</span><span class="value">'+value+'</span></div>';
     const table=(headers,rows)=>'<table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+(c||'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
-    const gold=JSON.parse(localStorage.getItem('vo_gold')||'[]');
+    const gold=(S.assets||[]).filter(x=>x.assetType==='precious_metals'||x.assetType==='precious');
     const activeLent=(S.loans||[]).filter(l=>l.type==='lent'&&l.status!=='Settled');
     const activeBorrowed=(S.loans||[]).filter(l=>l.type==='borrowed'&&l.status!=='Settled');
     const lentTotal=activeLent.reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
@@ -885,8 +872,7 @@ const ExIm={
     section('Net Worth Breakdown',
       row('Cash & Banks',fmt(toCur(cashPKR+bankPKR)))+
       row('Investments',fmt(toCur(invPKR)))+
-      row('Assets',fmt(toCur(asPKR)))+
-      row('Gold & Silver',fmt(toCur(goldPKR)))+
+      row('Assets (incl. vehicles, metals)',fmt(toCur(asPKR)))+
       (bcPKR>0?row('BC Receivables',fmt(toCur(bcPKR))):'')+
       (bondsPKR>0?row('Prize Bonds',fmt(toCur(bondsPKR))):'')+
       row('Loans Owed','− '+fmt(toCur(debtPKR)))
@@ -904,7 +890,7 @@ const ExIm={
       row('P&L','<span class="'+(investPL>=0?'positive':'negative')+'">'+(investPL>=0?'+':'')+fmt(toCur(investPL))+'</span>')+
       table(['Investment','Type','Invested','Current'],(S.investments||[]).map(i=>[i.investmentName||'—',i.type||'—',i.currency+' '+Math.round(i.amountInvested||0).toLocaleString(),i.currency+' '+Math.round(i.currentValue||0).toLocaleString()]))
     ):'')+
-    (gold.length?section('Precious Metals',table(['Label','Metal','Weight','Est. Value'],gold.map(g=>{let grams=g.weight||0;if(g.unit==='tola')grams*=11.6638;else if(g.unit==='oz')grams*=31.1035;else if(g.unit==='kg')grams*=1000;const ppg=typeof RatesEngine!=='undefined'?(g.metal==='silver'?RatesEngine.silverInCurrency(cur,'gram'):RatesEngine.goldInCurrency(cur,'gram')):0;const val=Math.round(grams*ppg);return [g.label||g.metal||'—',g.metal||'gold',(g.weight||0)+' '+(g.unit||'g'),val?cur+' '+val.toLocaleString():'—'];}))):'')+
+    (gold.length?section('Precious Metals',table(['Name','Metal','Weight','Est. Value'],gold.map(g=>{let grams=g.weight||0;const un=g.unit||g.weightUnit||'g';if(un==='tola')grams*=11.6638;else if(un==='oz'||un==='troy oz')grams*=31.1035;else if(un==='kg')grams*=1000;const metal=(g.metal||g.metalType||'gold').toLowerCase();const ppg=typeof RatesEngine!=='undefined'?(metal==='silver'?RatesEngine.silverInCurrency(cur,'gram'):RatesEngine.goldInCurrency(cur,'gram')):0;const val=Math.round(grams*ppg);return [g.name||g.label||metal||'—',metal,(g.weight||0)+' '+(g.unit||g.weightUnit||'g'),val?cur+' '+val.toLocaleString():'—'];}))):'')+
     ((S.bc||[]).length?section('Committees (BC)',table(['Name','Type','Contribution','Pot','Status'],(S.bc||[]).map(b=>{const pot=(b.members||1)*(b.contribution||0);const myTurnDone=b.myTurnRound&&(b.currentRound||1)>=b.myTurnRound;return [b.name||'BC',b.type||'ballot',b.currency+' '+Math.round(b.contribution||0).toLocaleString()+'/round',b.currency+' '+pot.toLocaleString(),myTurnDone?'Received':'Round '+(b.currentRound||1)+' of '+(b.totalRounds||b.members||'?')];}))):'')+
     ((S.bonds||[]).length?section('Prize Bonds & Securities',table(['Name','Type','Quantity','Face Value'],(S.bonds||[]).map(b=>[b.name||'Bond',b.typeId||'—',String(b.quantity||1),b.currency+' '+Math.round((b.quantity||1)*(b.faceValue||0)).toLocaleString()]))):'')+
     (expiringDocs.length?section('Documents Expiring (next 90 days)',table(['Document','Holder','Expires'],expiringDocs.map(d=>[d.docType||'Document',d.holderName||'—',d.expiryDate?new Date(d.expiryDate).toLocaleDateString('en-GB'):'—']))):'')+
