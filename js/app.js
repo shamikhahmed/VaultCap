@@ -388,27 +388,28 @@ const DevDiag = {
   },
 
   entityCounts() {
+    const cc = S.user?.activeCountry || null;
+    const filter = arr => {
+      if (!cc || cc === 'ALL') return arr || [];
+      return (arr || []).filter(i => !i.country || i.country === cc);
+    };
     return {
-      banks: (S.banks||[]).length,
-      cards: (S.cards||[]).length,
-      documents: (S.documents||[]).length,
-      investments: (S.investments||[]).length,
-      loans: (S.loans||[]).length,
-      cash: (S.cash||[]).length,
-      vehicles: (S.vehicles||[]).length,
-      assets: (S.assets||[]).length,
-      friends: (S.friends||[]).length,
-      sims: (S.sims||[]).length,
-      emails: (S.emails||[]).length,
-      gadgets: (S.gadgets||[]).length,
-      expenses: (S.expenses||[]).length,
+      banks: filter(S.banks).length,
+      cards: filter(S.cards).length,
+      documents: filter(S.documents).length,
+      investments: filter(S.investments).length,
+      loans: filter(S.loans).length,
+      cash: filter(S.cash).length,
+      vehicles: filter(S.vehicles).length,
+      assets: filter(S.assets).length,
+      friends: filter(S.friends).length,
+      sims: filter(S.sims).length,
+      emails: filter(S.emails).length,
+      gadgets: filter(S.gadgets).length,
+      expenses: filter(S.expenses).length,
       activity: (S.activity||[]).length,
       trash: (S.trash||[]).length,
-      total: Object.values({
-        banks:S.banks, cards:S.cards, documents:S.documents,
-        investments:S.investments, loans:S.loans, cash:S.cash,
-        vehicles:S.vehicles, assets:S.assets, friends:S.friends,
-      }).reduce((a, arr) => a + (arr||[]).length, 0),
+      total: ['banks','cards','documents','investments','loans','cash','vehicles','assets','friends'].reduce((a, k) => a + filter(S[k]).length, 0),
     };
   },
 
@@ -3607,28 +3608,63 @@ function openMore() {
   const overlay = document.createElement('div');
   overlay.id = 'moreOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
-  const allMore = [
-    {id:'alerts',     ic:'🔔', n:'Alerts'},
-    {id:'reminders',  ic:'⏰', n:'Reminders'},
-    {id:'timeline',   ic:'📅', n:'Timeline'},
-    {id:'search',     ic:'🔍', n:'Search'},
-    {id:'expenses',   ic:'📋', n:'Expenses'},
-    {id:'trash',      ic:'🗑️', n:'Trash'},
-    {id:'ai-import',  ic:'🤖', n:'AI Import'},
-    {id:'backup',     ic:'💾', n:'Backup'},
-    {id:'security',   ic:'🛡️', n:'Security'},
-    {id:'settings',   ic:'⚙️', n:'Settings'},
+  const navGroups = [
+    { label:'💰 Money', items:[
+      {id:'banks',ic:'🏦',n:'Banks'},
+      {id:'cards',ic:'💳',n:'Cards'},
+      {id:'cash',ic:'💵',n:'Cash'},
+      {id:'investments',ic:'📈',n:'Investments'},
+      {id:'loans',ic:'💸',n:'Loans'},
+      {id:'expenses',ic:'📋',n:'Expenses'},
+      {id:'bc',ic:'🤝',n:'Committees'},
+      {id:'bonds',ic:'🎫',n:'Bonds'},
+    ]},
+    { label:'🏠 Assets', items:[
+      {id:'assets',ic:'🏠',n:'Assets'},
+    ]},
+    { label:'🪪 Identity', items:[
+      {id:'documents',ic:'🪪',n:'Documents'},
+      {id:'sims',ic:'📱',n:'SIM Cards'},
+      {id:'emails',ic:'📧',n:'Emails'},
+      {id:'digital',ic:'💼',n:'Digital'},
+      {id:'friends',ic:'👥',n:'Contacts'},
+    ]},
+    { label:'🔧 Tools', items:[
+      {id:'zakat',ic:'🌙',n:'Zakat'},
+      {id:'tax',ic:'🧾',n:'Tax'},
+      {id:'currency',ic:'💱',n:'Currency'},
+      {id:'ai-import',ic:'🤖',n:'AI Import'},
+      {id:'creditScore',ic:'📊',n:'Credit Score'},
+      {id:'reminders',ic:'⏰',n:'Reminders'},
+      {id:'alerts',ic:'🔔',n:'Alerts'},
+      {id:'timeline',ic:'📅',n:'Timeline'},
+      {id:'search',ic:'🔍',n:'Search'},
+      {id:'trash',ic:'🗑️',n:'Trash'},
+    ]},
+    { label:'⚙️ System', items:[
+      {id:'backup',ic:'💾',n:'Backup'},
+      {id:'security',ic:'🛡️',n:'Security'},
+      {id:'settings',ic:'⚙️',n:'Settings'},
+      {id:'help',ic:'❓',n:'Help'},
+    ]},
   ];
   overlay.innerHTML =
     '<div style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0) + 20px) 16px 12px;position:sticky;top:0;background:var(--bg);z-index:1;border-bottom:1px solid var(--border)">' +
-    '<div style="font-size:16px;font-weight:800;color:var(--text)">More</div>' +
+    '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
     '<button onclick="document.getElementById(\'moreOverlay\')?.remove()" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1">×</button>' +
     '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px">' +
-    allMore.map(m =>
-      `<div onclick="document.getElementById('moreOverlay')?.remove();R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px"><div style="font-size:24px">${m.ic}</div><div style="font-size:14px;font-weight:600;color:var(--text)">${m.n}</div></div>`
+    navGroups.map(group =>
+      '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
+      group.items.map(m =>
+        '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center">' +
+        '<div style="font-size:22px">' + m.ic + '</div>' +
+        '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
+        '</div>'
+      ).join('') +
+      '</div></div>'
     ).join('') +
-    '</div>';
+    '<div style="height:20px"></div>';
   document.body.appendChild(overlay);
 }
 function closeMore() {
