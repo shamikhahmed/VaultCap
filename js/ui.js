@@ -62,7 +62,7 @@ const Dash={
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
 
     const toB = (a,c) => (a||0) * (FX[c] || 1);
-    const toCur = (pkr, c) => pkr / (FX[c] || 1);
+    const toCur = (pkr, c) => CurrencyEngine.fromBase(pkr, c || cur);
     const fmtN = n => cur === 'PKR' ? U.fmtPKR(n) : U.fmt(n);
     const fmt = n => {
       const sym = cur === 'GBP' ? '£' : cur === 'USD' ? '$' : cur === 'AED' ? 'AED ' : 'PKR ';
@@ -372,7 +372,7 @@ const Dash={
   showNWBreakdown(){
     const cur=S.user.currency||'PKR';
     const toB=(a,c)=>(a||0)*(FX[c]||1);
-    const toCur=(pkr,c)=>pkr/(FX[c]||1);
+    const toCur=(pkr,c)=>CurrencyEngine.fromBase(pkr,c||cur);
     const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     const fmt=v=>`${cur} ${fmtN(Math.round(toCur(v,cur)))}`;
     const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
@@ -862,7 +862,7 @@ const ExIm={
     try{const gi=JSON.parse(localStorage.getItem('vo_gold')||'[]');goldPKR=gi.reduce((a,g)=>{let ppg=typeof RatesEngine!=='undefined'?(g.metal==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram')):0;let grams=g.weight||0;if(g.unit==='tola')grams*=11.6638;else if(g.unit==='oz')grams*=31.1035;else if(g.unit==='kg')grams*=1000;return a+grams*ppg;},0);}catch(e){}
     const bcPKR=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
     const bondsPKR=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
-    const toCur=(v)=>typeof RatesEngine!=='undefined'?RatesEngine.convert(v,'PKR',cur):v;
+    const toCur=(v)=>CurrencyEngine.fromBase(v,cur);
     const nwTotal=toCur(invPKR+asPKR+cashPKR+bankPKR+goldPKR+bcPKR+bondsPKR-debtPKR);
     const in90=Date.now()+90*86400000;
     const expiringDocs=(S.documents||[]).filter(d=>d.expiryDate&&new Date(d.expiryDate)>new Date()&&new Date(d.expiryDate)<in90);
@@ -1988,7 +1988,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
     </div></div>
-    <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.showReport()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
+    <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
       ${[
         {label:'Encryption',val:'AES-256-GCM ✅',ok:true},

@@ -120,78 +120,144 @@ const VaultRelations = {
 
 // ===================== DATA INTEGRITY =====================
 const DataIntegrity = {
-  cleanOrphanedBankLinks() {
-    const bankIds = new Set((S.banks || []).map(b => b.id));
-    let fixed = 0;
-    (S.cards || []).forEach(c => { if (c.linkedBankId && !bankIds.has(c.linkedBankId)) { c.linkedBankId = ''; fixed++; } });
-    return fixed;
-  },
+  // BANK duplicate detection — entity-aware
+  // HIGH confidence: same bankName + (accountNumber OR iban)
+  // POSSIBLE: same bankName + accountType (different accounts at same bank)
   findDuplicateBanks() {
-    const seen = {};
-    return (S.banks || []).filter(b => { const key = (b.bankName || '').toLowerCase() + '|' + (b.country || ''); if (seen[key]) return true; seen[key] = true; return false; });
+    const banks = S.banks || [];
+    const dupes = [];
+    for (let i = 0; i < banks.length; i++) {
+      for (let j = i + 1; j < banks.length; j++) {
+        const a = banks[i], b = banks[j];
+        const sameName = (a.bankName || '').toLowerCase() === (b.bankName || '').toLowerCase();
+        if (!sameName) continue;
+        // HIGH: same unique identifier
+        const aNum = (a.accountNumber || a.iban || '').replace(/\s/g,'').toLowerCase();
+        const bNum = (b.accountNumber || b.iban || '').replace(/\s/g,'').toLowerCase();
+        if (aNum && bNum && aNum === bNum) {
+          dupes.push({ a, b, confidence: 'HIGH', reason: 'Same bank name and account number/IBAN' });
+          continue;
+        }
+        // POSSIBLE: same name + same account type (but different/missing numbers — could be different accounts)
+        if ((a.accountType || '') === (b.accountType || '') && a.accountType) {
+          dupes.push({ a, b, confidence: 'POSSIBLE', reason: 'Same bank and account type — verify if different accounts' });
+        }
+      }
+    }
+    return dupes;
   },
+
+  // CARD duplicate detection — entity-aware
+  // HIGH: same last4 + same network
+  // POSSIBLE: same card type + same linked bank (could be different cards)
   findDuplicateCards() {
-    const seen = {};
-    return (S.cards || []).filter(c => { if (!c.last4) return false; const key = (c.last4 || '') + '|' + (c.network || '').toLowerCase(); if (seen[key]) return true; seen[key] = true; return false; });
+    const cards = S.cards || [];
+    const dupes = [];
+    for (let i = 0; i < cards.length; i++) {
+      for (let j = i + 1; j < cards.length; j++) {
+        const a = cards[i], b = cards[j];
+        const aLast4 = (a.last4 || a.cardNumber || '').slice(-4);
+        const bLast4 = (b.last4 || b.cardNumber || '').slice(-4);
+        const aNet = (a.network || a.cardType || '').toLowerCase();
+        const bNet = (b.network || b.cardType || '').toLowerCase();
+        // HIGH: same last 4 + same network
+        if (aLast4 && bLast4 && aLast4 === bLast4 && aNet && aNet === bNet) {
+          dupes.push({ a, b, confidence: 'HIGH', reason: 'Same last 4 digits and card network' });
+          continue;
+        }
+        // POSSIBLE: same card type + same linked bank
+        if (aNet && aNet === bNet && (a.linkedBank || '') === (b.linkedBank || '') && a.linkedBank) {
+          dupes.push({ a, b, confidence: 'POSSIBLE', reason: 'Same card type and linked bank — verify if different cards' });
+        }
+      }
+    }
+    return dupes;
   },
-  expiredDocs() {
-    const now = new Date();
-    return (S.documents || []).filter(d => d.expiry && new Date(d.expiry) < now);
+
+  // DOCUMENT duplicate detection
+  findDuplicateDocuments() {
+    const docs = S.documents || [];
+    const dupes = [];
+    for (let i = 0; i < docs.length; i++) {
+      for (let j = i + 1; j < docs.length; j++) {
+        const a = docs[i], b = docs[j];
+        const sameType = (a.type || '').toLowerCase() === (b.type || '').toLowerCase();
+        const aNum = (a.number || a.docNumber || '').replace(/\s/g,'').toLowerCase();
+        const bNum = (b.number || b.docNumber || '').replace(/\s/g,'').toLowerCase();
+        if (sameType && aNum && bNum && aNum === bNum) {
+          dupes.push({ a, b, confidence: 'HIGH', reason: 'Same document type and number' });
+        }
+      }
+    }
+    return dupes;
   },
+
+  check() {
+    const dupBanks = this.findDuplicateBanks();
+    const dupCards = this.findDuplicateCards();
+    const dupDocs  = this.findDuplicateDocuments();
+    const highCount = [...dupBanks, ...dupCards, ...dupDocs].filter(d => d.confidence === 'HIGH').length;
+    const posCount  = [...dupBanks, ...dupCards, ...dupDocs].filter(d => d.confidence === 'POSSIBLE').length;
+    return { dupBanks, dupCards, dupDocs, highCount, posCount };
+  },
+
   run() {
-    const orphanedLinks = this.cleanOrphanedBankLinks();
-    const dupBanks = this.findDuplicateBanks();
-    const dupCards = this.findDuplicateCards();
-    const expiredDocs = this.expiredDocs();
-    if (orphanedLinks > 0) Store.save();
-    return { orphanedLinks, dupBanks: dupBanks.length, dupCards: dupCards.length, expiredDocs: expiredDocs.length, issues: orphanedLinks + dupBanks.length + dupCards.length };
-  },
-  showReport() {
-    const r = this.run();
-    const dupBanks = this.findDuplicateBanks();
-    const dupCards = this.findDuplicateCards();
-    const hasDups = dupBanks.length + dupCards.length > 0;
-    const lines = [
-      r.orphanedLinks > 0 ? `✅ Fixed ${r.orphanedLinks} orphaned card-bank link(s)` : '✅ No orphaned links',
-      r.dupBanks > 0 ? `⚠️ ${r.dupBanks} possible duplicate bank(s) found` : '✅ No duplicate banks',
-      r.dupCards > 0 ? `⚠️ ${r.dupCards} possible duplicate card(s) found` : '✅ No duplicate cards',
-      r.expiredDocs > 0 ? `⚠️ ${r.expiredDocs} expired document(s)` : '✅ No expired documents',
-    ];
-    Modal.open('🔍 Vault Integrity Check',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        ${lines.map(l => `<div style="padding:12px 14px;background:var(--glass);border-radius:10px;font-size:13px;color:var(--text)">${l}</div>`).join('')}
-        ${r.issues === 0 ? '<div style="text-align:center;margin-top:8px;font-size:13px;color:var(--ok)">Vault is clean ✓</div>' : ''}
-      </div>`,
-      `${hasDups ? '<button class="btn btn-g" onclick="Modal.close();DataIntegrity.showDuplicates()">View Duplicates →</button>' : ''}<button class="btn btn-p" onclick="Modal.close()">Done</button>`
+    const r = this.check();
+    const total = r.highCount + r.posCount;
+    const hasDups = total > 0;
+    Modal.open(
+      '🔍 Data Integrity Check',
+      `<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+        Scanned ${(S.banks||[]).length} banks, ${(S.cards||[]).length} cards, ${(S.documents||[]).length} documents.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        ${r.highCount > 0 ? `<div style="padding:10px;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.2);border-radius:10px;font-size:13px;color:var(--err)">🔴 ${r.highCount} HIGH confidence duplicate${r.highCount>1?'s':''} — likely same record entered twice</div>` : '<div style="font-size:13px;color:var(--ok)">✅ No high-confidence duplicates</div>'}
+        ${r.posCount > 0 ? `<div style="padding:10px;background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:10px;font-size:13px;color:var(--warn)">🟡 ${r.posCount} POSSIBLE duplicate${r.posCount>1?'s':''} — review recommended</div>` : ''}
+        ${!hasDups ? '<div style="font-size:13px;color:var(--ok)">✅ No duplicates detected</div>' : ''}
+      </div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.5">Note: Duplicate detection uses unique identifiers (account numbers, last 4 digits, document numbers) — two accounts at the same bank are NOT flagged as duplicates unless they share the same identifier.</div>`,
+      `${hasDups ? '<button class="btn btn-g" onclick="Modal.close();DataIntegrity.showDuplicates()">Review →</button>' : ''}<button class="btn btn-p" onclick="Modal.close()">Done</button>`
     );
   },
+
   showDuplicates() {
-    const dupBanks = this.findDuplicateBanks();
-    const dupCards = this.findDuplicateCards();
-    if (!dupBanks.length && !dupCards.length) { Toast.show('No duplicates found ✓', 'success'); return; }
-    const bankRows = dupBanks.map(b => `
-      <div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.25);border-radius:12px;padding:12px 14px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div><div style="font-size:13px;font-weight:600;color:var(--text)">🏦 ${b.bankName}</div><div style="font-size:11px;color:var(--text3)">${b.country||''} · ${b.accountType||''} · ${b.currency||''}</div></div>
-          <button onclick="Banks.del('${b.id}');Modal.close();DataIntegrity.showDuplicates()" style="background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.3);color:var(--err);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;touch-action:manipulation">Remove</button>
+    const r = this.check();
+    const allDupes = [...r.dupBanks, ...r.dupCards, ...r.dupDocs];
+    if (!allDupes.length) { Toast.show('No duplicates found', 'success'); return; }
+
+    const renderDupe = (d, idx) => {
+      const confColor = d.confidence === 'HIGH' ? 'var(--err)' : 'var(--warn)';
+      const confBg    = d.confidence === 'HIGH' ? 'rgba(255,59,48,.08)' : 'rgba(255,152,0,.08)';
+      const nameA = d.a.bankName || d.a.cardType || d.a.type || d.a.name || 'Record A';
+      const nameB = d.b.bankName || d.b.cardType || d.b.type || d.b.name || 'Record B';
+      const subA  = d.a.accountNumber || d.a.last4 || d.a.number || d.a.accountType || '';
+      const subB  = d.b.accountNumber || d.b.last4 || d.b.number || d.b.accountType || '';
+      return `<div style="background:${confBg};border:1px solid ${confColor}44;border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;font-weight:700;color:${confColor}">${d.confidence} CONFIDENCE</span>
+          <span style="font-size:11px;color:var(--text3)">${d.reason}</span>
         </div>
-      </div>`).join('');
-    const cardRows = dupCards.map(c => `
-      <div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.25);border-radius:12px;padding:12px 14px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div><div style="font-size:13px;font-weight:600;color:var(--text)">💳 ${c.cardName}</div><div style="font-size:11px;color:var(--text3)">**** ${c.last4||''} · ${c.network||''}</div></div>
-          <button onclick="Cards.del('${c.id}');Modal.close();DataIntegrity.showDuplicates()" style="background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.3);color:var(--err);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;touch-action:manipulation">Remove</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div style="background:var(--glass);border-radius:8px;padding:8px">
+            <div style="font-size:12px;font-weight:700;color:var(--text)">${escHtml(nameA)}</div>
+            ${subA ? `<div style="font-size:11px;color:var(--text3)">${escHtml(subA)}</div>` : ''}
+          </div>
+          <div style="background:var(--glass);border-radius:8px;padding:8px">
+            <div style="font-size:12px;font-weight:700;color:var(--text)">${escHtml(nameB)}</div>
+            ${subB ? `<div style="font-size:11px;color:var(--text3)">${escHtml(subB)}</div>` : ''}
+          </div>
         </div>
-      </div>`).join('');
-    Modal.open('⚠️ Possible Duplicates',
-      `<div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.6">These entries appear to be duplicates based on name and country (banks) or last 4 digits and network (cards). Review and remove if needed.</div>
-        ${dupBanks.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Duplicate Banks (${dupBanks.length})</div>${bankRows}` : ''}
-        ${dupCards.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;margin-top:${dupBanks.length?'12px':'0'}">Duplicate Cards (${dupCards.length})</div>${cardRows}` : ''}
-      </div>`,
-      `<button class="btn btn-p" onclick="Modal.close();DataIntegrity.showReport()">Done</button>`
+        ${d.confidence === 'HIGH' ? `<div style="font-size:11px;color:var(--text3)">These appear to be the same record. Review both before deleting.</div>` : `<div style="font-size:11px;color:var(--text3)">These may be different records at the same institution. No action required if they are distinct accounts.</div>`}
+      </div>`;
+    };
+
+    Modal.open(
+      '⚠️ Duplicate Review',
+      `<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Review these entries. Only delete if you are certain they are the same record. Never auto-merge without your confirmation.</div>` +
+      allDupes.map(renderDupe).join(''),
+      `<button class="btn btn-p" onclick="Modal.close()">Done</button>`
     );
-  },
+  }
 };
 
 const Audit = {
@@ -369,7 +435,7 @@ const DevDiag = {
       const storage = this.storageUsage();
       const counts = this.entityCounts();
       const backup = this.backupAge();
-      const integrity = typeof DataIntegrity !== 'undefined' ? DataIntegrity.run() : null;
+      const integrity = typeof DataIntegrity !== 'undefined' ? DataIntegrity.check() : null;
       const schemaVer = typeof SCHEMA_VERSION !== 'undefined' ? SCHEMA_VERSION : '?';
       const appVer = typeof VER !== 'undefined' ? VER : '?';
       const failedOps = JSON.parse(localStorage.getItem('vos_failed_ops') || '[]');
@@ -393,7 +459,7 @@ const DevDiag = {
           ${row('Trash', counts.trash)} ${row('Emails', counts.emails)}
           ${row('Last Backup', backup.label, backup.ok)}
           ${row('Backup Fingerprint', backup.fingerprint)}
-          ${integrity ? row('Integrity Issues', integrity.issues === 0 ? 'None ✓' : `${integrity.issues} found`, integrity.issues === 0) : ''}
+          ${integrity ? row('Integrity Issues', (integrity.highCount + integrity.posCount) === 0 ? 'None ✓' : `${integrity.highCount + integrity.posCount} found`, (integrity.highCount + integrity.posCount) === 0) : ''}
           ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None ✓', true)}
           ${Object.entries(this._renderTimings).slice(0,5).map(([k,v]) => row(`Render: ${k}`, `${v}ms`)).join('')}
         </div>
@@ -2309,8 +2375,9 @@ const R = {
     }, 500);
     setTimeout(() => {
       if (typeof DataIntegrity !== 'undefined') {
-        const r = DataIntegrity.run();
-        if (r.issues > 0) Toast.show(`🔍 Vault scan: ${r.issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
+        const r = DataIntegrity.check();
+        const issues = r.highCount + r.posCount;
+        if (issues > 0) Toast.show(`🔍 Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
       }
     }, 2000);
     setTimeout(() => {

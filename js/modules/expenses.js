@@ -4,10 +4,12 @@ const Exp={
     const chips=[['all','All'],['Streaming','🎬 Stream'],['Music','🎵 Music'],['VPN','🔒 VPN'],['Cloud','☁️ Cloud'],['Fitness','💪 Fitness'],['Gaming','🎮 Gaming'],['AI','🤖 AI'],['Productivity','💼 Prod'],['Security','🔑 Security'],['News','📰 News'],['Other','📦 Other']];
     const ci=document.getElementById('expChips');
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.expF='${v}';Exp.render()">${l}</div>`).join('');
-    const toMonthly=e=>{const a=parseFloat(e.amount)||0;const freq=(e.frequency||e.cycle||'monthly').toLowerCase();if(freq.includes('year')||freq.includes('annual'))return a/12;if(freq.includes('week'))return a*52/12;if(freq.includes('quarter'))return a/3;if(freq.includes('one')||freq.includes('once'))return 0;return a;};
+    const toMonthlyPKR=e=>{const a=parseFloat(String(e.amount||0).replace(/,/g,''))||0;const freq=(e.frequency||e.cycle||'monthly').toLowerCase();let monthly=a;if(freq.includes('year')||freq.includes('annual'))monthly=a/12;else if(freq.includes('week'))monthly=a*52/12;else if(freq.includes('quarter'))monthly=a/3;else if(freq.includes('one')||freq.includes('once'))monthly=0;return typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(monthly,e.currency||S.user.currency||'PKR'):monthly;};
+    const toMonthly=e=>{const a=parseFloat(String(e.amount||0).replace(/,/g,''))||0;const freq=(e.frequency||e.cycle||'monthly').toLowerCase();if(freq.includes('year')||freq.includes('annual'))return a/12;if(freq.includes('week'))return a*52/12;if(freq.includes('quarter'))return a/3;if(freq.includes('one')||freq.includes('once'))return 0;return a;};
     const data=S.expenses.filter(e=>f==='all'||e.category===f);
     const active=data.filter(e=>e.active);
-    const total=active.reduce((a,e)=>a+toMonthly(e),0);
+    const totalPKR=active.reduce((a,e)=>a+toMonthlyPKR(e),0);
+    const total=typeof CurrencyEngine!=='undefined'?CurrencyEngine.fromBase(totalPKR,S.user.currency||'PKR'):totalPKR;
     const yearlyTotal=total*12;
     const sm=document.getElementById('expSummary');
     if(sm&&S.expenses.length>0){
