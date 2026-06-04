@@ -255,9 +255,9 @@ const Emergency = {
         ${e.showOnLockscreen?`
         <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
           <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">🆘 ${e.name||'Name not set'}</div>
-          <div style="font-size:13px;color:var(--text2)">${e.phone?'📞 '+e.phone:''}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'🩸 '+e.bloodType:''}${e.allergies?' · ⚠️ '+e.allergies.split('\n')[0]:''}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">🆘 ${escHtml(e.name||'Name not set')}</div>
+          <div style="font-size:13px;color:var(--text2)">${e.phone?'📞 '+escHtml(e.phone):''}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'🩸 '+escHtml(e.bloodType):''}${e.allergies?' · ⚠️ '+escHtml(e.allergies.split('\n')[0]):''}</div>
         </div>`:''}
       </div>`;
   },
@@ -292,12 +292,12 @@ const Emergency = {
       `<div style="display:flex;flex-direction:column;gap:12px">
         <div style="text-align:center;padding:8px 0">
           <div style="font-size:32px;margin-bottom:8px">🆘</div>
-          <div style="font-size:20px;font-weight:800;color:var(--text)">${e.name||''}</div>
+          <div style="font-size:20px;font-weight:800;color:var(--text)">${escHtml(e.name||'')}</div>
         </div>
-        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${e.phone}</div></div>`:''}
-        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${e.bloodType}</div></div>`:''}
-        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${e.allergies}</div></div>`:''}
-        ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${e.emergencyNote}</div></div>`:''}
+        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
+        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
+        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${escHtml(e.allergies)}</div></div>`:''}
+        ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${escHtml(e.emergencyNote)}</div></div>`:''}
       </div>`,
       `<button class="btn btn-p" onclick="Modal.close()">Close</button>`
     );
@@ -1987,6 +1987,7 @@ const Store = {
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
       assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
+      documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
@@ -2059,7 +2060,7 @@ const Store = {
       const healthScore = (() => {
         let score = 0;
         if (S.user?.name) score += 15;
-        if (S.pin !== '123456') score += 20;
+        if (S.unlocked) score += 20;
         if (S.decoyPin) score += 15;
         const daysSince = S.user?.lastBackup ? Math.floor((now - new Date(S.user.lastBackup)) / 86400000) : 999;
         if (daysSince <= 7) score += 30; else if (daysSince <= 30) score += 15; else if (daysSince <= 60) score += 5;
@@ -2582,17 +2583,17 @@ const PIN = {
 
     this._verify(entered).then(result => {
       if (result === 'real') {
-        S.fails = 0; Store.save();
+        S.fails = 0; S.lockedUntil = 0;
+        try { localStorage.removeItem('vos_fails'); } catch(e) {}
+        Store.save();
         setTimeout(() => R.unlock(), 180);
       } else if (result === 'decoy') {
-        S.decoy = true; S.fails = 0;
+        S.decoy = true; S.fails = 0; S.lockedUntil = 0;
+        try { localStorage.removeItem('vos_fails'); } catch(e) {}
         loadDecoyData(); R.unlock();
       } else {
         // Wrong PIN — brute force protection
         S.fails++;
-        // Persist fail count via legacy localStorage during migration, or via VaultDB if available
-        if (VaultDB.sessionKey) { Store.save(); }
-        else { try { localStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); } catch(e) {} }
 
         [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd err'; });
         if (msg) msg.className = 'pin-msg err';
@@ -2615,6 +2616,9 @@ const PIN = {
         } else {
           if (msg) msg.textContent = `Wrong PIN — ${3 - Math.min(S.fails, 2)} attempts left`;
         }
+        // Persist AFTER lockedUntil is set so reload restores the full lockout state
+        if (VaultDB.sessionKey) { Store.save(); }
+        else { try { localStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); } catch(e) {} }
         Activity.log('Failed PIN #' + S.fails);
         if (S.fails >= 3) {
           const fpl = document.getElementById('forgotPinLink');
