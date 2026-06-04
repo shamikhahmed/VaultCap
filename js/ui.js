@@ -179,13 +179,13 @@ const Dash={
     const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${_cf(S[m.id]).length}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-bottom:16px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     const prevNW = hist.length >= 2 ? hist[hist.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
     const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(nwChange));
     const sparkline = _nwSparkline(hist);
-    const nwHero = '<div style="padding:16px 16px 0"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">Net Worth</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
@@ -196,7 +196,7 @@ const Dash={
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
     const familyWidget = familyMC > 0
-      ? '<div style="padding:12px 16px 0"><div onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
+      ? '<div style="padding:0 16px;margin-top:14px"><div onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
         '<div style="font-size:28px">👨‍👩‍👧‍👦</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Family Vault</div>' +
         '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
@@ -207,7 +207,7 @@ const Dash={
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (S.user?.activeCountry && S.user.activeCountry!=='ALL') ? S.user.activeCountry : '🌐';
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 16px 0">' +
+    const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-top:14px">' +
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
       '<div style="font-size:20px;font-weight:800;color:var(--text)">'+entityTotal+'</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Records</div></div>' +
@@ -228,7 +228,7 @@ const Dash={
 
     ${quickStats}
 
-    ${activeMods.length > 0 ? `<div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div>` : ''}
+    ${activeMods.length > 0 ? `<div style="padding:0 16px;margin-top:14px"><div class="dash-sec-label">Modules</div><div class="dash-mod-grid">${modGrid}</div></div>` : ''}
 
     <!-- WALLET -->
     ${S.modules.cards && wCards.length > 0 ? `
