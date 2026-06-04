@@ -3806,6 +3806,76 @@ const SmartSuggest = {
 };
 
 // ===================== MORE SHEET =====================
+function openMoneySheet() {
+  document.getElementById('moneySheet')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'moneySheet';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const items = [
+    {id:'banks',ic:'🏦',n:'Banks'},
+    {id:'cards',ic:'💳',n:'Cards'},
+    {id:'cash',ic:'💵',n:'Cash'},
+    {id:'investments',ic:'📈',n:'Investments'},
+    {id:'loans',ic:'💸',n:'Loans'},
+    {id:'expenses',ic:'📋',n:'Expenses'},
+    {id:'bc',ic:'🤝',n:'Committees'},
+    {id:'bonds',ic:'🎫',n:'Bonds'},
+  ];
+  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Money</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+    items.map(m => '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    '</div></div>';
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+window.openMoneySheet = openMoneySheet;
+
+function openAssetsSheet() {
+  document.getElementById('assetsSheet')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'assetsSheet';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const items = [
+    {id:'assets',ic:'🏠',n:'All Assets'},
+    {id:'vehicles',ic:'🚗',n:'Vehicles'},
+    {id:'gadgets',ic:'📱',n:'Gadgets'},
+  ];
+  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Assets</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+    items.map(m => '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    '</div></div>';
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+window.openAssetsSheet = openAssetsSheet;
+
+function openIdentitySheet() {
+  document.getElementById('identitySheet')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'identitySheet';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const items = [
+    {id:'documents',ic:'🪪',n:'Documents'},
+    {id:'sims',ic:'📱',n:'SIM Cards'},
+    {id:'emails',ic:'📧',n:'Emails'},
+    {id:'digital',ic:'💼',n:'Digital'},
+    {id:'friends',ic:'👥',n:'Contacts'},
+  ];
+  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
+    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Identity</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+    items.map(m => '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    '</div></div>';
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+window.openIdentitySheet = openIdentitySheet;
+
 function openMore() {
   document.getElementById('moreOverlay')?.remove();
   const overlay = document.createElement('div');
@@ -4034,17 +4104,16 @@ function buildNav() {
   const nameEl = document.getElementById('sbUser');
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
 
-  const PRIMARY_TABS = [
-    { id: 'dashboard',    n: 'Home',     ic: '📊' },
-    { id: 'finance-home', n: 'Finance',  ic: '💰' },
-    { id: 'vault-home',   n: 'Identity', ic: '🪪' },
-    { id: 'assets-home',  n: 'Assets',   ic: '🏠' },
-    { id: 'family',       n: 'Family',   ic: '👨‍👩‍👧‍👦' },
-  ];
+  const moneyPages = new Set(['banks','cards','cash','investments','loans','expenses','bc','bonds']);
+  const assetsPages = new Set(['assets','vehicles','gadgets']);
+  const identityPages = new Set(['documents','sims','emails','digital','friends']);
 
-  document.getElementById('btabs').innerHTML = PRIMARY_TABS.map(m =>
-    `<div class="ti${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><div class="ti-ic">${m.ic}</div><span>${m.n}</span></div>`
-  ).join('');
+  document.getElementById('btabs').innerHTML =
+    `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard" onclick="R.goto('dashboard')"><div class="ti-ic">🏠</div><span>Home</span></div>` +
+    `<div class="ti${moneyPages.has(S.currentPage) ? ' on' : ''}" onclick="openMoneySheet()"><div class="ti-ic">💰</div><span>Money</span></div>` +
+    `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" onclick="openAssetsSheet()"><div class="ti-ic">🏠</div><span>Assets</span></div>` +
+    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" onclick="openIdentitySheet()"><div class="ti-ic">🪪</div><span>Identity</span></div>` +
+    `<div class="ti" onclick="openMore()"><div class="ti-ic">⋯</div><span>More</span></div>`;
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [

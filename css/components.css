@@ -40,7 +40,8 @@ input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter
 
 /* ─ Icon button ─ */
 .icb {
-  width: 30px; height: 30px; border-radius: var(--rsm); background: var(--glass2);
+  width: 30px; height: 30px; min-width: 44px; min-height: 44px;
+  border-radius: var(--rsm); background: var(--glass2);
   border: none; color: var(--text2); font-size: 13px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: var(--t); flex-shrink: 0;
@@ -74,8 +75,9 @@ input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   padding: 11px 20px; border: none; border-radius: var(--r); cursor: pointer;
-  font-size: 13px; font-weight: 600; font-family: var(--font);
+  font-size: 13px; font-weight: 600; font-family: var(--font-system);
   transition: all .2s var(--ease); white-space: nowrap; touch-action: manipulation;
+  min-height: 44px;
 }
 button, .icb, .key, .ti, .ni, .chip, .wc-act-btn { touch-action: manipulation; }
 .btn-p { background: var(--accent); color: #fff; box-shadow: 0 4px 14px var(--glow); }

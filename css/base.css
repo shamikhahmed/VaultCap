@@ -13,6 +13,8 @@
   --shadow: 0 4px 24px rgba(0,0,0,0.4); --shadowlg: 0 16px 56px rgba(0,0,0,0.7);
   --font: -apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',sans-serif;
   --mono: 'SF Mono','Fira Code',monospace;
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", "Fira Code", monospace;
   --tabh: 68px; --sbw: 256px;
   --st: env(safe-area-inset-top); --sb: env(safe-area-inset-bottom);
 
@@ -20,10 +22,12 @@
   --fs-display: 42px; --fs-title: 22px; --fs-section: 18px;
   --fs-body: 14px; --fs-secondary: 12px; --fs-label: 11px;
   --fs-meta: 10px; --fs-mono: 13px;
-  --lh-tight: 1.2; --lh-normal: 1.5; --lh-loose: 1.7;
+  --fs-hero: 36px; --fs-heading: 17px;
+  --lh-tight: 1.2; --lh-normal: 1.5; --lh-loose: 1.7; --lh-body: 1.5;
   --ls-tight: -0.5px; --ls-normal: 0; --ls-wide: 0.5px; --ls-widest: 1.2px;
   --fw-light: 300; --fw-normal: 400; --fw-medium: 500;
   --fw-semibold: 600; --fw-bold: 700; --fw-heavy: 800; --fw-black: 900;
+  --fw-semi: 600; --fw-regular: 400;
 
   /* Spacing — 8px base grid */
   --sp1: 8px; --sp2: 16px; --sp3: 24px; --sp4: 32px; --sp5: 40px; --sp6: 56px;
@@ -89,6 +93,19 @@
   --anim-slow: 340ms;
   --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
   --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+
+  /* Semantic aliases */
+  --surface: var(--glass);
+  --surface-2: var(--glass2);
+  --text-primary: var(--text);
+  --text-secondary: var(--text2);
+  --success: #30d158;
+  --warning: #ff9f0a;
+  --danger: #ff3b30;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
 }
 
 /* ─ Reset ─ */
@@ -98,7 +115,7 @@
 }
 html { height: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  font-family: var(--font); background: var(--bg); color: var(--text);
+  font-family: var(--font-system); background: var(--bg); color: var(--text);
   height: 100%; overflow: hidden; overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
   font-feature-settings: 'kern' 1, 'liga' 1;
