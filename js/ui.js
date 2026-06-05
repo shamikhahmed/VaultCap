@@ -156,18 +156,9 @@ const Dash={
     const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
     const backupNeeded = daysSinceBackup > 30;
 
-    // Vault health
-    const health = (() => {
-      let score = 0;
-      if (S.pin !== '123456' && !S.noPin) score += 25;
-      if (localStorage.getItem('vo_mkh')) score += 20;
-      if (daysSinceBackup <= 7) score += 25; else if (daysSinceBackup <= 30) score += 15; else if (S.user?.lastBackup) score += 5;
-      if (S.autoLock) score += 15;
-      if (S.decoyPin) score += 10;
-      if (S.emergency && S.emergency.enabled) score += 5;
-      return Math.min(score, 100);
-    })();
-    const healthColor = health >= 80 ? 'var(--ok)' : health >= 50 ? 'var(--warn)' : 'var(--err)';
+    // Vault health — single source: VaultHealth service
+    const health = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
+    const healthColor = VaultHealth.color(health);
 
     const stats = [
       {icon:'🏦', label:'Banks', value:(S.banks||[]).length, page:'banks'},
@@ -178,9 +169,8 @@ const Dash={
 
     const wCards = S.cards.filter(c => S.wallet.includes(c.id));
     const activeMods = ALL_MODULES.filter(m => S.modules[m.id] && S[m.id]);
-    const _cc = S.user?.activeCountry || null;
-    const _cf = arr => (!_cc || _cc === 'ALL') ? (arr||[]) : (arr||[]).filter(i => !i.country || i.country === _cc);
-    const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${_cf(S[m.id]).length}</div><div class="dmi-name">${m.n}</div></div>`).join('');
+    const ctxFilt = arr => typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]);
+    const modGrid = activeMods.map(m => `<div class="dash-mod-item" onclick="R.goto('${m.id}')"><div class="dmi-ic">${m.ic}</div><div class="dmi-count">${ctxFilt(S[m.id]).length}</div><div class="dmi-name">${m.n}</div></div>`).join('');
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
     const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
@@ -268,7 +258,7 @@ const Dash={
       '</div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
-    const activeCountryLabel = (S.user?.activeCountry && S.user.activeCountry!=='ALL') ? S.user.activeCountry : '🌐';
+    const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? activeCtx : '🌐';
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
     const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-top:14px">' +
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
@@ -338,14 +328,7 @@ const Dash={
           <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          ${[
-            [!!S.user?.name,'Name set'],
-            [S.pin!=='123456','Custom PIN'],
-            [!!S.decoyPin,'Decoy PIN'],
-            [!!S.user?.lastBackup && daysSinceBackup <= 30, daysSinceBackup >= 999 ? 'Never backed up' : daysSinceBackup === 0 ? 'Backed up today' : `Backed up ${daysSinceBackup}d ago`],
-            [(S.banks||[]).length>0,'Banks added'],
-            [(S.documents||[]).length>0,'Docs added'],
-          ].map(([ok,label]) => `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:${ok?'rgba(0,255,136,.1)':'rgba(255,69,58,.1)'};color:${ok?'var(--ok)':'var(--err)'};">${ok?'✓':'+'} ${label}</div>`).join('')}
+          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:${ok?'rgba(0,255,136,.1)':'rgba(255,69,58,.1)'};color:${ok?'var(--ok)':'var(--err)'};">${ok?'✓':'+'} ${label}</div>`).join('')}
         </div>
       </div>
     </div>

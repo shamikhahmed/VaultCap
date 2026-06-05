@@ -389,11 +389,7 @@ const DevDiag = {
   },
 
   entityCounts() {
-    const cc = S.user?.activeCountry || null;
-    const filter = arr => {
-      if (!cc || cc === 'ALL') return arr || [];
-      return (arr || []).filter(i => !i.country || i.country === cc);
-    };
+    const filter = arr => typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr || []) : (arr || []);
     return {
       banks: filter(S.banks).length,
       cards: filter(S.cards).length,
@@ -540,7 +536,17 @@ const ContextSwitcher = {
   set(code) {
     S.user.activeContext = code;
     Store.save();
-    const renders = { 'finance-home': renderFinanceHome, 'banks': ()=>Banks.render(), 'cards': ()=>Cards.render(), 'dashboard': ()=>Dash.render() };
+    const renders = {
+      'finance-home': renderFinanceHome,
+      'dashboard':    () => Dash.render(),
+      'banks':        () => Banks.render(),
+      'cards':        () => Cards.render(),
+      'investments':  () => typeof Inv !== 'undefined' && Inv.render(),
+      'cash':         () => typeof Cash !== 'undefined' && Cash.render(),
+      'loans':        () => typeof Loans !== 'undefined' && Loans.render(),
+      'assets':       () => typeof Assets !== 'undefined' && Assets.render(),
+      'expenses':     () => typeof Exp !== 'undefined' && Exp.render(),
+    };
     if (renders[S.currentPage]) renders[S.currentPage]();
     if (typeof resetScroll === 'function') resetScroll();
   },
@@ -2127,6 +2133,47 @@ const Migrate = {
   }
 };
 
+// ===================== VAULT HEALTH — SINGLE SOURCE OF TRUTH =====================
+// All three callers (Dashboard, SecurityCenter, Widget snapshot) must use this.
+const VaultHealth = {
+  score() {
+    let s = 0;
+    if (Crypto.available())                                    s += 20; // AES-256-GCM ready
+    if (S.pin !== '123456')                                    s += 20; // Custom PIN (undefined = VaultDB mode = custom)
+    const daysSince = S.user?.lastBackup
+      ? Math.floor((Date.now() - new Date(S.user.lastBackup)) / 86400000) : 999;
+    if (daysSince <= 7)       s += 20;
+    else if (daysSince <= 30) s += 10;
+    else if (daysSince < 999) s += 3;
+    if (localStorage.getItem('vo_mkh'))                        s += 15; // Recovery key saved
+    if (S.autoLock)                                            s += 10; // Auto-lock on
+    if (S.decoyPin)                                            s += 8;  // Decoy PIN
+    if (S.emergency && S.emergency.enabled)                    s += 5;  // Emergency info
+    if (S.privacyMode !== undefined)                           s += 2;  // Privacy-mode available
+    return Math.min(s, 100);
+  },
+  label(score) {
+    return score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs Attention';
+  },
+  color(score) {
+    return score >= 80 ? 'var(--ok)' : score >= 60 ? 'var(--warn)' : 'var(--err)';
+  },
+  checks() {
+    const daysSince = S.user?.lastBackup
+      ? Math.floor((Date.now() - new Date(S.user.lastBackup)) / 86400000) : 999;
+    return [
+      { ok: Crypto.available(),                  label: 'AES-256 encryption' },
+      { ok: S.pin !== '123456',                  label: 'Custom PIN' },
+      { ok: !!localStorage.getItem('vo_mkh'),    label: 'Recovery key saved' },
+      { ok: daysSince <= 30,                     label: daysSince >= 999 ? 'No backup yet' : daysSince === 0 ? 'Backed up today' : `Backup ${daysSince}d ago` },
+      { ok: S.autoLock,                          label: 'Auto-lock on' },
+      { ok: !!S.decoyPin,                        label: 'Decoy PIN' },
+      { ok: !!(S.emergency && S.emergency.enabled), label: 'Emergency info' },
+    ];
+  },
+};
+window.VaultHealth = VaultHealth;
+
 // ===================== STATE =====================
 let S = {
   unlocked: false, decoy: false,
@@ -2229,17 +2276,7 @@ const Store = {
       const now = Date.now();
       const in30 = now + 30 * 24 * 60 * 60 * 1000;
 
-      const healthScore = (() => {
-        let score = 0;
-        if (S.pin !== '123456' && !S.noPin) score += 25;
-        if (localStorage.getItem('vo_mkh')) score += 20;
-        const daysSince = S.user?.lastBackup ? Math.floor((now - new Date(S.user.lastBackup)) / 86400000) : 999;
-        if (daysSince <= 7) score += 25; else if (daysSince <= 30) score += 15; else score += 5;
-        if (S.autoLock) score += 15;
-        if (S.decoyPin) score += 10;
-        if (S.emergency && S.emergency.enabled) score += 5;
-        return Math.min(score, 100);
-      })();
+      const healthScore = VaultHealth.score();
 
       const expiringItems = [
         ...(S.documents || []).filter(d => d.expiry && new Date(d.expiry) > now && new Date(d.expiry) < in30)
@@ -2673,9 +2710,7 @@ const R = {
     if (S.trash.length < before) Store.save();
     if (S.autoLock) this.resetTimer();
     setTimeout(() => WhatsNew.check(), 800);
-    setTimeout(() => {
-      if (typeof Onboarding !== 'undefined' && Onboarding.shouldShow()) Onboarding.show();
-    }, 600);
+    // OB (index.html inline onboarding) is the active system; Onboarding overlay is retired.
     if (S._clockTimer) clearInterval(S._clockTimer);
   },
   lock() {
@@ -4005,6 +4040,7 @@ function openMore() {
   const overlay = document.createElement('div');
   overlay.id = 'moreOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
+  const vis = id => S.modules[id] !== false;
   const navGroups = [
     { label:'💰 Money', items:[
       {id:'banks',ic:'🏦',n:'Banks'},
@@ -4015,36 +4051,37 @@ function openMore() {
       {id:'expenses',ic:'📋',n:'Expenses'},
       {id:'bc',ic:'🤝',n:'Committees'},
       {id:'bonds',ic:'🎫',n:'Bonds'},
-    ]},
+    ].filter(m => vis(m.id))},
     { label:'🏠 Assets', items:[
       {id:'assets',ic:'🏠',n:'Assets'},
-    ]},
+    ].filter(m => vis(m.id))},
     { label:'🪪 Identity', items:[
       {id:'documents',ic:'🪪',n:'Documents'},
       {id:'sims',ic:'📱',n:'SIM Cards'},
       {id:'emails',ic:'📧',n:'Emails'},
       {id:'digital',ic:'💼',n:'Digital'},
       {id:'friends',ic:'👥',n:'Contacts'},
-    ]},
+    ].filter(m => vis(m.id))},
     { label:'🔧 Tools', items:[
       {id:'zakat',ic:'🌙',n:'Zakat'},
       {id:'tax',ic:'🧾',n:'Tax'},
       {id:'currency',ic:'💱',n:'Currency'},
       {id:'ai-import',ic:'🤖',n:'AI Import'},
-      {id:'creditScore',ic:'📊',n:'Credit Score'},
+      {id:'credit',ic:'📊',n:'Credit Score'},
       {id:'reminders',ic:'⏰',n:'Reminders'},
       {id:'alerts',ic:'🔔',n:'Alerts'},
       {id:'timeline',ic:'📅',n:'Timeline'},
       {id:'search',ic:'🔍',n:'Search'},
       {id:'trash',ic:'🗑️',n:'Trash'},
-    ]},
+      {id:'family',ic:'👨‍👩‍👧‍👦',n:'Family Vault'},
+    ].filter(m => vis(m.id))},
     { label:'⚙️ System', items:[
       {id:'backup',ic:'💾',n:'Backup'},
       {id:'security',ic:'🛡️',n:'Security'},
       {id:'settings',ic:'⚙️',n:'Settings'},
       {id:'help',ic:'❓',n:'Help'},
     ]},
-  ];
+  ].filter(g => g.items.length > 0);
   overlay.innerHTML =
     '<div style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0) + 20px) 16px 12px;position:sticky;top:0;background:var(--bg);z-index:1;border-bottom:1px solid var(--border)">' +
     '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +

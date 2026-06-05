@@ -7,20 +7,10 @@ const SecurityCenter={
     const hasBackup=!!S.user.lastBackup;
     const backupAge=S.user.lastBackup?Math.floor((Date.now()-new Date(S.user.lastBackup))/864e5):999;
     const usingDefaultPIN=false; // PIN verified via VaultDB PBKDF2 — plaintext unavailable
-    let score=60;
-    if(!usingDefaultPIN)score+=10;
-    if(S.autoLock)score+=10;
-    if(S.lockMins<=10)score+=5;
-    if(noMFAEmails===0&&totEmails>0)score+=8;
-    if(no2FADigital===0&&totDigital>0)score+=7;
-    if(hasBackup&&backupAge<=7)score+=10;
-    else if(hasBackup)score+=4;
-    if(expCards===0&&totCards>0)score+=5;
-    if(S.decoyPin)score+=5;
-    score=Math.min(100,score);
+    const score = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
     const enc=Crypto.available()?'AES-256-GCM ready':'Basic (SubtleCrypto unavailable)';
-    const scoreColor=score>=80?'var(--ok)':score>=60?'var(--warn)':'var(--err)';
-    const scoreLabel=score>=80?'Excellent':score>=60?'Good':'Needs Attention';
+    const scoreColor = typeof VaultHealth !== 'undefined' ? VaultHealth.color(score) : 'var(--text)';
+    const scoreLabel = typeof VaultHealth !== 'undefined' ? VaultHealth.label(score) : '';
     b.innerHTML=`
     <div class="hero" style="margin-bottom:14px;text-align:center">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Vault Security Score</div>
@@ -58,11 +48,6 @@ const SecurityCenter={
     `;
   },
   computeScore(){
-    let s=60;
-    s+=12;if(S.autoLock)s+=10;if(S.lockMins<=10)s+=6;
-    if(S.emails.every(e=>e.mfaEnabled)&&S.emails.length)s+=8;
-    if(S.user.lastBackup&&Math.floor((Date.now()-new Date(S.user.lastBackup))/864e5)<=7)s+=10;
-    if(S.decoyPin)s+=6;if(S.clipSecs<=30)s+=4;if(S.panicEnabled)s+=4;
-    return Math.min(100,s);
+    return typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
   }
 };
