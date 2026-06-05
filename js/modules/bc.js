@@ -68,7 +68,13 @@ const BCModule = {
 
   _bcCard(bc, i) {
     const cur = bc.currency || 'PKR';
-    const fmt = n => cur + ' ' + Math.round(n).toLocaleString();
+    const displayCur = (S.user && S.user.currency) || 'PKR';
+    const fmt = n => {
+      if (typeof RatesEngine !== 'undefined' && cur !== displayCur) {
+        return displayCur + ' ' + Math.round(RatesEngine.convert(n, cur, displayCur)).toLocaleString();
+      }
+      return cur + ' ' + Math.round(n).toLocaleString();
+    };
     const pot = (bc.members || 1) * (bc.contribution || 0);
     const myTurnDone = bc.myTurnRound && (bc.currentRound || 1) >= bc.myTurnRound;
     const myTurnNext = bc.myTurnRound && (bc.currentRound || 1) === bc.myTurnRound - 1;

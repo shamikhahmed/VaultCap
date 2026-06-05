@@ -99,6 +99,10 @@ const BondsModule = {
     const type = this._getType(b.typeId);
     const fv = (b.quantity || 1) * (b.faceValue || b.amount || 0);
     const cur = b.currency || 'PKR';
+    const displayCur = (S.user && S.user.currency) || 'PKR';
+    const displayFv = typeof RatesEngine !== 'undefined' && cur !== displayCur
+      ? displayCur + ' ' + Math.round(RatesEngine.convert(fv, cur, displayCur)).toLocaleString()
+      : cur + ' ' + fv.toLocaleString();
     const isDrawBond = type && !type.isFixed;
     const nextDraw = isDrawBond ? this._nextDraw(type) : null;
 
@@ -109,7 +113,7 @@ const BondsModule = {
           '<div class="entry-name">' + (b.name || 'Bond') + '</div>' +
           '<div class="entry-sub">' + (b.quantity || 1) + ' × ' + cur + ' ' + (b.faceValue || b.amount || 0).toLocaleString() + ' · ' + (b.country || '') + '</div>' +
           '<div class="entry-meta">' +
-            '<span class="badge b-acc">' + cur + ' ' + fv.toLocaleString() + '</span>' +
+            '<span class="badge b-acc">' + displayFv + '</span>' +
             (nextDraw ? '<span class="badge b-warn">Draw: ' + nextDraw + '</span>' : '') +
             (b.bondNumbers && b.bondNumbers.length > 0 ? '<span class="badge b-muted">' + b.bondNumbers.length + ' numbers</span>' : '') +
           '</div>' +

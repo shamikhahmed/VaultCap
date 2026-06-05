@@ -2818,8 +2818,35 @@ window._confirmReset = async function() {
 
 // ===================== ROUTER =====================
 const R = {
+  showProfilePicker() {
+    ['pgHome', 'pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    const pp = document.getElementById('pgProfilePicker');
+    if (!pp) { this.showLock(); return; }
+    const active = VaultProfiles.active();
+    const ppCards = document.getElementById('ppCards');
+    if (ppCards) {
+      ppCards.innerHTML = VaultProfiles.PROFILES.map(p =>
+        '<div onclick="R._pickProfile(\'' + p.id + '\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (p.id === active ? 'rgba(123,95,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (p.id === active ? 'rgba(123,95,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation;transition:.15s">' +
+        '<div style="font-size:34px">' + p.icon + '</div>' +
+        '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">' + p.label + (p.id === active ? ' <span style="font-size:11px;color:var(--accent)">● Active</span>' : '') + '</div>' +
+        '<div style="font-size:12px;color:var(--text3)">' + p.desc + '</div></div>' +
+        '<div style="font-size:20px;color:var(--text3)">›</div>' +
+        '</div>'
+      ).join('');
+    }
+    pp.style.display = 'flex';
+  },
+  _pickProfile(profileId) {
+    if (profileId !== VaultProfiles.active()) {
+      VaultProfiles.switch(profileId);
+    } else {
+      const pp = document.getElementById('pgProfilePicker');
+      if (pp) pp.style.display = 'none';
+      R.showLock();
+    }
+  },
   showLock() {
-    ['pgHome', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    ['pgHome', 'pgOnboard', 'app', 'pgProfilePicker'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     const lk = document.getElementById('pgLock');
     lk.style.display = 'flex';
     PIN.reset();

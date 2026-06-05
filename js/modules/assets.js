@@ -84,7 +84,7 @@ const Assets = {
       const _pnl=(a.currentValue>0&&a.purchasePrice>0)?a.currentValue-a.purchasePrice:null;
       const _pnlPct=_pnl!==null?(_pnl/a.purchasePrice*100).toFixed(1):null;
       const _pnlHtml=_pnl!==null?`<span class="badge" style="color:${_pnl>=0?'var(--ok)':'var(--err)'}">${_pnl>=0?'+':''}${U.fmt(Math.round(Math.abs(_pnl)))} (${_pnl>=0?'+':''}${_pnlPct}%)</span>`:'';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${typeInfo.icon}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'🏢 Business':'👤 Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">👤 ${a.staffAssigned}</span>`:''}</div></div><div class="entry-acts"><button class="icb fav${a.favorite?' on':''}" onclick="Assets.fav('${a.id}')">⭐</button><button class="icb" onclick="Assets.edit('${a.id}')">✏️</button><button class="icb del" onclick="Assets.del('${a.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${typeInfo.icon}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'🏢 Business':'👤 Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">👤 ${a.staffAssigned}</span>`:''}</div></div><div class="entry-acts"><button class="icb fav${a.favorite?' on':''}" onclick="Assets.fav('${a.id}')">⭐</button><button class="icb" onclick="Assets.detail('${a.id}')">👁️</button><button class="icb" onclick="Assets.edit('${a.id}')">✏️</button><button class="icb del" onclick="Assets.del('${a.id}')">🗑️</button></div></div></div>`;
     }).join('');
   },
 
@@ -182,6 +182,32 @@ const Assets = {
     Activity.log((editId?'Edited':'Added')+' asset', name);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId?'Updated':'Added'}: ${name}`, 'success');
+  },
+
+  detail(id) {
+    const a = (S.assets||[]).find(x => x.id===id); if (!a) return;
+    const typeInfo = ASSET_TYPES_MAP[a.assetType] || ASSET_TYPES_MAP.other;
+    const aName = (a.name||'').toLowerCase();
+    const relatedDocs = (S.documents||[]).filter(d =>
+      aName.length > 2 && (
+        (d.tags||[]).some(t => (t||'').toLowerCase().includes(aName) || aName.includes((t||'').toLowerCase().trim())) ||
+        (d.notes||'').toLowerCase().includes(aName)
+      )
+    );
+    const relatedReminders = (S.assets||[]).filter(r => r.assetType === 'reminder' && (r.notes||'').toLowerCase().includes(aName));
+    const docsHtml = relatedDocs.length
+      ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Related Documents (${relatedDocs.length})</div>${relatedDocs.map(d=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:16px">📄</span><div><div style="font-size:13px;font-weight:600;color:var(--text)">${d.name||d.docName||'Document'}</div><div style="font-size:11px;color:var(--text3)">${d.docType||''} ${d.expiryDate?'· Exp '+d.expiryDate:''}</div></div></div>`).join('')}</div>`
+      : '';
+    const remHtml = relatedReminders.length
+      ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Linked Reminders (${relatedReminders.length})</div>${relatedReminders.map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:16px">🔔</span><div><div style="font-size:13px;font-weight:600;color:var(--text)">${r.name||'Reminder'}</div><div style="font-size:11px;color:var(--text3)">${r.renewalDate||''}</div></div></div>`).join('')}</div>`
+      : '';
+    const noRelated = !relatedDocs.length && !relatedReminders.length
+      ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);text-align:center;padding-bottom:4px">No related documents or reminders found</div>'
+      : '';
+    Modal.open(`${typeInfo.icon} ${a.name||'Asset'}`,
+      `<div>${[['Type',typeInfo.label],['Value',(a.currentValue?(a.currency||'')+' '+U.fmt(a.currentValue):'—')],['Ownership',a.ownership||'personal'],['Notes',a.notes||'—']].map(([k,v])=>U.drRow(k,v)).join('')}${docsHtml}${remHtml}${noRelated}</div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Assets.edit('${id}');Modal.close()">Edit</button>`
+    );
   },
 
   edit(id) {
