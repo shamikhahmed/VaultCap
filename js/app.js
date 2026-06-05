@@ -2230,13 +2230,13 @@ const Store = {
 
       const healthScore = (() => {
         let score = 0;
-        if (S.user?.name) score += 15;
-        if (S.unlocked) score += 20;
-        if (S.decoyPin) score += 15;
+        if (S.pin !== '123456' && !S.noPin) score += 25;
+        if (localStorage.getItem('vo_mkh')) score += 20;
         const daysSince = S.user?.lastBackup ? Math.floor((now - new Date(S.user.lastBackup)) / 86400000) : 999;
-        if (daysSince <= 7) score += 30; else if (daysSince <= 30) score += 15; else if (daysSince <= 60) score += 5;
-        if ((S.banks || []).length > 0) score += 10;
-        if ((S.documents || []).length > 0) score += 10;
+        if (daysSince <= 7) score += 25; else if (daysSince <= 30) score += 15; else score += 5;
+        if (S.autoLock) score += 15;
+        if (S.decoyPin) score += 10;
+        if (S.emergency && S.emergency.enabled) score += 5;
         return Math.min(score, 100);
       })();
 
@@ -3023,12 +3023,14 @@ const PIN = {
 let obStep = 1;
 let obCountries = [];
 let obCats = { money: true, assets: false, identity: true, family: true };
+let obUserType = 'personal';
 
 const OB = {
   init() {
     obStep = 1;
     obCountries = S.user && S.user.country ? [S.user.country] : [];
     obCats = { money: true, assets: false, identity: true, family: true };
+    obUserType = 'personal';
     document.getElementById('pgOnboard').style.display = 'flex';
     document.getElementById('pgHome').style.display = 'none';
     this.renderProg();
@@ -3036,7 +3038,7 @@ const OB = {
     this.renderCats();
   },
   renderProg() {
-    document.getElementById('obProg').innerHTML = Array.from({ length: 6 }, (_, i) =>
+    document.getElementById('obProg').innerHTML = Array.from({ length: 7 }, (_, i) =>
       `<div class="ob-pd${i < obStep ? ' on' : ''}"></div>`
     ).join('');
   },
@@ -3083,6 +3085,14 @@ const OB = {
       </div>`
     ).join('');
   },
+  selectUserType(type, el) {
+    obUserType = type;
+    document.querySelectorAll('.ob-type-card').forEach(c => {
+      c.style.borderColor = 'var(--border)';
+      c.style.background = 'var(--glass)';
+    });
+    if (el) { el.style.borderColor = 'var(--accent)'; el.style.background = 'var(--glass2)'; }
+  },
   toggleCat(key, el) {
     obCats[key] = !obCats[key];
     const on = obCats[key];
@@ -3109,7 +3119,7 @@ const OB = {
     obStep = step + 1;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
-    if (obStep === 6) this._renderReadyStats();
+    if (obStep === 7) this._renderReadyStats();
   },
   back() {
     if (obStep <= 1) return;
@@ -3124,8 +3134,10 @@ const OB = {
     const countries = obCountries.length ? obCountries.map(c => CNAMES[c] || c).join(', ') : 'Not set';
     const CATLABELS = { money:'💰 Money', assets:'🏠 Assets', identity:'🪪 Identity', family:'👨‍👩‍👧‍👦 Family' };
     const cats = Object.entries(obCats).filter(([, v]) => v).map(([k]) => CATLABELS[k]).join(', ') || 'None selected';
+    const TYPE_LABELS = { personal:'👤 Personal', family:'👨‍👩‍👧‍👦 Family Manager', business:'💼 Business Owner', expat:'🌍 Global Expat' };
     el.innerHTML = `
       <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">👤 Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:6px">🌍 Countries: ${countries}</div>
       <div style="font-size:13px;color:var(--text2)">📦 Tracking: ${cats}</div>`;
   },
@@ -3136,7 +3148,7 @@ const OB = {
     if (p !== p2) { document.getElementById('ob-perr').textContent = 'PINs do not match'; return; }
     S.pin = p; S.noPin = false;
     // Move to recovery key screen immediately
-    obStep = 5;
+    obStep = 6;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
     const rkEl = document.getElementById('ob-recovery-key');
@@ -3167,6 +3179,16 @@ const OB = {
       S.user.country = obCountries[0];
       S.user.currency = COUNTRY_CUR[obCountries[0]] || 'USD';
       S.user.secondaryCountries = obCountries.slice(1);
+    }
+    S.user.userType = obUserType;
+    // Apply module presets based on user type
+    if (obUserType === 'family') {
+      S.modules.family = true;
+      obCats.family = true;
+    } else if (obUserType === 'business') {
+      S.modules.tax = true; S.modules.bc = true; S.modules.bonds = true; S.modules.credit = true;
+    } else if (obUserType === 'expat') {
+      S.modules.family = true; S.modules.currency = true;
     }
     if (!obCats.family) S.modules.family = false;
     S.autoLock = true; S.lockMins = 10; S.clipSecs = 30;
@@ -3879,6 +3901,8 @@ function openMoneySheet() {
   const overlay = document.createElement('div');
   overlay.id = 'moneySheet';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
+  const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
     {id:'banks',ic:'🏦',n:'Banks'},
     {id:'cards',ic:'💳',n:'Cards'},
@@ -3888,12 +3912,16 @@ function openMoneySheet() {
     {id:'expenses',ic:'📋',n:'Expenses'},
     {id:'bc',ic:'🤝',n:'Committees'},
     {id:'bonds',ic:'🎫',n:'Bonds'},
-  ];
+  ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Money</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Money' + ctxLabel + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
-    items.map(m => '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    items.map(m => {
+      const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
+      const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
+      return '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+    }).join('') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -3905,16 +3933,22 @@ function openAssetsSheet() {
   const overlay = document.createElement('div');
   overlay.id = 'assetsSheet';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
+  const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
     {id:'assets',ic:'🏠',n:'All Assets'},
     {id:'vehicles',ic:'🚗',n:'Vehicles'},
     {id:'gadgets',ic:'📱',n:'Gadgets'},
-  ];
+  ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Assets</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Assets' + ctxLabel + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
-    items.map(m => '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    items.map(m => {
+      const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
+      const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
+      return '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+    }).join('') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -3926,18 +3960,24 @@ function openIdentitySheet() {
   const overlay = document.createElement('div');
   overlay.id = 'identitySheet';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
+  const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
     {id:'documents',ic:'🪪',n:'Documents'},
     {id:'sims',ic:'📱',n:'SIM Cards'},
     {id:'emails',ic:'📧',n:'Emails'},
     {id:'digital',ic:'💼',n:'Digital'},
     {id:'friends',ic:'👥',n:'Contacts'},
-  ];
+  ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Identity</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Identity' + ctxLabel + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
-    items.map(m => '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div></div>').join('') +
+    items.map(m => {
+      const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
+      const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
+      return '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+    }).join('') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);

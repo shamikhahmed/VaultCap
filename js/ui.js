@@ -154,15 +154,16 @@ const Dash={
     const backupNeeded = daysSinceBackup > 30;
 
     // Vault health
-    const checks = [
-      !!S.user?.name,
-      S.pin !== '123456',
-      !!S.decoyPin,
-      !!S.user?.lastBackup && daysSinceBackup <= 30,
-      (S.banks||[]).length > 0,
-      (S.documents||[]).length > 0,
-    ];
-    const health = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+    const health = (() => {
+      let score = 0;
+      if (S.pin !== '123456' && !S.noPin) score += 25;
+      if (localStorage.getItem('vo_mkh')) score += 20;
+      if (daysSinceBackup <= 7) score += 25; else if (daysSinceBackup <= 30) score += 15; else if (S.user?.lastBackup) score += 5;
+      if (S.autoLock) score += 15;
+      if (S.decoyPin) score += 10;
+      if (S.emergency && S.emergency.enabled) score += 5;
+      return Math.min(score, 100);
+    })();
     const healthColor = health >= 80 ? 'var(--ok)' : health >= 50 ? 'var(--warn)' : 'var(--err)';
 
     const stats = [
@@ -185,12 +186,24 @@ const Dash={
     const nwChange = nwDisplay - prevNW;
     const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(nwChange));
     const sparkline = _nwSparkline(hist);
+    const _COUNTRY_CUR = {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
+    const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
+    const multiCurHtml = secondaryCurs.length > 0
+      ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
+        secondaryCurs.map(c => {
+          const cv = typeof CurrencyEngine !== 'undefined' ? Math.round(CurrencyEngine.fromBase(nwPKR, c)) : 0;
+          const sym = c==='GBP'?'£':c==='USD'?'$':(c+' ');
+          const s = cv>=1000000 ? sym+(cv/1000000).toFixed(1)+'M' : cv>=1000 ? sym+(cv/1000).toFixed(0)+'K' : sym+cv.toLocaleString();
+          return '<span>≈ '+s+'</span>';
+        }).join('') + '</div>'
+      : '';
     const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">Net Worth</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
       (nwChange !== 0 ? '<div style="font-size:12px;color:'+(nwChange>=0?'var(--ok)':'var(--err)')+';margin-top:4px">'+nwChangeStr+' from last record</div>' : '') +
       sparkline +
+      multiCurHtml +
       '</div></div>';
 
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
@@ -439,7 +452,7 @@ const Settings={
     </div></div>
 
     <div class="set-sec"><div class="set-title">🧩 Active Modules</div><div class="set-card">
-      ${ALL_MODULES.map(m=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('')}
+      ${ALL_MODULES.map(m=>{const isCore=['banks','cards','documents','alerts','reminders','recovery-center'].includes(m.id);return `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}${isCore?'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-left:6px;opacity:.7">core</span>':''}</div><div class="desc">${m.desc}</div></div></div>${isCore?'<span style="font-size:11px;color:var(--text3)">Always on</span>':`<label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label>`}</div>`;}).join('')}
       <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Changes take effect after toggling — hidden modules stay in data but don't appear in nav</div></div></div>
     </div></div>
 
