@@ -48,19 +48,26 @@ function _sparkLine(history) {
 }
 
 function _nwSparkline(hist) {
-  const h = (hist || []).slice(-8);
+  const h = (hist || []).slice(-30);
   if (h.length < 2) return '';
   const max = Math.max(...h.map(x=>x.v)), min = Math.min(...h.map(x=>x.v));
   const range = max - min || 1;
   const pts = h.map((x,i) => {
     const px = (i/(h.length-1))*240+10;
     const py = 30 - ((x.v-min)/range)*24;
-    return px+','+py;
-  }).join(' ');
-  const last = pts.split(' ').pop().split(',');
-  return '<svg viewBox="0 0 260 40" style="width:100%;height:36px;margin-top:10px" preserveAspectRatio="none">' +
-    '<polyline points="'+pts+'" fill="none" stroke="rgba(123,95,255,.5)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>' +
-    '<circle cx="'+last[0]+'" cy="'+last[1]+'" r="3" fill="var(--accent)"/>' +
+    return [px.toFixed(1), py.toFixed(1)];
+  });
+  const lineStr = pts.map(p=>p[0]+','+p[1]).join(' ');
+  const areaStr = pts.map(p=>p[0]+','+p[1]).join(' ')+' '+pts[pts.length-1][0]+',38 '+pts[0][0]+',38';
+  const last = pts[pts.length-1];
+  const trend = h[h.length-1].v >= h[0].v;
+  const col = trend ? '#34c759' : '#ff453a';
+  const gid = 'nwg'+Math.random().toString(36).slice(2,7);
+  return '<svg viewBox="0 0 260 42" style="width:100%;height:40px;margin-top:8px;overflow:hidden" preserveAspectRatio="none">' +
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity="0.22"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>' +
+    '<polygon points="'+areaStr+'" fill="url(#'+gid+')" />' +
+    '<polyline points="'+lineStr+'" fill="none" stroke="'+col+'" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<circle cx="'+last[0]+'" cy="'+last[1]+'" r="3.5" fill="'+col+'"/>' +
     '</svg>';
 }
 
@@ -119,6 +126,9 @@ const Dash={
     const nwDisplay = Math.round(toCur(nwPKR, cur));
     const trendDir = prevV !== null ? (nwDisplay > prevV ? 1 : nwDisplay < prevV ? -1 : 0) : 0;
     const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
+    const monthAgo = [...hist].reverse().find(h => (new Date() - new Date(h.d)) >= 25*24*60*60*1000);
+    const pctChange = monthAgo && monthAgo.v > 0 ? ((nwDisplay - monthAgo.v) / Math.abs(monthAgo.v) * 100) : null;
+    const pctStr = pctChange !== null ? (pctChange >= 0 ? '+' : '') + pctChange.toFixed(1) + '% vs 30d' : '';
 
     // Auto-save today's net worth to history
     try {
@@ -194,7 +204,7 @@ const Dash={
       '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + activeCtx : 'Net Worth') + '</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
-      (nwChange !== 0 ? '<div style="font-size:12px;color:'+(nwChange>=0?'var(--ok)':'var(--err)')+';margin-top:4px">'+nwChangeStr+' from last record</div>' : '') +
+      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
       multiCurHtml +
       '</div></div>';
@@ -482,7 +492,10 @@ const Settings={
     const b=document.getElementById('settBody');if(!b)return;
     const mk=this.getMasterKey();
     b.innerHTML=`
-    <div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
+    <div style="position:sticky;top:0;z-index:20;background:var(--bg2);padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      ${[['ss-profile','👤 Profile'],['ss-modules','🧩 Modules'],['ss-look','🎨 Look'],['ss-security','🔒 Security'],['ss-backup','💾 Backup']].map(([id,label])=>`<button onclick="document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})" style="flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--glass);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap">${label}</button>`).join('')}
+    </div>
+    <div class="set-sec" id="ss-profile"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1">${(()=>{const n=S.user.name||'User';const initials=n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);const hash=n.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const colors=['#0080ff','#10b981','#d946ef','#f59e0b','#ef4444','#6935d3','#ff3464','#00b67a'];const bg=colors[hash%colors.length];return `<div style="width:48px;height:48px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px">${initials}</div>`;})()}<div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to add email'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
       </div>
@@ -490,7 +503,7 @@ const Settings={
       <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
     </div></div>
 
-    <div class="set-sec"><div class="set-title">🧩 Active Modules</div><div class="set-card">
+    <div class="set-sec" id="ss-modules"><div class="set-title">🧩 Active Modules</div><div class="set-card">
       ${ALL_MODULES.map(m=>{const isCore=['banks','cards','documents','alerts','reminders','recovery-center'].includes(m.id);return `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}${isCore?'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-left:6px;opacity:.7">core</span>':''}</div><div class="desc">${m.desc}</div></div></div>${isCore?'<span style="font-size:11px;color:var(--text3)">Always on</span>':`<label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label>`}</div>`;}).join('')}
       <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Changes take effect after toggling — hidden modules stay in data but don't appear in nav</div></div></div>
     </div></div>
@@ -512,7 +525,7 @@ const Settings={
       })()}
     </div></div>
 
-    <div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
+    <div class="set-sec" id="ss-look"><div class="set-title">🎨 Appearance</div><div class="set-card">
       <div style="padding:14px 16px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">🌙 Dark</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
@@ -543,7 +556,7 @@ const Settings={
       </div>
     </div></div>
 
-    <div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
+    <div class="set-sec" id="ss-security"><div class="set-title">🔒 Security</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
       <div style="padding:14px">
         <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🗝️ Your Master Key</div>
@@ -608,7 +621,7 @@ const Settings={
       </div>
     </div></div>
 
-    <div class="set-sec"><div class="set-title">💾 Backup & Export</div><div class="set-card">
+    <div class="set-sec" id="ss-backup"><div class="set-title">💾 Backup & Export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never backed up'}</div></div></div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">📤 Export Encrypted Vault (.vault)</button>
@@ -836,7 +849,7 @@ const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'&&Crypto.available()){
       const pw=S.pin+'_vos4_'+S.user.name;
-      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
+      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};
       S.user.lastBackup=new Date().toISOString();Store.save();
       Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
         const fp = btoa(String.fromCharCode(...new Uint8Array(
@@ -849,7 +862,7 @@ const ExIm={
       }).catch(()=>{this._exportPlain(data);});
       return;
     }
-    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
+    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};
     S.user.lastBackup=new Date().toISOString();Store.save();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
@@ -860,7 +873,7 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultOS-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};S.user.lastBackup=new Date().toISOString();Store.save();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultOS-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
@@ -890,7 +903,7 @@ const ExIm={
             if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
-              ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
+              ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
               Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
             }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}

@@ -65,15 +65,11 @@ const GlobalSearch = {
   },
 
   _ownerLabel(item) {
-    const owners = item.owners || (item.ownerId ? [item.ownerId] : ['self']);
-    const nonSelf = owners.filter(o => o && o !== 'self');
-    if (!nonSelf.length) return '';
-    if (typeof Family === 'undefined') return nonSelf.join(', ');
-    try {
-      const fam = Family.get();
-      const all = [...(fam.head ? [fam.head] : []), ...(fam.members || [])];
-      return nonSelf.map(id => { const m = all.find(x => x.id === id); return m ? m.name : id; }).join(', ');
-    } catch(e) { return nonSelf.join(', '); }
+    const ownerId = item.ownerId;
+    if (!ownerId || ownerId === 'self') return '';
+    const members = (typeof S !== 'undefined' && S.familyMembers) || [];
+    const m = members.find(x => x.id === ownerId);
+    return m ? m.name : ownerId;
   },
 
   _primaryField(item, fields) {
@@ -120,7 +116,16 @@ const GlobalSearch = {
         const primary = this._primaryField(item, t.fields);
         const secondary = this._secondaryField(item, t.fields);
         const owner = this._ownerLabel(item);
-        results.push({ _label: t.label, _icon: t.icon, _key: t.key, _primary: primary, _secondary: secondary, _owner: owner, _id: item.id });
+        const valueStr = (() => {
+          const c = item.currency || '';
+          if (t.key === 'banks' && item.balance) return c + ' ' + Math.round(item.balance).toLocaleString();
+          if (t.key === 'cash' && item.amount) return c + ' ' + Math.round(item.amount).toLocaleString();
+          if (t.key === 'investments' && item.currentValue) return c + ' ' + Math.round(item.currentValue).toLocaleString();
+          if (t.key === 'loans' && item.amount) return c + ' ' + Math.round(item.amount).toLocaleString();
+          if (t.key === 'assets' && (item.currentValue || item.purchasePrice)) return c + ' ' + Math.round(item.currentValue || item.purchasePrice).toLocaleString();
+          return '';
+        })();
+        results.push({ _label: t.label, _icon: t.icon, _key: t.key, _primary: primary, _secondary: secondary, _owner: owner, _id: item.id, _valueStr: valueStr });
       });
     });
 
@@ -132,23 +137,19 @@ const GlobalSearch = {
           const label = g.label || (g.metal === 'silver' ? 'Silver' : 'Gold');
           const sub = (g.metal === 'silver' ? 'Silver' : 'Gold') + ' · ' + g.weight + ' ' + (g.unit || 'g');
           if (!ql || this._match(label, ql) || this._match(sub, ql)) {
-            results.push({ _label: 'Asset', _icon: g.metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: 'gold_' + i });
+            results.push({ _label: 'Asset', _icon: g.metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: 'gold_' + i, _valueStr: '' });
           }
         });
       } catch(e) {}
     }
 
     // Family members
-    if ((f === 'all' || f === 'family') && typeof Family !== 'undefined') {
-      try {
-        const fam = Family.get();
-        const allMembers = [...(fam.head ? [fam.head] : []), ...(fam.members || [])];
-        allMembers.forEach(m => {
-          const hit = !ql || this._match(m.name, ql) || this._match(m.phone, ql) || this._match(m.email, ql) || this._match(m.notes, ql);
-          if (!hit) return;
-          results.push({ _label: 'Family Member', _icon: '👨‍👩‍👧‍👦', _key: 'family', _primary: m.name || '', _secondary: m.relation || m.phone || '', _owner: '', _id: m.id });
-        });
-      } catch(e) {}
+    if (f === 'all' || f === 'family') {
+      (S.familyMembers || []).forEach(m => {
+        const hit = !ql || this._match(m.name, ql) || this._match(m.phone, ql) || this._match(m.email, ql) || this._match(m.notes, ql);
+        if (!hit) return;
+        results.push({ _label: 'Family Member', _icon: '👨‍👩‍👧‍👦', _key: 'family', _primary: m.name || '', _secondary: (m.relation || m.phone || ''), _owner: '', _id: m.id, _valueStr: '' });
+      });
     }
 
     if (!results.length) {
@@ -180,7 +181,7 @@ const GlobalSearch = {
             <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
             ${secLine ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}
           </div>
-          <div style="font-size:16px;color:var(--text3);flex-shrink:0">›</div>
+          ${item._valueStr ? `<div style="font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;text-align:right;max-width:100px;overflow:hidden;text-overflow:ellipsis" class="sens">${escHtml(item._valueStr)}</div>` : `<div style="font-size:16px;color:var(--text3);flex-shrink:0">›</div>`}
         </div>`;
       }).join('');
     });

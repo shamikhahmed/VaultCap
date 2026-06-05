@@ -87,9 +87,18 @@ const Assets = {
     }).join('');
   },
 
-  openAdd(type) {
-    const preType = type && type !== 'all' ? type : '';
-    Modal.open('🏠 Add Asset', this.form(preType ? {assetType:preType} : {}), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Assets.save()">Save</button>`);
+  _pendingOwnerId: null,
+  openAdd(typeOrPrefill) {
+    let preType = '';
+    if (typeOrPrefill && typeof typeOrPrefill === 'object') {
+      Assets._pendingOwnerId = typeOrPrefill.ownerId || null;
+    } else {
+      Assets._pendingOwnerId = null;
+      preType = (typeOrPrefill && typeOrPrefill !== 'all') ? typeOrPrefill : '';
+    }
+    const ownerLabel = Assets._pendingOwnerId && typeof Family !== 'undefined' ? Family.ownerName(Assets._pendingOwnerId) : '';
+    const title = ownerLabel ? `🏠 Add Asset — ${escHtml(ownerLabel)}` : '🏠 Add Asset';
+    Modal.open(title, this.form(preType ? {assetType:preType} : {}), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Assets.save()">Save</button>`);
     setTimeout(() => {
       const t = document.getElementById('af-type');
       if (t) {
@@ -164,7 +173,9 @@ const Assets = {
     if (type==='business') { extra.industry=g('sf2-ind');extra.ownershipPct=g('sf2-own2');extra.annualRevenue=parseFloat(g('sf2-rev'))||0;extra.bizStage=g('sf2-stage');extra.partners=g('sf2-partners'); }
     if (type==='loan') { extra.debtor=g('sf2-deb');extra.loanDirection=g('sf2-ldir');extra.loanOriginal=parseFloat(g('sf2-lorig'))||0;extra.loanBalance=parseFloat(g('sf2-lbal'))||0;extra.dueDate=g('sf2-due');extra.loanInterest=parseFloat(g('sf2-lint'))||0; }
 
-    const item = { id:editId||U.id(), name, assetType:type, ownership:document.getElementById('af-own').value, purchasePrice:parseFloat(document.getElementById('af-pp').value)||0, currentValue:parseFloat(document.getElementById('af-cv').value)||0, currency:document.getElementById('af-cur').value, purchaseDate:document.getElementById('af-date').value, notes:document.getElementById('af-notes').value.trim(), tags:U.getTags(), favorite:document.getElementById('af-fav').checked, ownerId:'self', updatedAt:new Date().toISOString(), createdAt:editId?(S.assets||[]).find(x=>x.id===editId)?.createdAt||new Date().toISOString():new Date().toISOString(), ...extra };
+    const _oid = editId ? ((S.assets||[]).find(x=>x.id===editId)?.ownerId||'self') : (Assets._pendingOwnerId||'self');
+    if (!editId) Assets._pendingOwnerId = null;
+    const item = { id:editId||U.id(), name, assetType:type, ownership:document.getElementById('af-own').value, purchasePrice:parseFloat(document.getElementById('af-pp').value)||0, currentValue:parseFloat(document.getElementById('af-cv').value)||0, currency:document.getElementById('af-cur').value, purchaseDate:document.getElementById('af-date').value, notes:document.getElementById('af-notes').value.trim(), tags:U.getTags(), favorite:document.getElementById('af-fav').checked, ownerId:_oid, updatedAt:new Date().toISOString(), createdAt:editId?(S.assets||[]).find(x=>x.id===editId)?.createdAt||new Date().toISOString():new Date().toISOString(), ...extra };
     if (!S.assets) S.assets = [];
     if (editId) S.assets = S.assets.map(x => x.id===editId ? item : x); else S.assets.push(item);
     Activity.log((editId?'Edited':'Added')+' asset', name);

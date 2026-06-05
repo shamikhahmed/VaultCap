@@ -161,10 +161,10 @@ const Banks={
   },
   emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button class="btn btn-g" onclick="Settings.loadDemo()">🎮 Try Demo</button></div></div>`;},
   _showExample(){Modal.open('🏦 Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏦</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
-  _familyCtx: null,
+  _pendingOwnerId: null,
   openAdd(prefill={}){
-    Banks._familyCtx = prefill._familyCtx || null;
-    Banks._openWithCountry(S.user.country||'PK', prefill._ownerName||null);
+    Banks._pendingOwnerId = prefill.ownerId || null;
+    Banks._openWithCountry(S.user.country||'PK', prefill.ownerName||prefill._ownerName||null);
   },
   _openWithCountry(cc, ownerName=null){
     const title = ownerName ? `🏦 Add Bank — ${escHtml(ownerName)}` : '🏦 Add Bank';
@@ -276,14 +276,10 @@ const Banks={
     if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const lf=U.getLF();
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
-    const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat((g('bf-bal')||'').replace(/,/g,''))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',jointAccount:document.getElementById('bf-joint')?.checked||false,jointWith:document.getElementById('b-joint-person')?.value||'',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,ownerId:'self',owners:['self'],updatedAt:new Date().toISOString(),createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    const _oid = editId ? (S.banks.find(x=>x.id===editId)?.ownerId||'self') : (Banks._pendingOwnerId||'self');
+    if (!editId) Banks._pendingOwnerId = null;
+    const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat((g('bf-bal')||'').replace(/,/g,''))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',jointAccount:document.getElementById('bf-joint')?.checked||false,jointWith:document.getElementById('b-joint-person')?.value||'',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,ownerId:_oid,owners:[_oid],updatedAt:new Date().toISOString(),createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('bank',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
-    if(!editId&&Banks._familyCtx){
-      const ctx=Banks._familyCtx;Banks._familyCtx=null;
-      const fd=Family.get();const fm=ctx.isHead?fd.head:fd.members[ctx.memberIdx];
-      if(fm){if(!fm.banks)fm.banks=[];fm.banks.push({...item,ownerId:fm.id});Family.save(fd);}
-      Activity.log('Added family bank',name);Modal.close();if(typeof Family!=='undefined')Family.render();Toast.show(`Added: ${name}`,'success');return;
-    }
     if(editId){S.banks=S.banks.map(x=>x.id===editId?item:x);if(typeof Audit!=='undefined')Audit.log(item,'edited');}else{S.banks.push(item);if(typeof Audit!=='undefined')Audit.log(item,'created');}
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(typeof Haptic!=='undefined')Haptic.save();

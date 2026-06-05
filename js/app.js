@@ -89,10 +89,8 @@ const VaultRelations = {
     });
   },
   docsForMember(memberId) {
-    const family = typeof Family !== 'undefined' ? Family.get() : null;
-    if (!family) return [];
-    const member = memberId === 'head' ? family.head : family.members?.[memberId];
-    return member?.docs || [];
+    if (!memberId) return [];
+    return (S.documents || []).filter(d => d.ownerId === memberId);
   },
   bankSummary(bankId) {
     const bank = (S.banks || []).find(b => b.id === bankId);
@@ -1956,7 +1954,7 @@ const Crypto = {
 };
 
 // ===================== SCHEMA MIGRATION =====================
-const SCHEMA_VERSION = 12;
+const SCHEMA_VERSION = 13;
 
 const Migrate = {
   run() {
@@ -2127,9 +2125,184 @@ const Migrate = {
       stored.schemaVersion = 12;
       console.log('[VaultOS] Migrated schema v11 → v12: owners array backfilled');
     }
+    if (sv < 13) {
+      const _now13 = new Date().toISOString();
+      const _uc13 = (stored.user && stored.user.country) || 'PK';
+      const _cur13 = _uc13 === 'GB' ? 'GBP' : _uc13 === 'AE' ? 'AED' : _uc13 === 'US' ? 'USD' : 'PKR';
+      const _fam13 = stored.family || { head: null, members: [] };
+      const _familyMembers13 = [];
+      const _mkId13 = () => 'fm_' + Math.random().toString(36).slice(2, 10);
+
+      const _migrateEntities13 = (person, memberId) => {
+        // Banks (may be string names or full objects)
+        if (Array.isArray(person.banks)) {
+          person.banks.forEach(b => {
+            if (typeof b === 'string') {
+              stored.banks = stored.banks || [];
+              stored.banks.push({ id: _mkId13(), bankName: b, ownerId: memberId, owners: [memberId], country: _uc13, currency: _cur13, balance: 0, accountType: 'Current', bankType: 'commercial', tags: [], createdAt: _now13, updatedAt: _now13 });
+            } else if (b && typeof b === 'object') {
+              const exists = (stored.banks || []).some(x => x.id && x.id === b.id);
+              if (!exists) {
+                stored.banks = stored.banks || [];
+                const entry = { id: b.id || _mkId13(), bankName: b.bankName || b.name || 'Bank', ownerId: memberId, owners: [memberId], country: b.country || _uc13, currency: b.currency || _cur13, balance: b.balance || 0, accountType: b.accountType || 'Current', bankType: b.bankType || 'commercial', tags: b.tags || [], createdAt: b.createdAt || _now13, updatedAt: _now13, ...b };
+                entry.ownerId = memberId; entry.owners = [memberId];
+                stored.banks.push(entry);
+              }
+            }
+          });
+        }
+        // Cards
+        if (Array.isArray(person.cards)) {
+          person.cards.forEach(c => {
+            if (c && typeof c === 'object') {
+              const exists = (stored.cards || []).some(x => x.id && x.id === c.id);
+              if (!exists) {
+                stored.cards = stored.cards || [];
+                const entry = { id: c.id || _mkId13(), cardName: c.name || c.cardName || 'Card', last4: c.last4 || '', network: c.network || '', cardType: c.cardType || 'Debit', ownerId: memberId, owners: [memberId], country: _uc13, currency: _cur13, tags: [], createdAt: c.createdAt || _now13, updatedAt: _now13, ...c };
+                entry.ownerId = memberId; entry.owners = [memberId];
+                stored.cards.push(entry);
+              }
+            }
+          });
+        }
+        // Docs (may be {type, number, expiry} or full objects)
+        if (Array.isArray(person.docs)) {
+          person.docs.forEach(d => {
+            if (d && typeof d === 'object') {
+              const exists = (stored.documents || []).some(x => x.id && x.id === d.id);
+              if (!exists) {
+                const _dtMap = { 'CNIC':'nic','NIC':'nic','Passport':'passport','passport':'passport','NTN':'tax','Driving License':'driving_license','Emirates ID':'nic','Iqama':'nic','Birth Certificate':'certificate','Other':'other' };
+                const docType = d.docType || _dtMap[d.type] || 'other';
+                stored.documents = stored.documents || [];
+                const entry = { id: d.id || _mkId13(), docType, holderName: person.name || '', docNumber: d.number || d.docNumber || '', expiryDate: d.expiry || d.expiryDate || '', issuingCountry: d.issuingCountry || _uc13, ownerId: memberId, owners: [memberId], country: _uc13, tags: [], createdAt: d.createdAt || _now13, updatedAt: _now13, ...d };
+                entry.ownerId = memberId; entry.owners = [memberId];
+                stored.documents.push(entry);
+              }
+            }
+          });
+        }
+        // Cash
+        if (Array.isArray(person.cash)) {
+          person.cash.forEach(c => {
+            if (c && typeof c === 'object') {
+              const exists = (stored.cash || []).some(x => x.id && x.id === c.id);
+              if (!exists) {
+                stored.cash = stored.cash || [];
+                stored.cash.push({ id: c.id || _mkId13(), location: c.label || c.location || 'Other', amount: c.amount || 0, currency: c.currency || _cur13, notes: c.notes || '', ownerId: memberId, owners: [memberId], country: _uc13, tags: [], createdAt: c.createdAt || _now13, updatedAt: _now13 });
+              }
+            }
+          });
+        }
+      };
+
+      // Process head
+      if (_fam13.head && _fam13.head.name) {
+        const headId = _fam13.head.id || _mkId13();
+        _familyMembers13.push({ id: headId, name: _fam13.head.name, avatar: _fam13.head.avatar || '👤', relation: 'Head of Family', isHead: true, dob: _fam13.head.dob || '', phone: _fam13.head.phone || '', email: _fam13.head.email || '', notes: _fam13.head.notes || '', createdAt: _fam13.head.createdAt || _now13, updatedAt: _now13 });
+        _migrateEntities13(_fam13.head, headId);
+      }
+      // Process members
+      (_fam13.members || []).forEach(m => {
+        if (!m || !m.name) return;
+        const memberId = m.id || _mkId13();
+        _familyMembers13.push({ id: memberId, name: m.name, avatar: m.avatar || '👤', relation: m.relation || '', isHead: false, dob: m.dob || '', phone: m.phone || '', email: m.email || '', notes: m.notes || '', createdAt: m.createdAt || _now13, updatedAt: _now13 });
+        _migrateEntities13(m, memberId);
+      });
+
+      stored.familyMembers = _familyMembers13;
+      // Keep S.family but empty entity arrays to prevent double reads
+      if (stored.family) {
+        if (stored.family.head) stored.family.head = { ...stored.family.head, banks: [], cards: [], docs: [], cash: [] };
+        if (stored.family.members) stored.family.members = stored.family.members.map(m => ({ ...m, banks: [], cards: [], docs: [], cash: [] }));
+      }
+      stored.schemaVersion = 13;
+      console.log('[VaultOS] Migrated schema v12 → v13: family members flattened into S.familyMembers');
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
+  },
+
+  // Run family v13 migration on live S state (called after VaultDB load if needed)
+  _runFamilyV13(store) {
+    const _now = new Date().toISOString();
+    const _uc = (store.user && store.user.country) || 'PK';
+    const _cur = _uc === 'GB' ? 'GBP' : _uc === 'AE' ? 'AED' : _uc === 'US' ? 'USD' : 'PKR';
+    const _fam = store.family || { head: null, members: [] };
+    const _mkId = () => 'fm_' + Math.random().toString(36).slice(2, 10);
+    const newMembers = [];
+
+    const _migrate = (person, memberId) => {
+      if (Array.isArray(person.banks)) {
+        person.banks.forEach(b => {
+          if (typeof b === 'string') {
+            store.banks = store.banks || [];
+            store.banks.push({ id: _mkId(), bankName: b, ownerId: memberId, owners: [memberId], country: _uc, currency: _cur, balance: 0, accountType: 'Current', bankType: 'commercial', tags: [], createdAt: _now, updatedAt: _now });
+          } else if (b && typeof b === 'object') {
+            const exists = (store.banks || []).some(x => x.id && x.id === b.id);
+            if (!exists) {
+              store.banks = store.banks || [];
+              const entry = { ...b, id: b.id || _mkId(), ownerId: memberId, owners: [memberId] };
+              store.banks.push(entry);
+            }
+          }
+        });
+      }
+      if (Array.isArray(person.cards)) {
+        person.cards.forEach(c => {
+          if (c && typeof c === 'object') {
+            const exists = (store.cards || []).some(x => x.id && x.id === c.id);
+            if (!exists) {
+              store.cards = store.cards || [];
+              store.cards.push({ id: c.id || _mkId(), cardName: c.name || c.cardName || 'Card', last4: c.last4 || '', network: c.network || '', cardType: c.cardType || 'Debit', ownerId: memberId, owners: [memberId], country: _uc, currency: _cur, tags: [], createdAt: _now, updatedAt: _now, ...c, ownerId: memberId, owners: [memberId] });
+            }
+          }
+        });
+      }
+      if (Array.isArray(person.docs)) {
+        person.docs.forEach(d => {
+          if (d && typeof d === 'object') {
+            const exists = (store.documents || []).some(x => x.id && x.id === d.id);
+            if (!exists) {
+              const _dtMap = { 'CNIC':'nic','NIC':'nic','Passport':'passport','NTN':'tax','Driving License':'driving_license','Emirates ID':'nic','Birth Certificate':'certificate','Other':'other' };
+              const docType = d.docType || _dtMap[d.type] || 'other';
+              store.documents = store.documents || [];
+              store.documents.push({ id: d.id || _mkId(), docType, holderName: person.name || '', docNumber: d.number || d.docNumber || '', expiryDate: d.expiry || d.expiryDate || '', issuingCountry: _uc, ownerId: memberId, owners: [memberId], country: _uc, tags: [], createdAt: _now, updatedAt: _now, ...d, ownerId: memberId, owners: [memberId] });
+            }
+          }
+        });
+      }
+      if (Array.isArray(person.cash)) {
+        person.cash.forEach(c => {
+          if (c && typeof c === 'object') {
+            const exists = (store.cash || []).some(x => x.id && x.id === c.id);
+            if (!exists) {
+              store.cash = store.cash || [];
+              store.cash.push({ id: c.id || _mkId(), location: c.label || c.location || 'Other', amount: c.amount || 0, currency: c.currency || _cur, notes: c.notes || '', ownerId: memberId, owners: [memberId], country: _uc, tags: [], createdAt: _now, updatedAt: _now });
+            }
+          }
+        });
+      }
+    };
+
+    if (_fam.head && _fam.head.name) {
+      const headId = _fam.head.id || _mkId();
+      newMembers.push({ id: headId, name: _fam.head.name, avatar: _fam.head.avatar || '👤', relation: 'Head of Family', isHead: true, dob: _fam.head.dob || '', phone: _fam.head.phone || '', email: _fam.head.email || '', notes: _fam.head.notes || '', createdAt: _now, updatedAt: _now });
+      _migrate(_fam.head, headId);
+    }
+    (_fam.members || []).forEach(m => {
+      if (!m || !m.name) return;
+      const memberId = m.id || _mkId();
+      newMembers.push({ id: memberId, name: m.name, avatar: m.avatar || '👤', relation: m.relation || '', isHead: false, dob: m.dob || '', phone: m.phone || '', email: m.email || '', notes: m.notes || '', createdAt: _now, updatedAt: _now });
+      _migrate(m, memberId);
+    });
+
+    store.familyMembers = newMembers;
+    if (store.family) {
+      if (store.family.head) store.family.head = { ...store.family.head, banks: [], cards: [], docs: [], cash: [] };
+      if (store.family.members) store.family.members = store.family.members.map(m => ({ ...m, banks: [], cards: [], docs: [], cash: [] }));
+    }
+    console.log('[VaultOS] Live migration: family → familyMembers (' + newMembers.length + ' members)');
   }
 };
 
@@ -2182,6 +2355,7 @@ let S = {
   modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true, family:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
   family: { head: null, members: [] },
+  familyMembers: [],
   emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
@@ -2207,6 +2381,7 @@ const Store = {
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
       documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
       family: S.family || { head: null, members: [] },
+      familyMembers: S.familyMembers || [],
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
@@ -2259,6 +2434,10 @@ const Store = {
     this._saveWidgetSnapshot();
     this._saveCount++;
     if (this._saveCount % 10 === 0) this.checkQuota();
+    // Re-render Family page tab if a member is open (entity was added/edited from family context)
+    if (typeof Family !== 'undefined' && Family._activeId !== null && document.getElementById('pg-family')?.classList.contains('on')) {
+      setTimeout(() => Family.render(), 30);
+    }
     // Monthly cleanup of oversized activity and trash
     try {
       const lastClean = localStorage.getItem('vos_last_clean');
@@ -2329,6 +2508,7 @@ const Store = {
     S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
     S.activity=[]; S.tags=[]; S.wallet=[]; S.trash=[];
     S.family = { head: null, members: [] };
+    S.familyMembers = [];
     S.user = { name:'', avatar:'💼', theme:'dark', currency:'USD', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:null };
     S.pin=''; S.decoyPin=''; S.fails=0; S.unlocked=false; S.decoy=false;
   }
@@ -2444,6 +2624,10 @@ const Modal = {
     ['cf-cvv','cf-cpin','bf-pin','bf-appPin','cf-pwd','bf-pwd'].forEach(id => {
       const f = document.getElementById(id); if (f) f.value = '';
     });
+    if (window._familyEditCtx) {
+      const ctx = window._familyEditCtx; window._familyEditCtx = null;
+      setTimeout(() => { if (typeof Family !== 'undefined') { Family._activeId = ctx.memberId; Family._tab = ctx.tab; Family.render(); } }, 50);
+    }
   },
   _initSwipe() {
     const modal = document.getElementById('modal');
@@ -2656,6 +2840,13 @@ const R = {
     setTimeout(() => Emergency.updateLockscreenButton(), 200);
   },
   unlock() {
+    // Run live family migration if S.familyMembers is missing but S.family has data
+    if ((!S.familyMembers || !S.familyMembers.length) && S.family) {
+      const _fLive = S.family;
+      if ((_fLive.head && _fLive.head.name) || (_fLive.members && _fLive.members.length)) {
+        try { Migrate._runFamilyV13(S); Store.save(); } catch(e) {}
+      }
+    }
     S.unlocked = true; S.decoy = false;
     window._vosUnlocked = true;
     ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
@@ -4793,59 +4984,47 @@ function loadDemoData() {
   localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
   loadDemoProfile('business');
   localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
-  S.family = {
-    head:{
-      name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1968-05-15',
-      phone:'+92 300 1234567',email:'ahmed.khan@example.com',
-      notes:'Head of household. Director at logistics company. Based in Karachi.',
-      docs:[
-        {type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},
-        {type:'Passport',number:'AB1234567',expiry:'2029-06-15'},
-        {type:'NTN',number:'1234567-8',expiry:''}
-      ],
-      banks:['HBL','Standard Chartered','Meezan Bank'],
-      cards:[{name:'HBL Prestige Visa Infinite',last4:'4821',network:'Visa'},{name:'SCB Platinum Mastercard',last4:'3390',network:'Mastercard'}],
-      cash:[{label:'Home Safe',amount:150000,notes:'Emergency cash'},{label:'Office Petty Cash',amount:50000,notes:'Business expenses'}]
-    },
-    members:[
-      {
-        id:'fd1',name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1972-08-22',
-        phone:'+92 300 7654321',email:'sara.ahmed@example.com',
-        notes:'Joint account holder. Manages household finances.',
-        docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'},{type:'Passport',number:'CD7654321',expiry:'2028-11-20'}],
-        banks:['Meezan Bank','HBL'],
-        cards:[{name:'Meezan Infinite Visa',last4:'6677',network:'Visa'}],
-        cash:[{label:'Household Budget',amount:80000,notes:'Monthly expenses'},{label:'Savings Jar',amount:30000,notes:'Personal savings'}]
-      },
-      {
-        id:'fd2',name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'1998-03-10',
-        phone:'+92 321 1234567',email:'ali.ahmed@student.com',
-        notes:'Studying at IBA Karachi. Final year MBA.',
-        docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'EF9876543',expiry:'2031-09-20'}],
-        banks:['UBL','NayaPay'],
-        cards:[{name:'UBL Campus Visa Debit',last4:'1122',network:'Visa'}],
-        cash:[{label:'Pocket Money',amount:15000,notes:'Monthly allowance'}]
-      },
-      {
-        id:'fd3',name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',
-        phone:'+92 321 9876543',email:'fatima.ahmed@school.com',
-        notes:'A-Levels student. Karachi Grammar School.',
-        docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'},{type:'Birth Certificate',number:'KHI-2003-11789',expiry:''}],
-        banks:['EasyPaisa Bank'],
-        cards:[],
-        cash:[{label:'Savings',amount:25000,notes:'Birthday gifts savings'}]
-      },
-      {
-        id:'fd4',name:'Khalid Khan',avatar:'👨‍🦳',relation:'Father',dob:'1940-02-28',
-        phone:'+92 300 1111111',email:'',
-        notes:'Retired. Lives in Lahore. Property owner.',
-        docs:[{type:'CNIC',number:'42101-0001111-9',expiry:'2025-12-31'},{type:'Passport',number:'GH0001111',expiry:'2026-03-10'}],
-        banks:['NBP','HBL'],
-        cards:[],
-        cash:[{label:'Pension',amount:45000,notes:'Monthly pension'}]
-      }
-    ]
-  };
+  // Family members as first-class owners
+  S.familyMembers = [
+    { id:'fm_head', name:'Ahmed Khan', avatar:'👨', relation:'Head of Family', isHead:true, dob:'1968-05-15', phone:'+92 300 1234567', email:'ahmed.khan@example.com', notes:'Head of household. Director at logistics company. Based in Karachi.', createdAt:ts, updatedAt:ts },
+    { id:'fd1', name:'Sara Ahmed', avatar:'👩', relation:'Wife', isHead:false, dob:'1972-08-22', phone:'+92 300 7654321', email:'sara.ahmed@example.com', notes:'Joint account holder. Manages household finances.', createdAt:ts, updatedAt:ts },
+    { id:'fd2', name:'Ali Ahmed', avatar:'👦', relation:'Son', isHead:false, dob:'1998-03-10', phone:'+92 321 1234567', email:'ali.ahmed@student.com', notes:'Studying at IBA Karachi. Final year MBA.', createdAt:ts, updatedAt:ts },
+    { id:'fd3', name:'Fatima Ahmed', avatar:'👧', relation:'Daughter', isHead:false, dob:'2003-11-05', phone:'+92 321 9876543', email:'fatima.ahmed@school.com', notes:'A-Levels student. Karachi Grammar School.', createdAt:ts, updatedAt:ts },
+    { id:'fd4', name:'Khalid Khan', avatar:'👨‍🦳', relation:'Father', isHead:false, dob:'1940-02-28', phone:'+92 300 1111111', email:'', notes:'Retired. Lives in Lahore. Property owner.', createdAt:ts, updatedAt:ts },
+  ];
+  S.family = { head: null, members: [] };
+  // Ahmed Khan's assets
+  S.banks.push({id:id(),bankName:'HBL',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:350000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.banks.push({id:id(),bankName:'Standard Chartered',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:180000,accountType:'Savings',bankType:'international',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.banks.push({id:id(),bankName:'Meezan Bank',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:220000,accountType:'Current',bankType:'islamic',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cards.push({id:id(),cardName:'HBL Prestige Visa Infinite',last4:'4821',network:'Visa',cardType:'Credit',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cards.push({id:id(),cardName:'SCB Platinum Mastercard',last4:'3390',network:'Mastercard',cardType:'Credit',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Home',amount:150000,currency:'PKR',notes:'Home safe — emergency cash',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Office',amount:50000,currency:'PKR',notes:'Office petty cash',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'nic',holderName:'Ahmed Khan',docNumber:'42101-1234567-1',expiryDate:'2028-01-01',issuingCountry:'PK',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'passport',holderName:'Ahmed Khan',docNumber:'AB1234567',expiryDate:'2029-06-15',issuingCountry:'PK',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  // Sara Ahmed's assets
+  S.banks.push({id:id(),bankName:'Meezan Bank',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',balance:95000,accountType:'Savings',bankType:'islamic',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.banks.push({id:id(),bankName:'HBL',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',balance:45000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cards.push({id:id(),cardName:'Meezan Infinite Visa',last4:'6677',network:'Visa',cardType:'Debit',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Home',amount:80000,currency:'PKR',notes:'Household budget',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Other',amount:30000,currency:'PKR',notes:'Savings jar',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'nic',holderName:'Sara Ahmed',docNumber:'42101-7654321-2',expiryDate:'2027-03-10',issuingCountry:'PK',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'passport',holderName:'Sara Ahmed',docNumber:'CD7654321',expiryDate:'2028-11-20',issuingCountry:'PK',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  // Ali Ahmed's assets
+  S.banks.push({id:id(),bankName:'UBL',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',balance:35000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.banks.push({id:id(),bankName:'NayaPay',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',balance:12000,accountType:'Digital',bankType:'digital',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cards.push({id:id(),cardName:'UBL Campus Visa Debit',last4:'1122',network:'Visa',cardType:'Debit',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Wallet',amount:15000,currency:'PKR',notes:'Monthly allowance',ownerId:'fd2',owners:['fd2'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'nic',holderName:'Ali Ahmed',docNumber:'42101-9876543-3',expiryDate:'2030-01-01',issuingCountry:'PK',ownerId:'fd2',owners:['fd2'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  // Fatima Ahmed's assets
+  S.banks.push({id:id(),bankName:'EasyPaisa Bank',ownerId:'fd3',owners:['fd3'],country:'PK',currency:'PKR',balance:25000,accountType:'Digital',bankType:'digital',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Home',amount:25000,currency:'PKR',notes:'Birthday gifts savings',ownerId:'fd3',owners:['fd3'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'certificate',holderName:'Fatima Ahmed',docNumber:'KHI-2003-11789',issuingCountry:'PK',ownerId:'fd3',owners:['fd3'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  // Khalid Khan's assets
+  S.banks.push({id:id(),bankName:'NBP',ownerId:'fd4',owners:['fd4'],country:'PK',currency:'PKR',balance:180000,accountType:'Savings',bankType:'government',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.cash.push({id:id(),location:'Other',amount:45000,currency:'PKR',notes:'Monthly pension',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
+  S.documents.push({id:id(),docType:'nic',holderName:'Khalid Khan',docNumber:'42101-0001111-9',expiryDate:'2025-12-31',issuingCountry:'PK',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
   Store.save();
   localStorage.setItem('vo_credit_score', JSON.stringify({
     country:'GB',

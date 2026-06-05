@@ -1,76 +1,113 @@
 'use strict';
-/* VaultOS Family Vault — members stored in S.family (VaultDB encrypted)
- * Each member has: id, name, avatar, relation, dob, phone, email, notes
- * Plus entity arrays: banks[], cards[], docs[], cash[]
- * All entities stamped with ownerId = member.id
+/* Family Vault — first-class owner model
+ * Members stored in S.familyMembers (flat profile list, no embedded entity arrays)
+ * All entities (banks, cards, cash, investments, assets, documents) live in their
+ * respective S arrays with ownerId = member.id for family-owned items.
+ * Family Vault is a filtered view — it opens the same full forms used by main modules.
  */
 
 const Family = {
-  _memberIdx: null,
+  _activeId: null,  // null = list view, string memberId = member detail view
   _tab: 'overview',
 
-  // ── Data access via VaultDB S.family ──────────────────────────────────────
+  // ── Data access ──────────────────────────────────────────────────────────
+  allMembers() {
+    return S.familyMembers || [];
+  },
+
+  getMember(id) {
+    return (S.familyMembers || []).find(m => m.id === id) || null;
+  },
+
+  ownerName(ownerId) {
+    if (!ownerId || ownerId === 'self') return '';
+    const m = this.getMember(ownerId);
+    return m ? m.name : ownerId;
+  },
+
+  // Legacy API — used by search module and dashboard
   get() {
-    if (typeof S !== 'undefined' && S.family) return S.family;
-    try { return JSON.parse(localStorage.getItem('vo_family') || '{"head":null,"members":[]}'); }
-    catch(e) { return { head: null, members: [] }; }
+    const members = this.allMembers();
+    const head = members.find(m => m.isHead) || null;
+    const rest = members.filter(m => !m.isHead);
+    return { head, members: rest };
   },
 
-  save(d) {
-    if (typeof S !== 'undefined') {
-      S.family = d;
-      if (typeof Store !== 'undefined') Store.save();
-    } else {
-      try { localStorage.setItem('vo_family', JSON.stringify(d)); } catch(e) {}
-    }
+  // ── Summary helpers ───────────────────────────────────────────────────────
+  memberCount() {
+    return this.allMembers().length;
   },
 
-  _member() {
-    const d = this.get();
-    if (this._memberIdx === 'head') return d.head || {};
-    return (d.members || [])[this._memberIdx] || {};
-  },
-
-  _memberId() {
-    return this._member().id || this._memberIdx;
+  totalNetWorthPKR() {
+    const memberIds = new Set(this.allMembers().map(m => m.id));
+    let total = 0;
+    (S.banks || []).filter(b => memberIds.has(b.ownerId)).forEach(b => {
+      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(b.balance || 0, b.currency || 'PKR') : (b.balance || 0);
+    });
+    (S.cash || []).filter(c => memberIds.has(c.ownerId)).forEach(c => {
+      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(c.amount || 0, c.currency || 'PKR') : (c.amount || 0);
+    });
+    (S.investments || []).filter(i => memberIds.has(i.ownerId)).forEach(i => {
+      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(i.currentValue || 0, i.currency || 'PKR') : (i.currentValue || 0);
+    });
+    return total;
   },
 
   // ── Render ─────────────────────────────────────────────────────────────────
   render() {
     const body = document.getElementById('pg-family-body');
     if (!body) return;
-    if (this._memberIdx !== null) { this._renderMember(body); return; }
+    if (this._activeId !== null) { this._renderMember(body); return; }
     this._renderList(body);
   },
 
   _renderList(body) {
-    const d = this.get();
-    const members = d.members || [];
+    const members = this.allMembers();
 
-    const headCard = d.head
-      ? `<div onclick="Family.openMember('head')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
+    const _stat = (id) => {
+      const banks = (S.banks || []).filter(b => b.ownerId === id).length;
+      const cards = (S.cards || []).filter(c => c.ownerId === id).length;
+      const docs  = (S.documents || []).filter(d => d.ownerId === id).length;
+      const cash  = (S.cash || []).filter(c => c.ownerId === id).length;
+      const inv   = (S.investments || []).filter(i => i.ownerId === id).length;
+      const assets= (S.assets || []).filter(a => a.ownerId === id).length;
+      const parts = [];
+      if (banks) parts.push(banks + ' bank' + (banks !== 1 ? 's' : ''));
+      if (cards) parts.push(cards + ' card' + (cards !== 1 ? 's' : ''));
+      if (docs)  parts.push(docs  + ' doc' + (docs !== 1 ? 's' : ''));
+      if (cash)  parts.push(cash  + ' cash');
+      if (inv)   parts.push(inv   + ' inv.');
+      if (assets)parts.push(assets + ' asset' + (assets !== 1 ? 's' : ''));
+      return parts.length ? parts.join(' · ') : 'No items yet';
+    };
+
+    const head = members.find(m => m.isHead);
+    const rest = members.filter(m => !m.isHead);
+
+    const headCard = head
+      ? `<div onclick="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>
           <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD 👑</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
-            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${escHtml(d.head.avatar||'👤')}</div>
+            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${escHtml(head.avatar || '👤')}</div>
             <div>
-              <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(d.head.name||'Head of Family')}</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">${(d.head.banks||[]).length} banks · ${(d.head.cards||[]).length} cards · ${(d.head.docs||[]).length} docs</div>
+              <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)}</div>
+              <div style="font-size:12px;color:var(--text3);margin-top:2px">${_stat(head.id)}</div>
             </div>
           </div>
         </div>`
-      : `<div onclick="Family.openSetHead()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
+      : `<div onclick="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
           <div style="font-size:32px;margin-bottom:8px">👑</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Set Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px">Tap to set up your own family vault profile</div>
         </div>`;
 
-    const memberCards = members.map((m, i) =>
-      `<div onclick="Family.openMember(${i})" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
-        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${escHtml(m.avatar||'👤')}</div>
+    const memberCards = rest.map(m =>
+      `<div onclick="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name||'Member')}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">${escHtml(m.relation||'')} · ${(m.banks||[]).length} banks · ${(m.cards||[]).length} cards · ${(m.docs||[]).length} docs</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
         </div>
         <div style="color:var(--text3);font-size:20px">›</div>
       </div>`
@@ -81,38 +118,39 @@ const Family = {
         ${headCard}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
-          <button onclick="Family.openAddMember()" style="background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+          <button onclick="Family.openAddMember(false)" style="background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
         </div>
-        ${members.length ? memberCards : '<div style="text-align:center;padding:32px 20px;color:var(--text3)"><div style="font-size:40px;margin-bottom:10px">👨‍👩‍👧‍👦</div><div style="font-size:14px">Add family members to manage their finances</div></div>'}
+        ${rest.length ? memberCards : '<div style="text-align:center;padding:32px 20px;color:var(--text3)"><div style="font-size:40px;margin-bottom:10px">👨‍👩‍👧‍👦</div><div style="font-size:14px">Add family members to manage their finances</div></div>'}
       </div>`;
   },
 
   _renderMember(body) {
-    const m = this._member();
-    if (!m || !m.name) { this._memberIdx = null; this.render(); return; }
+    const m = this.getMember(this._activeId);
+    if (!m) { this._activeId = null; this.render(); return; }
 
     const tabs = [
-      { id:'overview', label:'Overview', icon:'📊' },
-      { id:'banks',    label:'Banks',    icon:'🏦' },
-      { id:'cards',    label:'Cards',    icon:'💳' },
-      { id:'docs',     label:'Docs',     icon:'🪪' },
-      { id:'cash',     label:'Cash',     icon:'💵' },
+      { id:'overview',     label:'Overview',     icon:'📊' },
+      { id:'banks',        label:'Banks',         icon:'🏦' },
+      { id:'cards',        label:'Cards',         icon:'💳' },
+      { id:'cash',         label:'Cash',          icon:'💵' },
+      { id:'investments',  label:'Investments',   icon:'📈' },
+      { id:'assets',       label:'Assets',        icon:'🏠' },
+      { id:'documents',    label:'Documents',     icon:'🪪' },
     ];
 
     const tabBar = `<div style="display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-bottom:1px solid var(--border)">
       ${tabs.map(t => `<button onclick="Family._switchTab('${t.id}')" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._tab===t.id?'var(--accent)':'var(--border)'};background:${this._tab===t.id?'var(--accent)':'transparent'};color:${this._tab===t.id?'#fff':'var(--text3)'}">${t.icon} ${t.label}</button>`).join('')}
     </div>`;
 
-    const isHead = this._memberIdx === 'head';
-    const backBtn = `<button onclick="Family._memberIdx=null;Family._tab='overview';Family.render()" style="background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:6px;padding:16px 16px 0">← Family</button>`;
+    const backBtn = `<button onclick="Family._activeId=null;Family._tab='overview';Family.render()" style="background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:6px;padding:16px 16px 0">← Family</button>`;
 
     const header = `<div style="display:flex;align-items:center;gap:14px;padding:12px 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.06))">
-      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">${escHtml(m.avatar||'👤')}</div>
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
       <div style="flex:1">
-        <div style="font-size:20px;font-weight:900;color:var(--text)">${escHtml(m.name)}${isHead?' 👑':''}</div>
-        <div style="font-size:13px;color:var(--text3)">${escHtml(m.relation||'')}${m.dob?' · DOB: '+escHtml(m.dob):''}</div>
+        <div style="font-size:20px;font-weight:900;color:var(--text)">${escHtml(m.name)}${m.isHead ? ' 👑' : ''}</div>
+        <div style="font-size:13px;color:var(--text3)">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
-      <button onclick="Family.editMember()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;touch-action:manipulation;color:var(--text)">Edit</button>
+      <button onclick="Family.editMember('${m.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;touch-action:manipulation;color:var(--text)">Edit</button>
     </div>`;
 
     body.innerHTML = backBtn + header + tabBar + '<div id="fm-tab-body" style="padding:14px 16px">' + this._tabContent(m) + '</div>';
@@ -120,7 +158,7 @@ const Family = {
 
   _switchTab(t) {
     this._tab = t;
-    const m = this._member();
+    const m = this.getMember(this._activeId);
     const body = document.getElementById('fm-tab-body');
     if (body && m) body.innerHTML = this._tabContent(m);
     document.querySelectorAll('#pg-family-body button[onclick*="_switchTab"]').forEach(b => {
@@ -133,255 +171,323 @@ const Family = {
   },
 
   _tabContent(m) {
+    const id = m.id;
+
     if (this._tab === 'overview') {
+      const banks = (S.banks || []).filter(b => b.ownerId === id);
+      const cards = (S.cards || []).filter(c => c.ownerId === id);
+      const docs  = (S.documents || []).filter(d => d.ownerId === id);
+      const cash  = (S.cash || []).filter(c => c.ownerId === id);
+      const inv   = (S.investments || []).filter(i => i.ownerId === id);
+      const assets= (S.assets || []).filter(a => a.ownerId === id);
+      const stats = [
+        { n: banks.length,  l: 'Banks',       ic: '🏦', tab: 'banks' },
+        { n: cards.length,  l: 'Cards',        ic: '💳', tab: 'cards' },
+        { n: cash.length,   l: 'Cash',         ic: '💵', tab: 'cash' },
+        { n: inv.length,    l: 'Investments',  ic: '📈', tab: 'investments' },
+        { n: assets.length, l: 'Assets',       ic: '🏠', tab: 'assets' },
+        { n: docs.length,   l: 'Documents',    ic: '🪪', tab: 'documents' },
+      ];
       const fields = [
         m.phone && ['📞 Phone', escHtml(m.phone)],
         m.email && ['📧 Email', escHtml(m.email)],
         m.notes && ['📝 Notes', escHtml(m.notes)],
       ].filter(Boolean);
       return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--text)">${(m.banks||[]).length}</div>
-          <div style="font-size:11px;color:var(--text3)">Banks</div>
-        </div>
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--text)">${(m.cards||[]).length}</div>
-          <div style="font-size:11px;color:var(--text3)">Cards</div>
-        </div>
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--text)">${(m.docs||[]).length}</div>
-          <div style="font-size:11px;color:var(--text3)">Docs</div>
-        </div>
+        ${stats.map(s => `<div onclick="Family._switchTab('${s.tab}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;touch-action:manipulation">
+          <div style="font-size:22px;font-weight:800;color:var(--text)">${s.n}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.ic} ${s.l}</div>
+        </div>`).join('')}
       </div>
-      ${fields.map(([k,v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:13px;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
+      ${fields.map(([k, v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:13px;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
     }
 
     if (this._tab === 'banks') {
-      const banks = m.banks || [];
-      const idx = this._memberIdx;
+      const items = (S.banks || []).filter(b => b.ownerId === id);
       return `<button onclick="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
-        (banks.length ? banks.map((b,i) => `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:24px">🏦</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--text)">${escHtml(b.bankName||'Bank')}</div>
-            <div style="font-size:12px;color:var(--text3)">${escHtml(b.accountType||'')}${b.currency?' · '+escHtml(b.currency):''}${b.balance?' · '+U.fmt(b.balance):''}</div>
-          </div>
-          <button onclick="Family.delEntity('banks',${i})" style="background:none;border:none;color:var(--err);font-size:16px;cursor:pointer;touch-action:manipulation;padding:4px">🗑️</button>
-        </div>`).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No banks added</div>');
+        (items.length ? items.map(b => this._bankRow(b)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No banks added yet</div>');
     }
 
     if (this._tab === 'cards') {
-      const cards = m.cards || [];
+      const items = (S.cards || []).filter(c => c.ownerId === id);
       return `<button onclick="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
-        (cards.length ? cards.map((c,i) => `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:24px">💳</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--text)">${escHtml(c.cardName||'Card')}</div>
-            <div style="font-size:12px;color:var(--text3)">${escHtml(c.network||'')}${c.last4?' · **** '+escHtml(c.last4):''}${c.cardType?' · '+escHtml(c.cardType):''}</div>
-          </div>
-          <button onclick="Family.delEntity('cards',${i})" style="background:none;border:none;color:var(--err);font-size:16px;cursor:pointer;touch-action:manipulation;padding:4px">🗑️</button>
-        </div>`).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cards added</div>');
-    }
-
-    if (this._tab === 'docs') {
-      const docs = m.docs || [];
-      return `<button onclick="Family.addEntity('docs')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
-        (docs.length ? docs.map((d,i) => `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:24px">🪪</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--text)">${escHtml(d.docType||d.type||'Document')}</div>
-            <div style="font-size:12px;color:var(--text3)">${escHtml(d.number||d.docNumber||'')}${d.expiryDate?' · Exp: '+escHtml(d.expiryDate):''}</div>
-          </div>
-          <button onclick="Family.delEntity('docs',${i})" style="background:none;border:none;color:var(--err);font-size:16px;cursor:pointer;touch-action:manipulation;padding:4px">🗑️</button>
-        </div>`).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added</div>');
+        (items.length ? items.map(c => this._cardRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cards added yet</div>');
     }
 
     if (this._tab === 'cash') {
-      const cash = m.cash || [];
+      const items = (S.cash || []).filter(c => c.ownerId === id);
       return `<button onclick="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
-        (cash.length ? cash.map((c,i) => `<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-          <div style="font-size:24px">💵</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--text)">${escHtml(c.currency||'PKR')} ${U.fmt(c.amount||0)}</div>
-            <div style="font-size:12px;color:var(--text3)">${escHtml(c.location||'Cash')}</div>
-          </div>
-          <button onclick="Family.delEntity('cash',${i})" style="background:none;border:none;color:var(--err);font-size:16px;cursor:pointer;touch-action:manipulation;padding:4px">🗑️</button>
-        </div>`).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cash entries</div>');
+        (items.length ? items.map(c => this._cashRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cash entries yet</div>');
+    }
+
+    if (this._tab === 'investments') {
+      const items = (S.investments || []).filter(i => i.ownerId === id);
+      return `<button onclick="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
+        (items.length ? items.map(i => this._invRow(i)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No investments added yet</div>');
+    }
+
+    if (this._tab === 'assets') {
+      const items = (S.assets || []).filter(a => a.ownerId === id);
+      return `<button onclick="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
+        (items.length ? items.map(a => this._assetRow(a)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No assets added yet</div>');
+    }
+
+    if (this._tab === 'documents') {
+      const items = (S.documents || []).filter(d => d.ownerId === id);
+      return `<button onclick="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
+        (items.length ? items.map(d => this._docRow(d)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added yet</div>');
     }
 
     return '';
   },
 
+  // ── Entity row renderers (use same full-module edit functions) ────────────
+  _bankRow(b) {
+    const bal = b.balance ? (b.currency || '') + ' ' + U.fmt(b.balance) : '';
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${typeof getBankLogo !== 'undefined' ? getBankLogo(b.bankName, 36) : '🏦'}</div>
+      <div class="entry-body">
+        <div class="entry-name">${escHtml(b.bankName || 'Bank')}</div>
+        <div class="entry-sub">${escHtml(b.accountType || '')} · ${escHtml(b.currency || '')}${bal ? ' · ' + bal : ''}</div>
+        <div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType || 'bank')}</span>${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('banks','${b.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('banks','${b.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  _cardRow(c) {
+    const expSt = typeof U !== 'undefined' && U.expSt ? U.expSt(c.expiry) : 'ok';
+    const expBadge = c.expiry ? `<span class="badge ${expSt === 'ok' ? 'b-muted' : expSt === 'soon' ? 'b-warn' : 'b-err'}">${escHtml(c.expiry)}</span>` : '';
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic">💳</div>
+      <div class="entry-body">
+        <div class="entry-name">${escHtml(c.cardName || 'Card')}</div>
+        <div class="entry-sub">${escHtml(c.network || '')}${c.last4 ? ' · ****' + escHtml(c.last4) : ''}${c.cardType ? ' · ' + escHtml(c.cardType) : ''}</div>
+        <div class="entry-meta">${expBadge}${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('cards','${c.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('cards','${c.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  _cashRow(c) {
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic">💵</div>
+      <div class="entry-body">
+        <div class="entry-name">${escHtml(c.location || 'Cash')}</div>
+        <div class="entry-sub sens">${U.fmt(c.amount || 0)} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div>
+        <div class="entry-meta">${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('cash','${c.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('cash','${c.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  _invRow(i) {
+    const ic = {Stocks:'📊','Mutual Funds':'📁',ETFs:'📈',Bonds:'📜',Crypto:'₿','Fixed Deposit':'🏛️',Other:'💼'};
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic">${ic[i.type] || '📈'}</div>
+      <div class="entry-body">
+        <div class="entry-name">${escHtml(i.investmentName || i.broker || 'Investment')}</div>
+        <div class="entry-sub">${escHtml(i.broker || '')} · ${escHtml(i.type || '')} · ${escHtml(i.currency || '')}</div>
+        <div class="entry-meta">${i.currentValue ? `<span class="badge b-acc sens">${U.fmt(i.currentValue)} ${i.currency || ''}</span>` : ''}${i.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('investments','${i.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('investments','${i.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  _assetRow(a) {
+    const ic = { property:'🏠', vehicle:'🚗', electronics:'💻', precious_metals:'🥇', jewelry:'💍', insurance:'🛡️', other:'📦' };
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic">${ic[a.assetType] || '📦'}</div>
+      <div class="entry-body">
+        <div class="entry-name">${escHtml(a.name || 'Asset')}</div>
+        <div class="entry-sub">${escHtml(a.assetType || '')} · ${escHtml(a.currency || '')}${a.currentValue ? ' · ' + U.fmt(a.currentValue) : ''}</div>
+        <div class="entry-meta">${a.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('assets','${a.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('assets','${a.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  _docRow(d) {
+    const schema = typeof DOC_SCHEMAS !== 'undefined' ? (DOC_SCHEMAS[d.docType] || DOC_SCHEMAS.other) : { ic:'🪪', label: d.docType || 'Document' };
+    const now = new Date();
+    const exp = d.expiryDate ? new Date(d.expiryDate) : null;
+    const daysLeft = exp ? Math.ceil((exp - now) / 864e5) : null;
+    const expBadge = daysLeft !== null ? `<span class="badge ${daysLeft < 0 ? 'b-err' : daysLeft <= 30 ? 'b-warn' : 'b-muted'}">${daysLeft < 0 ? 'Expired' : 'Exp ' + exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'2-digit'})}</span>` : '';
+    return `<div class="entry"><div class="entry-main">
+      <div class="entry-ic">${schema.ic || '🪪'}</div>
+      <div class="entry-body">
+        <div class="entry-name">${schema.label || escHtml(d.docType || 'Document')}</div>
+        <div class="entry-sub">${escHtml(d.holderName || '')}${d.docNumber ? ' · ' + escHtml(d.docNumber) : ''}</div>
+        <div class="entry-meta">${expBadge}${d.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
+      </div>
+      <div class="entry-acts">
+        <button class="icb" onclick="Family._editEntity('documents','${d.id}')">✏️</button>
+        <button class="icb del" onclick="Family._delEntity('documents','${d.id}')">🗑️</button>
+      </div>
+    </div></div>`;
+  },
+
+  // ── Entity actions ────────────────────────────────────────────────────────
+  addEntity(type) {
+    const m = this.getMember(this._activeId);
+    if (!m) return;
+    const prefill = { ownerId: m.id, ownerName: m.name };
+    if (type === 'banks'       && typeof Banks !== 'undefined')      { Banks.openAdd(prefill); }
+    else if (type === 'cards'  && typeof Cards !== 'undefined')      { Cards.openAdd(prefill); }
+    else if (type === 'cash'   && typeof Cash !== 'undefined')       { Cash.openAdd(prefill); }
+    else if (type === 'investments' && typeof Inv !== 'undefined')   { Inv.openAdd(prefill); }
+    else if (type === 'assets' && typeof Assets !== 'undefined')     { Assets.openAdd(prefill); }
+    else if (type === 'documents' && typeof DocsModule !== 'undefined') { DocsModule.openAdd(prefill); }
+  },
+
+  _editEntity(type, id) {
+    // Store current family context so we can re-render after save
+    window._familyEditCtx = { memberId: this._activeId, tab: this._tab };
+    if (type === 'banks'       && typeof Banks !== 'undefined')      Banks.edit(id);
+    else if (type === 'cards'  && typeof Cards !== 'undefined')      Cards.edit(id);
+    else if (type === 'cash'   && typeof Cash !== 'undefined')       Cash.edit(id);
+    else if (type === 'investments' && typeof Inv !== 'undefined')   Inv.edit(id);
+    else if (type === 'assets' && typeof Assets !== 'undefined')     Assets.edit(id);
+    else if (type === 'documents' && typeof DocsModule !== 'undefined') DocsModule.edit(id);
+  },
+
+  _delEntity(type, id) {
+    if (!window.__vos_confirm('Move this item to Trash?')) return;
+    const arr = S[type === 'documents' ? 'documents' : type];
+    if (!arr) return;
+    const item = arr.find(x => x.id === id);
+    if (!item) return;
+    S.trash = S.trash || [];
+    S.trash.push({ id: U.id(), type, data: item, deletedAt: new Date().toISOString() });
+    if (type === 'documents') { S.documents = S.documents.filter(x => x.id !== id); }
+    else { S[type] = arr.filter(x => x.id !== id); }
+    Store.save();
+    this.render();
+    Toast.show('Moved to Trash', 'info');
+  },
+
   // ── Member CRUD ────────────────────────────────────────────────────────────
-  openMember(idx) {
-    this._memberIdx = idx;
+  openMember(id) {
+    this._activeId = id;
     this._tab = 'overview';
     this.render();
   },
 
-  openSetHead() {
-    const d = this.get();
-    this._openMemberForm(d.head || {}, true);
-  },
-
-  editMember() {
-    const m = this._member();
-    this._openMemberForm(m, this._memberIdx === 'head');
-  },
-
-  _openMemberForm(m, isHead) {
+  openAddMember(isHead) {
     const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
-    Modal.open(isHead ? '👑 Head of Family' : (m.name ? '✏️ Edit Member' : '➕ Add Member'),
+    Modal.open(isHead ? '👑 Add Head of Family' : '➕ Add Family Member',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fav-av').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fav-av').value='${a}'" class="fav-av" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${(m.avatar||'👤')===a?'var(--accent)':'var(--glass)'};border:1px solid ${(m.avatar||'👤')===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
-        <input type="hidden" id="fav-av" value="${escHtml(m.avatar||'👤')}">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fm-name" value="${escHtml(m.name||'')}" placeholder="Full name"></div>
-        ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fm-rel" value="${escHtml(m.relation||'')}" list="fRelDL" placeholder="Spouse, Son, Daughter..."></div>` : ''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:var(--glass);border:1px solid var(--border)">${a}</div>`).join('')}</div>
+        <input type="hidden" id="fam-av-input" value="👤">
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" placeholder="Full name"></div>
+        ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL3"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fam-rel" value="" list="fRelDL3" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
-          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fm-dob" type="date" value="${escHtml(m.dob||'')}"></div>
-          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fm-phone" value="${escHtml(m.phone||'')}" placeholder="+92..."></div>
+          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" placeholder="+92..."></div>
         </div>
-        <div class="fg"><label class="fl">Email</label><input class="inp" id="fm-email" value="${escHtml(m.email||'')}" placeholder="email@example.com"></div>
-        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fm-notes" rows="2">${escHtml(m.notes||'')}</textarea></div>
+        <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      (!isHead && m.name ? `<button class="btn btn-d btn-sm" onclick="Family.deleteMember()">Delete</button>` : '') +
-      `<button class="btn btn-p" onclick="Family.saveMember(${isHead})">Save</button>`
+      `<button class="btn btn-p" onclick="Family._saveNewMember(${isHead})">Save</button>`
     );
   },
 
-  saveMember(isHead) {
-    const name = (document.getElementById('fm-name')?.value || '').trim();
-    if (!name) { Toast.show('Name required', 'warning'); return; }
-    const avatar = document.getElementById('fav-av')?.value || '👤';
-    const now = new Date().toISOString();
-    const d = this.get();
-    const existing = isHead ? (d.head || {}) : ((d.members||[])[this._memberIdx] || {});
-    const member = {
-      ...existing,
-      id: existing.id || U.id(),
-      name, avatar,
-      relation: isHead ? 'Head of Family' : (document.getElementById('fm-rel')?.value?.trim() || ''),
-      dob:   document.getElementById('fm-dob')?.value   || '',
-      phone: document.getElementById('fm-phone')?.value?.trim() || '',
-      email: document.getElementById('fm-email')?.value?.trim() || '',
-      notes: document.getElementById('fm-notes')?.value?.trim() || '',
-      updatedAt: now,
-      banks: existing.banks || [],
-      cards: existing.cards || [],
-      docs:  existing.docs  || [],
-      cash:  existing.cash  || [],
-    };
-    if (!member.createdAt) member.createdAt = now;
-    if (isHead) {
-      d.head = member;
-    } else if (typeof this._memberIdx === 'number') {
-      d.members[this._memberIdx] = member;
-    }
-    this.save(d);
-    Modal.close();
-    this.render();
-    Toast.show((isHead ? 'Family head' : 'Member') + ' saved', 'success');
-  },
-
-  openAddMember() {
-    Modal.open('➕ Add Family Member',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fm-name" placeholder="Full name"></div>
-        <div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL2"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fm-rel" list="fRelDL2" placeholder="Spouse, Son..."></div>
-        <div class="fr">
-          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fm-dob" type="date"></div>
-          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fm-phone" placeholder="+92..."></div>
-        </div>
-        <div class="fg"><label class="fl">Email</label><input class="inp" id="fm-email" placeholder="email@example.com"></div>
-      </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      `<button class="btn btn-p" onclick="Family._saveNewMember()">Add Member</button>`
-    );
-  },
-
-  _saveNewMember() {
-    const name = (document.getElementById('fm-name')?.value || '').trim();
+  _saveNewMember(isHead) {
+    const name = (document.getElementById('fam-name')?.value || '').trim();
     if (!name) { Toast.show('Name required', 'warning'); return; }
     const now = new Date().toISOString();
-    const d = this.get();
-    if (!d.members) d.members = [];
     const member = {
       id: U.id(),
       name,
-      avatar: '👤',
-      relation: document.getElementById('fm-rel')?.value?.trim() || '',
-      dob:   document.getElementById('fm-dob')?.value   || '',
-      phone: document.getElementById('fm-phone')?.value?.trim() || '',
-      email: document.getElementById('fm-email')?.value?.trim() || '',
-      notes: '',
+      avatar: document.getElementById('fam-av-input')?.value || '👤',
+      relation: isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || ''),
+      isHead: !!isHead,
+      dob:   document.getElementById('fam-dob')?.value   || '',
+      phone: document.getElementById('fam-phone')?.value?.trim() || '',
+      email: document.getElementById('fam-email')?.value?.trim() || '',
+      notes: document.getElementById('fam-notes')?.value?.trim() || '',
       createdAt: now, updatedAt: now,
-      banks: [], cards: [], docs: [], cash: [],
     };
-    d.members.push(member);
-    this.save(d);
-    this._memberIdx = d.members.length - 1;
-    this._tab = 'overview';
+    if (!S.familyMembers) S.familyMembers = [];
+    // Only one head allowed
+    if (isHead) S.familyMembers = S.familyMembers.map(m => ({ ...m, isHead: false }));
+    S.familyMembers.push(member);
+    Store.save();
     Modal.close();
     this.render();
     Toast.show('Member added', 'success');
   },
 
-  deleteMember() {
-    if (!window.__vos_confirm('Remove this family member?')) return;
-    const d = this.get();
-    d.members.splice(this._memberIdx, 1);
-    this.save(d);
-    this._memberIdx = null;
+  editMember(id) {
+    const m = this.getMember(id);
+    if (!m) return;
+    const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
+    Modal.open(m.isHead ? '👑 Edit Head of Family' : '✏️ Edit Member',
+      `<div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${(m.avatar||'👤')===a?'var(--accent)':'var(--glass)'};border:1px solid ${(m.avatar||'👤')===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
+        <input type="hidden" id="fam-av-input" value="${escHtml(m.avatar || '👤')}">
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name"></div>
+        ${!m.isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL4"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fam-rel" value="${escHtml(m.relation || '')}" list="fRelDL4" placeholder="Spouse, Son, Daughter..."></div>` : ''}
+        <div class="fr">
+          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date" value="${escHtml(m.dob || '')}"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(m.phone || '')}" placeholder="+92..."></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(m.email || '')}" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
+      </div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
+      (!m.isHead ? `<button class="btn btn-d btn-sm" onclick="Family._deleteMember('${id}')">Delete</button>` : '') +
+      `<button class="btn btn-p" onclick="Family._updateMember('${id}')">Save</button>`
+    );
+  },
+
+  _updateMember(id) {
+    const name = (document.getElementById('fam-name')?.value || '').trim();
+    if (!name) { Toast.show('Name required', 'warning'); return; }
+    S.familyMembers = (S.familyMembers || []).map(m => {
+      if (m.id !== id) return m;
+      return {
+        ...m,
+        name,
+        avatar: document.getElementById('fam-av-input')?.value || m.avatar,
+        relation: m.isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || m.relation || ''),
+        dob:   document.getElementById('fam-dob')?.value   || m.dob,
+        phone: document.getElementById('fam-phone')?.value?.trim() || m.phone,
+        email: document.getElementById('fam-email')?.value?.trim() || m.email,
+        notes: document.getElementById('fam-notes')?.value?.trim() || m.notes,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+    Store.save();
+    Modal.close();
+    this.render();
+    Toast.show('Member updated', 'success');
+  },
+
+  _deleteMember(id) {
+    if (!window.__vos_confirm('Remove this family member? Their financial records will remain in the vault with their owner tag.')) return;
+    S.familyMembers = (S.familyMembers || []).filter(m => m.id !== id);
+    Store.save();
+    this._activeId = null;
     Modal.close();
     this.render();
     Toast.show('Member removed', 'success');
-  },
-
-  // ── Entity add/delete (banks, cards, docs, cash) ──────────────────────────
-  addEntity(type) {
-    const m = this._member();
-    const ctx = { memberIdx: this._memberIdx, isHead: this._memberIdx === 'head' };
-    const prefill = { _ownerName: m.name, _familyCtx: ctx };
-
-    if (type === 'banks') {
-      if (typeof Banks !== 'undefined') { Banks.openAdd(prefill); return; }
-    } else if (type === 'cards') {
-      if (typeof Cards !== 'undefined') { Cards.openAdd(prefill); return; }
-    } else if (type === 'docs') {
-      if (typeof DocsModule !== 'undefined') { DocsModule.openAdd(prefill); return; }
-    } else if (type === 'cash') {
-      if (typeof Cash !== 'undefined') { Cash.openAdd(prefill); return; }
-    }
-  },
-
-  delEntity(type, entityIdx) {
-    if (!window.__vos_confirm('Remove this entry?')) return;
-    const d = this.get();
-    const isHead = this._memberIdx === 'head';
-    const m = isHead ? d.head : d.members[this._memberIdx];
-    if (!m || !m[type]) return;
-    m[type].splice(entityIdx, 1);
-    this.save(d);
-    this.render();
-    Toast.show('Removed', 'success');
-  },
-
-  // ── Summary helpers (for dashboard / entity counts) ───────────────────────
-  totalNetWorthPKR() {
-    const d = this.get();
-    const all = [...(d.head ? [d.head] : []), ...(d.members || [])];
-    let total = 0;
-    all.forEach(m => {
-      (m.banks||[]).forEach(b => { total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(b.balance||0, b.currency||'PKR') : (b.balance||0); });
-      (m.cash||[]).forEach(c => { total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(c.amount||0, c.currency||'PKR') : (c.amount||0); });
-    });
-    return total;
-  },
-
-  memberCount() {
-    const d = this.get();
-    return (d.members||[]).length + (d.head ? 1 : 0);
   },
 };
 window.Family = Family;

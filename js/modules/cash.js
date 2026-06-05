@@ -26,10 +26,10 @@ const Cash = {
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
     el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}</div></div><div class="entry-acts"><button class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
   },
-  _familyCtx: null,
+  _pendingOwnerId: null,
   openAdd(prefill={}) {
-    Cash._familyCtx = prefill._familyCtx || null;
-    const title = prefill._ownerName ? `💵 Add Cash — ${escHtml(prefill._ownerName)}` : '💵 Add Cash';
+    Cash._pendingOwnerId = prefill.ownerId || null;
+    const title = (prefill.ownerName||prefill._ownerName) ? `💵 Add Cash — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '💵 Add Cash';
     Modal.open(title, this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);
     setTimeout(() => { const el = document.getElementById('cf-amt'); if (el) U.numInput(el, S.user.currency || 'PKR'); }, 60);
   },
@@ -46,13 +46,9 @@ const Cash = {
     const cur = document.getElementById('cf-cur').value;
     const notes = document.getElementById('cf-notes').value.trim();
     const prev = (S.cash || []).find(x => x.id === editId);
-    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, tags: U.getTags(), ownerId: 'self', country: (S.user && S.user.country) || 'PK', updatedAt: new Date().toISOString(), createdAt: editId ? prev?.createdAt : new Date().toISOString() };
-    if (!editId && Cash._familyCtx) {
-      const ctx = Cash._familyCtx; Cash._familyCtx = null;
-      const fd = Family.get(); const fm = ctx.isHead ? fd.head : fd.members[ctx.memberIdx];
-      if (fm) { if (!fm.cash) fm.cash = []; fm.cash.push({...item, ownerId: fm.id}); Family.save(fd); }
-      Activity.log('Added family cash', loc); Modal.close(); if (typeof Family !== 'undefined') Family.render(); Toast.show(`Added: ${loc}`, 'success'); return;
-    }
+    const _oid = editId ? (prev?.ownerId||'self') : (Cash._pendingOwnerId||'self');
+    if (!editId) Cash._pendingOwnerId = null;
+    const item = { id: editId || U.id(), location: loc, amount: amt, currency: cur, notes, tags: U.getTags(), ownerId: _oid, country: (S.user && S.user.country) || 'PK', updatedAt: new Date().toISOString(), createdAt: editId ? prev?.createdAt : new Date().toISOString() };
     if (!S.cash) S.cash = [];
     if (editId) S.cash = S.cash.map(x => x.id === editId ? item : x); else S.cash.push(item);
     Activity.log((editId ? 'Edited' : 'Added') + ' cash', loc);
