@@ -542,6 +542,7 @@ const ContextSwitcher = {
     Store.save();
     const renders = { 'finance-home': renderFinanceHome, 'banks': ()=>Banks.render(), 'cards': ()=>Cards.render(), 'dashboard': ()=>Dash.render() };
     if (renders[S.currentPage]) renders[S.currentPage]();
+    if (typeof resetScroll === 'function') resetScroll();
   },
   bar(currentPage) {
     const primary = S.user.country || 'PK';
