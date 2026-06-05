@@ -167,11 +167,12 @@ const Cards={
     if(v.length>=4){const l4El=document.getElementById('cf-l4');if(l4El)l4El.value=v.slice(-4);}
   },
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
-  openAdd(){
-    Modal.open('💳 Add Card',
-      `<div style="margin-bottom:12px"><button class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card with Camera</button></div>` + this.form(),
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`
-    );
+  _familyCtx: null,
+  openAdd(prefill={}){
+    Cards._familyCtx = prefill._familyCtx || null;
+    const title = prefill._ownerName ? `💳 Add Card — ${escHtml(prefill._ownerName)}` : '💳 Add Card';
+    const scanBtn = prefill._familyCtx ? '' : `<div style="margin-bottom:12px"><button class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card with Camera</button></div>`;
+    Modal.open(title, scanBtn + this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
   },
 
   // ── Camera scan (QR auto + manual capture for OCR) ────────────────────────
@@ -414,6 +415,12 @@ const Cards={
     const _linkedBankName=document.getElementById('cf-bank')?.value||document.getElementById('cf-mybank')?.value||'';
     const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:_l4v,cardNumber:fullNumRaw||'',expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,limit:parseFloat(document.getElementById('cf-limit')?.value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,jointAccount:document.getElementById('cf-joint')?.checked||false,jointWith:document.getElementById('cf-joint-person')?.value||'',issuer:name.split(' ')[0],linkedBankId:(_linkedBankName?(S.banks.find(b=>b.bankName===_linkedBankName)?.id||''):''),frontPhoto,backPhoto,ownerId:'self',owners:['self'],updatedAt:new Date().toISOString(),createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
+    if(!editId&&Cards._familyCtx){
+      const ctx=Cards._familyCtx;Cards._familyCtx=null;
+      const fd=Family.get();const fm=ctx.isHead?fd.head:fd.members[ctx.memberIdx];
+      if(fm){if(!fm.cards)fm.cards=[];fm.cards.push({...item,ownerId:fm.id});Family.save(fd);}
+      Activity.log('Added family card',name);Modal.close();if(typeof Family!=='undefined')Family.render();Toast.show(`Added: ${name}`,'success');return;
+    }
     if(editId){S.cards=S.cards.map(x=>x.id===editId?item:x);if(typeof Audit!=='undefined')Audit.log(item,'edited');}else{S.cards.push(item);if(typeof Audit!=='undefined')Audit.log(item,'created');}
     const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
     if(_cPhotoBytes>10*1024*1024)Toast.show('Storage is getting large. Consider removing old photos.','warning',5000);

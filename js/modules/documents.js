@@ -60,9 +60,12 @@ const DocsModule={
     const m={cnic:'nic',driving_licence:'driving_license',ntn:'tax',emirates_id:'nic',vaccination:'medical'};
     return m[t]||t;
   },
-  openAdd(){
+  _familyCtx: null,
+  openAdd(prefill={}){
+    DocsModule._familyCtx = prefill._familyCtx || null;
+    const title = prefill._ownerName ? `🪪 Add Document — ${escHtml(prefill._ownerName)}` : '🪪 Add Document';
     const smartNames=(SMART_DB.documents||[]).map(d=>`<option value="${d.name}">`).join('');
-    Modal.open('🪪 Add Document',`
+    Modal.open(title,`
     <div class="fg"><label class="fl">Document Type *</label>
       <datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${DOC_SCHEMAS[t].label}">`).join('')}${smartNames}</datalist>
       <input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="CNIC, Passport, Visa, Insurance..." oninput="DocsModule.onTypeChange(this.value)" autocomplete="off">
@@ -184,6 +187,12 @@ const DocsModule={
     const backPhoto=(backEl&&backEl.dataset&&backEl.dataset.photo)||prev&&prev.backPhoto||'';
     const data={id:editId||U.id(),docType,frontPhoto,backPhoto,ownerId:'self',country:(S.user&&S.user.country)||'PK',updatedAt:new Date().toISOString(),createdAt:editId?(S.documents||[]).find(x=>x.id===editId)?.createdAt:new Date().toISOString(),notes:g('notes'),tags:U.getTags()};
     schema.fields.forEach(f=>{data[f.id]=g(f.id);});
+    if(!editId&&DocsModule._familyCtx){
+      const ctx=DocsModule._familyCtx;DocsModule._familyCtx=null;
+      const fd=Family.get();const fm=ctx.isHead?fd.head:fd.members[ctx.memberIdx];
+      if(fm){if(!fm.docs)fm.docs=[];fm.docs.push({...data,ownerId:fm.id,docType:docType,type:docType,number:data[schema.fields.find(f=>f.id.includes('num'))?.id||'']||'',expiryDate:data[schema.fields.find(f=>f.id.includes('exp'))?.id||'']||''});Family.save(fd);}
+      Activity.log('Added family document',schema.label);Modal.close();if(typeof Family!=='undefined')Family.render();Toast.show(`Added: ${schema.label}`,'success');return;
+    }
     if(!S.documents)S.documents=[];
     if(editId)S.documents=S.documents.map(x=>x.id===editId?data:x);else S.documents.push(data);
     const _dPhotoBytes=(S.documents).reduce((a,d)=>a+(d.frontPhoto||'').length+(d.backPhoto||'').length,0)/1.37;

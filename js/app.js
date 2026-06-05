@@ -2690,6 +2690,13 @@ const R = {
   },
   goto(pg, force = false) {
     const prev = S.currentPage;
+    // Save scroll position for the page we're leaving
+    window._scrollCache = window._scrollCache || {};
+    if (prev && prev !== pg) {
+      const prevEl = document.getElementById('pg-' + prev);
+      const prevPb = prevEl?.querySelector('.pb');
+      if (prevPb) window._scrollCache[prev] = prevPb.scrollTop;
+    }
     S.currentPage = pg;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
     const el = document.getElementById('pg-' + pg);
@@ -2702,7 +2709,7 @@ const R = {
         el.style.opacity = '1';
         el.style.transform = 'none';
         const pb = el.querySelector('.pb');
-        if (pb) pb.scrollTop = 0;
+        if (pb) pb.scrollTop = window._scrollCache?.[pg] || 0;
       });
     }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
@@ -2789,6 +2796,14 @@ const R = {
     if (S._clockTimer) clearInterval(S._clockTimer);
     S._clockTimer = setInterval(upd, 10000);
   }
+};
+
+window.resetScroll = function(pageId) {
+  const pid = pageId || (typeof S !== 'undefined' ? S.currentPage : null);
+  if (window._scrollCache && pid) window._scrollCache[pid] = 0;
+  const el = pid ? document.getElementById('pg-' + pid) : null;
+  const pb = el?.querySelector('.pb');
+  if (pb) pb.scrollTop = 0;
 };
 
 // ===================== SETTINGS — FORGOT PIN =====================

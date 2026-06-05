@@ -1,4 +1,4 @@
-const CACHE = 'vaultos-v10';
+const CACHE = 'vaultos-v11';
 const ASSETS = [
   '/',
   '/index.html',
@@ -67,6 +67,6 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('/index.html')))
   );
 });

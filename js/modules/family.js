@@ -341,125 +341,18 @@ const Family = {
   // ── Entity add/delete (banks, cards, docs, cash) ──────────────────────────
   addEntity(type) {
     const m = this._member();
+    const ctx = { memberIdx: this._memberIdx, isHead: this._memberIdx === 'head' };
+    const prefill = { _ownerName: m.name, _familyCtx: ctx };
 
     if (type === 'banks') {
-      Modal.open('🏦 Add Bank — ' + escHtml(m.name),
-        `<div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="fb-name" placeholder="HBL, Meezan, Barclays..."></div>
-          <div class="fr">
-            <div class="fg"><label class="fl">Account Type</label><datalist id="fbTypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Islamic</option></datalist><input class="inp" id="fb-type" list="fbTypeDL" placeholder="Savings, Current..."></div>
-            <div class="fg"><label class="fl">Currency</label><select class="inp" id="fb-cur">${U.currencies()}</select></div>
-          </div>
-          <div class="fr">
-            <div class="fg"><label class="fl">Balance</label><input class="inp" id="fb-bal" type="number" placeholder="0"></div>
-            <div class="fg"><label class="fl">Country</label><select class="inp" id="fb-cc">${U.countries()}</select></div>
-          </div>
-          <div class="fg"><label class="fl">IBAN / Account No.</label><input class="inp" id="fb-iban" placeholder="IBAN or account number"></div>
-        </div>`,
-        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-        `<button class="btn btn-p" onclick="Family._saveEntity('banks')">Save</button>`
-      );
+      if (typeof Banks !== 'undefined') { Banks.openAdd(prefill); return; }
     } else if (type === 'cards') {
-      Modal.open('💳 Add Card — ' + escHtml(m.name),
-        `<div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fg"><label class="fl">Card Name *</label><input class="inp" id="fc-name" placeholder="Meezan Debit, Barclays Visa..."></div>
-          <div class="fr">
-            <div class="fg"><label class="fl">Network</label><datalist id="fcNetDL"><option>Visa</option><option>Mastercard</option><option>Amex</option><option>UnionPay</option></datalist><input class="inp" id="fc-net" list="fcNetDL" placeholder="Visa, Mastercard..."></div>
-            <div class="fg"><label class="fl">Last 4 digits</label><input class="inp" id="fc-l4" type="text" inputmode="numeric" maxlength="4" placeholder="1234"></div>
-          </div>
-          <div class="fr">
-            <div class="fg"><label class="fl">Expiry</label><input class="inp" id="fc-exp" placeholder="MM/YY"></div>
-            <div class="fg"><label class="fl">Type</label><datalist id="fcTypeDL"><option>Debit</option><option>Credit</option><option>Prepaid</option></datalist><input class="inp" id="fc-type" list="fcTypeDL" placeholder="Debit, Credit..."></div>
-          </div>
-        </div>`,
-        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-        `<button class="btn btn-p" onclick="Family._saveEntity('cards')">Save</button>`
-      );
+      if (typeof Cards !== 'undefined') { Cards.openAdd(prefill); return; }
     } else if (type === 'docs') {
-      Modal.open('🪪 Add Document — ' + escHtml(m.name),
-        `<div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fg"><label class="fl">Document Type *</label><datalist id="fdTypeDL"><option>Passport</option><option>National ID (CNIC)</option><option>Driving Licence</option><option>Birth Certificate</option><option>Visa</option><option>Residence Permit</option></datalist><input class="inp" id="fd-type" list="fdTypeDL" placeholder="Passport, CNIC..."></div>
-          <div class="fr">
-            <div class="fg"><label class="fl">Document Number</label><input class="inp" id="fd-num" placeholder="AB1234567"></div>
-            <div class="fg"><label class="fl">Expiry Date</label><input class="inp" id="fd-exp" type="date"></div>
-          </div>
-          <div class="fg"><label class="fl">Issued By / Country</label><input class="inp" id="fd-issued" placeholder="Pakistan, UK..."></div>
-        </div>`,
-        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-        `<button class="btn btn-p" onclick="Family._saveEntity('docs')">Save</button>`
-      );
+      if (typeof DocsModule !== 'undefined') { DocsModule.openAdd(prefill); return; }
     } else if (type === 'cash') {
-      Modal.open('💵 Add Cash — ' + escHtml(m.name),
-        `<div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fr">
-            <div class="fg"><label class="fl">Amount *</label><input class="inp" id="fca-amt" type="number" placeholder="0"></div>
-            <div class="fg"><label class="fl">Currency</label><select class="inp" id="fca-cur">${U.currencies()}</select></div>
-          </div>
-          <div class="fg"><label class="fl">Location</label><input class="inp" id="fca-loc" placeholder="Home, Wallet, Safe..."></div>
-        </div>`,
-        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-        `<button class="btn btn-p" onclick="Family._saveEntity('cash')">Save</button>`
-      );
+      if (typeof Cash !== 'undefined') { Cash.openAdd(prefill); return; }
     }
-  },
-
-  _saveEntity(type) {
-    const d = this.get();
-    const isHead = this._memberIdx === 'head';
-    const m = isHead ? d.head : d.members[this._memberIdx];
-    if (!m) return;
-    if (!m[type]) m[type] = [];
-    const now = new Date().toISOString();
-    const mid = m.id || String(this._memberIdx);
-    const country = (typeof S !== 'undefined' && S.user?.country) || 'PK';
-
-    let entity = { id: U.id(), ownerId: mid, country, tags: [], createdAt: now, updatedAt: now };
-
-    if (type === 'banks') {
-      const name = (document.getElementById('fb-name')?.value || '').trim();
-      if (!name) { Toast.show('Bank name required', 'warning'); return; }
-      entity = { ...entity,
-        bankName: name,
-        accountType: document.getElementById('fb-type')?.value?.trim() || '',
-        currency: document.getElementById('fb-cur')?.value || 'PKR',
-        balance: parseFloat(document.getElementById('fb-bal')?.value) || 0,
-        country: document.getElementById('fb-cc')?.value || country,
-        iban: document.getElementById('fb-iban')?.value?.trim() || '',
-      };
-    } else if (type === 'cards') {
-      const name = (document.getElementById('fc-name')?.value || '').trim();
-      if (!name) { Toast.show('Card name required', 'warning'); return; }
-      entity = { ...entity,
-        cardName: name,
-        network: document.getElementById('fc-net')?.value?.trim() || '',
-        last4: document.getElementById('fc-l4')?.value?.trim() || '',
-        expiry: document.getElementById('fc-exp')?.value?.trim() || '',
-        cardType: document.getElementById('fc-type')?.value?.trim() || '',
-      };
-    } else if (type === 'docs') {
-      const docType = (document.getElementById('fd-type')?.value || '').trim();
-      if (!docType) { Toast.show('Document type required', 'warning'); return; }
-      entity = { ...entity,
-        docType,
-        type: docType,
-        number: document.getElementById('fd-num')?.value?.trim() || '',
-        expiryDate: document.getElementById('fd-exp')?.value || '',
-        issuedBy: document.getElementById('fd-issued')?.value?.trim() || '',
-      };
-    } else if (type === 'cash') {
-      const amt = parseFloat(document.getElementById('fca-amt')?.value) || 0;
-      entity = { ...entity,
-        amount: amt,
-        currency: document.getElementById('fca-cur')?.value || 'PKR',
-        location: document.getElementById('fca-loc')?.value?.trim() || 'Cash',
-      };
-    }
-
-    m[type].push(entity);
-    this.save(d);
-    Modal.close();
-    this.render();
-    Toast.show('Saved', 'success');
   },
 
   delEntity(type, entityIdx) {
