@@ -243,9 +243,22 @@ Rules:
         S.investments.push({ id, investmentName: d.investmentName||'', type: d.type||'Stocks', currentValue: parseFloat(d.currentValue)||0, amountInvested: parseFloat(d.currentValue)||0, currency: d.currency||'PKR', broker: d.broker||'', notes: d.notes||'', createdAt: now });
         count++;
       } else if (item.type === 'gold') {
-        const goldItems = JSON.parse(localStorage.getItem('vo_gold') || '[]');
-        goldItems.push({ label: d.label||'', metal: d.metal||'gold', weight: parseFloat(d.weight)||0, unit: d.unit||'g', useManualPrice: false, pricePerUnit: 0, notes: d.notes||'', updatedAt: now });
-        localStorage.setItem('vo_gold', JSON.stringify(goldItems));
+        S.assets = S.assets || [];
+        S.assets.push({
+          id: 'ast_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+          assetType: 'precious_metals',
+          name: d.label || ((d.metal || 'Gold') + (d.weight ? ' ' + d.weight + (d.unit||'g') : '')),
+          metalType: d.metal || 'Gold',
+          weight: parseFloat(d.weight)||0,
+          unit: d.unit || 'g',
+          purity: d.purity || '24K',
+          purchasePrice: parseFloat(d.purchasePrice)||0,
+          currency: d.currency || (S.user && S.user.currency) || 'PKR',
+          country: d.country || (S.user && S.user.country) || 'PK',
+          ownerId: 'self',
+          createdAt: now,
+          updatedAt: now,
+        });
         count++;
       } else if (item.type === 'bc') {
         if (!S.bc) S.bc = [];

@@ -89,8 +89,11 @@ const Dash={
       return sym + v.toLocaleString();
     };
 
-    const invPKR = S.investments.reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
-    const asPKR = (S.assets||[]).reduce((a,x) => {
+    const activeCtx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
+    const ctxFilter = arr => (activeCtx === 'ALL' || !activeCtx) ? (arr||[]) : (typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]));
+
+    const invPKR = ctxFilter(S.investments).reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
+    const asPKR = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
         let gr=x.weight||0; const un=x.unit||x.weightUnit||'g';
         if(un==='tola')gr*=11.6638; else if(un==='oz'||un==='troy oz')gr*=31.1035; else if(un==='kg')gr*=1000;
@@ -100,13 +103,13 @@ const Dash={
       }
       return a + toB(x.currentValue||0, x.currency||cur);
     }, 0);
-    const cashPKR = S.cash.reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
-    const vehPKR = 0; // vehicles now in S.assets via schema v10 migration
-    const goldPKR = 0; // precious metals now in S.assets via schema v10 migration
-    const debtPKR = S.loans.filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
+    const cashPKR = ctxFilter(S.cash).reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
+    const vehPKR = 0;
+    const goldPKR = 0;
+    const debtPKR = ctxFilter(S.loans).filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
     const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
     const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
-    const bankPKR = (S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
+    const bankPKR = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
     const nwPKR = invPKR + asPKR + cashPKR + bcPKR + bondsPKR - debtPKR;
 
     const hist = S.user.nwHistory || [];
@@ -199,7 +202,7 @@ const Dash={
       : '';
     const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">Net Worth</div>' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + activeCtx : 'Net Worth') + '</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
       (nwChange !== 0 ? '<div style="font-size:12px;color:'+(nwChange>=0?'var(--ok)':'var(--err)')+';margin-top:4px">'+nwChangeStr+' from last record</div>' : '') +
       sparkline +
@@ -216,6 +219,53 @@ const Dash={
         '<div style="font-size:18px;color:var(--text3)">›</div>' +
         '</div></div>'
       : '';
+
+    const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
+    const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
+    const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
+    const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
+      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">💰 Money</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">' +
+      (S.modules.banks !== false ? '<div onclick="R.goto(\'banks\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--accent)" class="sens">' + fmt(bankTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Banks</div></div>' : '') +
+      (S.modules.investments !== false ? '<div onclick="R.goto(\'investments\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--ok)" class="sens">' + fmt(invTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Investments</div></div>' : '') +
+      (S.modules.cash !== false ? '<div onclick="R.goto(\'cash\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--warn)" class="sens">' + fmt(cashTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Cash</div></div>' : '') +
+      '</div></div>' : '';
+
+    const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
+      if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
+        let gr=x.weight||0; const un=x.unit||x.weightUnit||'g';
+        if(un==='tola')gr*=11.6638; else if(un==='oz'||un==='troy oz')gr*=31.1035; else if(un==='kg')gr*=1000;
+        const m=(x.metal||x.metalType||'gold').toLowerCase();
+        const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');
+        return a+gr*ppg;
+      }
+      return a + toB(x.currentValue||x.purchasePrice||0, x.currency||cur);
+    }, 0);
+    const assetCount = ctxFilter(S.assets||[]).length;
+    const assetSum = assetCount > 0 ?
+      '<div onclick="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
+      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px">🏠 Assets</div>' +
+      '<div style="font-size:22px;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
+      '<div style="text-align:right"><div style="font-size:28px;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
+      '<div style="font-size:10px;color:var(--text3)">items</div></div></div>' : '';
+
+    const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
+    const _reminders = (S.reminders || []).filter(r => !r.done).sort((a,b) => new Date(a.dueDate||0) - new Date(b.dueDate||0)).slice(0, 2);
+    const _allActions = [..._alerts.map(a => ({...a, _type:'alert'})), ..._reminders.map(r => ({...r, _type:'reminder'}))].slice(0, 4);
+    const upcomingActions = _allActions.length ?
+      '<div style="margin:0 16px 16px">' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">⏰ Upcoming</div>' +
+      _allActions.map((a,i) => {
+        const daysLeft = a.dueDate ? Math.ceil((new Date(a.dueDate) - new Date()) / 86400000) : null;
+        const urgency = daysLeft !== null && daysLeft <= 7 ? 'var(--err)' : daysLeft !== null && daysLeft <= 30 ? 'var(--warn)' : 'var(--text3)';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;' + (i < _allActions.length-1 ? 'border-bottom:1px solid var(--border)' : '') + '">' +
+          '<div style="font-size:20px">' + (a._type === 'alert' ? '🔔' : '📌') + '</div>' +
+          '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">' + (a.title||a.name||'Reminder').replace(/</g,'&lt;') + '</div>' +
+          (daysLeft !== null ? '<div style="font-size:11px;color:' + urgency + '">' + (daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Today' : daysLeft + ' days left') + '</div>' : '') +
+          '</div></div>';
+      }).join('') +
+      '</div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (S.user?.activeCountry && S.user.activeCountry!=='ALL') ? S.user.activeCountry : '🌐';
@@ -238,6 +288,12 @@ const Dash={
     ${breakdownHtml}
 
     ${familyWidget}
+
+    ${moneySum}
+
+    ${assetSum}
+
+    ${upcomingActions}
 
     ${quickStats}
 
@@ -797,7 +853,7 @@ const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'&&Crypto.available()){
       const pw=S.pin+'_vos4_'+S.user.name;
-      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
+      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
       S.user.lastBackup=new Date().toISOString();Store.save();
       Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
         const fp = btoa(String.fromCharCode(...new Uint8Array(
@@ -810,7 +866,7 @@ const ExIm={
       }).catch(()=>{this._exportPlain(data);});
       return;
     }
-    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
+    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};
     S.user.lastBackup=new Date().toISOString();Store.save();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
@@ -821,7 +877,7 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultOS-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet};S.user.lastBackup=new Date().toISOString();Store.save();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultOS-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
@@ -851,7 +907,7 @@ const ExIm={
             if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
-              ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
+              ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
               Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
             }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}
@@ -872,7 +928,7 @@ const ExIm={
         if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file — is this a VaultOS backup?','error');return;}
         const counts=[`${(data.banks||[]).length} banks`,`${(data.cards||[]).length} cards`,`${(data.emails||[]).length} emails`,`${(data.gadgets||[]).length} devices`,`${(data.expenses||[]).length} expenses`].join(', ');
         if(!window.__vos_confirm(`Import vault backup?\n\n${counts}\n\nThis will MERGE with your existing data (no deletions).`))return;
-        ['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
+        ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
         if(data.modules)Object.assign(S.modules,data.modules);
         Store.save();buildNav();Activity.log('Vault imported from file');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
       }catch(err){Toast.show('Failed to read file: '+err.message,'error');}
