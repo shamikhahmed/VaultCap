@@ -110,6 +110,7 @@ const GlobalSearch = {
     this._TARGETS.forEach(t => {
       const filterKey = this._filterKeyFor(t.label);
       if (f !== 'all' && f !== filterKey) return;
+      if (typeof S !== 'undefined' && S.modules && S.modules[t.key] === false) return;
       (S[t.key] || []).forEach(item => {
         const hit = !ql || t.fields.some(field => this._match(item[field], ql));
         if (!hit) return;

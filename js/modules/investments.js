@@ -4,6 +4,7 @@ const Inv={
     const chips=[['all','All'],['Stocks','📊 Stocks'],['Mutual Funds','📁 Funds'],['Bonds','📜 Bonds'],['Crypto','₿ Crypto'],['Fixed Deposit','🏛️ FD'],['fav','⭐']];
     const ci=document.getElementById('invChips');if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.invF='${v}';Inv.render()">${l}</div>`).join('');
     let data=S.investments.filter(i=>{if(f==='fav'&&!i.favorite)return false;if(!['all','fav'].includes(f)&&i.type!==f)return false;return !q||JSON.stringify(i).toLowerCase().includes(q);});
+    if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(i=>(i.country||'').toUpperCase()===ContextSwitcher.get());}
     if(sort==='name')data.sort((a,b)=>(a.investmentName||a.broker||'').localeCompare(b.investmentName||b.broker||''));
     else if(sort==='value')data.sort((a,b)=>(b.currentValue||0)-(a.currentValue||0));
     else if(sort==='pnl')data.sort((a,b)=>((b.currentValue||0)-(b.amountInvested||0))-((a.currentValue||0)-(a.amountInvested||0)));

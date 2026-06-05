@@ -56,7 +56,8 @@ const Assets = {
     ];
     const ci = document.getElementById('aChips');
     if (ci) ci.innerHTML = chips.map(([v,l]) => `<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()">${l}</div>`).join('');
-    const data = (S.assets||[]).filter(a => f==='all' || a.assetType===f || (f==='precious_metals' && a.assetType==='precious'));
+    let data = (S.assets||[]).filter(a => f==='all' || a.assetType===f || (f==='precious_metals' && a.assetType==='precious'));
+    if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(a=>(a.country||'').toUpperCase()===ContextSwitcher.get());}
     const el = document.getElementById('aItems'); if (!el) return;
     if (!data.length) {
       const typeInfo = ASSET_TYPES_MAP[f] || ASSET_TYPES_MAP.other;

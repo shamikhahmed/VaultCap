@@ -41,6 +41,7 @@ const Cards={
       if(f==='expiring'){const s=U.expSt(c.expiry);if(s==='ok')return false;}
       return !q||_fuzzC(c.cardName,q)||_fuzzC(c.last4,q)||_fuzzC(c.network,q)||_fuzzC(c.cardType,q)||_fuzzC(c.linkedBank,q)||_fuzzC(c.notes,q)||(c.tags||[]).some(t=>_fuzzC(t,q));
     });
+    if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(c=>(c.country||'').toUpperCase()===ContextSwitcher.get());}
     if(sort==='name')data.sort((a,b)=>a.cardName.localeCompare(b.cardName));
     else if(sort==='expiry')data.sort((a,b)=>(a.expiry||'99/99').localeCompare(b.expiry||'99/99'));
     else if(sort==='network')data.sort((a,b)=>(a.network||'').localeCompare(b.network||''));
