@@ -31,6 +31,7 @@ const ALL_MODULES=[
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
   {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
+  {id:'family',        n:'Family Vault',    ic:'👨‍👩‍👧‍👦', desc:'Family financial overview',                    group:'Finance'},
   {id:'emergency',     n:'Emergency',       ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
   {id:'recovery-center',n:'Recovery Center',ic:'🛡️', desc:'Backup health, restore guide, verification',  group:'Tools'},
   {id:'help',          n:'Help & Guide',    ic:'📖', desc:'How to use VaultOS',                           group:'Tools'},
@@ -2130,7 +2131,7 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true },
+  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true, family:true },
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
   family: { head: null, members: [] },
   emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
@@ -3021,13 +3022,13 @@ const PIN = {
 // ===================== ONBOARDING =====================
 let obStep = 1;
 let obCountries = [];
-let obCats = { money: true, assets: false, identity: true, family: false };
+let obCats = { money: true, assets: false, identity: true, family: true };
 
 const OB = {
   init() {
     obStep = 1;
     obCountries = S.user && S.user.country ? [S.user.country] : [];
-    obCats = { money: true, assets: false, identity: true, family: false };
+    obCats = { money: true, assets: false, identity: true, family: true };
     document.getElementById('pgOnboard').style.display = 'flex';
     document.getElementById('pgHome').style.display = 'none';
     this.renderProg();
@@ -4158,9 +4159,6 @@ function buildNav() {
       `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span>${m.n}</div>`
     ).join('');
   });
-  if (document.getElementById('pg-family')) {
-    sbHTML += `<div class="ni${S.currentPage === 'family' ? ' on' : ''}" data-pg="family" onclick="R.goto('family')"><span class="ni-ic">👨‍👩‍👧‍👦</span>Family</div>`;
-  }
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
