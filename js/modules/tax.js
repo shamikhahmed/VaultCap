@@ -239,7 +239,7 @@ const Tax = {
       else if (S.user.country === 'AE') this._country = 'AE';
       else if (S.user.country === 'PK') this._country = 'PK';
     }
-    const saved = JSON.parse(localStorage.getItem('vo_tax_calc')||'{}');
+    const saved = typeof VaultMeta !== 'undefined' ? VaultMeta.get('taxCalc') : {};
     if(saved.country) this._country = saved.country;
     if(saved.taxYear) this._taxYear = saved.taxYear;
     const cc = this._country;
@@ -462,7 +462,7 @@ const Tax = {
       const tax = income * filing.flatRate;
       const takeHome = income - tax;
       const saved = {country:cc, filing:this._filing, income};
-      localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+      VaultMeta.set('taxCalc', saved);
       const res = document.getElementById('tax-result');
       if(!res) return;
       res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
@@ -507,7 +507,7 @@ const Tax = {
     const yearLabel = filing.taxYears ? ` (${this._taxYear})` : '';
 
     const saved = {country:cc, filing:this._filing, income, taxYear:this._taxYear};
-    localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+    VaultMeta.set('taxCalc', saved);
 
     const res = document.getElementById('tax-result');
     if(!res) return;
@@ -592,7 +592,7 @@ const Tax = {
     const tax = taxableGain * rate;
     const fmt = n => '£'+Math.round(n).toLocaleString();
     const saved = {country:'GB', filing:'cgt', income:gain, cgtBand:band, cgtType:assetType};
-    localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+    VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
@@ -626,7 +626,7 @@ const Tax = {
     const fmt = n => '£'+Math.round(n).toLocaleString();
     const rateLabels = {basic:'Basic (8.75%)', higher:'Higher (33.75%)', additional:'Additional (39.35%)'};
     const saved = {country:'GB', filing:'dividend', income, divBand:band};
-    localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+    VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
@@ -662,7 +662,7 @@ const Tax = {
     const tax = taxableEstate * filing.rate;
     const fmt = n => '£'+Math.round(n).toLocaleString();
     const saved = {country:'GB', filing:'iht', ihtEstate:estate, ihtHome:homeVal, ihtSpouse:spouse?'yes':'no'};
-    localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+    VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
@@ -708,7 +708,7 @@ const Tax = {
     const surcharge = additional ? price * filing.additionalPropertySurcharge : 0;
     const total = tax + surcharge;
     const saved = {country:'GB', filing:'stampduty', sdltPrice:price, sdltFtb:ftb?'yes':'no', sdltAdd:additional?'yes':'no'};
-    localStorage.setItem('vo_tax_calc', JSON.stringify(saved));
+    VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">

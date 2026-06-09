@@ -483,154 +483,10 @@ const Dash={
 
 // ===================== SETTINGS =====================
 const Settings={
-  render(){
-    const b=document.getElementById('settBody');if(!b)return;
-    const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
-    b.innerHTML=`
-    <div style="position:sticky;top:0;z-index:20;background:var(--bg2);padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-      ${[['ss-profile','👤 Profile'],['ss-modules','🧩 Modules'],['ss-look','🎨 Look'],['ss-security','🔒 Security'],['ss-backup','💾 Backup']].map(([id,label])=>`<button onclick="document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})" style="flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--glass);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap">${label}</button>`).join('')}
-    </div>
-    <div class="set-sec" id="ss-profile"><div class="set-title">👤 Profile</div><div class="set-card">
-      <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">${(()=>{const n=S.user.name||'User';const initials=n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);const hash=n.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const colors=['#0080ff','#10b981','#d946ef','#f59e0b','#ef4444','#6935d3','#ff3464','#00b67a'];const bg=colors[hash%colors.length];return `<div style="width:48px;height:48px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px">${initials}</div>`;})()}<div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to add email'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
-      </div>
-      <div class="si" onclick="Settings.editCountries()" style="cursor:pointer">
-        <div class="sil"><div class="name">Countries & Regions</div><div class="desc">${S.user.country ? U.flag(S.user.country)+' '+U.cname(S.user.country) : 'Not set'}${(S.user.secondaryCountries||[]).length ? ' · +'+(S.user.secondaryCountries||[]).length+' more' : ''}</div></div><span style="color:var(--text3)">›</span>
-      </div>
-      <div class="si" onclick="Dash.toggleCurrency()" style="cursor:pointer">
-        <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span style="color:var(--text3)">›</span>
-      </div>
-      <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
-      <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
-    </div></div>
-
-    <div class="set-sec" id="ss-modules"><div class="set-title">🧩 Active Modules</div><div class="set-card">
-      ${ALL_MODULES.map(m=>{const isCore=['banks','cards','documents','alerts','reminders','recovery-center'].includes(m.id);return `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}${isCore?'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-left:6px;opacity:.7">core</span>':''}</div><div class="desc">${m.desc}</div></div></div>${isCore?'<span style="font-size:11px;color:var(--text3)">Always on</span>':`<label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label>`}</div>`;}).join('')}
-      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Changes take effect after toggling — hidden modules stay in data but don't appear in nav</div></div></div>
-    </div></div>
-
-    <div class="set-sec"><div class="set-title">🗂️ Tab Customisation</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Choose which Finance tiles appear on the Finance home screen.</div></div></div>
-      ${(()=>{
-        const finMods=[{id:'banks',label:'Banks'},{id:'cards',label:'Cards'},{id:'cash',label:'Cash'},{id:'investments',label:'Investments'},{id:'loans',label:'Loans'},{id:'credit',label:'Credit Score'},{id:'zakat',label:'Zakat'},{id:'tax',label:'Tax Calculator'},{id:'currency',label:'Currency'},{id:'gold',label:'Precious Metals'}];
-        const prefs=getTabPrefs();
-        const hidden=prefs.hiddenFinance||[];
-        return finMods.map(m=>`<div class="si"><div class="sil"><div class="name">${m.label}</div><div class="desc">Finance group</div></div><label class="tog"><input type="checkbox" ${!hidden.includes(m.id)?'checked':''} onchange="(function(id,checked){const p=getTabPrefs();if(!p.hiddenFinance)p.hiddenFinance=[];if(checked){p.hiddenFinance=p.hiddenFinance.filter(x=>x!==id)}else{if(!p.hiddenFinance.includes(id))p.hiddenFinance.push(id)}saveTabPrefs(p);if(window.Toast)Toast.show(checked?id+' shown':id+' hidden','success',1500);})('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('');
-      })()}
-      <div style="height:1px;background:var(--border);margin:4px 14px"></div>
-      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Family member tab preferences</div></div></div>
-      ${(()=>{
-        const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');
-        const hidFam=fp.hiddenTabs||[];
-        return [['docs','Documents'],['banks','Banks'],['cards','Cards'],['cash','Cash'],['investments','Investments'],['notes','Notes']].map(([id,label])=>`<div class="si"><div class="sil"><div class="name">${label}</div><div class="desc">Family member tabs</div></div><label class="tog"><input type="checkbox" ${!hidFam.includes(id)?'checked':''} onchange="(function(id,checked){const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');if(!fp.hiddenTabs)fp.hiddenTabs=[];if(checked){fp.hiddenTabs=fp.hiddenTabs.filter(x=>x!==id)}else{if(!fp.hiddenTabs.includes(id))fp.hiddenTabs.push(id)}localStorage.setItem('vo_family_tab_prefs',JSON.stringify(fp));if(window.Toast)Toast.show(checked?id+' tab shown':id+' tab hidden','success',1500);})('${id}',this.checked)"><span class="ts"></span></label></div>`).join('');
-      })()}
-    </div></div>
-
-    <div class="set-sec" id="ss-look"><div class="set-title">🎨 Appearance</div><div class="set-card">
-      <div style="padding:14px 16px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">🌙 Dark</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-          ${THEMES.filter(t=>t.g==='dark').map(t=>`
-            <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
-              <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px">
-                <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
-                <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.4"></div>
-              </div>
-              <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
-                <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
-              </div>
-            </div>`).join('')}
-        </div>
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">☀️ Light</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          ${THEMES.filter(t=>t.g==='light').map(t=>`
-            <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
-              <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:1px solid rgba(0,0,0,.08)">
-                <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
-                <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.5"></div>
-              </div>
-              <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
-                <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
-              </div>
-            </div>`).join('')}
-        </div>
-      </div>
-    </div></div>
-
-    <div class="set-sec" id="ss-security"><div class="set-title">🔒 Security</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
-      <div style="padding:14px">
-        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🗝️ Recovery Master Key</div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6">Your master key was shown once during vault setup. For security it cannot be displayed again. Store it offline — you need it if you forget your PIN.</div>
-        <div style="font-size:14px;font-weight:700;text-align:center;padding:16px;background:rgba(0,0,0,.25);border-radius:10px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
-          ${hasRecoveryKey?'✓ Recovery key configured':'⚠️ No recovery key on this device'}
-        </div>
-        <div id="mk-actions" style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings.useMasterKey()">🗝️ Recover with Key</button>
-        </div>
-      </div>
-      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
-      <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
-      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
-    </div></div>
-
-    <div class="set-sec"><div class="set-title">🔔 Notifications</div><div class="set-card">
-      <div class="si">
-        <div class="sil">
-          <div class="name">Browser Notifications</div>
-          <div class="desc">${'Notification' in window ? (Notification.permission === 'granted' ? '✓ Enabled — alerts for expiring docs, cards & loans' : Notification.permission === 'denied' ? '✗ Blocked — allow in browser settings' : 'Not yet enabled') : 'Not supported in this browser'}</div>
-        </div>
-        ${'Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'
-          ? '<button class="btn btn-p btn-sm" onclick="Reminders.requestPermission().then(granted=>{if(granted)Toast.show(\'Notifications enabled\',\'success\');else Toast.show(\'Blocked by browser\',\'warn\');Settings.render()})">Enable</button>'
-          : ''}
-      </div>
-      <div class="si"><div class="sil"><div class="name">What you'll be notified about</div><div class="desc">Documents expiring in 7 days · Cards expiring in 30 days · Loans due in 7 days · BC payments (3 days notice)</div></div></div>
-    </div></div>
-
-    <div class="set-sec"><div class="set-title">📥 Smart Import</div><div class="set-card">
-      <div class="si">
-        <div class="sil">
-          <div class="name">Offline pattern detection</div>
-          <div class="desc">Paste text from statements or notes — VaultOS extracts banks, cards, loans, and more. No AI, no API key, works globally.</div>
-        </div>
-        <button class="btn btn-g btn-sm" onclick="R.goto('ai-import')">Open →</button>
-      </div>
-    </div></div>
-
-    <div class="set-sec" id="ss-backup"><div class="set-title">💾 Backup & Export</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never backed up'}</div></div></div>
-      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">📤 Export Encrypted Vault (.vault)</button>
-        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">📄 Export as JSON (readable)</button>
-        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
-      </div>
-    </div></div>
-
-    <div class="set-sec"><div class="set-title">📊 Data Summary</div><div class="set-card">
-      ${[...(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity',S.activity.length,'📋']].map(([n,c,ic])=>`<div class="si"><div class="name">${ic} ${n}</div><div style="font-weight:700;color:var(--accent)">${c}</div></div>`).join('')}
-    </div></div>
-
-    <div class="set-sec"><div class="set-title">⚙️ Data Management</div><div class="set-card">
-      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-g btn-full btn-sm" onclick="S.activity=[];Store.save();Settings.render();Toast.show('Activity cleared')">🗑️ Clear Activity Log</button>
-        <button class="btn btn-s btn-full btn-sm" onclick="Settings.loadDemo()">🎮 Load Demo Data (fictional)</button>
-        <button class="btn btn-d btn-full btn-sm" onclick="Settings.resetVault()">⚠️ Reset Entire Vault</button>
-      </div>
-    </div></div>
-
-    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
-      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','Client-side (localStorage)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
-      <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
-      <div class="si" style="cursor:pointer" onclick="window.open('widget.html','_blank')"><div class="sil"><div class="name">📊 Home Screen Widget</div><div class="desc">View net worth without opening the app</div></div><span style="color:var(--accent)">›</span></div>
-      <div class="si"><div class="name" style="font-size:11px;color:var(--text3);line-height:1.6">iPhone: Long-press home screen → + → VaultOS<br>Android: Long-press app icon → Widget</div></div>
-    </div></div>`;
+  refresh(){
+    if(typeof SettingsNav!=='undefined') SettingsNav.show(SettingsNav.current||'profile');
   },
+  render(){ this.refresh(); },
   toggleMod(id,v){
     S.modules[id]=v;Store.save();buildNav();
     const tp=getTabPrefs();tp.hiddenFinance=tp.hiddenFinance||[];
@@ -664,7 +520,7 @@ const Settings={
     S.user.currency=document.getElementById('pp-cur')?.value||S.user.currency;
     S.user.homeAddr=g('pp-home');S.user.workAddr=g('pp-work');
     if(typeof Family!=='undefined')Family.syncHeadFromProfile();
-    Store.save();Modal.close();this.render();buildNav();if(S.currentPage==='dashboard'&&typeof Dash!=='undefined')Dash.render();if(S.currentPage==='family'&&typeof Family!=='undefined')Family.render();Toast.show('Profile updated','success');
+    Store.save();Modal.close();Settings.refresh();buildNav();if(S.currentPage==='dashboard'&&typeof Dash!=='undefined')Dash.render();if(S.currentPage==='family'&&typeof Family!=='undefined')Family.render();Toast.show('Profile updated','success');
   },
   changePIN(){
     Modal.open('🔑 Change PIN',`
@@ -707,7 +563,7 @@ const Settings={
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">When someone enters this PIN, they see a convincing fake vault with realistic-looking data. Your real data stays hidden. Perfect for coercion or border device inspections.</p>
     <div class="fg"><label class="fl">Decoy PIN (6 digits, must differ from real PIN)</label><input class="inp" id="dp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="dp-err"></div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.render();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
@@ -716,7 +572,7 @@ const Settings={
     S.decoyPin=p;Store.save();
     // Persist decoy slot in VaultDB so it's recognised on next unlock
     VaultDB.saveDecoySlot(p,{_decoy:true}).catch(e=>console.warn('[VaultDB] decoy slot error:',e));
-    Modal.close();this.render();Toast.show('Decoy PIN set — entering it shows empty vault','success');
+    Modal.close();Settings.refresh();Toast.show('Decoy PIN set — entering it shows empty vault','success');
   },
   forgotPIN(){
     Modal.open('🔑 Forgot PIN',
@@ -781,11 +637,12 @@ const Settings={
     const isAE = (type === 'family');
     const cur = isPK ? 'PKR' : isAE ? 'AED' : 'GBP';
     localStorage.setItem('vo_currency', JSON.stringify({base:cur, rates:{USD:280,GBP:355,AED:76,EUR:300,PKR:1}}));
-    localStorage.setItem('vo_gold', JSON.stringify([
-      {id:'dg1',type:'gold',name:'22k Wedding Set',weight:40,unit:'g',pricePerUnit:18500,currency:'PKR',createdAt:new Date().toISOString()},
-      {id:'dg2',type:'gold',name:'Gold Coins',weight:2,unit:'tola',pricePerUnit:220000,currency:'PKR',createdAt:new Date().toISOString()},
-      {id:'dg3',type:'silver',name:'Silver Cutlery',weight:500,unit:'g',pricePerUnit:250,currency:'PKR',createdAt:new Date().toISOString()}
-    ]));
+    const demoGold = [
+      {id:'dg1',assetType:'precious_metals',metal:'gold',name:'22k Wedding Set',weight:40,unit:'g',createdAt:new Date().toISOString()},
+      {id:'dg2',assetType:'precious_metals',metal:'gold',name:'Gold Coins',weight:2,unit:'tola',createdAt:new Date().toISOString()},
+      {id:'dg3',assetType:'precious_metals',metal:'silver',name:'Silver Cutlery',weight:500,unit:'g',createdAt:new Date().toISOString()}
+    ];
+    demoGold.forEach(g => { if (!S.assets.find(a => a.id === g.id)) S.assets.push(g); });
     S.family = {
       head:{name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1970-05-15',phone:'+92 300 1234567',email:'ahmed@example.com',docs:[{type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},{type:'Passport',number:'AB1234567',expiry:'2029-06-15'}],banks:['HBL','Standard Chartered'],cards:[{name:'HBL Prestige Visa',last4:'4821'},{name:'SCB Platinum',last4:'3390'}],notes:'Head of household. Primary income earner.'},
       members:[
@@ -795,13 +652,15 @@ const Settings={
       ]
     };
     Store.save();
-    localStorage.setItem('vo_credit_score', JSON.stringify({country:'GB',entries:[
-      {id:'cs1',score:720,bureau:'Experian',date:'2024-01-15',notes:'After paying off credit card'},
-      {id:'cs2',score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
-      {id:'cs3',score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application check'}
-    ]}));
-    localStorage.setItem('vo_zakat_calc', JSON.stringify({'zk-cash':'850000','zk-gold-val':'740000','zk-silver-val':'125000','zk-investments':'200000','zk-receivable':'50000','zk-stock':'0','zk-debts':'100000','zk-expenses':'30000'}));
-    localStorage.setItem('vo_tax_calc', JSON.stringify({country:'PK',income:'3600000'}));
+    if (typeof VaultMeta !== 'undefined') {
+      VaultMeta.set('creditScore', {country:'GB',entries:[
+        {id:'cs1',score:720,bureau:'Experian',date:'2024-01-15',notes:'After paying off credit card'},
+        {id:'cs2',score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
+        {id:'cs3',score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application check'}
+      ]});
+      VaultMeta.set('zakatCalc', {'zk-cash':'850000','zk-gold-val':'740000','zk-silver-val':'125000','zk-investments':'200000','zk-receivable':'50000','zk-stock':'0','zk-debts':'100000','zk-expenses':'30000'});
+      VaultMeta.set('taxCalc', {country:'PK',income:'3600000'});
+    }
     Toast.show('Demo data loaded — explore all features!','success');
     setTimeout(()=>location.reload(),1500);
   },
@@ -827,9 +686,24 @@ const Settings={
 // ===================== EXPORT / IMPORT =====================
 const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
+    if(fmt==='vault'){
+      S.user.lastBackup=new Date().toISOString();
+      Store.save();
+      if(VaultDB.sessionKey){
+        VaultDB.exportEncrypted().then(()=>{
+          Activity.log('Exported','AES-256-GCM encrypted .vos');
+          Toast.show('Backup saved ✓','success',4000);
+        }).catch(()=>Toast.show('Export failed — try again after unlocking','error'));
+        return;
+      }
+      if(!S.pin){
+        ExIm._promptPinForExport();
+        return;
+      }
+    }
     if(fmt==='vault'&&Crypto.available()){
       const pw=S.pin+'_vos4_'+S.user.name;
-      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};
+      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
       S.user.lastBackup=new Date().toISOString();Store.save();
       Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
         const fp = btoa(String.fromCharCode(...new Uint8Array(
@@ -842,7 +716,7 @@ const ExIm={
       }).catch(()=>{this._exportPlain(data);});
       return;
     }
-    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};
+    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     S.user.lastBackup=new Date().toISOString();Store.save();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
@@ -853,12 +727,31 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultOS-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[]};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultOS-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
     return;},
-  _exportPlain(data,fmt){},
+  _promptPinForExport(){
+    Modal.open('📤 Export Backup',`
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to create an encrypted backup file.</p>
+      <div class="fg"><label class="fl">PIN</label><input class="inp" id="exp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
+      <div class="ferr" id="exp-pin-err"></div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="ExIm._doPinExport()">Export</button>`);
+  },
+  _doPinExport(){
+    const pin=document.getElementById('exp-pin')?.value||'';
+    if(!/^\d{6}$/.test(pin)){document.getElementById('exp-pin-err').textContent='Enter your 6-digit PIN';return;}
+    VaultDB.tryPin(pin).then(r=>{
+      if(!r){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
+      Modal.close();
+      ExIm.export('vault');
+    });
+  },
+  _exportPlain(data){
+    this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
+    Toast.show('Exported unencrypted JSON (crypto unavailable)','warn');
+  },
   dl(name,mime,content){const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);},
   share(){
     const data={ver:'3.0',exported:new Date().toISOString(),banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital};
@@ -885,6 +778,7 @@ const ExIm={
             try{
               ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
+              if(data.vaultMeta&&typeof VaultMeta!=='undefined'){VaultMeta._ensure();Object.keys(data.vaultMeta).forEach(k=>{if(data.vaultMeta[k]&&typeof data.vaultMeta[k]==='object')S.vaultMeta[k]={...S.vaultMeta[k],...data.vaultMeta[k]};});}
               Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
             }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}
           }catch(err){Toast.show('Failed: '+err.message,'error');}

@@ -111,11 +111,43 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
 @media (max-width: 768px) { .ph { padding-top: calc(env(safe-area-inset-top, 0px) + 10px); } }
 
 /* ─ Page body ─ */
-.pb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 32px; overscroll-behavior: contain; }
+.pb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 32px; overscroll-behavior: contain; min-height: 0; }
 .pb::-webkit-scrollbar { width: 0; }
-.main, .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); }
-@media (min-width: 769px) { .main, .pb { padding-bottom: 24px !important; } }
-.btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); }
+
+/* Bottom tab clearance — only when tabs visible */
+body:not(.hide-btabs) .main,
+body:not(.hide-btabs) .page.on > .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px); }
+body.hide-btabs .main,
+body.hide-btabs .page.on > .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
+@media (min-width: 769px) {
+  body .main, body .page.on > .pb { padding-bottom: 24px !important; }
+}
+
+.btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); flex-shrink: 0; }
+body.hide-btabs .btabs-spacer { display: none; height: 0; }
+
+/* Settings page chrome */
+.settings-chrome {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  z-index: 40;
+}
+.sett-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 6px;
+  padding: 8px 14px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.sett-tabs::-webkit-scrollbar { display: none; }
+
+/* Hide bottom nav on utility / full-screen modules */
+body.hide-btabs .btabs { display: none !important; }
+body.hide-btabs #fab { display: none !important; }
 
 /* ─ Bottom tabs ─ */
 .btabs {

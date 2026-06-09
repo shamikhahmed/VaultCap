@@ -225,9 +225,16 @@ const Reminders = {
 
     // Credit score — remind to check every 30 days
     try {
-      const cs = JSON.parse(localStorage.getItem('vo_credit_score') || '{}');
-      if (cs.lastChecked) {
-        const daysSince = Math.floor((Date.now() - new Date(cs.lastChecked).getTime()) / 86400000);
+      const cs = typeof VaultMeta !== 'undefined' ? VaultMeta.get('creditScore') : {};
+      let lastChecked = cs.lastChecked;
+      if (!lastChecked && Array.isArray(cs.entries) && cs.entries.length) {
+        lastChecked = [...cs.entries].sort((a, b) => new Date(b.date) - new Date(a.date))[0].date;
+      }
+      if (!lastChecked && Array.isArray(cs.history) && cs.history.length) {
+        lastChecked = [...cs.history].sort((a, b) => new Date(b.date) - new Date(a.date))[0].date;
+      }
+      if (lastChecked) {
+        const daysSince = Math.floor((Date.now() - new Date(lastChecked).getTime()) / 86400000);
         if (daysSince >= 30) {
           items.push({
             icon: '📊',

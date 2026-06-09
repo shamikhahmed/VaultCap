@@ -130,18 +130,16 @@ const GlobalSearch = {
       });
     });
 
-    // Gold (localStorage)
+    // Precious metals (S.assets)
     if (f === 'all' || f === 'asset') {
-      try {
-        const gi = JSON.parse(localStorage.getItem('vo_gold') || '[]');
-        gi.forEach((g, i) => {
-          const label = g.label || (g.metal === 'silver' ? 'Silver' : 'Gold');
-          const sub = (g.metal === 'silver' ? 'Silver' : 'Gold') + ' · ' + g.weight + ' ' + (g.unit || 'g');
-          if (!ql || this._match(label, ql) || this._match(sub, ql)) {
-            results.push({ _label: 'Asset', _icon: g.metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: 'gold_' + i, _valueStr: '' });
-          }
-        });
-      } catch(e) {}
+      (S.assets || []).filter(a => a.assetType === 'precious_metals' || a.assetType === 'precious').forEach(g => {
+        const metal = (g.metal || g.metalType || 'gold').toLowerCase();
+        const label = g.name || g.label || (metal === 'silver' ? 'Silver' : 'Gold');
+        const sub = (metal === 'silver' ? 'Silver' : 'Gold') + ' · ' + (g.weight || 0) + ' ' + (g.unit || g.weightUnit || 'g');
+        if (!ql || this._match(label, ql) || this._match(sub, ql)) {
+          results.push({ _label: 'Asset', _icon: metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: g.id, _valueStr: '' });
+        }
+      });
     }
 
     // Family members

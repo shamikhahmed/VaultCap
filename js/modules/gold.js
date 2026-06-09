@@ -18,26 +18,22 @@ const Gold = {
     return typeof Assets !== 'undefined' ? Assets.byType('precious_metals') : [];
   },
   getLegacy() {
-    try { return JSON.parse(localStorage.getItem('vo_gold') || '[]'); } catch(e) { return []; }
+    return this.get();
   },
   totalPKR() {
-    if (typeof Assets !== 'undefined') {
-      return Assets.byType('precious_metals').reduce((s, a) => s + Assets._valueInPKR(a), 0);
-    }
-    // Fallback: read from localStorage if Assets not ready
-    try {
-      const items = JSON.parse(localStorage.getItem('vo_gold') || '[]');
-      return items.reduce((a, g) => {
-        let ppg = typeof RatesEngine !== 'undefined'
-          ? (g.metal === 'silver' ? RatesEngine.silverInCurrency('PKR', 'gram') : RatesEngine.goldInCurrency('PKR', 'gram'))
-          : 0;
-        let grams = g.weight || 0;
-        if (g.unit === 'tola') grams *= 11.6638;
-        else if (g.unit === 'oz') grams *= 31.1035;
-        else if (g.unit === 'kg') grams *= 1000;
-        return a + grams * ppg;
-      }, 0);
-    } catch(e) { return 0; }
+    const items = typeof Assets !== 'undefined' ? Assets.byType('precious_metals') : this.get();
+    return items.reduce((s, a) => {
+      if (typeof Assets !== 'undefined') return s + Assets._valueInPKR(a);
+      let ppg = typeof RatesEngine !== 'undefined'
+        ? ((a.metal || a.metalType || 'gold') === 'silver' ? RatesEngine.silverInCurrency('PKR', 'gram') : RatesEngine.goldInCurrency('PKR', 'gram'))
+        : 0;
+      let grams = a.weight || 0;
+      const unit = a.unit || a.weightUnit || 'g';
+      if (unit === 'tola') grams *= 11.6638;
+      else if (unit === 'oz' || unit === 'troy oz') grams *= 31.1035;
+      else if (unit === 'kg') grams *= 1000;
+      return s + grams * ppg;
+    }, 0);
   },
   getZakatableAmount(currency) {
     const pkr = this.totalPKR();

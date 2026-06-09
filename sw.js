@@ -1,4 +1,4 @@
-const CACHE = 'vaultos-v17';
+const CACHE = 'vaultos-v18';
 // Relative paths work on custom domain (/) and GitHub Pages (/VaultOS/)
 const ASSETS = [
   './',
@@ -17,6 +17,8 @@ const ASSETS = [
   './js/core/schema.js',
   './js/core/utils.js',
   './js/core/validators.js',
+  './js/core/vault-meta.js',
+  './js/core/family-pickers.js',
   './js/modules/rates.js',
   './js/modules/banks.js',
   './js/modules/cards.js',

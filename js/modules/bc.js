@@ -184,7 +184,7 @@ const BCModule = {
       '</div>' +
 
       '<div class="fg"><label class="fl">Organiser / Contact (optional)</label>' +
-        (function(){try{const fd=JSON.parse(localStorage.getItem('vo_family')||'{}');const members=[...(fd.head?[fd.head]:[]),...(fd.members||[])];return members.length?'<datalist id="bcOrgDL">'+members.map(function(m){return '<option value="'+m.name+'">';}).join('')+'</datalist>':'';}catch(e){return '';}})() +
+        (typeof familyOrganiserDatalistHtml === 'function' ? familyOrganiserDatalistHtml() : '') +
         '<input class="inp" id="bc-organiser" value="' + (bc.organiser || '') + '" list="bcOrgDL" placeholder="Name or phone number"></div>' +
 
       '<div class="fg"><label class="fl">Notes</label>' +

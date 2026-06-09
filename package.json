@@ -1,0 +1,12 @@
+{
+  "name": "vaultos",
+  "private": true,
+  "scripts": {
+    "serve": "python3 -m http.server 8765",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

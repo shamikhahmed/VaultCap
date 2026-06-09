@@ -4,12 +4,11 @@ const CreditScore = {
   _KEY: 'vo_credit_score',
 
   get() {
-    try { return JSON.parse(localStorage.getItem(this._KEY) || '{}'); }
-    catch(e) { return {}; }
+    return typeof VaultMeta !== 'undefined' ? VaultMeta.get('creditScore') : {};
   },
 
   save(d) {
-    try { localStorage.setItem(this._KEY, JSON.stringify(d)); } catch(e) {}
+    if (typeof VaultMeta !== 'undefined') VaultMeta.set('creditScore', d);
   },
 
   render() {

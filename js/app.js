@@ -2426,6 +2426,7 @@ let S = {
   banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
   family: { head: null, members: [] },
   familyMembers: [],
+  vaultMeta: { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
   emergency: { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false },
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
@@ -2452,6 +2453,7 @@ const Store = {
       documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
       family: S.family || { head: null, members: [] },
       familyMembers: S.familyMembers || [],
+      vaultMeta: S.vaultMeta || { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
@@ -2563,7 +2565,11 @@ const Store = {
   async load() {
     try {
       const d = await VaultDB.load();
-      if (d) { Object.assign(S, d); return true; }
+      if (d) {
+        Object.assign(S, d);
+        if (typeof VaultMeta !== 'undefined') VaultMeta.migrateFromLocalStorage();
+        return true;
+      }
     } catch(e) {}
     return false;
   },
@@ -3019,6 +3025,8 @@ const R = {
     Activity.log('Vault locked');
   },
   goto(pg, force = false) {
+    if (pg === 'ai-import') pg = 'import';
+    updatePageChrome(pg);
     const prev = S.currentPage;
     // Save scroll position for the page we're leaving
     window._scrollCache = window._scrollCache || {};
@@ -3088,8 +3096,8 @@ const R = {
         buildSettTabs();
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
-        } else {
-          Settings.render();
+        } else if (typeof Settings !== 'undefined' && Settings.refresh) {
+          Settings.refresh();
         }
       },
       'finance-home': () => renderFinanceHome(),
@@ -3127,6 +3135,18 @@ const R = {
     S._clockTimer = setInterval(upd, 10000);
   }
 };
+
+const UTILITY_PAGES = new Set([
+  'settings', 'import', 'ai-import', 'help', 'search', 'timeline', 'security', 'backup',
+  'recovery', 'recovery-center', 'sync', 'trash', 'emergency', 'workspace', 'alerts', 'reminders',
+]);
+
+function updatePageChrome(pg) {
+  const hideTabs = UTILITY_PAGES.has(pg);
+  document.body.classList.toggle('hide-btabs', hideTabs);
+  const fab = document.getElementById('fab');
+  if (fab && S.unlocked) fab.style.display = (hideTabs || pg === 'dashboard') ? 'none' : '';
+}
 
 window.resetScroll = function(pageId) {
   const pid = pageId || (typeof S !== 'undefined' ? S.currentPage : null);
@@ -5058,20 +5078,18 @@ function loadDemoProfile(type) {
   S.digital.push({id:id(),serviceName:'LinkedIn',username:'alexkhan88',url:'linkedin.com',category:'Professional',mfaEnabled:true,passwordStrength:'strong',createdAt:ts});
   S.digital.push({id:id(),serviceName:'Barclays Online Banking',username:'alexkhan',url:'barclays.co.uk',category:'Banking',mfaEnabled:true,passwordStrength:'strong',createdAt:ts});
 
-  // Gold (stored in localStorage by loadDemoData, but set here too for completeness)
-  try {
-    localStorage.setItem('vo_gold', JSON.stringify([
-      {id:id(),label:'Gold Jewellery Set',metal:'gold',weight:5,unit:'tola',purity:'22k',notes:'Wife\'s jewellery',addedAt:ts},
-      {id:id(),label:'Gold Bars',metal:'gold',weight:10,unit:'tola',purity:'24k',notes:'Investment — stored at home',addedAt:ts}
-    ]));
-    localStorage.setItem('vo_credit_score', JSON.stringify({
+  // Precious metals demo (encrypted vault)
+  S.assets.push(
+    {id:id(),assetType:'precious_metals',name:'Gold Jewellery Set',metal:'gold',weight:5,unit:'tola',purity:'22k',notes:'Wife\'s jewellery',createdAt:ts,updatedAt:ts},
+    {id:id(),assetType:'precious_metals',name:'Gold Bars',metal:'gold',weight:10,unit:'tola',purity:'24k',notes:'Investment — stored at home',createdAt:ts,updatedAt:ts}
+  );
+  if (typeof VaultMeta !== 'undefined') {
+    VaultMeta.set('creditScore', {
       score:742,agency:'Experian',lastChecked:daysAgo(45),
       history:[{score:698,date:'2025-09-01'},{score:715,date:'2025-12-01'},{score:742,date:'2026-03-01'}]
-    }));
-    localStorage.setItem('vo_zakat_state', JSON.stringify({
-      nisabType:'silver',hawlDate:daysAgo(250),includeJewellery:true,mode:'personal'
-    }));
-  } catch(e) {}
+    });
+    VaultMeta.set('zakatState', { nisabType:'silver',hawlDate:daysAgo(250),includeJewellery:true,mode:'personal' });
+  }
 
   S.user.netWorth = 0;
   Store.save();
@@ -5128,22 +5146,24 @@ function loadDemoData() {
   S.cash.push({id:id(),location:'Other',amount:45000,currency:'PKR',notes:'Monthly pension',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
   S.documents.push({id:id(),docType:'nic',holderName:'Khalid Khan',docNumber:'42101-0001111-9',expiryDate:'2025-12-31',issuingCountry:'PK',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
   Store.save();
-  localStorage.setItem('vo_credit_score', JSON.stringify({
-    country:'GB',
-    entries:[
-      {score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
-      {score:720,bureau:'Experian',date:'2024-01-15',notes:'After clearing credit card'},
-      {score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application'},
-      {score:755,bureau:'Experian',date:'2025-01-20',notes:'Annual check — improving trend'}
-    ]
-  }));
-  localStorage.setItem('vo_zakat_calc', JSON.stringify({
-    goldPrice:18500,silverPrice:250,
-    'zk-cash':'850000','zk-gold':'740000','zk-silver':'125000',
-    'zk-invest':'500000','zk-recv':'150000','zk-stock':'200000',
-    'zk-debts':'200000','zk-exp':'80000'
-  }));
-  localStorage.setItem('vo_tax_calc', JSON.stringify({ country:'PK', filing:'salaried', income:'3600000' }));
+  if (typeof VaultMeta !== 'undefined') {
+    VaultMeta.set('creditScore', {
+      country:'GB',
+      entries:[
+        {score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
+        {score:720,bureau:'Experian',date:'2024-01-15',notes:'After clearing credit card'},
+        {score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application'},
+        {score:755,bureau:'Experian',date:'2025-01-20',notes:'Annual check — improving trend'}
+      ]
+    });
+    VaultMeta.set('zakatCalc', {
+      goldPrice:18500,silverPrice:250,
+      'zk-cash':'850000','zk-gold':'740000','zk-silver':'125000',
+      'zk-invest':'500000','zk-recv':'150000','zk-stock':'200000',
+      'zk-debts':'200000','zk-exp':'80000'
+    });
+    VaultMeta.set('taxCalc', { country:'PK', filing:'salaried', income:'3600000' });
+  }
   if (window.Toast) Toast.show(
     'Demo data loaded! <button onclick="undoDemoLoad()" style="margin-left:8px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:3px 10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">↩ Undo</button>',
     'success', 8000

@@ -135,21 +135,20 @@ const Zakat = {
   },
 
   _saveState() {
-    try {
-      localStorage.setItem('vo_zakat_state', JSON.stringify({
-        nisabType: this._nisabType,
-        madhab: this._madhab,
-        includeJewellery: this._includeJewellery,
-        hawlDate: this._hawlDate,
-        investmentType: this._investmentType,
-        mode: this._mode,
-      }));
-    } catch(e) {}
+    if (typeof VaultMeta === 'undefined') return;
+    VaultMeta.set('zakatState', {
+      nisabType: this._nisabType,
+      madhab: this._madhab,
+      includeJewellery: this._includeJewellery,
+      hawlDate: this._hawlDate,
+      investmentType: this._investmentType,
+      mode: this._mode,
+    });
   },
 
   _loadState() {
     try {
-      const saved = JSON.parse(localStorage.getItem('vo_zakat_state') || '{}');
+      const saved = typeof VaultMeta !== 'undefined' ? VaultMeta.get('zakatState') : {};
       if (saved.nisabType) this._nisabType = saved.nisabType;
       if (saved.madhab) this._madhab = saved.madhab;
       if (saved.includeJewellery !== undefined) this._includeJewellery = saved.includeJewellery;
@@ -188,8 +187,7 @@ const Zakat = {
     const loansGiven = this._vaultLoansGiven(cur);
     const loansOwed = this._vaultLoansOwed(cur);
 
-    let hasSavedManual = {};
-    try { hasSavedManual = JSON.parse(localStorage.getItem('vo_zakat_calc') || '{}'); } catch(e) {}
+    let hasSavedManual = typeof VaultMeta !== 'undefined' ? VaultMeta.get('zakatCalc') : {};
 
     const mCash = hasSavedManual.cash !== undefined ? hasSavedManual.cash : Math.round(cashTotal + banksTotal);
     const mInvest = hasSavedManual.invest !== undefined ? hasSavedManual.invest : Math.round(investTotal);
@@ -333,8 +331,7 @@ const Zakat = {
 
   _onFieldChange(id) {
     try {
-      let saved = {};
-      try { saved = JSON.parse(localStorage.getItem('vo_zakat_calc') || '{}'); } catch(e) {}
+      let saved = typeof VaultMeta !== 'undefined' ? { ...VaultMeta.get('zakatCalc') } : {};
       const fieldMap = {
         'z-cash': 'cash', 'z-invest': 'invest', 'z-gold': 'gold',
         'z-silver': 'silver', 'z-loans-given': 'loansGiven',
@@ -346,7 +343,7 @@ const Zakat = {
       if (key) {
         const el = document.getElementById(id);
         saved[key] = parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
-        localStorage.setItem('vo_zakat_calc', JSON.stringify(saved));
+        if (typeof VaultMeta !== 'undefined') VaultMeta.set('zakatCalc', saved);
       }
     } catch(e) {}
     this._recalculate();
