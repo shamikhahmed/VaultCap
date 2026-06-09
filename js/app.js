@@ -56,19 +56,28 @@ function mkEntity(type, fields = {}) {
 const Tags = {
   chips(tags = [], opts = {}) {
     if (!tags.length) return '';
-    return tags.map(t => `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--r-pill,999px);background:rgba(123,95,255,.15);color:rgba(150,120,255,1);border:1px solid rgba(123,95,255,.25)">${t}${opts.removable ? `<span onclick="${opts.onRemove}('${t}')" style="cursor:pointer;margin-left:2px;opacity:.7">×</span>` : ''}</span>`).join(' ');
+    return tags.map(t => {
+      const safe = escHtml(t);
+      const safeJs = String(t).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      return `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--r-pill,999px);background:rgba(123,95,255,.15);color:rgba(150,120,255,1);border:1px solid rgba(123,95,255,.25)">${safe}${opts.removable ? `<span onclick="${opts.onRemove}('${safeJs}')" style="cursor:pointer;margin-left:2px;opacity:.7">×</span>` : ''}</span>`;
+    }).join(' ');
   },
   parse(str) {
     return (str || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
   },
   input(id, existing = [], presets = null) {
     const p = presets || this.PRESETS.slice(0, 8);
+    const safeId = escHtml(id);
     return `<div>
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Tags (optional)</div>
-      <input id="${id}" placeholder="e.g. uk, business, halal" value="${existing.join(', ')}"
+      <input id="${safeId}" placeholder="e.g. uk, business, halal" value="${escHtml(existing.join(', '))}"
         style="width:100%;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;margin-bottom:6px">
       <div style="display:flex;flex-wrap:wrap;gap:4px">
-        ${p.map(t => `<span onclick="(()=>{const el=document.getElementById('${id}');const cur=el.value.split(',').map(x=>x.trim()).filter(Boolean);if(!cur.includes('${t}')){cur.push('${t}');el.value=cur.join(', ');}else{el.value=cur.filter(x=>x!=='${t}').join(', ');}})()" style="font-size:10px;padding:2px 8px;border-radius:999px;background:var(--glass2);border:1px solid var(--border);color:var(--text3);cursor:pointer;touch-action:manipulation">${t}</span>`).join('')}
+        ${p.map(t => {
+          const safeT = escHtml(t);
+          const jsT = String(t).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          return `<span onclick="(()=>{const el=document.getElementById('${safeId}');const cur=el.value.split(',').map(x=>x.trim()).filter(Boolean);if(!cur.includes('${jsT}')){cur.push('${jsT}');el.value=cur.join(', ');}else{el.value=cur.filter(x=>x!=='${jsT}').join(', ');}})()" style="font-size:10px;padding:2px 8px;border-radius:999px;background:var(--glass2);border:1px solid var(--border);color:var(--text3);cursor:pointer;touch-action:manipulation">${safeT}</span>`;
+        }).join('')}
       </div>
     </div>`;
   },
@@ -2473,6 +2482,7 @@ const Store = {
   loadPrefs() { try { return JSON.parse(localStorage.getItem('vos_prefs')); } catch(e) {} return null; },
 
   _saveCount: 0,
+  _pendingSave: null,
 
   checkQuota() {
     try {
@@ -2488,13 +2498,12 @@ const Store = {
     } catch(e) { return 0; }
   },
 
-  // Fire-and-forget: encrypt and persist to IndexedDB.
-  // Callers remain synchronous — VaultDB.save runs in background.
+  // Persist to IndexedDB; track promise so lock/export can await pending writes.
   save() {
     const data = this._data();
     this._savePrefs();
     if (VaultDB.sessionKey) {
-      VaultDB.save(data).catch(e => {
+      this._pendingSave = VaultDB.save(data).catch(e => {
         console.warn('[VaultDB] save error:', e);
         try {
           const fails = JSON.parse(localStorage.getItem('vos_failed_ops') || '[]');
@@ -2502,6 +2511,8 @@ const Store = {
           localStorage.setItem('vos_failed_ops', JSON.stringify(fails.slice(0, 20)));
         } catch(_) {}
       });
+    } else {
+      this._pendingSave = Promise.resolve();
     }
     this._saveWidgetSnapshot();
     this._saveCount++;
@@ -2526,39 +2537,37 @@ const Store = {
     try {
       const now = Date.now();
       const in30 = now + 30 * 24 * 60 * 60 * 1000;
-
-      const healthScore = VaultHealth.score();
-
-      const expiringItems = [
-        ...(S.documents || []).filter(d => d.expiry && new Date(d.expiry) > now && new Date(d.expiry) < in30)
-          .map(d => ({ name: d.title || d.docType, type: 'document', expiry: d.expiry })),
+      const expiringCount = [
+        ...(S.documents || []).filter(d => d.expiry && new Date(d.expiry) > now && new Date(d.expiry) < in30),
         ...(S.cards || []).filter(c => {
           if (!c.expiry) return false;
           const [m, y] = c.expiry.split('/');
           const exp = new Date(2000 + parseInt(y), parseInt(m) - 1, 1);
           return exp > now && exp < in30;
-        }).map(c => ({ name: c.cardName, type: 'card', expiry: c.expiry })),
-      ].slice(0, 5);
+        }),
+      ].length;
 
+      // Non-sensitive summary only — no net worth, names, or item titles (readable without PIN).
       localStorage.setItem('vaultos_widget', JSON.stringify({
-        nw: S.user?.netWorth || 0,
-        currency: S.user?.currency || 'PKR',
+        locked: !S.unlocked,
         bankCount: (S.banks || []).length,
         cardCount: (S.cards || []).length,
         documentCount: (S.documents || []).length,
         investmentCount: (S.investments || []).length,
         loanCount: (S.loans || []).length,
-        vaultHealth: healthScore,
-        expiringItems,
+        vaultHealth: VaultHealth.score(),
+        expiringCount,
         lastBackup: S.user?.lastBackup || null,
-        name: S.user?.name || '',
         updatedAt: new Date().toISOString(),
-        // legacy keys for older widget.html
         banks: (S.banks || []).length,
         cards: (S.cards || []).length,
         updated: new Date().toISOString(),
       }));
     } catch(e) {}
+  },
+
+  flush() {
+    return this._pendingSave || Promise.resolve();
   },
 
   // Load from VaultDB (async). Called after VaultDB.init() in PIN flow.
@@ -3014,15 +3023,19 @@ const R = {
     if (S._clockTimer) clearInterval(S._clockTimer);
   },
   lock() {
-    S.unlocked = false; clearTimeout(S._timer);
-    S._bankFilterInit = false;
-    VaultDB.sessionKey = null;           // clear in-memory key on lock
-    if (navigator.vibrate) navigator.vibrate(50);
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('fab').style.display = 'none';
-    Modal.close();
-    this.showHome();
-    Activity.log('Vault locked');
+    const finishLock = () => {
+      S.unlocked = false; clearTimeout(S._timer);
+      S._bankFilterInit = false;
+      VaultDB.sessionKey = null;
+      if (navigator.vibrate) navigator.vibrate(50);
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('fab').style.display = 'none';
+      Modal.close();
+      Store._saveWidgetSnapshot();
+      this.showLock();
+      Activity.log('Vault locked');
+    };
+    Store.flush().then(finishLock).catch(finishLock);
   },
   goto(pg, force = false) {
     if (pg === 'ai-import') pg = 'import';
@@ -3254,15 +3267,14 @@ const PIN = {
     if (msg) { msg.className = 'pin-msg'; msg.textContent = 'Verifying…'; }
 
     this._verify(entered).then(result => {
-      if (result === 'real') {
+      const kind = (result && typeof result === 'object') ? result.kind : result;
+      if (kind === 'real') {
         S.fails = 0; S.lockedUntil = 0;
-        try { localStorage.removeItem('vos_fails'); localStorage.removeItem('vo_pin'); } catch(e) {}
+        try { sessionStorage.removeItem('vos_fails'); localStorage.removeItem('vos_fails'); localStorage.removeItem('vo_pin'); } catch(e) {}
         Store.save();
         setTimeout(() => R.unlock(), 180);
-      } else if (result === 'decoy') {
-        S.decoy = true; S.fails = 0; S.lockedUntil = 0;
-        try { localStorage.removeItem('vos_fails'); } catch(e) {}
-        loadDecoyData(); R.unlock();
+      } else if (kind === 'decoy') {
+        applyDecoyUnlock(result && result.data);
       } else {
         // Wrong PIN — brute force protection
         S.fails++;
@@ -3271,9 +3283,8 @@ const PIN = {
         if (msg) msg.className = 'pin-msg err';
 
         if (S.fails >= 10) {
-          // Wipe vault after 10 fails
-          msg.textContent = '⚠️ Too many attempts — wiping vault';
-          Store.clear().then(() => setTimeout(() => location.reload(), 1500));
+          msg.textContent = '⚠️ Too many attempts';
+          this.showWipeGate();
           return;
         } else if (S.fails >= 5) {
           const w = 300; // 5 min
@@ -3290,7 +3301,7 @@ const PIN = {
         }
         // Persist AFTER lockedUntil is set so reload restores the full lockout state
         if (VaultDB.sessionKey) { Store.save(); }
-        else { try { localStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); } catch(e) {} }
+        else { try { sessionStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); localStorage.removeItem('vos_fails'); } catch(e) {} }
         Activity.log('Failed PIN #' + S.fails);
         if (S.fails >= 3) {
           const fpl = document.getElementById('forgotPinLink');
@@ -3309,9 +3320,34 @@ const PIN = {
     });
   },
 
+  showWipeGate() {
+    if (PIN._wipeTimer) clearInterval(PIN._wipeTimer);
+    let left = 60;
+    Modal.open('⚠️ Vault Protection',
+      `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">10 failed PIN attempts. Recover with your <strong>master key</strong> or the vault will be permanently wiped.</p>
+       <p style="font-size:12px;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
+      `<button class="btn btn-p" onclick="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>
+       <button class="btn btn-d btn-sm" onclick="PIN._executeWipe()">Wipe Now</button>`
+    );
+    PIN._wipeTimer = setInterval(() => {
+      left--;
+      const el = document.getElementById('wipe-cd');
+      if (el) el.textContent = String(left);
+      if (left <= 0) PIN._executeWipe();
+    }, 1000);
+  },
+  cancelWipe() {
+    if (PIN._wipeTimer) { clearInterval(PIN._wipeTimer); PIN._wipeTimer = null; }
+  },
+  _executeWipe() {
+    PIN.cancelWipe();
+    Modal.close();
+    Store.clear().then(() => location.reload());
+  },
+
   // Async PIN verification: migration path + VaultDB path
   async _verify(pin) {
-    if (S.noPin) return 'real';
+    if (S.noPin) return { kind: 'real' };
 
     // ── Migration path: old localStorage data ──────────────────────────────
     const oldData = Store.loadRaw();
@@ -3319,7 +3355,6 @@ const PIN = {
 
     if (oldData && !hasVaultDB) {
       if (oldData.noPin || pin === String(oldData.pin)) {
-        // Migrate: load old data into S, then encrypt to VaultDB
         Object.assign(S, oldData);
         try {
           await VaultDB.init(pin || '000000');
@@ -3327,10 +3362,10 @@ const PIN = {
           localStorage.removeItem('vos3');
           Store._savePrefs();
         } catch(e) { console.warn('[VaultDB] migration error:', e); }
-        return 'real';
+        return { kind: 'real' };
       }
       if (oldData.decoyPin && pin === String(oldData.decoyPin)) {
-        return 'decoy';
+        return { kind: 'decoy', data: null };
       }
       return null;
     }
@@ -3338,9 +3373,9 @@ const PIN = {
     // ── VaultDB path: try main then decoy slot ─────────────────────────────
     const result = await VaultDB.tryPin(pin);
     if (!result) return null;
-    if (result.slot === 'decoy') return 'decoy';
+    if (result.slot === 'decoy') return { kind: 'decoy', data: result.data };
     Object.assign(S, result.data);
-    return 'real';
+    return { kind: 'real' };
   },
   countdown(s) {
     let r = s;
@@ -4927,6 +4962,26 @@ const PanicLock = {
 })();
 
 // ===================== DECOY MODE =====================
+function applyDecoyUnlock(decoyData) {
+  S.decoy = true;
+  S.fails = 0;
+  S.lockedUntil = 0;
+  try { sessionStorage.removeItem('vos_fails'); localStorage.removeItem('vos_fails'); } catch(e) {}
+  const hasCustomVault = decoyData && !decoyData._decoy &&
+    ((decoyData.banks && decoyData.banks.length) || (decoyData.cards && decoyData.cards.length) ||
+     (decoyData.documents && decoyData.documents.length));
+  if (hasCustomVault) {
+    Object.assign(S, decoyData);
+    S.decoy = true;
+    Activity.log('Vault unlocked (decoy)');
+    Store.save();
+    R.unlock();
+    return;
+  }
+  loadDecoyData();
+  R.unlock();
+}
+
 function loadDecoyData() {
   S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
   S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[]; S.vehicles=[];
@@ -5350,10 +5405,18 @@ async function App() {
     k.addEventListener('click', function() { if (navigator.vibrate) navigator.vibrate(6); });
   });
 
-  // Restore brute-force state from lightweight localStorage (pre-unlock)
+  // Restore brute-force state from sessionStorage (pre-unlock — not bypassable via localStorage clear)
   try {
-    const fc = JSON.parse(localStorage.getItem('vos_fails') || 'null');
-    if (fc) { S.fails = fc.fails || 0; S.lockedUntil = fc.lockedUntil || 0; }
+    const raw = sessionStorage.getItem('vos_fails') || localStorage.getItem('vos_fails');
+    const fc = JSON.parse(raw || 'null');
+    if (fc) {
+      S.fails = fc.fails || 0;
+      S.lockedUntil = fc.lockedUntil || 0;
+      if (sessionStorage.getItem('vos_fails') == null) {
+        sessionStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil }));
+        localStorage.removeItem('vos_fails');
+      }
+    }
   } catch(e) {}
 
   // Load non-sensitive prefs for startup display (theme, font scale)

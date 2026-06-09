@@ -43,3 +43,5 @@ const Validators = {
     return true;
   },
 };
+
+window.Validators = Validators;

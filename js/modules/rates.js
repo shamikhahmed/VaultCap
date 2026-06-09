@@ -153,11 +153,12 @@ const RatesEngine = {
         metals = null;
       }
 
-      if (fx || metals) {
-        const existing = this._cache() || {};
+      const existing = this._cache() || {};
+      const mergedMetals = metals || existing.metals || { ...this._METAL_FALLBACK };
+      if (fx || mergedMetals) {
         this._save({
           fx: fx || existing.fx || null,
-          metals: metals || existing.metals || null,
+          metals: mergedMetals,
         });
         return true;
       }

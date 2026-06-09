@@ -272,13 +272,14 @@ const Banks={
   _toggleJoint(checked){const s=document.getElementById('b-joint-section');if(s)s.style.display=checked?'block':'none';},
   bindCC(){setTimeout(()=>{const cur=document.getElementById('bf-cur');if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
   save(editId=null){
-    const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;} // TODO: formalize via Validators.run(item,'bank') in js/core/validators.js
+    const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
     if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
     const lf=U.getLF();
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
     const _oid = editId ? (S.banks.find(x=>x.id===editId)?.ownerId||'self') : (Banks._pendingOwnerId||'self');
     if (!editId) Banks._pendingOwnerId = null;
     const item={id:editId||U.id(),bankName:name,country:document.getElementById('bf-cc').value,bankType:g('bf-type'),accountType:g('bf-atype'),currency:document.getElementById('bf-cur').value,last4:g('bf-l4'),balance:parseFloat((g('bf-bal')||'').replace(/,/g,''))||0,iban:g('bf-iban'),sortCode:g('bf-swift'),holderName:g('bf-holder')||S.user.name||'',ownership:document.getElementById('bf-own')?.value||'personal',jointAccount:document.getElementById('bf-joint')?.checked||false,jointWith:document.getElementById('b-joint-person')?.value||'',email:g('bf-email'),phone:g('bf-phone'),...lf,notes:g('bf-notes'),tags:U.getTags(),favorite:document.getElementById('bf-fav')?.checked||false,ownerId:_oid,owners:[_oid],updatedAt:new Date().toISOString(),createdAt:editId?S.banks.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
+    if(typeof Validators!=='undefined'&&!Validators.run(item,'bank'))return;
     const auto=autoTags('bank',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId){S.banks=S.banks.map(x=>x.id===editId?item:x);if(typeof Audit!=='undefined')Audit.log(item,'edited');}else{S.banks.push(item);if(typeof Audit!=='undefined')Audit.log(item,'created');}
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');

@@ -554,9 +554,13 @@ const Settings={
     </div>`,`<button class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
   },
   _printMasterKey(key){
-    const w=window.open('','_blank');
-    w.document.write(`<html><head><title>VaultOS Master Key</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:400px;margin:0 auto;text-align:center}.card{border:2px solid #333;border-radius:16px;padding:24px;margin:20px 0}.key{font-size:22px;font-weight:900;letter-spacing:4px;font-family:monospace;color:#1a237e;margin:16px 0}.warn{font-size:12px;color:#666;margin-top:16px}</style></head><body><h2>🔐 VaultOS Emergency Master Key</h2><div class="card"><div style="font-size:13px;color:#666;margin-bottom:8px">Keep this card safe and private</div><div class="key">${key}</div><div style="font-size:12px;color:#666">Generated: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="warn">⚠️ This key can reset your PIN. Do not share it with anyone.<br>Store in a safe place separate from your device.</div></body></html>`);
-    w.document.close();w.print();
+    const fmt=String(key).match(/.{1,6}/g)?.join('-')||key;
+    Modal.open('🔐 Emergency Master Key',
+      `<div style="text-align:center;padding:8px 0">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Copy and store this key somewhere safe. It can reset your PIN.</p>
+        <div id="mk-display" style="font-family:var(--mono);font-size:1rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
+      </div>`,
+      `<button class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button class="btn btn-p" onclick="Modal.close()">Done</button>`);
   },
   setDecoyPIN(){
     Modal.open('🎭 Set Decoy PIN',`
@@ -567,12 +571,15 @@ const Settings={
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
-    if(!/^\d{6}$/.test(p)){document.getElementById('dp-err').textContent='Must be exactly 6 digits';return;}
-    if(p===S.pin){document.getElementById('dp-err').textContent='Must be different from your real PIN';return;}
-    S.decoyPin=p;Store.save();
-    // Persist decoy slot in VaultDB so it's recognised on next unlock
-    VaultDB.saveDecoySlot(p,{_decoy:true}).catch(e=>console.warn('[VaultDB] decoy slot error:',e));
-    Modal.close();Settings.refresh();Toast.show('Decoy PIN set — entering it shows empty vault','success');
+    const errEl=document.getElementById('dp-err');
+    if(!/^\d{6}$/.test(p)){errEl.textContent='Must be exactly 6 digits';return;}
+    if(S.pin&&p===S.pin){errEl.textContent='Must be different from your real PIN';return;}
+    VaultDB.tryPin(p).then(result=>{
+      if(result&&result.slot==='main'){errEl.textContent='Must be different from your real PIN';return;}
+      S.decoyPin=p;Store.save();
+      VaultDB.saveDecoySlot(p,{_decoy:true}).catch(e=>console.warn('[VaultDB] decoy slot error:',e));
+      Modal.close();Settings.refresh();Toast.show('Decoy PIN set — shows convincing fake vault','success');
+    });
   },
   forgotPIN(){
     Modal.open('🔑 Forgot PIN',
@@ -688,32 +695,19 @@ const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
       S.user.lastBackup=new Date().toISOString();
-      Store.save();
-      if(VaultDB.sessionKey){
+      const runVaultExport=()=>{
         VaultDB.exportEncrypted().then(()=>{
           Activity.log('Exported','AES-256-GCM encrypted .vos');
           Toast.show('Backup saved ✓','success',4000);
-        }).catch(()=>Toast.show('Export failed — try again after unlocking','error'));
-        return;
-      }
-      if(!S.pin){
-        ExIm._promptPinForExport();
-        return;
-      }
-    }
-    if(fmt==='vault'&&Crypto.available()){
-      const pw=S.pin+'_vos4_'+S.user.name;
-      const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-      S.user.lastBackup=new Date().toISOString();Store.save();
-      Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
-        const fp = btoa(String.fromCharCode(...new Uint8Array(
-          await crypto.subtle.digest('SHA-256', new TextEncoder().encode(enc.slice(0, 1000)))
-        ))).slice(0, 8).toUpperCase();
-        S.user.lastBackupFingerprint = fp; Store.save();
-        this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
-        Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show(`Backup saved ✓ Fingerprint: ${fp} — note this for verification`, 'success', 6000);
-      }).catch(()=>{this._exportPlain(data);});
+        }).catch(()=>Toast.show('Export failed — try again','error'));
+      };
+      Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
+        if(VaultDB.sessionKey){ runVaultExport(); return; }
+        VaultDB.isInitialized().then(init=>{
+          if(init) ExIm._promptPinForExport();
+          else ExIm._exportLegacyVault();
+        });
+      });
       return;
     }
     const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
@@ -743,10 +737,41 @@ const ExIm={
     const pin=document.getElementById('exp-pin')?.value||'';
     if(!/^\d{6}$/.test(pin)){document.getElementById('exp-pin-err').textContent='Enter your 6-digit PIN';return;}
     VaultDB.tryPin(pin).then(r=>{
-      if(!r){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
+      if(!r||r.slot!=='main'){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
       Modal.close();
-      ExIm.export('vault');
+      VaultDB.exportEncrypted().then(()=>{
+        Activity.log('Exported','AES-256-GCM encrypted .vos');
+        Toast.show('Backup saved ✓','success',4000);
+      }).catch(()=>Toast.show('Export failed','error'));
     });
+  },
+  _exportLegacyVault(){
+    if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
+    const pw=S.pin+'_vos4_'+S.user.name;
+    const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
+    Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
+      this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      Activity.log('Exported','Legacy AES-256-GCM .vos');
+      Toast.show('Legacy backup saved ✓','success',4000);
+    }).catch(()=>this._exportPlain(data));
+  },
+  _promptPinForLegacyImport(encRaw,onSuccess){
+    ExIm._legacyImportCb=onSuccess;
+    ExIm._legacyImportEnc=encRaw;
+    Modal.open('📥 Import Backup',`
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to decrypt this legacy backup file.</p>
+      <div class="fg"><label class="fl">PIN</label><input class="inp" id="imp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
+      <div class="ferr" id="imp-pin-err"></div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="ExIm._doLegacyImportDecrypt()">Decrypt</button>`);
+  },
+  _doLegacyImportDecrypt(){
+    const pin=document.getElementById('imp-pin')?.value||'';
+    if(!/^\d{6}$/.test(pin)){document.getElementById('imp-pin-err').textContent='Enter your 6-digit PIN';return;}
+    const pw=pin+'_vos4_'+(S.user?.name||'');
+    Crypto.decrypt(ExIm._legacyImportEnc,pw).then(plain=>{
+      Modal.close();
+      if(ExIm._legacyImportCb) ExIm._legacyImportCb(JSON.parse(plain));
+    }).catch(()=>{document.getElementById('imp-pin-err').textContent='Wrong PIN or corrupted file';});
   },
   _exportPlain(data){
     this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
@@ -1368,13 +1393,10 @@ const ImportEngine={
       const raw=e.target.result;
       if(raw.startsWith('VAULTOS_AES256::')&&Crypto.available()){
         const enc=raw.replace('VAULTOS_AES256::','');
-        const pw=prompt('Enter vault PIN to decrypt:');
-        if(!pw)return;
-        const derivedPw=pw+'_vos4_'+S.user.name;
-        Crypto.decrypt(enc,derivedPw).then(plain=>this.mergeVault(JSON.parse(plain))).catch(()=>Toast.show('Wrong PIN or corrupted file','error'));
-      } else {
-        try{this.mergeVault(JSON.parse(raw));}catch(e){Toast.show('Invalid vault file','error');}
+        ExIm._promptPinForLegacyImport(enc, data => this.mergeVault(data));
+        return;
       }
+      try{this.mergeVault(JSON.parse(raw));}catch(err){Toast.show('Invalid vault file','error');}
     };
     r.readAsText(file);
   },
@@ -1835,10 +1857,14 @@ const RecoveryCenter={
     </div></div>`;
   },
   printKey(key){
-    const win=window.open('','_blank');
-    if(!win)return;
-    win.document.write(`<html><head><title>VaultOS Recovery Key</title><style>body{font-family:monospace;padding:40px;max-width:400px}h2{font-size:18px}p{font-size:12px;color:#666}.key{font-size:24px;font-weight:bold;letter-spacing:4px;padding:20px;border:2px solid #333;border-radius:8px;margin:20px 0}.warn{color:#c00;font-size:11px;margin-top:20px;border-top:1px solid #eee;padding-top:12px}</style></head><body><h2>🔐 VaultOS Emergency Recovery Key</h2><p>Generated: ${new Date().toLocaleString()}<br>Owner: ${S.user.name}</p><div class="key">${key}</div><p><strong>Instructions:</strong></p><ul><li>Open VaultOS and tap "Forgot PIN?"</li><li>Choose "Use Master Key"</li><li>Enter this code exactly</li></ul><div class="warn">⚠️ KEEP THIS CARD SECURE. Anyone with this key can reset your vault. Store in a safe place separate from your device.</div>`);
-    win.print();
+    const fmt=String(key).match(/.{1,6}/g)?.join('-')||key;
+    Modal.open('🔐 Recovery Key',
+      `<div style="text-align:center;padding:8px 0">
+        <p style="font-size:11px;color:var(--text3);margin-bottom:12px">Generated ${new Date().toLocaleString()}</p>
+        <div style="font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
+        <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.6">Use <strong>Forgot PIN → Master Key</strong> on the lock screen.</p>
+      </div>`,
+      `<button class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button class="btn btn-p" onclick="Modal.close()">Done</button>`);
   }
 };
 
@@ -2269,7 +2295,7 @@ const HelpCenter = {
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('🔐', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
           ${this._card('🔒', 'Encryption standard', 'VaultOS uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
-          ${this._card('🕵️', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a completely empty vault. Your real data remains hidden.')}
+          ${this._card('🕵️', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
           ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
           ${this._card('❌', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
           ${this._card('🧹', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
