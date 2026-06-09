@@ -54,9 +54,83 @@ const Family = {
   },
 
   // ── Render ─────────────────────────────────────────────────────────────────
+  _profileSnapshot() {
+    return {
+      name: (S.user && S.user.name) || '',
+      avatar: (S.user && S.user.avatar) || '💼',
+      dob: (S.user && S.user.dob) || '',
+      phone: (S.user && S.user.phone) || '',
+      email: (S.user && S.user.email) || '',
+    };
+  },
+
+  ensureHeadFromProfile(opts = {}) {
+    const members = S.familyMembers || [];
+    const existing = members.find(m => m.isHead);
+    if (existing) return existing;
+    const p = this._profileSnapshot();
+    if (!p.name) return null;
+    const now = new Date().toISOString();
+    const head = {
+      id: U.id(),
+      name: p.name,
+      avatar: p.avatar,
+      relation: 'Head of Family',
+      isHead: true,
+      dob: p.dob,
+      phone: p.phone,
+      email: p.email,
+      notes: '',
+      createdAt: now,
+      updatedAt: now,
+    };
+    S.familyMembers = [...members, head];
+    Store.save();
+    if (!opts.silent) Toast.show('Linked your profile as Head of Family', 'success');
+    return head;
+  },
+
+  syncHeadFromProfile() {
+    const head = (S.familyMembers || []).find(m => m.isHead);
+    if (!head) return;
+    const p = this._profileSnapshot();
+    S.familyMembers = S.familyMembers.map(m => m.isHead ? {
+      ...m,
+      name: p.name || m.name,
+      avatar: p.avatar || m.avatar,
+      dob: p.dob || m.dob,
+      phone: p.phone || m.phone,
+      email: p.email || m.email,
+      updatedAt: new Date().toISOString(),
+    } : m);
+  },
+
+  syncProfileFromHead() {
+    const head = (S.familyMembers || []).find(m => m.isHead);
+    if (!head) return;
+    if (head.name) S.user.name = head.name;
+    if (head.avatar) S.user.avatar = head.avatar;
+    if (head.dob) S.user.dob = head.dob;
+    if (head.phone) S.user.phone = head.phone;
+    if (head.email) S.user.email = head.email;
+  },
+
+  confirmHeadFromProfile() {
+    const head = this.ensureHeadFromProfile();
+    if (head) {
+      this.openMember(head.id);
+    } else {
+      Toast.show('Add your name in Settings → Profile first', 'warning');
+      R.goto('settings');
+    }
+  },
+
   render() {
     const body = document.getElementById('pg-family-body');
     if (!body) return;
+    if (S.modules?.family !== false && (S.user?.name || S.user?.email)) {
+      this.ensureHeadFromProfile({ silent: true });
+    }
     if (this._activeId !== null) { this._renderMember(body); return; }
     this._renderList(body);
   },
@@ -96,11 +170,17 @@ const Family = {
             </div>
           </div>
         </div>`
-      : `<div onclick="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
+      : (S.user.name
+        ? `<div onclick="Family.confirmHeadFromProfile()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
+          <div style="font-size:32px;margin-bottom:8px">${escHtml(S.user.avatar || '👑')}</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text)">Use ${escHtml(S.user.name)} as Head of Family</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
+        </div>`
+        : `<div onclick="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
           <div style="font-size:32px;margin-bottom:8px">👑</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Set Head of Family</div>
-          <div style="font-size:13px;color:var(--text3);margin-top:4px">Tap to set up your own family vault profile</div>
-        </div>`;
+          <div style="font-size:13px;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
+        </div>`);
 
     const memberCards = rest.map(m =>
       `<div onclick="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
@@ -128,21 +208,13 @@ const Family = {
     const m = this.getMember(this._activeId);
     if (!m) { this._activeId = null; this.render(); return; }
 
-    const tabs = [
-      { id:'overview',     label:'Overview',     icon:'📊' },
-      { id:'banks',        label:'Banks',         icon:'🏦' },
-      { id:'cards',        label:'Cards',         icon:'💳' },
-      { id:'cash',         label:'Cash',          icon:'💵' },
-      { id:'investments',  label:'Investments',   icon:'📈' },
-      { id:'assets',       label:'Assets',        icon:'🏠' },
-      { id:'documents',    label:'Documents',     icon:'🪪' },
-    ];
+    const tabs = this._visibleTabs();
 
     const tabBar = `<div style="display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-bottom:1px solid var(--border)">
       ${tabs.map(t => `<button onclick="Family._switchTab('${t.id}')" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._tab===t.id?'var(--accent)':'var(--border)'};background:${this._tab===t.id?'var(--accent)':'transparent'};color:${this._tab===t.id?'#fff':'var(--text3)'}">${t.icon} ${t.label}</button>`).join('')}
     </div>`;
 
-    const backBtn = `<button onclick="Family._activeId=null;Family._tab='overview';Family.render()" style="background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:6px;padding:16px 16px 0">← Family</button>`;
+    const backBtn = `<button onclick="Family._activeId=null;Family._tab='overview';Family.render()" style="background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:6px;padding:16px 16px 0;width:100%;text-align:left;font-family:inherit">← Family</button>`;
 
     const header = `<div style="display:flex;align-items:center;gap:14px;padding:12px 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.06))">
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
@@ -238,7 +310,38 @@ const Family = {
         (items.length ? items.map(d => this._docRow(d)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added yet</div>');
     }
 
+    if (this._tab === 'notes') {
+      return `<div class="fg"><label class="fl">Private notes for ${escHtml(m.name)}</label>
+        <textarea class="inp" id="fam-member-notes" rows="6" placeholder="Medical info, emergency contacts, school details…">${escHtml(m.notes || '')}</textarea></div>
+        <button class="btn btn-p btn-full" style="margin-top:10px" onclick="Family._saveNotes('${id}')">Save Notes</button>`;
+    }
+
     return '';
+  },
+
+  _visibleTabs() {
+    const all = [
+      { id:'overview',     label:'Overview',     icon:'📊', prefKey:'overview' },
+      { id:'banks',        label:'Banks',         icon:'🏦', prefKey:'banks' },
+      { id:'cards',        label:'Cards',         icon:'💳', prefKey:'cards' },
+      { id:'cash',         label:'Cash',          icon:'💵', prefKey:'cash' },
+      { id:'investments',  label:'Investments',   icon:'📈', prefKey:'investments' },
+      { id:'assets',       label:'Assets',        icon:'🏠', prefKey:'assets' },
+      { id:'documents',    label:'Documents',     icon:'🪪', prefKey:'docs' },
+      { id:'notes',        label:'Notes',         icon:'📝', prefKey:'notes' },
+    ];
+    let hidden = [];
+    try { hidden = JSON.parse(localStorage.getItem('vo_family_tab_prefs') || '{}').hiddenTabs || []; } catch(e) {}
+    const visible = all.filter(t => !hidden.includes(t.prefKey));
+    if (!visible.find(t => t.id === this._tab)) this._tab = visible[0]?.id || 'overview';
+    return visible.length ? visible : all;
+  },
+
+  _saveNotes(id) {
+    const notes = document.getElementById('fam-member-notes')?.value?.trim() || '';
+    S.familyMembers = (S.familyMembers || []).map(m => m.id === id ? { ...m, notes, updatedAt: new Date().toISOString() } : m);
+    Store.save();
+    Toast.show('Notes saved', 'success');
   },
 
   // ── Entity row renderers (use same full-module edit functions) ────────────
@@ -389,18 +492,21 @@ const Family = {
   },
 
   openAddMember(isHead) {
+    const p = isHead ? this._profileSnapshot() : { name:'', avatar:'👤', dob:'', phone:'', email:'' };
     const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
-    Modal.open(isHead ? '👑 Add Head of Family' : '➕ Add Family Member',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:var(--glass);border:1px solid var(--border)">${a}</div>`).join('')}</div>
-        <input type="hidden" id="fam-av-input" value="👤">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" placeholder="Full name"></div>
+    const defaultAv = p.avatar || '👤';
+    Modal.open(isHead ? '👑 Head of Family' : '➕ Add Family Member',
+      `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${defaultAv===a?'var(--accent)':'var(--glass)'};border:1px solid ${defaultAv===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
+        <input type="hidden" id="fam-av-input" value="${escHtml(defaultAv)}">
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name"></div>
         ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL3"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fam-rel" value="" list="fRelDL3" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
-          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date"></div>
-          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" placeholder="+92..."></div>
+          <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date" value="${escHtml(p.dob || '')}"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(p.phone || '')}" placeholder="+44..."></div>
         </div>
-        <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(p.email || '')}" placeholder="email@example.com"></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
@@ -428,6 +534,7 @@ const Family = {
     // Only one head allowed
     if (isHead) S.familyMembers = S.familyMembers.map(m => ({ ...m, isHead: false }));
     S.familyMembers.push(member);
+    if (isHead) this.syncProfileFromHead();
     Store.save();
     Modal.close();
     this.render();
@@ -474,6 +581,8 @@ const Family = {
         updatedAt: new Date().toISOString(),
       };
     });
+    const updated = S.familyMembers.find(m => m.id === id);
+    if (updated?.isHead) this.syncProfileFromHead();
     Store.save();
     Modal.close();
     this.render();

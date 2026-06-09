@@ -84,6 +84,8 @@ const Dash={
 
     const cur = S.user.currency || 'GBP';
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
+    const cmdBtn = document.getElementById('dashCmdBtn');
+    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(min-width:768px)').matches ? '' : 'none';
 
     const toB = (a,c) => (a||0) * (FX[c] || 1);
     const toCur = (pkr, c) => CurrencyEngine.fromBase(pkr, c || cur);
@@ -520,7 +522,7 @@ const Settings={
       ${(()=>{
         const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');
         const hidFam=fp.hiddenTabs||[];
-        return [['docs','Documents'],['banks','Banks & Cards'],['cash','Cash'],['investments','Investments'],['notes','Notes']].map(([id,label])=>`<div class="si"><div class="sil"><div class="name">${label}</div><div class="desc">Family member tabs</div></div><label class="tog"><input type="checkbox" ${!hidFam.includes(id)?'checked':''} onchange="(function(id,checked){const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');if(!fp.hiddenTabs)fp.hiddenTabs=[];if(checked){fp.hiddenTabs=fp.hiddenTabs.filter(x=>x!==id)}else{if(!fp.hiddenTabs.includes(id))fp.hiddenTabs.push(id)}localStorage.setItem('vo_family_tab_prefs',JSON.stringify(fp));if(window.Toast)Toast.show(checked?id+' tab shown':id+' tab hidden','success',1500);})('${id}',this.checked)"><span class="ts"></span></label></div>`).join('');
+        return [['docs','Documents'],['banks','Banks'],['cards','Cards'],['cash','Cash'],['investments','Investments'],['notes','Notes']].map(([id,label])=>`<div class="si"><div class="sil"><div class="name">${label}</div><div class="desc">Family member tabs</div></div><label class="tog"><input type="checkbox" ${!hidFam.includes(id)?'checked':''} onchange="(function(id,checked){const fp=JSON.parse(localStorage.getItem('vo_family_tab_prefs')||'{}');if(!fp.hiddenTabs)fp.hiddenTabs=[];if(checked){fp.hiddenTabs=fp.hiddenTabs.filter(x=>x!==id)}else{if(!fp.hiddenTabs.includes(id))fp.hiddenTabs.push(id)}localStorage.setItem('vo_family_tab_prefs',JSON.stringify(fp));if(window.Toast)Toast.show(checked?id+' tab shown':id+' tab hidden','success',1500);})('${id}',this.checked)"><span class="ts"></span></label></div>`).join('');
       })()}
     </div></div>
 
@@ -605,7 +607,6 @@ const Settings={
         <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">📄 Export as JSON (readable)</button>
         <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
         <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
-        <input type="file" id="importF" accept=".vault,.json" style="display:none" onchange="ExIm.import(event)">
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
         <button class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
       </div>
@@ -662,7 +663,8 @@ const Settings={
     S.user.country=newCountry;
     S.user.currency=document.getElementById('pp-cur')?.value||S.user.currency;
     S.user.homeAddr=g('pp-home');S.user.workAddr=g('pp-work');
-    Store.save();Modal.close();this.render();buildNav();if(S.currentPage==='dashboard'&&typeof Dash!=='undefined')Dash.render();Toast.show('Profile updated','success');
+    if(typeof Family!=='undefined')Family.syncHeadFromProfile();
+    Store.save();Modal.close();this.render();buildNav();if(S.currentPage==='dashboard'&&typeof Dash!=='undefined')Dash.render();if(S.currentPage==='family'&&typeof Family!=='undefined')Family.render();Toast.show('Profile updated','success');
   },
   changePIN(){
     Modal.open('🔑 Change PIN',`
@@ -1997,6 +1999,18 @@ const SelfCheck={
 };
 
 // ===================== SETTINGS NAV (tabbed settings) =====================
+const ExcelImport = {
+  open() {
+    R.goto('import');
+    setTimeout(() => {
+      const f = document.getElementById('ie-file');
+      if (f) f.click();
+      else Toast.show('Open Smart Import and choose your spreadsheet', 'info');
+    }, 250);
+  },
+};
+window.ExcelImport = ExcelImport;
+
 const SettingsNav = {
   current: 'profile',
 
@@ -2136,9 +2150,8 @@ const SettingsNav = {
 
   _import() {
     return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
-      <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import Engine</div><div class="desc">Paste text, drop files, scan images — VaultOS detects and imports entries automatically</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" onclick="R.goto('ai-import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text — offline detection for banks, cards, loans, and more</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📊</div><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls — auto-detect sheets and map to vault modules</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — offline detection for banks, cards, loans, spreadsheets, and more</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📊</div><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls — opens Smart Import file picker</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🔒</div><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup file or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
     </div></div>`;
   },

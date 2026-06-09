@@ -3069,7 +3069,7 @@ const R = {
       workspace:   () => WorkspaceManager.render(),
       vehicles:    () => { S.aF = 'vehicle'; R.goto('assets'); },
       reminders:   () => Reminders.render(),
-      'ai-import': () => { if (typeof AIImport !== 'undefined') AIImport.render(); },
+      'ai-import': () => R.goto('import'),
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
       emergency:   () => Emergency.render(),
       'recovery-center': () => { if (typeof VaultHealthCenter !== 'undefined') VaultHealthCenter.render(); },
@@ -3525,6 +3525,13 @@ const OB = {
       S.user.secondaryCountries = obCountries.slice(1);
     }
     S.user.userType = obUserType;
+    // Apply onboarding category choices to modules
+    const moneyMods = ['banks','cards','investments','cash','loans','expenses','bc','bonds','credit','currency','zakat','tax'];
+    const assetMods = ['assets','vehicles','gold'];
+    const identityMods = ['documents','sims','emails','digital','friends'];
+    if (!obCats.money) moneyMods.forEach(id => { S.modules[id] = false; });
+    if (!obCats.assets) assetMods.forEach(id => { S.modules[id] = false; });
+    if (!obCats.identity) identityMods.forEach(id => { S.modules[id] = false; });
     // Apply module presets based on user type
     if (obUserType === 'family') {
       S.modules.family = true;
@@ -3538,6 +3545,9 @@ const OB = {
     S.autoLock = true; S.lockMins = 10; S.clipSecs = 30;
     const name = document.getElementById('ob-name')?.value.trim();
     if (name) S.user.name = name;
+    if (S.modules.family && typeof Family !== 'undefined') {
+      Family.ensureHeadFromProfile({ silent: true });
+    }
     S.user.onboardingComplete = true;
     Store.save();
     if (typeof buildNav === 'function') buildNav();
@@ -4517,10 +4527,12 @@ function renderVaultHome() {
 function renderAssetsHome() {
   const b = document.getElementById('assets-home-body');
   if (!b) return;
+  const vehicleCount = (S.assets || []).filter(a => a.assetType === 'vehicle').length;
+  const metalCount = (S.assets || []).filter(a => a.assetType === 'precious_metals' || a.assetType === 'precious').length;
   const modules = [
-    {id:'vehicles',icon:'🚗',label:'Vehicles',desc:(S.vehicles||[]).length+' vehicles'},
+    {id:'vehicles',icon:'🚗',label:'Vehicles',desc:vehicleCount+' vehicle'+(vehicleCount!==1?'s':'')},
     {id:'assets',icon:'🏠',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
-    {id:'gold',icon:'🥇',label:'Precious Metals',desc:'Gold & silver'},
+    {id:'gold',icon:'🥇',label:'Precious Metals',desc:metalCount ? metalCount+' holding'+(metalCount!==1?'s':'') : 'Gold & silver'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
