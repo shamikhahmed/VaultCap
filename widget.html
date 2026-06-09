@@ -294,7 +294,7 @@ function render() {
   const staleHours = Math.round(staleMs / 3600000);
 
   const health = snap.vaultHealth ?? null;
-  const expiring = snap.expiringItems || [];
+  const expiringCount = snap.expiringCount ?? (snap.expiringItems || []).length;
   const backupDays = snap.lastBackup
     ? Math.floor((Date.now() - new Date(snap.lastBackup).getTime()) / 86400000)
     : null;
@@ -317,9 +317,9 @@ function render() {
     </div>
 
     <div class="hero">
-      <div class="hero-label">Net Worth</div>
-      <div class="hero-nw">${fmt(snap.nw || 0, snap.currency)}</div>
-      ${snap.name ? `<div class="hero-name">${snap.name}</div>` : ''}
+      <div class="hero-label">Vault Status</div>
+      <div class="hero-nw" style="font-size:22px;-webkit-text-fill-color:var(--text)">🔒 Locked</div>
+      <div class="hero-name">Open VaultOS to view net worth</div>
     </div>
 
     <div class="stats">
@@ -348,14 +348,10 @@ function render() {
       </div>
     </div>` : ''}
 
-    ${expiring.length > 0 ? `
+    ${expiringCount > 0 ? `
     <div class="expiring">
-      <div class="expiring-hdr">⚠ Expiring Soon</div>
-      ${expiring.map(e => `
-        <div class="exp-item">
-          <div class="exp-name">${e.name || e.type || 'Item'}</div>
-          <div class="exp-date">${formatExpiry(e.expiry)}</div>
-        </div>`).join('')}
+      <div class="expiring-hdr">⚠ ${expiringCount} item${expiringCount === 1 ? '' : 's'} expiring soon</div>
+      <div class="exp-item"><div class="exp-name">Open vault for details</div></div>
     </div>` : ''}
 
     <div class="footer-row">

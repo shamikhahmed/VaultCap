@@ -6,7 +6,7 @@ If you discover a security vulnerability in VaultOS, please report it responsibl
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Contact: your-actual-email@domain.com
+Contact: security@vaultos.app (or open a private discussion via GitHub if email unavailable)
 
 Please include:
 - Description of the vulnerability
@@ -41,11 +41,12 @@ VaultOS uses:
 
 ### Known limitations
 
-The following data is stored in **unencrypted** `localStorage` and will be migrated to encrypted storage in a future release:
+The following data remains in **unencrypted** `localStorage` (non-vault, cache only):
 
-- Gold & precious metals holdings (`vo_gold`)
-- Zakat calculation state (`vo_zakat_state`)
-- Credit score entries (`vo_credit_score`)
-- Cached exchange rates (`vo_currency`)
+- Cached exchange rates (`vo_rates`, `vo_currency`)
+- Theme/preferences (`vos_prefs`)
+- Per-profile cryptographic salt (`vos_salt_*`) — not secret; required for key derivation
 
-The widget snapshot (`vaultos_widget`) also stores a non-sensitive summary (item counts, net worth figure, expiring item names) in unencrypted `localStorage` for the PWA home-screen widget.
+Calculator state (zakat, tax, credit score) is stored inside the encrypted vault via `S.vaultMeta`.
+
+The widget snapshot (`vaultos_widget`) stores **counts and health score only** — no net worth, names, or item titles. Financial figures require unlocking the app.
