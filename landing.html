@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="VaultOS — Zero-knowledge encrypted life OS. Finance, identity, documents across PK/UK/UAE.">
+  <meta name="theme-color" content="#5b8dee">
+  <title>VaultOS — Private Life OS</title>
+  <style>
+    :root{
+      --accent:#5b8dee;--glow:rgba(91,141,238,0.2);
+      --bg:#080808;--bg2:#0f0f0f;--card:rgba(255,255,255,0.04);
+      --border:rgba(255,255,255,0.08);--text:#f0f0f0;--dim:#adadad;
+      --ok:#00d68f;--font:-apple-system,'SF Pro Display',system-ui,sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:14px 22px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;background:rgba(8,8,8,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+    .logo{font-size:17px;font-weight:800;letter-spacing:-0.02em}
+    .logo span{color:var(--accent)}
+    .btn{padding:11px 22px;border-radius:12px;font-size:14px;font-weight:700;border:none;cursor:pointer;touch-action:manipulation}
+    .btn-p{background:var(--accent);color:#fff;box-shadow:0 6px 24px var(--glow)}
+    .btn-s{background:var(--card);border:1px solid var(--border);color:var(--text)}
+    .hero{min-height:100vh;display:grid;place-items:center;padding:100px 24px 60px;text-align:center}
+    .lock{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),#3d6fd4);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 24px;box-shadow:0 12px 40px var(--glow)}
+    h1{font-size:clamp(36px,8vw,64px);font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:16px}
+    .tagline{font-size:clamp(17px,3vw,22px);color:var(--dim);max-width:560px;line-height:1.5;margin:0 auto 28px}
+    .flags{display:flex;gap:10px;justify-content:center;margin-bottom:32px;font-size:28px}
+    .hero-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:40px}
+    .trust{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;font-size:12px;color:var(--dim)}
+    .trust span{padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+    .section{padding:72px 24px;max-width:980px;margin:0 auto}
+    .sh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);text-align:center;margin-bottom:8px}
+    .st{font-size:clamp(26px,5vw,38px);font-weight:800;text-align:center;margin-bottom:36px;letter-spacing:-0.02em}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px}
+    .card h3{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+    .card p{font-size:14px;color:var(--dim);line-height:1.55}
+    .sec-block{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-top:20px}
+    .sec-block h4{font-size:15px;margin-bottom:12px}
+    .sec-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:13px;color:var(--dim)}
+    footer{padding:40px 24px;text-align:center;border-top:1px solid var(--border);color:#555;font-size:13px}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="logo">Vault<span>OS</span></div>
+    <div style="display:flex;gap:10px">
+      <a href="docs/GUIDE.md" class="btn btn-s">Guide</a>
+      <a href="index.html" class="btn btn-p">Open Vault</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="lock">🔐</div>
+      <h1>Your life.<br>Your vault.</h1>
+      <p class="tagline">Zero-knowledge encrypted PWA for banks, cards, investments, documents, and family — across Pakistan, the UK, and the UAE. No servers. No subscriptions.</p>
+      <div class="flags">🇵🇰 🇬🇧 🇦🇪</div>
+      <div class="hero-btns">
+        <a href="index.html" class="btn btn-p">Launch VaultOS</a>
+        <a href="https://github.com/shamikhahmed/VaultOS" class="btn btn-s">GitHub</a>
+      </div>
+      <div class="trust">
+        <span>AES-256-GCM</span>
+        <span>PBKDF2 310k</span>
+        <span>Offline PWA</span>
+        <span>Decoy PIN</span>
+        <span>QR Sync</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sh">Modules</div>
+    <div class="st">One app replaces a dozen</div>
+    <div class="grid">
+      <div class="card"><h3>Finance</h3><p>Banks, cards, cash, investments, loans, expenses, BC committees, prize bonds.</p></div>
+      <div class="card"><h3>Identity</h3><p>Passports, NICs, visas, SIMs, emails, gadgets — with expiry alerts.</p></div>
+      <div class="card"><h3>Family Vault</h3><p>Per-member sub-vaults for spouse, children, parents.</p></div>
+      <div class="card"><h3>Zakat & Tax</h3><p>AAOIFI calculator, live nisab, PK/UK/UAE income tax.</p></div>
+      <div class="card"><h3>Live Rates</h3><p>FX and gold/silver prices with 6-hour cache for offline.</p></div>
+      <div class="card"><h3>Smart Add</h3><p>Describe in English — AI pre-fills the right form.</p></div>
+    </div>
+    <div class="sec-block">
+      <h4>🔒 Security you can verify</h4>
+      <div class="sec-list">
+        <span>• PIN never leaves device</span>
+        <span>• Brute-force lockout</span>
+        <span>• .vos encrypted backup</span>
+        <span>• Emergency medical access</span>
+        <span>• 18 themes</span>
+        <span>• PDF export</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="sh">iPhone</div>
+    <div class="st">Install & protect</div>
+    <p style="text-align:center;color:var(--dim);max-width:480px;margin:0 auto 20px;font-size:15px;line-height:1.6">Safari → Share → <strong style="color:var(--text)">Add to Home Screen</strong>. Set your PIN. Export your first <code style="color:var(--accent)">.vos</code> backup immediately.</p>
+    <p style="text-align:center;font-size:13px;color:#555">Demo: PIN <strong style="color:var(--dim)">123456</strong> → Settings → Load Demo</p>
+  </section>
+
+  <footer>
+    <p>VaultOS © 2026 <strong>Shamikh Ahmed</strong></p>
+    <p style="margin-top:8px"><a href="index.html">App</a> · <a href="docs/GUIDE.md">Guide</a> · <a href="docs/PRESENTATION.md">Deck</a></p>
+  </footer>
+</body>
+</html>

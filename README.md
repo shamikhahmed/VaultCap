@@ -78,7 +78,10 @@ VaultOS/
 ├── css/                 # 4 CSS files — base, layout, components, themes
 ├── pitch.html           # 20-slide pitch deck
 ├── widget.html          # Standalone net worth widget
-├── GUIDE.md             # User documentation
+├── landing.html         # Marketing landing page
+├── docs/
+│   ├── GUIDE.md         # User documentation
+│   └── PRESENTATION.md  # Product deck
 └── sw.js                # Service worker (offline PWA)
 ```
 
@@ -93,6 +96,24 @@ VaultOS/
 **iPhone:** Safari → Share → Add to Home Screen
 
 **Android:** Chrome → Menu → Add to Home Screen
+
+## iPhone test checklist
+
+- [ ] PIN setup and unlock flow works
+- [ ] Banks, cards, and documents add/edit correctly
+- [ ] Expiry reminders appear on dashboard timeline
+- [ ] Export `.vos` backup downloads successfully
+- [ ] Decoy PIN shows empty vault
+- [ ] App works offline after first load (rates use cache)
+- [ ] Safe area: FAB and nav clear notch / home indicator
+
+## Documentation
+
+| Resource | Path |
+|----------|------|
+| User guide | [docs/GUIDE.md](docs/GUIDE.md) |
+| Presentation | [docs/PRESENTATION.md](docs/PRESENTATION.md) |
+| Landing page | [landing.html](landing.html) |
 
 **Demo PIN:** `123456` — load demo data from Settings → Load Demo
 
