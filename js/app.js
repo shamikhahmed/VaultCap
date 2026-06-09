@@ -29,7 +29,7 @@ const ALL_MODULES=[
   {id:'alerts',     n:'Alerts',     ic:'🔔', desc:'Expiry & urgent alerts',             group:'Tools'},
   {id:'timeline',   n:'Timeline',   ic:'📅', desc:'Activity history',                   group:'Tools'},
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
-  {id:'ai-import',  n:'AI Import',  ic:'🤖', desc:'Smart pattern-matching data import', group:'Tools'},
+  {id:'ai-import',  n:'Smart Import',  ic:'📥', desc:'Paste text — offline pattern detection', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
   {id:'family',        n:'Family Vault',    ic:'👨‍👩‍👧‍👦', desc:'Family financial overview',                    group:'Finance'},
   {id:'emergency',     n:'Emergency',       ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
@@ -530,6 +530,7 @@ const VaultRecovery = {
 };
 
 const ContextSwitcher = {
+  _page: 'dashboard',
   get() { return S.user.activeContext || 'ALL'; },
   set(code) {
     S.user.activeContext = code;
@@ -549,22 +550,87 @@ const ContextSwitcher = {
     if (typeof resetScroll === 'function') resetScroll();
   },
   bar(currentPage) {
-    const primary = S.user.country || 'PK';
-    const secondary = S.user.secondaryCountries || [];
-    const allCountries = [primary, ...secondary].filter(Boolean);
-    if (allCountries.length < 2) return '';
-    const flags = { PK:'🇵🇰', GB:'🇬🇧', AE:'🇦🇪', US:'🇺🇸', CA:'🇨🇦', AU:'🇦🇺', SA:'🇸🇦', QA:'🇶🇦' };
-    const names = { PK:'Pakistan', GB:'UK', AE:'UAE', US:'USA', CA:'Canada', AU:'Australia', SA:'Saudi', QA:'Qatar' };
+    this._page = currentPage || 'dashboard';
+    const primary = S.user.country || '';
+    const secondary = (S.user.secondaryCountries || []).filter(c => c && c !== primary);
+    const codes = primary ? [primary, ...secondary] : secondary;
     const active = this.get();
-    const pills = [...allCountries, 'ALL'].map(code => {
+    const pill = (code, label, flag) => {
       const isActive = active === code;
-      const flag = code === 'ALL' ? '🌍' : (flags[code] || '🌍');
-      const name = code === 'ALL' ? 'All' : (names[code] || code);
-      return `<div onclick="ContextSwitcher.set('${code}')" style="display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:${isActive?'var(--accent)':'var(--glass2)'};color:${isActive?'#fff':'var(--text2)'};border:1px solid ${isActive?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;white-space:nowrap;font-size:12px;font-weight:${isActive?'700':'500'};transition:all .15s ease">
-        <span>${flag}</span><span>${name}</span>
-      </div>`;
-    }).join('');
-    return `<div style="padding:10px 16px 6px;overflow-x:auto;display:flex;gap:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)">${pills}</div>`;
+      return `<button type="button" onclick="ContextSwitcher.set('${code}')" style="display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;background:${isActive ? 'var(--accent)' : 'var(--glass2)'};color:${isActive ? '#fff' : 'var(--text)'};border:1px solid ${isActive ? 'var(--accent)' : 'var(--border)'};cursor:pointer;touch-action:manipulation;white-space:nowrap;font-size:12px;font-weight:${isActive ? '700' : '500'};transition:all .15s ease;font-family:inherit">
+        ${flag ? `<span aria-hidden="true">${flag}</span>` : ''}<span>${label}</span>
+      </button>`;
+    };
+    let pills = pill('ALL', 'All', '🌍');
+    codes.forEach(code => pills += pill(code, U.cname(code), U.flag(code)));
+    if (!primary) {
+      pills += `<button type="button" onclick="ContextSwitcher.openManager()" style="display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;background:rgba(123,95,255,.12);color:var(--accent);border:1px dashed var(--accent);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">+ Set home country</button>`;
+    } else {
+      pills += `<button type="button" onclick="ContextSwitcher.openManager()" title="Manage countries" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;background:var(--glass2);color:var(--text2);border:1px solid var(--border);cursor:pointer;font-size:14px;font-family:inherit;flex-shrink:0">✏️</button>`;
+    }
+    return `<div style="padding:10px 16px 8px;overflow-x:auto;display:flex;gap:6px;align-items:center;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)">${pills}</div>`;
+  },
+  openManager() {
+    const primary = S.user.country || '';
+    const secondary = [...(S.user.secondaryCountries || [])];
+    const pickList = COUNTRIES.filter(c => c.c !== 'OTHER');
+    Modal.open('🌍 Countries & Regions', `
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:14px">Choose your home country and any others where you hold accounts. Filter the dashboard by country, or tap <strong>All</strong> to see everything.</p>
+      <div class="fg"><label class="fl">Home country</label>
+        <select class="inp" id="ctx-primary">${pickList.map(c => `<option value="${c.c}">${c.f} ${c.n}</option>`).join('')}</select>
+      </div>
+      <div class="fg"><label class="fl">Also active in</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="ctx-secondary">${pickList.filter(c => c.c !== primary).map(c => `
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--glass);border:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--text)">
+            <input type="checkbox" class="ctx-sec-chk" value="${c.c}" ${secondary.includes(c.c) ? 'checked' : ''} style="accent-color:var(--accent)">
+            <span>${c.f} ${c.n}</span>
+          </label>`).join('')}
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Display currency</label><select class="inp" id="ctx-currency">${U.currencies()}</select></div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="ContextSwitcher.saveManager()">Save</button>`);
+    setTimeout(() => {
+      const p = document.getElementById('ctx-primary');
+      if (p) {
+        p.value = primary || 'GB';
+        p.onchange = () => ContextSwitcher._refreshSecondaryList();
+      }
+      const c = document.getElementById('ctx-currency');
+      if (c) c.value = S.user.currency || COUNTRY_CUR[primary] || 'GBP';
+      ContextSwitcher._refreshSecondaryList();
+    }, 50);
+  },
+  _refreshSecondaryList() {
+    const primary = document.getElementById('ctx-primary')?.value || '';
+    const secondary = [...(S.user.secondaryCountries || [])];
+    const box = document.getElementById('ctx-secondary');
+    if (!box) return;
+    const pickList = COUNTRIES.filter(c => c.c !== 'OTHER' && c.c !== primary);
+    box.innerHTML = pickList.map(c => `
+      <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--glass);border:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--text)">
+        <input type="checkbox" class="ctx-sec-chk" value="${c.c}" ${secondary.includes(c.c) ? 'checked' : ''} style="accent-color:var(--accent)">
+        <span>${c.f} ${c.n}</span>
+      </label>`).join('') || '<div style="font-size:12px;color:var(--text3);padding:8px 0">Add another home country above to enable secondary regions.</div>';
+    const cur = document.getElementById('ctx-currency');
+    if (cur && primary && COUNTRY_CUR[primary]) cur.value = COUNTRY_CUR[primary];
+  },
+  saveManager() {
+    const primary = document.getElementById('ctx-primary')?.value || '';
+    const secondary = [...document.querySelectorAll('.ctx-sec-chk:checked')].map(el => el.value).filter(c => c !== primary);
+    const currency = document.getElementById('ctx-currency')?.value || S.user.currency || 'GBP';
+    S.user.country = primary;
+    S.user.secondaryCountries = secondary;
+    S.user.currency = currency;
+    const ctx = this.get();
+    const valid = ['ALL', primary, ...secondary];
+    if (!valid.includes(ctx)) S.user.activeContext = 'ALL';
+    Store.save();
+    Modal.close();
+    Toast.show('Countries updated', 'success');
+    const renders = { 'finance-home': renderFinanceHome, 'dashboard': () => Dash.render() };
+    if (renders[S.currentPage]) renders[S.currentPage]();
+    else if (typeof Dash !== 'undefined') Dash.render();
+    buildNav();
   },
   filter(arr, countryField = 'country') {
     const ctx = this.get();
@@ -836,6 +902,10 @@ const COUNTRIES=[
 ];
 
 const CURRENCIES=['PKR','GBP','USD','AED','EUR','SAR','CAD','AUD','SGD','INR','QAR','BTC','ETH','USDT'];
+
+const COUNTRY_CUR = { PK:'PKR', GB:'GBP', AE:'AED', US:'USD', CA:'CAD', AU:'AUD', SA:'SAR', QA:'QAR', IN:'INR', SG:'SGD', OTHER:'USD' };
+
+const CUR_SYM = { GBP:'£', USD:'$', EUR:'€', AED:'AED ', PKR:'PKR ', SAR:'SAR ', CAD:'CA$', AUD:'A$', SGD:'S$', INR:'₹', QAR:'QAR ' };
 
 const BANKS_DB=[
   {n:'HBL',c:'PK',t:'commercial'},{n:'UBL',c:'PK',t:'commercial'},{n:'MCB Bank',c:'PK',t:'commercial'},
@@ -2318,7 +2388,7 @@ const VaultHealth = {
     if (daysSince <= 7)       s += 20;
     else if (daysSince <= 30) s += 10;
     else if (daysSince < 999) s += 3;
-    if (localStorage.getItem('vo_mkh'))                        s += 15; // Recovery key saved
+    if (localStorage.getItem(recoveryKeyStorageKey()))                        s += 15; // Recovery key saved
     if (S.autoLock)                                            s += 10; // Auto-lock on
     if (S.decoyPin)                                            s += 8;  // Decoy PIN
     if (S.emergency && S.emergency.enabled)                    s += 5;  // Emergency info
@@ -2337,7 +2407,7 @@ const VaultHealth = {
     return [
       { ok: Crypto.available(),                  label: 'AES-256 encryption' },
       { ok: S.pin !== '123456',                  label: 'Custom PIN' },
-      { ok: !!localStorage.getItem('vo_mkh'),    label: 'Recovery key saved' },
+      { ok: !!localStorage.getItem(recoveryKeyStorageKey()),    label: 'Recovery key saved' },
       { ok: daysSince <= 30,                     label: daysSince >= 999 ? 'No backup yet' : daysSince === 0 ? 'Backed up today' : `Backup ${daysSince}d ago` },
       { ok: S.autoLock,                          label: 'Auto-lock on' },
       { ok: !!S.decoyPin,                        label: 'Decoy PIN' },
@@ -2674,8 +2744,14 @@ function generateMasterKey() {
 
 async function storeMasterKeyHash(key) {
   const h = await hashString(key);
-  localStorage.setItem('vo_mkh', h);
+  localStorage.setItem(recoveryKeyStorageKey(), h);
 }
+
+function recoveryKeyStorageKey() {
+  const p = localStorage.getItem('vo_active_profile') || 'personal';
+  return p === 'personal' ? 'vo_mkh' : 'vo_mkh_' + p;
+}
+window.recoveryKeyStorageKey = recoveryKeyStorageKey;
 
 async function showMasterKeyModal(mk) {
   const fmt = mk.match(/.{1,6}/g).join('-');
@@ -2727,7 +2803,7 @@ window.VaultProfiles = VaultProfiles;
 
 // ===================== FORGOT PIN (LOCK SCREEN) =====================
 window.forgotPINFromLock = async function() {
-  const hasRecovery = !!localStorage.getItem('vo_mkh');
+  const hasRecovery = !!localStorage.getItem(recoveryKeyStorageKey());
   Modal.open('🔑 Account Recovery',
     '<div style="display:flex;flex-direction:column;gap:10px">' +
     '<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px">Choose a recovery option:</div>' +
@@ -2751,11 +2827,11 @@ window._recoverWithKey = function() {
 };
 
 window._verifyMasterKey = async function() {
-  const input = (document.getElementById('mkInput')?.value || '').replace(/[\s-]/g,'').toUpperCase();
-  const errEl = document.getElementById('mkErr');
+  const input = (document.getElementById('mkInput')?.value || document.getElementById('mk-in')?.value || '').replace(/[\s-]/g,'').toUpperCase();
+  const errEl = document.getElementById('mkErr') || document.getElementById('mk-err');
   const setErr = msg => { if(errEl){ errEl.textContent=msg; } };
   if (input.length < 8) { setErr('Please enter your master key.'); return; }
-  const stored = localStorage.getItem('vo_mkh');
+  const stored = localStorage.getItem(recoveryKeyStorageKey());
   if (!stored) { setErr('No master key found for this vault.'); return; }
   const h = await hashString(input);
   if (h !== stored) { setErr('Incorrect master key — please check and try again.'); return; }
@@ -2779,7 +2855,7 @@ window._applyNewPIN = async function(masterKey, hasSlot) {
   const b = document.getElementById('newPinB')?.value || '';
   const err = document.getElementById('newPinErr');
   const setErr = msg => { if(err){err.textContent=msg;} };
-  if (!a || a.length < 4) { setErr('PIN must be at least 4 digits.'); return; }
+  if (!/^\d{6}$/.test(a)) { setErr('PIN must be exactly 6 digits.'); return; }
   if (a !== b) { setErr('PINs do not match.'); return; }
   try {
     if (hasSlot && masterKey) {
@@ -3086,8 +3162,8 @@ window.Settings.forgotPIN = function() {
 window.Settings.useMasterKey = function() {
   Modal.open('🗝️ Enter Master Key',
     '<div style="display:flex;flex-direction:column;gap:12px">' +
-    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultOS.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX</span></div>' +
-    '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
+    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultOS.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
+    '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
     '<div id="mk-err" style="color:var(--err);font-size:12px;min-height:16px;text-align:center"></div>' +
     '</div>',
     '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
@@ -3096,41 +3172,17 @@ window.Settings.useMasterKey = function() {
 };
 
 window.Settings.verifyMasterKey = function() {
-  const input = (document.getElementById('mk-in')?.value || '').trim().toUpperCase();
-  const pin = S.pin || localStorage.getItem('vo_pin') || '';
-  const name = S.user?.name || '';
-  const raw = btoa(unescape(encodeURIComponent(pin + ':' + name + ':VaultOS3')));
-  const expected = (raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6) + '-' + raw.slice(4,10).toUpperCase() + '-' + raw.slice(10,16).toUpperCase()).toUpperCase();
-  const err = document.getElementById('mk-err');
-  if (input === expected) {
-    Modal.close();
-    if (window.Settings.changePIN) {
-      window.Settings.changePIN();
-    } else {
-      const newPin = prompt('Master key verified! Enter your new 6-digit PIN:');
-      if (newPin && /^\d{6}$/.test(newPin)) {
-        S.pin = newPin;
-        if (typeof Store !== 'undefined') Store.save();
-        else localStorage.setItem('vo_pin', newPin);
-        if (window.Toast) Toast.show('PIN updated successfully', 'success');
-      }
-    }
-  } else {
-    if (err) err.textContent = 'Invalid master key — please check and try again';
-    else alert('Invalid master key');
-  }
+  window._verifyMasterKey();
 };
 
 window.Settings.resetVault = function() {
+  if (typeof Settings !== 'undefined' && Settings.resetVault) {
+    Settings.resetVault();
+    return;
+  }
   if (!confirm('⚠️ This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
   if (!confirm('FINAL CONFIRMATION: Reset entire vault and delete all data?')) return;
-  const keys = Object.keys(localStorage).filter(k =>
-    k.startsWith('vo_') || k.startsWith('vos_') || k.startsWith('vault_') || k === 'pin'
-  );
-  keys.forEach(k => localStorage.removeItem(k));
-  if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
-  if (window.Toast) Toast.show('Vault reset — reloading...', 'warning', 1500);
-  setTimeout(() => location.reload(), 1600);
+  window._confirmReset();
 };
 
 // ===================== PIN / LOCK SYSTEM =====================
@@ -3184,7 +3236,7 @@ const PIN = {
     this._verify(entered).then(result => {
       if (result === 'real') {
         S.fails = 0; S.lockedUntil = 0;
-        try { localStorage.removeItem('vos_fails'); } catch(e) {}
+        try { localStorage.removeItem('vos_fails'); localStorage.removeItem('vo_pin'); } catch(e) {}
         Store.save();
         setTimeout(() => R.unlock(), 180);
       } else if (result === 'decoy') {
@@ -3384,6 +3436,21 @@ const OB = {
     else if (p1.startsWith(p2) || p2.length < 6) { m.innerHTML = '<span style="color:var(--text3)">Typing...</span>'; }
     else { m.innerHTML = '<span style="color:var(--err)">❌ PINs do not match</span>'; }
   },
+  copyRecoveryKey() {
+    const mk = window._obRecoveryKey;
+    const el = document.getElementById('ob-recovery-key');
+    const text = mk || (el ? el.textContent : '');
+    if (!text || text.includes('Generating') || text.includes('Error')) {
+      Toast.show('Key not ready yet', 'warn');
+      return;
+    }
+    const fmt = mk ? mk.match(/.{1,6}/g).join('-') : text;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(fmt).then(() => Toast.show('Recovery key copied — store it safely', 'success', 4000));
+    } else {
+      Toast.show('Copy: ' + fmt, 'info', 8000);
+    }
+  },
   next(step) {
     obStep = step + 1;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
@@ -3425,13 +3492,22 @@ const OB = {
     VaultDB.init(p).then(async () => {
       Store.save();
       delete S.pin;
-      if (!localStorage.getItem('vo_mkh')) {
+      if (!localStorage.getItem(recoveryKeyStorageKey())) {
         const mk = generateMasterKey();
         await storeMasterKeyHash(mk);
         await VaultDB.saveRecovery(mk);
         const fmt = mk.match(/.{1,6}/g).join('-');
+        window._obRecoveryKey = mk;
         const el = document.getElementById('ob-recovery-key');
-        if (el) el.textContent = fmt;
+        if (el) {
+          el.textContent = fmt;
+          el.style.fontSize = '0.95rem';
+          el.style.lineHeight = '1.5';
+        }
+        const copyBtn = document.getElementById('ob-recovery-copy');
+        if (copyBtn) copyBtn.style.display = 'flex';
+        if (navigator.vibrate) navigator.vibrate([20, 40, 20]);
+        Toast.show('Recovery key ready — write it down now', 'warning', 6000);
       } else {
         const el = document.getElementById('ob-recovery-key');
         if (el) el.textContent = '(Recovery key already configured)';
@@ -3443,7 +3519,6 @@ const OB = {
     });
   },
   complete() {
-    const COUNTRY_CUR = { PK:'PKR', GB:'GBP', AE:'AED', US:'USD' };
     if (obCountries.length > 0) {
       S.user.country = obCountries[0];
       S.user.currency = COUNTRY_CUR[obCountries[0]] || 'USD';
@@ -3755,6 +3830,18 @@ const U = {
   cname:    c  => COUNTRIES.find(x => x.c === c)?.n || c,
   phone:    c  => COUNTRIES.find(x => x.c === c)?.p || '+0',
   fmt:      n  => new Intl.NumberFormat().format(n || 0),
+  curSym:   c  => CUR_SYM[(c || 'GBP').toUpperCase()] || ((c || 'GBP').toUpperCase() + ' '),
+  fmtCur(pkr, cur) {
+    cur = (cur || (typeof S !== 'undefined' && S.user && S.user.currency) || 'GBP').toUpperCase();
+    const val = typeof CurrencyEngine !== 'undefined'
+      ? Math.round(CurrencyEngine.fromBase(pkr || 0, cur))
+      : Math.round(pkr || 0);
+    const sym = U.curSym(cur);
+    if (cur === 'PKR') return sym + U.fmtPKR(val);
+    if (val >= 1000000) return sym + (val / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+    if (val >= 1000) return sym + (val / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return sym + val.toLocaleString();
+  },
   fmtPKR(n) {
     n = Math.abs(Math.round(n || 0));
     if (n >= 10000000) return (n / 10000000).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
@@ -4501,7 +4588,7 @@ function buildNav() {
   const fabItems = [
     ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${q.icon} Add ${q.label}</div>`),
     '<div class="fmi" onclick="SmartAdd.open();FAB.close()">✨ Smart Add</div>',
-    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">🤖 AI Import</div>',
+    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">📥 Smart Import</div>',
     '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
     '<div class="fmi" onclick="R.goto(\'alerts\');FAB.close()">🔔 Alerts</div>',
     '<div class="fmi" onclick="R.goto(\'timeline\');FAB.close()">📅 Timeline</div>',
@@ -4511,62 +4598,38 @@ function buildNav() {
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
 }
 
-// ===================== SMART ADD (Quick Add — no API key required) =====================
+// ===================== SMART ADD (offline pattern detection) =====================
 const SmartAdd = {
   open() {
-    Modal.open('✨ Quick Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. Claude AI detects and pre-fills the form — add your API key in Settings → AI Import to enable.</p>
+    Modal.open('✨ Smart Add', `
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. VaultOS detects the type and pre-fills the form — works offline, no AI needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
-        <textarea class="inp" id="sa-text" rows="4" placeholder="HBL account with PKR 500,000 balance&#10;Lent £500 to Ahmed, due June&#10;Netflix £17.99 monthly subscription" style="font-size:13px;line-height:1.6"></textarea>
+        <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:13px;line-height:1.6"></textarea>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: "HBL account PKR 500,000" · "Lent £500 to Ahmed, due June" · "Netflix £17.99/month" · "Jazz SIM +92 300 1234567"</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: bank + balance · card + last 4 · loan to someone · subscription · SIM number</div>
     `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
 
-  async run() {
+  run() {
     const text = (document.getElementById('sa-text')?.value || '').trim();
     if (!text) { Toast.show('Describe what you want to add', 'warning'); return; }
     const btn = document.getElementById('sa-run-btn');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Detecting...'; }
-    try {
-      const userCur = S.user?.currency || 'PKR';
-      const userCountry = S.user?.country || 'PK';
-      const apiKey = localStorage.getItem('vo_claude_key') || '';
-      const headers = { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-allow-browser': 'true' };
-      if (apiKey) headers['x-api-key'] = apiKey;
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers,
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6', max_tokens: 500,
-          system: `You are a financial data parser. Extract ONE financial item from the user's description.\nReturn ONLY valid JSON: {"module":"bank|card|loan|cash|investment|expense|document|sim|bc|bond","fields":{...}}\nUser context: currency=${userCur}, country=${userCountry}\n\nFor bank: fields = {bankName, balance, currency, accountType, last4}\nFor card: fields = {cardName, last4, expiry, network, creditLimit, currency}\nFor loan: fields = {person, amount, currency, type:"lent|borrowed", dueDate, notes}\nFor cash: fields = {label, amount, currency, location}\nFor investment: fields = {investmentName, broker, type, amountInvested, currency}\nFor expense: fields = {name, amount, currency, category, frequency:"monthly|yearly"}\nFor document: fields = {docType, holderName, docNumber, expiryDate}\nFor sim: fields = {network, phone, country, simType:"Physical|eSIM"}\nFor bc: fields = {name, members, contribution, currency, type:"ballot|fixed"}\nFor bond: fields = {name, faceValue, quantity, currency, typeId}\nReturn ONLY JSON, no explanation.`,
-          messages: [{ role: 'user', content: text }]
-        })
-      });
-      if (!response.ok) throw new Error('API error ' + response.status);
-      const data = await response.json();
-      const raw = (data.content || []).map(c => c.text || '').join('');
-      let parsed;
-      try { parsed = JSON.parse(raw.replace(/```json|```/g, '').trim()); }
-      catch(e) { throw new Error('Could not parse response'); }
+
+    const parsed = (typeof SmartParser !== 'undefined' ? SmartParser.parseOne(text) : null)
+      || (typeof AIImport !== 'undefined' && AIImport.parse ? (() => { const items = AIImport.parse(text); return items.length ? { module: items[0].type === 'expense' ? 'expense' : items[0].type, fields: items[0].data } : null; })() : null);
+
+    if (btn) { btn.disabled = false; btn.textContent = '✨ Detect & Pre-fill'; }
+
+    if (parsed && parsed.module) {
       Modal.close();
       if (navigator.vibrate) navigator.vibrate(30);
       this._dispatch(parsed.module, parsed.fields || {});
-    } catch(e) {
-      const t2 = document.getElementById('sa-text')?.value || '';
-      const items = typeof AIImport !== 'undefined' ? AIImport.parse(t2) : [];
-      Modal.close();
-      if (items.length) {
-        const best = items[0];
-        if (navigator.vibrate) navigator.vibrate(30);
-        this._dispatch(best.type, best.fields || {});
-        Toast.show('Smart Add: using pattern match (AI unavailable)', 'info', 3000);
-      } else {
-        Toast.show('Could not detect — try describing more specifically', 'warning', 4000);
-      }
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '✨ Detect & Pre-fill'; }
+      Toast.show('Detected — review and save', 'success', 3000);
+    } else {
+      Toast.show('Could not detect — try: bank name + amount, or "lent $X to Name"', 'warning', 4500);
     }
   },
 
@@ -4650,7 +4713,7 @@ const CMD = {
   recentActions: [],
   addRecent(action) { this.recentActions = [action, ...this.recentActions.filter(a => a.label !== action.label)].slice(0, 8); },
   _allCmds: [
-    {icon:'✨',label:'Smart Add (AI)',action:()=>SmartAdd.open()},
+    {icon:'✨',label:'Smart Add',action:()=>SmartAdd.open()},
     {icon:'🏦',label:'Add Bank',action:()=>Banks.openAdd()},
     {icon:'💳',label:'Add Card',action:()=>Cards.openAdd()},
     {icon:'📈',label:'Add Investment',action:()=>Inv.openAdd()},

@@ -4,15 +4,32 @@
 const VaultDB = (() => {
   let _key  = null;  // AES-GCM session key (in memory only, cleared on lock)
   let _db   = null;  // cached IndexedDB connection
+  let _dbId = null;  // which profile DB is open
+
+  function _profileId() {
+    try { return localStorage.getItem('vo_active_profile') || 'personal'; }
+    catch (e) { return 'personal'; }
+  }
+
+  function _dbName() {
+    const p = _profileId();
+    return p === 'personal' ? 'vaultos' : 'vaultos_' + p;
+  }
 
   // ── IndexedDB helpers ──────────────────────────────────────────────────────
 
   async function _getDB() {
-    if (_db) return _db;
+    const name = _dbName();
+    if (_db && _dbId === name) return _db;
+    if (_db) {
+      try { _db.close(); } catch (e) {}
+      _db = null;
+      _dbId = null;
+    }
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open('vaultos', 1);
+      const req = indexedDB.open(name, 1);
       req.onupgradeneeded = e => { e.target.result.createObjectStore('vault'); };
-      req.onsuccess  = e => { _db = e.target.result; resolve(_db); };
+      req.onsuccess  = e => { _db = e.target.result; _dbId = name; resolve(_db); };
       req.onerror    = e => reject(e.target.error);
     });
   }
@@ -49,11 +66,13 @@ const VaultDB = (() => {
   // ── Salt (non-sensitive, lives in localStorage) ────────────────────────────
 
   function _getSalt() {
-    let s = localStorage.getItem('vos_salt');
+    const p = _profileId();
+    const saltKey = p === 'personal' ? 'vos_salt' : 'vos_salt_' + p;
+    let s = localStorage.getItem(saltKey);
     if (!s) {
       const bytes = crypto.getRandomValues(new Uint8Array(16));
       s = btoa(String.fromCharCode(...bytes));
-      localStorage.setItem('vos_salt', s);
+      localStorage.setItem(saltKey, s);
     }
     return new Uint8Array(atob(s).split('').map(c => c.charCodeAt(0)));
   }
@@ -213,9 +232,16 @@ const VaultDB = (() => {
     // Wipe all vault data and clear session key.
     async wipe() {
       _key = null;
-      _db = null;
       try { await _idbClearAll(); } catch(e) {}
+      if (_db) {
+        try { _db.close(); } catch(e) {}
+      }
+      _db = null;
+      _dbId = null;
     },
+
+    activeProfile() { return _profileId(); },
+    databaseName() { return _dbName(); },
 
     // Save a recovery copy of current vault data encrypted with master key.
     async saveRecovery(masterKey) {

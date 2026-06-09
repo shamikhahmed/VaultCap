@@ -82,19 +82,14 @@ const Dash={
     const b = document.getElementById('dashBody');
     if (!b) return;
 
-    const cur = S.user.currency || 'PKR';
+    const cur = S.user.currency || 'GBP';
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
 
     const toB = (a,c) => (a||0) * (FX[c] || 1);
     const toCur = (pkr, c) => CurrencyEngine.fromBase(pkr, c || cur);
-    const fmtN = n => cur === 'PKR' ? U.fmtPKR(n) : U.fmt(n);
-    const fmt = n => {
-      const sym = cur === 'GBP' ? '£' : cur === 'USD' ? '$' : cur === 'AED' ? 'AED ' : 'PKR ';
-      const v = Math.round(toCur(n, cur));
-      if (v >= 1000000) return sym + (v/1000000).toFixed(2) + 'M';
-      if (v >= 1000) return sym + (v/1000).toFixed(1) + 'K';
-      return sym + v.toLocaleString();
-    };
+    const fmt = pkr => U.fmtCur(pkr, cur);
+
+    const ctxBar = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.bar('dashboard') : '';
 
     const activeCtx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
     const ctxFilter = arr => (activeCtx === 'ALL' || !activeCtx) ? (arr||[]) : (typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]));
@@ -187,20 +182,15 @@ const Dash={
     const nwChange = nwDisplay - prevNW;
     const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(nwChange));
     const sparkline = _nwSparkline(hist);
-    const _COUNTRY_CUR = {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
+    const _COUNTRY_CUR = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
     const multiCurHtml = secondaryCurs.length > 0
       ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
-        secondaryCurs.map(c => {
-          const cv = typeof CurrencyEngine !== 'undefined' ? Math.round(CurrencyEngine.fromBase(nwPKR, c)) : 0;
-          const sym = c==='GBP'?'£':c==='USD'?'$':(c+' ');
-          const s = cv>=1000000 ? sym+(cv/1000000).toFixed(1)+'M' : cv>=1000 ? sym+(cv/1000).toFixed(0)+'K' : sym+cv.toLocaleString();
-          return '<span>≈ '+s+'</span>';
-        }).join('') + '</div>'
+        secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
     const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + activeCtx : 'Net Worth') + '</div>' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwDisplay)+'</div>' +
       ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
@@ -266,14 +256,14 @@ const Dash={
       '</div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
-    const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? activeCtx : '🌐';
+    const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : '🌐 All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
     const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-top:14px">' +
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
       '<div style="font-size:20px;font-weight:800;color:var(--text)">'+entityTotal+'</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Records</div></div>' +
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
-      '<div style="font-size:16px;font-weight:800;color:var(--text)">'+activeCountryLabel+'</div>' +
+      '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.2">'+activeCountryLabel+'</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Country</div></div>' +
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
       '<div style="font-size:14px;font-weight:800;color:var(--text)">'+lastBackupLabel+'</div>' +
@@ -281,6 +271,7 @@ const Dash={
       '</div>';
 
     b.innerHTML = `
+    ${ctxBar}
     ${nwHero}
 
     ${breakdownHtml}
@@ -443,7 +434,13 @@ const Dash={
     setTimeout(()=>{const c=document.getElementById('nwc');if(c)c.value=S.user.currency||'GBP';},50);
   },
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
-  toggleCurrency(){const order=['PKR','GBP','AED','USD'];const idx=order.indexOf(S.user.currency||'PKR');S.user.currency=order[(idx+1)%order.length];Store.save();this.render();},
+  toggleCurrency(){
+    Modal.open('💱 Display Currency',`
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Choose how amounts appear on the dashboard. This does not change your account currencies.</p>
+      <div class="fg"><label class="fl">Currency</label><select class="inp" id="dash-cur-pick">${U.currencies()}</select></div>`,
+      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="S.user.currency=document.getElementById('dash-cur-pick').value;Store.save();Modal.close();Dash.render();Toast.show('Currency updated','success')">Save</button>`);
+    setTimeout(()=>{const c=document.getElementById('dash-cur-pick');if(c)c.value=S.user.currency||'GBP';},50);
+  },
   security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.decoyPin)s+=5;return Math.min(s,100);},
   showNWBreakdown(){
     const cur=S.user.currency||'PKR';
@@ -486,7 +483,7 @@ const Dash={
 const Settings={
   render(){
     const b=document.getElementById('settBody');if(!b)return;
-    const mk=this.getMasterKey();
+    const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
     b.innerHTML=`
     <div style="position:sticky;top:0;z-index:20;background:var(--bg2);padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
       ${[['ss-profile','👤 Profile'],['ss-modules','🧩 Modules'],['ss-look','🎨 Look'],['ss-security','🔒 Security'],['ss-backup','💾 Backup']].map(([id,label])=>`<button onclick="document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})" style="flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--glass);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap">${label}</button>`).join('')}
@@ -494,6 +491,12 @@ const Settings={
     <div class="set-sec" id="ss-profile"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1">${(()=>{const n=S.user.name||'User';const initials=n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);const hash=n.split('').reduce((a,c)=>a+c.charCodeAt(0),0);const colors=['#0080ff','#10b981','#d946ef','#f59e0b','#ef4444','#6935d3','#ff3464','#00b67a'];const bg=colors[hash%colors.length];return `<div style="width:48px;height:48px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-0.5px">${initials}</div>`;})()}<div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to add email'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
+      </div>
+      <div class="si" onclick="Settings.editCountries()" style="cursor:pointer">
+        <div class="sil"><div class="name">Countries & Regions</div><div class="desc">${S.user.country ? U.flag(S.user.country)+' '+U.cname(S.user.country) : 'Not set'}${(S.user.secondaryCountries||[]).length ? ' · +'+(S.user.secondaryCountries||[]).length+' more' : ''}</div></div><span style="color:var(--text3)">›</span>
+      </div>
+      <div class="si" onclick="Dash.toggleCurrency()" style="cursor:pointer">
+        <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span style="color:var(--text3)">›</span>
       </div>
       <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
       <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
@@ -555,15 +558,13 @@ const Settings={
     <div class="set-sec" id="ss-security"><div class="set-title">🔒 Security</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
       <div style="padding:14px">
-        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🗝️ Your Master Key</div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6">This key can reset your PIN if you forget it. It is derived from your PIN and name — not stored anywhere. Write it down and keep it safe.</div>
-        <div id="mk-display" onclick="this.style.filter='none';document.getElementById('mk-actions').style.display='flex'"
-          style="font-size:18px;font-weight:900;letter-spacing:4px;color:var(--accent);text-align:center;padding:16px;background:rgba(0,0,0,.3);border-radius:10px;font-family:var(--mono);filter:blur(8px);cursor:pointer;transition:filter .3s"
-          title="Tap to reveal">${mk}</div>
-        <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:6px">Tap to reveal · Keep this private</div>
-        <div id="mk-actions" style="display:none;gap:8px;margin-top:12px">
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="navigator.clipboard?.writeText('${mk}').then(()=>Toast.show('Copied','success'))">📋 Copy</button>
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings._printMasterKey('${mk}')">🖨️ Print Card</button>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🗝️ Recovery Master Key</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6">Your master key was shown once during vault setup. For security it cannot be displayed again. Store it offline — you need it if you forget your PIN.</div>
+        <div style="font-size:14px;font-weight:700;text-align:center;padding:16px;background:rgba(0,0,0,.25);border-radius:10px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
+          ${hasRecoveryKey?'✓ Recovery key configured':'⚠️ No recovery key on this device'}
+        </div>
+        <div id="mk-actions" style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings.useMasterKey()">🗝️ Recover with Key</button>
         </div>
       </div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
@@ -587,33 +588,13 @@ const Settings={
       <div class="si"><div class="sil"><div class="name">What you'll be notified about</div><div class="desc">Documents expiring in 7 days · Cards expiring in 30 days · Loans due in 7 days · BC payments (3 days notice)</div></div></div>
     </div></div>
 
-    <div class="set-sec"><div class="set-title">🤖 AI Import</div><div class="set-card">
+    <div class="set-sec"><div class="set-title">📥 Smart Import</div><div class="set-card">
       <div class="si">
         <div class="sil">
-          <div class="name">Claude API Key</div>
-          <div class="desc">Required for AI Import to work. Get your key from console.anthropic.com → API Keys. Stored locally only, never sent anywhere except Anthropic.</div>
+          <div class="name">Offline pattern detection</div>
+          <div class="desc">Paste text from statements or notes — VaultOS extracts banks, cards, loans, and more. No AI, no API key, works globally.</div>
         </div>
-      </div>
-      <div style="padding:10px 14px">
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="password" id="claude-api-key-input"
-            class="inp"
-            placeholder="sk-ant-..."
-            value="${localStorage.getItem('vo_claude_key') || ''}"
-            style="flex:1;font-family:monospace;font-size:13px"
-            oninput="localStorage.setItem('vo_claude_key',this.value.trim())">
-          <button onclick="const el=document.getElementById('claude-api-key-input');el.type=el.type==='password'?'text':'password'"
-            style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text2);cursor:pointer;font-size:13px;white-space:nowrap">
-            👁
-          </button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:6px">
-          ${localStorage.getItem('vo_claude_key') ? '✓ Key saved — AI Import is ready' : '⚠️ No key set — AI Import will not work'}
-        </div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn btn-g btn-sm" onclick="window.open('https://console.anthropic.com/settings/keys','_blank')">Get API Key →</button>
-          <button class="btn btn-sm" style="background:rgba(255,69,58,.1);color:var(--err);border:1px solid rgba(255,69,58,.3)" onclick="localStorage.removeItem('vo_claude_key');Settings.render();Toast.show('API key removed','info')">Remove Key</button>
-        </div>
+        <button class="btn btn-g btn-sm" onclick="R.goto('ai-import')">Open →</button>
       </div>
     </div></div>
 
@@ -657,23 +638,31 @@ const Settings={
     saveTabPrefs(tp);
     Toast.show(`${v?'Enabled':'Hidden'}: ${ALL_MODULES.find(m=>m.id===id)?.n}`,'info',1500);
   },
+  editCountries(){ ContextSwitcher.openManager(); },
   editProfile(){
     Modal.open('👤 Edit Profile',`
     <div class="fr"><div class="fg"><label class="fl">Your Name</label><input class="inp" id="pp-name" value="${S.user.name||''}"></div><div class="fg"><label class="fl">Avatar Emoji</label><input class="inp" id="pp-avatar" value="${S.user.avatar||'💼'}" style="font-size:22px;text-align:center"></div></div>
     <div class="fr"><div class="fg"><label class="fl">Email</label><input class="inp" id="pp-email" type="email" value="${S.user.email||''}" placeholder="your@email.com"></div><div class="fg"><label class="fl">Phone</label><input class="inp" id="pp-phone" value="${S.user.phone||''}" placeholder="+44 7700..."></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="pp-dob" type="date" value="${S.user.dob||''}"></div><div class="fg"><label class="fl">Default Currency</label><select class="inp" id="pp-cur">${U.currencies()}</select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="pp-dob" type="date" value="${S.user.dob||''}"></div><div class="fg"><label class="fl">Home Country</label><select class="inp" id="pp-country">${U.countries()}</select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Default Currency</label><select class="inp" id="pp-cur">${U.currencies()}</select></div><div class="fg"><label class="fl">&nbsp;</label><button type="button" class="btn btn-g btn-full" onclick="Settings.editCountries()">Manage all countries →</button></div></div>
     <div class="fg"><label class="fl">Home Address</label><textarea class="inp" id="pp-home" rows="2">${S.user.homeAddr||''}</textarea></div>
     <div class="fg"><label class="fl">Work / Office Address</label><textarea class="inp" id="pp-work" rows="2">${S.user.workAddr||''}</textarea></div>`,
     `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Settings.saveProfile()">Save Profile</button>`);
-    setTimeout(()=>{const c=document.getElementById('pp-cur');if(c)c.value=S.user.currency||'GBP';},50);
+    setTimeout(()=>{
+      const c=document.getElementById('pp-cur');if(c)c.value=S.user.currency||'GBP';
+      const cc=document.getElementById('pp-country');if(cc)cc.value=S.user.country||'GB';
+    },50);
   },
   saveProfile(){
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
     S.user.name=g('pp-name')||S.user.name;S.user.avatar=g('pp-avatar')||S.user.avatar;
     S.user.email=g('pp-email');S.user.phone=g('pp-phone');S.user.dob=g('pp-dob');
+    const newCountry=document.getElementById('pp-country')?.value||S.user.country;
+    if(newCountry&&newCountry!==S.user.country&&typeof COUNTRY_CUR!=='undefined')S.user.currency=COUNTRY_CUR[newCountry]||S.user.currency;
+    S.user.country=newCountry;
     S.user.currency=document.getElementById('pp-cur')?.value||S.user.currency;
     S.user.homeAddr=g('pp-home');S.user.workAddr=g('pp-work');
-    Store.save();Modal.close();this.render();buildNav();Toast.show('Profile updated','success');
+    Store.save();Modal.close();this.render();buildNav();if(S.currentPage==='dashboard'&&typeof Dash!=='undefined')Dash.render();Toast.show('Profile updated','success');
   },
   changePIN(){
     Modal.open('🔑 Change PIN',`
@@ -696,17 +685,15 @@ const Settings={
     });
   },
   showMasterKey(){
-    const key=this.getMasterKey();
-    Modal.open('🗝️ Master Emergency Key',`
+    const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
+    Modal.open('🗝️ Recovery Master Key',`
     <div style="text-align:center;padding:8px 0">
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">This key can bypass lockouts and reset your PIN. It is derived from your PIN + name — it is NOT stored anywhere. Write it down and keep it somewhere physically safe.</p>
-      <div style="font-size:22px;font-weight:900;letter-spacing:4px;color:var(--accent);background:var(--glass2);padding:18px;border-radius:var(--r);font-family:var(--mono);margin-bottom:14px;word-break:break-all">${key}</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button class="btn btn-s" style="flex:1" onclick="U.copy('${key}','Master key')">📋 Copy Key</button>
-        <button class="btn btn-s" style="flex:1" onclick="Settings._printMasterKey('${key}')">🖨️ Print Card</button>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery master key was shown once when you created your vault. It is never stored in readable form on this device.</p>
+      <div style="font-size:15px;font-weight:700;padding:18px;border-radius:var(--r);background:var(--glass2);color:${hasRecoveryKey?'var(--ok)':'var(--warn)'};margin-bottom:14px">
+        ${hasRecoveryKey?'✓ Recovery key configured on this device':'⚠️ No recovery key found — use a .vos backup if you forget your PIN'}
       </div>
-      <p style="font-size:11px;color:var(--text3)">If your PIN or name changes, this key changes too. Re-view it after any changes.</p>
-    </div>`,`<button class="btn btn-p btn-full" onclick="Modal.close()">✅ I've stored it safely</button>`);
+      <p style="font-size:11px;color:var(--text3);line-height:1.6">If you saved your key on paper or in a password manager, use <strong>Forgot PIN → Use Master Key</strong> on the lock screen.</p>
+    </div>`,`<button class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
   },
   _printMasterKey(key){
     const w=window.open('','_blank');
@@ -751,8 +738,8 @@ const Settings={
   useMasterKey(){
     Modal.open('🗝️ Enter Master Key',
       `<div style="display:flex;flex-direction:column;gap:12px">
-        <div style="font-size:13px;color:var(--text2);line-height:1.6">Enter the master key that was shown when you first set up your vault. Format: XXXXXX-XXXXXX-XXXXXX</div>
-        <input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX"
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">Enter the master key that was shown when you first set up your vault. Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
+        <input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX"
           style="font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;font-size:16px;text-align:center"
           oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')">
         <div class="ferr" id="mk-err" style="color:var(--err);font-size:12px;min-height:16px"></div>
@@ -762,20 +749,7 @@ const Settings={
     );
   },
   verifyMasterKey(){
-    const input=(document.getElementById('mk-in')?.value||'').trim().toUpperCase();
-    const pin=S.pin||localStorage.getItem('vo_pin')||'';
-    const name=S.user?.name||'';
-    const raw=btoa(unescape(encodeURIComponent(pin+':'+name+':VaultOS3')));
-    const expected=(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
-    const err=document.getElementById('mk-err');
-    if(input===expected){Modal.close();Settings.changePIN();if(window.Toast)Toast.show('Master key verified — set your new PIN','success');}
-    else{if(err)err.textContent='Invalid master key — check and try again';}
-  },
-  getMasterKey(){
-    const pin=S.pin||'';
-    const name=S.user?.name||'';
-    const raw=btoa(unescape(encodeURIComponent(pin+':'+name+':VaultOS3')));
-    return(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
+    if(typeof window._verifyMasterKey==='function') window._verifyMasterKey();
   },
   loadDemo(){
     const profiles=[
@@ -832,11 +806,19 @@ const Settings={
   resetVault(){
     if(!window.__vos_confirm('⚠️ This will permanently delete ALL your vault data.'))return;
     if(!window.__vos_confirm('Final confirmation — this CANNOT be undone. Reset entire vault?'))return;
-    Store.clear().then(()=>{
+    const wipe=async()=>{
+      try{await VaultDB.wipe();}catch(e){}
+      try{
+        Object.keys(localStorage).filter(k=>{
+          const mk=typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh';
+          return k.startsWith('vo_')||k.startsWith('vos_')||k.startsWith('vault_')||k===mk;
+        }).forEach(k=>localStorage.removeItem(k));
+      }catch(e){}
       if(window.caches)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
       Toast.show('Vault cleared — reloading...','warning',1500);
       setTimeout(()=>location.reload(),1600);
-    });
+    };
+    wipe();
   }
 };
 
@@ -1907,20 +1889,18 @@ const BackupCenter={
 const RecoveryCenter={
   render(){
     const b=document.getElementById('recoveryBody');if(!b)return;
-    const raw=btoa(unescape(encodeURIComponent(S.pin+':'+S.user.name+':VaultOS3')));
-    const masterKey=(raw.replace(/[^A-Za-z0-9]/g,'').slice(0,6)+'-'+raw.slice(4,10).toUpperCase()+'-'+raw.slice(10,16).toUpperCase()).toUpperCase();
+    const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
     b.innerHTML=`
     <!-- MASTER KEY -->
     <div class="hero" style="margin-bottom:14px">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">🗝️ Emergency Master Key</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">This key can unlock your vault if you forget your PIN. It is mathematically derived from your PIN and name — it is NOT stored anywhere on this device or any server. Write it down now.</div>
-      <div id="masterKeyDisplay" style="font-size:20px;font-weight:900;letter-spacing:5px;color:var(--accent);text-align:center;padding:18px;background:rgba(0,0,0,.4);border-radius:12px;font-family:var(--mono);filter:blur(8px);cursor:pointer;transition:filter .3s" onclick="this.style.filter='none';document.getElementById('rc-copy').style.display='flex'" title="Tap to reveal">
-        ${masterKey}
+      <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery key was shown once during vault setup and cannot be displayed again. If you wrote it down, use it below to reset your PIN and restore access.</div>
+      <div style="font-size:16px;font-weight:700;text-align:center;padding:18px;background:rgba(0,0,0,.35);border-radius:12px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
+        ${hasRecoveryKey?'✓ Recovery key configured':'⚠️ No recovery key on this device'}
       </div>
-      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Tap to reveal · Keep this private</div>
-      <div id="rc-copy" style="display:none;gap:8px;margin-top:12px">
-        <button class="btn btn-s btn-sm" style="flex:1" onclick="U.copy('${masterKey}','Master key')">📋 Copy</button>
-        <button class="btn btn-s btn-sm" style="flex:1" onclick="RecoveryCenter.printKey('${masterKey}')">🖨️ Print Card</button>
+      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
+      <div id="rc-copy" style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings.useMasterKey()">🗝️ Enter Master Key</button>
       </div>
     </div>
     <!-- RECOVERY OPTIONS -->
@@ -1932,7 +1912,7 @@ const RecoveryCenter={
     <!-- SECURITY CHECKLIST -->
     <div class="set-sec"><div class="set-title">Recovery Checklist</div><div class="set-card">
       ${[
-        {done:S.user.name,label:'Name set',tip:'Required for master key derivation'},
+        {done:S.user.name,label:'Name set',tip:'Shown on dashboard and exports'},
         {done:!!S.user.lastBackup||S.banks.length>0||S.cards.length>0,label:'Vault has data',tip:'Add banks, cards or other entries'},
         {done:!!S.decoyPin,label:'Decoy PIN configured',tip:'Shows fake vault under coercion'},
         {done:!!S.user.lastBackup,label:'Vault backed up',tip:'Export encrypted backup to safe location'},
@@ -2039,7 +2019,12 @@ const SettingsNav = {
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
       </div>
-      <div class="si"><div class="sil"><div class="name">Default Currency</div><div class="desc">${S.user.currency||'PKR'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+      <div class="si" onclick="Settings.editCountries()" style="cursor:pointer">
+        <div class="sil"><div class="name">Countries & Regions</div><div class="desc">${S.user.country ? U.flag(S.user.country)+' '+U.cname(S.user.country) : 'Not set'}${(S.user.secondaryCountries||[]).length ? ' · +'+(S.user.secondaryCountries||[]).length+' more' : ''}</div></div><span style="color:var(--text3)">›</span>
+      </div>
+      <div class="si" onclick="Dash.toggleCurrency()" style="cursor:pointer">
+        <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span style="color:var(--text3)">›</span>
+      </div>
       <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
       <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
     </div></div>
@@ -2152,7 +2137,7 @@ const SettingsNav = {
   _import() {
     return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
       <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import Engine</div><div class="desc">Paste text, drop files, scan images — VaultOS detects and imports entries automatically</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" onclick="R.goto('ai-import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🤖</div><div class="sil"><div class="name">AI Import (Smart Pattern Matching)</div><div class="desc">Advanced pattern engine — detect banks, cards, SIMs, investments from any text snippet</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="R.goto('ai-import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text — offline detection for banks, cards, loans, and more</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📊</div><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls — auto-detect sheets and map to vault modules</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">🔒</div><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup file or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
     </div></div>`;
