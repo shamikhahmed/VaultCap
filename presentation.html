@@ -203,7 +203,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
 
 <canvas id="particles"></canvas>
 <div id="progress"></div>
-<div id="counter">01 / 14</div>
+<div id="counter">01 / 25</div>
 <div id="dots"></div>
 <button id="fsBtn" onclick="toggleFS()">⛶ Fullscreen</button>
 
@@ -553,7 +553,11 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
   <div class="anim" style="font-size:clamp(26px,4vw,48px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">One net worth. Any currency.</div>
   <div class="anim tagline" style="margin-bottom:28px">Live FX rates · toggle between PKR · GBP · USD · AED · EUR with one tap.</div>
   <div class="anim" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:680px;width:100%;margin-bottom:20px">
-    ${['🇵🇰 PKR','🇬🇧 GBP','🇺🇸 USD','🇦🇪 AED','🇪🇺 EUR'].map(c=>`<div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">${c}</div>`).join('')}
+    <div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">🇵🇰 PKR</div>
+    <div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">🇬🇧 GBP</div>
+    <div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">🇺🇸 USD</div>
+    <div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">🇦🇪 AED</div>
+    <div class="glass" style="padding:12px;text-align:center;font-size:13px;font-weight:700">🇪🇺 EUR</div>
   </div>
   <div class="anim" style="display:flex;flex-direction:column;gap:12px;max-width:560px;width:100%">
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
@@ -851,6 +855,11 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
         <rect x="44" y="84" width="8" height="8" rx="1" fill="#000"/>
       </svg>
     </div>
+  </div>
+  <div class="anim" style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <a href="https://shamikhahmed.github.io/VaultOS/pitch.html" style="font-size:12px;color:var(--text2);text-decoration:underline">Pitch deck</a>
+    <a href="https://shamikhahmed.github.io/VaultOS/landing.html" style="font-size:12px;color:var(--text2);text-decoration:underline">Landing page</a>
+    <a href="https://shamikhahmed.github.io/VaultOS/docs/GUIDE.md" style="font-size:12px;color:var(--text2);text-decoration:underline">User guide</a>
   </div>
   <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:11px;color:var(--text3);text-align:right;line-height:1.7">Built by Shamikh Ahmed<br>Director, NEWS Logistics · Founder, TheSolution360<br>June 2026 · v4.0</div>
 </div>
