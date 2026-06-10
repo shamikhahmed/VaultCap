@@ -1994,7 +1994,7 @@ window.__vos_confirm = function(msg) {
   }
 };
 
-const VER = '4.0';
+const VER = '4.1.0';
 
 // ===================== CRYPTO ENGINE (AES-256-GCM + PBKDF2) =====================
 const Crypto = {

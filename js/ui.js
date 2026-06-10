@@ -2109,6 +2109,12 @@ const SettingsNav = {
           • Export a backup regularly: Settings → Backup &amp; Export
         </div>
       </div>
+      <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
+        <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">Enterprise disclaimer</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8">
+          VaultOS is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
+        </div>
+      </div>
     </div></div>`;
   }
 };

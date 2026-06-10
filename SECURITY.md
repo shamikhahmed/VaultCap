@@ -1,5 +1,16 @@
 # VaultOS — Security Notes
 
+## Threat model boundaries
+
+| Boundary | In scope | Out of scope |
+|----------|----------|--------------|
+| Device storage | AES-encrypted vault, localStorage session | Cloud backup (unless you export) |
+| Network | Optional LLM proxy, static PWA assets | Server-side vault sync |
+| Attacker model | Physical device access, shoulder surfing, malicious backup files | Nation-state remote breach of GitHub Pages |
+| Trust assumptions | User chooses PIN strength; user controls exports | VaultOS does not custody funds or identity documents |
+
+**Demo / enterprise:** Fictional demo profiles never contain real PII. Rotate bundled LLM proxy keys if exposed.
+
 ## Encryption & vault
 
 - Vault PIN protects local **AES-256-GCM** storage with **PBKDF2** (310k iterations).
