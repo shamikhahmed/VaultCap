@@ -4,10 +4,14 @@
   "scripts": {
     "serve": "python3 -m http.server 8765",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "cap:init": "npx cap add ios 2>/dev/null || true && npx cap sync ios",
+    "cap:sync": "npx cap sync ios",
+    "cap:ios": "npx cap open ios"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "@capacitor/cli": "^7.2.0"
   },
   "version": "1.0.0",
   "description": "[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS) [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS) [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)",
@@ -18,7 +22,9 @@
   },
   "dependencies": {
     "playwright": "^1.60.0",
-    "playwright-core": "^1.60.0"
+    "playwright-core": "^1.60.0",
+    "@capacitor/core": "^7.2.0",
+    "@capacitor/ios": "^7.2.0"
   },
   "repository": {
     "type": "git",

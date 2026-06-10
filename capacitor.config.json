@@ -1,0 +1,12 @@
+{
+  "appId": "com.shamikhahmed.vaultos",
+  "appName": "VaultOS",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "scrollEnabled": true
+  }
+}
