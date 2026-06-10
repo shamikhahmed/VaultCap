@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v23';
+const CACHE = 'vaultcap-v24';
 // Relative paths work on custom domain (/) and GitHub Pages (/VaultCap/)
 const ASSETS = [
   './',
