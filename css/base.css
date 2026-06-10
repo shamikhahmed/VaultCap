@@ -15,7 +15,7 @@
   --mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
   --font-system: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
-  --tabh: 68px; --sbw: 256px;
+  --tabh: 68px; --sbw: 280px;
   --st: env(safe-area-inset-top); --sb: env(safe-area-inset-bottom);
 
   /* Typography scale */

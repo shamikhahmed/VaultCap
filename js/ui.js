@@ -1,4 +1,4 @@
-// VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
+// VaultCap — © 2026 Capricorn Systems. Source-available. See LICENSE.
 const _FX_DEFAULTS={PKR:1,GBP:355,AED:76,USD:280,EUR:300,SAR:74,CAD:210,AUD:185,SGD:210,INR:3.3,QAR:77,USDT:280,BTC:0,ETH:0};
 function getFX(){
   // Priority: RatesEngine (live, USD-based) → Currency module → hardcoded fallback
@@ -85,7 +85,7 @@ const Dash={
     const cur = S.user.currency || 'GBP';
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
     const cmdBtn = document.getElementById('dashCmdBtn');
-    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(min-width:768px)').matches ? '' : 'none';
+    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(min-width:769px)').matches ? 'none' : '';
 
     const _COUNTRY_CUR_MAP = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const homeCur = (S.user.homeCurrency || _COUNTRY_CUR_MAP[S.user.country] || 'PKR').toUpperCase();
@@ -649,7 +649,7 @@ const Settings={
       {id:'entrepreneur',ic:'🚀',label:'Entrepreneur (Pakistan + UK)',desc:'GBP/PKR · Barclays, MCB · crypto + PSX stocks'},
     ];
     Modal.open('🎮 Load Demo Data',`
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Choose a fictional profile to explore VaultOS. All data is made up.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Choose a fictional profile to explore VaultCap. All data is made up.</p>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${profiles.map(p=>`<div onclick="Settings._loadProfile('${p.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
           <span style="font-size:24px">${p.ic}</span>
@@ -743,11 +743,11 @@ const ExIm={
       S.investments.forEach(i=>csv+=`Investment,"${i.investmentName||i.broker}","${i.country||''}","${i.currency}","${i.currentValue||0}","P&L: ${i.currentValue&&i.amountInvested?i.currentValue-i.amountInvested:0}"\n`);
       S.expenses.forEach(e=>csv+=`Expense,"${e.name}","","${e.currency}","${e.amount}/mo","${e.from||''}"\n`);
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
-      this.dl('VaultOS-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
+      this.dl('VaultCap-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
     const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
-    this.dl('VaultOS-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
+    this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
     return;},
   _promptPinForExport(){
@@ -774,7 +774,7 @@ const ExIm={
     const pw=S.pin+'_vos4_'+S.user.name;
     const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
-      this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
       Activity.log('Exported','Legacy AES-256-GCM .vos');
       Toast.show('Legacy backup saved ✓','success',4000);
     }).catch(()=>this._exportPlain(data));
@@ -798,15 +798,15 @@ const ExIm={
     }).catch(()=>{document.getElementById('imp-pin-err').textContent='Wrong PIN or corrupted file';});
   },
   _exportPlain(data){
-    this.dl('VaultOS-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
+    this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
     Toast.show('Exported unencrypted JSON (crypto unavailable)','warn');
   },
   dl(name,mime,content){const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);},
   share(){
     const data={ver:'3.0',exported:new Date().toISOString(),banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital};
     const blob=new Blob([JSON.stringify(data)],{type:'application/octet-stream'});
-    const file=new File([blob],'VaultOS-backup.vault',{type:'application/octet-stream'});
-    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'VaultOS Backup'}).catch(err=>{if(err.name!=='AbortError')this.export('vault');});}
+    const file=new File([blob],'VaultCap-backup.vault',{type:'application/octet-stream'});
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'VaultCap Backup'}).catch(err=>{if(err.name!=='AbortError')this.export('vault');});}
     else{this.export('vault');Toast.show('Share not available — downloaded instead','info');}
   },
   import(ev){
@@ -819,7 +819,7 @@ const ExIm={
           try{
             const data=JSON.parse(raw2);
             if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file','error');return;}
-            if(data._vaultVersion&&typeof SCHEMA_VERSION!=='undefined'&&data._vaultVersion>SCHEMA_VERSION){Toast.show('This backup was created with a newer version of VaultOS. Some data may not display correctly.','warn',6000);}
+            if(data._vaultVersion&&typeof SCHEMA_VERSION!=='undefined'&&data._vaultVersion>SCHEMA_VERSION){Toast.show('This backup was created with a newer version of VaultCap. Some data may not display correctly.','warn',6000);}
             const previewCounts={Banks:(data.banks||[]).length,Cards:(data.cards||[]).length,Documents:(data.documents||[]).length,Investments:(data.investments||[]).length,Emails:(data.emails||[]).length,Devices:(data.gadgets||[]).length,Expenses:(data.expenses||[]).length};
             const previewLines=Object.entries(previewCounts).filter(([,v])=>v>0).map(([k,v])=>`  ${k}: ${v}`).join('\n');
             if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
@@ -844,7 +844,7 @@ const ExIm={
         doImport(raw);
         return;
         const data=JSON.parse(raw);
-        if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file — is this a VaultOS backup?','error');return;}
+        if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file — is this a VaultCap backup?','error');return;}
         const counts=[`${(data.banks||[]).length} banks`,`${(data.cards||[]).length} cards`,`${(data.emails||[]).length} emails`,`${(data.gadgets||[]).length} devices`,`${(data.expenses||[]).length} expenses`].join(', ');
         if(!window.__vos_confirm(`Import vault backup?\n\n${counts}\n\nThis will MERGE with your existing data (no deletions).`))return;
         ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
@@ -885,10 +885,10 @@ const ExIm={
     const investedTotal=(S.investments||[]).reduce((a,i)=>a+toB(i.amountInvested||0,i.currency),0);
     const investCurrent=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
     const investPL=investCurrent-investedTotal;
-    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultOS Financial Summary</title>'+
+    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
     '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f0f4ff;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#1a1a2e}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#1a1a2e;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
     '<div class="no-print"><button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
-    '<div class="header"><h1>🔐 VaultOS Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
+    '<div class="header"><h1>🔐 VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmt(nwTotal)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
     section('Net Worth Breakdown',
       row('Cash & Banks',fmt(toCur(cashPKR+bankPKR)))+
@@ -915,7 +915,7 @@ const ExIm={
     ((S.bc||[]).length?section('Committees (BC)',table(['Name','Type','Contribution','Pot','Status'],(S.bc||[]).map(b=>{const pot=(b.members||1)*(b.contribution||0);const myTurnDone=b.myTurnRound&&(b.currentRound||1)>=b.myTurnRound;return [b.name||'BC',b.type||'ballot',b.currency+' '+Math.round(b.contribution||0).toLocaleString()+'/round',b.currency+' '+pot.toLocaleString(),myTurnDone?'Received':'Round '+(b.currentRound||1)+' of '+(b.totalRounds||b.members||'?')];}))):'')+
     ((S.bonds||[]).length?section('Prize Bonds & Securities',table(['Name','Type','Quantity','Face Value'],(S.bonds||[]).map(b=>[b.name||'Bond',b.typeId||'—',String(b.quantity||1),b.currency+' '+Math.round((b.quantity||1)*(b.faceValue||0)).toLocaleString()]))):'')+
     (expiringDocs.length?section('Documents Expiring (next 90 days)',table(['Document','Holder','Expires'],expiringDocs.map(d=>[d.docType||'Document',d.holderName||'—',d.expiryDate?new Date(d.expiryDate).toLocaleDateString('en-GB'):'—']))):'')+
-    '<div class="footer">Generated by VaultOS · Private & Encrypted · All data is stored locally on your device<br>'+dateStr+'</div>'+
+    '<div class="footer">Generated by VaultCap · Private & Encrypted · All data is stored locally on your device<br>'+dateStr+'</div>'+
     '</div></body></html>';
     const w=window.open('','_blank');
     if(w){w.document.write(html);w.document.close();}
@@ -1231,7 +1231,7 @@ const WhatsNew={
   },
   show(){
     localStorage.setItem('vos_wn_ver',VER);
-    Modal.open('✨ Welcome to VaultOS v'+VER,`
+    Modal.open('✨ Welcome to VaultCap v'+VER,`
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">🪪 Standalone Documents Module</div>
@@ -1254,7 +1254,7 @@ const WhatsNew={
         <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
       </div>
     </div>`,
-    `<button class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultOS →</button>`);
+    `<button class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultCap →</button>`);
   }
 };
 
@@ -1292,7 +1292,7 @@ const ImportEngine={
       <!-- MANUAL PARSE SECTION -->
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
         <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">✏️ Paste Text to Import</div>
-        <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultOS will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:13px;line-height:1.6"></textarea>
+        <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultCap will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:13px;line-height:1.6"></textarea>
         <button class="btn btn-p btn-sm" onclick="ImportEngine.parseText(document.getElementById('ie-paste').value)" style="margin-top:8px;width:100%">🔍 Detect & Import</button>
       </div>
       <!-- HISTORY -->
@@ -1425,7 +1425,7 @@ const ImportEngine={
     r.readAsText(file);
   },
   mergeVault(data){
-    if(!data.banks&&!data.cards){Toast.show('Not a valid VaultOS file','error');return;}
+    if(!data.banks&&!data.cards){Toast.show('Not a valid VaultCap file','error');return;}
     const total=['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].reduce((a,k)=>{
       if(Array.isArray(data[k])){const new_=data[k].filter(x=>!S[k]?.find(y=>y.id===x.id));S[k]=[...(S[k]||[]),...new_];return a+new_.length;}return a;
     },0);
@@ -1869,7 +1869,7 @@ const RecoveryCenter={
         {label:'Total entries',val:ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)+''},
         {label:'Activity records',val:S.activity.length+''},
         {label:'Last backup',val:S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never'},
-        {label:'App version',val:'VaultOS v'+VER},
+        {label:'App version',val:'VaultCap v'+VER},
       ].map(({label,val})=>`<div class="si"><div class="name">${label}</div><div style="color:var(--text2);font-size:12px">${val}</div></div>`).join('')}
     </div></div>
     <!-- DEVELOPER DIAGNOSTICS -->
@@ -1899,8 +1899,8 @@ const SelfCheck={
     this.checkStateArrays();this.checkModuleFlags();
     this.checkCriticalDOM();this.checkDataIntegrity();
     this.autoRepair();this.lastCheck=new Date();
-    if(this.errors.length)console.warn('[VaultOS SelfCheck]',this.errors);
-    if(this.fixes.length)console.info('[VaultOS AutoFixed]',this.fixes);
+    if(this.errors.length)console.warn('[VaultCap SelfCheck]',this.errors);
+    if(this.fixes.length)console.info('[VaultCap AutoFixed]',this.fixes);
     return{errors:this.errors,fixes:this.fixes};
   },
   checkStateArrays(){
@@ -1930,7 +1930,7 @@ const SelfCheck={
   autoRepair(){if(this.fixes.length)Store.save();},
   renderReport(){
     const r=this.run();
-    Modal.open('🔍 VaultOS Diagnostic',`
+    Modal.open('🔍 VaultCap Diagnostic',`
     <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Checked: ${this.lastCheck?.toLocaleTimeString()}</div>
     ${r.errors.length?`<div style="margin-bottom:10px">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:12px">❌ ${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">✅ All systems healthy</div>'}
     ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:12px">🔧 ${f}</div>`).join('')}</div>`:''}
@@ -2096,10 +2096,10 @@ const SettingsNav = {
     const cfg = typeof LlmAssist !== 'undefined' ? LlmAssist.getConfig() : { enabled: false, bundled: false };
     const llmOn = cfg.enabled;
     const hasOverride = !!(S.user.llmApiKey || '').trim();
-    return `<div class="set-sec"><div class="set-title">🤖 VaultOS Smart Import (included)</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? '✓ Included with VaultOS — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultOS parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
+    return `<div class="set-sec"><div class="set-title">🤖 VaultCap Smart Import (included)</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? '✓ Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://vaultos-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save()"></div>
-      <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultOS key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
       <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — Smart Parser offline; LLM optional</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
@@ -2117,8 +2117,8 @@ const SettingsNav = {
   },
 
   _about() {
-    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultOS</div><div class="set-card">
-      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Shamikh Ahmed'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">ℹ️ About VaultCap</div><div class="set-card">
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>
@@ -2136,7 +2136,7 @@ const SettingsNav = {
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
         <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">Enterprise disclaimer</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.8">
-          VaultOS is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
+          VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
         </div>
       </div>
     </div></div>`;
@@ -2287,7 +2287,7 @@ const HelpCenter = {
     const content = {
       'getting-started': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🔐', 'What is VaultOS?', 'VaultOS is your private financial operating system. It stores all your financial and identity information — banks, cards, documents, passports, investments, loans — in one encrypted place on your device. No accounts. No servers. No one else can see your data.')}
+          ${this._card('🔐', 'What is VaultCap?', 'VaultCap is your private financial operating system. It stores all your financial and identity information — banks, cards, documents, passports, investments, loans — in one encrypted place on your device. No accounts. No servers. No one else can see your data.')}
           ${this._card('1️⃣', 'Step 1 — Set your PIN', 'Your PIN is the key to your vault. Choose something memorable but not obvious. It encrypts all your data. Without it, your backup file cannot be opened. Go to Settings → Security to change it.')}
           ${this._card('2️⃣', 'Step 2 — Add your first bank', 'Tap the Finance tab → Banks → + Add Bank. Choose your country, enter your bank name, account type, and currency. You can add as many banks as you have accounts.')}
           ${this._card('3️⃣', 'Step 3 — Link cards to banks', 'In Finance → Cards → + Add Card, you can link a card to a bank. This creates a relationship — tap a bank, scroll down to see all linked cards instantly.')}
@@ -2332,7 +2332,7 @@ const HelpCenter = {
       'security': `
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('🔐', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
-          ${this._card('🔒', 'Encryption standard', 'VaultOS uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
+          ${this._card('🔒', 'Encryption standard', 'VaultCap uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
           ${this._card('🕵️', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
           ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
           ${this._card('❌', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
@@ -2363,7 +2363,7 @@ const HelpCenter = {
           ${this._card('❓', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
           ${this._card('❓', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
           ${this._card('❓', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
-          ${this._card('❓', 'Who built this?', 'VaultOS is built by Shamikh Ahmed — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
+          ${this._card('❓', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };
     el.innerHTML = content[this._section] || content['getting-started'];

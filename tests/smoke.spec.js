@@ -7,11 +7,11 @@ async function enterPin(page, pin) {
   }
 }
 
-test.describe('VaultOS smoke', () => {
+test.describe('VaultCap smoke', () => {
   test('loads welcome or lock screen', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    await expect(page.getByRole('heading', { name: 'VaultOS' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'VaultCap' })).toBeVisible({ timeout: 15000 });
     const screen = page.locator('#pgLock:visible, #pgHome:visible, #pgOnboard:visible, #app:visible').first();
     await expect(screen).toBeVisible();
   });

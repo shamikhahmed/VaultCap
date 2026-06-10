@@ -34,7 +34,7 @@ const ALL_MODULES=[
   {id:'family',        n:'Family Vault',    ic:'👨‍👩‍👧‍👦', desc:'Family financial overview',                    group:'Finance'},
   {id:'emergency',     n:'Emergency',       ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
   {id:'recovery-center',n:'Recovery Center',ic:'🛡️', desc:'Backup health, restore guide, verification',  group:'Tools'},
-  {id:'help',          n:'Help & Guide',    ic:'📖', desc:'How to use VaultOS',                           group:'Tools'},
+  {id:'help',          n:'Help & Guide',    ic:'📖', desc:'How to use VaultCap',                           group:'Tools'},
 ];
 
 // ── Universal Entity Factory ──
@@ -475,7 +475,7 @@ const DevDiag = {
     const counts = this.entityCounts();
     const backup = this.backupAge();
     const report = [
-      `VaultOS Diagnostics — ${new Date().toLocaleString()}`,
+      `VaultCap Diagnostics — ${new Date().toLocaleString()}`,
       `Schema: v${typeof SCHEMA_VERSION !== 'undefined' ? SCHEMA_VERSION : '?'}`,
       `Storage: ${storage.totalMB}MB`,
       `Entities: ${JSON.stringify(counts)}`,
@@ -696,7 +696,7 @@ const Onboarding = {
     if (this._step === 0) {
       content = `
         <div style="font-size:40px;margin-bottom:16px">🔐</div>
-        <div style="font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultOS</div>
+        <div style="font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultCap</div>
         <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;margin-bottom:32px">Your private financial vault. Takes 30 seconds to personalise.</div>
         <button onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:320px;padding:16px;font-size:15px;font-weight:700">Get Started →</button>
         <button onclick="Onboarding._skip()" style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip for now</button>`;
@@ -789,7 +789,7 @@ const Onboarding = {
               <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent)">${this._prefs[p.key]?'✓':''}</div>
             </div>`).join('')}
         </div>
-        <button onclick="Onboarding._finish()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Start Using VaultOS ✓</button>
+        <button onclick="Onboarding._finish()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Start Using VaultCap ✓</button>
         <button onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
     }
 
@@ -3236,7 +3236,7 @@ window.Settings.forgotPIN = function() {
 window.Settings.useMasterKey = function() {
   Modal.open('🗝️ Enter Master Key',
     '<div style="display:flex;flex-direction:column;gap:12px">' +
-    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultOS.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
+    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultCap.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
     '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
     '<div id="mk-err" style="color:var(--err);font-size:12px;min-height:16px;text-align:center"></div>' +
     '</div>',
@@ -3648,7 +3648,7 @@ const OB = {
     Store.save();
     if (typeof buildNav === 'function') buildNav();
     document.getElementById('pgOnboard').style.display = 'none';
-    Toast.show(`Welcome to VaultOS${name ? ', ' + name : ''}! 🎉`, 'success');
+    Toast.show(`Welcome to VaultCap${name ? ', ' + name : ''}! 🎉`, 'success');
     R.unlock();
     setTimeout(() => {
       const ov = document.createElement('div');
@@ -4657,18 +4657,18 @@ function buildNav() {
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
-  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard" onclick="R.goto('dashboard')"><span class="ni-ic">📊</span>Dashboard</div>`;
+  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard" onclick="R.goto('dashboard')"><span class="ni-ic">📊</span><span class="ni-txt">Dashboard</span></div>`;
   Object.entries(groups).forEach(([grp, label]) => {
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span>${m.n}</div>`
+      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span>${m.n}</div>`
+    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 
@@ -4710,7 +4710,7 @@ function buildNav() {
 const SmartAdd = {
   open() {
     Modal.open('✨ Smart Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. VaultOS detects the type and pre-fills the form — works offline, no AI needed.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. VaultCap detects the type and pre-fills the form — works offline, no AI needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
         <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:13px;line-height:1.6"></textarea>

@@ -450,7 +450,7 @@ const Zakat = {
       return parseFloat(el ? (el.value + '').replace(/,/g, '') : 0) || 0;
     };
     const lines = [
-      'VaultOS Zakat Report — ' + new Date().toLocaleDateString(),
+      'VaultCap Zakat Report — ' + new Date().toLocaleDateString(),
       'Currency: ' + cur,
       'Nisab Standard: ' + (this._nisabType === 'gold' ? 'Gold (7.5 tola)' : 'Silver (52.5 tola)'),
       '',

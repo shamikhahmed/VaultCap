@@ -815,6 +815,10 @@ body.light .dash-stat {
   display: grid; grid-template-columns: repeat(4,1fr);
   gap: 8px; margin-bottom: 16px;
 }
+@media (min-width: 900px) {
+  .dash-mod-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .dash-stats { grid-template-columns: repeat(4, 1fr); }
+}
 @media (max-width: 375px) { .dash-mod-grid { grid-template-columns: repeat(3,1fr); } }
 .dash-mod-item {
   background: var(--glass); border: 1px solid var(--border);

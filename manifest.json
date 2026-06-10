@@ -14,7 +14,7 @@
   ],
   "widgets": [
     {
-      "name": "VaultOS Net Worth",
+      "name": "VaultCap Net Worth",
       "short_name": "Net Worth",
       "description": "Your current net worth",
       "tag": "networth",
