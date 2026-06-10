@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#5b8dee">
-<title>Privacy Policy — VaultOS</title>
+<title>Privacy Policy — VaultCap</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#080808;color:#f0f0f0;line-height:1.65;padding:24px;max-width:720px;margin:0 auto}
@@ -22,14 +22,14 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
 </head>
 <body>
 <nav>
-  <a href="landing.html">← VaultOS</a>
+  <a href="landing.html">← VaultCap</a>
   <a href="index.html">App</a>
   <a href="presentation.html">Presentation</a>
   <a href="pitch.html">Pitch</a>
 </nav>
-<article><h1>VaultOS — Privacy Policy</h1>
+<article><h1>VaultCap — Privacy Policy</h1>
 <p><strong>Last updated:</strong> June 10, 2026</p>
-<p>VaultOS is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it.</p>
+<p>VaultCap is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it.</p>
 <h2>What we collect</h2>
 <ul><li><strong>Nothing by default.</strong> No accounts, analytics SDKs, or third-party trackers ship in this app.</li>
 <li><strong>Smart Import (optional):</strong> When enabled, text you paste for parsing is sent to the configured LLM endpoint. See Smart Import / LLM below.</li>
@@ -45,17 +45,17 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
 <li>GitHub Pages serves static files only — no server-side access to your vault.</li>
 <p></ul></p>
 <h2>Smart Import / LLM</h2>
-<p>VaultOS offers three parsing paths for Smart Add:</p>
+<p>VaultCap offers three parsing paths for Smart Add:</p>
 <p>1. <strong>Smart Parser (default, offline)</strong> — Rule-based parsing on-device. No network. No data leaves your browser.</p>
-<p>2. <strong>Bundled LLM (shipped)</strong> — VaultOS includes <code>js/config/llm-bundled.js</code> with a proxy provider. Requests go to the Cloudflare Worker at <code>https://vaultos-llm-proxy.shamikhahmed.workers.dev</code> (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
+<p>2. <strong>Bundled LLM (shipped)</strong> — VaultCap includes <code>js/config/llm-bundled.js</code> with a proxy provider. Requests go to the Cloudflare Worker at <code>https://VaultCap-llm-proxy.shamikhahmed.workers.dev</code> (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
 <p>3. <strong>Custom key (optional)</strong> — Paste your own API key or proxy URL in Settings → Import. Stored in localStorage on your device only.</p>
 <p>The Cloudflare Worker uses Workers AI (<code>@cf/meta/llama-3.1-8b-instruct</code>). If the proxy is unavailable, Smart Parser is used automatically.</p>
 <p><strong>Important:</strong> Bundled credentials are visible in the public PWA bundle. Treat Smart Import text as non-secret; do not paste full account numbers or passwords into Smart Add.</p>
 <h2>Children</h2>
-<ul><li>VaultOS is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.</li>
+<ul><li>VaultCap is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.</li>
 <p></ul></p>
 <h2>Contact</h2>
-<p>Built by Shamikh Ahmed — issues via the [VaultOS GitHub repository](https://github.com/shamikhahmed/VaultCap).</p>
+<p>Built by Capricorn Systems — issues via the [VaultCap GitHub repository](https://github.com/shamikhahmed/VaultCap).</p>
 </article>
 <footer>© 2026 Shamikh Ahmed · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
 </body>

@@ -17,7 +17,7 @@ For iPhone PWA: Safari → Share → Add to Home Screen.
 
 ## Architecture
 
-VaultOS is a fully client-side, zero-dependency personal finance/identity vault PWA. No framework, no build system, no npm.
+VaultCap is a fully client-side, zero-dependency personal finance/identity vault PWA. No framework, no build system, no npm.
 
 ### File Layout
 

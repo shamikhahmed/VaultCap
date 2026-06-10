@@ -1,10 +1,10 @@
-# VaultOS — Product Presentation
+# VaultCap — Product Presentation
 
 ---
 
 ## Slide 1 — Title
 
-# VaultOS
+# VaultCap
 ### Your Private Life Operating System
 
 *Encrypted · Offline · PK · UK · UAE*
@@ -26,7 +26,7 @@ Expats and multi-country households juggle:
 
 ## Slide 3 — Solution
 
-**VaultOS** — one encrypted vault on your device:
+**VaultCap** — one encrypted vault on your device:
 
 - Banks, cards, investments, loans, cash
 - Identity documents with expiry alerts
@@ -123,6 +123,6 @@ Try Smart Add, zakat auto-fill, document expiry timeline.
 
 > *Your entire financial life. Encrypted. Offline. Always with you.*
 
-**VaultOS** — github.com/shamikhahmed/VaultCap
+**VaultCap** — github.com/shamikhahmed/VaultCap
 
 *Shamikh Ahmed · 2026*

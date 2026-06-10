@@ -1,4 +1,4 @@
-# VaultOS — Security Notes
+# VaultCap — Security Notes
 
 ## Threat model boundaries
 
@@ -7,7 +7,7 @@
 | Device storage | AES-encrypted vault, localStorage session | Cloud backup (unless you export) |
 | Network | Optional LLM proxy, static PWA assets | Server-side vault sync |
 | Attacker model | Physical device access, shoulder surfing, malicious backup files | Nation-state remote breach of GitHub Pages |
-| Trust assumptions | User chooses PIN strength; user controls exports | VaultOS does not custody funds or identity documents |
+| Trust assumptions | User chooses PIN strength; user controls exports | VaultCap does not custody funds or identity documents |
 
 **Demo / enterprise:** Fictional demo profiles never contain real PII. Rotate bundled LLM proxy keys if exposed.
 
@@ -30,7 +30,7 @@
 ### Bundled LLM architecture
 
 - **Client:** `js/config/llm-bundled.js` → `js/modules/llm-assist.js`
-- **Proxy:** `https://vaultos-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
+- **Proxy:** `https://VaultCap-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
 - **Worker secret:** Real API key stored via `wrangler secret put LLM_API_KEY` — not in git
 - **Fallback:** Smart Parser if proxy fails or is disabled
 
@@ -48,4 +48,4 @@
 
 ## Reporting
 
-Open a private security issue on the [VaultOS GitHub repo](https://github.com/shamikhahmed/VaultCap) for vulnerabilities.
+Open a private security issue on the [VaultCap GitHub repo](https://github.com/shamikhahmed/VaultCap) for vulnerabilities.

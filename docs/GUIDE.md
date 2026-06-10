@@ -1,12 +1,12 @@
-# VaultOS User Guide
+# VaultCap User Guide
 
-VaultOS is a private, zero-server financial operating system. Everything lives on your device, encrypted with your PIN. No accounts. No syncing. No data leaving your phone.
+VaultCap is a private, zero-server financial operating system. Everything lives on your device, encrypted with your PIN. No accounts. No syncing. No data leaving your phone.
 
 ---
 
 ## Philosophy
 
-Most finance apps store your data on their servers. VaultOS does not. Your vault exists only on your device, encrypted with a PIN only you know. If you delete the app or lose your phone without a backup, the data is gone — because no one else has it.
+Most finance apps store your data on their servers. VaultCap does not. Your vault exists only on your device, encrypted with a PIN only you know. If you delete the app or lose your phone without a backup, the data is gone — because no one else has it.
 
 This is the trade-off: complete privacy, in exchange for complete responsibility. Back up regularly.
 
@@ -89,7 +89,7 @@ Go to **Settings → Backup & Export → Export Vault**. A `.vos` file downloads
 
 ## Multi-Country Usage
 
-VaultOS is designed for people managing finances across Pakistan, UK, UAE, USA, and more.
+VaultCap is designed for people managing finances across Pakistan, UK, UAE, USA, and more.
 
 ### Setting up multiple countries
 
@@ -219,7 +219,7 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 
 **Themes** — 5 themes available: Midnight (black), Graphite (dark grey gold), Cloud (white), Ivory (warm cream), Blossom (pink). Switch instantly via Settings → Appearance or ⌘K → "theme".
 
-**PWA install** — On iPhone: Safari → Share → Add to Home Screen. On Android: browser menu → Install app. VaultOS works fully offline after installation.
+**PWA install** — On iPhone: Safari → Share → Add to Home Screen. On Android: browser menu → Install app. VaultCap works fully offline after installation.
 
 **Pull to refresh** — Pull down on any list page to force a re-render and refresh counters.
 
@@ -246,17 +246,17 @@ Yes, completely free. No ads, no subscriptions, no premium tier.
 Yes. After your first visit, install it as a PWA (Add to Home Screen in Safari/Chrome) and it works with zero internet connection. Exchange rates and AI import require an internet connection.
 
 **Who built this?**
-VaultOS is built by Shamikh Ahmed — independently, with no company or investor backing. It is a privacy-first tool built for people managing finances across multiple countries.
+VaultCap is built by Shamikh Ahmed — independently, with no company or investor backing. It is a privacy-first tool built for people managing finances across multiple countries.
 
 ---
 
-*VaultOS © 2026 Shamikh Ahmed. Source-available. See LICENSE.*
+*VaultCap © 2026 Shamikh Ahmed. Source-available. See LICENSE.*
 
 ---
 
 ## Committee (BC) — Rotating Savings Groups
 
-VaultOS tracks **ballot committees (BC)**, known as BC in Pakistan, pardner in the UK, jamiya in the Middle East, and susu in West Africa.
+VaultCap tracks **ballot committees (BC)**, known as BC in Pakistan, pardner in the UK, jamiya in the Middle East, and susu in West Africa.
 
 ### Adding a BC
 Go to **Finance → Committee (BC) → + Join / Create a BC**. Fill in:
@@ -283,13 +283,13 @@ Money you've paid into a BC that you haven't yet received is **zakatable as a re
 Track prize bonds, premium bonds, NSS certificates, and government securities across Pakistan, UK, and UAE.
 
 ### Adding Bonds
-Go to **Finance → Prize Bonds & Savings → + Add Bond / Security**. Select the bond type — VaultOS knows the draw months for each denomination automatically.
+Go to **Finance → Prize Bonds & Savings → + Add Bond / Security**. Select the bond type — VaultCap knows the draw months for each denomination automatically.
 
 ### Bulk Import
 Tap **Bulk Import Bond Numbers** to paste a list of bond numbers (one per line). Select the denomination and they're all imported at once.
 
 ### Upcoming Draws
-VaultOS shows when your next draw is and links directly to the official results page (CDNS for Pakistan, NS&I for UK).
+VaultCap shows when your next draw is and links directly to the official results page (CDNS for Pakistan, NS&I for UK).
 
 ### Zakat on Prize Bonds
 Prize bonds are zakatable at **face value** — the total value of all your bonds is automatically added to your Zakat calculator.
@@ -298,7 +298,7 @@ Prize bonds are zakatable at **face value** — the total value of all your bond
 
 ## Live Rates (Gold, Silver & Currency)
 
-VaultOS fetches live exchange rates and metal prices automatically when you unlock your vault.
+VaultCap fetches live exchange rates and metal prices automatically when you unlock your vault.
 
 - **Exchange rates** — updated from open.er-api.com (free, USD-based)
 - **Gold & Silver prices** — updated from api.metals.live (per troy ounce)
@@ -306,13 +306,13 @@ VaultOS fetches live exchange rates and metal prices automatically when you unlo
 - **Manual override** — in the Currency module, tap any rate field to override it manually. Tap "Use live ↺" to revert.
 
 ### Gold Net Worth
-If you've added gold or silver holdings, VaultOS values them at the **live market price** automatically. Your dashboard net worth reflects the current market value.
+If you've added gold or silver holdings, VaultCap values them at the **live market price** automatically. Your dashboard net worth reflects the current market value.
 
 ---
 
 ## Zakat Calculator
 
-VaultOS includes a comprehensive Zakat calculator built on AAOIFI standards and classical fiqh.
+VaultCap includes a comprehensive Zakat calculator built on AAOIFI standards and classical fiqh.
 
 ### Nisab
 Two standards are supported:
@@ -322,7 +322,7 @@ Two standards are supported:
 Both thresholds are calculated at **live market prices** and shown in your currency.
 
 ### Hawl Tracker
-Enter the date your wealth first crossed the nisab threshold. VaultOS tracks the 354-day lunar year and shows how many days remain until Zakat becomes due.
+Enter the date your wealth first crossed the nisab threshold. VaultCap tracks the 354-day lunar year and shows how many days remain until Zakat becomes due.
 
 ### Auto-Fill from Vault
 All your vault data is automatically read:
@@ -364,7 +364,7 @@ The widget shows your net worth, vault health, expiring items, and backup status
 
 Go to **Settings → Notifications** and tap **Enable** to allow browser notifications.
 
-VaultOS will alert you when:
+VaultCap will alert you when:
 - Documents expire in the next 7 days
 - Cards expire in the next 30 days
 - Loans are due in the next 7 days
@@ -389,19 +389,19 @@ Data is compressed and transferred as base64 chunks. No internet required.
 
 ## Credit Score Tracker
 
-VaultOS tracks your credit score history across agencies.
+VaultCap tracks your credit score history across agencies.
 
 **Adding your score:**
 1. Go to Finance → Credit Score
 2. Tap **📊 Update Score**
 3. Enter your score, select the reporting agency, and the date checked
-4. VaultOS shows a live preview of your rating (Excellent/Good/Fair/Poor)
+4. VaultCap shows a live preview of your rating (Excellent/Good/Fair/Poor)
 
 **Supported agencies:** Experian (UK), Equifax (UK), TransUnion (UK), ECIB (Pakistan), AECB (UAE)
 
-**Score ranges:** Each agency uses different scales — VaultOS shows the correct range bars so you know where you stand.
+**Score ranges:** Each agency uses different scales — VaultCap shows the correct range bars so you know where you stand.
 
-**Reminder:** VaultOS reminds you to check your credit score every 30 days.
+**Reminder:** VaultCap reminds you to check your credit score every 30 days.
 
 **Free credit report links:** ClearScore (Equifax), Credit Karma (TransUnion), Experian UK, ECIB Pakistan, AECB UAE — all accessible from within the Credit Score module.
 
@@ -409,7 +409,7 @@ VaultOS tracks your credit score history across agencies.
 
 ## Vehicle Reminders
 
-VaultOS tracks three vehicle expiry dates and alerts you in advance:
+VaultCap tracks three vehicle expiry dates and alerts you in advance:
 
 - **MOT:** 60-day advance warning (or calculated from MOT test date + 12 months)
 - **Road Tax:** 30-day advance warning
@@ -437,13 +437,13 @@ Export a complete snapshot of your vault as a print-ready PDF.
 
 ## Loan Payment Tracking
 
-VaultOS tracks partial payments on loans.
+VaultCap tracks partial payments on loans.
 
 **Recording a payment:**
 1. Go to Finance → Loans
 2. Tap the **💰** button on any active loan
 3. Enter the amount paid and date
-4. VaultOS deducts from the remaining balance
+4. VaultCap deducts from the remaining balance
 5. When fully paid, the loan auto-marks as **Settled**
 
 **Overdue alerts:** Loans past their due date show a red **⚠️ OVERDUE X days** badge. Loans due within 7 days show an orange **⏰ Due in X days** badge.

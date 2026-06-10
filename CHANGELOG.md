@@ -1,4 +1,4 @@
-# Changelog — VaultOS
+# Changelog — VaultCap
 
 ## 4.1.0 (2026-06-10)
 
@@ -9,12 +9,12 @@
 
 ### Smart Import / LLM
 - **Bundled LLM** via `js/config/llm-bundled.js` — proxy provider, no user key required
-- **Cloudflare Worker** at `https://vaultos-llm-proxy.shamikhahmed.workers.dev` (`worker/llm-proxy.js`)
+- **Cloudflare Worker** at `https://VaultCap-llm-proxy.shamikhahmed.workers.dev` (`worker/llm-proxy.js`)
 - Workers AI backend (`@cf/meta/llama-3.1-8b-instruct`) with Smart Parser offline fallback
 - Optional custom API key override in Settings → Import
 
 ### PWA & icons
-- PNG maskable icons (192/512), service worker cache bump (`vaultos-v20`)
+- PNG maskable icons (192/512), service worker cache bump (`VaultCap-v20`)
 - Offline Tesseract OCR for document capture
 
 ### Docs

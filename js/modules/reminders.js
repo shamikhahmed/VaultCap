@@ -326,7 +326,7 @@ const Reminders = {
         new Notification('VaultCap Alert', {
           body: (icons[item.type] || '⚠️') + ' ' + item.title + ' — ' + (item.days === 0 ? 'today' : 'in ' + item.days + ' day' + (item.days > 1 ? 's' : '')),
           icon: '/icons/icon-192.png',
-          tag: 'vaultos-' + item.type + '-' + item.title,
+          tag: 'VaultCap-' + item.type + '-' + item.title,
           silent: false,
         });
       } catch(e) {}

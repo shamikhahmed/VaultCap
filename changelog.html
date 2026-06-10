@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#5b8dee">
-<title>Changelog — VaultOS</title>
+<title>Changelog — VaultCap</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#080808;color:#f0f0f0;line-height:1.65;padding:24px;max-width:720px;margin:0 auto}
@@ -22,12 +22,12 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
 </head>
 <body>
 <nav>
-  <a href="landing.html">← VaultOS</a>
+  <a href="landing.html">← VaultCap</a>
   <a href="index.html">App</a>
   <a href="presentation.html">Presentation</a>
   <a href="pitch.html">Pitch</a>
 </nav>
-<article><h1>Changelog — VaultOS</h1>
+<article><h1>Changelog — VaultCap</h1>
 <h2>4.1.0 (2026-06-10)</h2>
 <h3>Phase 2 — Quality</h3>
 <ul><li>Playwright smoke tests verified (lock screen, settings shell)</li>
@@ -36,12 +36,12 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
 <p></ul></p>
 <h3>Smart Import / LLM</h3>
 <ul><li><strong>Bundled LLM</strong> via <code>js/config/llm-bundled.js</code> — proxy provider, no user key required</li>
-<li><strong>Cloudflare Worker</strong> at <code>https://vaultos-llm-proxy.shamikhahmed.workers.dev</code> (<code>worker/llm-proxy.js</code>)</li>
+<li><strong>Cloudflare Worker</strong> at <code>https://VaultCap-llm-proxy.shamikhahmed.workers.dev</code> (<code>worker/llm-proxy.js</code>)</li>
 <li>Workers AI backend (<code>@cf/meta/llama-3.1-8b-instruct</code>) with Smart Parser offline fallback</li>
 <li>Optional custom API key override in Settings → Import</li>
 <p></ul></p>
 <h3>PWA & icons</h3>
-<ul><li>PNG maskable icons (192/512), service worker cache bump (<code>vaultos-v20</code>)</li>
+<ul><li>PNG maskable icons (192/512), service worker cache bump (<code>VaultCap-v20</code>)</li>
 <li>Offline Tesseract OCR for document capture</li>
 <p></ul></p>
 <h3>Docs</h3>

@@ -1,8 +1,8 @@
-# VaultOS — iOS Info.plist notes
+# VaultCap — iOS Info.plist notes
 
 After `npm run cap:init`, edit `ios/App/App/Info.plist`:
 
-- `CFBundleDisplayName`: VaultOS
+- `CFBundleDisplayName`: VaultCap
 - `NSPhotoLibraryUsageDescription`: Not required for this app.
 - `ITSAppUsesNonExemptEncryption`: false (standard HTTPS only)
 

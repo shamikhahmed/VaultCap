@@ -1,6 +1,6 @@
 # VaultCap — Private Life Operating System
 
-[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
+[![Live App](https://img.shields.io/badge/Live%20App-VaultCap-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
 [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)
 
@@ -12,7 +12,7 @@ VaultCap by Capricorn Systems is a zero-knowledge personal life operating system
 
 ## What It Does
 
-VaultOS replaces a dozen fragmented apps with one encrypted vault — managing banks, cards, investments, loans, documents, family, identity, and more across Pakistan, the UK, and the UAE.
+VaultCap replaces a dozen fragmented apps with one encrypted vault — managing banks, cards, investments, loans, documents, family, identity, and more across Pakistan, the UK, and the UAE.
 
 ### Finance
 - Banks & accounts across PK/UK/UAE with IBAN tracking
@@ -70,7 +70,7 @@ VaultOS replaces a dozen fragmented apps with one encrypted vault — managing b
 ## Architecture
 
 ```
-VaultOS/
+VaultCap/
 ├── index.html           # App shell
 ├── js/
 │   ├── app.js           # Core engine — routing, security, all data modules
@@ -120,7 +120,7 @@ VaultOS/
 **Local:**
 ```bash
 git clone https://github.com/shamikhahmed/VaultCap.git
-cd VaultOS
+cd VaultCap
 python3 -m http.server 8080
 # open http://localhost:8080
 ```
@@ -144,7 +144,7 @@ MSc Logistics & Operations Management, Cardiff University
 MSc Accounting & Finance, BPP University London
 Karachi, Pakistan
 
-VaultOS was built to solve a personal problem: managing finances across three countries with no single app that understood BC committees, prize bonds, Pakistani banks, UK accounts, zakat, and expat financial complexity.
+VaultCap was built to solve a personal problem: managing finances across three countries with no single app that understood BC committees, prize bonds, Pakistani banks, UK accounts, zakat, and expat financial complexity.
 
 ---
 
@@ -154,4 +154,4 @@ Source-available. See [LICENSE](./LICENSE).
 
 ---
 
-*VaultOS © 2026 Shamikh Ahmed*
+*VaultCap © 2026 Shamikh Ahmed*

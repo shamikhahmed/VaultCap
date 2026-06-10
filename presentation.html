@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VaultOS — by Shamikh Ahmed</title>
+<title>VaultCap — by Shamikh Ahmed</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -980,12 +980,12 @@ function go(n){
   if(cur===0) initTitleLetters();
 }
 
-// Letter-by-letter for VAULT OS
+// Letter-by-letter for VaultCap
 function initTitleLetters(){
   const el=document.getElementById('vaultLetters');
   if(!el||el.dataset.built)return;
   el.dataset.built='1';
-  const text='VAULT OS';
+  const text='VaultCap';
   el.innerHTML='';
   text.split('').forEach((ch,i)=>{
     const sp=document.createElement('span');
