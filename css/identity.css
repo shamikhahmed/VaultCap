@@ -1,0 +1,48 @@
+/* VaultOS — Swiss Vault Command Center */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+:root {
+  --bg: #060a12;
+  --bg2: #0a1020;
+  --bg3: #0f1628;
+  --accent: #4a7fd4;
+  --glow: rgba(74, 127, 212, 0.22);
+  --r: 10px;
+  --rsm: 6px;
+  --rlg: 14px;
+  --rxl: 18px;
+  --card-br: 10px;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'IBM Plex Sans', system-ui, sans-serif;
+  --dur-normal: 320ms;
+  --dur-slow: 520ms;
+}
+
+body {
+  font-family: var(--font);
+  background:
+    linear-gradient(rgba(74, 127, 212, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 127, 212, 0.03) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(74, 127, 212, 0.14), transparent 55%),
+    #060a12;
+  background-size: 24px 24px, 24px 24px, auto, auto;
+  letter-spacing: 0.01em;
+}
+
+.sens, .dash-stat-n, [class*="fmt"], .hero-value {
+  font-family: var(--mono) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+#nav, .nb, .tab, .btn-p {
+  border-radius: var(--rsm) !important;
+  transition-duration: var(--dur-normal) !important;
+}
+
+.glass, .card, [class*="glass"] {
+  border-radius: var(--rsm) !important;
+  border-color: rgba(74, 127, 212, 0.18) !important;
+}
+
+#themeColorMeta, meta[name="theme-color"] { /* synced via JS if needed */ }

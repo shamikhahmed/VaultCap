@@ -2780,14 +2780,17 @@ async function showMasterKeyModal(mk) {
 
 // ===================== VAULT PROFILES =====================
 const VaultProfiles = {
+  DEMO_PIN: '123456',
   PROFILES: [
-    { id:'personal', label:'Personal', icon:'👤', desc:'Your real vault data' },
-    { id:'demo',     label:'Demo',     icon:'🎭', desc:'Safe to show others' },
-    { id:'test',     label:'Test',     icon:'🧪', desc:'Try new features' },
+    { id:'personal', label:'My Vault', icon:'🔐', desc:'Your private encrypted vault' },
   ],
+  DEMO: { id:'demo', label:'Guided Demo', icon:'🎭', desc:'Sample data with a short tour · PIN 123456' },
+  TEST: { id:'test', label:'Test Sandbox', icon:'🧪', desc:'Developer-only isolated vault' },
   active() {
     return localStorage.getItem('vo_active_profile') || 'personal';
   },
+  isDemo() { return this.active() === 'demo'; },
+  isDevMode() { return localStorage.getItem('vo_dev_mode') === '1'; },
   dbName() {
     const p = this.active();
     return p === 'personal' ? 'vaultos' : 'vaultos_' + p;
@@ -2796,12 +2799,38 @@ const VaultProfiles = {
     localStorage.setItem('vo_active_profile', profileId);
     location.reload();
   },
+  startDemo() {
+    localStorage.setItem('vo_used_demo', '1');
+    localStorage.setItem('vo_demo_guide_pending', '1');
+    this.switch('demo');
+  },
+  exitDemo() {
+    localStorage.removeItem('vo_demo_guide_pending');
+    this.switch('personal');
+  },
+  showDemoGuide() {
+    Modal.open('🎭 Guided Demo',
+      '<div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px">This is a <strong>sample vault</strong> with fictional data — safe to explore and show others.</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text2);line-height:1.55">' +
+      '<div>① Dashboard — net worth, health score, expiry alerts</div>' +
+      '<div>② Banks & Cards — tap any module in the nav</div>' +
+      '<div>③ Settings → Exit Demo when you want your real vault</div>' +
+      '</div>' +
+      '<div style="margin-top:14px;padding:12px;background:rgba(123,95,255,.1);border:1px solid rgba(123,95,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong style="color:var(--text)">123456</strong> · No real data is stored here</div>',
+      '<button class="btn btn-p btn-full" onclick="Modal.close()">Start exploring →</button>'
+    );
+  },
+  pickerProfiles() {
+    const list = [...this.PROFILES, this.DEMO];
+    if (this.isDevMode()) list.push(this.TEST);
+    return list;
+  },
   showSwitcher() {
     const active = this.active();
     Modal.open('🔐 Vault Profiles',
-      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Switching reloads the app with that profile\'s vault.</div>' +
+      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Your real vault is <strong>My Vault</strong>. Demo is for tours only.</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px">' +
-      VaultProfiles.PROFILES.map(p =>
+      VaultProfiles.pickerProfiles().map(p =>
         '<div onclick="VaultProfiles.switch(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:14px;background:' + (p.id===active?'rgba(123,95,255,.12)':'var(--glass)') + ';border:1px solid ' + (p.id===active?'rgba(123,95,255,.4)':'var(--border)') + ';border-radius:14px;cursor:pointer;touch-action:manipulation">' +
         '<div style="font-size:28px">' + p.icon + '</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">' + p.label + (p.id===active?' <span style="font-size:11px;color:var(--accent)">● Active</span>':'') + '</div>' +
@@ -2809,6 +2838,7 @@ const VaultProfiles = {
         '<div style="font-size:16px;color:var(--text3)">›</div>' +
         '</div>'
       ).join('') +
+      (active === 'demo' ? '<button class="btn btn-g btn-full btn-sm" style="margin-top:4px" onclick="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +
       '</div>',
       '<button class="btn btn-g btn-full" onclick="Modal.close()">Close</button>'
     );
@@ -2826,6 +2856,7 @@ window.forgotPINFromLock = async function() {
       ? '<div onclick="Modal.close();setTimeout(window._recoverWithKey,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;touch-action:manipulation"><div style="font-size:28px">🗝️</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Recover with Master Key</div><div style="font-size:13px;color:var(--text2)">Restores your vault data</div></div></div>'
       : '<div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;opacity:.45"><div style="font-size:28px">🗝️</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Recover with Master Key</div><div style="font-size:13px;color:var(--text2)">No master key set up for this vault</div></div></div>') +
     '<div onclick="Modal.close();setTimeout(window._resetVault,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:14px;cursor:pointer;touch-action:manipulation"><div style="font-size:28px">⚠️</div><div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Permanently deletes all data</div></div></div>' +
+    '<div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:rgba(123,95,255,.08);border:1px solid rgba(123,95,255,.25);border-radius:14px"><div style="font-size:28px">💎</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Premium Recovery Support</div><div style="font-size:13px;color:var(--text2);line-height:1.55">Contact Shamikh with your vault ID. Assisted unlock requires <strong>your Master Key</strong> or encrypted backup — encryption is never bypassed. Fee applies.</div><div style="font-size:12px;color:var(--accent);margin-top:6px">thesolution360.com · support@thesolution360.com</div></div></div>' +
     '</div>',
     '<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
   );
@@ -2910,20 +2941,21 @@ window._confirmReset = async function() {
 // ===================== ROUTER =====================
 const R = {
   showProfilePicker() {
+    if (VaultProfiles.active() === 'personal' && !VaultProfiles.isDevMode()) {
+      this.showLock();
+      return;
+    }
     ['pgHome', 'pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     const pp = document.getElementById('pgProfilePicker');
     if (!pp) { this.showLock(); return; }
     const active = VaultProfiles.active();
     const ppCards = document.getElementById('ppCards');
     if (ppCards) {
-      ppCards.innerHTML = VaultProfiles.PROFILES.map(p =>
-        '<div onclick="R._pickProfile(\'' + p.id + '\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (p.id === active ? 'rgba(123,95,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (p.id === active ? 'rgba(123,95,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation;transition:.15s">' +
-        '<div style="font-size:34px">' + p.icon + '</div>' +
-        '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">' + p.label + (p.id === active ? ' <span style="font-size:11px;color:var(--accent)">● Active</span>' : '') + '</div>' +
-        '<div style="font-size:12px;color:var(--text3)">' + p.desc + '</div></div>' +
-        '<div style="font-size:20px;color:var(--text3)">›</div>' +
-        '</div>'
-      ).join('');
+      ppCards.innerHTML =
+        '<div onclick="R._pickProfile(\'personal\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (active === 'personal' ? 'rgba(123,95,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (active === 'personal' ? 'rgba(123,95,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation">' +
+        '<div style="font-size:34px">🔐</div><div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">My Vault</div><div style="font-size:12px;color:var(--text3)">Your private encrypted vault</div></div><div style="font-size:20px;color:var(--text3)">›</div></div>' +
+        '<button onclick="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">🎭 New here? Take the guided demo →</button>' +
+        (VaultProfiles.isDevMode() ? '<div onclick="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div style="font-size:24px">🧪</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Test Sandbox</div><div style="font-size:11px;color:var(--text3)">Developer only</div></div></div>' : '');
     }
     pp.style.display = 'flex';
   },
@@ -2943,10 +2975,15 @@ const R = {
     PIN.reset();
     this.startClock();
     const sub = document.getElementById('lkSub');
-    if (sub && S.user.name) sub.textContent = `Welcome back, ${S.user.name}`;
-    // Forgot PIN shows only after failed attempts
+    if (sub) {
+      if (VaultProfiles.isDemo()) sub.textContent = 'Demo vault · PIN ' + VaultProfiles.DEMO_PIN;
+      else if (S.user.name) sub.textContent = 'Welcome back, ' + S.user.name;
+      else sub.textContent = 'Enter your 6-digit PIN';
+    }
+    const sp = document.getElementById('switchProfileBtn');
+    if (sp) sp.style.display = (VaultProfiles.isDemo() || VaultProfiles.isDevMode() || localStorage.getItem('vo_used_demo') === '1') ? '' : 'none';
     const fp = document.getElementById('forgotPinLink');
-    if (fp) fp.style.display = 'none';
+    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : 'none';
     ThemeEngine.renderDots();
   },
   showHome() {
@@ -2994,6 +3031,10 @@ const R = {
     setTimeout(() => {
       if (typeof VaultRecovery !== 'undefined') VaultRecovery.check();
     }, 1500);
+    if (VaultProfiles.isDemo() && localStorage.getItem('vo_demo_guide_pending') === '1') {
+      setTimeout(() => VaultProfiles.showDemoGuide(), 500);
+      localStorage.removeItem('vo_demo_guide_pending');
+    }
     setTimeout(() => {
       if (typeof Reminders !== 'undefined' && Reminders.checkAndNotify) Reminders.checkAndNotify();
     }, 2500);

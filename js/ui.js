@@ -87,7 +87,10 @@ const Dash={
     const cmdBtn = document.getElementById('dashCmdBtn');
     if (cmdBtn) cmdBtn.style.display = window.matchMedia('(min-width:768px)').matches ? '' : 'none';
 
-    const toB = (a,c) => (a||0) * (FX[c] || 1);
+    const _COUNTRY_CUR_MAP = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
+    const homeCur = (S.user.homeCurrency || _COUNTRY_CUR_MAP[S.user.country] || 'PKR').toUpperCase();
+    const itemCur = (c) => (c && String(c).trim()) ? String(c).trim().toUpperCase() : homeCur;
+    const toB = (a, c) => typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(a || 0, itemCur(c)) : (a || 0);
     const toCur = (pkr, c) => CurrencyEngine.fromBase(pkr, c || cur);
     const fmt = pkr => U.fmtCur(pkr, cur);
 
@@ -96,7 +99,7 @@ const Dash={
     const activeCtx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
     const ctxFilter = arr => (activeCtx === 'ALL' || !activeCtx) ? (arr||[]) : (typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]));
 
-    const invPKR = ctxFilter(S.investments).reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
+    const invPKR = ctxFilter(S.investments).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
     const asPKR = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
         let gr=x.weight||0; const un=x.unit||x.weightUnit||'g';
@@ -105,34 +108,51 @@ const Dash={
         const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');
         return a+gr*ppg;
       }
-      return a + toB(x.currentValue||0, x.currency||cur);
+      return a + toB(x.currentValue||0, x.currency);
     }, 0);
-    const cashPKR = ctxFilter(S.cash).reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
+    const cashPKR = ctxFilter(S.cash).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
     const vehPKR = 0;
     const goldPKR = 0;
-    const debtPKR = ctxFilter(S.loans).filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency||cur), 0);
+    const debtPKR = ctxFilter(S.loans).filter(l => l.type==='borrowed' && l.status!=='Settled').reduce((a,l) => a + toB(l.amount||0, l.currency), 0);
     const bcPKR = typeof BCModule !== 'undefined' ? BCModule.getZakatableAmount('PKR') : 0;
     const bondsPKR = typeof BondsModule !== 'undefined' ? BondsModule.getZakatableAmount('PKR') : 0;
-    const bankPKR = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
+    const bankPKR = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
     const nwPKR = invPKR + asPKR + cashPKR + bcPKR + bondsPKR - debtPKR;
 
-    const hist = S.user.nwHistory || [];
+    let hist = S.user.nwHistory || [];
+    if (hist.some(h => h && !h.base)) {
+      hist = hist.map(h => {
+        if (!h) return h;
+        if (h.base === 'PKR') return h;
+        return { v: toB(h.v, cur), d: h.d, base: 'PKR' };
+      });
+      S.user.nwHistory = hist;
+      Store.save();
+    }
+    const histPKR = hist.map(h => ({ v: h.v, d: h.d }));
+    const histDisplay = histPKR.map(h => ({ v: Math.round(toCur(h.v, cur)), d: h.d }));
     const todayStr = new Date().toISOString().split('T')[0];
-    const prevEntry = [...hist].reverse().find(h => h.d !== todayStr);
-    const prevV = prevEntry ? prevEntry.v : null;
+    const prevEntry = [...histPKR].reverse().find(h => h.d !== todayStr);
+    const prevPKR = prevEntry ? prevEntry.v : null;
     const nwDisplay = Math.round(toCur(nwPKR, cur));
-    const trendDir = prevV !== null ? (nwDisplay > prevV ? 1 : nwDisplay < prevV ? -1 : 0) : 0;
+    const prevDisplay = prevPKR !== null ? Math.round(toCur(prevPKR, cur)) : null;
+    const trendDir = prevDisplay !== null ? (nwDisplay > prevDisplay ? 1 : nwDisplay < prevDisplay ? -1 : 0) : 0;
     const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
-    const monthAgo = [...hist].reverse().find(h => (new Date() - new Date(h.d)) >= 25*24*60*60*1000);
-    const pctChange = monthAgo && monthAgo.v > 0 ? ((nwDisplay - monthAgo.v) / Math.abs(monthAgo.v) * 100) : null;
+    const monthAgo = [...histPKR].reverse().find(h => (new Date() - new Date(h.d)) >= 25*24*60*60*1000);
+    const monthAgoDisplay = monthAgo ? Math.round(toCur(monthAgo.v, cur)) : null;
+    const pctChange = monthAgoDisplay && monthAgoDisplay > 0 ? ((nwDisplay - monthAgoDisplay) / Math.abs(monthAgoDisplay) * 100) : null;
     const pctStr = pctChange !== null ? (pctChange >= 0 ? '+' : '') + pctChange.toFixed(1) + '% vs 30d' : '';
 
-    // Auto-save today's net worth to history
+    // Auto-save today's net worth to history (always PKR base)
     try {
       const today = new Date().toISOString().split('T')[0];
       if (!hist.length || hist[hist.length-1].d !== today) {
-        hist.push({v: nwDisplay, d: today});
+        hist.push({v: nwPKR, d: today, base: 'PKR'});
         if (hist.length > 180) hist.splice(0, hist.length - 180);
+        S.user.nwHistory = hist;
+        Store.save();
+      } else if (hist[hist.length-1].base !== 'PKR') {
+        hist[hist.length-1] = { v: nwPKR, d: today, base: 'PKR' };
         S.user.nwHistory = hist;
         Store.save();
       }
@@ -178,12 +198,13 @@ const Dash={
     const ctxFilt = arr => typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]);
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${x.value};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text)" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-height:22px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1;line-height:1.3">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;align-items:center"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
-    const prevNW = hist.length >= 2 ? hist[hist.length-2].v : nwDisplay;
+    const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
-    const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(nwChange));
-    const sparkline = _nwSparkline(hist);
+    const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ −') + (cur + ' ' + Math.abs(nwChange).toLocaleString());
+    const sparkline = _nwSparkline(histDisplay.length ? histDisplay : [{v:nwDisplay,d:todayStr}]);
     const _COUNTRY_CUR = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
     const multiCurHtml = secondaryCurs.length > 0
@@ -210,16 +231,18 @@ const Dash={
         '</div></div>'
       : '';
 
-    const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency||cur), 0);
-    const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency||cur), 0);
-    const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency||cur), 0);
+    const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
+    const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
+    const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
+    const moneyCell = (total, color, label, page) =>
+      '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px"><div style="font-size:17px;font-weight:900;color:' + color + ';line-height:1.2" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
       '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">💰 Money</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">' +
-      (S.modules.banks !== false ? '<div onclick="R.goto(\'banks\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--accent)" class="sens">' + fmt(bankTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Banks</div></div>' : '') +
-      (S.modules.investments !== false ? '<div onclick="R.goto(\'investments\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--ok)" class="sens">' + fmt(invTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Investments</div></div>' : '') +
-      (S.modules.cash !== false ? '<div onclick="R.goto(\'cash\')" style="text-align:center;cursor:pointer;touch-action:manipulation"><div style="font-size:18px;font-weight:900;color:var(--warn)" class="sens">' + fmt(cashTotal) + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Cash</div></div>' : '') +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
+      (S.modules.banks !== false ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
+      (S.modules.investments !== false ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
+      (S.modules.cash !== false ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
       '</div></div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
@@ -230,7 +253,7 @@ const Dash={
         const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');
         return a+gr*ppg;
       }
-      return a + toB(x.currentValue||x.purchasePrice||0, x.currency||cur);
+      return a + toB(x.currentValue||x.purchasePrice||0, x.currency);
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
     const assetSum = assetCount > 0 ?
@@ -260,16 +283,14 @@ const Dash={
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : '🌐 All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStats = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-top:14px">' +
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
-      '<div style="font-size:20px;font-weight:800;color:var(--text)">'+entityTotal+'</div>' +
-      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Records</div></div>' +
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
-      '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.2">'+activeCountryLabel+'</div>' +
-      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Country</div></div>' +
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center">' +
-      '<div style="font-size:14px;font-weight:800;color:var(--text)">'+lastBackupLabel+'</div>' +
-      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Backup</div></div>' +
+    const quickStatCell = (value, label, valueSize) =>
+      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+      '<div style="font-size:' + (valueSize || '20px') + ';font-weight:800;color:var(--text);line-height:1.25">' + value + '</div>' +
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;line-height:1.2">'+label+'</div></div>';
+    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-top:14px;align-items:stretch">' +
+      quickStatCell(entityTotal, 'Records', '20px') +
+      quickStatCell(activeCountryLabel, 'Country', '13px') +
+      quickStatCell(lastBackupLabel, 'Backup', '14px') +
       '</div>';
 
     b.innerHTML = `
@@ -438,7 +459,7 @@ const Dash={
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
   toggleCurrency(){
     Modal.open('💱 Display Currency',`
-      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Choose how amounts appear on the dashboard. This does not change your account currencies.</p>
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Choose how amounts <strong>display</strong> on the dashboard. Your real balances stay the same — only the currency label changes (e.g. PKR 1,000,000 ≈ GBP 2,840).</p>
       <div class="fg"><label class="fl">Currency</label><select class="inp" id="dash-cur-pick">${U.currencies()}</select></div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="S.user.currency=document.getElementById('dash-cur-pick').value;Store.save();Modal.close();Dash.render();Toast.show('Currency updated','success')">Save</button>`);
     setTimeout(()=>{const c=document.getElementById('dash-cur-pick');if(c)c.value=S.user.currency||'GBP';},50);
@@ -446,17 +467,20 @@ const Dash={
   security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.decoyPin)s+=5;return Math.min(s,100);},
   showNWBreakdown(){
     const cur=S.user.currency||'PKR';
-    const toB=(a,c)=>(a||0)*(FX[c]||1);
+    const _CC=typeof COUNTRY_CUR!=='undefined'?COUNTRY_CUR:{PK:'PKR',GB:'GBP',AE:'AED',US:'USD'};
+    const homeCur=(S.user.homeCurrency||_CC[S.user.country]||'PKR').toUpperCase();
+    const itemCur=c=>(c&&String(c).trim())?String(c).trim().toUpperCase():homeCur;
+    const toB=(a,c)=>CurrencyEngine.toBase(a||0,itemCur(c));
     const toCur=(pkr,c)=>CurrencyEngine.fromBase(pkr,c||cur);
     const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     const fmt=v=>`${cur} ${fmtN(Math.round(toCur(v,cur)))}`;
-    const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency||cur),0);
+    const invPKR=S.investments.reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
     const asPKR=(S.assets||[]).reduce((a,x)=>{
       if((x.assetType==='precious_metals'||x.assetType==='precious')&&x.weight&&typeof RatesEngine!=='undefined'){let gr=x.weight||0;const un=x.unit||x.weightUnit||'g';if(un==='tola')gr*=11.6638;else if(un==='oz'||un==='troy oz')gr*=31.1035;else if(un==='kg')gr*=1000;const m=(x.metal||x.metalType||'gold').toLowerCase();const ppg=m==='silver'?RatesEngine.silverInCurrency('PKR','gram'):RatesEngine.goldInCurrency('PKR','gram');return a+gr*ppg;}
-      return a+toB(x.currentValue||0,x.currency||cur);
+      return a+toB(x.currentValue||0,x.currency);
     },0);
-    const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency||cur),0);
-    const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency||cur),0);
+    const cashPKR=S.cash.reduce((a,c)=>a+toB(c.amount||0,c.currency),0);
+    const debtPKR=S.loans.filter(l=>l.type==='borrowed'&&l.status!=='Settled').reduce((a,l)=>a+toB(l.amount||0,l.currency),0);
     const bcPKR2=typeof BCModule!=='undefined'?BCModule.getZakatableAmount('PKR'):0;
     const bondsPKR2=typeof BondsModule!=='undefined'?BondsModule.getZakatableAmount('PKR'):0;
     const nwPKR=invPKR+asPKR+cashPKR+bcPKR2+bondsPKR2-debtPKR;
@@ -1986,7 +2010,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'👤 Personal','demo':'🎭 Demo','test':'🧪 Test'};return m[p]||p;})()} — switch between Personal / Demo / Test</div></div><button class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
+      <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'🔐 My Vault','demo':'🎭 Guided Demo','test':'🧪 Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
