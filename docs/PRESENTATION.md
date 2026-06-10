@@ -9,7 +9,7 @@
 
 *Encrypted · Offline · PK · UK · UAE*
 
-**Live:** shamikhahmed.github.io/VaultOS
+**Live:** shamikhahmed.github.io/VaultCap
 
 ---
 
@@ -123,6 +123,6 @@ Try Smart Add, zakat auto-fill, document expiry timeline.
 
 > *Your entire financial life. Encrypted. Offline. Always with you.*
 
-**VaultOS** — github.com/shamikhahmed/VaultOS
+**VaultOS** — github.com/shamikhahmed/VaultCap
 
 *Shamikh Ahmed · 2026*

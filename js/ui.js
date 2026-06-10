@@ -2198,7 +2198,7 @@ const VaultHealthCenter = {
         <summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">What if I lose my phone? <span style="color:var(--text3)">▾</span></summary>
         <div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">
           <strong>Step 1:</strong> Get a new phone or open any browser<br>
-          <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultOS</strong><br>
+          <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultCap</strong><br>
           <strong>Step 3:</strong> Tap Settings → Import → select your .vos backup file<br>
           <strong>Step 4:</strong> Enter your PIN to decrypt<br>
           <strong>Step 5:</strong> Your entire vault is restored ✓<br><br>
@@ -2325,7 +2325,7 @@ const HelpCenter = {
           ${this._card('💾', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
           ${this._card('📂', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('🔑', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('📱', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultOS. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('📱', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
           ${this._card('⏰', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
           ${this._card('☁️', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,

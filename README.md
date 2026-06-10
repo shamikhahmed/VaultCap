@@ -1,7 +1,7 @@
 # VaultCap — Private Life Operating System
 
-[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
-[![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
+[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
+[![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
 [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)
 
 > **Your entire financial and personal life. Encrypted. Offline. Always with you.**
@@ -91,7 +91,7 @@ VaultOS/
 
 ## Getting Started
 
-**Live:** https://shamikhahmed.github.io/VaultOS
+**Live:** https://shamikhahmed.github.io/VaultCap
 
 **iPhone:** Safari → Share → Add to Home Screen
 
@@ -119,7 +119,7 @@ VaultOS/
 
 **Local:**
 ```bash
-git clone https://github.com/shamikhahmed/VaultOS.git
+git clone https://github.com/shamikhahmed/VaultCap.git
 cd VaultOS
 python3 -m http.server 8080
 # open http://localhost:8080

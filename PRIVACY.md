@@ -39,4 +39,4 @@ The Cloudflare Worker uses Workers AI (`@cf/meta/llama-3.1-8b-instruct`). If the
 
 ## Contact
 
-Built by Shamikh Ahmed — issues via the [VaultOS GitHub repository](https://github.com/shamikhahmed/VaultOS).
+Built by Shamikh Ahmed — issues via the [VaultOS GitHub repository](https://github.com/shamikhahmed/VaultCap).

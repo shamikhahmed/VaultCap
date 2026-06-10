@@ -14,7 +14,7 @@
     "@capacitor/cli": "^7.2.0"
   },
   "version": "1.0.0",
-  "description": "[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS) [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS) [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)",
+  "description": "[![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap) [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap) [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)",
   "main": "playwright.config.js",
   "directories": {
     "doc": "docs",
@@ -28,14 +28,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shamikhahmed/VaultOS.git"
+    "url": "git+https://github.com/shamikhahmed/VaultCap.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/shamikhahmed/VaultOS/issues"
+    "url": "https://github.com/shamikhahmed/VaultCap/issues"
   },
-  "homepage": "https://github.com/shamikhahmed/VaultOS#readme"
+  "homepage": "https://github.com/shamikhahmed/VaultCap#readme"
 }

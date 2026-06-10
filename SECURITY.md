@@ -48,4 +48,4 @@
 
 ## Reporting
 
-Open a private security issue on the [VaultOS GitHub repo](https://github.com/shamikhahmed/VaultOS) for vulnerabilities.
+Open a private security issue on the [VaultOS GitHub repo](https://github.com/shamikhahmed/VaultCap) for vulnerabilities.
