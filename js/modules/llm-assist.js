@@ -1,29 +1,42 @@
 'use strict';
-// Optional LLM assist — user supplies API key in Settings. Never hardcoded.
-// Falls back to SmartParser when no key or on error.
+// Smart Import / Smart Add — bundled LLM (included) with Smart Parser fallback.
+// Bundled key in js/config/llm-bundled.js. Optional user override in Settings.
 
 const LlmAssist = {
+  _bundled() {
+    return (typeof window !== 'undefined' && window.VaultOSBundledLlm) ? window.VaultOSBundledLlm : {};
+  },
+
   getConfig() {
     const u = (typeof S !== 'undefined' && S.user) ? S.user : {};
+    const b = this._bundled();
+    const userKey = (u.llmApiKey || '').trim();
+    const key = userKey || (b.apiKey || '').trim();
+    const userOff = u.llmEnabled === false;
+    const userOn = u.llmEnabled === true;
+    const enabled = !userOff && (userOn || b.enabled !== false) && !!key;
     return {
-      enabled: !!u.llmEnabled && !!u.llmApiKey,
-      apiKey: (u.llmApiKey || '').trim(),
-      provider: u.llmProvider || 'anthropic',
-      model: u.llmModel || 'claude-sonnet-4-20250514',
+      enabled,
+      apiKey: key,
+      provider: u.llmProvider || b.provider || 'proxy',
+      model: u.llmModel || b.model || 'claude-3-5-haiku-latest',
+      proxyUrl: (u.llmProxyUrl || b.proxyUrl || '').trim(),
+      bundled: !userKey && !!b.apiKey,
     };
   },
 
-  saveConfig({ enabled, apiKey, provider, model }) {
+  saveConfig({ enabled, apiKey, provider, model, proxyUrl }) {
     if (typeof S === 'undefined') return;
     if (enabled !== undefined) S.user.llmEnabled = !!enabled;
     if (apiKey !== undefined) S.user.llmApiKey = String(apiKey).trim();
     if (provider !== undefined) S.user.llmProvider = provider;
     if (model !== undefined) S.user.llmModel = model;
+    if (proxyUrl !== undefined) S.user.llmProxyUrl = String(proxyUrl).trim();
     if (typeof Store !== 'undefined') Store.save();
   },
 
   clearKey() {
-    this.saveConfig({ apiKey: '', enabled: false });
+    this.saveConfig({ apiKey: '', enabled: true });
   },
 
   async parseText(text) {
@@ -33,7 +46,7 @@ const LlmAssist = {
       const raw = await this._call(cfg, text);
       return this._normalize(raw);
     } catch (e) {
-      if (typeof Toast !== 'undefined') Toast.show('LLM unavailable — using Smart Parser', 'warning', 3500);
+      if (typeof Toast !== 'undefined') Toast.show('Enhanced parsing unavailable — using Smart Parser', 'warning', 3500);
       return null;
     }
   },
@@ -46,6 +59,20 @@ const LlmAssist = {
   },
 
   async _call(cfg, text) {
+    if (cfg.proxyUrl) {
+      const res = await fetch(cfg.proxyUrl.replace(/\/$/, '') + '/parse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + cfg.apiKey,
+        },
+        body: JSON.stringify({ text, model: cfg.model }),
+      });
+      if (!res.ok) throw new Error('proxy ' + res.status);
+      const j = await res.json();
+      if (j.items) return JSON.stringify(j.items);
+      throw new Error('proxy empty');
+    }
     const sys = 'Extract financial records from user text. Return ONLY valid JSON array. Each item: {"type":"bank|card|loan|document|cash|investment|gold|bc|bond|expense|sim|email","confidence":0-1,"data":{...}}. Use snake_case field names matching: bankName,balance,iban,cardName,last4,expiry,person,amount,dueDate,network,phone,label,investmentName,broker,name. If nothing found return [].';
     if (cfg.provider === 'openai') {
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -61,6 +88,7 @@ const LlmAssist = {
       const j = await res.json();
       return j.choices?.[0]?.message?.content || '[]';
     }
+    // Anthropic direct (browser) — works with sk-ant-* keys only
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
