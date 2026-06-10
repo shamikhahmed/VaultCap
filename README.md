@@ -1,4 +1,4 @@
-# VaultOS — Private Life Operating System
+# VaultCap — Private Life Operating System
 
 [![Live App](https://img.shields.io/badge/Live%20App-VaultOS-5b8dee?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultOS)
@@ -6,7 +6,7 @@
 
 > **Your entire financial and personal life. Encrypted. Offline. Always with you.**
 
-VaultOS is a zero-knowledge personal life operating system built as a PWA. No servers. No accounts. No subscriptions. All data stays on your device, encrypted with AES-256-GCM.
+VaultCap by Capricorn Systems is a zero-knowledge personal life operating system built as a PWA. No servers. No accounts. No subscriptions. All data stays on your device, encrypted with AES-256-GCM.
 
 ---
 

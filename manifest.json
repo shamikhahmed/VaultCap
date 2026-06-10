@@ -1,6 +1,7 @@
 {
-  "name": "VaultOS",
-  "short_name": "VaultOS",
+  "name": "VaultCap",
+  "short_name": "VaultCap",
+  "description": "VaultCap by Capricorn Systems — encrypted personal life vault PWA",
   "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",

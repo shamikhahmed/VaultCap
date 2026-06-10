@@ -1,6 +1,6 @@
 {
   "appId": "com.shamikhahmed.vaultos",
-  "appName": "VaultOS",
+  "appName": "VaultCap",
   "webDir": ".",
   "server": {
     "androidScheme": "https"
