@@ -270,7 +270,7 @@ const AIImport = {
   parse(text) { return SmartParser.parse(text); },
 
   openImportModal() {
-    if (typeof R !== 'undefined' && R.goto) R.goto('ai-import');
+    if (typeof R !== 'undefined' && R.goto) R.goto('import');
     else this.render();
   },
 
@@ -282,7 +282,7 @@ const AIImport = {
 
       '<div style="background:linear-gradient(135deg,rgba(91,141,238,.15),rgba(91,141,238,.05));border:1px solid rgba(91,141,238,.25);border-radius:16px;padding:16px">' +
         '<div style="font-size:15px;font-weight:800;color:var(--accent);margin-bottom:4px">📥 Smart Import</div>' +
-        '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from statements, messages, or notes. VaultOS detects banks, cards, loans, and more — fully offline, no AI required.</div>' +
+        '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
       '</div>' +
 
@@ -334,7 +334,7 @@ const AIImport = {
     if (file) this.handleFile(file);
   },
 
-  detect() {
+  async detect() {
     const pasteEl = document.getElementById('ie-paste');
     const text = (pasteEl ? pasteEl.value : '').trim();
     if (!text) { Toast.show('Paste some text first', 'warn'); return; }
@@ -343,23 +343,25 @@ const AIImport = {
     const resultsEl = document.getElementById('ie-results');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Analysing…'; }
 
-    setTimeout(() => {
-      try {
-        const detected = SmartParser.parse(text);
-        if (!detected.length) {
-          if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">No financial data detected. Try including amounts, bank names, or card details.</div>';
-          Toast.show('Nothing detected — add more detail', 'warn');
-        } else {
-          this._results = detected;
-          this._renderResults(detected, resultsEl);
-          Toast.show('Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : ''), 'success');
-        }
-      } catch (e) {
-        if (resultsEl) resultsEl.innerHTML = '<div style="color:var(--err);font-size:13px;padding:14px">Detection failed — ' + (e.message || 'unknown error') + '</div>';
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = '🔍 Detect & Extract'; }
+    try {
+      let detected = null;
+      if (typeof LlmAssist !== 'undefined' && LlmAssist.getConfig().enabled) {
+        detected = await LlmAssist.parseText(text);
       }
-    }, 80);
+      if (!detected || !detected.length) detected = SmartParser.parse(text);
+      if (!detected.length) {
+        if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">No financial data detected. Try including amounts, bank names, or card details.</div>';
+        Toast.show('Nothing detected — add more detail', 'warn');
+      } else {
+        this._results = detected;
+        this._renderResults(detected, resultsEl);
+        Toast.show('Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : ''), 'success');
+      }
+    } catch (e) {
+      if (resultsEl) resultsEl.innerHTML = '<div style="color:var(--err);font-size:13px;padding:14px">Detection failed — ' + (e.message || 'unknown error') + '</div>';
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '🔍 Detect & Extract'; }
+    }
   },
 
   _renderResults(detected, container) {

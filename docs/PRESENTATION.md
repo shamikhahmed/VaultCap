@@ -74,8 +74,8 @@ Your PIN never leaves your device.
 ## Slide 7 — AI features (optional)
 
 - **Smart Add** — describe in English → pre-filled form
-- **AI Import** — paste statement text → structured data
-- Requires Claude API key; pattern fallback offline
+- **Smart Import** — paste statement text → structured data
+- Requires optional LLM API key key; pattern fallback offline
 
 ---
 
@@ -105,7 +105,7 @@ Built for Shamikh's life — designed for millions like it.
 ## Slide 10 — Design
 
 - Accent `#5b8dee` — trust blue on obsidian
-- 18 themes — Midnight to Blossom
+- 5 themes — Midnight to Blossom
 - Glass cards, command palette ⌘K
 - PWA — full offline after install
 

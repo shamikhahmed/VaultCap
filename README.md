@@ -55,13 +55,13 @@ VaultOS replaces a dozen fragmented apps with one encrypted vault — managing b
 
 ## Features
 
-- **Smart Add** — describe what to add, Claude AI detects and pre-fills the form
-- **AI Import** — paste any text, Claude extracts structured financial data
+- **Smart Add** — describe what to add, Smart Parser (optional LLM) detects and pre-fills the form
+- **Smart Import** — paste any text, Smart Parser / LLM extracts structured financial data
 - **Live rates** — real-time FX (PKR/GBP/AED/USD) and gold/silver prices
 - **PDF export** — full financial summary as print-ready PDF
 - **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
 - **Multi-country** — filter by Pakistan, UK, UAE
-- **18 themes** — Midnight, Graphite, Cloud, Ivory, Blossom, and more
+- **5 themes** — Midnight, Graphite, Cloud, Ivory, Blossom, and more
 - **60+ bank logos** with real favicons
 - **QR sync** — transfer vault between devices via QR code
 
@@ -74,7 +74,7 @@ VaultOS/
 ├── index.html           # App shell
 ├── js/
 │   ├── app.js           # Core engine — routing, security, all data modules
-│   └── ui.js            # Dashboard, Settings, Export, AI Import
+│   └── ui.js            # Dashboard, Settings, Export, Smart Import
 ├── css/                 # 4 CSS files — base, layout, components, themes
 ├── pitch.html           # 20-slide pitch deck
 ├── widget.html          # Standalone net worth widget
@@ -85,7 +85,7 @@ VaultOS/
 └── sw.js                # Service worker (offline PWA)
 ```
 
-**Stack:** Vanilla JS · Web Crypto API · localStorage · Tesseract.js · Claude API (optional)
+**Stack:** Vanilla JS · Web Crypto API · localStorage · Tesseract.js · optional LLM API key (optional)
 
 ---
 

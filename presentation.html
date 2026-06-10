@@ -734,7 +734,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🎨</div>
-      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">18 Themes</div><div style="font-size:12px;color:var(--text2)">Dark glass · neon · earth · minimal — switch instantly, persisted per session</div></div>
+      <div><div style="font-weight:700;font-size:14px;margin-bottom:3px">5 Themes</div><div style="font-size:12px;color:var(--text2)">Dark glass · neon · earth · minimal — switch instantly, persisted per session</div></div>
     </div>
     <div class="glass" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px">🔔</div>
@@ -895,7 +895,7 @@ const dotsEl=document.getElementById('dots');
 for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);dotsEl.appendChild(d);}
 
 // Module grid
-const mods=[{ic:'🏦',n:'Banks'},{ic:'💳',n:'Cards'},{ic:'📈',n:'Invest'},{ic:'💵',n:'Cash'},{ic:'🤝',n:'Loans'},{ic:'📋',n:'Bills'},{ic:'💱',n:'Currency'},{ic:'🥇',n:'Gold'},{ic:'☪️',n:'Zakat'},{ic:'📊',n:'Credit'},{ic:'🧾',n:'Tax'},{ic:'🏠',n:'Assets'},{ic:'🚗',n:'Vehicles'},{ic:'📱',n:'SIMs'},{ic:'🪪',n:'Docs'},{ic:'📧',n:'Emails'},{ic:'💻',n:'Gadgets'},{ic:'💼',n:'Digital'},{ic:'👥',n:'Contacts'},{ic:'🌳',n:'Family'},{ic:'🔔',n:'Alerts'},{ic:'🤖',n:'AI Import'}];
+const mods=[{ic:'🏦',n:'Banks'},{ic:'💳',n:'Cards'},{ic:'📈',n:'Invest'},{ic:'💵',n:'Cash'},{ic:'🤝',n:'Loans'},{ic:'📋',n:'Bills'},{ic:'💱',n:'Currency'},{ic:'🥇',n:'Gold'},{ic:'☪️',n:'Zakat'},{ic:'📊',n:'Credit'},{ic:'🧾',n:'Tax'},{ic:'🏠',n:'Assets'},{ic:'🚗',n:'Vehicles'},{ic:'📱',n:'SIMs'},{ic:'🪪',n:'Docs'},{ic:'📧',n:'Emails'},{ic:'💻',n:'Gadgets'},{ic:'💼',n:'Digital'},{ic:'👥',n:'Contacts'},{ic:'🌳',n:'Family'},{ic:'🔔',n:'Alerts'},{ic:'🤖',n:'Smart Import'}];
 const mg=document.getElementById('modGrid');
 if(mg)mg.innerHTML=mods.map(m=>`<div class="mod-tile">${m.ic}<div class="mod-label">${m.n}</div></div>`).join('');
 

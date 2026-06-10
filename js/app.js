@@ -29,7 +29,7 @@ const ALL_MODULES=[
   {id:'alerts',     n:'Alerts',     ic:'🔔', desc:'Expiry & urgent alerts',             group:'Tools'},
   {id:'timeline',   n:'Timeline',   ic:'📅', desc:'Activity history',                   group:'Tools'},
   {id:'reminders',  n:'Reminders',  ic:'⏰', desc:'Expiry alerts & upcoming dues',      group:'Tools'},
-  {id:'ai-import',  n:'Smart Import',  ic:'📥', desc:'Paste text — offline pattern detection', group:'Tools'},
+  {id:'import',  n:'Smart Import',  ic:'📥', desc:'Paste text — Smart Parser + optional LLM', group:'Tools'},
   {id:'trash',      n:'Trash',      ic:'🗑️', desc:'Deleted items — restore or purge',    group:'Tools'},
   {id:'family',        n:'Family Vault',    ic:'👨‍👩‍👧‍👦', desc:'Family financial overview',                    group:'Finance'},
   {id:'emergency',     n:'Emergency',       ic:'🆘', desc:'Emergency access info for first responders', group:'Tools'},
@@ -4436,7 +4436,7 @@ function openMore() {
       {id:'zakat',ic:'🌙',n:'Zakat'},
       {id:'tax',ic:'🧾',n:'Tax'},
       {id:'currency',ic:'💱',n:'Currency'},
-      {id:'ai-import',ic:'🤖',n:'AI Import'},
+      {id:'import',ic:'📥',n:'Smart Import'},
       {id:'credit',ic:'📊',n:'Credit Score'},
       {id:'reminders',ic:'⏰',n:'Reminders'},
       {id:'alerts',ic:'🔔',n:'Alerts'},
@@ -4679,14 +4679,20 @@ const SmartAdd = {
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
 
-  run() {
+  async run() {
     const text = (document.getElementById('sa-text')?.value || '').trim();
     if (!text) { Toast.show('Describe what you want to add', 'warning'); return; }
     const btn = document.getElementById('sa-run-btn');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Detecting...'; }
 
-    const parsed = (typeof SmartParser !== 'undefined' ? SmartParser.parseOne(text) : null)
-      || (typeof AIImport !== 'undefined' && AIImport.parse ? (() => { const items = AIImport.parse(text); return items.length ? { module: items[0].type === 'expense' ? 'expense' : items[0].type, fields: items[0].data } : null; })() : null);
+    let parsed = null;
+    if (typeof LlmAssist !== 'undefined' && LlmAssist.getConfig().enabled) {
+      parsed = await LlmAssist.parseOne(text);
+    }
+    if (!parsed) {
+      parsed = (typeof SmartParser !== 'undefined' ? SmartParser.parseOne(text) : null)
+        || (typeof AIImport !== 'undefined' && AIImport.parse ? (() => { const items = AIImport.parse(text); return items.length ? { module: items[0].type === 'expense' ? 'expense' : items[0].type, fields: items[0].data } : null; })() : null);
+    }
 
     if (btn) { btn.disabled = false; btn.textContent = '✨ Detect & Pre-fill'; }
 

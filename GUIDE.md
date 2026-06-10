@@ -80,7 +80,7 @@ Go to **Settings → Backup & Export → Export Vault**. A `.vos` file downloads
 |--------|---------------|
 | **Timeline** | Chronological activity history across all modules. |
 | **Reminders** | Custom and automatic reminders (document expiry, loan due dates). |
-| **AI Import** | Smart import from screenshots, spreadsheets, and PDFs using Claude AI. |
+| **Smart Import** | Smart import from screenshots, spreadsheets, and PDFs using Smart Parser (optional LLM). |
 | **Recovery Center** | Backup health score, export/restore actions, encryption explainer. |
 | **Help & Guide** | This guide, in-app. |
 | **Emergency** | Medical info and emergency contacts visible without a PIN. |
@@ -452,13 +452,13 @@ VaultOS tracks partial payments on loans.
 
 ## Smart Add (AI)
 
-Smart Add uses Claude AI to detect what you're describing and pre-fill the right form.
+Smart Add uses Smart Parser (optional LLM) to detect what you're describing and pre-fill the right form.
 
 **How to use:**
 1. Tap the **+** FAB button
 2. Tap **✨ Smart Add**
 3. Describe what you want to add in plain English
-4. Claude detects the type and opens the pre-filled form
+4. Smart Parser / LLM detects the type and opens the pre-filled form
 
 **Examples:**
 - "HBL account with PKR 500,000 balance" → opens Bank form pre-filled
@@ -466,18 +466,18 @@ Smart Add uses Claude AI to detect what you're describing and pre-fill the right
 - "Netflix £17.99 monthly subscription" → opens Expense form pre-filled
 - "My Jazz SIM +92 300 1234567" → opens SIM form pre-filled
 
-**Requires:** Claude API key set in Settings → AI Import. Falls back to pattern matching if no key is set.
+**Requires:** optional LLM API key key set in Settings → Smart Import. Falls back to pattern matching if no key is set.
 
 ---
 
-## AI Import
+## Smart Import
 
-AI Import reads unstructured text and extracts structured financial data.
+Smart Import reads unstructured text and extracts structured financial data.
 
 **How to use:**
-1. Go to Finance → Import (or Settings → AI Import)
+1. Go to Finance → Import (or Settings → Smart Import)
 2. Paste bank statement text, screenshot text, or any description
-3. Claude detects up to 9 data types with confidence indicators
+3. Smart Parser / LLM detects up to 9 data types with confidence indicators
 4. Review and confirm each detected item
 
 **Supported types:** Banks, Cards, Loans, Cash, Investments, Documents, Expenses, BC committees, Prize bonds

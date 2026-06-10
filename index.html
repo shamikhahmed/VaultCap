@@ -335,12 +335,11 @@
 <div class="page" id="pg-gadgets"><div class="ph"><h2>💻 Gadgets & Devices</h2><button class="btn btn-p btn-sm" onclick="Gadgets.openAdd()">+ Add</button></div><div class="pb"><div class="chips" id="gChips"></div><div id="gItems"></div></div></div>
 <div class="page" id="pg-digital"><div class="ph"><h2>💼 Digital Services</h2><button class="btn btn-p btn-sm" onclick="Digital.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic">🔍</span><input class="inp" id="digQ" placeholder="Search..." oninput="Digital.render()" style="padding-left:36px"></div><div id="digItems"></div></div></div>
 <div class="page" id="pg-alerts"><div class="ph"><h2>🔔 Alerts</h2></div><div class="pb" id="alertBody"></div></div>
-<div class="page" id="pg-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="importBody"><div class="empty"><div class="empty-ic">📥</div><h3>Loading...</h3></div></div></div>
 <div class="page" id="pg-documents"><div class="ph"><h2>🪪 Documents</h2></div><div style="padding:6px 14px 0"><input class="inp" id="docsQ" placeholder="🔍 Search documents..." oninput="DocsModule.render()" style="width:100%;box-sizing:border-box"></div><div id="docsChips" class="chips" style="padding:4px 14px 4px"></div><div class="pb" id="docsItems"></div></div>
 <div class="page" id="pg-vehicles"><div class="ph"><h2>🚗 Vehicles</h2><button class="btn btn-p btn-sm" onclick="Vehicles.openAdd()">+ Add</button></div><div class="pb" id="vItems"></div></div>
 <div class="page" id="pg-reminders"><div class="ph"><h2>🔔 Reminders</h2></div><div class="pb" id="reminderBody"></div></div>
 <div class="page" id="pg-search"><div class="pb" id="searchBody" style="padding-top:0"></div></div>
-<div class="page" id="pg-ai-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="aiImportBody"></div></div>
+<div class="page" id="pg-import"><div class="ph"><h2>📥 Smart Import</h2></div><div class="pb" id="aiImportBody"></div></div>
 <div class="page" id="pg-timeline"><div class="ph"><h2>📅 Timeline</h2></div><div class="pb" id="timelineBody"></div></div>
 <div class="page" id="pg-security"><div class="ph"><h2>🛡️ Security Center</h2></div><div class="pb" id="securityBody"></div></div>
 <div class="page" id="pg-backup"><div class="ph"><h2>💾 Backup Center</h2></div><div class="pb" id="backupBody"></div></div>
@@ -398,7 +397,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" integrity="sha384-9Q0jWoineiIq95JeIyBsNV90KKLfDsbkj29k/YFxf76a2JwkHDYkMuSbNGN6XJfV" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js" crossorigin="anonymous"></script>
+<script src="vendor/tesseract.min.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/core/constants.js"></script>
 <script src="js/core/validators.js"></script>
@@ -428,6 +427,7 @@
 <script src="js/modules/search.js"></script>
 <script src="js/modules/vehicles.js"></script>
 <script src="js/modules/reminders.js"></script>
+<script src="js/modules/llm-assist.js"></script>
 <script src="js/modules/ai-import.js"></script>
 <script src="js/modules/trash.js"></script>
 <script src="js/modules/currency.js"></script>
@@ -439,7 +439,7 @@
 <script src="js/modules/tax.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js?v=20').catch(() => {});
 }
 </script>
 </body>

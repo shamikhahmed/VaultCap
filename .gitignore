@@ -32,3 +32,7 @@ build/
 # Playwright
 test-results/
 playwright-report/
+
+# Agent notes (local only)
+memory/
+.cursor/

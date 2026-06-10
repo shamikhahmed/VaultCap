@@ -29,7 +29,7 @@ VaultOS is a fully client-side, zero-dependency personal finance/identity vault 
 | `css/base.css` | CSS custom properties, reset, typography scale |
 | `css/layout.css` | Navigation, page layout, responsive breakpoints |
 | `css/components.css` | Reusable UI components (cards, buttons, modals, toasts, toggles) |
-| `css/themes.css` | 18 theme overrides applied via body class names |
+| `css/themes.css` | 5 theme overrides applied via body class names |
 
 ### Global State (`S`)
 
@@ -65,7 +65,7 @@ Each data module follows this pattern:
 
 ### Theming
 
-18 themes defined in `THEMES` array (`app.js:1`). `ThemeEngine.apply(id)` sets `document.body.className` to the theme's `cls` value and updates CSS custom properties. All colour values are CSS variables (`--bg`, `--bg2`, `--bg3`, `--accent`, `--glow`, `--text`, `--text2`, `--text3`).
+5 themes defined in `THEMES` array (`app.js:1`). `ThemeEngine.apply(id)` sets `document.body.className` to the theme's `cls` value and updates CSS custom properties. All colour values are CSS variables (`--bg`, `--bg2`, `--bg3`, `--accent`, `--glow`, `--text`, `--text2`, `--text3`).
 
 ### CSS Conventions
 
@@ -81,4 +81,4 @@ Each data module follows this pattern:
 
 ### Export/Import
 
-`ExIm` (`ui.js:253`) supports `.vos` (AES-256-GCM encrypted), `.vault` (legacy), `.json`, and `.csv` exports. `ImportEngine` (`ui.js:368`) provides AI-assisted smart import from screenshots, spreadsheets, and PDFs by parsing with a prompt sent to Claude API.
+`ExIm` (`ui.js:253`) supports `.vos` (AES-256-GCM encrypted), `.vault` (legacy), `.json`, and `.csv` exports. `ImportEngine` (`ui.js:368`) provides AI-assisted smart import from screenshots, spreadsheets, and PDFs by parsing with a prompt sent to optional LLM API key.
