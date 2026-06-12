@@ -387,6 +387,23 @@ body.hide-btabs #fab { display: none !important; }
 }
 @media (min-width: 1400px) { .stat-row { grid-template-columns: repeat(5,1fr) !important; } }
 
+/* ─ Dashboard card grid (wide desktop) ─ */
+#dashBody .module-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 900px) {
+  #dashBody .module-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  #dashBody .stat-row { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .pb { padding: 20px 24px 36px; }
+}
+@media (min-width: 1200px) {
+  #dashBody .module-grid { grid-template-columns: repeat(4, 1fr); }
+  .sidebar { width: 296px; min-width: 296px; max-width: 296px; }
+}
+
+/* ─ Cap module headers (text + accent, no emoji) ─ */
+.ph h2.cap-h2 { display: flex; flex-direction: column; gap: 2px; line-height: 1.2; }
+.ph h2.cap-h2 .cap-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.ph h2.cap-h2 .cap-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+
 /* ─ Offline bar ─ */
 .offline-bar {
   display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 800;
