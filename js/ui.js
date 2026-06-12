@@ -716,6 +716,19 @@ const Settings={
 
 // ===================== EXPORT / IMPORT =====================
 const ExIm={
+  _exportMeta(fmt='json'){
+    return {
+      _meta:{
+        format:fmt==='vault'||fmt==='vos'?'vaultcap-encrypted-vos':'vaultcap-backup-json',
+        app:'VaultCap',
+        appVersion:typeof VER!=='undefined'?VER:'4.1.0',
+        schemaVersion:typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:13,
+        exportedAt:new Date().toISOString(),
+      },
+      ver:'4.0',
+      exported:new Date().toISOString(),
+    };
+  },
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
       S.user.lastBackup=new Date().toISOString();
@@ -734,7 +747,7 @@ const ExIm={
       });
       return;
     }
-    const data={ver:'3.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
+    const data={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     S.user.lastBackup=new Date().toISOString();Store.save();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
@@ -745,7 +758,7 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultCap-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={ver:'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
@@ -772,7 +785,7 @@ const ExIm={
   _exportLegacyVault(){
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
-    const data={ver:'4.0',_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.0',exported:new Date().toISOString(),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
+    const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
       this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
       Activity.log('Exported','Legacy AES-256-GCM .vos');

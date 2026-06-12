@@ -25,6 +25,15 @@ const Family = {
     return m ? m.name : ownerId;
   },
 
+  _roleLabel(role) {
+    return role === 'admin' ? 'Admin' : 'Viewer';
+  },
+
+  _roleBadge(role) {
+    const isAdmin = role !== 'viewer';
+    return `<span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(123,95,255,.25)' : 'rgba(255,255,255,.08)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
+  },
+
   // Legacy API — used by search module and dashboard
   get() {
     const members = this.allMembers();
@@ -77,6 +86,7 @@ const Family = {
       avatar: p.avatar,
       relation: 'Head of Family',
       isHead: true,
+      role: 'admin',
       dob: p.dob,
       phone: p.phone,
       email: p.email,
@@ -165,7 +175,7 @@ const Family = {
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
             <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${escHtml(head.avatar || '👤')}</div>
             <div>
-              <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)}</div>
+              <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)} ${this._roleBadge(head.role || 'admin')}</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">${_stat(head.id)}</div>
             </div>
           </div>
@@ -186,7 +196,7 @@ const Family = {
       `<div onclick="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
         <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)}</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
         </div>
         <div style="color:var(--text3);font-size:20px">›</div>
@@ -219,7 +229,7 @@ const Family = {
     const header = `<div style="display:flex;align-items:center;gap:14px;padding:12px 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.06))">
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
       <div style="flex:1">
-        <div style="font-size:20px;font-weight:900;color:var(--text)">${escHtml(m.name)}${m.isHead ? ' 👑' : ''}</div>
+        <div style="font-size:20px;font-weight:900;color:var(--text)">${escHtml(m.name)}${m.isHead ? ' 👑' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
         <div style="font-size:13px;color:var(--text3)">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
       <button onclick="Family.editMember('${m.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;touch-action:manipulation;color:var(--text)">Edit</button>
@@ -263,6 +273,7 @@ const Family = {
       const fields = [
         m.phone && ['📞 Phone', escHtml(m.phone)],
         m.email && ['📧 Email', escHtml(m.email)],
+        ['🔐 Vault Role', this._roleLabel(m.role || (m.isHead ? 'admin' : 'viewer'))],
         m.notes && ['📝 Notes', escHtml(m.notes)],
       ].filter(Boolean);
       return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
@@ -507,6 +518,7 @@ const Family = {
           <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(p.phone || '')}" placeholder="+44..."></div>
         </div>
         <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(p.email || '')}" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${isHead ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${!isHead ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
@@ -524,6 +536,7 @@ const Family = {
       avatar: document.getElementById('fam-av-input')?.value || '👤',
       relation: isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || ''),
       isHead: !!isHead,
+      role: isHead ? 'admin' : (document.getElementById('fam-role')?.value || 'viewer'),
       dob:   document.getElementById('fam-dob')?.value   || '',
       phone: document.getElementById('fam-phone')?.value?.trim() || '',
       email: document.getElementById('fam-email')?.value?.trim() || '',
@@ -556,6 +569,7 @@ const Family = {
           <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(m.phone || '')}" placeholder="+92..."></div>
         </div>
         <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(m.email || '')}" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
       </div>`,
       `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
@@ -574,6 +588,7 @@ const Family = {
         name,
         avatar: document.getElementById('fam-av-input')?.value || m.avatar,
         relation: m.isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || m.relation || ''),
+        role: document.getElementById('fam-role')?.value || m.role || (m.isHead ? 'admin' : 'viewer'),
         dob:   document.getElementById('fam-dob')?.value   || m.dob,
         phone: document.getElementById('fam-phone')?.value?.trim() || m.phone,
         email: document.getElementById('fam-email')?.value?.trim() || m.email,

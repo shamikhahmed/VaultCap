@@ -304,9 +304,14 @@ const AIImport = {
 
       '<button class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">🔍 Detect &amp; Extract</button>' +
 
+      '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
+
       '<div id="ie-results"></div>' +
 
       '</div>';
+    if (typeof LlmAssist !== 'undefined') {
+      setTimeout(() => LlmAssist.renderHealthEl('llm-health-import'), 0);
+    }
   },
 
   async handleFile(file) {
@@ -345,13 +350,37 @@ const AIImport = {
 
     try {
       let detected = null;
+      let llmProxyDown = false;
       if (typeof LlmAssist !== 'undefined' && LlmAssist.getConfig().enabled) {
-        detected = await LlmAssist.parseText(text);
+        const cfg = LlmAssist.getConfig();
+        if (cfg.proxyUrl) {
+          const health = await LlmAssist.checkProxyHealth();
+          if (health.status === 'error') {
+            llmProxyDown = true;
+            if (resultsEl) {
+              resultsEl.innerHTML = '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.35);border-radius:12px;padding:14px;margin-bottom:10px;font-size:12px;line-height:1.55;color:var(--text2)">' +
+                '<strong style="color:var(--warn)">LLM proxy offline</strong><br>' +
+                escHtml(health.message) + '<br><span style="color:var(--text3)">Continuing with offline Smart Parser…</span></div>';
+            }
+            Toast.show('LLM proxy offline — using Smart Parser only', 'warning', 5000);
+          }
+        }
+        try {
+          detected = await LlmAssist.parseText(text);
+        } catch (e) {
+          if (e.message === 'LLM_PROXY_DOWN') {
+            llmProxyDown = true;
+            detected = null;
+          } else throw e;
+        }
       }
       if (!detected || !detected.length) detected = SmartParser.parse(text);
       if (!detected.length) {
-        if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">No financial data detected. Try including amounts, bank names, or card details.</div>';
-        Toast.show('Nothing detected — add more detail', 'warn');
+        const emptyMsg = llmProxyDown
+          ? 'Smart Parser found nothing. LLM enhanced parsing was unavailable because the proxy is down — try again later or add more detail (bank name, amount, currency).'
+          : 'No financial data detected. Try including amounts, bank names, or card details.';
+        if (resultsEl) resultsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);line-height:1.55">' + emptyMsg + '</div>';
+        Toast.show(llmProxyDown ? 'Proxy down — Smart Parser found nothing' : 'Nothing detected — add more detail', 'warn');
       } else {
         this._results = detected;
         this._renderResults(detected, resultsEl);

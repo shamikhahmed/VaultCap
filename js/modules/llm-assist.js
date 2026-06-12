@@ -76,10 +76,19 @@ const LlmAssist = {
   async parseText(text) {
     const cfg = this.getConfig();
     if (!cfg.enabled || !cfg.apiKey) return null;
+    if (cfg.proxyUrl) {
+      const health = await this.checkProxyHealth();
+      if (health.status === 'error') {
+        const err = new Error('LLM_PROXY_DOWN');
+        err.healthMessage = health.message;
+        throw err;
+      }
+    }
     try {
       const raw = await this._call(cfg, text);
       return this._normalize(raw);
     } catch (e) {
+      if (e.message === 'LLM_PROXY_DOWN') throw e;
       if (typeof Toast !== 'undefined') Toast.show('Enhanced parsing unavailable — using Smart Parser', 'warning', 3500);
       return null;
     }
