@@ -1,5 +1,8 @@
 # Changelog — VaultCap
 
+## 4.3.1 (2026-06-12)
+- Phase P4: Playwright tests for family module navigation and settings export buttons; service worker cache bump.
+
 ## 4.1.0 (2026-06-10)
 
 ### Phase 2 — Quality

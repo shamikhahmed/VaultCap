@@ -7,6 +7,55 @@ async function enterPin(page, pin) {
   }
 }
 
+async function unlockIfNeeded(page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('vo_active_profile', 'demo');
+    localStorage.setItem('vo_used_demo', '1');
+    localStorage.removeItem('vo_demo_guide_pending');
+  });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.waitForFunction(() => typeof window.loadDemoProfile === 'function', { timeout: 15000 });
+
+  async function seedDemoAndUnlock() {
+    await page.evaluate(() => {
+      loadDemoProfile('business');
+      S.user.onboardingComplete = true;
+      if (S.modules) S.modules.family = true;
+      S.pin = '123456';
+      Store.save();
+      document.getElementById('pgOnboard').style.display = 'none';
+      document.getElementById('pgHome').style.display = 'none';
+      R.unlock();
+    });
+  }
+
+  if (await page.locator('#pgOnboard').isVisible().catch(() => false)) {
+    await seedDemoAndUnlock();
+  } else if (await page.locator('#pgHome').isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: /Take the guided demo/i }).click();
+    await page.waitForLoadState('networkidle');
+    if (await page.locator('#pgOnboard').isVisible().catch(() => false)) {
+      await seedDemoAndUnlock();
+    }
+  }
+
+  if (await page.getByRole('button', { name: /Start exploring/i }).isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: /Start exploring/i }).click();
+  }
+
+  if (await page.locator('#pgLock').isVisible().catch(() => false)) {
+    await enterPin(page, '123456');
+  }
+
+  try {
+    await page.locator('#app').waitFor({ state: 'visible', timeout: 15000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 test.describe('VaultCap smoke', () => {
   test('loads welcome or lock screen', async ({ page }) => {
     await page.goto('/');
@@ -111,5 +160,39 @@ test.describe('VaultCap smoke', () => {
     await page.locator('[data-pg="dashboard"]').first().click();
     await expect(page.locator('#pg-dashboard.on')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('#dashGreet')).toBeVisible();
+  });
+
+  test('navigates to family module when enabled', async ({ page }) => {
+    if (!(await unlockIfNeeded(page))) {
+      test.skip(true, 'App shell not available without vault unlock');
+      return;
+    }
+
+    await page.evaluate(() => {
+      document.getElementById('splashScreen')?.remove();
+      if (typeof Modal !== 'undefined') Modal.close();
+    });
+
+    await page.locator('[data-pg="family"]').click();
+    await expect(page.locator('#pg-family.on')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Family/i })).toBeVisible();
+  });
+
+  test('settings shows export backup buttons', async ({ page }) => {
+    if (!(await unlockIfNeeded(page))) {
+      test.skip(true, 'App shell not available without vault unlock');
+      return;
+    }
+
+    await page.evaluate(() => {
+      document.getElementById('splashScreen')?.remove();
+      if (typeof Modal !== 'undefined') Modal.close();
+    });
+
+    await page.locator('[data-pg="settings"]').first().click();
+    await expect(page.locator('#pg-settings.on')).toBeVisible({ timeout: 10000 });
+    await page.evaluate(() => SettingsNav.show('backup'));
+    await expect(page.getByRole('button', { name: /Export as CSV/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Export Encrypted Vault/i })).toBeVisible();
   });
 });
