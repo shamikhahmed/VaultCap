@@ -1966,9 +1966,15 @@ const SettingsNav = {
     const b = document.getElementById('settBody');
     if (!b) return;
     if (section === 'backup') { b.innerHTML = this._backup(); return; }
-    if (section === 'import') { b.innerHTML = this._import(); return; }
+    if (section === 'import') { b.innerHTML = this._import(); this._pollLlmHealth(); return; }
     b.innerHTML = this['_' + section]();
+    if (section === 'security') this._pollLlmHealth('llm-health-security');
     if (typeof SelfCheck !== 'undefined') SelfCheck.run();
+  },
+
+  _pollLlmHealth(targetId) {
+    if (typeof LlmAssist === 'undefined') return;
+    LlmAssist.renderHealthEl(targetId || 'llm-health-import');
   },
 
   _profile() {
@@ -2013,6 +2019,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'🔐 My Vault','demo':'🎭 Guided Demo','test':'🧪 Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
+    <div class="set-sec"><div class="set-title">🤖 Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
     <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
       ${[
         {label:'Encryption',val:'AES-256-GCM ✅',ok:true},
@@ -2098,7 +2105,8 @@ const SettingsNav = {
     const hasOverride = !!(S.user.llmApiKey || '').trim();
     return `<div class="set-sec"><div class="set-title">🤖 VaultCap Smart Import (included)</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? '✓ Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save()"></div>
+      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
+      <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
       <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">

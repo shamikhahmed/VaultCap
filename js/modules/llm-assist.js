@@ -39,6 +39,40 @@ const LlmAssist = {
     this.saveConfig({ apiKey: '', enabled: true });
   },
 
+  async checkProxyHealth() {
+    const cfg = this.getConfig();
+    const url = (cfg.proxyUrl || '').replace(/\/$/, '');
+    if (!url) return { status: 'none', message: 'No LLM proxy configured — Smart Parser only' };
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 6000);
+      const res = await fetch(`${url}/health`, { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!res.ok) return { status: 'error', message: `Worker unreachable (HTTP ${res.status})` };
+      const body = await res.json().catch(() => ({}));
+      return body.ok
+        ? { status: 'ok', message: 'LLM proxy online — enhanced parsing available' }
+        : { status: 'error', message: 'Worker responded but health check failed' };
+    } catch (e) {
+      const msg = e.name === 'AbortError'
+        ? 'LLM proxy timeout — Smart Parser will be used instead'
+        : 'LLM proxy unreachable — Smart Parser will be used instead';
+      return { status: 'error', message: msg };
+    }
+  },
+
+  renderHealthEl(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = 'Checking LLM proxy…';
+    el.style.color = 'var(--text3)';
+    this.checkProxyHealth().then(h => {
+      if (!document.getElementById(id)) return;
+      el.textContent = h.message;
+      el.style.color = h.status === 'ok' ? 'var(--ok)' : (h.status === 'none' ? 'var(--text3)' : 'var(--warn)');
+    });
+  },
+
   async parseText(text) {
     const cfg = this.getConfig();
     if (!cfg.enabled || !cfg.apiKey) return null;
