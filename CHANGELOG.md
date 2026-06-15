@@ -1,5 +1,11 @@
 # Changelog — VaultCap
 
+## 4.3.4 (2026-06-15)
+- **Data safety:** Removed Settings “Load Demo Data” that could wipe a real vault; demo is isolated profile + `?demo=1` link only.
+- **Rollback:** Each save keeps the previous encrypted vault (`pin_backup`); Recovery Center + restore prompt after accidental overwrites.
+- **Reset:** Requires typing DELETE and auto-starts encrypted backup export first.
+- Sandbox `confirm()` no longer auto-approves in embedded contexts.
+
 ## 4.3.3 (2026-06-15)
 - Restore pre–Capricorn identity home-screen icons; service worker cache bump.
 

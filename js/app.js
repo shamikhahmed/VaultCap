@@ -1989,12 +1989,62 @@ window.getUserContext = getUserContext;
 window.__vos_confirm = function(msg) {
   try { return window.confirm(msg); }
   catch(e) {
-    console.log('[VaultCap] Auto-confirmed (sandboxed):', msg.slice(0, 50));
-    return true;
+    console.warn('[VaultCap] confirm blocked in sandbox — treating as cancelled:', msg.slice(0, 80));
+    return false;
   }
 };
 
-const VER = '4.3.3';
+window.__vos_confirmTyped = function(msg, word) {
+  try {
+    const typed = window.prompt(msg + '\n\nType ' + word + ' to continue:');
+    return typed === word;
+  } catch (e) {
+    return false;
+  }
+};
+
+function _vaultEntityCount(data) {
+  if (!data || typeof data !== 'object') return 0;
+  return ['banks','cards','investments','cash','loans','documents','vehicles','assets','emails','gadgets','digital','expenses','sims'].reduce(
+    (n, k) => n + (Array.isArray(data[k]) ? data[k].length : 0), 0
+  );
+}
+
+const VaultSafety = {
+  async maybeOfferRestore() {
+    if (VaultProfiles.isDemo() || !S.unlocked) return;
+    if (sessionStorage.getItem('vo_restore_offer_dismissed')) return;
+    if (!(await VaultDB.hasPinBackup())) return;
+    const backup = await VaultDB.loadPinBackup();
+    if (!backup) return;
+    const mainCount = _vaultEntityCount(Store._data());
+    const backupCount = _vaultEntityCount(backup);
+    if (backupCount < 3 || backupCount <= mainCount) return;
+    Modal.open('↩ Restore previous vault?',
+      `<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">A saved copy from before your last change is available (${backupCount} entries vs ${mainCount} now). This can recover data after an accidental demo load or bad import.</div>`,
+      `<button class="btn btn-g" onclick="sessionStorage.setItem('vo_restore_offer_dismissed','1');Modal.close()">Keep current</button>` +
+      `<button class="btn btn-p" onclick="VaultSafety.restore()">Restore previous →</button>`
+    );
+  },
+
+  async restore() {
+    try {
+      const data = await VaultDB.restorePinBackup();
+      Object.assign(S, data);
+      await Store.save();
+      Modal.close();
+      buildNav();
+      Toast.show('Previous vault restored', 'success', 5000);
+      R.goto('dashboard');
+      setTimeout(() => Dash.render(), 50);
+    } catch (e) {
+      Toast.show('Restore failed — try Backup Center import', 'error');
+    }
+  },
+};
+window.VaultSafety = VaultSafety;
+
+const VER = '4.3.4';
 
 // ===================== CRYPTO ENGINE (AES-256-GCM + PBKDF2) =====================
 const Crypto = {
@@ -2799,7 +2849,22 @@ const VaultProfiles = {
     localStorage.setItem('vo_active_profile', profileId);
     location.reload();
   },
+  demoUrl() {
+    const u = new URL(location.href);
+    u.searchParams.set('demo', '1');
+    return u.toString();
+  },
   startDemo() {
+    if (this.active() === 'personal' && S.unlocked && _vaultEntityCount(Store._data()) > 0) {
+      Modal.open('🎭 Demo vault',
+        '<div style="font-size:13px;color:var(--text2);line-height:1.6">Opens a <strong>separate sandbox</strong> with fictional data. Your real vault is not changed.</div>',
+        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Modal.close();VaultProfiles._enterDemo()">Open demo vault →</button>`
+      );
+      return;
+    }
+    this._enterDemo();
+  },
+  _enterDemo() {
     localStorage.setItem('vo_used_demo', '1');
     localStorage.setItem('vo_demo_guide_pending', '1');
     this.switch('demo');
@@ -3031,6 +3096,9 @@ const R = {
     setTimeout(() => {
       if (typeof VaultRecovery !== 'undefined') VaultRecovery.check();
     }, 1500);
+    setTimeout(() => {
+      if (typeof VaultSafety !== 'undefined') VaultSafety.maybeOfferRestore();
+    }, 2200);
     if (VaultProfiles.isDemo() && localStorage.getItem('vo_demo_guide_pending') === '1') {
       setTimeout(() => VaultProfiles.showDemoGuide(), 500);
       localStorage.removeItem('vo_demo_guide_pending');
@@ -5212,95 +5280,20 @@ function loadDemoProfile(type) {
   if (S.unlocked) { buildNav(); R.goto('dashboard'); }
 }
 
-function loadDemoData() {
-  const snapshot = {};
-  Object.keys(localStorage).forEach(k => { snapshot[k] = localStorage.getItem(k); });
-  // NOTE: demo snapshot is stored unencrypted temporarily for undo — cleared after 30s
-  localStorage.setItem('vo_demo_snapshot', JSON.stringify(snapshot));
-  localStorage.setItem('vo_demo_snapshot_time', new Date().toISOString());
+async function ensureDemoVaultReady() {
+  if (VaultProfiles.active() !== 'demo') return;
+  if (await VaultDB.isInitialized()) return;
   loadDemoProfile('business');
-  localStorage.setItem('vo_currency', JSON.stringify({ base:'PKR', rates:{USD:280,GBP:355,AED:76,EUR:300} }));
-  // Family members as first-class owners
-  S.familyMembers = [
-    { id:'fm_head', name:'Ahmed Khan', avatar:'👨', relation:'Head of Family', isHead:true, dob:'1968-05-15', phone:'+92 300 1234567', email:'ahmed.khan@example.com', notes:'Head of household. Director at logistics company. Based in Karachi.', createdAt:ts, updatedAt:ts },
-    { id:'fd1', name:'Sara Ahmed', avatar:'👩', relation:'Wife', isHead:false, dob:'1972-08-22', phone:'+92 300 7654321', email:'sara.ahmed@example.com', notes:'Joint account holder. Manages household finances.', createdAt:ts, updatedAt:ts },
-    { id:'fd2', name:'Ali Ahmed', avatar:'👦', relation:'Son', isHead:false, dob:'1998-03-10', phone:'+92 321 1234567', email:'ali.ahmed@student.com', notes:'Studying at IBA Karachi. Final year MBA.', createdAt:ts, updatedAt:ts },
-    { id:'fd3', name:'Fatima Ahmed', avatar:'👧', relation:'Daughter', isHead:false, dob:'2003-11-05', phone:'+92 321 9876543', email:'fatima.ahmed@school.com', notes:'A-Levels student. Karachi Grammar School.', createdAt:ts, updatedAt:ts },
-    { id:'fd4', name:'Khalid Khan', avatar:'👨‍🦳', relation:'Father', isHead:false, dob:'1940-02-28', phone:'+92 300 1111111', email:'', notes:'Retired. Lives in Lahore. Property owner.', createdAt:ts, updatedAt:ts },
-  ];
-  S.family = { head: null, members: [] };
-  // Ahmed Khan's assets
-  S.banks.push({id:id(),bankName:'HBL',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:350000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.banks.push({id:id(),bankName:'Standard Chartered',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:180000,accountType:'Savings',bankType:'international',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.banks.push({id:id(),bankName:'Meezan Bank',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',balance:220000,accountType:'Current',bankType:'islamic',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cards.push({id:id(),cardName:'HBL Prestige Visa Infinite',last4:'4821',network:'Visa',cardType:'Credit',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cards.push({id:id(),cardName:'SCB Platinum Mastercard',last4:'3390',network:'Mastercard',cardType:'Credit',ownerId:'fm_head',owners:['fm_head'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Home',amount:150000,currency:'PKR',notes:'Home safe — emergency cash',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Office',amount:50000,currency:'PKR',notes:'Office petty cash',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'nic',holderName:'Ahmed Khan',docNumber:'42101-1234567-1',expiryDate:'2028-01-01',issuingCountry:'PK',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'passport',holderName:'Ahmed Khan',docNumber:'AB1234567',expiryDate:'2029-06-15',issuingCountry:'PK',ownerId:'fm_head',owners:['fm_head'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  // Sara Ahmed's assets
-  S.banks.push({id:id(),bankName:'Meezan Bank',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',balance:95000,accountType:'Savings',bankType:'islamic',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.banks.push({id:id(),bankName:'HBL',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',balance:45000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cards.push({id:id(),cardName:'Meezan Infinite Visa',last4:'6677',network:'Visa',cardType:'Debit',ownerId:'fd1',owners:['fd1'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Home',amount:80000,currency:'PKR',notes:'Household budget',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Other',amount:30000,currency:'PKR',notes:'Savings jar',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'nic',holderName:'Sara Ahmed',docNumber:'42101-7654321-2',expiryDate:'2027-03-10',issuingCountry:'PK',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'passport',holderName:'Sara Ahmed',docNumber:'CD7654321',expiryDate:'2028-11-20',issuingCountry:'PK',ownerId:'fd1',owners:['fd1'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  // Ali Ahmed's assets
-  S.banks.push({id:id(),bankName:'UBL',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',balance:35000,accountType:'Current',bankType:'commercial',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.banks.push({id:id(),bankName:'NayaPay',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',balance:12000,accountType:'Digital',bankType:'digital',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cards.push({id:id(),cardName:'UBL Campus Visa Debit',last4:'1122',network:'Visa',cardType:'Debit',ownerId:'fd2',owners:['fd2'],country:'PK',currency:'PKR',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Wallet',amount:15000,currency:'PKR',notes:'Monthly allowance',ownerId:'fd2',owners:['fd2'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'nic',holderName:'Ali Ahmed',docNumber:'42101-9876543-3',expiryDate:'2030-01-01',issuingCountry:'PK',ownerId:'fd2',owners:['fd2'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  // Fatima Ahmed's assets
-  S.banks.push({id:id(),bankName:'EasyPaisa Bank',ownerId:'fd3',owners:['fd3'],country:'PK',currency:'PKR',balance:25000,accountType:'Digital',bankType:'digital',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Home',amount:25000,currency:'PKR',notes:'Birthday gifts savings',ownerId:'fd3',owners:['fd3'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'certificate',holderName:'Fatima Ahmed',docNumber:'KHI-2003-11789',issuingCountry:'PK',ownerId:'fd3',owners:['fd3'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  // Khalid Khan's assets
-  S.banks.push({id:id(),bankName:'NBP',ownerId:'fd4',owners:['fd4'],country:'PK',currency:'PKR',balance:180000,accountType:'Savings',bankType:'government',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.cash.push({id:id(),location:'Other',amount:45000,currency:'PKR',notes:'Monthly pension',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  S.documents.push({id:id(),docType:'nic',holderName:'Khalid Khan',docNumber:'42101-0001111-9',expiryDate:'2025-12-31',issuingCountry:'PK',ownerId:'fd4',owners:['fd4'],country:'PK',tags:['family'],createdAt:ts,updatedAt:ts});
-  Store.save();
-  if (typeof VaultMeta !== 'undefined') {
-    VaultMeta.set('creditScore', {
-      country:'GB',
-      entries:[
-        {score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
-        {score:720,bureau:'Experian',date:'2024-01-15',notes:'After clearing credit card'},
-        {score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application'},
-        {score:755,bureau:'Experian',date:'2025-01-20',notes:'Annual check — improving trend'}
-      ]
-    });
-    VaultMeta.set('zakatCalc', {
-      goldPrice:18500,silverPrice:250,
-      'zk-cash':'850000','zk-gold':'740000','zk-silver':'125000',
-      'zk-invest':'500000','zk-recv':'150000','zk-stock':'200000',
-      'zk-debts':'200000','zk-exp':'80000'
-    });
-    VaultMeta.set('taxCalc', { country:'PK', filing:'salaried', income:'3600000' });
-  }
-  if (window.Toast) Toast.show(
-    'Demo data loaded! <button onclick="undoDemoLoad()" style="margin-left:8px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:3px 10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">↩ Undo</button>',
-    'success', 8000
-  );
-  setTimeout(() => localStorage.removeItem('vo_demo_snapshot'), 30000);
+  S.pin = VaultProfiles.DEMO_PIN;
+  S.noPin = false;
+  S.user.onboardingComplete = true;
+  S.user.setupProgress = { pinSet: true, recoveryAck: true, profileDone: true };
+  await VaultDB.init(VaultProfiles.DEMO_PIN);
+  await VaultDB.save(Store._data());
+  Store._savePrefs();
+  localStorage.setItem('vo_demo_seeded', '1');
 }
 
-function undoDemoLoad() {
-  const snap = localStorage.getItem('vo_demo_snapshot');
-  if (!snap) { if(window.Toast) Toast.show('No snapshot to restore', 'warning'); return; }
-  if (!confirm('Restore your previous data? Demo data will be removed.')) return;
-  let data;
-  try { data = JSON.parse(snap); } catch(e) { if(window.Toast) Toast.show('Snapshot is corrupted — cannot restore', 'error'); return; }
-  Object.keys(localStorage).forEach(k => localStorage.removeItem(k));
-  Object.entries(data).forEach(([k,v]) => { if (k !== 'vo_demo_snapshot' && k !== 'vo_demo_snapshot_time') localStorage.setItem(k,v); });
-  localStorage.removeItem('vo_demo_snapshot');
-  localStorage.removeItem('vo_demo_snapshot_time');
-  if (window.Toast) Toast.show('Previous data restored!', 'success');
-  setTimeout(() => location.reload(), 1200);
-}
-window.undoDemoLoad = undoDemoLoad;
 
 // ===================== LARGE TEXT =====================
 function applyLargeText(on) {
@@ -5505,6 +5498,14 @@ async function App() {
   // Check if old localStorage data exists (migration)
   const oldData = Store.loadRaw();
   if (oldData) { Migrate.run(); }
+
+  if (new URLSearchParams(location.search).get('demo') === '1') {
+    localStorage.setItem('vo_active_profile', 'demo');
+    localStorage.setItem('vo_used_demo', '1');
+    localStorage.setItem('vo_demo_guide_pending', '1');
+  }
+
+  await ensureDemoVaultReady();
 
   // Determine startup screen
   const hasVaultDB = await VaultDB.isInitialized();

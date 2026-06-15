@@ -651,63 +651,14 @@ const Settings={
     if(typeof window._verifyMasterKey==='function') window._verifyMasterKey();
   },
   loadDemo(){
-    const profiles=[
-      {id:'business',ic:'👔',label:'Business Professional (Karachi)',desc:'PKR · HBL, Meezan, Alfalah · PSX stocks'},
-      {id:'student',ic:'🎓',label:'Student (UK)',desc:'GBP · Monzo, Barclays · index funds, crypto'},
-      {id:'family',ic:'🏠',label:'Family (Dubai)',desc:'AED · Emirates NBD, ADCB · property investment'},
-      {id:'expat',ic:'💼',label:'Expat (Multiple Countries)',desc:'GBP/PKR/AED · Revolut, HBL, Emirates NBD'},
-      {id:'entrepreneur',ic:'🚀',label:'Entrepreneur (Pakistan + UK)',desc:'GBP/PKR · Barclays, MCB · crypto + PSX stocks'},
-    ];
-    Modal.open('🎮 Load Demo Data',`
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Choose a fictional profile to explore VaultCap. All data is made up.</p>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${profiles.map(p=>`<div onclick="Settings._loadProfile('${p.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background='var(--glass)'">
-          <span style="font-size:24px">${p.ic}</span>
-          <div style="flex:1"><div style="font-weight:700;font-size:13px">${p.label}</div><div style="font-size:11px;color:var(--text3)">${p.desc}</div></div>
-          <span style="color:var(--accent)">→</span>
-        </div>`).join('')}
-      </div>
-    `,`<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`);
-  },
-  _loadProfile(type){
-    if(!window.__vos_confirm('Load demo data? This will merge fictional data with your vault.'))return;
-    Modal.close();
-    loadDemoProfile(type);
-    // Populate new module localStorage keys not covered by loadDemoProfile
-    const isPK = (type === 'business');
-    const isAE = (type === 'family');
-    const cur = isPK ? 'PKR' : isAE ? 'AED' : 'GBP';
-    localStorage.setItem('vo_currency', JSON.stringify({base:cur, rates:{USD:280,GBP:355,AED:76,EUR:300,PKR:1}}));
-    const demoGold = [
-      {id:'dg1',assetType:'precious_metals',metal:'gold',name:'22k Wedding Set',weight:40,unit:'g',createdAt:new Date().toISOString()},
-      {id:'dg2',assetType:'precious_metals',metal:'gold',name:'Gold Coins',weight:2,unit:'tola',createdAt:new Date().toISOString()},
-      {id:'dg3',assetType:'precious_metals',metal:'silver',name:'Silver Cutlery',weight:500,unit:'g',createdAt:new Date().toISOString()}
-    ];
-    demoGold.forEach(g => { if (!S.assets.find(a => a.id === g.id)) S.assets.push(g); });
-    S.family = {
-      head:{name:'Ahmed Khan',avatar:'👨',relation:'Head',dob:'1970-05-15',phone:'+92 300 1234567',email:'ahmed@example.com',docs:[{type:'CNIC',number:'42101-1234567-1',expiry:'2028-01-01'},{type:'Passport',number:'AB1234567',expiry:'2029-06-15'}],banks:['HBL','Standard Chartered'],cards:[{name:'HBL Prestige Visa',last4:'4821'},{name:'SCB Platinum',last4:'3390'}],notes:'Head of household. Primary income earner.'},
-      members:[
-        {id:'fm1',name:'Sara Ahmed',avatar:'👩',relation:'Wife',dob:'1975-08-22',phone:'+92 300 7654321',docs:[{type:'CNIC',number:'42101-7654321-2',expiry:'2027-03-10'}],banks:['Meezan Bank'],cards:[{name:'Meezan Infinite Visa',last4:'6677'}],notes:'Joint account holder at Meezan.',cash:[{label:'Household',amount:50000}]},
-        {id:'fm2',name:'Ali Ahmed',avatar:'👦',relation:'Son',dob:'2000-03-10',docs:[{type:'CNIC',number:'42101-9876543-3',expiry:'2030-01-01'},{type:'Passport',number:'CD9876543',expiry:'2031-09-20'}],banks:['UBL'],cards:[{name:'UBL Campus Card',last4:'1122'}],notes:'Student. University of Karachi.'},
-        {id:'fm3',name:'Fatima Ahmed',avatar:'👧',relation:'Daughter',dob:'2003-11-05',docs:[{type:'CNIC',number:'42101-5432167-8',expiry:'2030-06-01'}],banks:[],cards:[],notes:'School student.'}
-      ]
-    };
-    Store.save();
-    if (typeof VaultMeta !== 'undefined') {
-      VaultMeta.set('creditScore', {country:'GB',entries:[
-        {id:'cs1',score:720,bureau:'Experian',date:'2024-01-15',notes:'After paying off credit card'},
-        {id:'cs2',score:695,bureau:'Experian',date:'2023-07-10',notes:'Initial check'},
-        {id:'cs3',score:740,bureau:'Experian',date:'2024-06-01',notes:'Mortgage application check'}
-      ]});
-      VaultMeta.set('zakatCalc', {'zk-cash':'850000','zk-gold-val':'740000','zk-silver-val':'125000','zk-investments':'200000','zk-receivable':'50000','zk-stock':'0','zk-debts':'100000','zk-expenses':'30000'});
-      VaultMeta.set('taxCalc', {country:'PK',income:'3600000'});
-    }
-    Toast.show('Demo data loaded — explore all features!','success');
-    setTimeout(()=>location.reload(),1500);
+    VaultProfiles.startDemo();
   },
   resetVault(){
-    if(!window.__vos_confirm('⚠️ This will permanently delete ALL your vault data.'))return;
-    if(!window.__vos_confirm('Final confirmation — this CANNOT be undone. Reset entire vault?'))return;
+    if(!window.__vos_confirm('⚠️ A backup download will start first. This permanently deletes ALL vault data on this device.'))return;
+    if(_vaultEntityCount(Store._data()) > 0){
+      try{ ExIm.export('vault'); }catch(e){}
+    }
+    if(!window.__vos_confirmTyped('Final step: reset entire vault?', 'DELETE'))return;
     const wipe=async()=>{
       try{await VaultDB.wipe();}catch(e){}
       try{
@@ -1870,6 +1821,7 @@ const RecoveryCenter={
     </div>
     <!-- RECOVERY OPTIONS -->
     <div class="set-sec"><div class="set-title">Recovery Methods</div><div class="set-card">
+      <div class="si" onclick="VaultSafety.restore()" style="cursor:pointer"><div class="sil"><div class="name">Restore previous save</div><div class="desc">Roll back to the copy made before your last change</div></div><button class="btn btn-g btn-sm">Restore →</button></div>
       <div class="si" onclick="Settings.useMasterKey()" style="cursor:pointer"><div class="sil"><div class="name">Use Master Key</div><div class="desc">Enter master key to reset your PIN</div></div><button class="btn btn-g btn-sm">Enter Key →</button></div>
       <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div class="sil"><div class="name">Restore from Backup</div><div class="desc">Import .vos vault to recover data</div></div><button class="btn btn-g btn-sm">Import →</button></div>
       <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">⚠️ Delete all data — cannot be undone</div></div><button class="btn btn-d btn-sm">Reset</button></div>
@@ -2026,7 +1978,9 @@ const SettingsNav = {
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">⚙️ Data Management</div><div class="set-card">
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-s btn-full btn-sm" onclick="Settings.loadDemo()">🎮 Load Demo Data (fictional)</button>
+        <button class="btn btn-s btn-full btn-sm" onclick="VaultProfiles.startDemo()">🎭 Open demo vault (safe sandbox)</button>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">Demo never touches My Vault. Share: <span style="color:var(--accent);word-break:break-all">${VaultProfiles.demoUrl()}</span></div>
+        <button class="btn btn-g btn-full btn-sm" onclick="VaultSafety.restore()">↩ Restore previous save</button>
         <button class="btn btn-g btn-full btn-sm" onclick="S.activity=[];Store.save();SettingsNav.show('profile');Toast.show('Activity cleared')">🗑️ Clear Activity Log</button>
         <button class="btn btn-d btn-full btn-sm" onclick="Settings.resetVault()">⚠️ Reset Entire Vault</button>
       </div>

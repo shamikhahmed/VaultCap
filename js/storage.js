@@ -136,10 +136,42 @@ const VaultDB = (() => {
     },
 
     // Encrypt data and write to IndexedDB slot 'main'.
+    // Keeps previous main ciphertext in pin_backup so the last save can be rolled back.
     async save(data) {
       if (!_key) throw new Error('VaultDB: session not initialized');
+      try {
+        const prev = await _idbGet('main');
+        if (prev) await _idbPut('pin_backup', prev);
+      } catch (e) { /* non-fatal */ }
       const buf = await _encrypt(_key, data);
       await _idbPut('main', buf);
+    },
+
+    async loadPinBackup() {
+      if (!_key) return null;
+      try {
+        const buf = await _idbGet('pin_backup');
+        if (!buf) return null;
+        return await _decrypt(_key, buf);
+      } catch (e) {
+        return null;
+      }
+    },
+
+    async hasPinBackup() {
+      try {
+        return !!(await _idbGet('pin_backup'));
+      } catch (e) {
+        return false;
+      }
+    },
+
+    async restorePinBackup() {
+      if (!_key) throw new Error('VaultDB: session not initialized');
+      const buf = await _idbGet('pin_backup');
+      if (!buf) throw new Error('VaultDB: no pin backup');
+      await _idbPut('main', buf);
+      return await _decrypt(_key, buf);
     },
 
     // Read and decrypt from slot 'main'. Returns null if no key or decrypt fails.
