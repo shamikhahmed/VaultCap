@@ -1,5 +1,8 @@
 # Changelog — VaultCap
 
+## 4.3.3 (2026-06-15)
+- Restore pre–Capricorn identity home-screen icons; service worker cache bump.
+
 ## 4.3.2 (2026-06-15)
 - **Progressive onboarding**: Quick setup (PIN only) and “Set up later” on profile steps; dashboard + Settings nudge until profile is complete.
 - Version sync: in-app `VER`, `VERSION.json`, and service worker cache `vaultcap-v32`.
