@@ -302,9 +302,24 @@ const Dash={
       <button class="btn btn-p btn-sm" style="flex-shrink:0" onclick="R.goto('settings');setTimeout(function(){SettingsNav.show('profile')},80)">Continue →</button>
     </div>` : '';
 
+    const totalItems = (S.banks||[]).length + (S.cards||[]).length + (S.documents||[]).length + (S.investments||[]).length + (S.cash||[]).length;
+    const firstStepsBanner = totalItems === 0 ? `
+    <div style="margin:0 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.07));border:1px solid rgba(123,95,255,.25);border-radius:20px;padding:18px 16px">
+      <div style="font-size:13px;font-weight:700;color:rgba(123,95,255,.9);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="R.goto('banks')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">🏦 Bank account</button>
+        <button onclick="R.goto('documents')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">📄 Document</button>
+        <button onclick="R.goto('cards')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">💳 Card</button>
+        <button onclick="R.goto('investments')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">📈 Investment</button>
+      </div>
+    </div>` : '';
+
     b.innerHTML = `
     ${ctxBar}
     ${setupBanner}
+    ${firstStepsBanner}
     ${nwHero}
 
     ${breakdownHtml}
