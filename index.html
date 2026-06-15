@@ -47,7 +47,7 @@
 <input type="file" id="importF-global" accept=".vos,.vault,.json,.csv,.xlsx,.xls,.docx,.doc,.pdf,.txt,image/*" style="display:none" onchange="if(window.ExIm)ExIm.import(event)">
 
 
-<div id="toastWrap" class="tw"></div>
+<div id="toastWrap" class="tw" role="status" aria-live="polite" aria-atomic="true"></div>
 <div class="offline-bar" id="offBar">📴 Offline — Vault works locally</div>
 
 <!-- CMD PALETTE -->
@@ -318,9 +318,9 @@
 
 <!-- MAIN APP -->
 <div class="app" id="app" style="display:none">
-<div class="sidebar" id="sidebar">
-<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><div class="mark" style="font-size:22px;flex-shrink:0">🔐</div><h1 style="font-size:16px;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" onclick="toggleSidebar()" title="Collapse sidebar">☰</button></div><p id="sbUser" style="font-size:10px;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
-<nav class="sb-nav" id="sbNav"></nav>
+<div class="sidebar" id="sidebar" role="navigation" aria-label="VaultCap sidebar">
+<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><div class="mark" style="font-size:22px;flex-shrink:0" aria-hidden="true">🔐</div><h1 style="font-size:16px;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" onclick="toggleSidebar()" aria-label="Collapse sidebar">☰</button></div><p id="sbUser" style="font-size:10px;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
+<nav class="sb-nav" id="sbNav" aria-label="Main navigation"></nav>
 <div class="sb-bot">
 <button class="btn btn-g btn-full btn-sm" onclick="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:11px">Search everything</span></button>
 <div style="display:flex;gap:6px">
@@ -330,7 +330,7 @@
 </div>
 </div>
 </div>
-<div class="main" id="mainPages">
+<main class="main" id="mainPages" aria-label="Vault content">
 <!-- Pages rendered dynamically -->
 <div class="page on" id="pg-dashboard">
 <div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="font-size:17px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
@@ -389,10 +389,10 @@
 <div class="pb" id="settBody"></div>
 </div>
 </div>
-</div>
+</main>
 
 <!-- FAB -->
-<button class="fab" id="fab" onclick="FAB.toggle()">＋</button>
+<button class="fab" id="fab" onclick="FAB.toggle()" aria-label="Add item" aria-haspopup="true" aria-expanded="false">＋</button>
 <div class="fab-menu" id="fabMenu"></div>
 
 <!-- BOTTOM TABS -->
