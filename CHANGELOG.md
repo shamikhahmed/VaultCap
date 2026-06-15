@@ -1,5 +1,9 @@
 # Changelog — VaultCap
 
+## 4.3.2 (2026-06-15)
+- **Progressive onboarding**: Quick setup (PIN only) and “Set up later” on profile steps; dashboard + Settings nudge until profile is complete.
+- Version sync: in-app `VER`, `VERSION.json`, and service worker cache `vaultcap-v32`.
+
 ## 4.3.1 (2026-06-12)
 - Phase P4: Playwright tests for family module navigation and settings export buttons; service worker cache bump.
 

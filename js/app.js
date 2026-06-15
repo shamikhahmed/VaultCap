@@ -1994,7 +1994,7 @@ window.__vos_confirm = function(msg) {
   }
 };
 
-const VER = '4.2.0';
+const VER = '4.3.2';
 
 // ===================== CRYPTO ENGINE (AES-256-GCM + PBKDF2) =====================
 const Crypto = {
@@ -3441,10 +3441,12 @@ let obStep = 1;
 let obCountries = [];
 let obCats = { money: true, assets: false, identity: true, family: true };
 let obUserType = 'personal';
+let obProfileSkipped = false;
 
 const OB = {
   init() {
     obStep = 1;
+    obProfileSkipped = false;
     obCountries = S.user && S.user.country ? [S.user.country] : [];
     obCats = { money: true, assets: false, identity: true, family: true };
     obUserType = 'personal';
@@ -3559,6 +3561,13 @@ const OB = {
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
   },
+  skipToPin() {
+    obProfileSkipped = true;
+    obStep = 5;
+    document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
+    this.renderProg();
+    Toast.show('Profile setup saved for later — finish anytime in Settings', 'info', 4000);
+  },
   _renderReadyStats() {
     const CNAMES = { PK:'🇵🇰 Pakistan', GB:'🇬🇧 UK', AE:'🇦🇪 UAE', US:'🇺🇸 USA' };
     const el = document.getElementById('ob-ready-stats');
@@ -3645,6 +3654,11 @@ const OB = {
       Family.ensureHeadFromProfile({ silent: true });
     }
     S.user.onboardingComplete = true;
+    S.user.setupProgress = {
+      pinSet: true,
+      recoveryAck: true,
+      profileDone: !obProfileSkipped,
+    };
     Store.save();
     if (typeof buildNav === 'function') buildNav();
     document.getElementById('pgOnboard').style.display = 'none';
@@ -5473,6 +5487,9 @@ async function App() {
     if (prefs.fontScale)   S.fontScale     = prefs.fontScale;
     if (prefs.highContrast) S.highContrast = prefs.highContrast;
     if (prefs.name)        S.user.name     = prefs.name;
+  }
+  if (S.user.onboardingComplete && !S.user.setupProgress) {
+    S.user.setupProgress = { pinSet: true, recoveryAck: true, profileDone: true };
   }
 
   const startTheme = S.user.theme || 'dark';

@@ -293,8 +293,18 @@ const Dash={
       quickStatCell(lastBackupLabel, 'Backup', '14px') +
       '</div>';
 
+    const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
+    <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and choose modules for a tailored vault.</div>
+      </div>
+      <button class="btn btn-p btn-sm" style="flex-shrink:0" onclick="R.goto('settings');setTimeout(function(){SettingsNav.show('profile')},80)">Continue →</button>
+    </div>` : '';
+
     b.innerHTML = `
     ${ctxBar}
+    ${setupBanner}
     ${nwHero}
 
     ${breakdownHtml}
@@ -1991,7 +2001,13 @@ const SettingsNav = {
   },
 
   _profile() {
-    return `${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
+    const setupNudge = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
+    <div class="set-card" style="margin-bottom:12px;border-color:var(--accent)">
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">Complete your profile</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
+      <button type="button" class="btn btn-p btn-sm" onclick="Settings.editCountries()">Set countries →</button>
+    </div>` : '';
+    return `${setupNudge}${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
     <div class="set-sec"><div class="set-title">👤 Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
