@@ -181,7 +181,7 @@ const Dash={
     // Backup reminder
     const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
     const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
-    const backupNeeded = daysSinceBackup > 30;
+    const backupNeeded = daysSinceBackup > 14;
 
     // Vault health — single source: VaultHealth service
     const health = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
@@ -283,36 +283,39 @@ const Dash={
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : '🌐 All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStatCell = (value, label, valueSize) =>
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+    const quickStatCell = (value, label, valueSize, onclick) =>
+      '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
       '<div style="font-size:' + (valueSize || '20px') + ';font-weight:800;color:var(--text);line-height:1.25">' + value + '</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;line-height:1.2">'+label+'</div></div>';
     const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-top:14px;align-items:stretch">' +
       quickStatCell(entityTotal, 'Records', '20px') +
       quickStatCell(activeCountryLabel, 'Country', '13px') +
-      quickStatCell(lastBackupLabel, 'Backup', '14px') +
+      quickStatCell(lastBackupLabel, 'Backup', '14px', "R.goto('settings');setTimeout(function(){SettingsNav.show('backup')},80)") +
       '</div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
     <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and choose modules for a tailored vault.</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
       </div>
       <button class="btn btn-p btn-sm" style="flex-shrink:0" onclick="R.goto('settings');setTimeout(function(){SettingsNav.show('profile')},80)">Continue →</button>
     </div>` : '';
 
     const totalItems = (S.banks||[]).length + (S.cards||[]).length + (S.documents||[]).length + (S.investments||[]).length + (S.cash||[]).length;
-    const firstStepsBanner = totalItems === 0 ? `
+    const firstStepItems = [
+      {icon:'🏦', label:'Bank account', module:'banks', action:"Banks.openAdd()"},
+      {icon:'📄', label:'Document', module:'documents', action:"DocsModule.openAdd()"},
+      {icon:'💳', label:'Card', module:'cards', action:"Cards.openAdd()"},
+      {icon:'📈', label:'Investment', module:'investments', action:"Investments.openAdd()"},
+    ].filter(i => S.modules[i.module] !== false);
+    const firstStepsBanner = totalItems === 0 && firstStepItems.length ? `
     <div style="margin:0 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.07));border:1px solid rgba(123,95,255,.25);border-radius:20px;padding:18px 16px">
       <div style="font-size:13px;font-weight:700;color:rgba(123,95,255,.9);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button onclick="R.goto('banks')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">🏦 Bank account</button>
-        <button onclick="R.goto('documents')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">📄 Document</button>
-        <button onclick="R.goto('cards')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">💳 Card</button>
-        <button onclick="R.goto('investments')" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">📈 Investment</button>
+        ${firstStepItems.map(i => `<button onclick="${i.action}" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">${i.icon} ${i.label}</button>`).join('')}
       </div>
     </div>` : '';
 
