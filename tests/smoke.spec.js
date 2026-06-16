@@ -13,7 +13,15 @@ async function dismissOverlays(page) {
   await page.evaluate(() => {
     document.getElementById('splashScreen')?.remove();
     if (typeof Modal !== 'undefined') Modal.close();
+    document.querySelectorAll('.modal-overlay.on').forEach(el => el.classList.remove('on'));
   });
+  await page.locator('.modal-overlay.on').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+}
+
+async function openSettings(page) {
+  await dismissOverlays(page);
+  await page.evaluate(() => R.goto('settings'));
+  await expect(page.locator('#pg-settings.on')).toBeVisible({ timeout: 10000 });
 }
 
 async function unlockDemoVault(page) {
@@ -82,9 +90,7 @@ test.describe('VaultCap smoke', () => {
 
   test('settings hides bottom tabs on utility pages', async ({ page }) => {
     await unlockDemoVault(page);
-    await page.locator('[data-pg="settings"]').first().click();
-    await page.waitForTimeout(400);
-    await expect(page.locator('#pg-settings.on')).toBeVisible();
+    await openSettings(page);
     await expect(page.locator('body')).toHaveClass(/hide-btabs/);
     await expect(page.locator('#settBody')).toBeVisible();
   });
@@ -121,8 +127,7 @@ test.describe('VaultCap smoke', () => {
 
   test('settings shows export backup buttons', async ({ page }) => {
     await unlockDemoVault(page);
-    await page.locator('[data-pg="settings"]').first().click();
-    await expect(page.locator('#pg-settings.on')).toBeVisible({ timeout: 10000 });
+    await openSettings(page);
     await page.evaluate(() => SettingsNav.show('backup'));
     await expect(page.getByRole('button', { name: /Export as CSV/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Export Encrypted Vault/i })).toBeVisible();
