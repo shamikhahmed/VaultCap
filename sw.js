@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v35';
+const CACHE = 'vaultcap-v36';
 // Relative paths work on custom domain (/) and GitHub Pages (/VaultCap/)
 const ASSETS = [
   './css/capricorn-core.css',
@@ -58,6 +58,17 @@ const ASSETS = [
   './js/modules/tax.js',
   './js/modules/creditScore.js',
   './manifest.json',
+  './js/capricorn-motion.js',
+  './js/capricorn-scene.js',
+  './js/capricorn-premium-nav.js',
+  './js/capricorn-cinematic.js',
+  './js/capricorn-deck.js',
+  './js/capricorn-deck-pro.js',
+  './js/capricorn-pitch.js',
+  './js/vendor/gsap.min.js',
+  './js/vendor/ScrollTrigger.min.js',
+  './privacy.html',
+  './changelog.html',
 ];
 
 self.addEventListener('install', e => {
