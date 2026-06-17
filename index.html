@@ -44,6 +44,7 @@
 </style>
 </head>
 <body>
+<div class="cap-ambient" aria-hidden="true"></div>
 <input type="file" id="importF-global" accept=".vos,.vault,.json,.csv,.xlsx,.xls,.docx,.doc,.pdf,.txt,image/*" style="display:none" onchange="if(window.ExIm)ExIm.import(event)">
 
 
@@ -469,6 +470,12 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js?v=35').catch(() => {});
 }
+</script>
+<script src="js/capricorn-premium-nav.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.CapPremiumNav) CapPremiumNav.init();
+  });
 </script>
 </body>
 </html>
