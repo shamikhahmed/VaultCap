@@ -204,8 +204,11 @@ body::before{
   font-size:11px;color:var(--text3);line-height:1.6;
 }
 </style>
+
+  <link rel="stylesheet" href="css/capricorn-core.css">
 </head>
 <body>
+<div class="cap-scroll-progress" aria-hidden="true"></div>
 <div class="wrap" id="wrap"></div>
 <script>
 function fmt(n, cur) {
@@ -374,5 +377,14 @@ function render() {
 render();
 setInterval(render, 30000);
 </script>
+
+  <canvas id="cap-scene" class="cap-scene-canvas cap-scene-canvas--subtle" aria-hidden="true"></canvas>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/capricorn-scene.js"></script>
+  <script src="js/capricorn-motion.js"></script>
+  <script src="js/capricorn-cinematic.js"></script>
+  <script>document.addEventListener('DOMContentLoaded',function(){if(window.CapCinematic)CapCinematic.init({canvas:'#cap-scene'});});</script>
 </body>
 </html>
