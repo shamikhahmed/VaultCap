@@ -9,7 +9,7 @@
 
 :root {
   --bg: #000000; --bg2: #0a0a0a; --bg3: #111111;
-  --accent: #0A84FF; --accent2: #0055cc;
+  --accent:#5b8dee; --accent2: #0055cc;
   --text: #ffffff; --text2: #a0a0a0; --text3: #505050;
   --ok: #30d158; --warn: #ffd60a; --err: #ff453a;
   --border: rgba(255,255,255,0.08);
@@ -197,6 +197,13 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
   .sync-arr { display:none; }
   .plat-grid { grid-template-columns:1fr; }
 }
+
+.deck-shot{display:block;width:100%;height:auto;margin:0;object-fit:cover;object-position:top center}
+.phone-b:has(.deck-shot),.phone-body:has(.deck-shot),.phone-screen:has(.deck-shot),.phone-inner:has(.deck-shot),.term-b:has(.deck-shot){padding:0!important;min-height:0!important;overflow:hidden}
+.term-b .deck-shot{border-radius:0 0 12px 12px}
+.deck-shot-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
+.deck-shot-frame{width:min(100%,280px);border-radius:24px;overflow:hidden;border:2px solid rgba(255,255,255,.12);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+
 </style>
 
   <link rel="stylesheet" href="css/capricorn-core.css">
@@ -209,7 +216,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
 
 <canvas id="particles"></canvas>
 <div id="progress"></div>
-<div id="counter">01 / 25</div>
+<div id="counter">01 / 26</div>
 <div id="dots"></div>
 <button id="fsBtn" onclick="toggleFS()">⛶ Fullscreen</button>
 
@@ -316,6 +323,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
   <div class="anim label">Dashboard</div>
   <div class="anim" style="font-size:clamp(26px,3.5vw,44px);font-weight:700;letter-spacing:-.025em;margin-bottom:6px">Your complete financial picture.</div>
   <div class="anim tagline" style="margin-bottom:24px">Net worth hero · vault health score · expiry alerts · 5-second overview.</div>
+  <div class="deck-shot-frame anim" style="margin:24px auto;max-width:280px"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-2.png" alt="VaultCap unlocked app shell" width="280" height="606" loading="lazy" decoding="async"></div>
   <div class="anim" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:680px;width:100%;align-items:stretch">
     <div style="background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.3);border-radius:16px;padding:18px;min-height:148px;display:flex;flex-direction:column">
       <div style="font-size:22px;margin-bottom:8px;line-height:1">💰</div>

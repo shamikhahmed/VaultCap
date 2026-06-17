@@ -11,7 +11,7 @@
 /* ── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --accent: #5b8dee;
+  --accent:#5b8dee;
   --pink: #e91e8c;
   --gold: #c9a84c;
   --ok: #30d158;
@@ -934,6 +934,13 @@ body {
   canvas { display: none !important; }
   #s1-gradient, #s5-nebula, #s9-globe-wrap, #s3-bg, #s16-gradient, #s20-gradient { display: block; }
 }
+
+.deck-shot{display:block;width:100%;height:auto;margin:0;object-fit:cover;object-position:top center}
+.phone-b:has(.deck-shot),.phone-body:has(.deck-shot),.phone-screen:has(.deck-shot),.phone-inner:has(.deck-shot),.term-b:has(.deck-shot){padding:0!important;min-height:0!important;overflow:hidden}
+.term-b .deck-shot{border-radius:0 0 12px 12px}
+.deck-shot-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
+.deck-shot-frame{width:min(100%,280px);border-radius:24px;overflow:hidden;border:2px solid rgba(255,255,255,.12);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+
 </style>
 
   <link rel="stylesheet" href="css/capricorn-core.css">
@@ -1071,6 +1078,7 @@ body {
 <section class="slide" id="s7">
   <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
     <h2 class="section-title reveal">Your complete financial picture.</h2>
+    <div class="deck-shot-row reveal delay-2"><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-2.png" alt="VaultCap unlocked app shell" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-3.png" alt="VaultCap finance dashboard" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-4.png" alt="VaultCap Family Vault overview" width="280" height="606" loading="lazy" decoding="async"></div></div>
     <div class="feature-grid">
       <div class="feat-card reveal-left delay-1">
         <span class="feat-card-icon">🏦</span>
@@ -1558,7 +1566,7 @@ body {
 <section class="slide" id="s19">
   <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
     <h2 class="section-title reveal">Just Paste. We'll Figure It Out.</h2>
-    <p style="font-size:1.05rem;color:var(--text2);text-align:center;max-width:560px;margin-bottom:2.5rem;" class="reveal delay-1">Bank statement? Paste it. Screenshot description? Paste it. VaultCap AI reads it, extracts every account, card, loan, and holding — editable before it touches your vault.</p>
+    <p style="font-size:1.05rem;color:var(--text2);text-align:center;max-width:560px;margin-bottom:2.5rem;" class="reveal delay-1">Bank statement? Paste it. Screenshot description? Paste it. VaultCap Smart Import reads it, extracts every account, card, loan, and holding — editable before it touches your vault.</p>
     <div class="backup-flow">
       <div class="backup-node reveal-left delay-1">
         <span class="backup-node-icon">📋</span>
