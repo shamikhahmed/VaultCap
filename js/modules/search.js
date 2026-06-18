@@ -37,8 +37,8 @@ const GlobalSearch = {
         <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:15px;border-radius:14px" oninput="GlobalSearch.search(this.value)" autocomplete="off">
         <button onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
       </div>
-      <div style="display:flex;overflow-x:auto;gap:6px;scrollbar-width:none;padding-bottom:2px">
-        ${filters.map(f => `<div class="search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" onclick="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</div>`).join('')}
+      <div class="cap-tab-bar cap-tab-bar--flush" role="tablist" aria-label="Search filters" style="padding:0 0 2px">
+        ${filters.map(f => `<button type="button" class="cap-tab search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" role="tab" aria-selected="${GlobalSearch.activeFilter === f}" onclick="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</button>`).join('')}
       </div>
     </div>
     <div id="gs-results" style="padding:8px 0"></div>`;

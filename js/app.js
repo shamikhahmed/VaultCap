@@ -2044,7 +2044,7 @@ const VaultSafety = {
 };
 window.VaultSafety = VaultSafety;
 
-const VER = '4.3.4';
+const VER = '4.3.7';
 
 // ===================== CRYPTO ENGINE (AES-256-GCM + PBKDF2) =====================
 const Crypto = {
@@ -4661,7 +4661,7 @@ function buildSettTabs() {
   ];
   const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'profile';
   el.innerHTML = tabs.map(([id, label]) =>
-    `<div class="tab-pill${cur === id ? ' on' : ''}" onclick="SettingsNav.show('${id}')">${label}</div>`
+    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" onclick="SettingsNav.show('${id}')">${label}</button>`
   ).join('');
 }
 
