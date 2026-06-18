@@ -2490,7 +2490,7 @@ let S = {
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
   wallet:[],
-  fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false,
+  fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false, largeText:false, reduceMotion:false,
   bF:'all', cF:'all', invF:'all', simF:'all', aF:'all', expF:'all', gF:'all',
   _timer:null, _clockTimer:null,
 };
@@ -2515,7 +2515,8 @@ const Store = {
       vaultMeta: S.vaultMeta || { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
-      autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs
+      autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs,
+      privacyMode: S.privacyMode, largeText: S.largeText, reduceMotion: S.reduceMotion
     };
   },
 
@@ -2524,7 +2525,7 @@ const Store = {
     try {
       localStorage.setItem('vos_prefs', JSON.stringify({
         theme: S.user.theme, fontScale: S.fontScale, highContrast: S.highContrast,
-        name: S.user.name, hasVault: true
+        name: S.user.name, hasVault: true, reduceMotion: S.reduceMotion, largeText: S.largeText
       }));
     } catch(e) {}
   },
@@ -3148,6 +3149,11 @@ const R = {
   },
   goto(pg, force = false) {
     if (pg === 'ai-import') pg = 'import';
+    const alias = PAGE_ALIASES[pg];
+    if (alias) {
+      S.aF = alias.filter;
+      pg = alias.target;
+    }
     updatePageChrome(pg);
     const prev = S.currentPage;
     // Save scroll position for the page we're leaving
@@ -3158,19 +3164,31 @@ const R = {
       if (prevPb) window._scrollCache[prev] = prevPb.scrollTop;
     }
     S.currentPage = pg;
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('on');
+      p.style.opacity = '';
+      p.style.transform = '';
+      p.style.transition = '';
+    });
     const el = document.getElementById('pg-' + pg);
     if (el) {
       el.classList.add('on');
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(8px)';
-      requestAnimationFrame(() => {
-        el.style.transition = 'opacity var(--anim-fast,140ms) var(--ease-smooth,ease), transform var(--anim-fast,140ms) var(--ease-smooth,ease)';
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-        const pb = el.querySelector('.pb');
+      const pb = el.querySelector('.pb');
+      if (isFastNavigation()) {
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.transition = '';
         if (pb) pb.scrollTop = window._scrollCache?.[pg] || 0;
-      });
+      } else {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        requestAnimationFrame(() => {
+          el.style.transition = 'opacity var(--anim-fast,140ms) var(--ease-smooth,ease), transform var(--anim-fast,140ms) var(--ease-smooth,ease)';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          if (pb) pb.scrollTop = window._scrollCache?.[pg] || 0;
+        });
+      }
     }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
     if (prev === pg && !force) return;
@@ -3186,7 +3204,7 @@ const R = {
       assets:      () => Assets.render(),
       expenses:    () => Exp.render(),
       emails:      () => Emails.render(),
-      gadgets:     () => { S.aF = 'electronics'; R.goto('assets'); },
+      gadgets:     () => Assets.render(),
       digital:     () => Digital.render(),
       alerts:      () => renderAlerts(),
       documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
@@ -3197,7 +3215,7 @@ const R = {
       backup:      () => BackupCenter.render(),
       recovery:    () => RecoveryCenter.render(),
       workspace:   () => WorkspaceManager.render(),
-      vehicles:    () => { S.aF = 'vehicle'; R.goto('assets'); },
+      vehicles:    () => Assets.render(),
       reminders:   () => Reminders.render(),
       'ai-import': () => R.goto('import'),
       'trash':     () => { if (typeof Trash !== 'undefined') Trash.render(); },
@@ -3205,7 +3223,7 @@ const R = {
       'recovery-center': () => { if (typeof VaultHealthCenter !== 'undefined') VaultHealthCenter.render(); },
       'help':      () => { if (typeof HelpCenter !== 'undefined') HelpCenter.render(); },
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
-      gold:        () => { S.aF = 'precious_metals'; R.goto('assets'); },
+      gold:        () => Assets.render(),
       bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
@@ -3262,6 +3280,18 @@ const UTILITY_PAGES = new Set([
   'settings', 'import', 'ai-import', 'help', 'search', 'timeline', 'security', 'backup',
   'recovery', 'recovery-center', 'sync', 'trash', 'emergency', 'workspace', 'alerts', 'reminders',
 ]);
+
+const PAGE_ALIASES = {
+  gadgets:  { target: 'assets', filter: 'electronics' },
+  vehicles: { target: 'assets', filter: 'vehicle' },
+  gold:     { target: 'assets', filter: 'precious_metals' },
+};
+
+function isFastNavigation() {
+  return document.body.getAttribute('data-cap-app') === '1'
+    || document.body.classList.contains('reduce-motion')
+    || !!S.reduceMotion;
+}
 
 function updatePageChrome(pg) {
   const hideTabs = UTILITY_PAGES.has(pg);
@@ -4739,18 +4769,18 @@ function buildNav() {
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
-  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard" onclick="R.goto('dashboard')"><span class="ni-ic">📊</span><span class="ni-txt">Dashboard</span></div>`;
+  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard"><span class="ni-ic">📊</span><span class="ni-txt">Dashboard</span></div>`;
   Object.entries(groups).forEach(([grp, label]) => {
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
+      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}" onclick="R.goto('${m.id}')"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
+    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 
@@ -4762,7 +4792,7 @@ function buildNav() {
   const identityPages = new Set(['documents','sims','emails','digital','friends']);
 
   document.getElementById('btabs').innerHTML =
-    `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard" onclick="R.goto('dashboard')"><div class="ti-ic">🏠</div><span>Home</span></div>` +
+    `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard"><div class="ti-ic">🏠</div><span>Home</span></div>` +
     `<div class="ti${moneyPages.has(S.currentPage) ? ' on' : ''}" onclick="openMoneySheet()"><div class="ti-ic">💰</div><span>Money</span></div>` +
     `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" onclick="openAssetsSheet()"><div class="ti-ic">🏠</div><span>Assets</span></div>` +
     `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" onclick="openIdentitySheet()"><div class="ti-ic">🪪</div><span>Identity</span></div>` +
@@ -5308,6 +5338,13 @@ function applyLargeText(on) {
 }
 window.applyLargeText = applyLargeText;
 
+function applyReduceMotion(on) {
+  S.reduceMotion = !!on;
+  document.body.classList.toggle('reduce-motion', S.reduceMotion);
+  Store.save();
+}
+window.applyReduceMotion = applyReduceMotion;
+
 // ===================== DEBOUNCE =====================
 function debounce(fn, ms) {
   let t;
@@ -5479,6 +5516,8 @@ async function App() {
     if (prefs.theme)       S.user.theme    = prefs.theme;
     if (prefs.fontScale)   S.fontScale     = prefs.fontScale;
     if (prefs.highContrast) S.highContrast = prefs.highContrast;
+    if (prefs.reduceMotion) S.reduceMotion = prefs.reduceMotion;
+    if (prefs.largeText) S.largeText = prefs.largeText;
     if (prefs.name)        S.user.name     = prefs.name;
   }
   if (S.user.onboardingComplete && !S.user.setupProgress) {
@@ -5494,6 +5533,7 @@ async function App() {
   }
   if (S.highContrast && !document.body.classList.contains('hc')) document.body.classList.add('hc');
   if (S.largeText) applyLargeText(true);
+  if (S.reduceMotion) applyReduceMotion(true);
 
   // Check if old localStorage data exists (migration)
   const oldData = Store.loadRaw();

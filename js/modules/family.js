@@ -137,7 +137,9 @@ const Family = {
 
   render() {
     const body = document.getElementById('pg-family-body');
+    const page = document.getElementById('pg-family');
     if (!body) return;
+    if (page) page.classList.toggle('family-detail', this._activeId !== null);
     if (S.modules?.family !== false && (S.user?.name || S.user?.email)) {
       this.ensureHeadFromProfile({ silent: true });
     }
@@ -204,13 +206,13 @@ const Family = {
     ).join('');
 
     body.innerHTML =
-      `<div style="padding:16px">
+      `<div class="fam-list-wrap">
         ${headCard}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
-          <button onclick="Family.openAddMember(false)" style="background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+          <button type="button" class="btn btn-p btn-sm" onclick="Family.openAddMember(false)">+ Add</button>
         </div>
-        ${rest.length ? memberCards : '<div style="text-align:center;padding:32px 20px;color:var(--text3)"><div style="font-size:40px;margin-bottom:10px">👨‍👩‍👧‍👦</div><div style="font-size:14px">Add family members to manage their finances</div></div>'}
+        ${rest.length ? memberCards : '<div class="empty"><div class="empty-ic">👨‍👩‍👧‍👦</div><h3>No members yet</h3><p>Add family members to manage their finances</p></div>'}
       </div>`;
   },
 
@@ -220,22 +222,22 @@ const Family = {
 
     const tabs = this._visibleTabs();
 
-    const tabBar = `<div style="display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;background:var(--bg2);border-bottom:1px solid var(--border)">
-      ${tabs.map(t => `<button onclick="Family._switchTab('${t.id}')" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._tab===t.id?'var(--accent)':'var(--border)'};background:${this._tab===t.id?'var(--accent)':'transparent'};color:${this._tab===t.id?'#fff':'var(--text3)'}">${t.icon} ${t.label}</button>`).join('')}
+    const tabBar = `<div class="cap-tab-bar" role="tablist" aria-label="Family member sections">
+      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" onclick="Family._switchTab('${t.id}')">${t.icon} ${t.label}</button>`).join('')}
     </div>`;
 
-    const backBtn = `<button onclick="Family._activeId=null;Family._tab='overview';Family.render()" style="background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:6px;padding:16px 16px 0;width:100%;text-align:left;font-family:inherit">← Family</button>`;
+    const backBtn = `<button type="button" class="cap-subchrome-back" onclick="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
 
-    const header = `<div style="display:flex;align-items:center;gap:14px;padding:12px 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.06))">
-      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
-      <div style="flex:1">
-        <div style="font-size:20px;font-weight:900;color:var(--text)">${escHtml(m.name)}${m.isHead ? ' 👑' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
-        <div style="font-size:13px;color:var(--text3)">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
+    const header = `<div class="cap-member-header">
+      <div class="cap-member-avatar" aria-hidden="true">${escHtml(m.avatar || '👤')}</div>
+      <div class="cap-member-meta">
+        <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' 👑' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
+        <div class="cap-member-sub">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
-      <button onclick="Family.editMember('${m.id}')" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;touch-action:manipulation;color:var(--text)">Edit</button>
+      <button type="button" class="btn btn-g btn-sm" onclick="Family.editMember('${m.id}')">Edit</button>
     </div>`;
 
-    body.innerHTML = backBtn + header + tabBar + '<div id="fm-tab-body" style="padding:14px 16px">' + this._tabContent(m) + '</div>';
+    body.innerHTML = `<div class="cap-subchrome">${backBtn}${header}${tabBar}<div id="fm-tab-body" class="cap-tab-panel" role="tabpanel">${this._tabContent(m)}</div></div>`;
   },
 
   _switchTab(t) {
@@ -243,12 +245,10 @@ const Family = {
     const m = this.getMember(this._activeId);
     const body = document.getElementById('fm-tab-body');
     if (body && m) body.innerHTML = this._tabContent(m);
-    document.querySelectorAll('#pg-family-body button[onclick*="_switchTab"]').forEach(b => {
-      const bt = b.getAttribute('onclick').match(/'(\w+)'/)?.[1];
-      const active = bt === t;
-      b.style.border = '1px solid ' + (active ? 'var(--accent)' : 'var(--border)');
-      b.style.background = active ? 'var(--accent)' : 'transparent';
-      b.style.color = active ? '#fff' : 'var(--text3)';
+    document.querySelectorAll('#pg-family .cap-tab[data-tab]').forEach(btn => {
+      const on = btn.dataset.tab === t;
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
   },
 
@@ -276,11 +276,11 @@ const Family = {
         ['🔐 Vault Role', this._roleLabel(m.role || (m.isHead ? 'admin' : 'viewer'))],
         m.notes && ['📝 Notes', escHtml(m.notes)],
       ].filter(Boolean);
-      return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-        ${stats.map(s => `<div onclick="Family._switchTab('${s.tab}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;touch-action:manipulation">
-          <div style="font-size:22px;font-weight:800;color:var(--text)">${s.n}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.ic} ${s.l}</div>
-        </div>`).join('')}
+      return `<div class="cap-member-stats">
+        ${stats.map(s => `<button type="button" class="cap-stat-tile" onclick="Family._switchTab('${s.tab}')">
+          <div class="cap-stat-tile-val">${s.n}</div>
+          <div class="cap-stat-tile-lbl">${s.ic} ${s.l}</div>
+        </button>`).join('')}
       </div>
       ${fields.map(([k, v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:13px;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
     }

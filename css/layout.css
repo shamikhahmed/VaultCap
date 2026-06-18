@@ -110,7 +110,7 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
 @media (min-width: 769px) {
   .main { flex: 1; min-width: 0; max-width: none; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 }
-@media (max-width: 768px) { .main { padding-bottom: calc(var(--tabh) + var(--sb)); } }
+@media (max-width: 768px) { .main { padding-bottom: 0; } }
 @media (min-width: 769px) { .main { padding-bottom: 24px !important; } }
 @media (min-width: 1400px) { .main { padding: 24px; } }
 
@@ -149,6 +149,13 @@ body.hide-btabs .btabs-spacer { display: none; height: 0; }
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
   z-index: 40;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@media (min-width: 769px) {
+  .settings-chrome { padding-top: 0; }
+}
+#pg-settings .settings-chrome .ph {
+  padding-top: 14px;
 }
 .sett-tabs {
   display: flex;

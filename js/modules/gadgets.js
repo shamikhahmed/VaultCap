@@ -7,7 +7,7 @@
 const Gadgets = {
   render() {
     S.aF = 'electronics';
-    if (typeof R !== 'undefined') R.goto('assets');
+    if (typeof Assets !== 'undefined') Assets.render();
   },
   openAdd() {
     if (typeof Assets !== 'undefined') Assets.openAdd('electronics');
