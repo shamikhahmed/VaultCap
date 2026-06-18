@@ -2044,7 +2044,7 @@ const VaultSafety = {
 };
 window.VaultSafety = VaultSafety;
 
-const VER = '4.3.7';
+const VER = '4.3.8';
 
 // ===================== CRYPTO ENGINE (AES-256-GCM + PBKDF2) =====================
 const Crypto = {
@@ -4758,7 +4758,14 @@ function buildNav() {
   }
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
   const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
-  const all = [{ id:'dashboard', n:'Dashboard', ic:'📊' }, ...active, ...extras];
+  const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + VER;
+  const sbNav = document.getElementById('sbNav');
+  const btabs = document.getElementById('btabs');
+  if (sbNav && btabs && navKey === buildNav._cacheKey && sbNav.children.length) {
+    patchNavActiveState();
+    return;
+  }
+  buildNav._cacheKey = navKey;
 
   const groups = {
     Finance:  '💰 Finance',
@@ -4816,6 +4823,24 @@ function buildNav() {
     '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
   ];
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
+  patchNavActiveState();
+}
+
+function patchNavActiveState() {
+  const page = S.currentPage;
+  document.querySelectorAll('#sbNav .ni[data-pg]').forEach(el => {
+    el.classList.toggle('on', el.dataset.pg === page);
+  });
+  const moneyPages = new Set(['banks','cards','cash','investments','loans','expenses','bc','bonds']);
+  const assetsPages = new Set(['assets','vehicles','gadgets']);
+  const identityPages = new Set(['documents','sims','emails','digital','friends']);
+  const tabs = document.getElementById('btabs');
+  if (!tabs) return;
+  const ti = tabs.querySelectorAll('.ti');
+  if (ti[0]) ti[0].classList.toggle('on', page === 'dashboard');
+  if (ti[1]) ti[1].classList.toggle('on', moneyPages.has(page));
+  if (ti[2]) ti[2].classList.toggle('on', assetsPages.has(page));
+  if (ti[3]) ti[3].classList.toggle('on', identityPages.has(page));
 }
 
 // ===================== SMART ADD (offline pattern detection) =====================
