@@ -140,6 +140,16 @@ const PIN = {
   async _verify(pin) {
     if (S.noPin) return { kind: 'real' };
 
+    // ── Demo vault: fixed PIN + auto-repair stale encrypted store ───────────
+    if (VaultProfiles.isDemo()) {
+      if (String(pin) !== VaultProfiles.DEMO_PIN) return null;
+      const result = await unlockDemoVaultWithPin(pin);
+      if (!result) return null;
+      Object.assign(S, result.data);
+      S.pin = VaultProfiles.DEMO_PIN;
+      return { kind: 'real' };
+    }
+
     // ── Migration path: old localStorage data ──────────────────────────────
     const oldData = Store.loadRaw();
     const hasVaultDB = await VaultDB.isInitialized();

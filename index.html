@@ -132,7 +132,7 @@
     </div>
   </div>
   <button id="emergencyLockBtn" onclick="Emergency.showLockscreen()" style="display:none;position:absolute;bottom:calc(env(safe-area-inset-bottom, 0px) + 24px);left:50%;transform:translateX(-50%);background:rgba(255,59,48,.15);border:1px solid rgba(255,59,48,.4);color:var(--err);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:nowrap">🆘 Emergency Info</button>
-  <button id="switchProfileBtn" onclick="VaultProfiles.showSwitcher()" style="display:none;position:absolute;bottom:calc(env(safe-area-inset-bottom, 0px) + 24px);left:20px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;touch-action:manipulation;padding:8px 4px">⇄ Switch Vault</button>
+  <button type="button" id="switchProfileBtn" class="lk-switch-vault" onclick="VaultProfiles.showSwitcher()" style="display:none">⇄ Switch Vault</button>
 </div>
 
 <!-- PROFILE PICKER -->

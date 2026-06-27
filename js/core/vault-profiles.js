@@ -17,6 +17,7 @@ const VaultProfiles = {
     return p === 'personal' ? 'VaultCap' : 'VaultCap_' + p;
   },
   switch(profileId) {
+    if (typeof Modal !== 'undefined') Modal.close();
     localStorage.setItem('vo_active_profile', profileId);
     location.reload();
   },
