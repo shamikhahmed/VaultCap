@@ -1,78 +1,39 @@
-/* ═══════════ THEMES: accent / palette overrides per body class ═══════════ */
+/* ═══════════ THEMES: light / dark only (no accent palette variants) ═══════════ */
 
-/* ─ Graphite dark theme ─ */
-body.graphite {
-  --bg: #1a1a1a; --bg2: #242424; --bg3: #2e2e2e;
-  --glass: rgba(255,255,255,.05); --glass2: rgba(255,255,255,.08); --glass3: rgba(255,255,255,.12);
-  --border: rgba(255,255,255,.1); --border2: rgba(255,255,255,.15); --border3: rgba(255,255,255,.2);
-  --text: #f0ede8; --text2: #c8c4bc; --text3: #8a8680;
-  --accent: #c9a84c; --accent2: #e8c96a; --glow: rgba(201,168,76,.18);
-  --ok: #6fba7f; --warn: #d4924a; --err: #e05c5c; --info: #6aabcc;
-  --purple: #a07cc8; --input: rgba(255,255,255,.06); --r: 14px;
-}
-
-/* ─ Light base (shared by cloud + ivory) ─ */
+/* ─ Light mode ─ */
 body.light {
-  --glass: rgba(255,255,255,0.8); --glass2: rgba(0,0,0,0.04); --glass3: rgba(0,0,0,0.08);
-  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18); --border3: rgba(0,0,0,0.26);
-  --text: #1d1d1f; --text2: #4a4a50; --text3: #8e8e93;
+  --bg: #ffffff;
+  --bg2: #f3f4f6;
+  --bg3: #e5e7eb;
+  --glass: rgba(0,0,0,.04);
+  --glass2: rgba(0,0,0,.06);
+  --glass3: rgba(0,0,0,.09);
+  --border: rgba(0,0,0,.1);
+  --border2: rgba(0,0,0,.15);
+  --border3: rgba(0,0,0,.22);
+  --text: #111827;
+  --text2: #374151;
+  --text3: #6b7280;
+  --accent: #2563eb;
+  --accent2: #3b82f6;
+  --glow: rgba(37,99,235,.12);
+  --ok: #16a34a;
+  --warn: #d97706;
+  --err: #dc2626;
+  --info: #0284c7;
+  --purple: #7c3aed;
+  --on-accent: #ffffff;
+  --input: rgba(0,0,0,.05);
+  --r: 14px;
   --shadow: 0 4px 24px rgba(0,0,0,.08);
   --shadowlg: 0 16px 56px rgba(0,0,0,.16);
 }
+
 body.light .key       { background: rgba(0,0,0,0.07); }
 body.light .key:active, body.light .key.pressed { background: rgba(0,0,0,0.18) !important; }
 body.light .pd        { border-color: rgba(0,0,0,0.35); }
 body.light .pd.on     { background: #1d1d1f; border-color: #1d1d1f; }
 body.light input, body.light textarea, body.light select { color: #1d1d1f; }
 body.light .inp       { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
-body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb,37,99,235),.15); }
+body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
 body.light select.inp option { background: #ffffff; color: #1d1d1f; }
-
-/* ─ Cloud light theme ─ */
-body.light.cloud {
-  --bg: #ffffff; --bg2: #f3f4f6; --bg3: #e5e7eb;
-  --glass: rgba(0,0,0,.04); --glass2: rgba(0,0,0,.06); --glass3: rgba(0,0,0,.09);
-  --border: rgba(0,0,0,.1); --border2: rgba(0,0,0,.15); --border3: rgba(0,0,0,.22);
-  --text: #111827; --text2: #374151; --text3: #6b7280;
-  --accent: #2563eb; --accent2: #3b82f6; --glow: rgba(37,99,235,.12);
-  --ok: #16a34a; --warn: #d97706; --err: #dc2626; --info: #0284c7;
-  --purple: #7c3aed; --on-accent: #ffffff; --input: rgba(0,0,0,.05); --r: 14px;
-}
-
-/* ─ Ivory light theme ─ */
-body.light.ivory {
-  --bg: #faf9f7; --bg2: #f0ede8; --bg3: #e4e0d9;
-  --glass: rgba(0,0,0,.04); --glass2: rgba(0,0,0,.07); --glass3: rgba(0,0,0,.1);
-  --border: rgba(0,0,0,.1); --border2: rgba(0,0,0,.15); --border3: rgba(0,0,0,.22);
-  --text: #1a1a16; --text2: #3d3d30; --text3: #78776a;
-  --accent: #2d6a4f; --accent2: #40916c; --glow: rgba(45,106,79,.12);
-  --ok: #2d6a4f; --warn: #b45309; --err: #b91c1c; --info: #1e6091;
-  --purple: #6d4c8e; --on-accent: #ffffff; --input: rgba(0,0,0,.05); --r: 14px;
-}
-
-/* ─ Blossom pink light theme ─ */
-body.light.blossom {
-  --bg: #fff5f7;
-  --bg2: #ffe8f0;
-  --bg3: #ffd6e7;
-  --glass: rgba(233,30,140,.04);
-  --glass2: rgba(233,30,140,.07);
-  --glass3: rgba(233,30,140,.12);
-  --border: rgba(233,30,140,.15);
-  --border2: rgba(233,30,140,.25);
-  --border3: rgba(233,30,140,.35);
-  --text: #1a0a0f;
-  --text2: #4a1a2e;
-  --text3: #9a6a7e;
-  --accent: #e91e8c;
-  --accent2: #f06292;
-  --glow: rgba(233,30,140,.2);
-  --ok: #2e7d32;
-  --warn: #e65100;
-  --err: #c62828;
-  --info: #1565c0;
-  --purple: #7b1fa2;
-  --on-accent: #ffffff;
-  --input: rgba(233,30,140,.05);
-  --r: 14px;
-}

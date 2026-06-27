@@ -432,6 +432,6 @@ body.hide-btabs #fab { display: none !important; }
 /* ─ PWA: macOS Safari desktop fix ─ */
 @supports (-webkit-touch-callout: none) {}
 @media (min-width: 769px) {
-  .app { height: 100vh; max-height: 100vh; overflow: hidden; }
-  body { height: 100vh; overflow: hidden; }
+  .app { height: 100dvh; max-height: 100dvh; overflow: hidden; }
+  body { height: 100dvh; overflow: hidden; }
 }

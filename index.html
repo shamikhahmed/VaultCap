@@ -44,6 +44,7 @@
 </style>
 </head>
 <body data-cap-app="1">
+<a href="#mainPages" class="cap-skip-link">Skip to content</a>
 <div class="cap-ambient" aria-hidden="true"></div>
 <canvas id="cap-scene" class="cap-scene-canvas cap-scene-canvas--subtle" aria-hidden="true"></canvas>
 <div class="cap-scroll-progress" aria-hidden="true"></div>
@@ -163,7 +164,8 @@
   <p style="font-size:10px;color:var(--text3);margin-bottom:28px;opacity:.5;letter-spacing:.3px">by Capricorn Systems</p>
   <!-- CTA -->
   <button onclick="R.showLock()" style="width:100%;max-width:280px;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:10px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px var(--glow)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3)'">🔓 Open My Vault</button>
-  <button onclick="VaultProfiles.startDemo()" style="width:100%;max-width:280px;padding:12px;background:var(--glass);border:1px solid var(--border);color:var(--text2);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:var(--font)">🎭 New? Take the guided demo</button>
+  <button onclick="VaultProfiles.startDemo()" style="width:100%;max-width:280px;padding:12px;background:var(--glass);border:1px solid var(--border);color:var(--text2);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:var(--font)">🎭 New? Take the guided demo</button>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Demo PIN: <strong style="color:var(--accent);letter-spacing:.08em">123456</strong> (6 digits) · sample data only</p>
   <!-- Feature pills -->
   <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:22px">
     <span style="padding:5px 13px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2);font-weight:500">🔐 Encrypted locally</span>
@@ -188,8 +190,8 @@
       <div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s" onmouseover="this.style.background='var(--glass2)'" onmouseout="this.style.background=''"><div style="font-size:20px;margin-bottom:4px">📋</div><div style="font-size:9px;color:var(--text3);font-weight:600">Expenses</div></div>
     </div>
   </div>
-  <!-- Theme dots -->
-  <div style="font-size:9px;color:var(--text3);margin-bottom:7px;letter-spacing:.8px;text-transform:uppercase">Themes</div>
+  <!-- Appearance -->
+  <div style="font-size:9px;color:var(--text3);margin-bottom:7px;letter-spacing:.8px;text-transform:uppercase">Appearance</div>
   <div class="home-themes" id="homeThemes" style="margin-bottom:16px"></div>
 </div>
 </div>
@@ -421,17 +423,25 @@
 
 <!-- THEME PICKER -->
 <div class="overlay" id="themeOv" onclick="if(event.target===this)ThemeEngine.closePicker()">
-<div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Choose Theme</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
+<div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Appearance</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" integrity="sha384-9Q0jWoineiIq95JeIyBsNV90KKLfDsbkj29k/YFxf76a2JwkHDYkMuSbNGN6XJfV" crossorigin="anonymous"></script>
-<script src="vendor/tesseract.min.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/core/constants.js"></script>
 <script src="js/core/validators.js"></script>
 <script src="js/core/vault-meta.js"></script>
+<script src="js/core/theme.js"></script>
+<script src="js/core/lazy-loader.js"></script>
+<script src="js/core/vault-profiles.js"></script>
+<script src="js/core/lock-recovery.js"></script>
+<script src="js/core/store-engine.js"></script>
+<script src="js/core/crypto.js"></script>
+<script src="js/core/migrate.js"></script>
+<script src="js/core/smart-db.js"></script>
+<script src="js/core/onboarding-flow.js"></script>
+<script src="js/core/pin.js"></script>
+<script src="js/core/router.js"></script>
+<script src="js/core/demo-boot.js"></script>
 <script src="js/core/family-pickers.js"></script>
 <script src="js/modules/rates.js"></script>
 <script src="js/modules/currency-engine.js"></script>
@@ -457,9 +467,6 @@
 <script src="js/modules/search.js"></script>
 <script src="js/modules/vehicles.js"></script>
 <script src="js/modules/reminders.js"></script>
-<script src="js/config/llm-bundled.js"></script>
-<script src="js/modules/llm-assist.js"></script>
-<script src="js/modules/ai-import.js"></script>
 <script src="js/modules/trash.js"></script>
 <script src="js/modules/currency.js"></script>
 <script src="js/modules/gold.js"></script>
@@ -474,6 +481,7 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script src="js/capricorn-motion.js"></script>
+<script src="js/cap-demo-mode.js"></script>
 <script src="js/capricorn-premium-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {

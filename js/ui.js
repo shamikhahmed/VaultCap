@@ -1008,12 +1008,16 @@ const QRSync = {
     if (nextBtn) nextBtn.style.display = idx < QRSync._qrTotal - 1 ? '' : 'none';
     el.innerHTML = '';
     const chunkData = JSON.stringify({ v:'vos2', i:idx, t:QRSync._qrTotal, d:QRSync._qrChunks[idx] });
-    if (typeof QRCode !== 'undefined') {
-      try { new QRCode(el, { text: chunkData, width:260, height:260, correctLevel: QRCode.CorrectLevel.L }); }
-      catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err);padding:12px">QR generation failed — use Copy as text instead</div>'; }
-    } else {
-      el.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:12px">QR library not loaded</div>';
-    }
+    const draw = () => {
+      if (typeof QRCode !== 'undefined') {
+        try { new QRCode(el, { text: chunkData, width:260, height:260, correctLevel: QRCode.CorrectLevel.L }); }
+        catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err);padding:12px">QR generation failed — use Copy as text instead</div>'; }
+      } else {
+        el.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:12px">QR library not loaded</div>';
+      }
+    };
+    if (typeof VaultLazy !== 'undefined') VaultLazy.qrcode().then(draw).catch(draw);
+    else draw();
   },
 
   importQR() {
@@ -1046,10 +1050,13 @@ const QRSync = {
     } catch(e) { if (status) status.textContent = 'Camera access denied — check permissions'; }
   },
 
-  _scanLoop() {
+  async _scanLoop() {
     const video = document.getElementById('qrVideo');
     const canvas = document.getElementById('qrCanvas');
     if (!video || !canvas || !this._stream) return;
+    if (typeof jsQR === 'undefined' && typeof VaultLazy !== 'undefined') {
+      try { await VaultLazy.jsqr(); } catch (_) {}
+    }
     const ctx = canvas.getContext('2d');
     canvas.width = video.videoWidth || 320;
     canvas.height = video.videoHeight || 240;
@@ -1326,14 +1333,18 @@ const ImportEngine={
   },
   importExcel(file){
     this.setStatus('Loading Excel parser...',10);
-    // Load SheetJS dynamically
-    if(typeof XLSX==='undefined'){
-      const s=document.createElement('script');
-      s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-      s.onload=()=>this._readExcel(file);
-      s.onerror=()=>{Toast.show('Could not load Excel parser — try CSV export','error');};
-      document.head.appendChild(s);
-    } else {this._readExcel(file);}
+    const run = () => this._readExcel(file);
+    if (typeof XLSX !== 'undefined') { run(); return; }
+    const load = typeof VaultLazy !== 'undefined'
+      ? VaultLazy.xlsx()
+      : new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+    load.then(run).catch(() => Toast.show('Could not load Excel parser — try CSV export', 'error'));
   },
   _readExcel(file){
     this.setStatus('Reading Excel file...',30);
@@ -1455,19 +1466,24 @@ const ImportEngine={
     const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsText(file);
   },
   runOCR(file){
-    if(typeof Tesseract==='undefined'){Toast.show('OCR loading... please wait a moment','info');setTimeout(()=>this.runOCR(file),2000);return;}
-    this.setStatus('📷 Scanning image with OCR...',10);
-    const r=new FileReader();
-    r.onload=e=>{
-      Tesseract.recognize(e.target.result,'eng',{logger:m=>{if(m.status==='recognizing text')this.setStatus('OCR: '+Math.round(m.progress*100)+'%...',Math.round(m.progress*90));}})
-        .then(({data:{text,confidence}})=>{
-          this.setStatus('✅ OCR complete — confidence '+Math.round(confidence)+'%',100);
-          const results=this.parseOCRText(text);
-          this.showResults(results,text);
-        })
-        .catch(()=>{this.setStatus('❌ OCR failed — try a clearer image',0);});
+    const start = () => {
+      this.setStatus('📷 Scanning image with OCR...',10);
+      const r=new FileReader();
+      r.onload=e=>{
+        Tesseract.recognize(e.target.result,'eng',{logger:m=>{if(m.status==='recognizing text')this.setStatus('OCR: '+Math.round(m.progress*100)+'%...',Math.round(m.progress*90));}})
+          .then(({data:{text,confidence}})=>{
+            this.setStatus('✅ OCR complete — confidence '+Math.round(confidence)+'%',100);
+            const results=this.parseOCRText(text);
+            this.showResults(results,text);
+          })
+          .catch(()=>{this.setStatus('❌ OCR failed — try a clearer image',0);});
+      };
+      r.readAsDataURL(file);
     };
-    r.readAsDataURL(file);
+    if (typeof Tesseract !== 'undefined') { start(); return; }
+    Toast.show('OCR loading... please wait a moment','info');
+    const load = typeof VaultLazy !== 'undefined' ? VaultLazy.tesseract() : Promise.resolve();
+    load.then(start).catch(() => Toast.show('OCR engine failed to load','error'));
   },
   parseText(text){
     if(!text.trim()){Toast.show('Please enter some text first','warning');return;}
@@ -2352,17 +2368,15 @@ const HelpCenter = {
           ${this._card('🔍', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
           ${this._card('🧠', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
           ${this._card('🏷️', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
-          ${this._card('⚡', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "theme midnight", "add bank". Weighted results show best matches first.')}
+          ${this._card('⚡', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
           ${this._card('📊', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🌑', 'Midnight (Dark)', 'Pure black background with blue accent. The default theme. Ideal for OLED screens — saves battery and looks stunning at night.')}
-          ${this._card('⬛', 'Graphite (Dark)', 'Dark grey background with warm gold accent. Softer than Midnight, easier on the eyes for long sessions. Premium notebook aesthetic.')}
-          ${this._card('☁️', 'Cloud (Light)', 'Clean white background with blue accent. Apple-style light mode. Best for bright environments and daytime use.')}
-          ${this._card('🟡', 'Ivory (Light)', 'Warm cream background with forest green accent. Notion-inspired warmth. Gentle on the eyes, great for reading.')}
-          ${this._card('🌸', 'Blossom (Light)', 'Rose pink background with hot pink accent. Warm, expressive, and beautiful. Switch themes anytime in Settings → Appearance.')}
-          ${this._card('💡', 'Switching themes', 'Settings → Appearance → tap any theme card. Or open the Command Palette (Cmd+K) and type "theme" to switch instantly.')}
+          ${this._card('🌙', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
+          ${this._card('☀️', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
+          ${this._card('⚙️', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
+          ${this._card('💡', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
         </div>`,
       'faq': `
         <div style="display:flex;flex-direction:column;gap:12px">

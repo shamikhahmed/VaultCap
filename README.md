@@ -61,7 +61,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - **PDF export** — full financial summary as print-ready PDF
 - **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
 - **Multi-country** — filter by Pakistan, UK, UAE
-- **5 themes** — Midnight, Graphite, Cloud, Ivory, Blossom, and more
+- **Dark & light modes** — plus system appearance on supported devices
 - **60+ bank logos** with real favicons
 - **QR sync** — transfer vault between devices via QR code
 
