@@ -365,7 +365,7 @@ const Cards={
     const isVirtual=(c.category||'').toLowerCase()==='virtual'||(c.category||'').toLowerCase()==='digital';
     const cardNames=SMART_DB.cards.map(x=>'<option value="'+x.name+'">').join('');
     const myBanks=(window.S?.banks||[]);
-    const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${b.bankName}">${b.bankName}</option>`).join(''):'';
+    const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${escAttr(b.bankName)}">${b.bankName}</option>`).join(''):'';
     const bankPicker=myBanks.length?'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" onchange="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
     return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
@@ -399,12 +399,12 @@ const Cards={
     if(!dl)return;
     const allCards=(window.SMART_DB?.cards||[]);
     if(!bankName||bankName==='__other__'){
-      dl.innerHTML=allCards.map(c=>`<option value="${c.name}"></option>`).join('');
+      dl.innerHTML=allCards.map(c=>`<option value="${escAttr(c.name)}"></option>`).join('');
       return;
     }
     const key=bankName.toLowerCase().split(' ')[0];
     const filtered=allCards.filter(c=>c.name.toLowerCase().includes(key));
-    dl.innerHTML=(filtered.length?filtered:allCards).map(c=>`<option value="${c.name}"></option>`).join('');
+    dl.innerHTML=(filtered.length?filtered:allCards).map(c=>`<option value="${escAttr(c.name)}"></option>`).join('');
     const bankField=document.getElementById('cf-bank');
     if(bankField)bankField.value=bankName;
   },

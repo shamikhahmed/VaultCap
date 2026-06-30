@@ -25,7 +25,7 @@ function _initialsLogo(initials, color, size) {
 }
 function getBankLogo(bankName, size) {
   size = size || 36;
-  if (!bankName) return _initialsLogo('BK', '#5b8dee', size);
+  if (!bankName) return _initialsLogo('BK', '#888888', size);
   const name = bankName.toUpperCase();
   const s = size + 'px';
   const r = Math.round(size * 0.28) + 'px';
@@ -94,7 +94,7 @@ function getBankLogo(bankName, size) {
   }
 
   const initials = bankName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
-  const colors = ['#5b8dee','#e91e8c','#00897b','#e65100','#6200ea','#c62828','#1565c0'];
+  const colors = ['#888888','#777777','#666666','#555555','#444444','#999999','#aaaaaa'];
   const fallbackColor = colors[bankName.charCodeAt(0) % colors.length];
 
   if (domain) {
@@ -194,11 +194,11 @@ const Banks={
     });
     const typeLabels={commercial:'Commercial',islamic:'Islamic',digital:'Digital',microfinance:'Microfinance',government:'Government',international:'International'};
     let optgroups='';
-    if(popular.length)optgroups+=`<optgroup label="Popular">${popular.map(b=>`<option value="${b.name}">${b.name}</option>`).join('')}</optgroup>`;
+    if(popular.length)optgroups+=`<optgroup label="Popular">${popular.map(b=>`<option value="${escAttr(b.name)}">${b.name}</option>`).join('')}</optgroup>`;
     Object.entries(grouped).forEach(([type,banks])=>{
       if(!banks.length)return;
       banks.sort((a,b)=>a.name.localeCompare(b.name));
-      optgroups+=`<optgroup label="${typeLabels[type]||type}">${banks.map(b=>`<option value="${b.name}">${b.name}</option>`).join('')}</optgroup>`;
+      optgroups+=`<optgroup label="${typeLabels[type]||type}">${banks.map(b=>`<option value="${escAttr(b.name)}">${b.name}</option>`).join('')}</optgroup>`;
     });
     const tiles=popularNames.slice(0,16).map(n=>allBanks.find(b=>b.name===n)).filter(Boolean);
     const safeCC=cc.replace(/'/g,"\\'");
@@ -236,12 +236,12 @@ const Banks={
     const curEl=document.getElementById('bf-cur');
     if(curEl&&pfxMap[cc])curEl.value=pfxMap[cc];
     const dl=document.getElementById('bankDL');
-    if(dl)dl.innerHTML=SMART_DB.banks.filter(b=>b.country===cc).map(b=>`<option value="${b.name}">`).join('');
+    if(dl)dl.innerHTML=SMART_DB.banks.filter(b=>b.country===cc).map(b=>`<option value="${escAttr(b.name)}">`).join('');
     this._showBankChips(cc);
   },
   form(b={}){
     const isEdit=!!b.id;
-    const bankNames=SMART_DB.banks.map(x=>`<option value="${x.name}">`).join('');
+    const bankNames=SMART_DB.banks.map(x=>`<option value="${escAttr(x.name)}">`).join('');
     return `
     <datalist id="bankDL">${bankNames}</datalist>
     <datalist id="bfTypeDL"><option>Commercial</option><option>Islamic</option><option>Digital</option><option>Microfinance</option><option>Government</option><option>International</option><option>Investment</option></datalist>
@@ -250,21 +250,21 @@ const Banks={
     <!-- Bank picker injected here by _showBankChips() -->
     <div id="bf-bank-picker-wrap"></div>
     <!-- REQUIRED -->
-    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" oninput="SMART_DB.fillBank(this.value,document.getElementById('bf-cc')?.value)" value="${b.bankName||''}"></div>
+    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" oninput="SMART_DB.fillBank(this.value,document.getElementById('bf-cc')?.value)" value="${escAttr(b.bankName||'')}"></div>
     <!-- BASIC: Account Type + Balance (always visible) -->
     <datalist id="bfAtypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Joint</option><option>Islamic</option><option>Fixed Deposit</option></datalist>
-    <div class="fr"><div class="fg"><label class="fl">Account Type</label><input class="inp" id="bf-atype" value="${b.accountType||''}" list="bfAtypeDL" placeholder="Current, Savings…"></div><div class="fg"><label class="fl">Balance</label><input class="inp num-inp" id="bf-bal" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${b.balance||''}" placeholder="0"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Account Type</label><input class="inp" id="bf-atype" value="${escAttr(b.accountType||'')}" list="bfAtypeDL" placeholder="Current, Savings…"></div><div class="fg"><label class="fl">Balance</label><input class="inp num-inp" id="bf-bal" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(b.balance||'')}" placeholder="0"></div></div>
     <!-- MORE DETAILS TOGGLE -->
     <div onclick="(()=>{const a=document.getElementById('bf-adv');const t=document.getElementById('bf-adv-btn');const open=a.style.display==='flex';a.style.display=open?'none':'flex';t.textContent=open?'More Details ▾':'Less Details ▲';})()" id="bf-adv-btn" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:center;margin:4px 0">${isEdit?'Less Details ▲':'More Details ▾'}</div>
     <!-- ADVANCED SECTION -->
     <div id="bf-adv" style="display:${isEdit?'flex':'none'};flex-direction:column;gap:10px">
-      <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="bf-l4" value="${b.last4||''}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Bank Type</label><input class="inp" id="bf-type" value="${b.bankType||''}" list="bfTypeDL" placeholder="commercial, digital…"></div></div>
-      <div class="fr"><div class="fg"><label class="fl">IBAN</label><input class="inp" id="bf-iban" value="${b.iban||''}" placeholder="GB29…"></div><div class="fg"><label class="fl">SWIFT / Sort Code</label><input class="inp" id="bf-swift" value="${b.sortCode||''}" placeholder="12-34-56 or SWIFT"></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Account Holder</label><input class="inp" id="bf-holder" value="${b.holderName||S.user.name||''}" placeholder="Full name"></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="bf-own"><option value="personal"${b.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${b.ownership==='business'?' selected':''}>🏢 Business</option><option value="joint"${b.ownership==='joint'?' selected':''}>👥 Joint</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="bf-l4" value="${escAttr(b.last4||'')}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Bank Type</label><input class="inp" id="bf-type" value="${escAttr(b.bankType||'')}" list="bfTypeDL" placeholder="commercial, digital…"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">IBAN</label><input class="inp" id="bf-iban" value="${escAttr(b.iban||'')}" placeholder="GB29…"></div><div class="fg"><label class="fl">SWIFT / Sort Code</label><input class="inp" id="bf-swift" value="${escAttr(b.sortCode||'')}" placeholder="12-34-56 or SWIFT"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Account Holder</label><input class="inp" id="bf-holder" value="${escAttr(b.holderName||S.user.name||'')}" placeholder="Full name"></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="bf-own"><option value="personal"${b.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${b.ownership==='business'?' selected':''}>🏢 Business</option><option value="joint"${b.ownership==='joint'?' selected':''}>👥 Joint</option></select></div></div>
       <div class="fg"><label class="fl">Joint Account?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="bf-joint" onchange="Banks._toggleJoint(this.checked)" style="width:20px;height:20px;cursor:pointer" ${b.jointAccount?'checked':''}><label for="bf-joint" style="font-size:14px;color:var(--text2)">This is a joint account</label></div><div id="b-joint-section" style="display:${b.jointAccount?'block':'none'};margin-top:10px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">Joint with (select from Family or Contacts):</div><select id="b-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>${typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(b.jointWith||''):''}</select><div style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:rgba(0,213,255,.06);border-radius:8px;border:1px solid rgba(0,213,255,.2)">ℹ️ Joint accounts count 100% toward your net worth — avoiding double-counting.</div></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Registered Email</label><input class="inp" id="bf-email" value="${b.email||''}" type="email" placeholder="email@…"></div><div class="fg"><label class="fl">Registered Phone</label><input class="inp" id="bf-phone" value="${b.phone||''}" placeholder="+44…"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Registered Email</label><input class="inp" id="bf-email" value="${escAttr(b.email||'')}" type="email" placeholder="email@…"></div><div class="fg"><label class="fl">Registered Phone</label><input class="inp" id="bf-phone" value="${escAttr(b.phone||'')}" placeholder="+44…"></div></div>
       ${U.loginFields(b)}
-      <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="bf-notes" rows="2">${b.notes||''}</textarea></div>
+      <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="bf-notes" rows="2">${escAttr(b.notes||'')}</textarea></div>
       <div class="fg"><label class="fl">Tags</label>${U.tags(b.tags||[])}</div>
       <label style="display:flex;align-items:center;gap:9px;cursor:pointer;margin-top:4px"><input type="checkbox" id="bf-fav" ${b.favorite?'checked':''}><span style="font-size:13px">⭐ Favourite</span></label>
     </div>`;

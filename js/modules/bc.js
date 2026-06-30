@@ -40,7 +40,7 @@ const BCModule = {
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
 
       (bcs.length > 0 ? (
-        '<div style="background:linear-gradient(135deg,rgba(91,141,238,.15),rgba(91,141,238,.05));border:1px solid rgba(91,141,238,.25);border-radius:16px;padding:16px">' +
+        '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px">' +
           '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">BC Summary</div>' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
             '<div style="text-align:center"><div style="font-size:11px;color:var(--text3)">Total Paid In</div><div style="font-size:20px;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
@@ -86,13 +86,13 @@ const BCModule = {
 
     return '<div class="entry" style="flex-direction:column;align-items:stretch">' +
       '<div class="entry-main">' +
-        '<div class="entry-ic" style="background:rgba(91,141,238,.15);font-size:20px">🤝</div>' +
+        '<div class="entry-ic" style="background:rgba(255,255,255,.15);font-size:20px">🤝</div>' +
         '<div class="entry-body">' +
           '<div class="entry-name">' + escHtml(bc.name || 'BC') + '</div>' +
           '<div class="entry-sub">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
           '<div class="entry-meta">' +
             '<span class="badge b-acc">' + fmt(pot) + ' pot</span>' +
-            '<span class="badge" style="background:rgba(91,141,238,.1);color:' + statusColor + '">' + statusText + '</span>' +
+            '<span class="badge" style="background:rgba(255,255,255,.1);color:' + statusColor + '">' + statusText + '</span>' +
             (bc.role === 'organiser' ? '<span class="badge b-warn">Organiser</span>' : '') +
             (bc.type === 'bid' ? '<span class="badge b-warn">⚠️ Bid-based</span>' : '') +
           '</div>' +
@@ -167,7 +167,7 @@ const BCModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bc-pot-display" style="background:rgba(91,141,238,.08);border:1px solid rgba(91,141,238,.2);border-radius:10px;padding:10px;text-align:center;margin-bottom:10px;font-size:13px;color:var(--accent);font-weight:700">Pot: Enter members and contribution</div>' +
+      '<div id="bc-pot-display" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px;text-align:center;margin-bottom:10px;font-size:13px;color:var(--accent);font-weight:700">Pot: Enter members and contribution</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">My Turn (Round #)</label>' +
@@ -293,7 +293,7 @@ const BCModule = {
       '</div>' +
 
       (bc.myTurnRound ? (
-        '<div style="background:' + (myTurnDone ? 'rgba(76,175,80,.1)' : 'rgba(91,141,238,.1)') + ';border:1px solid ' + (myTurnDone ? 'rgba(76,175,80,.3)' : 'rgba(91,141,238,.3)') + ';border-radius:12px;padding:12px;text-align:center">' +
+        '<div style="background:' + (myTurnDone ? 'rgba(76,175,80,.1)' : 'rgba(255,255,255,.1)') + ';border:1px solid ' + (myTurnDone ? 'rgba(76,175,80,.3)' : 'rgba(255,255,255,.3)') + ';border-radius:12px;padding:12px;text-align:center">' +
           '<div style="font-size:13px;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? '✓ You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
           (myTurnDone ? '<div style="font-size:12px;color:var(--text3);margin-top:4px">You received ' + fmt(pot) + '</div>' : '') +
         '</div>'

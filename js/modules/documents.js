@@ -50,10 +50,10 @@ const DocsModule={
   buildForm(schema,d={}){
     return schema.fields.map(f=>{
       const val=d[f.id]||'';
-      if(f.multi)return `<div class="fg"><label class="fl">${f.label}</label><textarea class="inp" id="df-${f.id}" rows="3" placeholder="${f.ph||''}">${val}</textarea></div>`;
-      if(f.type==='date')return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" type="date" value="${val}"></div>`;
-      if(f.list)return `<div class="fg"><label class="fl">${f.label}</label><datalist id="dl-${f.id}">${f.list.split(',').map(o=>`<option>${o}</option>`).join('')}</datalist><input class="inp" id="df-${f.id}" list="dl-${f.id}" value="${val}" placeholder="${f.ph||''}"></div>`;
-      return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" value="${val}" placeholder="${f.ph||''}"></div>`;
+      if(f.multi)return `<div class="fg"><label class="fl">${f.label}</label><textarea class="inp" id="df-${f.id}" rows="3" placeholder="${f.ph||''}">${escAttr(val)}</textarea></div>`;
+      if(f.type==='date')return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" type="date" value="${escAttr(val)}"></div>`;
+      if(f.list)return `<div class="fg"><label class="fl">${f.label}</label><datalist id="dl-${f.id}">${f.list.split(',').map(o=>`<option>${o}</option>`).join('')}</datalist><input class="inp" id="df-${f.id}" list="dl-${f.id}" value="${escAttr(val)}" placeholder="${f.ph||''}"></div>`;
+      return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" value="${escAttr(val)}" placeholder="${f.ph||''}"></div>`;
     }).join('');
   },
   _smartToSchemaType(t){
@@ -64,10 +64,10 @@ const DocsModule={
   openAdd(prefill={}){
     DocsModule._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `🪪 Add Document — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '🪪 Add Document';
-    const smartNames=(SMART_DB.documents||[]).map(d=>`<option value="${d.name}">`).join('');
+    const smartNames=(SMART_DB.documents||[]).map(d=>`<option value="${escAttr(d.name)}">`).join('');
     Modal.open(title,`
     <div class="fg"><label class="fl">Document Type *</label>
-      <datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${DOC_SCHEMAS[t].label}">`).join('')}${smartNames}</datalist>
+      <datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${escAttr(DOC_SCHEMAS[t].label)}">`).join('')}${smartNames}</datalist>
       <input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="CNIC, Passport, Visa, Insurance..." oninput="DocsModule.onTypeChange(this.value)" autocomplete="off">
     </div>
     <div id="doc-dynamic-fields"></div>
@@ -206,10 +206,10 @@ const DocsModule={
       +(needsBack?'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="doc-photo-back" style="margin-top:4px">'+(d.backPhoto?'<img src="data:image/jpeg;base64,'+d.backPhoto+'" alt="Document back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\'back\')" title="Tap to view">':'')+'</div></div>':'')
       +'</div></div>';
     Modal.open('✏️ Edit '+schema.label,`
-    <div class="fg"><label class="fl">Document Type</label><input class="inp" id="doc-type-sel" value="${schema.label}" readonly style="opacity:.7"></div>
+    <div class="fg"><label class="fl">Document Type</label><input class="inp" id="doc-type-sel" value="${escAttr(schema.label)}" readonly style="opacity:.7"></div>
     ${this.buildForm(schema,d)}
     ${photoHtml}
-    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2">${d.notes||''}</textarea></div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2">${escAttr(d.notes||'')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(d.tags||[])}`,
     `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="DocsModule.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="DocsModule.save('${id}')">Update</button>`);
     // Restore saved photo data attributes for save() to read

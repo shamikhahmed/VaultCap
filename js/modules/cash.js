@@ -1,17 +1,21 @@
-const _FX = typeof FX !== 'undefined' ? FX : {PKR:1,GBP:350,AED:75,USD:280,EUR:320};
-
 const Cash = {
   render() {
     const el = document.getElementById('cashItems'); if (!el) return;
     const sm = document.getElementById('cashSummary');
     const data = (S.cash || []).slice().sort((a, b) => (b.amount || 0) - (a.amount || 0));
+    const toPKR = (amt, cur) => typeof CurrencyEngine !== 'undefined'
+      ? CurrencyEngine.toBase(amt || 0, cur || 'PKR')
+      : (amt || 0);
+    const fromPKR = (pkr, cur) => typeof CurrencyEngine !== 'undefined'
+      ? CurrencyEngine.fromBase(pkr || 0, cur || 'PKR')
+      : (pkr || 0);
     if (sm) {
       if (data.length) {
         const byCur = {};
         data.forEach(c => { byCur[c.currency] = (byCur[c.currency] || 0) + (c.amount || 0); });
         const userCur = S.user.currency || 'PKR';
-        const totalPKR = data.reduce((a, c) => a + (c.amount || 0) * (_FX[c.currency] || 1), 0);
-        const totalUser = totalPKR / (_FX[userCur] || 1);
+        const totalPKR = data.reduce((a, c) => a + toPKR(c.amount, c.currency), 0);
+        const totalUser = fromPKR(totalPKR, userCur);
         const byLocStr = Object.entries(byCur).map(([cur, v]) => `<div class="sens" style="font-size:15px;font-weight:700">${U.fmt(v)} ${cur}</div>`).join('');
         const convLine = Object.keys(byCur).length > 1 || Object.keys(byCur)[0] !== userCur
           ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';
@@ -35,8 +39,8 @@ const Cash = {
   },
   form(c = {}) {
     return `<div class="fg"><label class="fl">Location *</label><select class="inp" id="cf-loc"><option value="Wallet">👛 Wallet</option><option value="Home">🏠 Home</option><option value="Office">🏢 Office</option><option value="Car">🚗 Car</option><option value="Other">📦 Other</option></select></div>
-    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="cf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${c.amount || ''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
-    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${c.notes || ''}</textarea></div>
+    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="cf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(c.amount || '')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${escAttr(c.notes || '')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(c.tags||[])}</div>`;
   },
   save(editId = null) {
@@ -73,14 +77,14 @@ const Cash = {
     const otherEntries = others.filter(o => o.currency === src.currency);
     const destOpts = [
       ...locOpts.map(l => `<option value="__new__${l}">${l} (new entry)</option>`),
-      ...(otherEntries.length ? ['<option disabled>── existing ──</option>', ...otherEntries.map(o => `<option value="${o.id}">${o.location} (${(o.amount||0).toLocaleString()} ${o.currency})</option>`)] : [])
+      ...(otherEntries.length ? ['<option disabled>── existing ──</option>', ...otherEntries.map(o => `<option value="${escAttr(o.id)}">${o.location} (${(o.amount||0).toLocaleString()} ${o.currency})</option>`)] : [])
     ].join('');
     Modal.open('→ Transfer Cash', `
-      <div class="fg"><label class="fl">From</label><input class="inp" value="${src.location} · ${(src.amount||0).toLocaleString()} ${src.currency}" readonly style="opacity:.6"></div>
+      <div class="fg"><label class="fl">From</label><input class="inp" value="${escAttr(src.location)} · ${escAttr(String((src.amount||0).toLocaleString()))} ${escAttr(src.currency||'')}" readonly style="opacity:.6"></div>
       <div class="fg"><label class="fl">To *</label><select class="inp" id="ct-dest">${destOpts}</select></div>
       <div class="fr">
-        <div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="ct-amt" type="text" inputmode="decimal" value="${src.amount||''}" placeholder="0"></div>
-        <div class="fg"><label class="fl">Currency</label><input class="inp" value="${src.currency||''}" readonly style="opacity:.6"></div>
+        <div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="ct-amt" type="text" inputmode="decimal" value="${escAttr(src.amount||'')}" placeholder="0"></div>
+        <div class="fg"><label class="fl">Currency</label><input class="inp" value="${escAttr(src.currency||'')}" readonly style="opacity:.6"></div>
       </div>
       <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
     `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash._doTransfer('${id}')">Transfer</button>`);

@@ -29,26 +29,26 @@ const Inv={
   },
   form(i={}){
     const isEdit=!!i.id;
-    const invNames=SMART_DB.investments.map(x=>`<option value="${x.name}">`).join('');
+    const invNames=SMART_DB.investments.map(x=>`<option value="${escAttr(x.name)}">`).join('');
     return `
     <datalist id="invDL">${invNames}</datalist>
     <datalist id="brDL">${U.brokerOpts()}</datalist>
     <datalist id="ifTypeDL"><option>Stocks</option><option>Mutual Funds</option><option>ETFs</option><option>Bonds</option><option>Sukuk</option><option>Crypto</option><option>Fixed Deposit</option><option>Pension</option><option>REITs</option><option>Other</option></datalist>
     <!-- REQUIRED -->
-    <div class="fg"><label class="fl">Investment Name *</label><input class="inp" id="if-name" list="invDL" placeholder="e.g. ENGRO, Bitcoin, Meezan Fund…" autocomplete="off" oninput="SMART_DB.fillInv(this.value)" value="${i.investmentName||''}"></div>
-    <div class="fr"><div class="fg"><label class="fl">Type *</label><input class="inp" id="if-type" value="${i.type||''}" list="ifTypeDL" placeholder="Stocks, Crypto, Fund…"></div><div class="fg"><label class="fl">Amount Invested *</label><input class="inp num-inp" id="if-inv" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${i.amountInvested||''}" placeholder="0"></div></div>
+    <div class="fg"><label class="fl">Investment Name *</label><input class="inp" id="if-name" list="invDL" placeholder="e.g. ENGRO, Bitcoin, Meezan Fund…" autocomplete="off" oninput="SMART_DB.fillInv(this.value)" value="${escAttr(i.investmentName||'')}"></div>
+    <div class="fr"><div class="fg"><label class="fl">Type *</label><input class="inp" id="if-type" value="${escAttr(i.type||'')}" list="ifTypeDL" placeholder="Stocks, Crypto, Fund…"></div><div class="fg"><label class="fl">Amount Invested *</label><input class="inp num-inp" id="if-inv" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(i.amountInvested||'')}" placeholder="0"></div></div>
     <!-- MORE DETAILS -->
     <details${isEdit?' open':''} style="margin-top:10px">
       <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
         <span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span>
       </summary>
       <div style="padding-top:10px">
-        <div class="fr"><div class="fg"><label class="fl">Current Value</label><input class="inp num-inp" id="if-cur2" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${i.currentValue||''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="if-cur">${U.currencies()}</select></div></div>
-        <div class="fr"><div class="fg"><label class="fl">Ticker / Symbol</label><input class="inp" id="if-tick" value="${i.ticker||''}" placeholder="ENGRO, BTC" oninput="Inv.lookupTicker(this.value)"><div id="if-tick-hint" style="font-size:11px;color:var(--text3);margin-top:3px;min-height:14px"></div></div><div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="if-date" value="${i.purchaseDate||''}" type="date"></div></div>
-        <div class="fr"><div class="fg"><label class="fl">Broker / Platform</label><input class="inp" id="if-broker" value="${i.broker||''}" list="brDL" placeholder="AKD, Binance…"></div><div class="fg"><label class="fl">Risk Level</label><datalist id="ifRiskDL"><option>Low</option><option>Medium</option><option>High</option><option>Very High</option></datalist><input class="inp" id="if-risk" value="${i.riskLevel||''}" list="ifRiskDL" placeholder="Low, Medium, High"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Current Value</label><input class="inp num-inp" id="if-cur2" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(i.currentValue||'')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="if-cur">${U.currencies()}</select></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Ticker / Symbol</label><input class="inp" id="if-tick" value="${escAttr(i.ticker||'')}" placeholder="ENGRO, BTC" oninput="Inv.lookupTicker(this.value)"><div id="if-tick-hint" style="font-size:11px;color:var(--text3);margin-top:3px;min-height:14px"></div></div><div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="if-date" value="${escAttr(i.purchaseDate||'')}" type="date"></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Broker / Platform</label><input class="inp" id="if-broker" value="${escAttr(i.broker||'')}" list="brDL" placeholder="AKD, Binance…"></div><div class="fg"><label class="fl">Risk Level</label><datalist id="ifRiskDL"><option>Low</option><option>Medium</option><option>High</option><option>Very High</option></datalist><input class="inp" id="if-risk" value="${escAttr(i.riskLevel||'')}" list="ifRiskDL" placeholder="Low, Medium, High"></div></div>
         <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="if-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="if-own"><option value="personal"${i.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${i.ownership==='business'?' selected':''}>🏢 Business</option></select></div></div>
         ${U.loginFields(i)}
-        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="if-notes" rows="2">${i.notes||''}</textarea></div>
+        <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="if-notes" rows="2">${escAttr(i.notes||'')}</textarea></div>
         <div class="fg"><label class="fl">Tags</label>${U.tags(i.tags||[])}</div>
         <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;margin-top:4px"><input type="checkbox" id="if-fav" ${i.favorite?'checked':''}> ⭐ Favourite</label>
       </div>

@@ -33,9 +33,9 @@ const Friends = {
     Modal.open('👥 Add Friend', this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Friends.save()">Save</button>`);
   },
   form(f = {}) {
-    return `<div class="fg"><label class="fl">Name *</label><input class="inp" id="ff-name" value="${f.name || ''}" placeholder="Full name"></div>
-    <div class="fg"><label class="fl">Phone</label><input class="inp" id="ff-phone" value="${f.phone || ''}" placeholder="+92 300 ..."></div>
-    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="ff-notes" rows="2">${f.notes || ''}</textarea></div>`;
+    return `<div class="fg"><label class="fl">Name *</label><input class="inp" id="ff-name" value="${escAttr(f.name || '')}" placeholder="Full name"></div>
+    <div class="fg"><label class="fl">Phone</label><input class="inp" id="ff-phone" value="${escAttr(f.phone || '')}" placeholder="+92 300 ..."></div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="ff-notes" rows="2">${escAttr(f.notes || '')}</textarea></div>`;
   },
   save(editId = null) {
     const name = document.getElementById('ff-name').value.trim();

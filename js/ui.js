@@ -181,7 +181,7 @@ const Dash={
     const wCards = S.cards.filter(c => S.wallet.includes(c.id));
     const ctxFilt = arr => typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]);
 
-    const breakdown=[{label:'Banks',value:bankPKR,color:'#5b8dee',icon:'🏦'},{label:'Cash',value:cashPKR,color:'#30d158',icon:'💵'},{label:'Investments',value:invPKR,color:'#e91e8c',icon:'📈'},{label:'Assets',value:asPKR,color:'#ff9f0a',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'#af52de',icon:'🤝'}].filter(x=>x.value>0);
+    const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'🏦'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'💵'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'📈'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'🤝'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
     const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-height:22px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1;line-height:1.3">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;align-items:center"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
@@ -195,8 +195,8 @@ const Dash={
       ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,213,255,.08));border:1px solid rgba(123,95,255,.3);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
-      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>' +
+    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwPKR)+'</div>' +
       ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
@@ -804,14 +804,6 @@ const ExIm={
         }
         if(raw.startsWith('VAULTOS4_ENC::'))raw=atob(raw.replace('VAULTOS4_ENC::',''));
         doImport(raw);
-        return;
-        const data=JSON.parse(raw);
-        if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file — is this a VaultCap backup?','error');return;}
-        const counts=[`${(data.banks||[]).length} banks`,`${(data.cards||[]).length} cards`,`${(data.emails||[]).length} emails`,`${(data.gadgets||[]).length} devices`,`${(data.expenses||[]).length} expenses`].join(', ');
-        if(!window.__vos_confirm(`Import vault backup?\n\n${counts}\n\nThis will MERGE with your existing data (no deletions).`))return;
-        ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
-        if(data.modules)Object.assign(S.modules,data.modules);
-        Store.save();buildNav();Activity.log('Vault imported from file');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
       }catch(err){Toast.show('Failed to read file: '+err.message,'error');}
     };
     r.readAsText(file);ev.target.value='';
@@ -837,7 +829,7 @@ const ExIm={
     const investCurrent=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
     const investPL=investCurrent-investedTotal;
     const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f0f4ff;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#1a1a2e}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#1a1a2e;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:#111;color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f5f5f5;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#111}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#111;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
     '<div class="no-print"><button type="button" class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button type="button" onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
     '<div class="header"><h1>🔐 VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmtDisplay(nwPKR)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
@@ -2010,35 +2002,24 @@ const SettingsNav = {
   },
 
   _appearance() {
-    return `<div class="set-sec"><div class="set-title">🎨 Appearance</div><div class="set-card">
+    const options = [
+      { id: 'dark', label: 'Dark', preview: '#000000', dot: '#ffffff' },
+      { id: 'light', label: 'Light', preview: '#ffffff', dot: '#000000' },
+      { id: 'auto', label: 'System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', dot: '#888888' },
+    ];
+    return `<div class="set-sec"><div class="set-title">Appearance</div><div class="set-card">
       <div style="padding:14px 16px">
-        <div style="margin-bottom:8px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">🌙 Dark</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-            ${THEMES.filter(t=>t.g==='dark').map(t=>`
-              <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
-                <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px">
-                  <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
-                  <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.4"></div>
-                </div>
-                <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
-                  <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
-                </div>
-              </div>`).join('')}
-          </div>
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">☀️ Light</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            ${THEMES.filter(t=>t.g==='light').map(t=>`
-              <div onclick="ThemeEngine.apply('${t.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme===t.id?'var(--accent)':'var(--border)'}">
-                <div style="height:48px;background:${t.bg};display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:1px solid rgba(0,0,0,.08)">
-                  <div style="width:12px;height:12px;border-radius:50%;background:${t.ac}"></div>
-                  <div style="width:28px;height:6px;border-radius:3px;background:${t.ac};opacity:.5"></div>
-                </div>
-                <div style="padding:8px 10px;background:var(--glass);border-top:1px solid var(--border)">
-                  <div style="font-size:12px;font-weight:600;color:var(--text)">${t.n}</div>
-                </div>
-              </div>`).join('')}
-          </div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Dark, Light, or match your device setting.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${options.map(o => `
+            <button type="button" onclick="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
+              <div style="height:48px;background:${o.preview};display:flex;align-items:center;justify-content:center">
+                <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
+              </div>
+              <div style="padding:8px 10px;border-top:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:${S.user.theme === o.id ? '700' : '600'};color:var(--text)">${o.label}</div>
+              </div>
+            </button>`).join('')}
         </div>
       </div>
     </div></div>`;

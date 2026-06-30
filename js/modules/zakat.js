@@ -320,7 +320,7 @@ const Zakat = {
   },
 
   _zakatField(label, id, value, hint, isAuto) {
-    const badge = isAuto ? '<span style="font-size:9px;background:rgba(91,141,238,.15);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px">Auto</span>' : '';
+    const badge = isAuto ? '<span style="font-size:9px;background:rgba(255,255,255,.15);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px">Auto</span>' : '';
     return '<div style="margin-bottom:10px">' +
       '<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:4px">' + label + badge + '</label>' +
       '<input class="inp num-inp" type="text" inputmode="decimal" id="' + id + '" value="' + Math.round(value) + '" ' +

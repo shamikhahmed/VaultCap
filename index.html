@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function () {
-  var BUILD = '4.8.8';
+  var BUILD = '4.9.1';
   var KEY = 'vaultcap_build';
   if (localStorage.getItem(KEY) === BUILD) return;
   localStorage.setItem(KEY, BUILD);
@@ -93,7 +93,7 @@
 <div class="offline-bar" id="offBar">📴 Offline — Vault works locally</div>
 
 <!-- DEMO BANNER — shown when active profile = demo -->
-<div id="demoBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:8888;background:rgba(91,141,238,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-size:13px;font-weight:600;text-align:center;padding:7px 16px;letter-spacing:0.02em">
+<div id="demoBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:8888;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-size:13px;font-weight:600;text-align:center;padding:7px 16px;letter-spacing:0.02em;border-bottom:1px solid rgba(255,255,255,0.12)">
   🎭 Demo mode — sample data only · PIN: <strong>123456</strong> · <button onclick="typeof VaultProfiles!=='undefined'&&VaultProfiles.exitDemo()" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px;cursor:pointer;margin-left:8px">Exit demo</button>
 </div>
 
@@ -131,11 +131,11 @@
     <div class="lk-brand">
       <div class="lk-mark">
         <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:translateZ(0);will-change:transform;display:block">
-          <rect width="72" height="72" rx="16" fill="#0A84FF"/>
-          <rect x="20" y="28" width="32" height="26" rx="6" fill="white" opacity="0.95"/>
-          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="white" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <circle cx="36" cy="41" r="4" fill="#0A84FF"/>
-          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="#0A84FF"/>
+          <rect width="72" height="72" rx="16" fill="#ffffff"/>
+          <rect x="20" y="28" width="32" height="26" rx="6" fill="#000000" opacity="0.95"/>
+          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="#000000" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="36" cy="41" r="4" fill="#ffffff"/>
+          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="#ffffff"/>
         </svg>
       </div>
       <div class="lk-brand-name">VaultCap</div>
@@ -471,48 +471,48 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3>🎨 Appearance</h3><button class="icb" onclick="ThemeEngine.closePicker()">✕</button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=4.8.8"></script>
-<script>window.VER='4.8.8';</script>
-<script src="js/core/constants.js?v=4.8.8"></script>
-<script src="js/core/validators.js?v=4.8.8"></script>
-<script src="js/core/vault-meta.js?v=4.8.8"></script>
-<script src="js/core/theme.js?v=4.8.8"></script>
-<script src="js/core/lazy-loader.js?v=4.8.8"></script>
-<script src="js/core/vault-profiles.js?v=4.8.8"></script>
-<script src="js/core/lock-recovery.js?v=4.8.8"></script>
-<script src="js/core/store-engine.js?v=4.8.8"></script>
-<script src="js/core/crypto.js?v=4.8.8"></script>
-<script src="js/core/migrate.js?v=4.8.8"></script>
-<script src="js/core/smart-db.js?v=4.8.8"></script>
-<script src="js/core/onboarding-flow.js?v=4.8.8"></script>
-<script src="js/core/pin.js?v=4.8.8"></script>
-<script src="js/core/router.js?v=4.8.8"></script>
-<script src="js/core/demo-boot.js?v=4.8.8"></script>
-<script src="js/core/family-pickers.js?v=4.8.8"></script>
-<script src="js/modules/rates.js?v=4.8.8"></script>
-<script src="js/modules/currency-engine.js?v=4.8.8"></script>
-<script src="js/core/lookup-data.js?v=4.8.8"></script>
-<script src="js/core/doc-schemas.js?v=4.8.8"></script>
-<script src="js/core/vault-safety.js?v=4.8.8"></script>
-<script src="js/core/module-registry.js?v=4.8.8"></script>
-<script src="js/core/vault-relations.js?v=4.8.8"></script>
-<script src="js/core/data-integrity.js?v=4.8.8"></script>
-<script src="js/core/branding.js?v=4.8.8"></script>
-<script src="js/core/focus-trap.js?v=4.8.8"></script>
-<script src="js/core/vault-health.js?v=4.8.8"></script>
-<script src="js/core/modal.js?v=4.8.8"></script>
-<script src="js/core/activity.js?v=4.8.8"></script>
-<script src="js/core/vault-utils.js?v=4.8.8"></script>
-<script src="js/core/emergency.js?v=4.8.8"></script>
-<script src="js/core/onboarding-wizard.js?v=4.8.8"></script>
-<script src="js/core/ios-interactions.js?v=4.8.8"></script>
-<script src="js/core/nav-ui.js?v=4.8.8"></script>
-<script src="js/core/smart-actions.js?v=4.8.8"></script>
-<script src="js/core/workspace-security.js?v=4.8.8"></script>
-<script src="js/core/demo-profiles.js?v=4.8.8"></script>
-<script src="js/core/app-helpers.js?v=4.8.8"></script>
-<script src="js/app.js?v=4.8.8"></script>
-<script src="js/ui.js?v=4.8.8"></script>
+<script src="js/storage.js?v=4.9.1"></script>
+<script>window.VER='4.9.1';</script>
+<script src="js/core/constants.js?v=4.9.1"></script>
+<script src="js/core/validators.js?v=4.9.1"></script>
+<script src="js/core/vault-meta.js?v=4.9.1"></script>
+<script src="js/core/theme.js?v=4.9.1"></script>
+<script src="js/core/lazy-loader.js?v=4.9.1"></script>
+<script src="js/core/vault-profiles.js?v=4.9.1"></script>
+<script src="js/core/lock-recovery.js?v=4.9.1"></script>
+<script src="js/core/store-engine.js?v=4.9.1"></script>
+<script src="js/core/crypto.js?v=4.9.1"></script>
+<script src="js/core/migrate.js?v=4.9.1"></script>
+<script src="js/core/smart-db.js?v=4.9.1"></script>
+<script src="js/core/onboarding-flow.js?v=4.9.1"></script>
+<script src="js/core/pin.js?v=4.9.1"></script>
+<script src="js/core/router.js?v=4.9.1"></script>
+<script src="js/core/demo-boot.js?v=4.9.1"></script>
+<script src="js/core/family-pickers.js?v=4.9.1"></script>
+<script src="js/modules/rates.js?v=4.9.1"></script>
+<script src="js/modules/currency-engine.js?v=4.9.1"></script>
+<script src="js/core/lookup-data.js?v=4.9.1"></script>
+<script src="js/core/doc-schemas.js?v=4.9.1"></script>
+<script src="js/core/vault-safety.js?v=4.9.1"></script>
+<script src="js/core/module-registry.js?v=4.9.1"></script>
+<script src="js/core/vault-relations.js?v=4.9.1"></script>
+<script src="js/core/data-integrity.js?v=4.9.1"></script>
+<script src="js/core/branding.js?v=4.9.1"></script>
+<script src="js/core/focus-trap.js?v=4.9.1"></script>
+<script src="js/core/vault-health.js?v=4.9.1"></script>
+<script src="js/core/modal.js?v=4.9.1"></script>
+<script src="js/core/activity.js?v=4.9.1"></script>
+<script src="js/core/vault-utils.js?v=4.9.1"></script>
+<script src="js/core/emergency.js?v=4.9.1"></script>
+<script src="js/core/onboarding-wizard.js?v=4.9.1"></script>
+<script src="js/core/ios-interactions.js?v=4.9.1"></script>
+<script src="js/core/nav-ui.js?v=4.9.1"></script>
+<script src="js/core/smart-actions.js?v=4.9.1"></script>
+<script src="js/core/workspace-security.js?v=4.9.1"></script>
+<script src="js/core/demo-profiles.js?v=4.9.1"></script>
+<script src="js/core/app-helpers.js?v=4.9.1"></script>
+<script src="js/app.js?v=4.9.1"></script>
+<script src="js/ui.js?v=4.9.1"></script>
 <script>
 (function () {
   // Show demo banner when in demo profile
@@ -537,42 +537,42 @@
   }
 })();
 </script>
-<script src="js/modules/banks.js?v=4.8.8"></script>
-<script src="js/modules/cards.js?v=4.8.8"></script>
-<script src="js/modules/sims.js?v=4.8.8"></script>
-<script src="js/modules/investments.js?v=4.8.8"></script>
-<script src="js/modules/cash.js?v=4.8.8"></script>
-<script src="js/modules/loans.js?v=4.8.8"></script>
-<script src="js/modules/friends.js?v=4.8.8"></script>
-<script src="js/modules/family.js?v=4.8.8"></script>
-<script src="js/modules/assets.js?v=4.8.8"></script>
-<script src="js/modules/expenses.js?v=4.8.8"></script>
-<script src="js/modules/documents.js?v=4.8.8"></script>
-<script src="js/modules/emails.js?v=4.8.8"></script>
-<script src="js/modules/gadgets.js?v=4.8.8"></script>
-<script src="js/modules/digital.js?v=4.8.8"></script>
-<script src="js/modules/alerts.js?v=4.8.8"></script>
-<script src="js/modules/timeline.js?v=4.8.8"></script>
-<script src="js/modules/security.js?v=4.8.8"></script>
-<script src="js/modules/search.js?v=4.8.8"></script>
-<script src="js/modules/vehicles.js?v=4.8.8"></script>
-<script src="js/modules/reminders.js?v=4.8.8"></script>
-<script src="js/modules/trash.js?v=4.8.8"></script>
-<script src="js/modules/currency.js?v=4.8.8"></script>
-<script src="js/modules/gold.js?v=4.8.8"></script>
-<script src="js/modules/zakat.js?v=4.8.8"></script>
-<script src="js/modules/bc.js?v=4.8.8"></script>
-<script src="js/modules/bonds.js?v=4.8.8"></script>
-<script src="js/modules/creditScore.js?v=4.8.8"></script>
-<script src="js/modules/tax.js?v=4.8.8"></script>
+<script src="js/modules/banks.js?v=4.9.1"></script>
+<script src="js/modules/cards.js?v=4.9.1"></script>
+<script src="js/modules/sims.js?v=4.9.1"></script>
+<script src="js/modules/investments.js?v=4.9.1"></script>
+<script src="js/modules/cash.js?v=4.9.1"></script>
+<script src="js/modules/loans.js?v=4.9.1"></script>
+<script src="js/modules/friends.js?v=4.9.1"></script>
+<script src="js/modules/family.js?v=4.9.1"></script>
+<script src="js/modules/assets.js?v=4.9.1"></script>
+<script src="js/modules/expenses.js?v=4.9.1"></script>
+<script src="js/modules/documents.js?v=4.9.1"></script>
+<script src="js/modules/emails.js?v=4.9.1"></script>
+<script src="js/modules/gadgets.js?v=4.9.1"></script>
+<script src="js/modules/digital.js?v=4.9.1"></script>
+<script src="js/modules/alerts.js?v=4.9.1"></script>
+<script src="js/modules/timeline.js?v=4.9.1"></script>
+<script src="js/modules/security.js?v=4.9.1"></script>
+<script src="js/modules/search.js?v=4.9.1"></script>
+<script src="js/modules/vehicles.js?v=4.9.1"></script>
+<script src="js/modules/reminders.js?v=4.9.1"></script>
+<script src="js/modules/trash.js?v=4.9.1"></script>
+<script src="js/modules/currency.js?v=4.9.1"></script>
+<script src="js/modules/gold.js?v=4.9.1"></script>
+<script src="js/modules/zakat.js?v=4.9.1"></script>
+<script src="js/modules/bc.js?v=4.9.1"></script>
+<script src="js/modules/bonds.js?v=4.9.1"></script>
+<script src="js/modules/creditScore.js?v=4.9.1"></script>
+<script src="js/modules/tax.js?v=4.9.1"></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw-v51.js').catch(() => {});
 }
 </script>
-<script src="js/capricorn-motion.js?v=4.8.8"></script>
-<script src="js/cap-demo-mode.js?v=4.8.8"></script>
-<script src="js/capricorn-premium-nav.js?v=4.8.8"></script>
+<script src="js/capricorn-motion.js?v=4.9.1"></script>
+<script src="js/cap-demo-mode.js?v=4.9.1"></script>
+<script src="js/capricorn-premium-nav.js?v=4.9.1"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
       if (window.CapPremiumNav) CapPremiumNav.init({ nav: '#btabs, #sbNav', item: '.ti, .ni' });

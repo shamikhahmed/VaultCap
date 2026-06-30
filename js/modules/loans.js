@@ -161,15 +161,15 @@ const Loans = {
   },
 
   form(l = {}) {
-    const friendOpts = (S.friends || []).map(f => `<option value="${f.name}">`).join('');
+    const friendOpts = (S.friends || []).map(f => `<option value="${escAttr(f.name)}">`).join('');
     const today = new Date().toISOString().split('T')[0];
     const type  = l.type || 'borrowed';
     return `<datalist id="loanFriendsDL">${friendOpts}</datalist>
-    <input type="hidden" id="lf-type" value="${type}">
-    <div class="fg"><label class="fl">Person *</label><input class="inp" id="lf-person" value="${l.person || ''}" list="loanFriendsDL" placeholder="Who did you borrow from / lend to?"></div>
-    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="lf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${l.amount || ''}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="lf-cur">${U.currencies()}</select></div></div>
-    <div class="fr"><div class="fg"><label class="fl">Date</label><input class="inp" id="lf-date" type="date" value="${l.date || today}"></div><div class="fg"><label class="fl">Due Date (optional)</label><input class="inp" id="lf-due" type="date" value="${l.dueDate || ''}"></div></div>
-    <div class="fg"><label class="fl">Notes (optional)</label><textarea class="inp" id="lf-notes" rows="2">${l.notes || ''}</textarea></div>
+    <input type="hidden" id="lf-type" value="${escAttr(type)}">
+    <div class="fg"><label class="fl">Person *</label><input class="inp" id="lf-person" value="${escAttr(l.person || '')}" list="loanFriendsDL" placeholder="Who did you borrow from / lend to?"></div>
+    <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="lf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(l.amount || '')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="lf-cur">${U.currencies()}</select></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Date</label><input class="inp" id="lf-date" type="date" value="${escAttr(l.date || today)}"></div><div class="fg"><label class="fl">Due Date (optional)</label><input class="inp" id="lf-due" type="date" value="${escAttr(l.dueDate || '')}"></div></div>
+    <div class="fg"><label class="fl">Notes (optional)</label><textarea class="inp" id="lf-notes" rows="2">${escAttr(l.notes || '')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(l.tags||[])}</div>`;
   },
 
@@ -241,7 +241,7 @@ const Loans = {
     const cur = l.currency || S.user?.currency || 'PKR';
     Modal.open('💰 Record Payment',
       `<div class="fg"><label class="fl">Amount Paid *</label><input class="inp num-inp" id="lp-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" placeholder="0"></div>
-      <div class="fg"><label class="fl">Date</label><input class="inp" id="lp-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="fg"><label class="fl">Date</label><input class="inp" id="lp-date" type="date" value="${escAttr(new Date().toISOString().split('T')[0])}"></div>
       <div class="fg"><label class="fl">Notes (optional)</label><input class="inp" id="lp-notes" placeholder="Transfer, cash…"></div>
       <div style="background:var(--glass);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text2);margin-top:4px">
         <div>Original: <strong>${cur} ${Math.round(l.amount||0).toLocaleString()}</strong></div>

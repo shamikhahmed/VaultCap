@@ -280,7 +280,7 @@ const AIImport = {
     body.innerHTML =
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
 
-      '<div style="background:linear-gradient(135deg,rgba(91,141,238,.15),rgba(91,141,238,.05));border:1px solid rgba(91,141,238,.25);border-radius:16px;padding:16px">' +
+      '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px">' +
         '<div style="font-size:15px;font-weight:800;color:var(--accent);margin-bottom:4px">📥 Smart Import</div>' +
         '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
@@ -396,7 +396,7 @@ const AIImport = {
   _renderResults(detected, container) {
     if (!container) return;
     const typeLabels = { bank:'🏦 Bank', card:'💳 Card', loan:'🤝 Loan', document:'🪪 Document', cash:'💵 Cash', investment:'📈 Investment', gold:'🥇 Metal', bc:'🤝 Committee', bond:'🎫 Bond', expense:'📋 Expense', sim:'📱 SIM', email:'📧 Email' };
-    const typeColors = { bank:'rgba(91,141,238,.15)', card:'rgba(52,199,89,.15)', loan:'rgba(255,159,10,.15)', document:'rgba(91,141,238,.15)', cash:'rgba(52,199,89,.15)', investment:'rgba(122,168,245,.15)', gold:'rgba(201,168,76,.15)', bc:'rgba(91,141,238,.15)', bond:'rgba(201,168,76,.15)', expense:'rgba(233,30,140,.12)', sim:'rgba(91,141,238,.12)' };
+    const typeColors = { bank:'rgba(255,255,255,.15)', card:'rgba(52,199,89,.15)', loan:'rgba(255,159,10,.15)', document:'rgba(255,255,255,.15)', cash:'rgba(52,199,89,.15)', investment:'rgba(122,168,245,.15)', gold:'rgba(201,168,76,.15)', bc:'rgba(255,255,255,.15)', bond:'rgba(201,168,76,.15)', expense:'rgba(233,30,140,.12)', sim:'rgba(255,255,255,.12)' };
 
     let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +

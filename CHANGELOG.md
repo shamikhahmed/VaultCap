@@ -1,5 +1,66 @@
 # Changelog — VaultCap
 
+## 4.9.1 (2026-06-30) — Full monochrome sweep + comprehensive E2E
+
+### Design
+- Monochrome pass on `landing.html`, `presentation.html`, `widget.html`, `changelog.html`, `privacy.html`
+- Module panels: `bc.js`, `ai-import.js`, `creditScore.js`, `zakat.js`, `onboarding-wizard.js` — blue rgba removed
+- `expenses.js` donut `CAT_COLORS` → grayscale palette
+- `assets.js` type colors → grayscale; `banks.js` logo palette neutralized
+- `capricorn-core.css`: `--cap-info` and accent fallback neutralized
+- `app-helpers.js` install banner uses `var(--accent)` only
+
+### Code quality
+- Removed dead unreachable block in `ExIm.import()` after `doImport(raw)`
+
+### Tests (107 passing)
+- `full-navigation.spec.js` — all 40+ pages + alias routes (gadgets/vehicles/gold → assets)
+- `forms-coverage.spec.js` — 14 add forms + edit XSS + demo edit flows
+- `settings-tabs.spec.js` — all 8 settings tabs + backup export actions
+- `satellite-pages.spec.js` — landing/pitch/presentation/changelog/privacy/widget monochrome
+- `export-import.spec.js` — legacy Crypto encrypt/decrypt + VAULTOS_AES256 merge path
+
+### Version
+- Bumped to `4.9.1`
+
+## 4.9.0 (2026-06-30) — Form escAttr sweep + pitch monochrome + export/import E2E
+
+### Security
+- `escAttr()` / `U.fv()` helpers in `vault-utils.js` — all form `value=` and textarea bodies in 13 modules
+- `U.loginFields()` escaped
+- Cash transfer readonly field escaped
+
+### Design
+- `pitch.html`: full monochrome pass — blue gradients removed
+- PDF export template: black/white header (no navy gradient)
+
+### Tests
+- `export-import.spec.js`: JSON schema, merge import, duplicate-ID guard, bank form XSS
+- Prior audit tests retained (theme, currency, viewport, security)
+
+### Version
+- Bumped to `4.9.0`
+
+## 4.8.9 (2026-06-30) — Monochrome theme + financial/currency audit
+
+### Design / Theme
+- Monochrome accent: dark `#ffffff`, light `#000000` — blue tint removed from tokens
+- Dashboard NW hero + breakdown bars use `--chart-*` grayscale tokens
+- Settings appearance: Dark / Light / System grid (legacy multi-theme picker removed)
+- Demo banner + lock screen logo: black/white, no iOS blue
+- `theme.js`: removed blue `rgba(91,141,238)` active-state fallback
+
+### Financial
+- `cash.js` summary uses `CurrencyEngine` instead of hardcoded `_FX`
+
+### Tests
+- `theme-audit.spec.js`: theme tokens + settings appearance
+- `currency-audit.spec.js`: GBP/PKR/AED/USD/EUR round-trip + NW identity
+- `viewport.spec.js`: 320px overflow, 390px mobile, 768px tablet
+
+### Version
+- Bumped to `4.8.9`
+
 ## 4.8.8 (2026-06-30) — XSS hardening + monetization UI removed
 
 ### Security

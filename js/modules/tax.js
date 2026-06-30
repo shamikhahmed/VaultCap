@@ -308,7 +308,7 @@ const Tax = {
     const isFlat = filing && filing.isFlat;
     return `${yearToggle}<div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">${isFlat?'IT Export Proceeds / Remittances':'Annual Income'} (${(symbol||'').trim()})</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
@@ -318,7 +318,7 @@ const Tax = {
   _vatForm(saved) {
     return `<div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Amount (AED) — exclusive of VAT</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
@@ -332,11 +332,11 @@ const Tax = {
       <div style="display:flex;gap:8px;margin-bottom:12px">
         ${[['standard','Standard (20%)'],['reduced','Reduced (5%)'],['zero','Zero (0%)']].map(([v,l])=>`<button type="button" onclick="Tax._gbVatRate='${v}';document.getElementById('gbvat-rate').value='${v}';document.querySelectorAll('.gbvat-btn').forEach(b=>b.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="gbvat-btn" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${rate===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
-      <input type="hidden" id="gbvat-rate" value="${rate}">
+      <input type="hidden" id="gbvat-rate" value="${escAttr(rate)}">
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Net Amount (£) — exclusive of VAT</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
@@ -351,7 +351,7 @@ const Tax = {
         <button type="button" onclick="document.querySelectorAll('.cgt-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('cgt-band').value='basic'" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='basic'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Basic Rate</button>
         <button type="button" onclick="document.querySelectorAll('.cgt-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('cgt-band').value='higher'" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='higher'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Higher / Additional</button>
       </div>
-      <input type="hidden" id="cgt-band" value="${b}">
+      <input type="hidden" id="cgt-band" value="${escAttr(b)}">
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Asset Type</label>
@@ -359,11 +359,11 @@ const Tax = {
         <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='property'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">🏠 Property</button>
         <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='other'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">📈 Other Assets</button>
       </div>
-      <input type="hidden" id="cgt-type" value="${t}">
+      <input type="hidden" id="cgt-type" value="${escAttr(t)}">
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Total Capital Gain (£)</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter total gain"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter total gain"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
@@ -377,11 +377,11 @@ const Tax = {
       <div style="display:flex;gap:8px;margin-bottom:12px">
         ${[['basic','Basic (8.75%)'],['higher','Higher (33.75%)'],['additional','Additional (39.35%)']].map(([v,l])=>`<button type="button" onclick="document.querySelectorAll('.div-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('div-band').value='${v}'" class="div-band" style="flex:1;padding:8px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${dv===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
-      <input type="hidden" id="div-band" value="${dv}">
+      <input type="hidden" id="div-band" value="${escAttr(dv)}">
     </div>
     <div style="margin-bottom:16px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Total Dividend Income (£)</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter dividend income"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter dividend income"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
@@ -392,17 +392,17 @@ const Tax = {
     const sp = saved.ihtSpouse||'no';
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Estate Value (£)</label>
-      <input id="iht-estate" type="text" inputmode="decimal" value="${saved.ihtEstate||''}" placeholder="Total estate value"
+      <input id="iht-estate" type="text" inputmode="decimal" value="${escAttr(saved.ihtEstate||'')}" placeholder="Total estate value"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Primary Home Value (£) — for Residence NRB</label>
-      <input id="iht-home" type="text" inputmode="decimal" value="${saved.ihtHome||''}" placeholder="Value of primary residence"
+      <input id="iht-home" type="text" inputmode="decimal" value="${escAttr(saved.ihtHome||'')}" placeholder="Value of primary residence"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px">
       <button type="button" onclick="document.getElementById('iht-spouse').value='yes';document.querySelectorAll('.iht-sp').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Transferring spouse NRB</button>
       <button type="button" onclick="document.getElementById('iht-spouse').value='no';document.querySelectorAll('.iht-sp').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
     </div>
-    <input type="hidden" id="iht-spouse" value="${sp}">
+    <input type="hidden" id="iht-spouse" value="${escAttr(sp)}">
     <button type="button" onclick="Tax.calculateIHT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate IHT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
@@ -411,7 +411,7 @@ const Tax = {
     const ft = saved.sdltFtb||'no', ad = saved.sdltAdd||'no';
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Property Purchase Price (£)</label>
-      <input id="sdlt-price" type="text" inputmode="decimal" value="${saved.sdltPrice||''}" placeholder="Enter purchase price"
+      <input id="sdlt-price" type="text" inputmode="decimal" value="${escAttr(saved.sdltPrice||'')}" placeholder="Enter purchase price"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px">
@@ -422,8 +422,8 @@ const Tax = {
       <button type="button" onclick="document.getElementById('sdlt-add').value='yes';document.querySelectorAll('.sdlt-add').forEach(x=>x.style.background='transparent');this.style.background='rgba(255,152,0,.2)'" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='yes'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Additional Property (+3%)</button>
       <button type="button" onclick="document.getElementById('sdlt-add').value='no';document.querySelectorAll('.sdlt-add').forEach(x=>x.style.background='transparent');this.style.background='rgba(255,152,0,.2)'" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='no'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Main Residence</button>
     </div>
-    <input type="hidden" id="sdlt-ftb" value="${ft}">
-    <input type="hidden" id="sdlt-add" value="${ad}">
+    <input type="hidden" id="sdlt-ftb" value="${escAttr(ft)}">
+    <input type="hidden" id="sdlt-add" value="${escAttr(ad)}">
     <button type="button" onclick="Tax.calculateSDLT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate SDLT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
@@ -433,10 +433,10 @@ const Tax = {
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Product Category</label>
       <select id="excise-cat" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;margin-bottom:12px">
-        ${ex.rates.map(r=>`<option value="${r.rate}">${r.label} (${(r.rate*100).toFixed(0)}%)</option>`).join('')}
+        ${ex.rates.map(r=>`<option value="${escAttr(r.rate)}">${r.label} (${(r.rate*100).toFixed(0)}%)</option>`).join('')}
       </select>
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Amount (AED) — exclusive of excise</label>
-      <input id="tax-income" type="text" inputmode="decimal" value="${saved.income||''}" placeholder="Enter amount"
+      <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
     <button type="button" onclick="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
@@ -779,9 +779,9 @@ const Tax = {
     if (!slabs.length) slabs.push({ label: 'Slab 1', min: 0, max: Infinity, rate: 0 });
     const rowHtml = (s, i) => `<div class="tax-slab-row" data-i="${i}" style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;align-items:center;margin-bottom:8px">
       <input data-f="label" class="inp" value="${escHtml(s.label || '')}" placeholder="Label" style="font-size:12px;padding:8px">
-      <input data-f="min" type="number" class="inp" value="${s.min === 0 ? 0 : (s.min || '')}" placeholder="From" style="font-size:12px;padding:8px">
-      <input data-f="max" type="number" class="inp" value="${s.max === Infinity ? '' : (s.max || '')}" placeholder="To (∞)" style="font-size:12px;padding:8px">
-      <input data-f="rate" type="number" class="inp" value="${(s.rate * 100).toFixed(2)}" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
+      <input data-f="min" type="number" class="inp" value="${escAttr(s.min === 0 ? 0 : (s.min || ''))}" placeholder="From" style="font-size:12px;padding:8px">
+      <input data-f="max" type="number" class="inp" value="${escAttr(s.max === Infinity ? '' : (s.max || ''))}" placeholder="To (∞)" style="font-size:12px;padding:8px">
+      <input data-f="rate" type="number" class="inp" value="${escAttr((s.rate * 100).toFixed(2))}" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
       <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>
     </div>`;
   Modal.open('✏️ Edit Tax Slabs',
@@ -806,7 +806,7 @@ const Tax = {
     div.dataset.i = String(i);
     div.style.cssText = 'display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;align-items:center;margin-bottom:8px';
     div.innerHTML = `<input data-f="label" class="inp" value="Slab ${i + 1}" placeholder="Label" style="font-size:12px;padding:8px">
-      <input data-f="min" type="number" class="inp" value="${min || ''}" placeholder="From" style="font-size:12px;padding:8px">
+      <input data-f="min" type="number" class="inp" value="${escAttr(min || '')}" placeholder="From" style="font-size:12px;padding:8px">
       <input data-f="max" type="number" class="inp" value="" placeholder="To (∞)" style="font-size:12px;padding:8px">
       <input data-f="rate" type="number" class="inp" value="0" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
       <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>`;

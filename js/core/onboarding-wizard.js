@@ -271,7 +271,7 @@ const Onboarding = {
 
   showSettingsCard() {
     return `
-      <div style="background:rgba(91,141,238,.08);border:1px solid rgba(91,141,238,.2);border-radius:14px;padding:16px;margin:0 0 16px">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:16px;margin:0 0 16px">
         <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">⚡ Personalise Your Vault</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:12px">Set your country, currency, and preferences for a tailored experience.</div>
         <button type="button" onclick="Onboarding._primaryCountry=S.user.country||'';Onboarding._secondaryCountries=S.user.secondaryCountries||[];Onboarding.show()" class="btn btn-p btn-sm">Run Setup →</button>

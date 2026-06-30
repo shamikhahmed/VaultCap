@@ -14,8 +14,13 @@ function docExpiry(d) {
 }
 window.docExpiry = docExpiry;
 
+function escAttr(str) { return escHtml(str); }
+window.escAttr = escAttr;
+
 const U = {
   esc: escHtml,
+  escAttr,
+  fv: escAttr,
   /** Generates a unique entity ID prefixed with 'i' using timestamp and random suffix. */
   id:       () => 'i' + Date.now() + Math.random().toString(36).slice(2, 5),
   flag:     c  => COUNTRIES.find(x => x.c === c)?.f || '🌐',
@@ -122,10 +127,10 @@ const U = {
     return `<div class="dr"><div class="dk">${safeLabel}</div><div class="dv"><span id="dr-${lid}" class="sens">${safeVal}</span>${secret ? `<button type="button" class="cpbtn" onclick="U.reveal('dr-${lid}','${secJs}','${safeLabel.replace(/'/g, "\\'")}')">👁️</button>` : ''}</div></div>`;
   },
   loginFields: (obj = {}) => `<div class="fr">
-    <div class="fg"><label class="fl">App / Web Username</label><input class="inp" id="lf-user" value="${obj.username||''}" placeholder="Username"></div>
-    <div class="fg"><label class="fl">Password Hint</label><input class="inp" id="lf-pwd" value="${obj.pwdHint||''}" placeholder="e.g. 'Email+DOB'"></div>
+    <div class="fg"><label class="fl">App / Web Username</label><input class="inp" id="lf-user" value="${escAttr(obj.username||'')}" placeholder="Username"></div>
+    <div class="fg"><label class="fl">Password Hint</label><input class="inp" id="lf-pwd" value="${escAttr(obj.pwdHint||'')}" placeholder="e.g. 'Email+DOB'"></div>
   </div><div class="fr">
-    <div class="fg"><label class="fl">App PIN / Passcode</label><input class="inp" id="lf-pin" type="password" value="${obj.appPin||''}" placeholder="App PIN"></div>
+    <div class="fg"><label class="fl">App PIN / Passcode</label><input class="inp" id="lf-pin" type="password" value="${escAttr(obj.appPin||'')}" placeholder="App PIN"></div>
     <div class="fg"><label class="fl">2FA Method</label><select class="inp" id="lf-2fa"><option value="">None</option><option value="SMS">SMS</option><option value="Authenticator">Authenticator</option><option value="Email">Email</option><option value="Hardware Key">Hardware Key</option></select></div>
   </div>`,
   getLF:  () => ({ username: document.getElementById('lf-user')?.value.trim(), pwdHint: document.getElementById('lf-pwd')?.value.trim(), appPin: document.getElementById('lf-pin')?.value.trim(), twoFA: document.getElementById('lf-2fa')?.value }),

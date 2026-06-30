@@ -43,7 +43,7 @@ const CreditScore = {
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
 
       // Score hero
-      '<div style="background:linear-gradient(135deg,rgba(91,141,238,.15),rgba(91,141,238,.05));border:1px solid rgba(91,141,238,.25);border-radius:20px;padding:24px;text-align:center">' +
+      '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:24px;text-align:center">' +
         '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Credit Score</div>' +
         '<div style="position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">' +
           '<svg width="160" height="160" viewBox="0 0 160 160">' +
