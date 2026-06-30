@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v50';
+const CACHE = 'vaultcap-v51';
 // Relative paths work on custom domain (/) and GitHub Pages (/VaultCap/)
 const ASSETS = [
   './css/capricorn-core.css',
