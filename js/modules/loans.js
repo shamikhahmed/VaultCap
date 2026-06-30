@@ -25,11 +25,15 @@ const Loans = {
     const borrowed = all.filter(l => l.type === 'borrowed');
     const lent     = all.filter(l => l.type === 'lent');
 
-    const fx = typeof getFX === 'function' ? getFX() : (typeof FX !== 'undefined' ? FX : {PKR:1,GBP:355,AED:76,USD:280});
-    const toBaseCur = (amt, cur) => (amt||0) * (fx[cur] || 1);
+    const sumLoansPKR = (loans) => loans
+      .filter(l => l.status !== 'Settled')
+      .reduce((a, l) => a + (typeof CurrencyEngine !== 'undefined'
+        ? CurrencyEngine.toBase(l.amount || 0, l.currency || 'PKR')
+        : (l.amount || 0)), 0);
     const userCur = S.user?.currency || 'PKR';
-    const totalOwe  = borrowed.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
-    const totalOwed = lent.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
+    const fmtSum = (pkr) => typeof U.fmtCur === 'function' ? U.fmtCur(pkr, userCur) : U.fmt(Math.round(pkr));
+    const totalOwe  = sumLoansPKR(borrowed);
+    const totalOwed = sumLoansPKR(lent);
     const net       = totalOwed - totalOwe;
 
     const sm = document.getElementById('loanSummary');
@@ -37,15 +41,15 @@ const Loans = {
       sm.innerHTML = `<div class="widget" style="margin-bottom:12px"><div class="fr" style="gap:0">
         <div style="flex:1;text-align:center;padding:6px 8px;border-right:1px solid var(--border)">
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">I Owe</div>
-          <div style="font-size:20px;font-weight:800;color:var(--err)" class="sens">${U.fmt(totalOwe)}</div>
+          <div style="font-size:20px;font-weight:800;color:var(--err)" class="sens">${fmtSum(totalOwe)}</div>
         </div>
         <div style="flex:1;text-align:center;padding:6px 8px;border-right:1px solid var(--border)">
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Net</div>
-          <div style="font-size:20px;font-weight:800;color:${net >= 0 ? 'var(--ok)' : 'var(--err)'}" class="sens">${net >= 0 ? '+' : ''}${U.fmt(net)}</div>
+          <div style="font-size:20px;font-weight:800;color:${net >= 0 ? 'var(--ok)' : 'var(--err)'}" class="sens">${net >= 0 ? '+' : '−'}${fmtSum(Math.abs(net))}</div>
         </div>
         <div style="flex:1;text-align:center;padding:6px 8px">
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">They Owe</div>
-          <div style="font-size:20px;font-weight:800;color:var(--ok)" class="sens">${U.fmt(totalOwed)}</div>
+          <div style="font-size:20px;font-weight:800;color:var(--ok)" class="sens">${fmtSum(totalOwed)}</div>
         </div>
       </div></div>`;
     }
@@ -111,7 +115,7 @@ const Loans = {
       const active   = loans.filter(l => l.status === 'Active' && !(l.dueDate && new Date(l.dueDate) < now));
       const settled  = loans.filter(l => l.status === 'Settled');
       const liveAll  = [...overdue, ...active];
-      const totalAmt = loans.filter(l => l.status !== 'Settled').reduce((a, l) => a + toBaseCur(l.amount||0, l.currency||userCur), 0);
+      const totalAmt = sumLoansPKR(loans);
       const title    = kind === 'borrowed' ? '🤲 I Owe' : '💸 They Owe Me';
       const color    = kind === 'borrowed' ? 'var(--err)' : 'var(--ok)';
       const addType  = kind;
@@ -121,7 +125,7 @@ const Loans = {
           <div>
             <div style="font-size:14px;font-weight:700">${title}</div>
             ${totalAmt > 0
-              ? `<div style="font-size:12px;color:var(--text3)">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${U.fmt(totalAmt)} ${S.user.currency || ''}</span></div>`
+              ? `<div style="font-size:12px;color:var(--text3)">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${fmtSum(totalAmt)}</span></div>`
               : `<div style="font-size:12px;color:var(--text3)">Nothing here yet</div>`}
           </div>
           <button type="button" class="btn btn-p btn-sm" onclick="Loans.openAdd('${addType}')">+ Add</button>

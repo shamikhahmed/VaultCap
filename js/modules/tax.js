@@ -221,8 +221,15 @@ const Tax = {
   },
 
   _getActiveSlabs(filing) {
+    const key = this._slabsKey();
+    const custom = typeof VaultMeta !== 'undefined' ? VaultMeta.get(key) : null;
+    if (custom && custom.length) return custom;
     if (filing.taxYears) return (filing.taxYears[this._taxYear] || filing.taxYears['2024-25'] || {}).slabs || [];
     return filing.slabs || [];
+  },
+
+  _slabsKey() {
+    return `taxSlabs_${this._country}_${this._filing}_${this._taxYear || ''}`;
   },
 
   _setTaxYear(year) {
@@ -273,7 +280,7 @@ const Tax = {
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
         📋 ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit rates ✏️</button>` : ''}
+        ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs ✏️</button>` : ''}
         ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">⚠️ ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
@@ -767,27 +774,60 @@ const Tax = {
 
   openEditSlabs() {
     const filing = this.config[this._country]?.filings[this._filing];
-    if(!filing) return;
-    const slabs = this._getActiveSlabs(filing);
-    if(!slabs.length) return;
-    Modal.open('✏️ Edit Tax Rates',
-      `<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Update if rates have changed. Enter as percentage (e.g. 20 for 20%).</div>
-      ${slabs.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <div style="flex:1;font-size:13px;color:var(--text)">${s.label}</div>
-        <input id="slb-${i}" type="number" value="${(s.rate*100).toFixed(2)}" min="0" max="100" step="0.01"
-          style="width:80px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);text-align:right;font-size:16px">
-        <span style="color:var(--text3)">%</span>
-      </div>`).join('')}`,
+    if (!filing) return;
+    const slabs = this._getActiveSlabs(filing).map(s => ({ ...s }));
+    if (!slabs.length) slabs.push({ label: 'Slab 1', min: 0, max: Infinity, rate: 0 });
+    const rowHtml = (s, i) => `<div class="tax-slab-row" data-i="${i}" style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;align-items:center;margin-bottom:8px">
+      <input data-f="label" class="inp" value="${escHtml(s.label || '')}" placeholder="Label" style="font-size:12px;padding:8px">
+      <input data-f="min" type="number" class="inp" value="${s.min === 0 ? 0 : (s.min || '')}" placeholder="From" style="font-size:12px;padding:8px">
+      <input data-f="max" type="number" class="inp" value="${s.max === Infinity ? '' : (s.max || '')}" placeholder="To (∞)" style="font-size:12px;padding:8px">
+      <input data-f="rate" type="number" class="inp" value="${(s.rate * 100).toFixed(2)}" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
+      <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>
+    </div>`;
+  Modal.open('✏️ Edit Tax Slabs',
+      `<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
+      <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">
+        <span>Label</span><span>From</span><span>To</span><span>Rate</span><span></span>
+      </div>
+      <div id="tax-slab-rows">${slabs.map(rowHtml).join('')}</div>
+      <button type="button" class="btn btn-g btn-sm" style="margin-top:8px;width:100%" onclick="Tax._addSlabRow()">+ Add Slab</button>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Tax._saveSlabs()">Save</button>`);
   },
 
+  _addSlabRow() {
+    const wrap = document.getElementById('tax-slab-rows');
+    if (!wrap) return;
+    const rows = wrap.querySelectorAll('.tax-slab-row');
+    const last = rows[rows.length - 1];
+    const min = last ? (parseFloat(last.querySelector('[data-f=max]')?.value) || parseFloat(last.querySelector('[data-f=min]')?.value) || 0) : 0;
+    const i = rows.length;
+    const div = document.createElement('div');
+    div.className = 'tax-slab-row';
+    div.dataset.i = String(i);
+    div.style.cssText = 'display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;align-items:center;margin-bottom:8px';
+    div.innerHTML = `<input data-f="label" class="inp" value="Slab ${i + 1}" placeholder="Label" style="font-size:12px;padding:8px">
+      <input data-f="min" type="number" class="inp" value="${min || ''}" placeholder="From" style="font-size:12px;padding:8px">
+      <input data-f="max" type="number" class="inp" value="" placeholder="To (∞)" style="font-size:12px;padding:8px">
+      <input data-f="rate" type="number" class="inp" value="0" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
+      <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>`;
+    wrap.appendChild(div);
+  },
+
   _saveSlabs() {
-    const filing = this.config[this._country]?.filings[this._filing];
-    if(!filing) return;
-    const slabs = this._getActiveSlabs(filing);
-    slabs.forEach((s,i)=>{ const el=document.getElementById('slb-'+i); if(el) s.rate=parseFloat(el.value||0)/100; });
+    const wrap = document.getElementById('tax-slab-rows');
+    if (!wrap) return;
+    const slabs = [...wrap.querySelectorAll('.tax-slab-row')].map((row, i) => {
+      const maxVal = row.querySelector('[data-f=max]')?.value;
+      return {
+        label: row.querySelector('[data-f=label]')?.value || `Slab ${i + 1}`,
+        min: parseFloat(row.querySelector('[data-f=min]')?.value) || 0,
+        max: maxVal === '' || maxVal == null ? Infinity : parseFloat(maxVal),
+        rate: parseFloat(row.querySelector('[data-f=rate]')?.value || 0) / 100,
+      };
+    }).sort((a, b) => a.min - b.min);
+    if (typeof VaultMeta !== 'undefined') VaultMeta.set(this._slabsKey(), slabs);
     Modal.close();
-    if(window.Toast) Toast.show('Rates updated','success');
+    if (window.Toast) Toast.show('Tax slabs updated', 'success');
     this.render();
   }
 };

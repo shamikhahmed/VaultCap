@@ -67,9 +67,15 @@ const Cards={
       :'';
     if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
     const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
-    const totalLimit=S.cards.filter(c=>c.cardType==='Credit'&&c.limit).reduce((a,c)=>a+(c.limit||0),0);
-    const _cur=S.user.currency||'GBP';
-    const limitBanner=totalLimit>0?`<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)">${U.fmt(Math.round(totalLimit))} ${_cur}</span></div>`:'';
+    const totalLimitPKR = S.cards
+      .filter(c => c.cardType === 'Credit' && c.limit)
+      .reduce((a, c) => a + (typeof CurrencyEngine !== 'undefined'
+        ? CurrencyEngine.toBase(c.limit || 0, c.currency || S.user.currency || 'PKR')
+        : (c.limit || 0)), 0);
+    const _cur = S.user.currency || 'GBP';
+    const limitBanner = totalLimitPKR > 0
+      ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
+      : '';
     const carrying=data.filter(c=>S.wallet.includes(c.id));
     const rest=data.filter(c=>!S.wallet.includes(c.id));
     const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});

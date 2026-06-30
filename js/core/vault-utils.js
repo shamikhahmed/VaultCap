@@ -1,6 +1,12 @@
 'use strict';
 /* U (utils), entityDefaults, formatNumberInput */
 
+/** Escape text for safe HTML interpolation (global for inline handlers). */
+function escHtml(str) {
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+window.escHtml = escHtml;
+
 const U = {
   /** Generates a unique entity ID prefixed with 'i' using timestamp and random suffix. */
   id:       () => 'i' + Date.now() + Math.random().toString(36).slice(2, 5),

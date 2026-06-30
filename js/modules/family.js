@@ -49,16 +49,14 @@ const Family = {
 
   totalNetWorthPKR() {
     const memberIds = new Set(this.allMembers().map(m => m.id));
+    if (typeof CurrencyEngine !== 'undefined' && CurrencyEngine.computeNetWorthPKR) {
+      return CurrencyEngine.computeNetWorthPKR({ ownerFilter: memberIds }).nwPKR;
+    }
     let total = 0;
-    (S.banks || []).filter(b => memberIds.has(b.ownerId)).forEach(b => {
-      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(b.balance || 0, b.currency || 'PKR') : (b.balance || 0);
-    });
-    (S.cash || []).filter(c => memberIds.has(c.ownerId)).forEach(c => {
-      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(c.amount || 0, c.currency || 'PKR') : (c.amount || 0);
-    });
-    (S.investments || []).filter(i => memberIds.has(i.ownerId)).forEach(i => {
-      total += typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(i.currentValue || 0, i.currency || 'PKR') : (i.currentValue || 0);
-    });
+    (S.banks || []).filter(b => memberIds.has(b.ownerId)).forEach(b => { total += b.balance || 0; });
+    (S.cash || []).filter(c => memberIds.has(c.ownerId)).forEach(c => { total += c.amount || 0; });
+    (S.investments || []).filter(i => memberIds.has(i.ownerId)).forEach(i => { total += i.currentValue || 0; });
+    (S.assets || []).filter(a => memberIds.has(a.ownerId)).forEach(a => { total += a.currentValue || 0; });
     return total;
   },
 

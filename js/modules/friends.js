@@ -4,11 +4,17 @@ const Friends = {
     const allFriends = S.friends || [];
     const activeLoans = (S.loans || []).filter(l => l.status !== 'Settled');
     const friendLoans = activeLoans.filter(l => allFriends.some(f => f.name === l.person));
-    const owedToYou = friendLoans.filter(l => l.type === 'lent').reduce((a, l) => a + (l.amount || 0), 0);
-    const youOwe = friendLoans.filter(l => l.type === 'borrowed').reduce((a, l) => a + (l.amount || 0), 0);
+    const sumFriendPKR = (type) => friendLoans
+      .filter(l => l.type === type)
+      .reduce((a, l) => a + (typeof CurrencyEngine !== 'undefined'
+        ? CurrencyEngine.toBase(l.amount || 0, l.currency || 'PKR')
+        : (l.amount || 0)), 0);
+    const owedToYou = sumFriendPKR('lent');
+    const youOwe = sumFriendPKR('borrowed');
+    const cur = S.user?.currency || 'PKR';
     const sm = document.getElementById('friendSummary');
     if (sm && allFriends.length > 0) {
-      sm.innerHTML = `<div class="widget" style="margin-bottom:12px"><div style="display:flex"><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Friends</div><div style="font-size:22px;font-weight:800">${allFriends.length}</div></div><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">They owe me</div><div style="font-size:16px;font-weight:700;color:var(--ok)" class="sens">${U.fmt(owedToYou)}</div></div><div style="flex:1;text-align:center;padding:10px 0"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">I owe them</div><div style="font-size:16px;font-weight:700;color:var(--err)" class="sens">${U.fmt(youOwe)}</div></div></div></div>`;
+      sm.innerHTML = `<div class="widget" style="margin-bottom:12px"><div style="display:flex"><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Friends</div><div style="font-size:22px;font-weight:800">${allFriends.length}</div></div><div style="flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">They owe me</div><div style="font-size:16px;font-weight:700;color:var(--ok)" class="sens">${U.fmtCur(owedToYou, cur)}</div></div><div style="flex:1;text-align:center;padding:10px 0"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">I owe them</div><div style="font-size:16px;font-weight:700;color:var(--err)" class="sens">${U.fmtCur(youOwe, cur)}</div></div></div></div>`;
     } else if (sm) { sm.innerHTML = ''; }
     const q = (document.getElementById('friendQ')?.value || '').toLowerCase();
     const data = allFriends.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
@@ -20,7 +26,7 @@ const Friends = {
     el.innerHTML = data.map(f => {
       const loans = (S.loans || []).filter(l => l.person === f.name && l.status !== 'Settled');
       const badge = loans.length ? `<span class="badge b-warn">${loans.length} loan${loans.length > 1 ? 's' : ''}</span>` : '';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${f.name}</div><div class="entry-sub">${f.phone || ''}${f.notes ? (f.phone ? ' · ' : '') + f.notes : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts"><button type="button" class="icb" aria-label="Edit" onclick="Friends.edit('${f.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Friends.del('${f.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts"><button type="button" class="icb" aria-label="Edit" onclick="Friends.edit('${f.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Friends.del('${f.id}')">🗑️</button></div></div></div>`;
     }).join('');
   },
   openAdd() {
