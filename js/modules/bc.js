@@ -50,7 +50,7 @@ const BCModule = {
         '</div>'
       ) : '') +
 
-      '<button class="btn btn-p" style="width:100%" onclick="BCModule.openAdd()">+ Join / Create a BC</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" onclick="BCModule.openAdd()">+ Join / Create a BC</button>' +
 
       (bcs.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">🤝</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
@@ -98,9 +98,9 @@ const BCModule = {
           '</div>' +
         '</div>' +
         '<div class="entry-acts">' +
-          '<button class="icb" onclick="BCModule.openDetail(' + i + ')">👁️</button>' +
-          '<button class="icb" onclick="BCModule.edit(' + i + ')">✏️</button>' +
-          '<button class="icb del" onclick="BCModule.del(' + i + ')">🗑️</button>' +
+          '<button type="button" class="icb" aria-label="View details" onclick="BCModule.openDetail(' + i + ')">👁️</button>' +
+          '<button type="button" class="icb" aria-label="Edit" onclick="BCModule.edit(' + i + ')">✏️</button>' +
+          '<button type="button" class="icb del" aria-label="Delete" onclick="BCModule.del(' + i + ')">🗑️</button>' +
         '</div>' +
       '</div>' +
       '<div style="padding:0 14px 12px">' +
@@ -192,8 +192,8 @@ const BCModule = {
 
       '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">💡 Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
 
-      '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button class="btn btn-p" onclick="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" onclick="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
     setTimeout(function() {
       BCModule._updatePot();
@@ -300,10 +300,10 @@ const BCModule = {
       ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
 
       (bc.type === 'ballot' && bc.role === 'organiser' ?
-        '<button onclick="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">🎲 Run Ballot Draw</button>'
+        '<button type="button" onclick="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">🎲 Run Ballot Draw</button>'
         : '') +
 
-      '<button onclick="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
+      '<button type="button" onclick="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
 
       (bc.notes ? '<div style="font-size:12px;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
 
@@ -312,7 +312,7 @@ const BCModule = {
         : '') +
 
       '</div>',
-      '<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="BCModule.edit(' + i + ');Modal.close()">Edit</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="BCModule.edit(' + i + ');Modal.close()">Edit</button>'
     );
   },
 
@@ -344,9 +344,9 @@ const BCModule = {
           '<div style="font-size:48px;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
           '<div style="font-size:13px;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
         '</div>' +
-        '<button onclick="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">🎲 Draw!</button>' +
+        '<button type="button" onclick="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">🎲 Draw!</button>' +
       '</div>',
-      '<button class="btn btn-g" onclick="Modal.close()">Close</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button>'
     );
   },
 

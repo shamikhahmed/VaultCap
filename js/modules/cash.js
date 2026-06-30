@@ -19,18 +19,18 @@ const Cash = {
       } else { sm.innerHTML = ''; }
     }
     if (!data.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-ic">💵</div><h3>No cash entries</h3><p>Track physical cash across your wallet, home, office and more</p><button class="btn btn-p" style="margin-top:12px" onclick="Cash.openAdd()">💵 Add Cash</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">💵</div><div class="ei-title">No cash tracked</div><div class="ei-sub">Track physical cash in your wallet, home safe, office and more — multi-currency</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button type="button" class="btn btn-p" onclick="Cash.openAdd()">+ Add Cash</button></div></div>`;
       return;
     }
     const locIc = { Wallet:'👛', Home:'🏠', Office:'🏢', Car:'🚗', Other:'📦' };
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}</div></div><div class="entry-acts"><button class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button class="icb" onclick="Cash.edit('${c.id}')">✏️</button><button class="icb del" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${c.location || 'Cash'}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}${c.notes ? ' · ' + c.notes : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${c.currency || ''}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}</div></div><div class="entry-acts"><button type="button" class="icb" title="Transfer" onclick="Cash.transfer('${c.id}')">→</button><button type="button" class="icb" aria-label="Edit" onclick="Cash.edit('${c.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Cash.del('${c.id}')">🗑️</button></div></div></div>`).join('');
   },
   _pendingOwnerId: null,
   openAdd(prefill={}) {
     Cash._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `💵 Add Cash — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '💵 Add Cash';
-    Modal.open(title, this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash.save()">Save</button>`);
+    Modal.open(title, this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash.save()">Save</button>`);
     setTimeout(() => { const el = document.getElementById('cf-amt'); if (el) U.numInput(el, S.user.currency || 'PKR'); }, 60);
   },
   form(c = {}) {
@@ -58,7 +58,7 @@ const Cash = {
   },
   edit(id) {
     const c = (S.cash || []).find(x => x.id === id); if (!c) return;
-    Modal.open('✏️ Edit Cash', this.form(c), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Cash.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Cash.save('${id}')">Update</button>`);
+    Modal.open('✏️ Edit Cash', this.form(c), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cash.save('${id}')">Update</button>`);
     setTimeout(() => {
       const loc = document.getElementById('cf-loc'); if (loc) loc.value = c.location || 'Wallet';
       const cur = document.getElementById('cf-cur'); if (cur) cur.value = c.currency || 'PKR';
@@ -83,7 +83,7 @@ const Cash = {
         <div class="fg"><label class="fl">Currency</label><input class="inp" value="${src.currency||''}" readonly style="opacity:.6"></div>
       </div>
       <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
-    `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cash._doTransfer('${id}')">Transfer</button>`);
+    `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash._doTransfer('${id}')">Transfer</button>`);
     setTimeout(() => { const a = document.getElementById('ct-amt'); if (a) U.numInput(a, src.currency || 'PKR'); }, 60);
   },
   _doTransfer(srcId) {

@@ -287,44 +287,44 @@ const Family = {
 
     if (this._tab === 'banks') {
       const items = (S.banks || []).filter(b => b.ownerId === id);
-      return `<button onclick="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
+      return `<button type="button" onclick="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
         (items.length ? items.map(b => this._bankRow(b)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No banks added yet</div>');
     }
 
     if (this._tab === 'cards') {
       const items = (S.cards || []).filter(c => c.ownerId === id);
-      return `<button onclick="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
+      return `<button type="button" onclick="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
         (items.length ? items.map(c => this._cardRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cards added yet</div>');
     }
 
     if (this._tab === 'cash') {
       const items = (S.cash || []).filter(c => c.ownerId === id);
-      return `<button onclick="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
+      return `<button type="button" onclick="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
         (items.length ? items.map(c => this._cashRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cash entries yet</div>');
     }
 
     if (this._tab === 'investments') {
       const items = (S.investments || []).filter(i => i.ownerId === id);
-      return `<button onclick="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
+      return `<button type="button" onclick="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
         (items.length ? items.map(i => this._invRow(i)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No investments added yet</div>');
     }
 
     if (this._tab === 'assets') {
       const items = (S.assets || []).filter(a => a.ownerId === id);
-      return `<button onclick="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
+      return `<button type="button" onclick="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
         (items.length ? items.map(a => this._assetRow(a)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No assets added yet</div>');
     }
 
     if (this._tab === 'documents') {
       const items = (S.documents || []).filter(d => d.ownerId === id);
-      return `<button onclick="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
+      return `<button type="button" onclick="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
         (items.length ? items.map(d => this._docRow(d)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added yet</div>');
     }
 
     if (this._tab === 'notes') {
       return `<div class="fg"><label class="fl">Private notes for ${escHtml(m.name)}</label>
         <textarea class="inp" id="fam-member-notes" rows="6" placeholder="Medical info, emergency contacts, school details…">${escHtml(m.notes || '')}</textarea></div>
-        <button class="btn btn-p btn-full" style="margin-top:10px" onclick="Family._saveNotes('${id}')">Save Notes</button>`;
+        <button type="button" class="btn btn-p btn-full" style="margin-top:10px" onclick="Family._saveNotes('${id}')">Save Notes</button>`;
     }
 
     return '';
@@ -366,8 +366,8 @@ const Family = {
         <div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType || 'bank')}</span>${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('banks','${b.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('banks','${b.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('banks','${b.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('banks','${b.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -383,8 +383,8 @@ const Family = {
         <div class="entry-meta">${expBadge}${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('cards','${c.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('cards','${c.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('cards','${c.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('cards','${c.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -398,8 +398,8 @@ const Family = {
         <div class="entry-meta">${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('cash','${c.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('cash','${c.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('cash','${c.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('cash','${c.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -414,8 +414,8 @@ const Family = {
         <div class="entry-meta">${i.currentValue ? `<span class="badge b-acc sens">${U.fmt(i.currentValue)} ${i.currency || ''}</span>` : ''}${i.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('investments','${i.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('investments','${i.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('investments','${i.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('investments','${i.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -430,8 +430,8 @@ const Family = {
         <div class="entry-meta">${a.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('assets','${a.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('assets','${a.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('assets','${a.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('assets','${a.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -450,8 +450,8 @@ const Family = {
         <div class="entry-meta">${expBadge}${d.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button class="icb" onclick="Family._editEntity('documents','${d.id}')">✏️</button>
-        <button class="icb del" onclick="Family._delEntity('documents','${d.id}')">🗑️</button>
+        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('documents','${d.id}')">✏️</button>
+        <button type="button" class="icb del" onclick="Family._delEntity('documents','${d.id}')">🗑️</button>
       </div>
     </div></div>`;
   },
@@ -521,8 +521,8 @@ const Family = {
         <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${isHead ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${!isHead ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      `<button class="btn btn-p" onclick="Family._saveNewMember(${isHead})">Save</button>`
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
+      `<button type="button" class="btn btn-p" onclick="Family._saveNewMember(${isHead})">Save</button>`
     );
   },
 
@@ -572,9 +572,9 @@ const Family = {
         <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      (!m.isHead ? `<button class="btn btn-d btn-sm" onclick="Family._deleteMember('${id}')">Delete</button>` : '') +
-      `<button class="btn btn-p" onclick="Family._updateMember('${id}')">Save</button>`
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
+      (!m.isHead ? `<button type="button" class="btn btn-d btn-sm" onclick="Family._deleteMember('${id}')">Delete</button>` : '') +
+      `<button type="button" class="btn btn-p" onclick="Family._updateMember('${id}')">Save</button>`
     );
   },
 

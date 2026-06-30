@@ -1,7 +1,7 @@
 const Timeline={
   render(){
     const b=document.getElementById('timelineBody');if(!b)return;
-    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">'+(S.activity||[]).length+' entries</div><button onclick="if(confirm(\'Clear all activity log?\')) { S.activity=[]; if(typeof Store!==\'undefined\') Store.save(); Timeline.render(); Toast.show(\'Activity log cleared\',\'success\'); }" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">🗑️ Clear Log</button></div>';
+    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">'+(S.activity||[]).length+' entries</div><button type="button" onclick="if(confirm(\'Clear all activity log?\')) { S.activity=[]; if(typeof Store!==\'undefined\') Store.save(); Timeline.render(); Toast.show(\'Activity log cleared\',\'success\'); }" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">🗑️ Clear Log</button></div>';
     const events=[];
     const now=new Date();
     const addEv=(date,label,type,icon,action)=>{
@@ -51,7 +51,7 @@ const Timeline={
     const monthName=now.toLocaleString('en-GB',{month:'long',year:'numeric'});
     let html=`<div style="padding:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <button class="btn btn-g btn-sm" onclick="Timeline.render()">← List View</button>
+      <button type="button" class="btn btn-g btn-sm" onclick="Timeline.render()">← List View</button>
       <div style="font-size:16px;font-weight:700">${monthName}</div>
       <div style="width:80px"></div>
     </div>

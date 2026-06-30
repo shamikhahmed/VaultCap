@@ -302,7 +302,7 @@ const AIImport = {
         '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" onchange="AIImport.handleFile(this.files[0])">' +
       '</div>' +
 
-      '<button class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">🔍 Detect &amp; Extract</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">🔍 Detect &amp; Extract</button>' +
 
       '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
 
@@ -400,7 +400,7 @@ const AIImport = {
 
     let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
-      '<button class="btn btn-p btn-sm" onclick="AIImport.importSelected()">✅ Import Selected</button>' +
+      '<button type="button" class="btn btn-p btn-sm" onclick="AIImport.importSelected()">✅ Import Selected</button>' +
     '</div>';
 
     html += detected.map(function(item, i) {
@@ -433,7 +433,7 @@ const AIImport = {
       '</div>';
     }).join('');
 
-    html += '<button class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">✅ Import All Selected Items</button>';
+    html += '<button type="button" class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">✅ Import All Selected Items</button>';
     container.innerHTML = html;
   },
 

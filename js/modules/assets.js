@@ -61,7 +61,7 @@ const Assets = {
     const el = document.getElementById('aItems'); if (!el) return;
     if (!data.length) {
       const typeInfo = ASSET_TYPES_MAP[f] || ASSET_TYPES_MAP.other;
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${typeInfo.icon}</div><div class="ei-title">No ${typeInfo.label} Yet</div><div class="ei-sub">Track property, vehicles, electronics, metals and more</div><button class="btn btn-p" onclick="Assets.openAdd('${f==='all'?'':f}')">+ Add Asset</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${typeInfo.icon}</div><div class="ei-title">No ${typeInfo.label} Yet</div><div class="ei-sub">Track property, vehicles, electronics, metals and more</div><button type="button" class="btn btn-p" onclick="Assets.openAdd('${f==='all'?'':f}')">+ Add Asset</button></div>`;
       return;
     }
     const cur = S.user.currency || 'PKR';
@@ -84,7 +84,7 @@ const Assets = {
       const _pnl=(a.currentValue>0&&a.purchasePrice>0)?a.currentValue-a.purchasePrice:null;
       const _pnlPct=_pnl!==null?(_pnl/a.purchasePrice*100).toFixed(1):null;
       const _pnlHtml=_pnl!==null?`<span class="badge" style="color:${_pnl>=0?'var(--ok)':'var(--err)'}">${_pnl>=0?'+':''}${U.fmt(Math.round(Math.abs(_pnl)))} (${_pnl>=0?'+':''}${_pnlPct}%)</span>`:'';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${typeInfo.icon}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'🏢 Business':'👤 Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">👤 ${a.staffAssigned}</span>`:''}</div></div><div class="entry-acts"><button class="icb fav${a.favorite?' on':''}" onclick="Assets.fav('${a.id}')">⭐</button><button class="icb" onclick="Assets.detail('${a.id}')">👁️</button><button class="icb" onclick="Assets.edit('${a.id}')">✏️</button><button class="icb del" onclick="Assets.del('${a.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${typeInfo.icon}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'🏢 Business':'👤 Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">👤 ${a.staffAssigned}</span>`:''}</div></div><div class="entry-acts"><button type="button" class="icb fav${a.favorite?' on':''}" onclick="Assets.fav('${a.id}')">⭐</button><button type="button" class="icb" aria-label="View details" onclick="Assets.detail('${a.id}')">👁️</button><button type="button" class="icb" aria-label="Edit" onclick="Assets.edit('${a.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Assets.del('${a.id}')">🗑️</button></div></div></div>`;
     }).join('');
   },
 
@@ -99,7 +99,7 @@ const Assets = {
     }
     const ownerLabel = Assets._pendingOwnerId && typeof Family !== 'undefined' ? Family.ownerName(Assets._pendingOwnerId) : '';
     const title = ownerLabel ? `🏠 Add Asset — ${escHtml(ownerLabel)}` : '🏠 Add Asset';
-    Modal.open(title, this.form(preType ? {assetType:preType} : {}), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Assets.save()">Save</button>`);
+    Modal.open(title, this.form(preType ? {assetType:preType} : {}), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Assets.save()">Save</button>`);
     setTimeout(() => {
       const t = document.getElementById('af-type');
       if (t) {
@@ -206,13 +206,13 @@ const Assets = {
       : '';
     Modal.open(`${typeInfo.icon} ${a.name||'Asset'}`,
       `<div>${[['Type',typeInfo.label],['Value',(a.currentValue?(a.currency||'')+' '+U.fmt(a.currentValue):'—')],['Ownership',a.ownership||'personal'],['Notes',a.notes||'—']].map(([k,v])=>U.drRow(k,v)).join('')}${docsHtml}${remHtml}${noRelated}</div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Assets.edit('${id}');Modal.close()">Edit</button>`
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Assets.edit('${id}');Modal.close()">Edit</button>`
     );
   },
 
   edit(id) {
     const a = (S.assets||[]).find(x => x.id===id); if (!a) return;
-    Modal.open('✏️ Edit Asset', this.form(a), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Assets.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Assets.save('${id}')">Update</button>`);
+    Modal.open('✏️ Edit Asset', this.form(a), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Assets.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Assets.save('${id}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('af-cur'); const own = document.getElementById('af-own');
       if (cur) cur.value = a.currency || 'GBP'; if (own) own.value = a.ownership || 'personal';
@@ -243,6 +243,6 @@ const Assets = {
     S.assets = S.assets.filter(x => x.id!==id);
     Activity.log('Trashed asset', a.name);
     Store.save(); if (fm) Modal.close(); this.render();
-    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`, 'info', 6000);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`, 'info', 6000);
   }
 };

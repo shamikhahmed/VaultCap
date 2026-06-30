@@ -60,11 +60,12 @@ const OB = {
     if (!el) return;
     el.innerHTML = cats.map(c =>
       `<div onclick="OB.toggleCat('${c.key}',this)"
+        role="checkbox" tabindex="0" aria-checked="${obCats[c.key]?'true':'false'}"
         style="padding:16px 12px;border-radius:16px;background:${obCats[c.key]?'var(--glass2)':'var(--glass)'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;transition:.15s">
-        <span style="font-size:30px">${c.icon}</span>
+        <span style="font-size:30px" aria-hidden="true">${c.icon}</span>
         <div style="font-size:13px;font-weight:700;color:var(--text)">${c.label}</div>
         <div style="font-size:10px;color:var(--text3);line-height:1.3">${c.desc}</div>
-        <div style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${obCats[c.key]?'✓':''}</div>
+        <div aria-hidden="true" style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${obCats[c.key]?'✓':''}</div>
       </div>`
     ).join('');
   },
@@ -73,14 +74,16 @@ const OB = {
     document.querySelectorAll('.ob-type-card').forEach(c => {
       c.style.borderColor = 'var(--border)';
       c.style.background = 'var(--glass)';
+      c.setAttribute('aria-checked', 'false');
     });
-    if (el) { el.style.borderColor = 'var(--accent)'; el.style.background = 'var(--glass2)'; }
+    if (el) { el.style.borderColor = 'var(--accent)'; el.style.background = 'var(--glass2)'; el.setAttribute('aria-checked', 'true'); }
   },
   toggleCat(key, el) {
     obCats[key] = !obCats[key];
     const on = obCats[key];
     el.style.borderColor = on ? 'var(--accent)' : 'var(--border)';
     el.style.background = on ? 'var(--glass2)' : 'var(--glass)';
+    el.setAttribute('aria-checked', on ? 'true' : 'false');
     const check = el.querySelector('div:last-child');
     if (check) {
       check.style.background = on ? 'var(--accent)' : 'transparent';
@@ -246,7 +249,7 @@ const OB = {
             <span style="font-size:26px">📱</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
           </div>
         </div>
-        <button onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
+        <button type="button" onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
       `;
       document.body.appendChild(ov);
       setTimeout(() => { const e = document.getElementById('quickStartOv'); if (e) e.remove(); }, 8000);

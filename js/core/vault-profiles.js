@@ -30,7 +30,7 @@ const VaultProfiles = {
     if (this.active() === 'personal' && S.unlocked && _vaultEntityCount(Store._data()) > 0) {
       Modal.open('🎭 Demo vault',
         '<div style="font-size:13px;color:var(--text2);line-height:1.6">Opens a <strong>separate sandbox</strong> with fictional data. Your real vault is not changed.</div>',
-        `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Modal.close();VaultProfiles._enterDemo()">Open demo vault →</button>`
+        `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Modal.close();VaultProfiles._enterDemo()">Open demo vault →</button>`
       );
       return;
     }
@@ -54,7 +54,7 @@ const VaultProfiles = {
       '<div>③ Settings → Exit Demo when you want your real vault</div>' +
       '</div>' +
       '<div style="margin-top:14px;padding:12px;background:rgba(123,95,255,.1);border:1px solid rgba(123,95,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong style="color:var(--text)">123456</strong> · No real data is stored here</div>',
-      '<button class="btn btn-p btn-full" onclick="Modal.close()">Start exploring →</button>'
+      '<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Start exploring →</button>'
     );
   },
   pickerProfiles() {
@@ -75,9 +75,9 @@ const VaultProfiles = {
         '<div style="font-size:16px;color:var(--text3)">›</div>' +
         '</div>'
       ).join('') +
-      (active === 'demo' ? '<button class="btn btn-g btn-full btn-sm" style="margin-top:4px" onclick="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +
+      (active === 'demo' ? '<button type="button" class="btn btn-g btn-full btn-sm" style="margin-top:4px" onclick="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +
       '</div>',
-      '<button class="btn btn-g btn-full" onclick="Modal.close()">Close</button>'
+      '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Close</button>'
     );
   }
 };

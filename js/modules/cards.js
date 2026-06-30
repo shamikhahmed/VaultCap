@@ -25,7 +25,7 @@ const Cards={
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.cF='${v}';Cards.render()">${l}</div>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
       if(c.archived&&!Cards._showArchived)return false;
@@ -65,8 +65,8 @@ const Cards={
         }).join('')+
         '</div>'
       :'';
-    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
-    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
+    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
+    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimit=S.cards.filter(c=>c.cardType==='Credit'&&c.limit).reduce((a,c)=>a+(c.limit||0),0);
     const _cur=S.user.currency||'GBP';
     const limitBanner=totalLimit>0?`<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)">${U.fmt(Math.round(totalLimit))} ${_cur}</span></div>`:'';
@@ -99,7 +99,7 @@ const Cards={
     const _dom=bankDomain(c.cardName||bankName,c.country);
     const _initials=(bankName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
     const logoHtml=_dom
-      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" width="18" height="18" style="border-radius:3px;display:block" onerror="this.parentElement.innerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
+      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" alt="" width="18" height="18" style="border-radius:3px;display:block" onerror="this.parentElement.innerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
       : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
@@ -148,14 +148,14 @@ const Cards={
     </div>
   </div>
   <div class="wcard-actions">
-    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
-    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
-    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.archive('${c.id}')" title="${c.archived?'Unarchive':'Archive'}">${c.archived?'📦':'🗂️'}</button>
-    <button class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
+    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
+    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
+    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.archive('${c.id}')" title="${c.archived?'Unarchive':'Archive'}">${c.archived?'📦':'🗂️'}</button>
+    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
   </div>
 </div>`;
   },
-  _showExample(){Modal.open('💳 Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _showExample(){Modal.open('💳 Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   _fmtCardNum(input){
     let v=input.value.replace(/\D/g,'').slice(0,16);
     input.value=v.replace(/(.{4})/g,'$1 ').trim();
@@ -172,8 +172,8 @@ const Cards={
   openAdd(prefill={}){
     Cards._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `💳 Add Card — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '💳 Add Card';
-    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card with Camera</button></div>`;
-    Modal.open(title, scanBtn + this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
+    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card with Camera</button></div>`;
+    Modal.open(title, scanBtn + this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
   },
 
   // ── Camera scan (QR auto + manual capture for OCR) ────────────────────────
@@ -191,8 +191,8 @@ const Cards={
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
       '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">📷 Capture</button>',
-      '<button onclick="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
+      '<button type="button" id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">📷 Capture</button>',
+      '<button type="button" onclick="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -238,16 +238,16 @@ const Cards={
       Tesseract.recognize(canvas,'eng',{logger:function(){}}).then(function(result){
         Cards._stopScan();
         const parsed=Cards._parseCardOCR(result.data.text);
-        Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
+        Modal.open('💳 Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
         setTimeout(function(){Cards._fillFromOCR(parsed);},200);
       }).catch(function(){
         Cards._stopScan();
         Toast.show('OCR failed — fill in details below','warning',3000);
-        Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);
+        Modal.open('💳 Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
       });
     } else {
       if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">Tap Capture again or fill below.</span>';
-      setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('💳 Add Card',Cards.form(),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
+      setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('💳 Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
     }
   },
   _parseCardOCR(text){
@@ -299,8 +299,8 @@ const Cards={
       '<canvas id="_photoCanvas" style="display:none"></canvas>',
       '<div id="_photoStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position card in frame then tap Capture</div>',
       '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button onclick="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
-      '<button onclick="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
+      '<button type="button" onclick="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
+      '<button type="button" onclick="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -329,7 +329,7 @@ const Cards={
     const base64=dataUrl.split(',')[1];
     const thumbEl=document.getElementById('cf-photo-'+targetId);
     if(thumbEl){
-      thumbEl.innerHTML='<img src="'+dataUrl+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
+      thumbEl.innerHTML='<img src="'+dataUrl+'" alt="Card photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
       thumbEl.dataset.photo=base64;
     }
     Toast.show('Photo saved — fill in the details below','info',2000);
@@ -341,14 +341,14 @@ const Cards={
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+b64+'" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img src="data:image/jpeg;base64,'+b64+'" alt="Card photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
     document.body.appendChild(v);
   },
   _viewPhotoB64(base64){
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+base64+'" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img src="data:image/jpeg;base64,'+base64+'" alt="Card photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
     document.body.appendChild(v);
   },
 
@@ -366,8 +366,8 @@ const Cards={
       +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" oninput="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">📷 Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
-      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
+      +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">📷 Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
+      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
       +'</div>'
       +'<details'+(isEdit?' open':'')+' style="margin-top:10px">'
       +'<summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>'
@@ -436,7 +436,7 @@ const Cards={
   },
   edit(id){
     const c=S.cards.find(x=>x.id===id);if(!c)return;
-    Modal.open('✏️ Edit Card',this.form(c),`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Cards.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Cards.save('${id}')">Update</button>`);
+    Modal.open('✏️ Edit Card',this.form(c),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cards.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cards.save('${id}')">Update</button>`);
     setTimeout(()=>{[['cf-net',c.network||'Visa'],['cf-type',c.cardType||'Credit'],['cf-cat',c.category||'Standard'],['cf-cc',c.country||'GB'],['cf-own',c.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});},60);
   },
   openDetail(id){
@@ -444,12 +444,12 @@ const Cards={
     let photoHtml='';
     if(c.frontPhoto||c.backPhoto){
       photoHtml='<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'
-        +(c.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+c.frontPhoto+'" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
-        +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
+        +(c.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
+        +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
         +'</div>';
     }
-    const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span><button class="icb" onclick="(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()">👁️</button><button class="icb" onclick="U.copy('${c.cardNumber}','Card number')">📋</button></div>`:U.drRow('Last 4','****'+(c.last4||'—'));
-    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',c.limit?U.fmt(Math.round(c.limit))+' '+(S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
+    const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span><button type="button" class="icb" aria-label="Reveal card number" onclick="(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()">👁️</button><button type="button" class="icb" aria-label="Copy card number" onclick="U.copy('${c.cardNumber}','Card number')">📋</button></div>`:U.drRow('Last 4','****'+(c.last4||'—'));
+    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',c.limit?U.fmt(Math.round(c.limit))+' '+(S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},
@@ -460,6 +460,6 @@ const Cards={
     S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});
     S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);
     Activity.log('Trashed card',c.cardName);Store.save();if(fm)Modal.close();this.render();
-    Toast.show('Moved to Trash — <button class="cpbtn" onclick="Trash.restore(\''+S.trash[S.trash.length-1].id+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
+    Toast.show('Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore(\''+S.trash[S.trash.length-1].id+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
   }
 };

@@ -76,7 +76,7 @@ const Dash={
     const h=new Date().getHours();
     const greet=h<5?'Good Night':h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
     const el=document.getElementById('dashGreet');
-    if(el)el.innerHTML=`<span>${greet}, <strong>${S.user.name||'User'}</strong></span>`;
+    if(el)el.innerHTML=`<div style="font-size:12px;color:var(--text3);font-weight:500;line-height:1.2">${greet}</div><div style="font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${S.user.name||'User'}</div>`;
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const b = document.getElementById('dashBody');
@@ -181,7 +181,7 @@ const Dash={
     // Backup reminder
     const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
     const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
-    const backupNeeded = daysSinceBackup > 14;
+    const backupNeeded = daysSinceBackup > 14 && !VaultProfiles.isDemo();
 
     // Vault health — single source: VaultHealth service
     const health = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
@@ -237,7 +237,7 @@ const Dash={
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px"><div style="font-size:17px;font-weight:900;color:' + color + ';line-height:1.2" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
-      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
+      '<div style="margin:14px 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">💰 Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
       (S.modules.banks !== false ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
@@ -283,14 +283,14 @@ const Dash={
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : '🌐 All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStatCell = (value, label, valueSize, onclick) =>
-      '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
-      '<div style="font-size:' + (valueSize || '20px') + ';font-weight:800;color:var(--text);line-height:1.25">' + value + '</div>' +
-      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;line-height:1.2">'+label+'</div></div>';
-    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-top:14px;align-items:stretch">' +
-      quickStatCell(entityTotal, 'Records', '20px') +
-      quickStatCell(activeCountryLabel, 'Country', '13px') +
-      quickStatCell(lastBackupLabel, 'Backup', '14px', "R.goto('settings');setTimeout(function(){SettingsNav.show('backup')},80)") +
+    const quickStatCell = (value, label, onclick) =>
+      '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
+      '<div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">' + value + '</div>' +
+      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
+    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
+      quickStatCell(entityTotal, 'Records') +
+      quickStatCell(activeCountryLabel, 'Country') +
+      quickStatCell(lastBackupLabel, 'Backup', "R.goto('settings');setTimeout(function(){SettingsNav.show('backup')},80)") +
       '</div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
@@ -299,7 +299,7 @@ const Dash={
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
       </div>
-      <button class="btn btn-p btn-sm" style="flex-shrink:0" onclick="R.goto('settings');setTimeout(function(){SettingsNav.show('profile')},80)">Continue →</button>
+      <button type="button" class="btn btn-p btn-sm" style="flex-shrink:0" onclick="R.goto('settings');setTimeout(function(){SettingsNav.show('profile')},80)">Continue →</button>
     </div>` : '';
 
     const totalItems = (S.banks||[]).length + (S.cards||[]).length + (S.documents||[]).length + (S.investments||[]).length + (S.cash||[]).length;
@@ -315,7 +315,7 @@ const Dash={
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        ${firstStepItems.map(i => `<button onclick="${i.action}" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">${i.icon} ${i.label}</button>`).join('')}
+        ${firstStepItems.map(i => `<button type="button" onclick="${i.action}" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px">${i.icon} ${i.label}</button>`).join('')}
       </div>
     </div>` : '';
 
@@ -329,8 +329,6 @@ const Dash={
 
     ${familyWidget}
 
-    ${moneySum}
-
     ${assetSum}
 
     ${upcomingActions}
@@ -342,7 +340,7 @@ const Dash={
     <div style="margin:0 16px 16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">👝 Today's Wallet</div>
-        <button onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
+        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
       </div>
       <div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>
     </div>` : ''}
@@ -376,7 +374,7 @@ const Dash={
           <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:${ok?'rgba(0,255,136,.1)':'rgba(255,69,58,.1)'};color:${ok?'var(--ok)':'var(--err)'};">${ok?'✓':'+'} ${label}</div>`).join('')}
+          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'✓':'⊕'} ${label}</div>`).join('')}
         </div>
       </div>
     </div>
@@ -402,8 +400,8 @@ const Dash={
           {icon:'📄',label:'Add Document',action:"R.goto('documents')"},
           {icon:'💵',label:'Add Cash',action:"Cash.openAdd()"},
         ].map(a => `
-          <button onclick="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text)">
-            <span style="font-size:22px">${a.icon}</span>${a.label}
+          <button type="button" onclick="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text);overflow:hidden">
+            <span style="font-size:22px;flex-shrink:0">${a.icon}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.label}</span>
           </button>`).join('')}
       </div>
     </div>
@@ -424,7 +422,7 @@ const Dash={
     <div style="margin:16px 16px 24px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
-        <button onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
+        <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
       </div>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden">
         ${S.activity.slice(0,5).map((a,i) => `
@@ -467,7 +465,7 @@ const Dash={
     return `<div class="wc-mini" onclick="Cards.openDetail('${c.id}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
   <div style="position:absolute;top:-30%;right:-15%;width:${Math.round(h*1.4)}px;height:${Math.round(h*1.4)}px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
-    <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">`:''}${bankName}</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" alt="" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">`:''}${bankName}</div>
     <div style="font-size:${f3};font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.15);padding:2px 6px;border-radius:99px;white-space:nowrap">${(c.cardType||'').toUpperCase()}</div>
   </div>
   <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
@@ -478,10 +476,10 @@ const Dash={
 </div>`;
   },
   editWallet(){
-    Modal.open('👝 Carrying Today',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} onchange="if(this.checked){S.wallet=[...new Set([...S.wallet,'${c.id}'])]}else{S.wallet=S.wallet.filter(x=>x!=='${c.id}')}"><span style="font-size:16px">💳</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div style="font-size:11px;color:var(--text3)">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">💳</div><h3>No cards yet</h3></div>'}`,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Store.save();Modal.close();Dash.render()">Save</button>`);
+    Modal.open('👝 Carrying Today',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} onchange="if(this.checked){S.wallet=[...new Set([...S.wallet,'${c.id}'])]}else{S.wallet=S.wallet.filter(x=>x!=='${c.id}')}"><span style="font-size:16px">💳</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div style="font-size:11px;color:var(--text3)">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">💳</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Store.save();Modal.close();Dash.render()">Save</button>`);
   },
   editNW(){
-    Modal.open('💰 Net Worth',`<div class="fg"><label class="fl">Amount</label><input class="inp" id="nwv" type="number" value="${S.user.netWorth}"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="nwc">${U.currencies()}</select></div>`,`<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="S.user.netWorth=parseFloat(document.getElementById('nwv').value)||0;S.user.currency=document.getElementById('nwc').value;Store.save();Modal.close();Dash.render();Toast.show('Updated','success')">Save</button>`);
+    Modal.open('💰 Net Worth',`<div class="fg"><label class="fl">Amount</label><input class="inp" id="nwv" type="number" value="${S.user.netWorth}"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="nwc">${U.currencies()}</select></div>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="S.user.netWorth=parseFloat(document.getElementById('nwv').value)||0;S.user.currency=document.getElementById('nwc').value;Store.save();Modal.close();Dash.render();Toast.show('Updated','success')">Save</button>`);
     setTimeout(()=>{const c=document.getElementById('nwc');if(c)c.value=S.user.currency||'GBP';},50);
   },
   snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
@@ -489,7 +487,7 @@ const Dash={
     Modal.open('💱 Display Currency',`
       <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Choose how amounts <strong>display</strong> on the dashboard. Your real balances stay the same — only the currency label changes (e.g. PKR 1,000,000 ≈ GBP 2,840).</p>
       <div class="fg"><label class="fl">Currency</label><select class="inp" id="dash-cur-pick">${U.currencies()}</select></div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="S.user.currency=document.getElementById('dash-cur-pick').value;Store.save();Modal.close();Dash.render();Toast.show('Currency updated','success')">Save</button>`);
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="S.user.currency=document.getElementById('dash-cur-pick').value;Store.save();Modal.close();Dash.render();Toast.show('Currency updated','success')">Save</button>`);
     setTimeout(()=>{const c=document.getElementById('dash-cur-pick');if(c)c.value=S.user.currency||'GBP';},50);
   },
   security(){let s=50;if(S.autoLock)s+=15;if(S.lockMins<=10)s+=10;if(S.clipSecs<=30)s+=10;if(S.banks.length)s+=5;if(S.cards.length)s+=5;if(S.decoyPin)s+=5;return Math.min(s,100);},
@@ -529,7 +527,7 @@ const Dash={
         ${Object.entries(FX).filter(([c,r])=>r>0&&c!=='PKR').slice(0,9).map(([c,r])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${c}</span><span style="font-weight:600">${U.fmt(r)}</span></div>`).join('')}
       </div>
     </div>`,
-    `<button class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+    `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
   }
 };
 
@@ -556,7 +554,7 @@ const Settings={
     <div class="fr"><div class="fg"><label class="fl">Default Currency</label><select class="inp" id="pp-cur">${U.currencies()}</select></div><div class="fg"><label class="fl">&nbsp;</label><button type="button" class="btn btn-g btn-full" onclick="Settings.editCountries()">Manage all countries →</button></div></div>
     <div class="fg"><label class="fl">Home Address</label><textarea class="inp" id="pp-home" rows="2">${S.user.homeAddr||''}</textarea></div>
     <div class="fg"><label class="fl">Work / Office Address</label><textarea class="inp" id="pp-work" rows="2">${S.user.workAddr||''}</textarea></div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Settings.saveProfile()">Save Profile</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings.saveProfile()">Save Profile</button>`);
     setTimeout(()=>{
       const c=document.getElementById('pp-cur');if(c)c.value=S.user.currency||'GBP';
       const cc=document.getElementById('pp-country');if(cc)cc.value=S.user.country||'GB';
@@ -580,7 +578,7 @@ const Settings={
     <div class="fg"><label class="fl">New PIN (6 digits)</label><input class="inp" id="cp-new" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="fg"><label class="fl">Confirm New PIN</label><input class="inp" id="cp-con" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="cp-err"></div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Settings.savePIN()">Change PIN</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings.savePIN()">Change PIN</button>`);
   },
   savePIN(){
     const o=document.getElementById('cp-cur').value,n=document.getElementById('cp-new').value,c=document.getElementById('cp-con').value;
@@ -603,7 +601,7 @@ const Settings={
         ${hasRecoveryKey?'✓ Recovery key configured on this device':'⚠️ No recovery key found — use a .vos backup if you forget your PIN'}
       </div>
       <p style="font-size:11px;color:var(--text3);line-height:1.6">If you saved your key on paper or in a password manager, use <strong>Forgot PIN → Use Master Key</strong> on the lock screen.</p>
-    </div>`,`<button class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+    </div>`,`<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
   },
   _printMasterKey(key){
     const fmt=String(key).match(/.{1,6}/g)?.join('-')||key;
@@ -612,14 +610,14 @@ const Settings={
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Copy and store this key somewhere safe. It can reset your PIN.</p>
         <div id="mk-display" style="font-family:var(--mono);font-size:1rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
       </div>`,
-      `<button class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button class="btn btn-p" onclick="Modal.close()">Done</button>`);
+      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`);
   },
   setDecoyPIN(){
     Modal.open('🎭 Set Decoy PIN',`
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">When someone enters this PIN, they see a convincing fake vault with realistic-looking data. Your real data stays hidden. Perfect for coercion or border device inspections.</p>
     <div class="fg"><label class="fl">Decoy PIN (6 digits, must differ from real PIN)</label><input class="inp" id="dp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="dp-err"></div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
@@ -649,7 +647,7 @@ const Settings={
           <div style="font-size:12px;color:var(--text2)">Last resort — permanently wipes all vault data</div>
         </div>
       </div>`,
-      `<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`
+      `<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>`
     );
   },
   useMasterKey(){
@@ -661,8 +659,8 @@ const Settings={
           oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')">
         <div class="ferr" id="mk-err" style="color:var(--err);font-size:12px;min-height:16px"></div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
-       <button class="btn btn-p" onclick="Settings.verifyMasterKey()">Verify & Reset PIN</button>`
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>
+       <button type="button" class="btn btn-p" onclick="Settings.verifyMasterKey()">Verify & Reset PIN</button>`
     );
   },
   verifyMasterKey(){
@@ -747,7 +745,7 @@ const ExIm={
       <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to create an encrypted backup file.</p>
       <div class="fg"><label class="fl">PIN</label><input class="inp" id="exp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
       <div class="ferr" id="exp-pin-err"></div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="ExIm._doPinExport()">Export</button>`);
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doPinExport()">Export</button>`);
   },
   _doPinExport(){
     const pin=document.getElementById('exp-pin')?.value||'';
@@ -778,7 +776,7 @@ const ExIm={
       <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to decrypt this legacy backup file.</p>
       <div class="fg"><label class="fl">PIN</label><input class="inp" id="imp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
       <div class="ferr" id="imp-pin-err"></div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="ExIm._doLegacyImportDecrypt()">Decrypt</button>`);
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doLegacyImportDecrypt()">Decrypt</button>`);
   },
   _doLegacyImportDecrypt(){
     const pin=document.getElementById('imp-pin')?.value||'';
@@ -879,7 +877,7 @@ const ExIm={
     const investPL=investCurrent-investedTotal;
     const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
     '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f0f4ff;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#1a1a2e}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#1a1a2e;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
-    '<div class="no-print"><button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
+    '<div class="no-print"><button type="button" class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button type="button" onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
     '<div class="header"><h1>🔐 VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmt(nwTotal)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
     section('Net Worth Breakdown',
@@ -976,13 +974,13 @@ const QRSync = {
         <div id="qrChunkLabel" style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
         <div id="qrContainer" style="display:inline-block;background:#fff;padding:10px;border-radius:12px;margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
-          ${total>1?'<button class="btn btn-s btn-sm" id="qrPrevBtn" onclick="QRSync._showChunk(-1)" style="display:none">← Prev</button>':''}
-          ${total>1?'<button class="btn btn-p btn-sm" id="qrNextBtn" onclick="QRSync._showChunk(1)">Next →</button>':''}
-          <button class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">📋 Copy as text</button>
+          ${total>1?'<button type="button" class="btn btn-s btn-sm" id="qrPrevBtn" onclick="QRSync._showChunk(-1)" style="display:none">← Prev</button>':''}
+          ${total>1?'<button type="button" class="btn btn-p btn-sm" id="qrNextBtn" onclick="QRSync._showChunk(1)">Next →</button>':''}
+          <button type="button" class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">📋 Copy as text</button>
         </div>
         <p style="font-size:11px;color:var(--text3);margin-top:10px">One-time use — expires when dialog closes.</p>
       </div>
-    `, `<button class="btn btn-p btn-full" onclick="Modal.close()">Done</button>`);
+    `, `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Done</button>`);
 
     QRSync._qrCurrent = 0;
     setTimeout(() => QRSync._renderQRChunk(0), 200);
@@ -1028,7 +1026,7 @@ const QRSync = {
         <canvas id="qrCanvas" style="display:none"></canvas>
         <div id="qrStatus" style="font-size:12px;color:var(--text3);margin-top:8px">Starting camera…</div>
       </div>
-    `, `<button class="btn btn-g" onclick="QRSync._stopCamera();Modal.close()">Cancel</button>`);
+    `, `<button type="button" class="btn btn-g" onclick="QRSync._stopCamera();Modal.close()">Cancel</button>`);
     setTimeout(() => this._startCamera(), 300);
   },
 
@@ -1101,7 +1099,7 @@ const QRSync = {
           <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Enter the 6-digit code shown on the other device.</p>
           <div class="fg"><label class="fl">Sync Code</label><input class="inp" id="qrCodeIn" maxlength="6" inputmode="numeric" placeholder="123456" style="text-align:center;font-size:24px;letter-spacing:8px;font-family:var(--mono)"></div>
           <div class="ferr" id="qrCodeErr"></div>
-        `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
+        `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._decryptAndMerge('${encodeURIComponent(parsed.enc)}')">Import</button>`);
         return;
       }
 
@@ -1152,7 +1150,7 @@ const QRSync = {
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Successfully decoded vault data from QR codes.</p>
         <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
         <p style="font-size:12px;color:var(--warn)">⚠ Existing items with matching IDs will be merged.</p>
-      `, `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
+      `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
     } catch(e) { Toast.show('Failed to decode QR data', 'error'); }
   },
 
@@ -1183,8 +1181,8 @@ const QRSync = {
           <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Sync Devices</h3>
           <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">Transfer your vault to another device securely using a QR code and a one-time 6-digit sync code.</p>
           <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
-            <button class="btn btn-p" onclick="QRSync.exportQR()" style="padding:14px;font-size:15px;font-weight:700">📱 Send to Another Device</button>
-            <button class="btn btn-s" onclick="QRSync.importQR()" style="padding:12px;font-size:14px">📷 Receive from Another Device</button>
+            <button type="button" class="btn btn-p" onclick="QRSync.exportQR()" style="padding:14px;font-size:15px;font-weight:700">📱 Send to Another Device</button>
+            <button type="button" class="btn btn-s" onclick="QRSync.importQR()" style="padding:12px;font-size:14px">📷 Receive from Another Device</button>
           </div>
         </div>
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
@@ -1253,7 +1251,7 @@ const WhatsNew={
         <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
       </div>
     </div>`,
-    `<button class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultCap →</button>`);
+    `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultCap →</button>`);
   }
 };
 
@@ -1292,7 +1290,7 @@ const ImportEngine={
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px">
         <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">✏️ Paste Text to Import</div>
         <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultCap will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:13px;line-height:1.6"></textarea>
-        <button class="btn btn-p btn-sm" onclick="ImportEngine.parseText(document.getElementById('ie-paste').value)" style="margin-top:8px;width:100%">🔍 Detect & Import</button>
+        <button type="button" class="btn btn-p btn-sm" onclick="ImportEngine.parseText(document.getElementById('ie-paste').value)" style="margin-top:8px;width:100%">🔍 Detect & Import</button>
       </div>
       <!-- HISTORY -->
       ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).length>0?`
@@ -1681,13 +1679,13 @@ const ImportEngine={
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.5px">${r.type} · <span style="color:${r.confidence==='high'?'var(--ok)':r.confidence==='medium'?'var(--warn)':'var(--text3)'}">${r.confidence}</span></div>
           <div style="font-size:13px;font-weight:600;margin-top:2px">${Object.values(r.data).filter(Boolean)[0]||'—'}</div>
         </div>
-        <button onclick="this.closest('div').nextElementSibling.style.display=this.closest('div').nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.textContent==='✏️'?'▲':'✏️'" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✏️</button>
+        <button type="button" onclick="this.closest('div').nextElementSibling.style.display=this.closest('div').nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.textContent==='✏️'?'▲':'✏️'" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✏️</button>
       </div>
       <div style="display:none;padding:0 14px 12px;border-top:1px solid var(--border);background:var(--glass)">
         ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" oninput="ImportEngine._results[${i}].data['${k}']=this.value" style="padding:7px 10px;font-size:12px"></div>`).join('')}
       </div>
     </div>`).join('')}
-    <button class="btn btn-p btn-full" onclick="ImportEngine.importSelected(${JSON.stringify(results).replace(/"/g,'&quot;')})">✅ Import Selected Items</button>
+    <button type="button" class="btn btn-p btn-full" onclick="ImportEngine.importSelected(${JSON.stringify(results).replace(/"/g,'&quot;')})">✅ Import Selected Items</button>
     </div>`;
     ImportEngine._results=results;
   },
@@ -1734,8 +1732,8 @@ const Links={
         <div><div style="font-size:13px;font-weight:500">${o.label}</div><div style="font-size:11px;color:var(--text3)">${o.type}</div></div>
       </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">No other entries to link to yet</div>'}
     </div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button>
-     <button class="btn btn-p" onclick="Links.savLinks('${entryId}',${JSON.stringify(entryArr===S.banks?'banks':entryArr===S.cards?'cards':entryArr===S.investments?'investments':entryArr===S.sims?'sims':entryArr===S.assets?'assets':entryArr===S.expenses?'expenses':entryArr===S.emails?'emails':entryArr===S.gadgets?'gadgets':'digital')})">Save Links</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>
+     <button type="button" class="btn btn-p" onclick="Links.savLinks('${entryId}',${JSON.stringify(entryArr===S.banks?'banks':entryArr===S.cards?'cards':entryArr===S.investments?'investments':entryArr===S.sims?'sims':entryArr===S.assets?'assets':entryArr===S.expenses?'expenses':entryArr===S.emails?'emails':entryArr===S.gadgets?'gadgets':'digital')})">Save Links</button>`);
   },
   savLinks(entryId, arrName){
     const arr=S[arrName];const entry=arr.find(x=>x.id===entryId);if(!entry)return;
@@ -1850,15 +1848,15 @@ const RecoveryCenter={
       </div>
       <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
       <div id="rc-copy" style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn btn-s btn-sm" style="flex:1" onclick="Settings.useMasterKey()">🗝️ Enter Master Key</button>
+        <button type="button" class="btn btn-s btn-sm" style="flex:1" onclick="Settings.useMasterKey()">🗝️ Enter Master Key</button>
       </div>
     </div>
     <!-- RECOVERY OPTIONS -->
     <div class="set-sec"><div class="set-title">Recovery Methods</div><div class="set-card">
-      <div class="si" onclick="VaultSafety.restore()" style="cursor:pointer"><div class="sil"><div class="name">Restore previous save</div><div class="desc">Roll back to the copy made before your last change</div></div><button class="btn btn-g btn-sm">Restore →</button></div>
-      <div class="si" onclick="Settings.useMasterKey()" style="cursor:pointer"><div class="sil"><div class="name">Use Master Key</div><div class="desc">Enter master key to reset your PIN</div></div><button class="btn btn-g btn-sm">Enter Key →</button></div>
-      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div class="sil"><div class="name">Restore from Backup</div><div class="desc">Import .vos vault to recover data</div></div><button class="btn btn-g btn-sm">Import →</button></div>
-      <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">⚠️ Delete all data — cannot be undone</div></div><button class="btn btn-d btn-sm">Reset</button></div>
+      <div class="si" onclick="VaultSafety.restore()" style="cursor:pointer"><div class="sil"><div class="name">Restore previous save</div><div class="desc">Roll back to the copy made before your last change</div></div><button type="button" class="btn btn-g btn-sm">Restore →</button></div>
+      <div class="si" onclick="Settings.useMasterKey()" style="cursor:pointer"><div class="sil"><div class="name">Use Master Key</div><div class="desc">Enter master key to reset your PIN</div></div><button type="button" class="btn btn-g btn-sm">Enter Key →</button></div>
+      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div class="sil"><div class="name">Restore from Backup</div><div class="desc">Import .vos vault to recover data</div></div><button type="button" class="btn btn-g btn-sm">Import →</button></div>
+      <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">⚠️ Delete all data — cannot be undone</div></div><button type="button" class="btn btn-d btn-sm">Reset</button></div>
     </div></div>
     <!-- SECURITY CHECKLIST -->
     <div class="set-sec"><div class="set-title">Recovery Checklist</div><div class="set-card">
@@ -1884,7 +1882,7 @@ const RecoveryCenter={
     <!-- DEVELOPER DIAGNOSTICS -->
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">🔧 Developer Diagnostics</div><div class="set-card">
       <div id="dev-diag-body" style="padding:14px">
-        <button class="btn btn-g" onclick="DevDiag.run()" style="width:100%;margin-bottom:10px">Run Diagnostics</button>
+        <button type="button" class="btn btn-g" onclick="DevDiag.run()" style="width:100%;margin-bottom:10px">Run Diagnostics</button>
         <div id="dev-diag-results" style="font-size:12px;color:var(--text3);text-align:center">Tap to run diagnostics</div>
       </div>
     </div></div>`;
@@ -1897,7 +1895,7 @@ const RecoveryCenter={
         <div style="font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
         <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.6">Use <strong>Forgot PIN → Master Key</strong> on the lock screen.</p>
       </div>`,
-      `<button class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button class="btn btn-p" onclick="Modal.close()">Done</button>`);
+      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`);
   }
 };
 
@@ -1947,7 +1945,7 @@ const SelfCheck={
       ${['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].map(k=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">${k}</span><strong>${(S[k]||[]).length}</strong></div>`).join('')}
       <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">documents</span><strong>${(S.documents||[]).length}</strong></div>
     </div>`,
-    `<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="SelfCheck.renderReport()">Re-run</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="SelfCheck.renderReport()">Re-run</button>`);
   }
 };
 
@@ -2004,19 +2002,19 @@ const SettingsNav = {
       <div class="si" onclick="Dash.toggleCurrency()" style="cursor:pointer">
         <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span style="color:var(--text3)">›</span>
       </div>
-      <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
-      <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+      <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
+      <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.editProfile()">Edit</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">📊 Data Summary</div><div class="set-card">
       ${[...(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity',S.activity.length,'📋']].map(([n,c,ic])=>`<div class="si"><div class="name">${ic} ${n}</div><div style="font-weight:700;color:var(--accent)">${c}</div></div>`).join('')}
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">⚙️ Data Management</div><div class="set-card">
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-s btn-full btn-sm" onclick="VaultProfiles.startDemo()">🎭 Open demo vault (safe sandbox)</button>
+        <button type="button" class="btn btn-s btn-full btn-sm" onclick="VaultProfiles.startDemo()">🎭 Open demo vault (safe sandbox)</button>
         <div style="font-size:11px;color:var(--text3);line-height:1.5">Demo never touches My Vault. Share: <span style="color:var(--accent);word-break:break-all">${VaultProfiles.demoUrl()}</span></div>
-        <button class="btn btn-g btn-full btn-sm" onclick="VaultSafety.restore()">↩ Restore previous save</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="S.activity=[];Store.save();SettingsNav.show('profile');Toast.show('Activity cleared')">🗑️ Clear Activity Log</button>
-        <button class="btn btn-d btn-full btn-sm" onclick="Settings.resetVault()">⚠️ Reset Entire Vault</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="VaultSafety.restore()">↩ Restore previous save</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="S.activity=[];Store.save();SettingsNav.show('profile');Toast.show('Activity cleared')">🗑️ Clear Activity Log</button>
+        <button type="button" class="btn btn-d btn-full btn-sm" onclick="Settings.resetVault()">⚠️ Reset Entire Vault</button>
       </div>
     </div></div>`;
   },
@@ -2025,17 +2023,17 @@ const SettingsNav = {
     const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
     const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
     return `<div class="set-sec"><div class="set-title">🔒 Security</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
-      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
-      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
+      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
+      <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
+      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
       <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'🔐 My Vault','demo':'🎭 Guided Demo','test':'🧪 Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
+      <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'🔐 My Vault','demo':'🎭 Guided Demo','test':'🧪 Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
     </div></div>
-    <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
+    <div class="set-sec"><div class="set-title">🔍 Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">🔍 Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">🤖 Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
     <div class="set-sec"><div class="set-title">🛡️ Security Report</div><div class="set-card">
       ${[
@@ -2099,15 +2097,15 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">💾 Backup & Export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">📤 Export Encrypted Vault (.vos)</button>
-        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">📄 Export as JSON (readable)</button>
-        <button class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="R.goto('sync')">🔄 Sync Devices</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="QRSync.exportQR()">📱 Sync to Another Device (QR)</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="QRSync.importQR()">📷 Scan from Another Device</button>
+        <button type="button" class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">📤 Export Encrypted Vault (.vos)</button>
+        <button type="button" class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">📄 Export as JSON (readable)</button>
+        <button type="button" class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">📊 Export as CSV (spreadsheet)</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">📥 Import / Restore Vault</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="ExIm.share()">📲 Share via Files / AirDrop</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="ExIm.exportPDF()">📄 Export Financial Summary PDF</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="R.goto('sync')">🔄 Sync Devices</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="QRSync.exportQR()">📱 Sync to Another Device (QR)</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="QRSync.importQR()">📷 Scan from Another Device</button>
       </div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">💡 Backup Strategy</div><div class="set-card">
@@ -2124,7 +2122,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? '✓ Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
       <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
-      <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">📥 Import</div><div class="set-card">
       <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><div style="font-size:28px">📥</div><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — Smart Parser offline; LLM optional</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
@@ -2146,8 +2144,8 @@ const SettingsNav = {
       ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">💡 Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>
-        <button class="btn btn-g btn-full btn-sm" onclick="WhatsNew.show()">✨ What's New</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">🔍 Run Diagnostics</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" onclick="WhatsNew.show()">✨ What's New</button>
       </div>
       <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:16px;margin:0 14px 14px">
         <div style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:8px">🔒 Your Data Guarantee</div>
@@ -2197,12 +2195,12 @@ const VaultHealthCenter = {
         ${fp ? `<div style="margin-top:8px;font-size:11px;color:var(--text3)">Fingerprint: <code style="background:var(--glass2);padding:2px 6px;border-radius:4px;color:var(--accent)">${fp}</code></div>` : ''}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button onclick="ExIm.export('vault')" class="btn btn-p" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
+        <button type="button" onclick="ExIm.export('vault')" class="btn btn-p" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
           <span style="font-size:24px">💾</span>
           <span style="font-size:12px;font-weight:700">Export Backup</span>
           <span style="font-size:10px;opacity:.7">Encrypted .vos file</span>
         </button>
-        <button onclick="document.getElementById('importF-global').click()" class="btn btn-g" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
+        <button type="button" onclick="document.getElementById('importF-global').click()" class="btn btn-g" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
           <span style="font-size:24px">📂</span>
           <span style="font-size:12px;font-weight:700">Restore Backup</span>
           <span style="font-size:10px;opacity:.7">Import .vos file</span>

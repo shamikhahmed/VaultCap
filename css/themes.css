@@ -1,27 +1,27 @@
-/* ═══════════ THEMES: light / dark only (no accent palette variants) ═══════════ */
+/* ═══════════ THEMES: light / dark only — monochrome black & white ═══════════ */
 
 /* ─ Light mode ─ */
 body.light {
   --bg: #ffffff;
-  --bg2: #f3f4f6;
-  --bg3: #e5e7eb;
+  --bg2: #f5f5f5;
+  --bg3: #e8e8e8;
   --glass: rgba(0,0,0,.04);
   --glass2: rgba(0,0,0,.06);
   --glass3: rgba(0,0,0,.09);
-  --border: rgba(0,0,0,.1);
-  --border2: rgba(0,0,0,.15);
-  --border3: rgba(0,0,0,.22);
-  --text: #111827;
-  --text2: #374151;
-  --text3: #6b7280;
-  --accent: #2563eb;
-  --accent2: #3b82f6;
-  --glow: rgba(37,99,235,.12);
-  --ok: #16a34a;
-  --warn: #d97706;
-  --err: #dc2626;
-  --info: #0284c7;
-  --purple: #7c3aed;
+  --border: rgba(0,0,0,.12);
+  --border2: rgba(0,0,0,.18);
+  --border3: rgba(0,0,0,.28);
+  --text: #000000;
+  --text2: #333333;
+  --text3: #666666;
+  --accent: #3a6fd8;
+  --accent-fg: #ffffff;
+  --glow: rgba(58,111,216,0.18);
+  --purple: #6a4fd4;
+  --ok: #1a8c3a;
+  --warn: #c47800;
+  --err: #cc2200;
+  --info: #0077b6;
   --on-accent: #ffffff;
   --input: rgba(0,0,0,.05);
   --r: 14px;
@@ -35,5 +35,93 @@ body.light .pd        { border-color: rgba(0,0,0,0.35); }
 body.light .pd.on     { background: #1d1d1f; border-color: #1d1d1f; }
 body.light input, body.light textarea, body.light select { color: #1d1d1f; }
 body.light .inp       { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
-body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+body.light .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
 body.light select.inp option { background: #ffffff; color: #1d1d1f; }
+
+/* ── Accessibility: focus-visible ── */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.inp:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px var(--glow, rgba(91,141,238,0.2));
+}
+.btn:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+.icb:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.chip:focus-visible, .tab-pill:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 2px;
+  border-radius: 99px;
+}
+.ni:focus-visible, .ti:focus-visible {
+  outline: 2px solid var(--accent, #5b8dee);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ── Accessibility: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .card { animation: none !important; }
+  .entry { animation: none !important; }
+  .dash-card { animation: none !important; }
+}
+
+/* ── Skip link ── */
+.cap-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  background: var(--accent, #5b8dee);
+  color: var(--accent-fg, #fff);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 9999;
+  transition: top 0.1s;
+  text-decoration: none;
+}
+.cap-skip-link:focus {
+  top: 8px;
+}
+
+/* ── Windows High Contrast (forced-colors) ── */
+@media (forced-colors: active) {
+  :focus-visible { outline: 3px solid ButtonText; }
+  button, .btn, .key { forced-color-adjust: auto; }
+  .skel { background: ButtonFace; animation: none; }
+}
+
+/* ── Color scheme ── */
+:root { color-scheme: dark light; }
+
+/* ── Print ── */
+@media print {
+  .sidebar, .btabs, .fab, #cmdPalette, #proUpgradeModal,
+  .cap-skip-link, canvas { display: none !important; }
+  .main { overflow: visible !important; }
+  body { background: #fff !important; color: #000 !important; }
+}

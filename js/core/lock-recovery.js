@@ -11,7 +11,7 @@ window.forgotPINFromLock = async function() {
     '<div onclick="Modal.close();setTimeout(window._resetVault,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:14px;cursor:pointer;touch-action:manipulation"><div style="font-size:28px">⚠️</div><div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Permanently deletes all data</div></div></div>' +
     '<div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:rgba(123,95,255,.08);border:1px solid rgba(123,95,255,.25);border-radius:14px"><div style="font-size:28px">💎</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Premium Recovery Support</div><div style="font-size:13px;color:var(--text2);line-height:1.55">Contact Shamikh with your vault ID. Assisted unlock requires <strong>your Master Key</strong> or encrypted backup — encryption is never bypassed. Fee applies.</div><div style="font-size:12px;color:var(--accent);margin-top:6px">thesolution360.com · support@thesolution360.com</div></div></div>' +
     '</div>',
-    '<button class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
+    '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
   );
 };
 
@@ -20,8 +20,8 @@ window._recoverWithKey = function() {
     '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Enter your 24-character master key to restore vault access.</div>' +
     '<input class="inp" id="mkInput" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:center" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
     '<div id="mkErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:16px"></div>',
-    '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-    '<button class="btn btn-p" onclick="window._verifyMasterKey()">Verify →</button>'
+    '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+    '<button type="button" class="btn btn-p" onclick="window._verifyMasterKey()">Verify →</button>'
   );
 };
 
@@ -43,8 +43,8 @@ window._verifyMasterKey = async function() {
       '<input class="inp" id="newPinA" type="password" inputmode="numeric" maxlength="8" placeholder="New PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem;margin-bottom:8px">' +
       '<input class="inp" id="newPinB" type="password" inputmode="numeric" maxlength="8" placeholder="Confirm PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem">' +
       '<div id="newPinErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:16px"></div>',
-      '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button class="btn btn-p" onclick="window._applyNewPIN(\'' + input + '\',' + hasSlot + ')">Set PIN →</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" onclick="window._applyNewPIN(\'' + input + '\',' + hasSlot + ')">Set PIN →</button>'
     );
   }, 300);
 };
@@ -75,8 +75,8 @@ window._resetVault = function() {
     '<div style="font-size:14px;font-weight:700;color:var(--err);margin-bottom:8px">This permanently deletes ALL vault data.</div>' +
     '<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">Type <strong>RESET</strong> to confirm. This cannot be undone.</div>' +
     '<input class="inp" id="resetConfirm" placeholder="RESET" autocorrect="off" autocapitalize="characters" style="text-align:center;font-weight:700;letter-spacing:.15em">',
-    '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-    '<button class="btn btn-d" onclick="window._confirmReset()">Delete Everything</button>'
+    '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+    '<button type="button" class="btn btn-d" onclick="window._confirmReset()">Delete Everything</button>'
   );
 };
 

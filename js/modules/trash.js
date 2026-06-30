@@ -3,7 +3,7 @@ const Trash = {
     const el = document.getElementById('trashBody'); if (!el) return;
     const items = (S.trash || []).sort((a, b) => new Date(b.deletedAt) - new Date(a.deletedAt));
     if (!items.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-ic">🗑️</div><h3>Trash is empty</h3><p>Deleted items appear here for 30 days. Tap Restore to recover them.</p></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🗑️</div><div class="ei-title">Trash is Empty</div><div class="ei-sub">Deleted items stay here for 30 days. Tap Restore on any item to recover it.</div></div>`;
       return;
     }
     const typeIc = { banks:'🏦', cards:'💳', investments:'📈', cash:'💵', sims:'📱', assets:'🏠', expenses:'📋', friends:'👥', emails:'📧', gadgets:'💻', digital:'💼', loans:'🤝', vehicles:'🚗' };
@@ -21,7 +21,7 @@ const Trash = {
       if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
       return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
     };
-    const emptyBtn = `<div style="padding:0 0 14px"><button class="btn btn-d btn-sm" onclick="Trash.emptyAll()">🗑️ Empty Trash</button></div>`;
+    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" onclick="Trash.emptyAll()">🗑️ Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
       <div class="sdiv">${typeIc[type] || '📦'} ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
       ${arr.map(item => {
@@ -34,8 +34,8 @@ const Trash = {
               <div class="entry-sub">Deleted ${age(item.deletedAt)} · ${daysLeft(item.deletedAt)}</div>
             </div>
             <div class="entry-acts">
-              <button class="icb" onclick="Trash.restore('${item.id}')" title="Restore">↩️</button>
-              <button class="icb del" onclick="Trash.purge('${item.id}')" title="Delete permanently">✕</button>
+              <button type="button" class="icb" aria-label="Restore" onclick="Trash.restore('${item.id}')" title="Restore">↩️</button>
+              <button type="button" class="icb del" aria-label="Delete permanently" onclick="Trash.purge('${item.id}')" title="Delete permanently">✕</button>
             </div>
           </div>
         </div>`;

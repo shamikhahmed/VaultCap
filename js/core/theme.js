@@ -1,9 +1,9 @@
 'use strict';
 
 const THEMES = [
-  { id: 'dark',  n: 'Dark',   g: 'dark',  bg: '#080808', ac: '#5b8dee', gl: 'rgba(91,141,238,.18)', cls: '' },
-  { id: 'light', n: 'Light',  g: 'light', bg: '#ffffff', ac: '#2563eb', gl: 'rgba(37,99,235,.12)', cls: 'light' },
-  { id: 'auto',  n: 'System', g: 'dark',  bg: '#080808', ac: 'linear-gradient(135deg,#080808 50%,#ffffff 50%)', gl: 'rgba(91,141,238,.18)', cls: '' },
+  { id: 'dark',  n: 'Dark',   g: 'dark',  bg: '#000000', ac: '#000000', gl: 'rgba(255,255,255,.14)', cls: '' },
+  { id: 'light', n: 'Light',  g: 'light', bg: '#ffffff', ac: '#ffffff', gl: 'rgba(0,0,0,.10)', cls: 'light' },
+  { id: 'auto',  n: 'System', g: 'dark',  bg: '#000000', ac: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', gl: 'rgba(255,255,255,.14)', cls: '' },
 ];
 
 function normalizeVaultTheme(id) {
@@ -40,18 +40,22 @@ const ThemeEngine = {
     this.renderDots();
   },
   renderDots() {
-    ['homeThemes'].forEach(elId => {
-      const e = document.getElementById(elId);
-      if (e) e.innerHTML = THEMES.map(t =>
-        `<div class="tdot${t.id === S.user.theme ? ' on' : ''}" style="background:${t.ac}" title="${t.n}" onclick="ThemeEngine.apply('${t.id}')"></div>`
-      ).join('');
-    });
+    const e = document.getElementById('homeThemes');
+    if (!e) return;
+    const icons = { dark: '🌙', light: '☀️', auto: '⚙️' };
+    e.innerHTML = THEMES.map(t => {
+      const active = t.id === S.user.theme;
+      return `<button type="button" onclick="ThemeEngine.apply('${t.id}')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:14px;border:1.5px solid ${active ? 'var(--accent)' : 'var(--border)'};background:${active ? 'rgba(var(--accent-rgb,91,141,238),.12)' : 'var(--glass)'};cursor:pointer;touch-action:manipulation;transition:all .2s;font-family:var(--font)">
+        <div style="width:36px;height:36px;border-radius:10px;background:${t.bg};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px">${icons[t.id]}</div>
+        <span style="font-size:11px;font-weight:${active ? '700' : '500'};color:${active ? 'var(--accent)' : 'var(--text3)'}">${t.n}</span>
+      </button>`;
+    }).join('');
   },
   openPicker() {
     const options = [
-      { id: 'dark', label: '🌙 Dark', preview: '#080808', accent: '#5b8dee' },
-      { id: 'light', label: '☀️ Light', preview: '#ffffff', accent: '#2563eb' },
-      { id: 'auto', label: '⚙️ System', preview: 'linear-gradient(135deg,#080808 50%,#ffffff 50%)', accent: '#5b8dee' },
+      { id: 'dark', label: '🌙 Dark', preview: '#000000', accent: '#ffffff' },
+      { id: 'light', label: '☀️ Light', preview: '#ffffff', accent: '#000000' },
+      { id: 'auto', label: '⚙️ System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', accent: '#ffffff' },
     ];
     document.getElementById('themePicker').innerHTML = `
       <div style="display:grid;grid-template-columns:1fr;gap:10px">

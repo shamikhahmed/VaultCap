@@ -1,7 +1,5 @@
 // VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
-// Core utility functions — future migration target from app.js
-
-// TODO: migrate to js/core/utils.js (canonical copy here, app.js retains working copy)
+// Core utility functions — canonical definitions loaded before app.js bootstrap.
 
 const escHtml = str => String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 

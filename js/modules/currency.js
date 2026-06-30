@@ -71,7 +71,7 @@ const Currency = {
     const manualBadge = isManual ? '<span style="font-size:9px;background:rgba(255,152,0,.15);color:var(--warn);border-radius:4px;padding:1px 5px;font-weight:700">MANUAL</span>' : '';
     const rateText = displayRate ? displayRate.toFixed(4) : '—';
     const pkrText = inPkr ? ' · 1 ' + c.code + ' = <strong style="color:var(--accent)">' + inPkr.toFixed(2) + '</strong> PKR' : '';
-    const clearBtn = isManual ? '<button onclick="Currency._clearManual(\'' + c.code + '\')" style="font-size:9px;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
+    const clearBtn = isManual ? '<button type="button" onclick="Currency._clearManual(\'' + c.code + '\')" style="font-size:9px;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
     return '<div style="padding:14px 16px;' + border + 'display:flex;align-items:center;gap:12px">' +
       '<div style="font-size:22px;flex-shrink:0">' + c.flag + '</div>' +
       '<div style="flex:1;min-width:0">' +
@@ -122,7 +122,7 @@ const Currency = {
         '<div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
             '<div style="font-size:13px;font-weight:700;color:var(--text)">💱 Exchange Rates</div>' +
-            '<button onclick="Currency._refreshRates()" style="background:var(--glass2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">↻ Refresh</button>' +
+            '<button type="button" onclick="Currency._refreshRates()" style="background:var(--glass2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">↻ Refresh</button>' +
           '</div>' +
           '<div style="font-size:11px;color:' + staleColor + '">' + staleIcon + ' Last updated: ' + lastUpdated + '</div>' +
           '<div style="font-size:10px;color:var(--text3);margin-top:4px">Base: 1 USD · Tap any rate to override manually</div>' +

@@ -25,7 +25,7 @@ const Store = {
   _data() {
     return {
       schemaVersion: typeof SCHEMA_VERSION !== 'undefined' ? SCHEMA_VERSION : 13,
-      user: S.user, noPin: S.noPin,
+      user: S.user, noPin: S.noPin, decoyPin: S.decoyPin || '',
       modules: S.modules,
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
       assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,

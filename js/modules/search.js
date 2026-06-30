@@ -35,7 +35,7 @@ const GlobalSearch = {
       <div style="position:relative;margin-bottom:10px">
         <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none">🔍</span>
         <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:15px;border-radius:14px" oninput="GlobalSearch.search(this.value)" autocomplete="off">
-        <button onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
+        <button type="button" onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
       </div>
       <div class="cap-tab-bar cap-tab-bar--flush" role="tablist" aria-label="Search filters" style="padding:0 0 2px">
         ${filters.map(f => `<button type="button" class="cap-tab search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" role="tab" aria-selected="${GlobalSearch.activeFilter === f}" onclick="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</button>`).join('')}
@@ -152,7 +152,7 @@ const GlobalSearch = {
     }
 
     if (!results.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><h3>${q ? 'Nothing found for "' + escHtml(q) + '"' : 'Your vault is empty'}</h3><p>${q ? 'Try different keywords or change the filter' : 'Add entries from the + button or any module tab'}</p></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🔍</div><div class="ei-title">${q ? 'No Results for &ldquo;' + escHtml(q) + '&rdquo;' : 'Vault is Empty'}</div><div class="ei-sub">${q ? 'Try different keywords, check spelling, or change the filter.' : 'Add entries using the + button or any module tab.'}</div></div>`;
       return;
     }
 

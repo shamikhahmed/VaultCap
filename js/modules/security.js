@@ -38,12 +38,12 @@ const SecurityCenter={
       expCards>0&&{sev:'warn',msg:expCards+' card'+(expCards>1?'s are':' is')+' expired or expiring soon',btn:'Review Cards',act:"R.goto('cards')"},
       !hasBackup&&{sev:'err',msg:'No backup created — your data is at risk',btn:'Backup Now',act:"ExIm.export('vault')"},
       backupAge>30&&hasBackup&&{sev:'warn',msg:'Last backup was '+backupAge+' days ago',btn:'Backup Now',act:"ExIm.export('vault')"},
-    ].filter(Boolean).map(({sev,msg,btn,act})=>`<div class="insight ${sev==='err'?'err':'warn'}" style="margin-bottom:8px"><div class="insight-ic">${sev==='err'?'❌':'⚠️'}</div><div class="insight-body"><div class="insight-title">${msg}</div></div><button class="btn btn-g btn-sm" onclick="${act}">${btn}</button></div>`).join('') || '<div class="insight ok"><div class="insight-ic">✅</div><div class="insight-body"><div class="insight-title">No security issues found</div><div class="insight-sub">Your vault is well-configured</div></div></div>'}
+    ].filter(Boolean).map(({sev,msg,btn,act})=>`<div class="insight ${sev==='err'?'err':'warn'}" style="margin-bottom:8px"><div class="insight-ic">${sev==='err'?'❌':'⚠️'}</div><div class="insight-body"><div class="insight-title">${msg}</div></div><button type="button" class="btn btn-g btn-sm" onclick="${act}">${btn}</button></div>`).join('') || '<div class="insight ok"><div class="insight-ic">✅</div><div class="insight-body"><div class="insight-title">No security issues found</div><div class="insight-sub">Your vault is well-configured</div></div></div>'}
     <div class="set-sec" style="margin-top:14px"><div class="set-title">Security Actions</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your vault PIN</div></div><button class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
-      <div class="si"><div class="sil"><div class="name">Set Decoy PIN</div><div class="desc">Show fake vault under coercion</div></div><button class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">Set</button></div>
-      <div class="si"><div class="sil"><div class="name">View Master Key</div><div class="desc">Emergency recovery key</div></div><button class="btn btn-g btn-sm" onclick="Settings.showMasterKey()">View</button></div>
-      <div class="si"><div class="sil"><div class="name">Encrypted Backup</div><div class="desc">AES-256-GCM encrypted .vos file</div></div><button class="btn btn-p btn-sm" onclick="ExIm.export('vault')">Backup</button></div>
+      <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
+      <div class="si"><div class="sil"><div class="name">Set Decoy PIN</div><div class="desc">Show fake vault under coercion</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">Set</button></div>
+      <div class="si"><div class="sil"><div class="name">View Master Key</div><div class="desc">Emergency recovery key</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()">View</button></div>
+      <div class="si"><div class="sil"><div class="name">Encrypted Backup</div><div class="desc">AES-256-GCM encrypted .vos file</div></div><button type="button" class="btn btn-p btn-sm" onclick="ExIm.export('vault')">Backup</button></div>
     </div></div>
     `;
   },

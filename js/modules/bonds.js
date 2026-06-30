@@ -72,14 +72,14 @@ const BondsModule = {
               '<div><div style="font-size:13px;color:var(--text)">' + b.name + '</div>' +
               '<div style="font-size:11px;color:var(--text3)">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
               '<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
-              '<button onclick="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
+              '<button type="button" onclick="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
             '</div>';
           }).join('') +
         '</div>'
       ) : '') +
 
-      '<button class="btn btn-p" style="width:100%" onclick="BondsModule.openAdd()">+ Add Bond / Security</button>' +
-      '<button class="btn btn-g" style="width:100%" onclick="BondsModule.openBulkImport()">📋 Bulk Import Bond Numbers</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" onclick="BondsModule.openAdd()">+ Add Bond / Security</button>' +
+      '<button type="button" class="btn btn-g" style="width:100%" onclick="BondsModule.openBulkImport()">📋 Bulk Import Bond Numbers</button>' +
 
       (bonds.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">🎫</div><div class="ei-title">No bonds yet</div><div class="ei-sub">Track prize bonds, premium bonds, NSS certificates, government securities across PK, UK and UAE</div></div>'
@@ -119,9 +119,9 @@ const BondsModule = {
           '</div>' +
         '</div>' +
         '<div class="entry-acts">' +
-          (isDrawBond ? '<button class="icb" onclick="BondsModule._checkResults(\'' + b.typeId + '\')" title="Check Results">🎯</button>' : '') +
-          '<button class="icb" onclick="BondsModule.edit(' + i + ')">✏️</button>' +
-          '<button class="icb del" onclick="BondsModule.del(' + i + ')">🗑️</button>' +
+          (isDrawBond ? '<button type="button" class="icb" aria-label="Check Results" onclick="BondsModule._checkResults(\'' + b.typeId + '\')" title="Check Results">🎯</button>' : '') +
+          '<button type="button" class="icb" aria-label="Edit" onclick="BondsModule.edit(' + i + ')">✏️</button>' +
+          '<button type="button" class="icb del" aria-label="Delete" onclick="BondsModule.del(' + i + ')">🗑️</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -209,8 +209,8 @@ const BondsModule = {
       '<div class="fg"><label class="fl">Notes</label>' +
         '<textarea class="inp" id="bnd-notes" rows="2">' + (b.notes || '') + '</textarea></div>',
 
-      '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button class="btn btn-p" onclick="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" onclick="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
     setTimeout(function() {
       BondsModule._updateTotal();
@@ -298,8 +298,8 @@ const BondsModule = {
         '</select></div>' +
       '<div class="fg"><label class="fl">Bond Numbers (one per line)</label>' +
         '<textarea class="inp" id="bulk-numbers" rows="8" placeholder="123456&#10;789012&#10;345678&#10;..."></textarea></div>',
-      '<button class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button class="btn btn-p" onclick="BondsModule.processBulkImport()">Import</button>'
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" onclick="BondsModule.processBulkImport()">Import</button>'
     );
   },
 

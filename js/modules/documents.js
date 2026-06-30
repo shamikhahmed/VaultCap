@@ -32,7 +32,7 @@ const DocsModule={
     const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
     const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
     if(!docs.length){
-      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🪪</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
+      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🪪</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;
     }
     const now=new Date();
@@ -44,7 +44,7 @@ const DocsModule={
       const expLabel=!exp?'':daysLeft<0?'Expired '+Math.abs(daysLeft)+'d ago':daysLeft<=0?'Expires today':'Exp '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
       const subtitle=[d.holderName,d.issuingCountry,d.docNumber?'Ref: '+d.docNumber.slice(-4).padStart(d.docNumber.length,'•'):''].filter(Boolean).join(' · ');
       const hasPhotos=d.frontPhoto||d.backPhoto;
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${schema.ic}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">📷 Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">🔗 Linked</span>':''}</div></div><div class="entry-acts"><button class="icb${d.pinned?' on':''}" onclick="DocsModule.pin('${d.id}')" title="Pin">📌</button><button class="icb" onclick="DocsModule.openDetail('${d.id}')">👁️</button><button class="icb" onclick="DocsModule.edit('${d.id}')">✏️</button><button class="icb del" onclick="DocsModule.del('${d.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${schema.ic}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">📷 Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">🔗 Linked</span>':''}</div></div><div class="entry-acts"><button type="button" class="icb${d.pinned?' on':''}" onclick="DocsModule.pin('${d.id}')" title="Pin">📌</button><button type="button" class="icb" aria-label="View details" onclick="DocsModule.openDetail('${d.id}')">👁️</button><button type="button" class="icb" aria-label="Edit" onclick="DocsModule.edit('${d.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="DocsModule.del('${d.id}')">🗑️</button></div></div></div>`;
     }).join('');
   },
   buildForm(schema,d={}){
@@ -74,7 +74,7 @@ const DocsModule={
     <div id="doc-photo-area"></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2" placeholder="Any additional details..."></textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags([])}`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="DocsModule.save()">Save Document</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="DocsModule.save()">Save Document</button>`);
   },
   onTypeChange(val){
     if(!val.trim()){document.getElementById('doc-dynamic-fields').innerHTML='';document.getElementById('doc-photo-area').innerHTML='';return;}
@@ -120,8 +120,8 @@ const DocsModule={
       '<canvas id="_docCanvas" style="display:none"></canvas>',
       '<div id="_docStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position document in frame then tap Capture</div>',
       '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button onclick="DocsModule._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
-      '<button onclick="DocsModule._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
+      '<button type="button" onclick="DocsModule._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
+      '<button type="button" onclick="DocsModule._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -150,7 +150,7 @@ const DocsModule={
     const thumbId='doc-photo-'+targetId;
     const thumbEl=document.getElementById(thumbId);
     if(thumbEl){
-      thumbEl.innerHTML='<img src="'+dataUrl+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\''+targetId+'\')" title="Tap to view">';
+      thumbEl.innerHTML=''<img src="'+dataUrl+'" alt="Document photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\''+targetId+'\')" title="Tap to view">';
       thumbEl.dataset.photo=base64;
     }
     Toast.show('Photo saved — fill in the document details below','info',2000);
@@ -172,7 +172,7 @@ const DocsModule={
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+b64+'" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img src="data:image/jpeg;base64,'+b64+'" alt="Document photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
     document.body.appendChild(v);
   },
   save(editId=null){
@@ -202,8 +202,8 @@ const DocsModule={
     const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
     const needsBack=this._needsFrontBack(d.docType,'');
     const photoHtml='<div id="doc-photo-area"><div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'front\')" style="gap:6px">📷 '+(needsBack?'Front':'Capture')+'</button><div id="doc-photo-front" style="margin-top:4px">'+(d.frontPhoto?'<img src="data:image/jpeg;base64,'+d.frontPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\'front\')" title="Tap to view">':'')+'</div></div>'
-      +(needsBack?'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="doc-photo-back" style="margin-top:4px">'+(d.backPhoto?'<img src="data:image/jpeg;base64,'+d.backPhoto+'" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\'back\')" title="Tap to view">':'')+'</div></div>':'')
+      +'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'front\')" style="gap:6px">📷 '+(needsBack?'Front':'Capture')+'</button><div id="doc-photo-front" style="margin-top:4px">'+(d.frontPhoto?'<img src="data:image/jpeg;base64,'+d.frontPhoto+'" alt="Document front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\'front\')" title="Tap to view">':'')+'</div></div>'
+      +(needsBack?'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="doc-photo-back" style="margin-top:4px">'+(d.backPhoto?'<img src="data:image/jpeg;base64,'+d.backPhoto+'" alt="Document back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\'back\')" title="Tap to view">':'')+'</div></div>':'')
       +'</div></div>';
     Modal.open('✏️ Edit '+schema.label,`
     <div class="fg"><label class="fl">Document Type</label><input class="inp" id="doc-type-sel" value="${schema.label}" readonly style="opacity:.7"></div>
@@ -211,7 +211,7 @@ const DocsModule={
     ${photoHtml}
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2">${d.notes||''}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(d.tags||[])}`,
-    `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="DocsModule.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="DocsModule.save('${id}')">Update</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="DocsModule.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="DocsModule.save('${id}')">Update</button>`);
     // Restore saved photo data attributes for save() to read
     setTimeout(function(){
       if(d.frontPhoto){const f=document.getElementById('doc-photo-front');if(f)f.dataset.photo=d.frontPhoto;}
@@ -225,18 +225,18 @@ const DocsModule={
     let photoHtml='';
     if(d.frontPhoto||d.backPhoto){
       photoHtml='<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'
-        +(d.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+d.frontPhoto+'" style="width:130px;border-radius:8px;cursor:pointer" onclick="DocsModule._openPhotoFull(\''+d.frontPhoto+'\')"></div>':'')
-        +(d.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+d.backPhoto+'" style="width:130px;border-radius:8px;cursor:pointer" onclick="DocsModule._openPhotoFull(\''+d.backPhoto+'\')"></div>':'')
+        +(d.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+d.frontPhoto+'" alt="Document front" style="width:130px;border-radius:8px;cursor:pointer" onclick="DocsModule._openPhotoFull(\''+d.frontPhoto+'\')"></div>':'')
+        +(d.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+d.backPhoto+'" alt="Document back" style="width:130px;border-radius:8px;cursor:pointer" onclick="DocsModule._openPhotoFull(\''+d.backPhoto+'\')"></div>':'')
         +'</div>';
     }
     const rows=schema.fields.map(f=>{const v=d[f.id];return v?U.drRow(f.label,v):''}).filter(Boolean).join('');
-    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,`<button class="btn btn-g" onclick="Modal.close()">Close</button><button class="btn btn-p" onclick="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
   },
   _openPhotoFull(base64){
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+base64+'" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img src="data:image/jpeg;base64,'+base64+'" alt="Document photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
     document.body.appendChild(v);
   },
   pin(id){if(!S.documents)return;const d=S.documents.find(x=>x.id===id);if(d){d.pinned=!d.pinned;Store.save();this.render();}},

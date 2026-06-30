@@ -80,10 +80,10 @@ const Loans = {
       const cur = l.currency || userCur;
 
       const settle  = status !== 'Settled'
-        ? `<button class="icb" title="Mark settled" onclick="Loans.settle('${l.id}')">✔</button>`
+        ? `<button type="button" class="icb" aria-label="Mark settled" title="Mark settled" onclick="Loans.settle('${l.id}')">✔</button>`
         : '';
       const payBtn = status !== 'Settled'
-        ? `<button class="icb" title="Record payment" onclick="Loans.recordPayment('${l.id}')">💰</button>`
+        ? `<button type="button" class="icb" aria-label="Record payment" title="Record payment" onclick="Loans.recordPayment('${l.id}')">💰</button>`
         : '';
 
       return `<div class="entry" data-id="${l.id}">
@@ -100,7 +100,7 @@ const Loans = {
             </div>
             ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens" style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
-          <div class="entry-acts">${payBtn}${settle}<button class="icb" onclick="Loans.edit('${l.id}')">✏️</button><button class="icb del" onclick="Loans.del('${l.id}')">🗑️</button></div>
+          <div class="entry-acts">${payBtn}${settle}<button type="button" class="icb" aria-label="Edit" onclick="Loans.edit('${l.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Loans.del('${l.id}')">🗑️</button></div>
         </div>
         ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${l.notes}</div>` : ''}
       </div>`;
@@ -124,11 +124,11 @@ const Loans = {
               ? `<div style="font-size:12px;color:var(--text3)">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${U.fmt(totalAmt)} ${S.user.currency || ''}</span></div>`
               : `<div style="font-size:12px;color:var(--text3)">Nothing here yet</div>`}
           </div>
-          <button class="btn btn-p btn-sm" onclick="Loans.openAdd('${addType}')">+ Add</button>
+          <button type="button" class="btn btn-p btn-sm" onclick="Loans.openAdd('${addType}')">+ Add</button>
         </div>`;
 
       if (liveAll.length === 0 && settled.length === 0) {
-        html += `<div style="padding:12px;background:var(--glass);border-radius:var(--r);text-align:center;font-size:12px;color:var(--text3)">No entries yet — tap + Add above</div>`;
+        html += `<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track mortgages, personal loans, car finance — repayment schedules and interest calculations</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
@@ -147,7 +147,7 @@ const Loans = {
 
   openAdd(type = 'borrowed') {
     const title = type === 'borrowed' ? '🤲 I Owe (Borrowed)' : '💸 They Owe Me (Lent)';
-    Modal.open(title, this.form({ type }), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Loans.save()">Save</button>`);
+    Modal.open(title, this.form({ type }), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Loans.save()">Save</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = S.user.currency || 'PKR';
@@ -206,7 +206,7 @@ const Loans = {
         const friendId = U.id();
         S.friends.push({ id: friendId, name: person, createdAt: new Date().toISOString() });
         Store.save();
-        Toast.show(`${person} added to Friends. <button class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000);
+        Toast.show(`${person} added to Friends. <button type="button" class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000);
       }
       promptAddAnother('Loan', `Loans.openAdd('${type}')`);
     }
@@ -214,7 +214,7 @@ const Loans = {
 
   edit(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
-    Modal.open('✏️ Edit Loan', this.form(l), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Loans.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Loans.save('${id}')">Update</button>`);
+    Modal.open('✏️ Edit Loan', this.form(l), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Loans.save('${id}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = l.currency || S.user.currency || 'PKR';
@@ -244,7 +244,7 @@ const Loans = {
         <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
         <div>Remaining: <strong style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
       </div>`,
-      `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Loans.savePayment('${id}')">Record</button>`
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Loans.savePayment('${id}')">Record</button>`
     );
     setTimeout(() => {
       const amtEl = document.getElementById('lp-amt');

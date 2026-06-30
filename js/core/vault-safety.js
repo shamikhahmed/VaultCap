@@ -1,0 +1,37 @@
+'use strict';
+/* VaultSafety — PIN backup restore offer + restore logic */
+
+const VaultSafety = {
+  async maybeOfferRestore() {
+    if (VaultProfiles.isDemo() || !S.unlocked) return;
+    if (sessionStorage.getItem('vo_restore_offer_dismissed')) return;
+    if (!(await VaultDB.hasPinBackup())) return;
+    const backup = await VaultDB.loadPinBackup();
+    if (!backup) return;
+    const mainCount = _vaultEntityCount(Store._data());
+    const backupCount = _vaultEntityCount(backup);
+    if (backupCount < 3 || backupCount <= mainCount) return;
+    Modal.open('↩ Restore previous vault?',
+      `<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">A saved copy from before your last change is available (${backupCount} entries vs ${mainCount} now). This can recover data after an accidental demo load or bad import.</div>`,
+      `<button type="button" class="btn btn-g" onclick="sessionStorage.setItem('vo_restore_offer_dismissed','1');Modal.close()">Keep current</button>` +
+      `<button type="button" class="btn btn-p" onclick="VaultSafety.restore()">Restore previous →</button>`
+    );
+  },
+
+  async restore() {
+    try {
+      const data = await VaultDB.restorePinBackup();
+      Object.assign(S, data);
+      await Store.save();
+      Modal.close();
+      buildNav();
+      Toast.show('Previous vault restored', 'success', 5000);
+      R.goto('dashboard');
+      setTimeout(() => Dash.render(), 50);
+    } catch (e) {
+      Toast.show('Restore failed — try Backup Center import', 'error');
+    }
+  },
+};
+window.VaultSafety = VaultSafety;
+

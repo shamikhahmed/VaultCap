@@ -14,17 +14,17 @@ const Friends = {
     const data = allFriends.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
       .slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     if (!data.length) {
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">👥</div><div class="ei-title">No Friends Yet</div><div class="ei-sub">Add people you share loans with or just keep as contacts</div><button class="btn btn-p" onclick="Friends.openAdd()">👥 Add Friend</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">👥</div><div class="ei-title">No Friends Yet</div><div class="ei-sub">Add people you share loans with or just keep as contacts</div><button type="button" class="btn btn-p" onclick="Friends.openAdd()">👥 Add Friend</button></div>`;
       return;
     }
     el.innerHTML = data.map(f => {
       const loans = (S.loans || []).filter(l => l.person === f.name && l.status !== 'Settled');
       const badge = loans.length ? `<span class="badge b-warn">${loans.length} loan${loans.length > 1 ? 's' : ''}</span>` : '';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${f.name}</div><div class="entry-sub">${f.phone || ''}${f.notes ? (f.phone ? ' · ' : '') + f.notes : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts"><button class="icb" onclick="Friends.edit('${f.id}')">✏️</button><button class="icb del" onclick="Friends.del('${f.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${f.name}</div><div class="entry-sub">${f.phone || ''}${f.notes ? (f.phone ? ' · ' : '') + f.notes : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts"><button type="button" class="icb" aria-label="Edit" onclick="Friends.edit('${f.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Friends.del('${f.id}')">🗑️</button></div></div></div>`;
     }).join('');
   },
   openAdd() {
-    Modal.open('👥 Add Friend', this.form(), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-p" onclick="Friends.save()">Save</button>`);
+    Modal.open('👥 Add Friend', this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Friends.save()">Save</button>`);
   },
   form(f = {}) {
     return `<div class="fg"><label class="fl">Name *</label><input class="inp" id="ff-name" value="${f.name || ''}" placeholder="Full name"></div>
@@ -43,7 +43,7 @@ const Friends = {
   },
   edit(id) {
     const f = (S.friends || []).find(x => x.id === id); if (!f) return;
-    Modal.open('✏️ Edit Friend', this.form(f), `<button class="btn btn-g" onclick="Modal.close()">Cancel</button><button class="btn btn-d btn-sm" onclick="Friends.del('${id}',true)">Delete</button><button class="btn btn-p" onclick="Friends.save('${id}')">Update</button>`);
+    Modal.open('✏️ Edit Friend', this.form(f), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Friends.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Friends.save('${id}')">Update</button>`);
   },
   del(id, fm = false) {
     if (!window.__vos_confirm('Move to Trash?')) return;
@@ -52,7 +52,7 @@ const Friends = {
     S.friends = (S.friends || []).filter(x => x.id !== id);
     Activity.log('Trashed friend', f.name);
     Store.save(); if (fm) Modal.close(); this.render();
-    Toast.show(`Moved to Trash — <button class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
   }
 };
 window.Contacts = Friends;
