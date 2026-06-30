@@ -31,6 +31,8 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-TileColor" content="#000000">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-512.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 <meta name="color-scheme" content="dark light">
@@ -483,7 +485,8 @@
 </div>
 
 <script src="js/storage.js"></script>
-<script src="js/core/constants.js"></script>
+<script>window.VER='4.8.1';</script>
+<script src="js/core/constants.js?v=4.8.1"></script>
 <script src="js/core/validators.js"></script>
 <script src="js/core/vault-meta.js"></script>
 <script src="js/core/theme.js"></script>
@@ -514,9 +517,9 @@
 <script src="js/core/activity.js"></script>
 <script src="js/core/vault-utils.js"></script>
 <script src="js/core/emergency.js"></script>
-<script src="js/core/onboarding-wizard.js"></script>
+<script src="js/core/onboarding-wizard.js?v=4.8.1"></script>
 <script src="js/core/ios-interactions.js"></script>
-<script src="js/core/nav-ui.js"></script>
+<script src="js/core/nav-ui.js?v=4.8.1"></script>
 <script src="js/core/smart-actions.js"></script>
 <script src="js/core/workspace-security.js"></script>
 <script src="js/core/demo-profiles.js"></script>
@@ -570,7 +573,7 @@
 <script src="js/modules/family.js"></script>
 <script src="js/modules/assets.js"></script>
 <script src="js/modules/expenses.js"></script>
-<script src="js/modules/documents.js"></script>
+<script src="js/modules/documents.js?v=4.8.1"></script>
 <script src="js/modules/emails.js"></script>
 <script src="js/modules/gadgets.js"></script>
 <script src="js/modules/digital.js"></script>
@@ -590,7 +593,7 @@
 <script src="js/modules/tax.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js?v=40').catch(() => {});
+  navigator.serviceWorker.register('sw.js?v=50').catch(() => {});
 }
 </script>
 <script src="js/capricorn-motion.js"></script>

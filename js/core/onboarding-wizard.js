@@ -145,8 +145,6 @@ const Onboarding = {
         </div>
         <button type="button" onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Continue →</button>
         <button type="button" onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
-    }
-
     } else if (this._step === 5) {
       const country = this._countries.find(c => c.code === this._primaryCountry);
       const flag = country ? country.flag : '🔐';
@@ -289,9 +287,4 @@ const Onboarding = {
 
 /* → js/core/vault-safety.js */
 
-const VER = '4.4.0';
-
 // Crypto → js/core/crypto.js · Migrate → js/core/migrate.js (load before app.js)
-
-// ===================== VAULT HEALTH — SINGLE SOURCE OF TRUTH =====================
-// All three callers (Dashboard, SecurityCenter, Widget snapshot) must use this.

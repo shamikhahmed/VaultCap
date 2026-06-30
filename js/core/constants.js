@@ -2,7 +2,9 @@
 // Centralised constants — future migration target from app.js
 
 const VAULT_VERSION = 7;
-const APP_VERSION = typeof VER !== 'undefined' ? VER : '4.0';
+const VER = window.VER || '4.8.1';
+const APP_VERSION = VER;
+window.VER = VER;
 const MAX_STORAGE_MB = 5;
 const BACKUP_REMINDER_DAYS = 30;
 const MAX_AUDIT_ENTRIES = 10;

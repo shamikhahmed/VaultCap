@@ -289,7 +289,8 @@ function buildNav() {
   }
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
   const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
-  const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + VER;
+  const appVer = (typeof window !== 'undefined' && window.VER) || (typeof VER !== 'undefined' ? VER : (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '4.8.1'));
+  const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + appVer;
   const sbNav = document.getElementById('sbNav');
   const btabs = document.getElementById('btabs');
   if (sbNav && btabs && navKey === buildNav._cacheKey && sbNav.children.length) {
@@ -323,7 +324,7 @@ function buildNav() {
   document.getElementById('sbNav').innerHTML = sbHTML;
 
   const nameEl = document.getElementById('sbUser');
-  if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + VER;
+  if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + appVer;
 
   const moneyPages = new Set(['banks','cards','cash','investments','loans','expenses','bc','bonds']);
   const assetsPages = new Set(['assets','vehicles','gadgets']);

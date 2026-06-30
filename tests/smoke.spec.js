@@ -6,7 +6,7 @@ const DEMO_PIN = '123456';
 
 async function enterPin(page, pin) {
   for (const digit of pin) {
-    await page.locator('button.key', { hasText: new RegExp(`^${digit}$`) }).click();
+    await page.locator(`#pgLock button.key[onclick="PIN.in('${digit}')"]`).click();
   }
 }
 
@@ -27,7 +27,7 @@ test.describe('VaultCap smoke', () => {
 
   test('demo vault unlocks with PIN 123456', async ({ page }) => {
     await unlockDemoVault(page);
-    await expect(page.locator('#dashGreet')).toBeVisible();
+    await expect(page.locator('#dashGreet')).not.toBeEmpty();
   });
 
   test('settings hides bottom tabs on utility pages', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('VaultCap smoke', () => {
     await unlockDemoVault(page);
     await page.locator('[data-pg="dashboard"]').first().click();
     await expect(page.locator('#pg-dashboard.on')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('#dashGreet')).toBeVisible();
+    await expect(page.locator('#dashGreet')).not.toBeEmpty();
   });
 
   test('navigates to family module when enabled', async ({ page }) => {

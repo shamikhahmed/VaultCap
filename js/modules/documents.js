@@ -150,7 +150,7 @@ const DocsModule={
     const thumbId='doc-photo-'+targetId;
     const thumbEl=document.getElementById(thumbId);
     if(thumbEl){
-      thumbEl.innerHTML=''<img src="'+dataUrl+'" alt="Document photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\''+targetId+'\')" title="Tap to view">';
+      thumbEl.innerHTML='<img src="'+dataUrl+'" alt="Document photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="DocsModule._viewPhotoB64(\''+targetId+'\')" title="Tap to view">';
       thumbEl.dataset.photo=base64;
     }
     Toast.show('Photo saved — fill in the document details below','info',2000);
