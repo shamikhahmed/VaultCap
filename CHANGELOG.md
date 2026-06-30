@@ -1,5 +1,19 @@
 # Changelog — VaultCap
 
+## 4.9.2 (2026-06-30) — CRUD E2E + VaultDB binary import + WebKit Safari
+
+### Tests
+- `crud-roundtrip.spec.js` — create → update → delete for 11 modules (banks, cards, cash, expenses, loans, investments, friends, sims, emails, digital, assets)
+- `vaultdb-import.spec.js` — `VaultDB.importEncrypted()` binary `.vos` round-trip + wrong-PIN rejection
+- `webkit-safari.spec.js` — WebKit engine + iPhone 14 viewport (Safari proxy QA)
+- Playwright projects: `chromium` + `webkit-iphone`; `npm run test:e2e:safari`
+
+### Branding
+- README + package.json shields: blue `#5b8dee` → monochrome white/black
+
+### Version
+- Bumped to `4.9.2`
+
 ## 4.9.1 (2026-06-30) — Full monochrome sweep + comprehensive E2E
 
 ### Design
