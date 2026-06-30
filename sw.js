@@ -38,7 +38,6 @@ const ASSETS = [
   './js/core/modal.js',
   './js/core/smart-actions.js',
   './js/core/nav-ui.js',
-  './js/core/utils.js',
   './js/core/app-helpers.js',
   './js/core/schema.js',
   './js/core/doc-schemas.js',

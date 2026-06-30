@@ -19,7 +19,8 @@ const Validators = {
   document(d) {
     const errors = [];
     if (!d.docType) errors.push('Document type is required');
-    if (d.expiry && isNaN(new Date(d.expiry))) errors.push('Invalid expiry date');
+    const exp = d.expiryDate || d.expiry;
+    if (exp && isNaN(new Date(exp))) errors.push('Invalid expiry date');
     return errors;
   },
   loan(l) {

@@ -110,8 +110,8 @@ const BondsModule = {
       '<div class="entry-main">' +
         '<div class="entry-ic" style="background:rgba(201,168,76,.15)">🎫</div>' +
         '<div class="entry-body">' +
-          '<div class="entry-name">' + (b.name || 'Bond') + '</div>' +
-          '<div class="entry-sub">' + (b.quantity || 1) + ' × ' + cur + ' ' + (b.faceValue || b.amount || 0).toLocaleString() + ' · ' + (b.country || '') + '</div>' +
+          '<div class="entry-name">' + escHtml(b.name || 'Bond') + '</div>' +
+          '<div class="entry-sub">' + escHtml(String(b.quantity || 1)) + ' × ' + escHtml(cur) + ' ' + (b.faceValue || b.amount || 0).toLocaleString() + ' · ' + escHtml(b.country || '') + '</div>' +
           '<div class="entry-meta">' +
             '<span class="badge b-acc">' + displayFv + '</span>' +
             (nextDraw ? '<span class="badge b-warn">Draw: ' + nextDraw + '</span>' : '') +

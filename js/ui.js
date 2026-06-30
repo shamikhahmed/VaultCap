@@ -152,13 +152,14 @@ const Dash={
       return exp <= in60 && exp >= now;
     });
     const expiringDocs = (S.documents||[]).filter(d => {
-      if (!d.expiry) return false;
-      const exp = new Date(d.expiry);
-      return exp <= in60 && exp >= now;
+      const exp = typeof docExpiry === 'function' ? docExpiry(d) : (d.expiryDate || d.expiry);
+      if (!exp) return false;
+      const dt = new Date(exp);
+      return !isNaN(dt) && dt <= in60 && dt >= now;
     });
     const allExpiring = [
       ...expiringCards.map(c => ({name:c.cardName||c.name, type:'card', days:Math.round((new Date('20'+c.expiry.split('/')[1]+'-'+c.expiry.split('/')[0]+'-01')-now)/(1000*60*60*24))})),
-      ...expiringDocs.map(d => ({name:d.title||d.type, type:'doc', days:Math.round((new Date(d.expiry)-now)/(1000*60*60*24))}))
+      ...expiringDocs.map(d => ({name:d.holderName||d.docType||d.title||'Document', type:'doc', days:Math.round((new Date(docExpiry(d))-now)/(1000*60*60*24))}))
     ].sort((a,b) => a.days-b.days);
 
     // Backup reminder
@@ -823,7 +824,7 @@ const ExIm={
     const toB=(a,c)=>CurrencyEngine.toBase(a||0,c||'PKR');
     const { bankPKR, invPKR, asPKR, cashPKR, bcPKR, bondsPKR, debtPKR, nwPKR } = CurrencyEngine.computeNetWorthPKR();
     const in90=Date.now()+90*86400000;
-    const expiringDocs=(S.documents||[]).filter(d=>d.expiryDate&&new Date(d.expiryDate)>new Date()&&new Date(d.expiryDate)<in90);
+    const expiringDocs=(S.documents||[]).filter(d=>{const exp=typeof docExpiry==='function'?docExpiry(d):(d.expiryDate||d.expiry);return exp&&new Date(exp)>new Date()&&new Date(exp)<in90;});
     const section=(title,content)=>'<div class="section"><h2>'+title+'</h2>'+content+'</div>';
     const row=(label,value)=>'<div class="row"><span class="label">'+label+'</span><span class="value">'+value+'</span></div>';
     const table=(headers,rows)=>'<table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+(c||'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';

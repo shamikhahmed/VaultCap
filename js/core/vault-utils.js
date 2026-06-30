@@ -7,7 +7,15 @@ function escHtml(str) {
 }
 window.escHtml = escHtml;
 
+/** Document expiry — canonical field is expiryDate; legacy expiry supported. */
+function docExpiry(d) {
+  if (!d) return '';
+  return d.expiryDate || d.expiry || '';
+}
+window.docExpiry = docExpiry;
+
 const U = {
+  esc: escHtml,
   /** Generates a unique entity ID prefixed with 'i' using timestamp and random suffix. */
   id:       () => 'i' + Date.now() + Math.random().toString(36).slice(2, 5),
   flag:     c  => COUNTRIES.find(x => x.c === c)?.f || '🌐',
@@ -91,7 +99,7 @@ const U = {
     const defaults = ['Personal','Business','Primary','Secondary','Joint','Emergency','Savings','Travel','Islamic','Backup','Crypto','Family'];
     const all = [...defaults, ...(S.tags || [])].filter((v, i, a) => v && a.indexOf(v) === i);
     let html = '<div class="tags" id="tagPick">';
-    all.forEach(t => { html += `<span class="tag${sel.indexOf(t) >= 0 ? ' on' : ''}" onclick="this.classList.toggle('on')">${t}</span>`; });
+    all.forEach(t => { const safe = escHtml(t); html += `<span class="tag${sel.indexOf(t) >= 0 ? ' on' : ''}" onclick="this.classList.toggle('on')">${safe}</span>`; });
     html += '</div>';
     html += '<div style="display:flex;gap:7px;margin-top:7px">';
     html += '<input class="inp" id="custTagIn" placeholder="Add tag..." style="flex:1" onkeydown="if(event.key===\'Enter\')U.addTag()">';
@@ -106,8 +114,13 @@ const U = {
     i.value = ''; Store.save();
   },
   getTags: () => [...document.querySelectorAll('#tagPick .tag.on')].map(t => t.textContent.trim()),
-  drRow: (label, val, secret = '') =>
-    `<div class="dr"><div class="dk">${label}</div><div class="dv"><span id="dr-${label.replace(/\W/g,'')}" class="sens">${val}</span>${secret ? `<button type="button" class="cpbtn" onclick="U.reveal('dr-${label.replace(/\W/g,'')}','${secret.replace(/'/g,"\\'")}','${label}')">👁️</button>` : ''}</div></div>`,
+  drRow: (label, val, secret = '') => {
+    const lid = String(label).replace(/\W/g, '');
+    const safeLabel = escHtml(label);
+    const safeVal = escHtml(val);
+    const secJs = secret ? String(secret).replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+    return `<div class="dr"><div class="dk">${safeLabel}</div><div class="dv"><span id="dr-${lid}" class="sens">${safeVal}</span>${secret ? `<button type="button" class="cpbtn" onclick="U.reveal('dr-${lid}','${secJs}','${safeLabel.replace(/'/g, "\\'")}')">👁️</button>` : ''}</div></div>`;
+  },
   loginFields: (obj = {}) => `<div class="fr">
     <div class="fg"><label class="fl">App / Web Username</label><input class="inp" id="lf-user" value="${obj.username||''}" placeholder="Username"></div>
     <div class="fg"><label class="fl">Password Hint</label><input class="inp" id="lf-pwd" value="${obj.pwdHint||''}" placeholder="e.g. 'Email+DOB'"></div>

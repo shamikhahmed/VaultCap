@@ -4,7 +4,7 @@
 - constants.js, lookup-data.js, doc-schemas.js
 
 ## Layer 1 — Utilities (depends on Layer 0)
-- utils.js, vault-utils.js, validators.js
+- vault-utils.js, validators.js
 
 ## Layer 2 — Storage (depends on Layer 1)
 - crypto.js, store-engine.js, smart-db.js, migrate.js

@@ -1,8 +1,54 @@
 # Changelog — VaultCap
 
-## 4.8.0 (2026-06-30) — JSDoc sweep + module dependency map + manifest & HEAD hardening
+## 4.8.8 (2026-06-30) — XSS hardening + monetization UI removed
 
-### Code Quality
+### Security
+- `escHtml` sweep: cash, emails, digital, expenses, loans, sims, alerts, trash, timeline, reminders
+- `U.drRow()` and `U.tags()` escape user-controlled values
+- `U.esc` alias on utils object
+
+### Removed
+- Pro upgrade modal and `openProUpgrade` — full vault, no paywall UI
+- Dead `js/core/utils.js` (duplicate of `vault-utils.js`); dropped from SW cache
+
+### Fixes
+- Timeline includes `S.loans` due dates
+- Calendar/list timeline labels escaped
+
+### Tests
+- `export-security.spec.js`: JSON snapshot, NIC doc alert, XSS cash render, integrity scan
+
+### Version
+- Bumped to `4.8.8`
+
+## 4.8.7 (2026-06-30) — Document expiry unification + alert coverage
+
+### Fixes
+- `docExpiry()` helper in `vault-utils.js` — canonical `expiryDate` with legacy `expiry` fallback
+- Dashboard, widget snapshot, alerts, timeline, PDF export use `docExpiry()` — demo NIC (43-day expiry) surfaces correctly
+- `alerts.js`: document expiry section; `S.loans` due-soon merged with asset-type loans; `escHtml` on loan rows
+- `data-integrity.js`: document duplicate check uses `docType`; duplicate review shows `docNumber`
+- `validators.js`: document expiry validates `expiryDate || expiry`
+- `ai-import.js`: SmartParser card field `limit` (canonical); import still accepts legacy `creditLimit`
+
+### Tests
+- `data-integrity.spec.js`: demo NIC expiry within 60 days
+- `smart-parser.spec.js`: UK bank/card extraction after lazy load
+
+### Version
+- Bumped to `4.8.7`; `VERSION.json` synced
+
+## 4.8.6 (2026-06-30) — Demo data integrity + credit limit field
+
+### Fixes
+- `_cardLimit()` in `cards.js`; demo uses `limit`; migrate normalizes `creditLimit → limit`
+- Demo family: 3 members with `ownerId` on banks, cards, cash, investments, assets, loans
+- `tests/data-integrity.spec.js`: demo counts, NW math identity, module renders
+
+### Version
+- Bumped to `4.8.6`
+
+## 4.8.0 (2026-06-30) — JSDoc sweep + module dependency map + manifest & HEAD hardening
 - `js/core/modal.js`: JSDoc 1-liners on `Modal.open()` and `Modal.close()`
 - `js/core/vault-utils.js`: JSDoc 1-liners on `U.id`, `U.fmtCur`, `U.copy`, `U.reveal`, `U.pnl`
 - `js/core/smart-actions.js`: JSDoc 1-liners on `CMD.open()`, `CMD.close()`, `CMD.showHelp()`

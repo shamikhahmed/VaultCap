@@ -108,7 +108,7 @@ const SmartParser = {
           expiry: exp.replace(/\s/g, ''),
           type: net,
           currency: cur,
-          creditLimit: this._amount(raw),
+          limit: this._amount(raw),
         },
       });
     }
@@ -457,7 +457,7 @@ const AIImport = {
         count++;
       } else if (item.type === 'card') {
         if (!S.cards) S.cards = [];
-        S.cards.push({ id, cardName: d.cardName||'', last4: d.last4||'', expiry: d.expiry||'', type: d.type||'Visa', creditLimit: parseFloat(d.creditLimit)||0, currency: d.currency||'USD', bank: d.bank||'', createdAt: now });
+        S.cards.push({ id, cardName: d.cardName||'', last4: d.last4||'', expiry: d.expiry||'', type: d.type||'Visa', limit: parseFloat(d.creditLimit||d.limit)||0, currency: d.currency||'USD', bank: d.bank||'', createdAt: now });
         count++;
       } else if (item.type === 'loan') {
         if (!S.loans) S.loans = [];

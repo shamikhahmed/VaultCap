@@ -120,7 +120,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 
 /* ── Print ── */
 @media print {
-  .sidebar, .btabs, .fab, #cmdPalette, #proUpgradeModal,
+  .sidebar, .btabs, .fab, #cmdPalette,
   .cap-skip-link, canvas { display: none !important; }
   .main { overflow: visible !important; }
   body { background: #fff !important; color: #000 !important; }

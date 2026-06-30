@@ -106,7 +106,12 @@ const Store = {
       const now = Date.now();
       const in30 = now + 30 * 24 * 60 * 60 * 1000;
       const expiringCount = [
-        ...(S.documents || []).filter(d => d.expiry && new Date(d.expiry) > now && new Date(d.expiry) < in30),
+        ...(S.documents || []).filter(d => {
+          const exp = typeof docExpiry === 'function' ? docExpiry(d) : (d.expiryDate || d.expiry);
+          if (!exp) return false;
+          const dt = new Date(exp);
+          return !isNaN(dt) && dt > now && dt < in30;
+        }),
         ...(S.cards || []).filter(c => {
           if (!c.expiry) return false;
           const [m, y] = c.expiry.split('/');

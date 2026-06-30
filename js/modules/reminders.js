@@ -30,9 +30,9 @@ const Reminders = {
           '<div class="entry-main">' +
             '<div class="entry-ic">' + (r.icon || '⚠️') + '</div>' +
             '<div class="entry-body">' +
-              '<div class="entry-name">' + (r.title || r.label || '') + '</div>' +
-              '<div class="entry-sub">' + (r.sub || '') + '</div>' +
-              '<div class="entry-meta"><span class="badge ' + badge + '">' + daysLabel + '</span><span class="badge b-muted">' + (r.category || '') + '</span></div>' +
+              '<div class="entry-name">' + escHtml(r.title || r.label || '') + '</div>' +
+              '<div class="entry-sub">' + escHtml(r.sub || '') + '</div>' +
+              '<div class="entry-meta"><span class="badge ' + badge + '">' + daysLabel + '</span><span class="badge b-muted">' + escHtml(r.category || '') + '</span></div>' +
             '</div>' +
             (r.page ? '<button type="button" class="icb" aria-label="Go to" onclick="R.goto(\'' + r.page + '\')" title="Go to">›</button>' : '') +
           '</div>' +

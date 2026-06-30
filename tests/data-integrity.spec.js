@@ -114,6 +114,17 @@ test.describe('VaultCap data integrity', () => {
     expect(audit.friendSummaryLen).toBeGreaterThan(50);
     expect(audit.familyNW).toBeGreaterThan(0);
 
+    const docExpiryOk = await page.evaluate(() => {
+      const nic = (S.documents || []).find(d => (d.docNumber || '').includes('42301'));
+      if (!nic) return false;
+      const exp = typeof docExpiry === 'function' ? docExpiry(nic) : nic.expiryDate;
+      if (!exp) return false;
+      const in60 = Date.now() + 60 * 86400000;
+      const dt = new Date(exp);
+      return dt > new Date() && dt <= in60;
+    });
+    expect(docExpiryOk).toBe(true);
+
     const fatal = errors.filter((e) => /escHtml|ReferenceError|SyntaxError/i.test(e));
     expect(fatal, fatal.join('\n')).toEqual([]);
   });

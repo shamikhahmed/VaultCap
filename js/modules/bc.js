@@ -88,8 +88,8 @@ const BCModule = {
       '<div class="entry-main">' +
         '<div class="entry-ic" style="background:rgba(91,141,238,.15);font-size:20px">🤝</div>' +
         '<div class="entry-body">' +
-          '<div class="entry-name">' + (bc.name || 'BC') + '</div>' +
-          '<div class="entry-sub">' + (BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + (bc.members || '?') + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
+          '<div class="entry-name">' + escHtml(bc.name || 'BC') + '</div>' +
+          '<div class="entry-sub">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
           '<div class="entry-meta">' +
             '<span class="badge b-acc">' + fmt(pot) + ' pot</span>' +
             '<span class="badge" style="background:rgba(91,141,238,.1);color:' + statusColor + '">' + statusText + '</span>' +

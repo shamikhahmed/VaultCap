@@ -64,7 +64,7 @@ const DataIntegrity = {
     for (let i = 0; i < docs.length; i++) {
       for (let j = i + 1; j < docs.length; j++) {
         const a = docs[i], b = docs[j];
-        const sameType = (a.type || '').toLowerCase() === (b.type || '').toLowerCase();
+        const sameType = (a.docType || a.type || '').toLowerCase() === (b.docType || b.type || '').toLowerCase();
         const aNum = (a.number || a.docNumber || '').replace(/\s/g,'').toLowerCase();
         const bNum = (b.number || b.docNumber || '').replace(/\s/g,'').toLowerCase();
         if (sameType && aNum && bNum && aNum === bNum) {
@@ -113,8 +113,8 @@ const DataIntegrity = {
       const confBg    = d.confidence === 'HIGH' ? 'rgba(255,59,48,.08)' : 'rgba(255,152,0,.08)';
       const nameA = d.a.bankName || d.a.cardType || d.a.type || d.a.name || 'Record A';
       const nameB = d.b.bankName || d.b.cardType || d.b.type || d.b.name || 'Record B';
-      const subA  = d.a.accountNumber || d.a.last4 || d.a.number || d.a.accountType || '';
-      const subB  = d.b.accountNumber || d.b.last4 || d.b.number || d.b.accountType || '';
+      const subA  = d.a.accountNumber || d.a.last4 || d.a.docNumber || d.a.number || d.a.accountType || '';
+      const subB  = d.b.accountNumber || d.b.last4 || d.b.docNumber || d.b.number || d.b.accountType || '';
       return `<div style="background:${confBg};border:1px solid ${confColor}44;border-radius:12px;padding:12px;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <span style="font-size:11px;font-weight:700;color:${confColor}">${d.confidence} CONFIDENCE</span>

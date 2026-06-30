@@ -52,7 +52,7 @@ async function unlockDemoVault(page) {
     localStorage.removeItem('vo_demo_guide_pending');
   });
   await page.goto('/?demo=1');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('load');
   await page.waitForFunction(() => typeof window.loadDemoProfile === 'function', { timeout: 15000 });
   await page.evaluate(() => localStorage.removeItem('vo_demo_guide_pending'));
   await dismissOverlays(page);
@@ -63,7 +63,7 @@ async function unlockDemoVault(page) {
     const guided = page.getByRole('button', { name: /Take the guided demo|Open demo vault/i });
     if (await guided.isVisible().catch(() => false)) {
       await guided.click();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
     }
     if (await page.locator('#pgOnboard').isVisible().catch(() => false)) {
       await seedDemoAndUnlock(page);

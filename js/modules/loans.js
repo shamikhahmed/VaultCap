@@ -71,7 +71,7 @@ const Loans = {
         } else if (soonDue) {
           duePart = `<span class="badge b-warn">⏰ Due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}</span>`;
         } else {
-          duePart = `<span class="badge b-warn">Due ${l.dueDate}</span>`;
+          duePart = `<span class="badge b-warn">Due ${escHtml(l.dueDate)}</span>`;
         }
       } else if (l.status === 'Settled') {
         duePart = `<span class="badge b-muted">✓ Settled</span>`;
@@ -94,19 +94,19 @@ const Loans = {
         <div class="entry-main">
           <div class="entry-ic">${l.type === 'lent' ? '💸' : '🤲'}</div>
           <div class="entry-body">
-            <div class="entry-name">${l.person || 'Unknown'}</div>
-            <div class="entry-sub">${l.date || ''}</div>
+            <div class="entry-name">${escHtml(l.person || 'Unknown')}</div>
+            <div class="entry-sub">${escHtml(l.date || '')}</div>
             <div class="entry-meta">
               <span class="badge b-acc sens">${cur} ${Math.round(l.amount || 0).toLocaleString()}</span>
               <span class="badge ${badge}">${status}</span>
               ${duePart}
-              ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')}
+              ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}
             </div>
             ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens" style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
           <div class="entry-acts">${payBtn}${settle}<button type="button" class="icb" aria-label="Edit" onclick="Loans.edit('${l.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Loans.del('${l.id}')">🗑️</button></div>
         </div>
-        ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${l.notes}</div>` : ''}
+        ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${escHtml(l.notes)}</div>` : ''}
       </div>`;
     };
 

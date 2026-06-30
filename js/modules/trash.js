@@ -30,7 +30,7 @@ const Trash = {
           <div class="entry-main">
             <div class="entry-ic">${typeIc[item.type] || '📦'}</div>
             <div class="entry-body">
-              <div class="entry-name">${label}</div>
+              <div class="entry-name">${escHtml(label)}</div>
               <div class="entry-sub">Deleted ${age(item.deletedAt)} · ${daysLeft(item.deletedAt)}</div>
             </div>
             <div class="entry-acts">
