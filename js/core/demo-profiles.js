@@ -34,10 +34,10 @@ function loadDemoProfile(type) {
 
   // Cards (5)
   S.cards.push({id:id(),cardName:'Barclays Visa Debit',network:'Visa',cardType:'Debit',category:'Standard',country:'GB',last4:'4821',expiry:'09/28',holderName:'ALEX KHAN',currency:'GBP',createdAt:ts});
-  S.cards.push({id:id(),cardName:'Barclaycard Avios Mastercard',network:'Mastercard',cardType:'Credit',category:'Rewards',country:'GB',last4:'3391',expiry:'04/27',holderName:'ALEX KHAN',currency:'GBP',creditLimit:8000,createdAt:ts});
+  S.cards.push({id:id(),cardName:'Barclaycard Avios Mastercard',network:'Mastercard',cardType:'Credit',category:'Rewards',country:'GB',last4:'3391',expiry:'04/27',holderName:'ALEX KHAN',currency:'GBP',limit:8000,createdAt:ts});
   S.cards.push({id:id(),cardName:'Monzo Visa Debit',network:'Visa',cardType:'Debit',category:'Digital',country:'GB',last4:'7732',expiry:'11/28',holderName:'ALEX KHAN',currency:'GBP',createdAt:ts});
   S.cards.push({id:id(),cardName:'HBL Visa Debit',network:'Visa',cardType:'Debit',category:'Standard',country:'PK',last4:'3310',expiry:'07/27',holderName:'ALEX KHAN',currency:'PKR',createdAt:ts});
-  S.cards.push({id:id(),cardName:'Lloyds Platinum Mastercard',network:'Mastercard',cardType:'Credit',category:'Premium',country:'GB',last4:'5519',expiry:'02/29',holderName:'ALEX KHAN',currency:'GBP',creditLimit:12000,createdAt:ts});
+  S.cards.push({id:id(),cardName:'Lloyds Platinum Mastercard',network:'Mastercard',cardType:'Credit',category:'Premium',country:'GB',last4:'5519',expiry:'02/29',holderName:'ALEX KHAN',currency:'GBP',limit:12000,createdAt:ts});
 
   // Cash (3)
   S.cash.push({id:id(),label:'Home Safe',location:'Home',amount:15000,currency:'PKR',notes:'Emergency PKR',createdAt:ts});
@@ -138,6 +138,22 @@ function loadDemoProfile(type) {
     { id: Date.now()-5, a: 'Added UK passport document', d: '', t: ago(360) },
     { id: Date.now()-6, a: 'Vault created', d: '', t: ago(720) },
   ];
+
+  // Family vault (3 members) + link sample assets to owners
+  const headId = id();
+  const spouseId = id();
+  const childId = id();
+  S.familyMembers = [
+    { id: headId, name: 'Alex Khan', avatar: '👨‍💼', relation: 'Head of Family', isHead: true, role: 'admin', dob: '1988-04-15', phone: '+44 7700 123456', email: 'alex.khan@gmail.com', notes: 'Primary account holder', createdAt: ts, updatedAt: ts },
+    { id: spouseId, name: 'Sara Khan', avatar: '👩', relation: 'Spouse', isHead: false, role: 'viewer', phone: '+44 7700 654321', notes: 'Joint finances', createdAt: ts, updatedAt: ts },
+    { id: childId, name: 'Ayaan Khan', avatar: '👦', relation: 'Son', isHead: false, role: 'viewer', dob: '2015-08-22', notes: 'Junior ISA', createdAt: ts, updatedAt: ts },
+  ];
+  S.banks.forEach((b, i) => { b.ownerId = i < 3 ? headId : (i < 5 ? spouseId : headId); });
+  S.cards.forEach((c, i) => { c.ownerId = i < 3 ? headId : spouseId; });
+  S.cash.forEach((c, i) => { c.ownerId = i === 0 ? headId : spouseId; });
+  S.investments.forEach((inv, i) => { inv.ownerId = i < 4 ? headId : spouseId; });
+  S.assets.forEach((a, i) => { a.ownerId = i < 2 ? headId : spouseId; });
+  S.loans.forEach((l, i) => { l.ownerId = headId; });
 
   Store.save();
   if (S.unlocked) { buildNav(); R.goto('dashboard'); }

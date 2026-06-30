@@ -14,6 +14,8 @@ const _fuzzC = (str, q) => {
   });
 };
 
+const _cardLimit = (c) => c.limit || c.creditLimit || 0;
+
 const Cards={
   _showArchived: false,
   render(){
@@ -68,10 +70,10 @@ const Cards={
     if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
     const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimitPKR = S.cards
-      .filter(c => c.cardType === 'Credit' && c.limit)
+      .filter(c => c.cardType === 'Credit' && _cardLimit(c))
       .reduce((a, c) => a + (typeof CurrencyEngine !== 'undefined'
-        ? CurrencyEngine.toBase(c.limit || 0, c.currency || S.user.currency || 'PKR')
-        : (c.limit || 0)), 0);
+        ? CurrencyEngine.toBase(_cardLimit(c), c.currency || S.user.currency || 'PKR')
+        : _cardLimit(c)), 0);
     const _cur = S.user.currency || 'GBP';
     const limitBanner = totalLimitPKR > 0
       ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
@@ -385,7 +387,7 @@ const Cards={
       +'<div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="'+(c.rewardsProgram||'')+'" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="'+(c.rewardsPoints||'')+'" type="number" placeholder="50000"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"'+(c.ownership!=='business'?' selected':'')+'>👤 Personal</option><option value="business"'+(c.ownership==='business'?' selected':'')+'>🏢 Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="'+(c.annualFee||'')+'" type="number" placeholder="0"></div></div>'
       +'<div class="fg"><label class="fl">Joint Card?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="cf-joint" onchange="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" style="width:20px;height:20px;cursor:pointer" '+(c.jointAccount?'checked':'')+' ><label for="cf-joint" style="font-size:14px;color:var(--text2)">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select id="cf-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
-      +'<div class="fg"><label class="fl">Credit Limit (optional)</label><input class="inp" id="cf-limit" value="'+(c.limit||'')+'" type="number" min="0" placeholder="e.g. 500000"></div>'
+      +'<div class="fg"><label class="fl">Credit Limit (optional)</label><input class="inp" id="cf-limit" value="'+(_cardLimit(c)||'')+'" type="number" min="0" placeholder="e.g. 500000"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="'+(c.username||'')+'" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="'+(c.pwdHint||'')+'" placeholder="\'Email+!\'"></div></div>'
       +'<div class="fg"><label class="fl">Notes / Benefits</label><textarea class="inp" id="cf-notes" rows="2">'+(c.notes||'')+'</textarea></div>'
       +'<div class="fg"><label class="fl">Tags</label>'+U.tags(c.tags||[])+'</div>'
@@ -455,7 +457,7 @@ const Cards={
         +'</div>';
     }
     const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span><button type="button" class="icb" aria-label="Reveal card number" onclick="(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()">👁️</button><button type="button" class="icb" aria-label="Copy card number" onclick="U.copy('${c.cardNumber}','Card number')">📋</button></div>`:U.drRow('Last 4','****'+(c.last4||'—'));
-    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',c.limit?U.fmt(Math.round(c.limit))+' '+(S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},

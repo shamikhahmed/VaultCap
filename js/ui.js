@@ -849,7 +849,7 @@ const ExIm={
       row('Loans Owed','− '+fmtDisplay(debtPKR))
     )+
     ((S.banks||[]).length?section('Bank Accounts',table(['Bank','Type','Balance'],(S.banks||[]).map(b=>[b.bankName||'Bank',b.accountType||'',b.currency+' '+(Math.round(b.balance||0)).toLocaleString()]))):'')+
-    ((S.cards||[]).length?section('Cards',table(['Card','Last 4','Expiry','Limit'],(S.cards||[]).map(c=>[c.cardName||'Card',c.last4?'****'+c.last4:'—',c.expiry||'—',c.creditLimit?(c.currency+' '+Math.round(c.creditLimit).toLocaleString()):'—']))):'')+
+    ((S.cards||[]).length?section('Cards',table(['Card','Last 4','Expiry','Limit'],(S.cards||[]).map(c=>{const lim=c.limit||c.creditLimit;return [c.cardName||'Card',c.last4?'****'+c.last4:'—',c.expiry||'—',lim?(c.currency+' '+Math.round(lim).toLocaleString()):'—'];}))):'')+
     ((S.loans||[]).filter(l=>l.status!=='Settled').length?section('Loans',
       row('Total Lent Out',fmtDisplay(lentTotal))+
       row('Total Owed',fmtDisplay(borrowedTotal))+

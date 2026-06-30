@@ -265,6 +265,12 @@ const Migrate = {
       stored.schemaVersion = 13;
       console.log('[VaultCap] Migrated schema v12 → v13: family members flattened into S.familyMembers');
     }
+    if (stored.cards) {
+      stored.cards = stored.cards.map(c => {
+        if (c.creditLimit && !c.limit) return { ...c, limit: c.creditLimit };
+        return c;
+      });
+    }
     stored.schemaVersion = SCHEMA_VERSION;
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
