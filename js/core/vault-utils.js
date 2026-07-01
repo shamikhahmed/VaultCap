@@ -119,12 +119,39 @@ const U = {
     i.value = ''; Store.save();
   },
   getTags: () => [...document.querySelectorAll('#tagPick .tag.on')].map(t => t.textContent.trim()),
+  icb(icon, opts = {}) {
+    const onclick = opts.onclick || '';
+    const ariaLabel = opts.ariaLabel || opts.label || '';
+    const title = opts.title || '';
+    const extra = opts.class || '';
+    const size = opts.size || 16;
+    const text = opts.text || '';
+    const iconHtml = text || ((typeof VC !== 'undefined' && VC.icon) ? VC.icon(icon, size) : '');
+    const base = extra.includes('wc-act-btn') ? '' : 'icb';
+    const cls = [base, extra].filter(Boolean).join(' ');
+    let attrs = `type="button" class="${cls}"`;
+    if (ariaLabel) attrs += ` aria-label="${escAttr(ariaLabel)}"`;
+    if (title) attrs += ` title="${escAttr(title)}"`;
+    if (onclick) attrs += ` onclick="${onclick}"`;
+    return `<button ${attrs}>${iconHtml}</button>`;
+  },
+  actsViewEditDel(prefix, id, view = 'detail') {
+    const q = `'${id}'`;
+    return this.icb('eye', { onclick: `${prefix}.${view}(${q})`, ariaLabel: 'View details' })
+      + this.icb('pencil', { onclick: `${prefix}.edit(${q})`, ariaLabel: 'Edit' })
+      + this.icb('trash', { onclick: `${prefix}.del(${q})`, ariaLabel: 'Delete', class: 'del' });
+  },
+  actsEditDel(prefix, id) {
+    const q = `'${id}'`;
+    return this.icb('pencil', { onclick: `${prefix}.edit(${q})`, ariaLabel: 'Edit' })
+      + this.icb('trash', { onclick: `${prefix}.del(${q})`, ariaLabel: 'Delete', class: 'del' });
+  },
   drRow: (label, val, secret = '') => {
     const lid = String(label).replace(/\W/g, '');
     const safeLabel = escHtml(label);
     const safeVal = escHtml(val);
     const secJs = secret ? String(secret).replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
-    return `<div class="dr"><div class="dk">${safeLabel}</div><div class="dv"><span id="dr-${lid}" class="sens">${safeVal}</span>${secret ? `<button type="button" class="cpbtn" onclick="U.reveal('dr-${lid}','${secJs}','${safeLabel.replace(/'/g, "\\'")}')">👁️</button>` : ''}</div></div>`;
+    return `<div class="dr"><div class="dk">${safeLabel}</div><div class="dv"><span id="dr-${lid}" class="sens">${safeVal}</span>${secret ? U.icb('eye', { onclick: `U.reveal('dr-${lid}','${secJs}','${safeLabel.replace(/'/g, "\\'")}')`, ariaLabel: 'Reveal', size: 14 }) : ''}</div></div>`;
   },
   loginFields: (obj = {}) => `<div class="fr">
     <div class="fg"><label class="fl">App / Web Username</label><input class="inp" id="lf-user" value="${escAttr(obj.username||'')}" placeholder="Username"></div>
@@ -179,6 +206,11 @@ const U = {
     if (thou) parts.push(toThree(thou) + ' Thousand');
     if (rem)  parts.push(toThree(rem));
     return parts.join(' ') || 'Zero';
+  },
+  applyIosGroups() {
+    document.querySelectorAll('.pb [id$="Items"]').forEach((el) => {
+      if (el.querySelector('.entry')) el.classList.add('ios-group');
+    });
   },
   showWords(inputEl, currency) {
     if (!inputEl) return;

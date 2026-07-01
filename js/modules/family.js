@@ -31,7 +31,7 @@ const Family = {
 
   _roleBadge(role) {
     const isAdmin = role !== 'viewer';
-    return `<span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(123,95,255,.25)' : 'rgba(255,255,255,.08)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
+    return `<span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(123,95,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
   },
 
   // Legacy API — used by search module and dashboard
@@ -364,8 +364,7 @@ const Family = {
         <div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType || 'bank')}</span>${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('banks','${b.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('banks','${b.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('banks','${b.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('banks','${b.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -381,8 +380,7 @@ const Family = {
         <div class="entry-meta">${expBadge}${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('cards','${c.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('cards','${c.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('cards','${c.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cards','${c.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -396,8 +394,7 @@ const Family = {
         <div class="entry-meta">${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('cash','${c.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('cash','${c.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('cash','${c.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cash','${c.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -412,8 +409,7 @@ const Family = {
         <div class="entry-meta">${i.currentValue ? `<span class="badge b-acc sens">${U.fmt(i.currentValue)} ${i.currency || ''}</span>` : ''}${i.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('investments','${i.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('investments','${i.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('investments','${i.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('investments','${i.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -428,8 +424,7 @@ const Family = {
         <div class="entry-meta">${a.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('assets','${a.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('assets','${a.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('assets','${a.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('assets','${a.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -448,8 +443,7 @@ const Family = {
         <div class="entry-meta">${expBadge}${d.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        <button type="button" class="icb" aria-label="Edit" onclick="Family._editEntity('documents','${d.id}')">✏️</button>
-        <button type="button" class="icb del" onclick="Family._delEntity('documents','${d.id}')">🗑️</button>
+        ${U.icb('pencil',{onclick:`Family._editEntity('documents','${d.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('documents','${d.id}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },

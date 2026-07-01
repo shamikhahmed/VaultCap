@@ -42,11 +42,12 @@ const ThemeEngine = {
   renderDots() {
     const e = document.getElementById('homeThemes');
     if (!e) return;
-    const icons = { dark: '🌙', light: '☀️', auto: '⚙️' };
+    const icons = { dark: 'moon', light: 'sun', auto: 'settings' };
     e.innerHTML = THEMES.map(t => {
       const active = t.id === S.user.theme;
+      const ic = (typeof VC !== 'undefined' && VC.icon) ? VC.icon(icons[t.id], 16) : '';
       return `<button type="button" onclick="ThemeEngine.apply('${t.id}')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:14px;border:1.5px solid ${active ? 'var(--accent)' : 'var(--border)'};background:${active ? 'var(--glass2)' : 'var(--glass)'};cursor:pointer;touch-action:manipulation;transition:all .2s;font-family:var(--font)">
-        <div style="width:36px;height:36px;border-radius:10px;background:${t.bg};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px">${icons[t.id]}</div>
+        <div style="width:36px;height:36px;border-radius:10px;background:${t.bg};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2)">${ic}</div>
         <span style="font-size:11px;font-weight:${active ? '700' : '500'};color:${active ? 'var(--accent)' : 'var(--text3)'}">${t.n}</span>
       </button>`;
     }).join('');

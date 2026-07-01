@@ -243,6 +243,17 @@ body.large-text .entry-sub { font-size: 13px; }
 body.large-text .badge { font-size: 12px; }
 body.large-text .btn { font-size: 15px; }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .entry { animation: none !important; }
+  .cap-scene-canvas, .cap-ambient { display: none !important; }
+}
+
 /* Desktop browsers — no phantom notch padding */
 @media (min-width: 769px) and (hover: hover) and (pointer: fine) {
   :root { --st: 0px; --sb: 0px; }

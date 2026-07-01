@@ -26,7 +26,7 @@ const Friends = {
     el.innerHTML = data.map(f => {
       const loans = (S.loans || []).filter(l => l.person === f.name && l.status !== 'Settled');
       const badge = loans.length ? `<span class="badge b-warn">${loans.length} loan${loans.length > 1 ? 's' : ''}</span>` : '';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts"><button type="button" class="icb" aria-label="Edit" onclick="Friends.edit('${f.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Friends.del('${f.id}')">🗑️</button></div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts">${U.actsEditDel('Friends', f.id)}</div></div></div>`;
     }).join('');
   },
   openAdd() {

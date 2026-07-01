@@ -37,10 +37,10 @@ const BCModule = {
     const fmt = n => (S.user.currency || 'PKR') + ' ' + Math.round(n).toLocaleString();
 
     el.innerHTML =
-      '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+      '<div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:14px">' +
 
       (bcs.length > 0 ? (
-        '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px">' +
+        '<div class="u-highlight-card">' +
           '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">BC Summary</div>' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
             '<div style="text-align:center"><div style="font-size:11px;color:var(--text3)">Total Paid In</div><div style="font-size:20px;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
@@ -82,14 +82,14 @@ const BCModule = {
     const progress = Math.round(((bc.currentRound || 1) / (bc.totalRounds || bc.members || 1)) * 100);
 
     const statusColor = myTurnDone ? 'var(--ok)' : myTurnNext ? 'var(--warn)' : 'var(--accent)';
-    const statusText = myTurnDone ? '✓ Turn complete' : myTurnNext ? '🔔 Your turn next!' : bc.myTurnRound ? 'Turn: Round ' + bc.myTurnRound : 'Turn: TBD';
+    const statusText = myTurnDone ? '✓ Turn complete' : myTurnNext ? '🔔 Your turn!' : bc.myTurnRound ? 'Turn: Round ' + bc.myTurnRound : 'Turn: TBD';
 
     return '<div class="entry" style="flex-direction:column;align-items:stretch">' +
       '<div class="entry-main">' +
-        '<div class="entry-ic" style="background:rgba(255,255,255,.15);font-size:20px">🤝</div>' +
+        '<div class="entry-ic" style="background:var(--glass2);font-size:20px">🤝</div>' +
         '<div class="entry-body">' +
-          '<div class="entry-name">' + escHtml(bc.name || 'BC') + '</div>' +
-          '<div class="entry-sub">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
+          '<div class="entry-name entry-name--wrap">' + escHtml(bc.name || 'BC') + '</div>' +
+          '<div class="entry-sub entry-sub--wrap">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
           '<div class="entry-meta">' +
             '<span class="badge b-acc">' + fmt(pot) + ' pot</span>' +
             '<span class="badge" style="background:rgba(255,255,255,.1);color:' + statusColor + '">' + statusText + '</span>' +
@@ -98,9 +98,7 @@ const BCModule = {
           '</div>' +
         '</div>' +
         '<div class="entry-acts">' +
-          '<button type="button" class="icb" aria-label="View details" onclick="BCModule.openDetail(' + i + ')">👁️</button>' +
-          '<button type="button" class="icb" aria-label="Edit" onclick="BCModule.edit(' + i + ')">✏️</button>' +
-          '<button type="button" class="icb del" aria-label="Delete" onclick="BCModule.del(' + i + ')">🗑️</button>' +
+          U.actsViewEditDel('BCModule', i, 'openDetail') +
         '</div>' +
       '</div>' +
       '<div style="padding:0 14px 12px">' +

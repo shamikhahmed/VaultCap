@@ -1,7 +1,10 @@
-const CACHE = 'vaultcap-v51';
+const CACHE = 'vaultcap-v52';
 const ASSETS = [
+  './icon.svg',
+  './icon-mark.svg',
   './icon-192.png',
   './icon-512.png',
+  './icon-1024.png',
   './manifest.json',
   './index.html',
 ];

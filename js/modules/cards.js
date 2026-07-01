@@ -88,10 +88,10 @@ const Cards={
     initLongPress(el, id => {
       const c = S.cards.find(x => x.id === id); if (!c) return [];
       return [
-        {label:'Edit', icon:'✏️', action: () => Cards.edit(id)},
-        {label:'View Details', icon:'👁️', action: () => Cards.openDetail(id)},
-        {label:'Toggle Carry', icon:'👝', action: () => Cards.toggleCarry(id)},
-        {label:'Delete', icon:'🗑️', destructive: true, action: () => Cards.del(id)},
+        {label:'Edit', ic:'pencil', action: () => Cards.edit(id)},
+        {label:'View Details', ic:'eye', action: () => Cards.openDetail(id)},
+        {label:'Toggle Carry', ic:'wallet', action: () => Cards.toggleCarry(id)},
+        {label:'Delete', ic:'trash', destructive: true, action: () => Cards.del(id)},
       ];
     });
   },
@@ -156,10 +156,10 @@ const Cards={
     </div>
   </div>
   <div class="wcard-actions">
-    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.toggleCarry('${c.id}')" title="Toggle carry">👝</button>
-    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.edit('${c.id}')" title="Edit">✏️</button>
-    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.archive('${c.id}')" title="${c.archived?'Unarchive':'Archive'}">${c.archived?'📦':'🗂️'}</button>
-    <button type="button" class="wc-act-btn" onclick="event.stopPropagation();Cards.del('${c.id}')" title="Delete">🗑️</button>
+    ${U.icb('wallet',{onclick:`event.stopPropagation();Cards.toggleCarry('${c.id}')`,title:'Toggle carry',class:'wc-act-btn'})}
+    ${U.icb('pencil',{onclick:`event.stopPropagation();Cards.edit('${c.id}')`,title:'Edit',class:'wc-act-btn'})}
+    ${U.icb('archive',{onclick:`event.stopPropagation();Cards.archive('${c.id}')`,title:c.archived?'Unarchive':'Archive',class:'wc-act-btn'})}
+    ${U.icb('trash',{onclick:`event.stopPropagation();Cards.del('${c.id}')`,title:'Delete',class:'wc-act-btn del'})}
   </div>
 </div>`;
   },
@@ -456,7 +456,7 @@ const Cards={
         +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
         +'</div>';
     }
-    const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span><button type="button" class="icb" aria-label="Reveal card number" onclick="(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()">👁️</button><button type="button" class="icb" aria-label="Copy card number" onclick="U.copy('${c.cardNumber}','Card number')">📋</button></div>`:U.drRow('Last 4','****'+(c.last4||'—'));
+    const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span>${U.icb('eye',{onclick:`(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()`,ariaLabel:'Reveal card number',size:14})}${U.icb('copy',{onclick:`U.copy('${c.cardNumber}','Card number')`,ariaLabel:'Copy card number',size:14})}</div>`:U.drRow('Last 4','****'+(c.last4||'—'));
     Modal.open('💳 '+c.cardName,'<div>'+[['Card',c.cardName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},

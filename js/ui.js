@@ -183,7 +183,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'🏦'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'💵'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'📈'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'🏠'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'🤝'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-height:22px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);flex:1;line-height:1.3">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;align-items:center"><span style="color:var(--text3)">🔴 Liabilities</span><span style="color:var(--err);font-weight:700">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;align-items:start">${breakdown.map(x=>`<div style="display:flex;align-items:flex-start;gap:6px;min-height:22px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0;margin-top:3px"></div><div style="font-size:11px;color:var(--text3);flex:1;line-height:1.35">${x.icon} ${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text);line-height:1.35;white-space:nowrap;text-align:right" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">🔴 Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -197,7 +197,7 @@ const Dash={
       : '';
     const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(123,95,255,.8);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
       '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwPKR)+'</div>' +
       ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
@@ -1724,28 +1724,28 @@ const BackupCenter={
     <!-- BACKUP OPTIONS -->
     <div class="set-sec"><div class="set-title">Create Backup</div><div class="set-card">
       <div class="si" onclick="BackupCenter.exportVOS()" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--glow);display:flex;align-items:center;justify-content:center;font-size:20px">🔐</div>
           <div class="sil"><div class="name">Encrypted Vault (.vos)</div><div class="desc">AES-256-GCM encrypted — recommended</div></div>
-        </div><span style="color:var(--accent);font-size:13px;font-weight:600">Export →</span>
+        </div><span class="si-action" style="color:var(--accent)">Export →</span>
       </div>
       <div class="si" onclick="ExIm.export('json')" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📄</div>
           <div class="sil"><div class="name">Plain JSON</div><div class="desc">Human-readable — keep secure!</div></div>
-        </div><span style="color:var(--text2);font-size:13px">Export →</span>
+        </div><span class="si-action" style="color:var(--text2)">Export →</span>
       </div>
       <div class="si" onclick="ExIm.export('csv')" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📊</div>
           <div class="sil"><div class="name">CSV Spreadsheet</div><div class="desc">For reference — no passwords exported</div></div>
-        </div><span style="color:var(--text2);font-size:13px">Export →</span>
+        </div><span class="si-action" style="color:var(--text2)">Export →</span>
       </div>
       <div class="si" onclick="ExIm.share()" style="cursor:pointer">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📲</div>
           <div class="sil"><div class="name">Share via AirDrop / Files</div><div class="desc">iOS share sheet — sends encrypted .vos</div></div>
-        </div><span style="color:var(--text2);font-size:13px">Share →</span>
+        </div><span class="si-action" style="color:var(--text2)">Share →</span>
       </div>
     </div></div>
     <!-- RESTORE -->
@@ -1754,7 +1754,7 @@ const BackupCenter={
         <div style="display:flex;align-items:center;gap:12px;flex:1">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:20px">📥</div>
           <div class="sil"><div class="name">Import / Restore Backup</div><div class="desc">Merge .vos, .json, or CSV into vault</div></div>
-        </div><span style="color:var(--accent);font-size:13px;font-weight:600">Import →</span>
+        </div><span class="si-action" style="color:var(--accent)">Import →</span>
       </div>
     </div></div>
     <!-- BACKUP TIPS -->
@@ -2007,27 +2007,41 @@ const SettingsNav = {
       { id: 'light', label: 'Light', preview: '#ffffff', dot: '#000000' },
       { id: 'auto', label: 'System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', dot: '#888888' },
     ];
+    const active = S.user.theme || 'dark';
     return `<div class="set-sec"><div class="set-title">Appearance</div><div class="set-card">
       <div style="padding:14px 16px">
         <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Dark, Light, or match your device setting.</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
           ${options.map(o => `
-            <button type="button" onclick="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${S.user.theme === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
+            <button type="button" onclick="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
               <div style="height:48px;background:${o.preview};display:flex;align-items:center;justify-content:center">
                 <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
               </div>
               <div style="padding:8px 10px;border-top:1px solid var(--border)">
-                <div style="font-size:12px;font-weight:${S.user.theme === o.id ? '700' : '600'};color:var(--text)">${o.label}</div>
+                <div style="font-size:12px;font-weight:${active === o.id ? '700' : '600'};color:var(--text)">${o.label}</div>
               </div>
             </button>`).join('')}
         </div>
+      </div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">Live preview</div><div class="set-card">
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;color:var(--text3);line-height:1.5">Cards, text, and accents update instantly when you switch theme.</div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Sample card</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Net worth snapshot</div>
+          <div style="font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-0.5px">£ 1,248,500</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:6px">Primary text · secondary labels · borders follow your theme</div>
+        </div>
+        <div class="si"><div class="sil"><div class="name">Large text</div><div class="desc">Increase base font size app-wide</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+        <div class="si"><div class="sil"><div class="name">Reduce motion</div><div class="desc">Minimize animations and transitions</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
       </div>
     </div></div>`;
   },
 
   _modules() {
     return `<div class="set-sec"><div class="set-title">🧩 Active Modules</div><div class="set-card">
-      ${(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:18px">${m.ic}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('')}
+      ${(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('')}
       <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div>
     </div></div>`;
   },
@@ -2233,7 +2247,7 @@ const HelpCenter = {
     ];
     el.innerHTML = `
     <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:2px 4px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
         ${sections.map(s => `
           <div onclick="HelpCenter._section='${s.id}';HelpCenter._renderContent()"
             class="chip${this._section===s.id?' on':''}"

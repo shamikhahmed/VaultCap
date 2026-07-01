@@ -53,7 +53,8 @@ const R = {
     const hw = document.getElementById('hWelcome');
     if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}! 👋`;
     ThemeEngine.renderDots();
-    setTimeout(() => Emergency.updateLockscreenButton(), 200);
+    if (typeof renderHomeModules === 'function') renderHomeModules();
+    if (typeof VC !== 'undefined') VC.refreshShellIcons();
   },
   unlock() {
     // Run live family migration if S.familyMembers is missing but S.family has data
@@ -96,8 +97,11 @@ const R = {
       if (typeof VaultSafety !== 'undefined') VaultSafety.maybeOfferRestore();
     }, 2200);
     if (VaultProfiles.isDemo() && localStorage.getItem('vo_demo_guide_pending') === '1') {
-      setTimeout(() => VaultProfiles.showDemoGuide(), 500);
       localStorage.removeItem('vo_demo_guide_pending');
+      if (!localStorage.getItem('vo_demo_guide_seen')) {
+        localStorage.setItem('vo_demo_guide_seen', '1');
+        setTimeout(() => VaultProfiles.showDemoGuide(), 500);
+      }
     }
     setTimeout(() => {
       if (typeof Reminders !== 'undefined' && Reminders.checkAndNotify) Reminders.checkAndNotify();
@@ -246,6 +250,7 @@ const R = {
       'assets-home':  () => renderAssetsHome(),
     };
     if (renders[pg]) renders[pg]();
+    if (typeof U !== 'undefined' && U.applyIosGroups) U.applyIosGroups();
     if (prev !== pg) buildNav();
     // Pull-to-refresh on module page bodies
     const ptrMap = {banks:'bList',cards:'cItems',investments:'invItems',cash:'cashItems',loans:'loanItems',sims:'simItems',assets:'aItems',expenses:'expItems',emails:'emailItems',gadgets:'gItems',digital:'digItems',friends:'friendItems',documents:'docsItems',vehicles:'vItems'};

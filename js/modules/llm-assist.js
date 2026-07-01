@@ -64,12 +64,24 @@ const LlmAssist = {
   renderHealthEl(id) {
     const el = document.getElementById(id);
     if (!el) return;
+    const cfg = this.getConfig();
+    if (!cfg.proxyUrl) {
+      el.style.display = 'none';
+      el.textContent = '';
+      return;
+    }
+    el.style.display = '';
     el.textContent = 'Checking LLM proxy…';
     el.style.color = 'var(--text3)';
     this.checkProxyHealth().then(h => {
       if (!document.getElementById(id)) return;
+      if (h.status === 'error') {
+        el.style.display = 'none';
+        el.textContent = '';
+        return;
+      }
       el.textContent = h.message;
-      el.style.color = h.status === 'ok' ? 'var(--ok)' : (h.status === 'none' ? 'var(--text3)' : 'var(--warn)');
+      el.style.color = h.status === 'ok' ? 'var(--ok)' : 'var(--text3)';
     });
   },
 

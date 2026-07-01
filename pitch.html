@@ -127,7 +127,7 @@ body {
 }
 #canvas-particles { position: absolute; inset: 0; z-index: 1; }
 .s1-content { position: relative; z-index: 2; }
-.s1-logo-icon { font-size: clamp(4rem, 10vw, 8rem); animation: float 4s ease-in-out infinite; display: block; }
+.s1-logo-icon { width: clamp(4rem, 10vw, 6rem); height: clamp(4rem, 10vw, 6rem); border-radius: 22%; animation: float 4s ease-in-out infinite; display: block; }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
 .s1-logo-text {
   font-size: clamp(4rem, 14vw, 10rem);
@@ -964,7 +964,7 @@ body {
   <div id="s1-gradient"></div>
   <canvas id="canvas-particles"></canvas>
   <div class="s1-content">
-    <span class="s1-logo-icon reveal">🔐</span>
+    <img src="icon-mark.svg" alt="" class="s1-logo-icon reveal" width="96" height="96">
     <div class="s1-logo-text reveal delay-1">VaultCap</div>
     <p class="s1-sub">Everything you own. Encrypted.</p>
     <p class="s1-scroll reveal delay-3">Scroll to explore ↓</p>
@@ -1030,7 +1030,7 @@ body {
   <div id="s5-nebula"></div>
   <div style="display:flex;flex-direction:column;align-items:center;z-index:2;position:relative;">
     <div class="s5-icon-wrap reveal">
-      <span class="s5-icon">🔐</span>
+      <img src="icon-mark.svg" alt="" class="s5-icon" width="48" height="48" style="border-radius:12px">
       <div class="s5-icon-glow"></div>
     </div>
     <div class="s5-name reveal delay-1">VaultCap</div>
@@ -1058,7 +1058,7 @@ body {
       </div>
       <div class="step reveal delay-2">
         <div class="step-num">02</div>
-        <span class="step-icon">🔐</span>
+        <img src="icon-mark.svg" alt="" class="step-icon" width="40" height="40" style="border-radius:10px">
         <h3>Encrypt</h3>
         <p>Everything encrypted with YOUR PIN. Locally. No servers involved.</p>
       </div>
@@ -1211,7 +1211,7 @@ body {
     <h2 class="section-title s10-title reveal">Bank-grade privacy.<br>Human-grade simplicity.</h2>
     <div class="sec-specs">
       <div class="spec-item reveal delay-1">
-        <span class="spec-check">🔐</span>
+        <img src="icon-mark.svg" alt="" class="spec-check" width="20" height="20" style="border-radius:4px;vertical-align:middle">
         <div>
           <div class="spec-text">AES-256-GCM Encryption</div>
           <div class="spec-detail">Industry standard used by governments and banks</div>
@@ -1607,7 +1607,7 @@ body {
     <p class="cta-big reveal">Your vault<br>awaits.</p>
     <p class="cta-sub reveal delay-1">Private. Encrypted. Yours.</p>
     <div class="cta-buttons">
-      <a class="btn-primary reveal-left delay-2" href="https://shamikhahmed.github.io/VaultCap" target="_blank">🔐 Open VaultCap</a>
+      <a class="btn-primary reveal-left delay-2" href="https://shamikhahmed.github.io/VaultCap" target="_blank">Open VaultCap</a>
       <a class="btn-secondary reveal-right delay-2" href="https://shamikhahmed.github.io/VaultCap/docs/GUIDE.md" target="_blank">📖 Read the Guide</a>
       <a class="btn-secondary reveal-right delay-2" href="https://shamikhahmed.github.io/VaultCap/presentation.html" target="_blank">📊 Presentation</a>
       <a class="btn-secondary reveal-right delay-2" href="https://shamikhahmed.github.io/VaultCap/landing.html" target="_blank">🌐 Landing</a>

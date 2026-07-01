@@ -138,11 +138,14 @@ function showContextMenu(x, y, items) {
   const left = Math.min(x, window.innerWidth - mw - 12);
   const top = Math.min(y, window.innerHeight - mh - 12);
   menu.style.cssText = `left:${Math.max(8, left)}px;top:${Math.max(8, top)}px;`;
-  menu.innerHTML = items.map((item, i) =>
-    `<div class="ctx-menu-item${item.destructive ? ' destructive' : ''}" data-ci="${i}">
-      <span class="ctx-menu-ic">${item.icon || ''}</span><span>${item.label}</span>
-    </div>`
-  ).join('');
+  menu.innerHTML = items.map((item, i) => {
+    const ic = item.ic && typeof VC !== 'undefined' && VC.icon
+      ? VC.icon(item.ic, 16)
+      : (item.icon || '');
+    return `<div class="ctx-menu-item${item.destructive ? ' destructive' : ''}" data-ci="${i}">
+      <span class="ctx-menu-ic">${ic}</span><span>${item.label}</span>
+    </div>`;
+  }).join('');
   menu.addEventListener('click', e => {
     const el = e.target.closest('[data-ci]');
     if (el) { _ctxMenuItems[+el.dataset.ci]?.action?.(); overlay.remove(); }

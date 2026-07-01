@@ -25,7 +25,7 @@ function openMoneySheet() {
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+      return '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
     }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
@@ -52,7 +52,7 @@ function openAssetsSheet() {
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+      return '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
     }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No asset modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
@@ -81,13 +81,20 @@ function openIdentitySheet() {
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><div style="font-size:24px">'+m.ic+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+      return '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
     }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
 }
 window.openIdentitySheet = openIdentitySheet;
+
+function moreItemIcon(id, size = 22) {
+  const extra = { search: 'search', backup: 'share', security: 'shield', settings: 'settings', help: 'book' };
+  if (extra[id]) return VC.icon(extra[id], size);
+  const mod = ALL_MODULES.find((x) => x.id === id);
+  return mod ? VC.modIcon(mod, size) : VC.icon('list', size);
+}
 
 function openMore() {
   document.getElementById('moreOverlay')?.remove();
@@ -96,44 +103,22 @@ function openMore() {
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
   const vis = id => S.modules[id] !== false;
   const navGroups = [
-    { label:'💰 Money', items:[
-      {id:'banks',ic:'🏦',n:'Banks'},
-      {id:'cards',ic:'💳',n:'Cards'},
-      {id:'cash',ic:'💵',n:'Cash'},
-      {id:'investments',ic:'📈',n:'Investments'},
-      {id:'loans',ic:'💸',n:'Loans'},
-      {id:'expenses',ic:'📋',n:'Expenses'},
-      {id:'bc',ic:'🤝',n:'Committees'},
-      {id:'bonds',ic:'🎫',n:'Bonds'},
+    { label:'Money', items:[
+      {id:'banks',n:'Banks'},{id:'cards',n:'Cards'},{id:'cash',n:'Cash'},{id:'investments',n:'Investments'},
+      {id:'loans',n:'Loans'},{id:'expenses',n:'Expenses'},{id:'bc',n:'Committees'},{id:'bonds',n:'Bonds'},
     ].filter(m => vis(m.id))},
-    { label:'🏠 Assets', items:[
-      {id:'assets',ic:'🏠',n:'Assets'},
+    { label:'Assets', items:[{id:'assets',n:'Assets'}].filter(m => vis(m.id))},
+    { label:'Identity', items:[
+      {id:'documents',n:'Documents'},{id:'sims',n:'SIM Cards'},{id:'emails',n:'Emails'},
+      {id:'digital',n:'Digital'},{id:'friends',n:'Contacts'},
     ].filter(m => vis(m.id))},
-    { label:'🪪 Identity', items:[
-      {id:'documents',ic:'🪪',n:'Documents'},
-      {id:'sims',ic:'📱',n:'SIM Cards'},
-      {id:'emails',ic:'📧',n:'Emails'},
-      {id:'digital',ic:'💼',n:'Digital'},
-      {id:'friends',ic:'👥',n:'Contacts'},
+    { label:'Tools', items:[
+      {id:'zakat',n:'Zakat'},{id:'tax',n:'Tax'},{id:'currency',n:'Currency'},{id:'import',n:'Smart Import'},
+      {id:'credit',n:'Credit Score'},{id:'reminders',n:'Reminders'},{id:'alerts',n:'Alerts'},
+      {id:'timeline',n:'Timeline'},{id:'search',n:'Search'},{id:'trash',n:'Trash'},{id:'family',n:'Family Vault'},
     ].filter(m => vis(m.id))},
-    { label:'🔧 Tools', items:[
-      {id:'zakat',ic:'🌙',n:'Zakat'},
-      {id:'tax',ic:'🧾',n:'Tax'},
-      {id:'currency',ic:'💱',n:'Currency'},
-      {id:'import',ic:'📥',n:'Smart Import'},
-      {id:'credit',ic:'📊',n:'Credit Score'},
-      {id:'reminders',ic:'⏰',n:'Reminders'},
-      {id:'alerts',ic:'🔔',n:'Alerts'},
-      {id:'timeline',ic:'📅',n:'Timeline'},
-      {id:'search',ic:'🔍',n:'Search'},
-      {id:'trash',ic:'🗑️',n:'Trash'},
-      {id:'family',ic:'👨‍👩‍👧‍👦',n:'Family Vault'},
-    ].filter(m => vis(m.id))},
-    { label:'⚙️ System', items:[
-      {id:'backup',ic:'💾',n:'Backup'},
-      {id:'security',ic:'🛡️',n:'Security'},
-      {id:'settings',ic:'⚙️',n:'Settings'},
-      {id:'help',ic:'❓',n:'Help'},
+    { label:'System', items:[
+      {id:'backup',n:'Backup'},{id:'security',n:'Security'},{id:'settings',n:'Settings'},{id:'help',n:'Help'},
     ]},
   ].filter(g => g.items.length > 0);
   overlay.innerHTML =
@@ -145,8 +130,8 @@ function openMore() {
       '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
       group.items.map(m =>
-        '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center">' +
-        '<div style="font-size:22px">' + m.ic + '</div>' +
+        '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
+        '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
         '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
         '</div>'
       ).join('') +
@@ -167,7 +152,12 @@ window.closeMore = closeMore;
 function togglePrivacy() {
   S.privacyMode = !S.privacyMode;
   document.body.classList.toggle('privacy', S.privacyMode);
-  document.getElementById('privBtn').textContent = S.privacyMode ? '👁️ Visible' : '🙈 Privacy';
+  if (typeof VC !== 'undefined') {
+    VC.setBtnIcon(document.getElementById('privBtn'), S.privacyMode ? 'eye' : 'eye-off', 18);
+    document.querySelectorAll('[data-vc-icon="eye-off"],[data-vc-icon="eye"]').forEach((el) => {
+      if (el.id !== 'privBtn') VC.setBtnIcon(el, S.privacyMode ? 'eye' : 'eye-off', 18);
+    });
+  }
 }
 
 function toggleSidebar() {
@@ -182,17 +172,28 @@ function initSidebar() {
 }
 
 // ===================== BUILD NAV =====================
+function hubTileIcon(id, size = 22) {
+  const extra = { credit: 'gauge', gold: 'moon', vehicles: 'package', gadgets: 'smartphone' };
+  const mod = ALL_MODULES.find((m) => m.id === id);
+  return VC.icon(mod?.ic || extra[id] || 'list', size);
+}
+
 function buildSettTabs() {
   const el = document.getElementById('settTabs');
   if (!el) return;
   const tabs = [
-    ['profile','👤 Profile'],['security','🔒 Security'],['appearance','🎨 Appearance'],
-    ['modules','🧩 Modules'],['backup','💾 Backup'],['import','📥 Import'],
-    ['accessibility','♿ Accessibility'],['about','ℹ️ About']
+    ['profile', 'Profile', 'users'],
+    ['security', 'Security', 'shield'],
+    ['appearance', 'Appearance', 'settings'],
+    ['modules', 'Modules', 'package'],
+    ['backup', 'Backup', 'share'],
+    ['import', 'Import', 'download'],
+    ['accessibility', 'Accessibility', 'eye'],
+    ['about', 'About', 'book'],
   ];
   const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'profile';
-  el.innerHTML = tabs.map(([id, label]) =>
-    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" onclick="SettingsNav.show('${id}')">${label}</button>`
+  el.innerHTML = tabs.map(([id, label, ic]) =>
+    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" onclick="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
   ).join('');
 }
 
@@ -208,19 +209,19 @@ function renderFinanceHome() {
   if (!b) return;
   const ctxBar = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.bar('finance-home') : '';
   const allModules = [
-    {id:'banks',icon:'🏦',label:'Banks',desc:(S.banks||[]).length+' accounts'},
-    {id:'cards',icon:'💳',label:'Cards',desc:(S.cards||[]).length+' cards'},
-    {id:'cash',icon:'💵',label:'Cash',desc:(S.cash||[]).length+' entries'},
-    {id:'investments',icon:'📈',label:'Investments',desc:(S.investments||[]).length+' positions'},
-    {id:'loans',icon:'🤝',label:'Loans',desc:(S.loans||[]).length+' loans'},
-    {id:'credit',icon:'📊',label:'Credit Score',desc:'Track scores'},
-    {id:'zakat',icon:'🌙',label:'Zakat',desc:'Calculate'},
-    {id:'tax',icon:'🧾',label:'Tax',desc:'Income tax calculator'},
-    {id:'currency',icon:'💱',label:'Currency',desc:'Net worth'},
-    {id:'gold',icon:'🥇',label:'Metals',desc:'Gold & silver'},
-    {id:'expenses',icon:'💸',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
-    {id:'bc',    icon:'🤝', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
-    {id:'bonds', icon:'🎫', label:'Prize Bonds & Savings', desc:(S.bonds||[]).length+' holdings'},
+    {id:'banks',ic:'bank',label:'Banks',desc:(S.banks||[]).length+' accounts'},
+    {id:'cards',ic:'card',label:'Cards',desc:(S.cards||[]).length+' cards'},
+    {id:'cash',ic:'banknote',label:'Cash',desc:(S.cash||[]).length+' entries'},
+    {id:'investments',ic:'chart',label:'Investments',desc:(S.investments||[]).length+' positions'},
+    {id:'loans',ic:'handshake',label:'Loans',desc:(S.loans||[]).length+' loans'},
+    {id:'credit',ic:'gauge',label:'Credit Score',desc:'Track scores'},
+    {id:'zakat',ic:'moon',label:'Zakat',desc:'Calculate'},
+    {id:'tax',ic:'receipt',label:'Tax',desc:'Tax calculator'},
+    {id:'currency',ic:'arrows',label:'Currency',desc:'Net worth'},
+    {id:'gold',ic:'moon',label:'Metals',desc:'Gold & silver'},
+    {id:'expenses',ic:'list',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
+    {id:'bc',    ic:'users', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
+    {id:'bonds', ic:'ticket', label:'Prize Bonds & Savings', desc:(S.bonds||[]).length+' holdings'},
   ];
   const hidden = getTabPrefs().hiddenFinance || [];
   const modules = allModules.filter(m => {
@@ -236,10 +237,10 @@ function renderFinanceHome() {
   });
   b.innerHTML = ctxBar + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
-      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
+      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
+      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
     </div>`).join('') + '</div>';
 }
 
@@ -247,19 +248,19 @@ function renderVaultHome() {
   const b = document.getElementById('vault-home-body');
   if (!b) return;
   const modules = [
-    {id:'documents',icon:'📄',label:'Documents',desc:(S.documents||[]).length+' docs'},
-    {id:'digital',icon:'💻',label:'Digital',desc:'Accounts & subscriptions'},
-    {id:'emails',icon:'📧',label:'Emails',desc:(S.emails||[]).length+' identities'},
-    {id:'sims',icon:'📱',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
-    {id:'friends',icon:'👥',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
-    {id:'gadgets',icon:'🖥️',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
+    {id:'documents',ic:'id-card',label:'Documents',desc:(S.documents||[]).length+' docs'},
+    {id:'digital',ic:'briefcase',label:'Digital',desc:'Accounts & subscriptions'},
+    {id:'emails',ic:'mail',label:'Emails',desc:(S.emails||[]).length+' identities'},
+    {id:'sims',ic:'smartphone',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
+    {id:'friends',ic:'users',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
+    {id:'gadgets',ic:'smartphone',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
-      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
+      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
+      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
     </div>`).join('') + '</div>';
 }
 
@@ -269,17 +270,42 @@ function renderAssetsHome() {
   const vehicleCount = (S.assets || []).filter(a => a.assetType === 'vehicle').length;
   const metalCount = (S.assets || []).filter(a => a.assetType === 'precious_metals' || a.assetType === 'precious').length;
   const modules = [
-    {id:'vehicles',icon:'🚗',label:'Vehicles',desc:vehicleCount+' vehicle'+(vehicleCount!==1?'s':'')},
-    {id:'assets',icon:'🏠',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
-    {id:'gold',icon:'🥇',label:'Precious Metals',desc:metalCount ? metalCount+' holding'+(metalCount!==1?'s':'') : 'Gold & silver'},
+    {id:'vehicles',ic:'package',label:'Vehicles',desc:vehicleCount+' vehicle'+(vehicleCount!==1?'s':'')},
+    {id:'assets',ic:'house',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
+    {id:'gold',ic:'moon',label:'Precious Metals',desc:metalCount ? metalCount+' holding'+(metalCount!==1?'s':'') : 'Gold & silver'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div style="font-size:28px;margin-bottom:4px">${m.icon}</div>
+      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3)">${m.desc}</div>
-      <div style="position:absolute;bottom:12px;right:12px;color:var(--text3);font-size:16px">›</div>
+      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
+      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
     </div>`).join('') + '</div>';
+}
+
+function renderHomeModules() {
+  const grid = document.getElementById('homeModGrid');
+  if (!grid || typeof VC === 'undefined') return;
+  const mods = [
+    { ic: 'bank', label: 'Banks' },
+    { ic: 'card', label: 'Cards' },
+    { ic: 'chart', label: 'Invest' },
+    { ic: 'house', label: 'Assets' },
+    { ic: 'smartphone', label: 'SIMs' },
+    { ic: 'mail', label: 'Emails' },
+    { ic: 'package', label: 'Gadgets' },
+    { ic: 'id-card', label: 'Docs' },
+    { ic: 'sync', label: 'Subs' },
+    { ic: 'briefcase', label: 'Logins' },
+    { ic: 'shield', label: 'Security' },
+    { ic: 'receipt', label: 'Expenses' },
+  ];
+  grid.innerHTML = mods.map(m =>
+    `<div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s">
+      <div class="home-mod-ic">${VC.icon(m.ic, 20)}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:600">${m.label}</div>
+    </div>`
+  ).join('');
 }
 
 function buildNav() {
@@ -288,7 +314,7 @@ function buildNav() {
     SMART_DB.banks.sort((a, b) => (a.country === uc ? 0 : 1) - (b.country === uc ? 0 : 1));
   }
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
-  const extras = [{ id:'settings', n:'Settings', ic:'⚙️' }, { id:'trash', n:'Trash', ic:'🗑️' }, { id:'reminders', n:'Reminders', ic:'🔔' }, { id:'sync', n:'Sync', ic:'🔄' }];
+  const extras = [{ id:'settings', n:'Settings', ic:'settings' }, { id:'trash', n:'Trash', ic:'trash' }, { id:'reminders', n:'Reminders', ic:'bell' }, { id:'sync', n:'Sync', ic:'sync' }];
   const appVer = (typeof window !== 'undefined' && window.VER) || (typeof VER !== 'undefined' ? VER : (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '4.8.2'));
   const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + appVer;
   const sbNav = document.getElementById('sbNav');
@@ -300,26 +326,26 @@ function buildNav() {
   buildNav._cacheKey = navKey;
 
   const groups = {
-    Finance:  '💰 Finance',
-    Assets:   '🏠 Assets & Property',
-    Identity: '🪪 Identity',
-    Tools:    '⚙️ Tools',
+    Finance:  'Finance',
+    Assets:   'Assets & Property',
+    Identity: 'Identity',
+    Tools:    'Tools',
   };
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
-  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">📊</span><span class="ni-txt">Dashboard</span></div>`;
+  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></div>`;
   Object.entries(groups).forEach(([grp, label]) => {
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
+      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px" role="separator"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${m.ic}</span><span class="ni-txt">${m.n}</span></div>`
+    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 
@@ -333,31 +359,32 @@ function buildNav() {
   document.getElementById('btabs').setAttribute('role', 'tablist');
   document.getElementById('btabs').setAttribute('aria-label', 'Main navigation');
   document.getElementById('btabs').innerHTML =
-    `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard'}" aria-label="Home" data-pg="dashboard"><div class="ti-ic" aria-hidden="true">🏠</div><span>Home</span></div>` +
-    `<div class="ti${moneyPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${moneyPages.has(S.currentPage)}" aria-label="Money" onclick="openMoneySheet()"><div class="ti-ic" aria-hidden="true">💰</div><span>Money</span></div>` +
-    `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${assetsPages.has(S.currentPage)}" aria-label="Assets" onclick="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">🏠</div><span>Assets</span></div>` +
-    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" onclick="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">🪪</div><span>Identity</span></div>` +
-    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" onclick="openMore()"><div class="ti-ic" aria-hidden="true">⋯</div><span>More</span></div>`;
+    `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard'}" aria-label="Home" data-pg="dashboard"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
+    `<div class="ti${moneyPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${moneyPages.has(S.currentPage)}" aria-label="Money" onclick="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
+    `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${assetsPages.has(S.currentPage)}" aria-label="Assets" onclick="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('package', 20)}</div><span>Assets</span></div>` +
+    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" onclick="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
+    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" onclick="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [
-    {id:'cash',  icon:'💵', label:'Cash',  obj:'Cash'},
-    {id:'loans', icon:'🤝', label:'Loan',  obj:'Loans'},
-    {id:'banks', icon:'🏦', label:'Bank',  obj:'Banks'},
-    {id:'cards', icon:'💳', label:'Card',  obj:'Cards'},
+    { id: 'cash', icon: 'banknote', label: 'Cash', obj: 'Cash' },
+    { id: 'loans', icon: 'handshake', label: 'Loan', obj: 'Loans' },
+    { id: 'banks', icon: 'bank', label: 'Bank', obj: 'Banks' },
+    { id: 'cards', icon: 'card', label: 'Card', obj: 'Cards' },
   ].filter(q => S.modules[q.id] && document.getElementById('pg-' + q.id));
   const fabItems = [
-    ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${q.icon} Add ${q.label}</div>`),
-    '<div class="fmi" onclick="SmartAdd.open();FAB.close()">✨ Smart Add</div>',
-    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">📥 Smart Import</div>',
-    '<div class="fmi" onclick="CMD.open();FAB.close()">⌘ Search Everything</div>',
-    '<div class="fmi" onclick="R.goto(\'alerts\');FAB.close()">🔔 Alerts</div>',
-    '<div class="fmi" onclick="R.goto(\'timeline\');FAB.close()">📅 Timeline</div>',
-    '<div class="fmi" onclick="R.goto(\'settings\');FAB.close()">⚙️ Settings</div>',
-    '<div class="fmi" onclick="R.lock();FAB.close()">🔒 Lock Vault</div>'
+    ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</div>`),
+    '<div class="fmi" onclick="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</div>',
+    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</div>',
+    '<div class="fmi" onclick="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</div>',
+    '<div class="fmi" onclick="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</div>',
+    '<div class="fmi" onclick="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</div>',
+    '<div class="fmi" onclick="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</div>',
+    '<div class="fmi" onclick="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</div>'
   ];
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
   patchNavActiveState();
+  if (typeof VC !== 'undefined') VC.refreshShellIcons();
 }
 
 function patchNavActiveState() {

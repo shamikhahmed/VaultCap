@@ -280,8 +280,7 @@ const AIImport = {
     body.innerHTML =
       '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
 
-      '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px">' +
-        '<div style="font-size:15px;font-weight:800;color:var(--accent);margin-bottom:4px">📥 Smart Import</div>' +
+      '<div class="u-highlight-card">' +
         '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
       '</div>' +

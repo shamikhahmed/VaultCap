@@ -119,9 +119,8 @@ const BondsModule = {
           '</div>' +
         '</div>' +
         '<div class="entry-acts">' +
-          (isDrawBond ? '<button type="button" class="icb" aria-label="Check Results" onclick="BondsModule._checkResults(\'' + b.typeId + '\')" title="Check Results">🎯</button>' : '') +
-          '<button type="button" class="icb" aria-label="Edit" onclick="BondsModule.edit(' + i + ')">✏️</button>' +
-          '<button type="button" class="icb del" aria-label="Delete" onclick="BondsModule.del(' + i + ')">🗑️</button>' +
+          (isDrawBond ? U.icb('target', { onclick: `BondsModule._checkResults('${b.typeId}')`, ariaLabel: 'Check Results', title: 'Check Results' }) : '') +
+          U.actsEditDel('BondsModule', i) +
         '</div>' +
       '</div>' +
     '</div>';

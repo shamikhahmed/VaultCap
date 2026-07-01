@@ -104,7 +104,7 @@ const Loans = {
             </div>
             ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens" style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
-          <div class="entry-acts">${payBtn}${settle}<button type="button" class="icb" aria-label="Edit" onclick="Loans.edit('${l.id}')">✏️</button><button type="button" class="icb del" aria-label="Delete" onclick="Loans.del('${l.id}')">🗑️</button></div>
+          <div class="entry-acts">${payBtn}${settle}${U.actsEditDel('Loans', l.id)}</div>
         </div>
         ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${escHtml(l.notes)}</div>` : ''}
       </div>`;
