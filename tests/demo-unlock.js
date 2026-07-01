@@ -16,9 +16,11 @@ async function dismissOverlays(page) {
   await page.evaluate(() => {
     document.getElementById('splashScreen')?.remove();
     if (typeof Modal !== 'undefined') Modal.close();
-    document.querySelectorAll('.modal-overlay.on').forEach(el => el.classList.remove('on'));
+    const overlay = document.getElementById('overlay');
+    if (overlay) overlay.classList.remove('on');
+    document.querySelectorAll('.modal-overlay.on, .overlay.on').forEach(el => el.classList.remove('on'));
   });
-  await page.locator('.modal-overlay.on').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+  await page.locator('#overlay.on, .modal-overlay.on').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
 }
 
 /** @param {import('@playwright/test').Page} page */
@@ -50,6 +52,8 @@ async function unlockDemoVault(page) {
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
+    // Suppress delayed WhatsNew modal during e2e
+    localStorage.setItem('vos_wn_ver', '9.9.9');
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
@@ -81,7 +85,10 @@ async function unlockDemoVault(page) {
     await startExploring.click();
   }
 
-  await expect(page.locator('#app')).toBeVisible({ timeout: 15000 });
+  await page.waitForFunction(
+    () => document.getElementById('app')?.style.display === 'flex',
+    { timeout: 15000 },
+  );
   await page.waitForFunction(
     () => document.getElementById('dashGreet')?.textContent?.trim().length > 0,
     { timeout: 15000 },

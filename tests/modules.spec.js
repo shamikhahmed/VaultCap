@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { unlockDemoVault } = require('./demo-unlock');
+const { unlockDemoVault, dismissOverlays } = require('./demo-unlock');
 
 test.describe('VaultCap modules', () => {
   test.beforeEach(async ({ page }) => {
@@ -58,6 +58,7 @@ test.describe('VaultCap modules', () => {
   test('tax tab opens slab editor', async ({ page }) => {
     await page.evaluate(() => R.goto('tax'));
     await expect(page.locator('#pg-tax.on')).toBeVisible({ timeout: 10000 });
+    await dismissOverlays(page);
     const editBtn = page.getByRole('button', { name: /Edit slabs/i });
     if (await editBtn.count()) {
       await editBtn.first().click();
