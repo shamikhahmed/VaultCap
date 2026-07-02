@@ -235,7 +235,7 @@ const R = {
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
       tax:         () => { if (typeof Tax !== 'undefined') Tax.render(); },
       family:      () => { if (typeof Family !== 'undefined') Family.render(); },
-      sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">🔄</div><h3>Sync</h3><p>Loading…</p></div>'; } },
+      sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">'+(typeof VC!=='undefined'?VC.icon('sync',32):'')+'</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();
         buildSettTabs();

@@ -269,7 +269,7 @@ const CMD = {
 const FAB = {
   toggle() {
     const m = document.getElementById('fabMenu'), btn = document.getElementById('fab');
-    const o = m.classList.toggle('on'); btn.classList.toggle('open', o); btn.textContent = o ? '✕' : '＋';
+    const o = m.classList.toggle('on'); btn.classList.toggle('open', o); btn.textContent = o ? 'Close' : '+';
   },
   close() {
     const m = document.getElementById('fabMenu'), btn = document.getElementById('fab');

@@ -65,7 +65,7 @@ const OB = {
         <span class="chip-ic" style="display:flex;justify-content:center" aria-hidden="true">${typeof VC !== 'undefined' ? VC.icon(c.icon, 30) : ''}</span>
         <div style="font-size:13px;font-weight:700;color:var(--text)">${c.label}</div>
         <div style="font-size:10px;color:var(--text3);line-height:1.3">${c.desc}</div>
-        <div aria-hidden="true" style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${obCats[c.key]?'✓':''}</div>
+        <div aria-hidden="true" style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'}"></div>
       </div>`
     ).join('');
   },
@@ -88,7 +88,6 @@ const OB = {
     if (check) {
       check.style.background = on ? 'var(--accent)' : 'transparent';
       check.style.borderColor = on ? 'var(--accent)' : 'var(--border)';
-      check.textContent = on ? '✓' : '';
     }
   },
   checkPIN() {

@@ -182,7 +182,7 @@ const Family = {
         </div>`
       : (S.user.name
         ? `<div onclick="Family.confirmHeadFromProfile()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
-          <div style="font-size:32px;margin-bottom:8px">${escHtml(S.user.avatar || '👑')}</div>
+          <div style="margin-bottom:8px;display:flex;justify-content:center">${S.user.avatar ? escHtml(S.user.avatar) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Use ${escHtml(S.user.name)} as Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
