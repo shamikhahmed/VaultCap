@@ -46,11 +46,11 @@ const Inv={
         <div class="fr"><div class="fg"><label class="fl">Current Value</label><input class="inp num-inp" id="if-cur2" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(i.currentValue||'')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="if-cur">${U.currencies()}</select></div></div>
         <div class="fr"><div class="fg"><label class="fl">Ticker / Symbol</label><input class="inp" id="if-tick" value="${escAttr(i.ticker||'')}" placeholder="ENGRO, BTC" oninput="Inv.lookupTicker(this.value)"><div id="if-tick-hint" style="font-size:11px;color:var(--text3);margin-top:3px;min-height:14px"></div></div><div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="if-date" value="${escAttr(i.purchaseDate||'')}" type="date"></div></div>
         <div class="fr"><div class="fg"><label class="fl">Broker / Platform</label><input class="inp" id="if-broker" value="${escAttr(i.broker||'')}" list="brDL" placeholder="AKD, Binance…"></div><div class="fg"><label class="fl">Risk Level</label><datalist id="ifRiskDL"><option>Low</option><option>Medium</option><option>High</option><option>Very High</option></datalist><input class="inp" id="if-risk" value="${escAttr(i.riskLevel||'')}" list="ifRiskDL" placeholder="Low, Medium, High"></div></div>
-        <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="if-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="if-own"><option value="personal"${i.ownership!=='business'?' selected':''}>👤 Personal</option><option value="business"${i.ownership==='business'?' selected':''}>🏢 Business</option></select></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="if-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="if-own"><option value="personal"${i.ownership!=='business'?' selected':''}>Personal</option><option value="business"${i.ownership==='business'?' selected':''}>Business</option></select></div></div>
         ${U.loginFields(i)}
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="if-notes" rows="2">${escAttr(i.notes||'')}</textarea></div>
         <div class="fg"><label class="fl">Tags</label>${U.tags(i.tags||[])}</div>
-        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;margin-top:4px"><input type="checkbox" id="if-fav" ${i.favorite?'checked':''}> ⭐ Favourite</label>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;margin-top:4px"><input type="checkbox" id="if-fav" ${i.favorite?'checked':''}> Favourite</label>
       </div>
     </details>`;
   },
@@ -62,7 +62,7 @@ const Inv={
     const match=SMART_DB.investments.find(i=>i.ticker&&i.ticker.toUpperCase()===ticker.toUpperCase().trim());
     if(match){
       const nameEl=document.getElementById('if-name');if(nameEl&&!nameEl.value)nameEl.value=match.name;
-      if(hint)hint.textContent=match.exchange?`📊 ${match.exchange} · ${match.currency}`:'';
+      if(hint)hint.textContent=match.exchange?`${match.exchange} · ${match.currency}`:'';
     }else{if(hint)hint.textContent='';}
   },
   fav(id){const i=S.investments.find(x=>x.id===id);if(!i)return;i.favorite=!i.favorite;Store.save();this.render();},

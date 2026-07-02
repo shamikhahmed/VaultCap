@@ -292,7 +292,7 @@ const BCModule = {
 
       (bc.myTurnRound ? (
         '<div style="background:' + (myTurnDone ? 'rgba(76,175,80,.1)' : 'rgba(255,255,255,.1)') + ';border:1px solid ' + (myTurnDone ? 'rgba(76,175,80,.3)' : 'rgba(255,255,255,.3)') + ';border-radius:12px;padding:12px;text-align:center">' +
-          '<div style="font-size:13px;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? '✓ You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
+          '<div style="font-size:13px;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? 'You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
           (myTurnDone ? '<div style="font-size:12px;color:var(--text3);margin-top:4px">You received ' + fmt(pot) + '</div>' : '') +
         '</div>'
       ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +

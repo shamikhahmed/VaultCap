@@ -88,7 +88,7 @@ const BondsModule = {
       ) +
 
       '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:12px;padding:12px">' +
-        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">🌙 Zakat on Bonds</div>' +
+        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">Zakat on Bonds</div>' +
         '<div style="font-size:11px;color:var(--text3);line-height:1.6">Prize bonds and government securities are zakatable at face value. Winnings received are zakatable as cash. This is auto-added to your Zakat calculator.</div>' +
       '</div>' +
 

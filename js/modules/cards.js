@@ -180,7 +180,7 @@ const Cards={
   openAdd(prefill={}){
     Cards._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `Add Card — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Card';
-    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">📷 Scan Card with Camera</button></div>`;
+    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">Scan Card with Camera</button></div>`;
     Modal.open(title, scanBtn + this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
   },
 
@@ -199,7 +199,7 @@ const Cards={
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
       '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button type="button" id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">📷 Capture</button>',
+      '<button type="button" id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
       '<button type="button" onclick="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
@@ -241,7 +241,7 @@ const Cards={
     if(qr){Cards._onScanResult(qr.data);return;}
     // Run Tesseract OCR
     if(typeof Tesseract!=='undefined'){
-      if(statusEl)statusEl.innerHTML='<span style="color:#60a5fa">🔍 Reading card…</span>';
+      if(statusEl)statusEl.innerHTML='<span style="color:#60a5fa">Reading card…</span>';
       if(btn)btn.disabled=true;
       Tesseract.recognize(canvas,'eng',{logger:function(){}}).then(function(result){
         Cards._stopScan();
@@ -307,7 +307,7 @@ const Cards={
       '<canvas id="_photoCanvas" style="display:none"></canvas>',
       '<div id="_photoStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position card in frame then tap Capture</div>',
       '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button type="button" onclick="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
+      '<button type="button" onclick="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Capture</button>',
       '<button type="button" onclick="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
@@ -374,8 +374,8 @@ const Cards={
       +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" oninput="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">📷 Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
-      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
+      +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
+      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
       +'</div>'
       +'<details'+(isEdit?' open':'')+' style="margin-top:10px">'
       +'<summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>'
@@ -385,7 +385,7 @@ const Cards={
       +'<div class="fr"><div class="fg"><label class="fl">CVV</label><input class="inp" id="cf-cvv" value="'+(c.cvv||'')+'" maxlength="4" type="password" inputmode="numeric" placeholder="•••"></div><div class="fg"><label class="fl">Card PIN</label><input class="inp" id="cf-cpin" value="'+(c.cardPin||'')+'" maxlength="6" type="password" inputmode="numeric" placeholder="••••"></div></div>'
       +'<div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="'+(c.holderName||S.user.name||'')+'" placeholder="Name on card"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="'+(c.rewardsProgram||'')+'" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="'+(c.rewardsPoints||'')+'" type="number" placeholder="50000"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"'+(c.ownership!=='business'?' selected':'')+'>👤 Personal</option><option value="business"'+(c.ownership==='business'?' selected':'')+'>🏢 Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="'+(c.annualFee||'')+'" type="number" placeholder="0"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"'+(c.ownership!=='business'?' selected':'')+'>Personal</option><option value="business"'+(c.ownership==='business'?' selected':'')+'>Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="'+(c.annualFee||'')+'" type="number" placeholder="0"></div></div>'
       +'<div class="fg"><label class="fl">Joint Card?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="cf-joint" onchange="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" style="width:20px;height:20px;cursor:pointer" '+(c.jointAccount?'checked':'')+' ><label for="cf-joint" style="font-size:14px;color:var(--text2)">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select id="cf-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
       +'<div class="fg"><label class="fl">Credit Limit (optional)</label><input class="inp" id="cf-limit" value="'+(_cardLimit(c)||'')+'" type="number" min="0" placeholder="e.g. 500000"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="'+(c.username||'')+'" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="'+(c.pwdHint||'')+'" placeholder="\'Email+!\'"></div></div>'

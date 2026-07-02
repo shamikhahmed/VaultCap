@@ -67,14 +67,14 @@ const Loans = {
       let duePart = '';
       if (l.status !== 'Settled' && dueDate) {
         if (overdue) {
-          duePart = `<span class="badge b-err">⚠️ OVERDUE ${daysOverdue} day${daysOverdue !== 1 ? 's' : ''}</span>`;
+          duePart = `<span class="badge b-err">OVERDUE ${daysOverdue} day${daysOverdue !== 1 ? 's' : ''}</span>`;
         } else if (soonDue) {
-          duePart = `<span class="badge b-warn">⏰ Due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}</span>`;
+          duePart = `<span class="badge b-warn">Due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}</span>`;
         } else {
           duePart = `<span class="badge b-warn">Due ${escHtml(l.dueDate)}</span>`;
         }
       } else if (l.status === 'Settled') {
-        duePart = `<span class="badge b-muted">✓ Settled</span>`;
+        duePart = `<span class="badge b-muted">Settled</span>`;
       }
 
       const payments = l.payments || [];
@@ -84,10 +84,10 @@ const Loans = {
       const cur = l.currency || userCur;
 
       const settle  = status !== 'Settled'
-        ? `<button type="button" class="icb" aria-label="Mark settled" title="Mark settled" onclick="Loans.settle('${l.id}')">✔</button>`
+        ? `${U.icb('target',{onclick:`Loans.settle('${l.id}')`,ariaLabel:'Mark settled',title:'Mark settled'})}`
         : '';
       const payBtn = status !== 'Settled'
-        ? `<button type="button" class="icb" aria-label="Record payment" title="Record payment" onclick="Loans.recordPayment('${l.id}')">💰</button>`
+        ? `${U.icb('banknote',{onclick:`Loans.recordPayment('${l.id}')`,ariaLabel:'Record payment',title:'Record payment'})}`
         : '';
 
       return `<div class="entry" data-id="${l.id}">
@@ -136,7 +136,7 @@ const Loans = {
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
-          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">✔ Settled (${settled.length})</span><span style="font-size:10px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
+          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">Settled (${settled.length})</span><span style="font-size:10px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
         }
       }
       html += `</div>`;
@@ -271,7 +271,7 @@ const Loans = {
     const totalPaid = l.payments.reduce((a, p) => a + (p.amount || 0), 0);
     if (totalPaid >= (l.amount || 0)) {
       l.status = 'Settled';
-      Toast.show(`🎉 Fully paid! Settled with ${l.person}`, 'success');
+      Toast.show(`Fully paid! Settled with ${l.person}`, 'success');
     } else {
       const remaining = Math.round((l.amount || 0) - totalPaid);
       Toast.show(`Payment recorded. Remaining: ${l.currency || ''} ${remaining.toLocaleString()}`, 'success');
@@ -286,7 +286,7 @@ const Loans = {
     l.status = 'Settled';
     Activity.log('Settled loan', l.person);
     Store.save(); this.render();
-    Toast.show(`🎉 Settled with ${l.person}!`, 'success');
+    Toast.show(`Settled with ${l.person}!`, 'success');
   },
 
   del(id, fm = false) {

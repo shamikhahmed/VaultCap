@@ -165,7 +165,7 @@ const CMD = {
           {icon:'⌘', label:'⌘L — lock vault', cat:'Shortcuts', action:()=>R.lock()},
           {icon:'⌘', label:'⌘F — search', cat:'Shortcuts', action:()=>R.goto('search')},
           {icon:'⎋', label:'Escape — close palette', cat:'Shortcuts', action:null},
-          {icon:'💬', label:'Try: "add bank" · "lock" · "theme dark" · "reminders"', cat:'Shortcuts', action:null},
+          {icon:'search', label:'Try: "add bank" · "lock" · "theme dark" · "reminders"', cat:'Shortcuts', action:null},
         ].forEach(a => cmdRes.push(a));
       }
       [

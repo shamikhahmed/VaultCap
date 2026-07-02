@@ -106,7 +106,7 @@ const Currency = {
     const isStale = typeof RatesEngine !== 'undefined' ? RatesEngine.isStale() : true;
     const usdToPkr = fx.PKR || 278.5;
     const staleColor = isStale ? 'var(--warn)' : 'var(--ok)';
-    const staleIcon = isStale ? '⚠️' : '✓';
+    const staleIcon = isStale ? (typeof VC !== 'undefined' ? VC.icon('bell', 12) : '') : (typeof VC !== 'undefined' ? VC.icon('target', 12) : '');
 
     const rows = this._CURRENCIES
       .filter(function(c) { return c.code !== 'USD'; })
@@ -121,7 +121,7 @@ const Currency = {
 
         '<div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
-            '<div style="font-size:13px;font-weight:700;color:var(--text)">💱 Exchange Rates</div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--text)">Exchange Rates</div>' +
             '<button type="button" onclick="Currency._refreshRates()" style="background:var(--glass2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">↻ Refresh</button>' +
           '</div>' +
           '<div style="font-size:11px;color:' + staleColor + '">' + staleIcon + ' Last updated: ' + lastUpdated + '</div>' +
@@ -183,7 +183,7 @@ const Currency = {
     if (typeof RatesEngine === 'undefined') { Toast.show('Rates engine not available', 'warn'); return; }
     Toast.show('Fetching live rates...', 'info', 2000);
     const ok = await RatesEngine.fetch();
-    if (ok) { Toast.show('Rates updated ✓', 'success'); this.render(); }
+    if (ok) { Toast.show('Rates updated', 'success'); this.render(); }
     else { Toast.show('Could not fetch rates — using cached data', 'warn'); }
   },
 

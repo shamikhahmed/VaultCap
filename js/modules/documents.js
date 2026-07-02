@@ -63,7 +63,7 @@ const DocsModule={
   _pendingOwnerId: null,
   openAdd(prefill={}){
     DocsModule._pendingOwnerId = prefill.ownerId || null;
-    const title = (prefill.ownerName||prefill._ownerName) ? `🪪 Add Document — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '🪪 Add Document';
+    const title = (prefill.ownerName||prefill._ownerName) ? `Add Document — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Document';
     const smartNames=(SMART_DB.documents||[]).map(d=>`<option value="${escAttr(d.name)}">`).join('');
     Modal.open(title,`
     <div class="fg"><label class="fl">Document Type *</label>
@@ -108,8 +108,8 @@ const DocsModule={
     if(!area)return;
     const needsBack=this._needsFrontBack(docType,rawVal);
     area.innerHTML='<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'front\')" style="gap:6px">📷 '+(needsBack?'Front':'Capture')+'</button><div id="doc-photo-front" style="margin-top:4px"></div></div>'
-      +(needsBack?'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'back\')" style="gap:6px">📷 Back</button><div id="doc-photo-back" style="margin-top:4px"></div></div>':'')
+      +'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'front\')" style="gap:6px">'+(needsBack?'Front':'Capture')+'</button><div id="doc-photo-front" style="margin-top:4px"></div></div>'
+      +(needsBack?'<div><button type="button" class="btn btn-g btn-sm" onclick="DocsModule._capturePhoto(\'back\')" style="gap:6px">Back</button><div id="doc-photo-back" style="margin-top:4px"></div></div>':'')
       +'</div>';
   },
   _capturePhoto(targetId){
@@ -120,7 +120,7 @@ const DocsModule={
       '<canvas id="_docCanvas" style="display:none"></canvas>',
       '<div id="_docStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position document in frame then tap Capture</div>',
       '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button type="button" onclick="DocsModule._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">📷 Capture</button>',
+      '<button type="button" onclick="DocsModule._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Capture</button>',
       '<button type="button" onclick="DocsModule._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
