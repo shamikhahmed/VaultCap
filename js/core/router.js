@@ -14,9 +14,9 @@ const R = {
     if (ppCards) {
       ppCards.innerHTML =
         '<div onclick="R._pickProfile(\'personal\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (active === 'personal' ? 'rgba(123,95,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (active === 'personal' ? 'rgba(123,95,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation">' +
-        '<div style="font-size:34px">🔐</div><div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">My Vault</div><div style="font-size:12px;color:var(--text3)">Your private encrypted vault</div></div><div style="font-size:20px;color:var(--text3)">›</div></div>' +
-        '<button type="button" onclick="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">🎭 New here? Take the guided demo →</button>' +
-        (VaultProfiles.isDevMode() ? '<div onclick="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div style="font-size:24px">🧪</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Test Sandbox</div><div style="font-size:11px;color:var(--text3)">Developer only</div></div></div>' : '');
+        '<div class="chip-ic" style="font-size:34px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon('vault', 34) : '') + '</div><div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--text)">My Vault</div><div style="font-size:12px;color:var(--text3)">Your private encrypted vault</div></div><div style="font-size:20px;color:var(--text3)">›</div></div>' +
+        '<button type="button" onclick="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">New here? Take the guided demo →</button>' +
+        (VaultProfiles.isDevMode() ? '<div onclick="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('settings', 24) : '') + '</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Test Sandbox</div><div style="font-size:11px;color:var(--text3)">Developer only</div></div></div>' : '');
     }
     pp.style.display = 'flex';
   },
@@ -51,7 +51,7 @@ const R = {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     document.getElementById('pgHome').style.display = 'flex';
     const hw = document.getElementById('hWelcome');
-    if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}! 👋`;
+    if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}!`;
     ThemeEngine.renderDots();
     if (typeof renderHomeModules === 'function') renderHomeModules();
     if (typeof VC !== 'undefined') VC.refreshShellIcons();
@@ -87,7 +87,7 @@ const R = {
       if (typeof DataIntegrity !== 'undefined') {
         const r = DataIntegrity.check();
         const issues = r.highCount + r.posCount;
-        if (issues > 0) Toast.show(`🔍 Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
+        if (issues > 0) Toast.show(`Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
       }
     }, 2000);
     setTimeout(() => {
@@ -114,8 +114,8 @@ const R = {
         if (_days > 14 && !VaultProfiles.isDemo()) {
           Toast.show(
             _days >= 999
-              ? '⚠️ You have never backed up your vault. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
-              : `⚠️ Last backup was ${_days} days ago. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>`,
+              ? 'You have never backed up your vault. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
+              : `Last backup was ${_days} days ago. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>`,
             'warn', 8000
           );
         }

@@ -22,12 +22,12 @@ const Cards={
     const q=(document.getElementById('cQ')?.value||'').toLowerCase();
     const sort=document.getElementById('cSort')?.value||'name';
     const f=S.cF;
-    const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','₿ Crypto'],['bnpl','BNPL'],['expiring','⚠️ Exp.'],['fav','⭐']];
+    const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','Crypto'],['bnpl','BNPL'],['expiring','Expiring'],['fav','Favourites']];
     const ci=document.getElementById('cChips');
     if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.cF='${v}';Cards.render()">${l}</div>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span>👝</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
       if(c.archived&&!Cards._showArchived)return false;
@@ -140,7 +140,7 @@ const Cards={
         ${logoHtml}
         <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${bankName}</span>
       </div>
-      <div class="wcard-type-badge">${typeLabel}${carrying?' 👝':''}${(c.owners||[]).filter(o=>o!=='self').length?' 👥':''}</div>
+      <div class="wcard-type-badge">${typeLabel}${carrying?' · Wallet':''}${(c.owners||[]).filter(o=>o!=='self').length?' · Shared':''}</div>
     </div>
     <div class="wcard-chip">${chip}</div>
     <div class="wcard-number">**** **** **** ${last4}</div>

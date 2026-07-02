@@ -3,15 +3,15 @@ const Reminders = {
     const body = document.getElementById('reminderBody');
     if (!body) return;
     const notifBanner = ('Notification' in window && Notification.permission === 'default')
-      ? `<button type="button" onclick="Reminders.requestPermission().then(()=>Reminders.render())" class="btn btn-g" style="width:100%;margin-bottom:14px">🔔 Enable Notifications</button>`
+      ? `<button type="button" onclick="Reminders.requestPermission().then(()=>Reminders.render())" class="btn btn-g" style="width:100%;margin-bottom:14px">Enable Notifications</button>`
       : '';
     const items = this._collect();
 
     const groups = [
-      { key: 'overdue', label: '🔴 Overdue',   filter: function(r) { return r.daysLeft < 0; } },
-      { key: 'week',    label: '🟠 This Week',  filter: function(r) { return r.daysLeft >= 0 && r.daysLeft <= 7; } },
-      { key: 'month',   label: '🟡 This Month', filter: function(r) { return r.daysLeft > 7 && r.daysLeft <= 30; } },
-      { key: 'later',   label: '🟢 Later',      filter: function(r) { return r.daysLeft > 30; } },
+      { key: 'overdue', label: 'Overdue',   filter: function(r) { return r.daysLeft < 0; } },
+      { key: 'week',    label: 'This Week',  filter: function(r) { return r.daysLeft >= 0 && r.daysLeft <= 7; } },
+      { key: 'month',   label: 'This Month', filter: function(r) { return r.daysLeft > 7 && r.daysLeft <= 30; } },
+      { key: 'later',   label: 'Later',      filter: function(r) { return r.daysLeft > 30; } },
     ];
 
     let html = notifBanner;
@@ -28,7 +28,7 @@ const Reminders = {
         const daysLabel = r.daysLeft < 0 ? Math.abs(r.daysLeft) + 'd overdue' : r.daysLeft === 0 ? 'Today' : r.daysLeft + 'd left';
         return '<div class="entry" style="border-left:3px solid ' + col + '">' +
           '<div class="entry-main">' +
-            '<div class="entry-ic">' + (r.icon || '⚠️') + '</div>' +
+            '<div class="entry-ic">' + (typeof VC !== 'undefined' ? VC.iconKey(r.icon || 'bell', 18) : '') + '</div>' +
             '<div class="entry-body">' +
               '<div class="entry-name">' + escHtml(r.title || r.label || '') + '</div>' +
               '<div class="entry-sub">' + escHtml(r.sub || '') + '</div>' +
@@ -41,7 +41,7 @@ const Reminders = {
     });
 
     if (totalCount === 0) {
-      html += '<div class="empty-ios"><div class="ei-ic">✅</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items.</div></div>';
+      html += '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('target', 32) : '') + '</div><div class="ei-title">All Clear!</div><div class="ei-sub">No upcoming reminders or expiring items.</div></div>';
     }
 
     body.innerHTML = html;
@@ -77,7 +77,7 @@ const Reminders = {
     (S.cards || []).forEach(c => {
       const days = this._cardExpiry(c.expiry);
       if (days !== null && days < 60) {
-        items.push({ icon:'💳', title:`${c.cardName} expiring`, sub:`Expires ${c.expiry} · ${c.network||''}`, daysLeft:days, category:'Card' });
+        items.push({ icon:'card', title:`${c.cardName} expiring`, sub:`Expires ${c.expiry} · ${c.network||''}`, daysLeft:days, category:'Card' });
       }
     });
 
@@ -88,7 +88,7 @@ const Reminders = {
       if (days !== null && days < 90) {
         const schema = (typeof DOC_SCHEMAS !== 'undefined' && DOC_SCHEMAS[d.docType]) || {};
         const label = schema.label || d.docType || 'Document';
-        items.push({ icon: schema.ic || '🪪', title:`${d.holderName ? d.holderName + ' · ' : ''}${label} expiring`, sub:`Expires ${d.expiryDate}`, daysLeft:days, category:'Document' });
+        items.push({ icon: schema.ic || 'id-card', title:`${d.holderName ? d.holderName + ' · ' : ''}${label} expiring`, sub:`Expires ${d.expiryDate}`, daysLeft:days, category:'Document' });
       }
     });
 
@@ -98,7 +98,7 @@ const Reminders = {
       const days = this._daysLeft(l.dueDate);
       if (days !== null && days < 0) {
         const dir = l.type === 'borrowed' ? 'You owe' : 'Owed to you';
-        items.push({ icon:'🤝', title:`Loan overdue: ${l.person||'Unknown'}`, sub:`${dir} · ${l.currency||''} ${U.fmt(l.amount||0)} · Due ${l.dueDate}`, daysLeft:days, category:'Loan' });
+        items.push({ icon:'handshake', title:`Loan overdue: ${l.person||'Unknown'}`, sub:`${dir} · ${l.currency||''} ${U.fmt(l.amount||0)} · Due ${l.dueDate}`, daysLeft:days, category:'Loan' });
       }
     });
 
@@ -110,28 +110,28 @@ const Reminders = {
         if (!ins.expiryDate) return;
         const days = this._daysLeft(ins.expiryDate);
         if (days !== null && days < 30) {
-          items.push({ icon:'🛡️', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'shield', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       });
       // Insurance — flat field
       if (v.insuranceExpiry) {
         const days = this._daysLeft(v.insuranceExpiry);
         if (days !== null && days <= 30) {
-          items.push({ icon:'🛡️', title:`${name} — Insurance`, sub:`Expires ${new Date(v.insuranceExpiry).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'shield', title:`${name} — Insurance`, sub:`Expires ${new Date(v.insuranceExpiry).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
       const d = v.documents || {};
       if (d.regExpiry) {
         const days = this._daysLeft(d.regExpiry);
         if (days !== null && days < 30) {
-          items.push({ icon:'🚗', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'car', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
       // MOT — explicit expiry (60-day window)
       if (v.motExpiry) {
         const days = this._daysLeft(v.motExpiry);
         if (days !== null && days <= 60) {
-          items.push({ icon:'🔧', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'settings', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       } else if (v.motDate) {
         // Fallback: MOT lasts 12 months from test date
@@ -139,7 +139,7 @@ const Reminders = {
         motExp.setFullYear(motExp.getFullYear() + 1);
         const days = this._daysLeft(motExp.toISOString());
         if (days !== null && days <= 60) {
-          items.push({ icon:'🚗', title:`${name} — MOT`, sub:`Due ${motExp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'car', title:`${name} — MOT`, sub:`Due ${motExp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
       // Road tax — taxExpiry or taxDue
@@ -147,7 +147,7 @@ const Reminders = {
       if (taxField) {
         const days = this._daysLeft(taxField);
         if (days !== null && days <= 30) {
-          items.push({ icon:'📋', title:`${name} road tax due`, sub:`Road tax expires ${taxField}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'list', title:`${name} road tax due`, sub:`Road tax expires ${taxField}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
         }
       }
     });
@@ -159,7 +159,7 @@ const Reminders = {
       const days = Reminders._daysLeft(expField);
       if (days !== null && days <= 30) {
         items.push({
-          icon: '📱',
+          icon: 'smartphone',
           title: (sim.network || 'SIM') + ' — Contract ending',
           sub: 'Expires ' + new Date(expField).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
           daysLeft: days,
@@ -173,7 +173,7 @@ const Reminders = {
     (S.expenses || []).filter(e => e.active && e.renewalDate).forEach(e => {
       const days = this._daysLeft(e.renewalDate);
       if (days !== null && days < 7) {
-        items.push({ icon:e.icon||'🔄', title:`${e.name} renewing soon`, sub:`${e.currency||''} ${e.amount||''}/mo · Renews ${e.renewalDate}`, daysLeft:days, category:'Subscription' });
+        items.push({ icon:e.icon||'repeat', title:`${e.name} renewing soon`, sub:`${e.currency||''} ${e.amount||''}/mo · Renews ${e.renewalDate}`, daysLeft:days, category:'Subscription' });
       }
     });
     // Also check subscription-type assets
@@ -181,7 +181,7 @@ const Reminders = {
       const days = this._daysLeft(a.renewalDate);
       if (days !== null && days < 7) {
         const sub = SUBS_DB ? (SUBS_DB.find(s => s.n === a.name) || {}) : {};
-        items.push({ icon:sub.ic||'🔄', title:`${a.name} renewing soon`, sub:`${a.currency||''} ${U.fmt(a.monthlyCost||0)}/mo · Renews ${a.renewalDate}`, daysLeft:days, category:'Subscription' });
+        items.push({ icon:sub.ic||'repeat', title:`${a.name} renewing soon`, sub:`${a.currency||''} ${U.fmt(a.monthlyCost||0)}/mo · Renews ${a.renewalDate}`, daysLeft:days, category:'Subscription' });
       }
     });
 
@@ -191,7 +191,7 @@ const Reminders = {
       const daysToPayment = typeof BCModule !== 'undefined' ? BCModule._daysToPaymentDay(bc.paymentDay) : null;
       if (daysToPayment === null) return;
       items.push({
-        icon: '🤝',
+        icon: 'handshake',
         title: (bc.name || 'BC') + ' payment',
         sub: (bc.currency || 'PKR') + ' ' + (bc.contribution || 0).toLocaleString() + ' due',
         daysLeft: daysToPayment,
@@ -213,7 +213,7 @@ const Reminders = {
       const daysLeft = Math.ceil((drawDate.getTime() - now.getTime()) / 86400000);
       if (daysLeft <= 30) {
         items.push({
-          icon: '🎫',
+          icon: 'ticket',
           title: b.name || 'Prize Bond Draw',
           sub: 'Draw date approaching',
           daysLeft: daysLeft,
@@ -237,7 +237,7 @@ const Reminders = {
         const daysSince = Math.floor((Date.now() - new Date(lastChecked).getTime()) / 86400000);
         if (daysSince >= 30) {
           items.push({
-            icon: '📊',
+            icon: 'chart',
             title: 'Check Credit Score',
             sub: 'Last checked ' + daysSince + ' days ago',
             daysLeft: -(daysSince - 30),
@@ -320,11 +320,11 @@ const Reminders = {
       }
     });
 
-    const icons = { document: '🪪', card: '💳', loan: '🤝', bc: '🤝', vehicle: '🚗' };
+    const labels = { document: 'Document', card: 'Card', loan: 'Loan', bc: 'BC', vehicle: 'Vehicle' };
     items.slice(0, 3).forEach(function(item) {
       try {
         new Notification('VaultCap Alert', {
-          body: (icons[item.type] || '⚠️') + ' ' + item.title + ' — ' + (item.days === 0 ? 'today' : 'in ' + item.days + ' day' + (item.days > 1 ? 's' : '')),
+          body: (labels[item.type] || 'Reminder') + ': ' + item.title + ' — ' + (item.days === 0 ? 'today' : 'in ' + item.days + ' day' + (item.days > 1 ? 's' : '')),
           icon: '/icons/icon-192.png',
           tag: 'VaultCap-' + item.type + '-' + item.title,
           silent: false,

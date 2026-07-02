@@ -59,7 +59,7 @@ const BCModule = {
       ) +
 
       '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:12px;padding:12px">' +
-        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">🌙 Zakat Note</div>' +
+        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">Zakat Note</div>' +
         '<div style="font-size:11px;color:var(--text3);line-height:1.6">Money paid into a BC that you haven\'t received yet is zakatable as a receivable (you still own it). This is auto-added to your Zakat calculator.</div>' +
       '</div>' +
 
@@ -94,7 +94,7 @@ const BCModule = {
             '<span class="badge b-acc">' + fmt(pot) + ' pot</span>' +
             '<span class="badge" style="background:rgba(255,255,255,.1);color:' + statusColor + '">' + statusText + '</span>' +
             (bc.role === 'organiser' ? '<span class="badge b-warn">Organiser</span>' : '') +
-            (bc.type === 'bid' ? '<span class="badge b-warn">⚠️ Bid-based</span>' : '') +
+            (bc.type === 'bid' ? '<span class="badge b-warn">Bid-based</span>' : '') +
           '</div>' +
         '</div>' +
         '<div class="entry-acts">' +
@@ -141,7 +141,7 @@ const BCModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:11px;color:var(--warn)">⚠️ Bid-based BCs are considered impermissible by many scholars (resembles riba). Consider using a fixed-order BC instead.</div>' +
+      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:11px;color:var(--warn)">Bid-based BCs are considered impermissible by many scholars (resembles riba). Consider using a fixed-order BC instead.</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Total Members</label>' +
@@ -188,7 +188,7 @@ const BCModule = {
       '<div class="fg"><label class="fl">Notes</label>' +
         '<textarea class="inp" id="bc-notes" rows="2">' + (bc.notes || '') + '</textarea></div>' +
 
-      '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">💡 Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
+      '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
 
       '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button type="button" class="btn btn-p" onclick="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
@@ -306,7 +306,7 @@ const BCModule = {
       (bc.notes ? '<div style="font-size:12px;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
 
       (!myTurnDone && paid > 0 ?
-        '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">🌙 Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
+        '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
         : '') +
 
       '</div>',

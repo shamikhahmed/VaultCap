@@ -51,10 +51,10 @@ const OB = {
   },
   renderCats() {
     const cats = [
-      { key:'money',    icon:'💰', label:'Money',    desc:'Banks, cards, investments' },
-      { key:'assets',   icon:'🏠', label:'Assets',   desc:'Property, vehicles, valuables' },
-      { key:'identity', icon:'🪪', label:'Identity', desc:'Documents, SIMs, digital' },
-      { key:'family',   icon:'👨‍👩‍👧‍👦', label:'Family',   desc:'Manage family finances' },
+      { key:'money',    icon:'banknote', label:'Money',    desc:'Banks, cards, investments' },
+      { key:'assets',   icon:'building', label:'Assets',   desc:'Property, vehicles, valuables' },
+      { key:'identity', icon:'id-card', label:'Identity', desc:'Documents, SIMs, digital' },
+      { key:'family',   icon:'users', label:'Family',   desc:'Manage family finances' },
     ];
     const el = document.getElementById('ob-cats');
     if (!el) return;
@@ -62,7 +62,7 @@ const OB = {
       `<div onclick="OB.toggleCat('${c.key}',this)"
         role="checkbox" tabindex="0" aria-checked="${obCats[c.key]?'true':'false'}"
         style="padding:16px 12px;border-radius:16px;background:${obCats[c.key]?'var(--glass2)':'var(--glass)'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;transition:.15s">
-        <span style="font-size:30px" aria-hidden="true">${c.icon}</span>
+        <span class="chip-ic" style="display:flex;justify-content:center" aria-hidden="true">${typeof VC !== 'undefined' ? VC.icon(c.icon, 30) : ''}</span>
         <div style="font-size:13px;font-weight:700;color:var(--text)">${c.label}</div>
         <div style="font-size:10px;color:var(--text3);line-height:1.3">${c.desc}</div>
         <div aria-hidden="true" style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${obCats[c.key]?'✓':''}</div>
@@ -97,9 +97,9 @@ const OB = {
     const m  = document.getElementById('ob-pinmatch');
     if (!m || !p2) return;
     if (p2.length === 0) { m.textContent = ''; return; }
-    if (p1 === p2 && p1.length === 6) { m.innerHTML = '<span style="color:var(--ok)">✅ PINs match</span>'; }
+    if (p1 === p2 && p1.length === 6) { m.innerHTML = '<span style="color:var(--ok)">PINs match</span>'; }
     else if (p1.startsWith(p2) || p2.length < 6) { m.innerHTML = '<span style="color:var(--text3)">Typing...</span>'; }
-    else { m.innerHTML = '<span style="color:var(--err)">❌ PINs do not match</span>'; }
+    else { m.innerHTML = '<span style="color:var(--err)">PINs do not match</span>'; }
   },
   copyRecoveryKey() {
     const mk = window._obRecoveryKey;
@@ -140,14 +140,14 @@ const OB = {
     const el = document.getElementById('ob-ready-stats');
     if (!el) return;
     const countries = obCountries.length ? obCountries.map(c => CNAMES[c] || c).join(', ') : 'Not set';
-    const CATLABELS = { money:'💰 Money', assets:'🏠 Assets', identity:'🪪 Identity', family:'👨‍👩‍👧‍👦 Family' };
+    const CATLABELS = { money:'Money', assets:'Assets', identity:'Identity', family:'Family' };
     const cats = Object.entries(obCats).filter(([, v]) => v).map(([k]) => CATLABELS[k]).join(', ') || 'None selected';
-    const TYPE_LABELS = { personal:'👤 Personal', family:'👨‍👩‍👧‍👦 Family Manager', business:'💼 Business Owner', expat:'🌍 Global Expat' };
+    const TYPE_LABELS = { personal:'Personal', family:'Family Manager', business:'Business Owner', expat:'Global Expat' };
     el.innerHTML = `
       <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">👤 Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">🌍 Countries: ${countries}</div>
-      <div style="font-size:13px;color:var(--text2)">📦 Tracking: ${cats}</div>`;
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Countries: ${countries}</div>
+      <div style="font-size:13px;color:var(--text2)">Tracking: ${cats}</div>`;
   },
   finish() {
     const p  = document.getElementById('ob-pin').value;
@@ -229,24 +229,24 @@ const OB = {
     Store.save();
     if (typeof buildNav === 'function') buildNav();
     document.getElementById('pgOnboard').style.display = 'none';
-    Toast.show(`Welcome to VaultCap${name ? ', ' + name : ''}! 🎉`, 'success');
+    Toast.show(`Welcome to VaultCap${name ? ', ' + name : ''}!`, 'success');
     R.unlock();
     setTimeout(() => {
       const ov = document.createElement('div');
       ov.id = 'quickStartOv';
       ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:24px';
       ov.innerHTML = `
-        <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start 🚀</div>
+        <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
           <div onclick="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
-            <span style="font-size:26px">🏦</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs &amp; login details</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs &amp; login details</div></div><span style="color:var(--accent)">→</span>
           </div>
           <div onclick="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
-            <span style="font-size:26px">🪪</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('id-card', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
           </div>
           <div onclick="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
-            <span style="font-size:26px">📱</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
           </div>
         </div>
         <button type="button" onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>

@@ -34,7 +34,7 @@ const WorkspaceManager = {
 
 const PanicLock = {
   trigger() {
-    if (!window.__vos_confirm('⚠️ PANIC LOCK: This will immediately lock the vault and clear the screen. Continue?')) return;
+    if (!window.__vos_confirm('PANIC LOCK: This will immediately lock the vault and clear the screen. Continue?')) return;
     document.querySelectorAll('.sens').forEach(el => el.textContent = '••••');
     R.lock();
     Toast.show('Vault panic-locked', 'warning', 2000);
@@ -45,7 +45,7 @@ const PanicLock = {
 (function() {
   const btn = document.createElement('button');
   btn.className = 'panic-btn'; btn.title = 'Panic Lock';
-  btn.innerHTML = '🚨'; btn.onclick = () => PanicLock.trigger();
+  btn.innerHTML = ''; if (typeof VC !== 'undefined') VC.setBtnIcon(btn, 'cross', 18); btn.onclick = () => PanicLock.trigger();
   btn.id = 'panicBtn'; document.body.appendChild(btn);
 })();
 

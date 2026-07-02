@@ -833,8 +833,8 @@ const ExIm={
     const investPL=investCurrent-investedTotal;
     const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
     '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:#111;color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f5f5f5;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#111}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#111;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
-    '<div class="no-print"><button type="button" class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button><button type="button" onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">✕ Close</button></div>'+
-    '<div class="header"><h1>🔐 VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
+    '<div class="no-print"><button type="button" class="btn-print" onclick="window.print()">Print / Save PDF</button><button type="button" onclick="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">Close</button></div>'+
+    '<div class="header"><h1>VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmtDisplay(nwPKR)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
     section('Net Worth Breakdown',
       row('Cash & Banks',fmtDisplay(cashPKR+bankPKR))+
@@ -932,7 +932,7 @@ const QRSync = {
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
           ${total>1?'<button type="button" class="btn btn-s btn-sm" id="qrPrevBtn" onclick="QRSync._showChunk(-1)" style="display:none">← Prev</button>':''}
           ${total>1?'<button type="button" class="btn btn-p btn-sm" id="qrNextBtn" onclick="QRSync._showChunk(1)">Next →</button>':''}
-          <button type="button" class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">📋 Copy as text</button>
+          <button type="button" class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">Copy as text</button>
         </div>
         <p style="font-size:11px;color:var(--text3);margin-top:10px">One-time use — expires when dialog closes.</p>
       </div>
@@ -2238,15 +2238,15 @@ const HelpCenter = {
     const el = document.getElementById('pg-help-body');
     if (!el) return;
     const sections = [
-      { id:'getting-started', icon:'🚀', label:'Getting Started' },
-      { id:'banks-cards',     icon:'🏦', label:'Banks & Cards' },
-      { id:'documents',       icon:'🪪', label:'Documents & ID' },
-      { id:'family',          icon:'👨‍👩‍👧‍👦', label:'Family Vault' },
-      { id:'backup',          icon:'💾', label:'Backup & Restore' },
-      { id:'security',        icon:'🔒', label:'Security & PIN' },
-      { id:'search',          icon:'🔍', label:'Search & Tags' },
-      { id:'themes',          icon:'🎨', label:'Themes' },
-      { id:'faq',             icon:'❓', label:'FAQ' },
+      { id:'getting-started', icon:'sparkles', label:'Getting Started' },
+      { id:'banks-cards',     icon:'bank', label:'Banks & Cards' },
+      { id:'documents',       icon:'id-card', label:'Documents & ID' },
+      { id:'family',          icon:'users', label:'Family Vault' },
+      { id:'backup',          icon:'share', label:'Backup & Restore' },
+      { id:'security',        icon:'lock', label:'Security & PIN' },
+      { id:'search',          icon:'search', label:'Search & Tags' },
+      { id:'themes',          icon:'grid', label:'Themes' },
+      { id:'faq',             icon:'book', label:'FAQ' },
     ];
     el.innerHTML = `
     <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
@@ -2254,8 +2254,8 @@ const HelpCenter = {
         ${sections.map(s => `
           <div onclick="HelpCenter._section='${s.id}';HelpCenter._renderContent()"
             class="chip${this._section===s.id?' on':''}"
-            style="white-space:nowrap;padding:6px 14px;cursor:pointer;touch-action:manipulation">
-            ${s.icon} ${s.label}
+            style="white-space:nowrap;padding:6px 14px;cursor:pointer;touch-action:manipulation;display:inline-flex;align-items:center;gap:6px">
+            ${typeof VC !== 'undefined' ? VC.icon(s.icon, 14) : ''} ${s.label}
           </div>`).join('')}
       </div>
       <div id="help-content"></div>
@@ -2269,91 +2269,92 @@ const HelpCenter = {
     const content = {
       'getting-started': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🔐', 'What is VaultCap?', 'VaultCap is your private financial operating system. It stores all your financial and identity information — banks, cards, documents, passports, investments, loans — in one encrypted place on your device. No accounts. No servers. No one else can see your data.')}
-          ${this._card('1️⃣', 'Step 1 — Set your PIN', 'Your PIN is the key to your vault. Choose something memorable but not obvious. It encrypts all your data. Without it, your backup file cannot be opened. Go to Settings → Security to change it.')}
-          ${this._card('2️⃣', 'Step 2 — Add your first bank', 'Tap the Finance tab → Banks → + Add Bank. Choose your country, enter your bank name, account type, and currency. You can add as many banks as you have accounts.')}
-          ${this._card('3️⃣', 'Step 3 — Link cards to banks', 'In Finance → Cards → + Add Card, you can link a card to a bank. This creates a relationship — tap a bank, scroll down to see all linked cards instantly.')}
-          ${this._card('4️⃣', 'Step 4 — Add key documents', 'In Identity → Documents, add your passport, driving licence, or NIC. You can photograph the document inside the app. Expiry alerts will appear automatically.')}
-          ${this._card('5️⃣', 'Step 5 — Export a backup', 'Go to Settings → Backup & Export → Export Vault. Save the .vos file somewhere safe — iCloud, Google Drive, or email it to yourself. Do this regularly.')}
-          ${this._card('💡', 'Pro tip — use the Command Palette', 'Tap Cmd+K (desktop) or the search icon to instantly jump to anything in your vault. Search by name, type tags, or run actions like "lock vault" or "export".')}
+          ${this._card('vault', 'What is VaultCap?', 'VaultCap is your private financial operating system. It stores all your financial and identity information — banks, cards, documents, passports, investments, loans — in one encrypted place on your device. No accounts. No servers. No one else can see your data.')}
+          ${this._card('', 'Step 1 — Set your PIN', 'Your PIN is the key to your vault. Choose something memorable but not obvious. It encrypts all your data. Without it, your backup file cannot be opened. Go to Settings → Security to change it.')}
+          ${this._card('', 'Step 2 — Add your first bank', 'Tap the Finance tab → Banks → + Add Bank. Choose your country, enter your bank name, account type, and currency. You can add as many banks as you have accounts.')}
+          ${this._card('', 'Step 3 — Link cards to banks', 'In Finance → Cards → + Add Card, you can link a card to a bank. This creates a relationship — tap a bank, scroll down to see all linked cards instantly.')}
+          ${this._card('', 'Step 4 — Add key documents', 'In Identity → Documents, add your passport, driving licence, or NIC. You can photograph the document inside the app. Expiry alerts will appear automatically.')}
+          ${this._card('', 'Step 5 — Export a backup', 'Go to Settings → Backup & Export → Export Vault. Save the .vos file somewhere safe — iCloud, Google Drive, or email it to yourself. Do this regularly.')}
+          ${this._card('sparkles', 'Pro tip — use the Command Palette', 'Tap Cmd+K (desktop) or the search icon to instantly jump to anything in your vault. Search by name, type tags, or run actions like "lock vault" or "export".')}
         </div>`,
       'banks-cards': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🏦', 'Adding a bank account', 'Finance → Banks → + Add Bank. Fill in: bank name, country, account type (current/savings/islamic), currency, and optionally your IBAN, sort code, balance, and account holder name. You can also store your online banking PIN and app PIN securely.')}
-          ${this._card('💳', 'Adding a card', 'Finance → Cards → + Add Card. Fill in manually. Store the last 4 digits, expiry, CVV hint, and link it to a bank account. Front and back photos can be captured.')}
-          ${this._card('🔗', 'Linking cards to banks', 'When adding a card, select the bank it belongs to in the "Linked Bank" field. Tap any bank entry and scroll down to see all linked cards automatically displayed.')}
-          ${this._card('🗂️', 'Archiving accounts', 'Tap the archive icon (🗂️) on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
-          ${this._card('🔍', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by Pakistan, UK, or UAE. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
-          ${this._card('⭐', 'Favouriting entries', 'Tap the star icon on any bank, card, or investment to mark it as a favourite. Favourites appear at the top of their list and in smart collections on the dashboard.')}
+          ${this._card('bank', 'Adding a bank account', 'Finance → Banks → + Add Bank. Fill in: bank name, country, account type (current/savings/islamic), currency, and optionally your IBAN, sort code, balance, and account holder name. You can also store your online banking PIN and app PIN securely.')}
+          ${this._card('card', 'Adding a card', 'Finance → Cards → + Add Card. Fill in manually. Store the last 4 digits, expiry, CVV hint, and link it to a bank account. Front and back photos can be captured.')}
+          ${this._card('arrows', 'Linking cards to banks', 'When adding a card, select the bank it belongs to in the "Linked Bank" field. Tap any bank entry and scroll down to see all linked cards automatically displayed.')}
+          ${this._card('archive', 'Archiving accounts', 'Tap the archive icon (🗂️) on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
+          ${this._card('search', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by Pakistan, UK, or UAE. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
+          ${this._card('star', 'Favouriting entries', 'Tap the star icon on any bank, card, or investment to mark it as a favourite. Favourites appear at the top of their list and in smart collections on the dashboard.')}
         </div>`,
       'documents': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🪪', 'Supported document types', 'Passport, National ID (NIC/CNIC), Driving Licence, Visa, Emirates ID, Property Documents, Insurance, Vehicle Registration, Tax Documents, Medical Records, Warranties, Contracts, Certificates.')}
-          ${this._card('📸', 'Photographing documents', 'When adding a document, tap "Capture Front" and "Capture Back" to photograph using your camera. Images are compressed and stored encrypted inside your vault. Useful for passports and ID cards.')}
-          ${this._card('⏰', 'Expiry alerts', 'Documents with expiry dates automatically appear in the Timeline and generate reminders 30 days before expiry. The dashboard also shows an "Expiring Soon" smart collection.')}
-          ${this._card('🔎', 'Finding documents', 'Use the search bar at the top of the Documents page, or use Cmd+K to search globally. You can search by document name, holder name, document number, or country.')}
-          ${this._card('🏷️', 'Tagging documents', 'Add tags like "uk", "urgent", "family", "business" to any document. Use the preset chips in the form or type your own. Filter and search by tag across the whole vault.')}
+          ${this._card('id-card', 'Supported document types', 'Passport, National ID (NIC/CNIC), Driving Licence, Visa, Emirates ID, Property Documents, Insurance, Vehicle Registration, Tax Documents, Medical Records, Warranties, Contracts, Certificates.')}
+          ${this._card('file', 'Photographing documents', 'When adding a document, tap "Capture Front" and "Capture Back" to photograph using your camera. Images are compressed and stored encrypted inside your vault. Useful for passports and ID cards.')}
+          ${this._card('clock', 'Expiry alerts', 'Documents with expiry dates automatically appear in the Timeline and generate reminders 30 days before expiry. The dashboard also shows an "Expiring Soon" smart collection.')}
+          ${this._card('search', 'Finding documents', 'Use the search bar at the top of the Documents page, or use Cmd+K to search globally. You can search by document name, holder name, document number, or country.')}
+          ${this._card('pin', 'Tagging documents', 'Add tags like "uk", "urgent", "family", "business" to any document. Use the preset chips in the form or type your own. Filter and search by tag across the whole vault.')}
         </div>`,
       'family': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('👨‍👩‍👧‍👦', 'What is the Family Vault?', 'The Family Vault lets you manage finances for your entire family in one place. Add family members — spouse, children, parents — and each gets their own banks, cards, cash, investments, and documents.')}
-          ${this._card('👑', 'Head of Family', 'The first member added becomes the Head of Family. This is usually you. The head\'s details are shown prominently at the top of the family page.')}
-          ${this._card('➕', 'Adding a family member', 'Tap Family → + Add Member. Enter their name, relationship, and avatar. Then tap their card to add their banks, cards, documents, and more.')}
-          ${this._card('💳', 'Family member cards', 'Each family member can have their own cards and bank accounts stored separately. This keeps your data organised by person, not just by account type.')}
-          ${this._card('📝', 'Notes per member', 'Each family member has a Notes tab where you can store free-form information — medical conditions, important contacts, or any other private notes.')}
+          ${this._card('users', 'What is the Family Vault?', 'The Family Vault lets you manage finances for your entire family in one place. Add family members — spouse, children, parents — and each gets their own banks, cards, cash, investments, and documents.')}
+          ${this._card('star', 'Head of Family', 'The first member added becomes the Head of Family. This is usually you. The head\'s details are shown prominently at the top of the family page.')}
+          ${this._card('plus', 'Adding a family member', 'Tap Family → + Add Member. Enter their name, relationship, and avatar. Then tap their card to add their banks, cards, documents, and more.')}
+          ${this._card('card', 'Family member cards', 'Each family member can have their own cards and bank accounts stored separately. This keeps your data organised by person, not just by account type.')}
+          ${this._card('pencil', 'Notes per member', 'Each family member has a Notes tab where you can store free-form information — medical conditions, important contacts, or any other private notes.')}
         </div>`,
       'backup': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('💾', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
-          ${this._card('📂', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
-          ${this._card('🔑', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('📱', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
-          ${this._card('⏰', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
-          ${this._card('☁️', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
+          ${this._card('share', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
+          ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
+          ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
+          ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('clock', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
+          ${this._card('archive', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,
       'security': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🔐', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
-          ${this._card('🔒', 'Encryption standard', 'VaultCap uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
-          ${this._card('🕵️', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
+          ${this._card('vault', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
+          ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
+          ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
           ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
-          ${this._card('❌', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
-          ${this._card('🧹', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
+          ${this._card('cross', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
+          ${this._card('trash', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
         </div>`,
       'search': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🔍', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
-          ${this._card('🧠', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
-          ${this._card('🏷️', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
+          ${this._card('search', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
+          ${this._card('search', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
+          ${this._card('pin', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
           ${this._card('⚡', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
-          ${this._card('📊', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
+          ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('🌙', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
+          ${this._card('moon', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
           ${this._card('☀️', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
-          ${this._card('⚙️', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
-          ${this._card('💡', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
+          ${this._card('settings', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
+          ${this._card('sparkles', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
         </div>`,
       'faq': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('❓', 'Is my data safe?', 'Yes. Your data never leaves your device. It is encrypted with AES-256-GCM using your PIN. No server, no cloud, no account required. The only way to access your data is with your PIN and your device (or a backup file).')}
-          ${this._card('❓', 'What happens if this website goes down?', 'Your data is stored on your device, not on any server. Even if the URL disappears, your data is safe. Export a .vos backup and you can open it on any device using any browser, anytime.')}
-          ${this._card('❓', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
-          ${this._card('❓', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
-          ${this._card('❓', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
-          ${this._card('❓', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
-          ${this._card('❓', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
+          ${this._card('book', 'Is my data safe?', 'Yes. Your data never leaves your device. It is encrypted with AES-256-GCM using your PIN. No server, no cloud, no account required. The only way to access your data is with your PIN and your device (or a backup file).')}
+          ${this._card('book', 'What happens if this website goes down?', 'Your data is stored on your device, not on any server. Even if the URL disappears, your data is safe. Export a .vos backup and you can open it on any device using any browser, anytime.')}
+          ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
+          ${this._card('book', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
+          ${this._card('book', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
+          ${this._card('book', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+          ${this._card('book', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };
     el.innerHTML = content[this._section] || content['getting-started'];
   },
 
   _card(icon, title, body) {
+    const ic = icon && typeof VC !== 'undefined' ? VC.iconKey(icon, 18) : '';
     return `
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="font-size:18px">${icon}</span>
+          ${ic ? `<span class="chip-ic">${ic}</span>` : ''}
           <div style="font-size:13px;font-weight:700;color:var(--text)">${title}</div>
         </div>
         <div style="font-size:12px;color:var(--text2);line-height:1.7">${body}</div>

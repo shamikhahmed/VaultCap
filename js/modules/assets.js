@@ -69,7 +69,7 @@ const Assets = {
     el.innerHTML = data.map(a => {
       const typeInfo = ASSET_TYPES_MAP[a.assetType] || ASSET_TYPES_MAP.other;
       let sub = '';
-      if (a.assetType==='property') sub=(a.location||'')+(a.propertyType?' · '+a.propertyType:'')+(a.rentalIncome?' · 🏠 Rent: '+U.fmt(a.rentalIncome)+'/mo':'')+(a.mortgType&&a.mortgType!=='None'?' · 🏦 '+a.mortgType:'');
+      if (a.assetType==='property') sub=(a.location||'')+(a.propertyType?' · '+a.propertyType:'')+(a.rentalIncome?' · Rent: '+U.fmt(a.rentalIncome)+'/mo':'')+(a.mortgType&&a.mortgType!=='None'?' · '+a.mortgType:'');
       else if (a.assetType==='vehicle') sub=[a.make,a.model,a.year,(a.registration||a.regNumber)?'· '+(a.registration||a.regNumber):''].filter(Boolean).join(' ');
       else if (a.assetType==='electronics') sub=[a.brand,a.model,a.serialNum?'· S/N ••••':''].filter(Boolean).join(' ');
       else if (a.assetType==='watch') sub=[a.brand,a.modelName,a.serialNum?'· S/N ••••':''].filter(Boolean).join(' ');

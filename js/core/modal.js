@@ -5,11 +5,11 @@ const Toast = {
   show(msg, type = 'info', dur = 3200) {
     const w = document.getElementById('toastWrap');
     const t = document.createElement('div');
-    const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+    const icons = { success:'target', error:'cross', warning:'bell', info:'search' };
     const cls   = { success:'ok', error:'err', warning:'wrn', info:'inf' };
     t.className = `toast ${cls[type] || 'inf'}`;
-    // msg is rendered as innerHTML so callers can embed buttons or strong tags
-    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${msg}</span><button type="button" onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0">×</button>`;
+    const ic = (typeof VC !== 'undefined' ? VC.icon(icons[type] || 'search', 16) : '');
+    t.innerHTML = `<span class="chip-ic">${ic}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${msg}</span><button type="button" onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0">×</button>`;
     w.appendChild(t);
     setTimeout(() => { t.style.animation = 'slideIn .25s reverse'; setTimeout(() => t.remove(), 240); }, dur);
   }
@@ -114,11 +114,11 @@ window.recoveryKeyStorageKey = recoveryKeyStorageKey;
 
 async function showMasterKeyModal(mk) {
   const fmt = mk.match(/.{1,6}/g).join('-');
-  Modal.open('🔑 Save Your Master Key',
+  Modal.open('Save Your Master Key',
     '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">This is your vault recovery key. <strong>Write it down and keep it safe.</strong> You cannot view it again here.</div>' +
     '<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px;word-break:break-all">' + fmt + '</div>' +
     '<div style="font-size:11px;color:var(--text3);text-align:center">If you forget your PIN, this key lets you recover your vault data.</div>',
-    '<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">I\'ve saved it ✓</button>'
+    '<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">I\'ve saved it</button>'
   );
 }
 
@@ -129,18 +129,18 @@ async function showMasterKeyModal(mk) {
 window.Settings = window.Settings || {};
 
 window.Settings.forgotPIN = function() {
-  Modal.open('🔑 Forgot PIN',
+  Modal.open('Forgot PIN',
     '<div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">' +
     '<div onclick="Modal.close();window.Settings.useMasterKey()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div style="font-size:28px">🗝️</div>' +
+    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('key', 28) : '') + '</div>' +
     '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Use Master Key</div><div style="font-size:13px;color:var(--text2)">Enter the master key you saved when setting up</div></div>' +
     '</div>' +
     '<div onclick="Modal.close();document.getElementById(\'importF-global\')?.click()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div style="font-size:28px">📥</div>' +
+    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
     '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Restore from Backup</div><div style="font-size:13px;color:var(--text2)">Import a .vault backup file to recover access</div></div>' +
     '</div>' +
     '<div onclick="Modal.close();window.Settings.resetVault()" style="background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div style="font-size:28px">⚠️</div>' +
+    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('bell', 28) : '') + '</div>' +
     '<div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Last resort — permanently wipes all data</div></div>' +
     '</div>' +
     '</div>',
@@ -149,7 +149,7 @@ window.Settings.forgotPIN = function() {
 };
 
 window.Settings.useMasterKey = function() {
-  Modal.open('🗝️ Enter Master Key',
+  Modal.open('Enter Master Key',
     '<div style="display:flex;flex-direction:column;gap:12px">' +
     '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultCap.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
     '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
@@ -169,7 +169,7 @@ window.Settings.resetVault = function() {
     Settings.resetVault();
     return;
   }
-  if (!confirm('⚠️ This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
+  if (!confirm('This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
   if (!confirm('FINAL CONFIRMATION: Reset entire vault and delete all data?')) return;
   window._confirmReset();
 };
