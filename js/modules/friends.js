@@ -26,11 +26,11 @@ const Friends = {
     el.innerHTML = data.map(f => {
       const loans = (S.loans || []).filter(l => l.person === f.name && l.status !== 'Settled');
       const badge = loans.length ? `<span class="badge b-warn">${loans.length} loan${loans.length > 1 ? 's' : ''}</span>` : '';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">👤</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts">${U.actsEditDel('Friends', f.id)}</div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.icon('user', 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts">${U.actsEditDel('Friends', f.id)}</div></div></div>`;
     }).join('');
   },
   openAdd() {
-    Modal.open('👥 Add Friend', this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Friends.save()">Save</button>`);
+    Modal.open('Add Friend', this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Friends.save()">Save</button>`);
   },
   form(f = {}) {
     return `<div class="fg"><label class="fl">Name *</label><input class="inp" id="ff-name" value="${escAttr(f.name || '')}" placeholder="Full name"></div>

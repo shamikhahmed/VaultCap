@@ -221,7 +221,7 @@ const Family = {
     const tabs = this._visibleTabs();
 
     const tabBar = `<div class="cap-tab-bar" role="tablist" aria-label="Family member sections">
-      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" onclick="Family._switchTab('${t.id}')">${t.icon} ${t.label}</button>`).join('')}
+      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" onclick="Family._switchTab('${t.id}')"><span class="chip-ic">${VC.icon(t.icon,12)}</span>${t.label}</button>`).join('')}
     </div>`;
 
     const backBtn = `<button type="button" class="cap-subchrome-back" onclick="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
@@ -261,23 +261,23 @@ const Family = {
       const inv   = (S.investments || []).filter(i => i.ownerId === id);
       const assets= (S.assets || []).filter(a => a.ownerId === id);
       const stats = [
-        { n: banks.length,  l: 'Banks',       ic: '🏦', tab: 'banks' },
-        { n: cards.length,  l: 'Cards',        ic: '💳', tab: 'cards' },
-        { n: cash.length,   l: 'Cash',         ic: '💵', tab: 'cash' },
-        { n: inv.length,    l: 'Investments',  ic: '📈', tab: 'investments' },
-        { n: assets.length, l: 'Assets',       ic: '🏠', tab: 'assets' },
-        { n: docs.length,   l: 'Documents',    ic: '🪪', tab: 'documents' },
+        { n: banks.length,  l: 'Banks',       ic: 'bank', tab: 'banks' },
+        { n: cards.length,  l: 'Cards',        ic: 'card', tab: 'cards' },
+        { n: cash.length,   l: 'Cash',         ic: 'banknote', tab: 'cash' },
+        { n: inv.length,    l: 'Investments',  ic: 'trending-up', tab: 'investments' },
+        { n: assets.length, l: 'Assets',       ic: 'building', tab: 'assets' },
+        { n: docs.length,   l: 'Documents',    ic: 'id-card', tab: 'documents' },
       ];
       const fields = [
-        m.phone && ['📞 Phone', escHtml(m.phone)],
-        m.email && ['📧 Email', escHtml(m.email)],
-        ['🔐 Vault Role', this._roleLabel(m.role || (m.isHead ? 'admin' : 'viewer'))],
-        m.notes && ['📝 Notes', escHtml(m.notes)],
+        m.phone && ['Phone', escHtml(m.phone)],
+        m.email && ['Email', escHtml(m.email)],
+        ['Vault Role', this._roleLabel(m.role || (m.isHead ? 'admin' : 'viewer'))],
+        m.notes && ['Notes', escHtml(m.notes)],
       ].filter(Boolean);
       return `<div class="cap-member-stats">
         ${stats.map(s => `<button type="button" class="cap-stat-tile" onclick="Family._switchTab('${s.tab}')">
           <div class="cap-stat-tile-val">${s.n}</div>
-          <div class="cap-stat-tile-lbl">${s.ic} ${s.l}</div>
+          <div class="cap-stat-tile-lbl"><span class="chip-ic">${VC.icon(s.ic,12)}</span>${s.l}</div>
         </button>`).join('')}
       </div>
       ${fields.map(([k, v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:13px;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
@@ -330,14 +330,14 @@ const Family = {
 
   _visibleTabs() {
     const all = [
-      { id:'overview',     label:'Overview',     icon:'📊', prefKey:'overview' },
-      { id:'banks',        label:'Banks',         icon:'🏦', prefKey:'banks' },
-      { id:'cards',        label:'Cards',         icon:'💳', prefKey:'cards' },
-      { id:'cash',         label:'Cash',          icon:'💵', prefKey:'cash' },
-      { id:'investments',  label:'Investments',   icon:'📈', prefKey:'investments' },
-      { id:'assets',       label:'Assets',        icon:'🏠', prefKey:'assets' },
-      { id:'documents',    label:'Documents',     icon:'🪪', prefKey:'docs' },
-      { id:'notes',        label:'Notes',         icon:'📝', prefKey:'notes' },
+      { id:'overview',     label:'Overview',     icon:'chart', prefKey:'overview' },
+      { id:'banks',        label:'Banks',         icon:'bank', prefKey:'banks' },
+      { id:'cards',        label:'Cards',         icon:'card', prefKey:'cards' },
+      { id:'cash',         label:'Cash',          icon:'banknote', prefKey:'cash' },
+      { id:'investments',  label:'Investments',   icon:'trending-up', prefKey:'investments' },
+      { id:'assets',       label:'Assets',        icon:'building', prefKey:'assets' },
+      { id:'documents',    label:'Documents',     icon:'id-card', prefKey:'docs' },
+      { id:'notes',        label:'Notes',         icon:'pencil', prefKey:'notes' },
     ];
     let hidden = [];
     try { hidden = JSON.parse(localStorage.getItem('vo_family_tab_prefs') || '{}').hiddenTabs || []; } catch(e) {}
@@ -357,7 +357,7 @@ const Family = {
   _bankRow(b) {
     const bal = b.balance ? (b.currency || '') + ' ' + U.fmt(b.balance) : '';
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${typeof getBankLogo !== 'undefined' ? getBankLogo(b.bankName, 36) : '🏦'}</div>
+      <div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${typeof getBankLogo !== 'undefined' ? getBankLogo(b.bankName, 36) : VC.icon('bank', 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(b.bankName || 'Bank')}</div>
         <div class="entry-sub">${escHtml(b.accountType || '')} · ${escHtml(b.currency || '')}${bal ? ' · ' + bal : ''}</div>
@@ -373,7 +373,7 @@ const Family = {
     const expSt = typeof U !== 'undefined' && U.expSt ? U.expSt(c.expiry) : 'ok';
     const expBadge = c.expiry ? `<span class="badge ${expSt === 'ok' ? 'b-muted' : expSt === 'soon' ? 'b-warn' : 'b-err'}">${escHtml(c.expiry)}</span>` : '';
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic">💳</div>
+      <div class="entry-ic">${VC.icon('card', 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(c.cardName || 'Card')}</div>
         <div class="entry-sub">${escHtml(c.network || '')}${c.last4 ? ' · ****' + escHtml(c.last4) : ''}${c.cardType ? ' · ' + escHtml(c.cardType) : ''}</div>
@@ -387,7 +387,7 @@ const Family = {
 
   _cashRow(c) {
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic">💵</div>
+      <div class="entry-ic">${VC.icon('banknote', 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(c.location || 'Cash')}</div>
         <div class="entry-sub sens">${U.fmt(c.amount || 0)} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div>
@@ -400,9 +400,8 @@ const Family = {
   },
 
   _invRow(i) {
-    const ic = {Stocks:'📊','Mutual Funds':'📁',ETFs:'📈',Bonds:'📜',Crypto:'₿','Fixed Deposit':'🏛️',Other:'💼'};
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic">${ic[i.type] || '📈'}</div>
+      <div class="entry-ic">${VC.investIcon(i.type, 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(i.investmentName || i.broker || 'Investment')}</div>
         <div class="entry-sub">${escHtml(i.broker || '')} · ${escHtml(i.type || '')} · ${escHtml(i.currency || '')}</div>
@@ -415,9 +414,8 @@ const Family = {
   },
 
   _assetRow(a) {
-    const ic = { property:'🏠', vehicle:'🚗', electronics:'💻', precious_metals:'🥇', jewelry:'💍', insurance:'🛡️', other:'📦' };
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic">${ic[a.assetType] || '📦'}</div>
+      <div class="entry-ic">${VC.assetIcon(a.assetType, 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(a.name || 'Asset')}</div>
         <div class="entry-sub">${escHtml(a.assetType || '')} · ${escHtml(a.currency || '')}${a.currentValue ? ' · ' + U.fmt(a.currentValue) : ''}</div>
@@ -498,7 +496,7 @@ const Family = {
     const p = isHead ? this._profileSnapshot() : { name:'', avatar:'👤', dob:'', phone:'', email:'' };
     const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
     const defaultAv = p.avatar || '👤';
-    Modal.open(isHead ? '👑 Head of Family' : '➕ Add Family Member',
+    Modal.open(isHead ? 'Head of Family' : 'Add Family Member',
       `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${defaultAv===a?'var(--accent)':'var(--glass)'};border:1px solid ${defaultAv===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
@@ -550,7 +548,7 @@ const Family = {
     const m = this.getMember(id);
     if (!m) return;
     const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
-    Modal.open(m.isHead ? '👑 Edit Head of Family' : '✏️ Edit Member',
+    Modal.open(m.isHead ? 'Edit Head of Family' : 'Edit Member',
       `<div style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${(m.avatar||'👤')===a?'var(--accent)':'var(--glass)'};border:1px solid ${(m.avatar||'👤')===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
         <input type="hidden" id="fam-av-input" value="${escHtml(m.avatar || '👤')}">

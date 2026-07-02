@@ -1,18 +1,19 @@
 'use strict';
 
 const ASSET_TYPES_MAP = {
-  property:        { label:'Property',        icon:'🏠', color:'#e8e8e8' },
-  vehicle:         { label:'Vehicle',         icon:'🚗', color:'#d0d0d0' },
-  electronics:     { label:'Electronics',     icon:'💻', color:'#b8b8b8' },
-  precious_metals: { label:'Precious Metals', icon:'🥇', color:'#a0a0a0' },
-  precious:        { label:'Precious Metals', icon:'🥇', color:'#a0a0a0' },
-  watch:           { label:'Watch',           icon:'⌚', color:'#888888' },
-  jewelry:         { label:'Jewellery',       icon:'💍', color:'#707070' },
-  subscription:    { label:'Subscription',   icon:'🔄', color:'#636366' },
-  insurance:       { label:'Insurance',      icon:'🛡️', color:'#585858' },
-  business:        { label:'Business',       icon:'🏢', color:'#484848' },
-  loan:            { label:'Loan Asset',     icon:'💰', color:'#383838' },
-  other:           { label:'Other',          icon:'📦', color:'#9e9e9e' }
+  property:        { label:'Property',        ic:'building', color:'#e8e8e8' },
+  vehicle:         { label:'Vehicle',         ic:'car', color:'#d0d0d0' },
+  electronics:     { label:'Electronics',     ic:'laptop', color:'#b8b8b8' },
+  gadget:          { label:'Gadget',          ic:'laptop', color:'#b8b8b8' },
+  precious_metals: { label:'Precious Metals', ic:'gem', color:'#a0a0a0' },
+  precious:        { label:'Precious Metals', ic:'gem', color:'#a0a0a0' },
+  watch:           { label:'Watch',           ic:'watch', color:'#888888' },
+  jewelry:         { label:'Jewellery',       ic:'ring', color:'#707070' },
+  subscription:    { label:'Subscription',   ic:'repeat', color:'#636366' },
+  insurance:       { label:'Insurance',      ic:'shield', color:'#585858' },
+  business:        { label:'Business',       ic:'building-2', color:'#484848' },
+  loan:            { label:'Loan Asset',     ic:'banknote', color:'#383838' },
+  other:           { label:'Other',          ic:'package', color:'#9e9e9e' }
 };
 window.ASSET_TYPES_MAP = ASSET_TYPES_MAP;
 
@@ -49,19 +50,19 @@ const Assets = {
   render() {
     const f = S.aF || 'all';
     const chips = [
-      ['all','All'],['property','🏠 Property'],['vehicle','🚗 Vehicles'],['electronics','💻 Electronics'],
-      ['precious_metals','🥇 Metals'],['watch','⌚ Watches'],['jewelry','💎 Jewellery'],
-      ['subscription','🔄 Subs'],['insurance','🛡️ Insurance'],['business','🏢 Business'],
-      ['loan','💰 Loans'],['other','📦 Other']
+      ['all','All','layers'],['property','Property','building'],['vehicle','Vehicles','car'],['electronics','Electronics','laptop'],
+      ['precious_metals','Metals','gem'],['watch','Watches','watch'],['jewelry','Jewellery','ring'],
+      ['subscription','Subs','repeat'],['insurance','Insurance','shield'],['business','Business','building-2'],
+      ['loan','Loans','banknote'],['other','Other','package']
     ];
     const ci = document.getElementById('aChips');
-    if (ci) ci.innerHTML = chips.map(([v,l]) => `<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()">${l}</div>`).join('');
+    if (ci) ci.innerHTML = chips.map(([v,l,ic]) => `<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()"><span class="chip-ic">${VC.icon(ic, 12)}</span>${l}</div>`).join('');
     let data = (S.assets||[]).filter(a => f==='all' || a.assetType===f || (f==='precious_metals' && a.assetType==='precious'));
     if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(a=>(a.country||'').toUpperCase()===ContextSwitcher.get());}
     const el = document.getElementById('aItems'); if (!el) return;
     if (!data.length) {
       const typeInfo = ASSET_TYPES_MAP[f] || ASSET_TYPES_MAP.other;
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${typeInfo.icon}</div><div class="ei-title">No ${typeInfo.label} Yet</div><div class="ei-sub">Track property, vehicles, electronics, metals and more</div><button type="button" class="btn btn-p" onclick="Assets.openAdd('${f==='all'?'':f}')">+ Add Asset</button></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${VC.assetIcon(f==='all'?'other':f, 32)}</div><div class="ei-title">No ${typeInfo.label} Yet</div><div class="ei-sub">Track property, vehicles, electronics, metals and more</div><button type="button" class="btn btn-p" onclick="Assets.openAdd('${f==='all'?'':f}')">+ Add Asset</button></div>`;
       return;
     }
     const cur = S.user.currency || 'PKR';
@@ -84,7 +85,7 @@ const Assets = {
       const _pnl=(a.currentValue>0&&a.purchasePrice>0)?a.currentValue-a.purchasePrice:null;
       const _pnlPct=_pnl!==null?(_pnl/a.purchasePrice*100).toFixed(1):null;
       const _pnlHtml=_pnl!==null?`<span class="badge" style="color:${_pnl>=0?'var(--ok)':'var(--err)'}">${_pnl>=0?'+':''}${U.fmt(Math.round(Math.abs(_pnl)))} (${_pnl>=0?'+':''}${_pnlPct}%)</span>`:'';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${typeInfo.icon}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'🏢 Business':'👤 Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">👤 ${a.staffAssigned}</span>`:''}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Assets.fav('${a.id}')`,class:'fav'+(a.favorite?' on':'')})}${U.actsViewEditDel('Assets', a.id)}</div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.assetIcon(a.assetType, 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||a.notes?.slice(0,60)||''}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'Business':'Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">${escHtml(a.staffAssigned)}</span>`:''}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Assets.fav('${a.id}')`,class:'fav'+(a.favorite?' on':'')})}${U.actsViewEditDel('Assets', a.id)}</div></div></div>`;
     }).join('');
   },
 
@@ -98,7 +99,7 @@ const Assets = {
       preType = (typeOrPrefill && typeOrPrefill !== 'all') ? typeOrPrefill : '';
     }
     const ownerLabel = Assets._pendingOwnerId && typeof Family !== 'undefined' ? Family.ownerName(Assets._pendingOwnerId) : '';
-    const title = ownerLabel ? `🏠 Add Asset — ${escHtml(ownerLabel)}` : '🏠 Add Asset';
+    const title = ownerLabel ? `Add Asset — ${escHtml(ownerLabel)}` : 'Add Asset';
     Modal.open(title, this.form(preType ? {assetType:preType} : {}), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Assets.save()">Save</button>`);
     setTimeout(() => {
       const t = document.getElementById('af-type');
@@ -204,7 +205,7 @@ const Assets = {
     const noRelated = !relatedDocs.length && !relatedReminders.length
       ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);text-align:center;padding-bottom:4px">No related documents or reminders found</div>'
       : '';
-    Modal.open(`${typeInfo.icon} ${a.name||'Asset'}`,
+    Modal.open(`${typeInfo.label} — ${a.name||'Asset'}`,
       `<div>${[['Type',typeInfo.label],['Value',(a.currentValue?(a.currency||'')+' '+U.fmt(a.currentValue):'—')],['Ownership',a.ownership||'personal'],['Notes',a.notes||'—']].map(([k,v])=>U.drRow(k,v)).join('')}${docsHtml}${remHtml}${noRelated}</div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Assets.edit('${id}');Modal.close()">Edit</button>`
     );

@@ -27,12 +27,12 @@ const DocsModule={
     const ci=document.getElementById('docsChips');
     const el=document.getElementById('docsItems');
     if(!ci||!el)return;
-    const cats=[['all','All'],['passport','📘 Passport'],['nic','🪪 ID'],['driving_license','🚗 Driving'],['visa','✈️ Visa'],['property_doc','🏠 Property'],['insurance_doc','🛡️ Insurance'],['vehicle_reg','🚗 Vehicle Reg'],['tax','📋 Tax'],['medical','🏥 Medical'],['warranty','🧾 Warranty'],['contract','📝 Contract'],['certificate','🎓 Certificate'],['other','📄 Other']];
-    ci.innerHTML=cats.map(([v,l])=>`<div class="chip${this.filter===v?' on':''}" onclick="DocsModule.filter='${v}';DocsModule.render()">${l}</div>`).join('');
+    const cats=[['all','All','id-card'],['passport','Passport','id-card'],['nic','ID','id-card'],['driving_license','Driving','car'],['visa','Visa','arrows'],['property_doc','Property','building'],['insurance_doc','Insurance','shield'],['vehicle_reg','Vehicle Reg','car'],['tax','Tax','receipt'],['medical','Medical','cross'],['warranty','Warranty','receipt'],['contract','Contract','book'],['certificate','Certificate','star'],['other','Other','file']];
+    ci.innerHTML=cats.map(([v,l,ic])=>`<div class="chip${this.filter===v?' on':''}" onclick="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');
     const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
     const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
     if(!docs.length){
-      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">🪪</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
+      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">${VC.icon('id-card',32)}</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;
     }
     const now=new Date();
@@ -44,7 +44,7 @@ const DocsModule={
       const expLabel=!exp?'':daysLeft<0?'Expired '+Math.abs(daysLeft)+'d ago':daysLeft<=0?'Expires today':'Exp '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
       const subtitle=[d.holderName,d.issuingCountry,d.docNumber?'Ref: '+d.docNumber.slice(-4).padStart(d.docNumber.length,'•'):''].filter(Boolean).join(' · ');
       const hasPhotos=d.frontPhoto||d.backPhoto;
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${schema.ic}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">📷 Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">🔗 Linked</span>':''}</div></div><div class="entry-acts">${U.icb('pin',{onclick:`DocsModule.pin('${d.id}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}</div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.docIcon(schema,18)}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">Linked</span>':''}</div></div><div class="entry-acts">${U.icb('pin',{onclick:`DocsModule.pin('${d.id}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}</div></div></div>`;
     }).join('');
   },
   buildForm(schema,d={}){

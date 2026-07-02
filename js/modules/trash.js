@@ -3,10 +3,10 @@ const Trash = {
     const el = document.getElementById('trashBody'); if (!el) return;
     const items = (S.trash || []).sort((a, b) => new Date(b.deletedAt) - new Date(a.deletedAt));
     if (!items.length) {
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🗑️</div><div class="ei-title">Trash is Empty</div><div class="ei-sub">Deleted items stay here for 30 days. Tap Restore on any item to recover it.</div></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${VC.icon('trash', 32)}</div><div class="ei-title">Trash is Empty</div><div class="ei-sub">Deleted items stay here for 30 days. Tap Restore on any item to recover it.</div></div>`;
       return;
     }
-    const typeIc = { banks:'🏦', cards:'💳', investments:'📈', cash:'💵', sims:'📱', assets:'🏠', expenses:'📋', friends:'👥', emails:'📧', gadgets:'💻', digital:'💼', loans:'🤝', vehicles:'🚗' };
+    const typeIc = (type, size = 16) => VC.trashIcon(type, size);
     const grouped = {};
     items.forEach(i => { (grouped[i.type] = grouped[i.type] || []).push(i); });
     const age = iso => {
@@ -21,14 +21,14 @@ const Trash = {
       if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
       return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
     };
-    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" onclick="Trash.emptyAll()">🗑️ Empty Trash</button></div>`;
+    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" onclick="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
-      <div class="sdiv">${typeIc[type] || '📦'} ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
+      <div class="sdiv"><span class="sdiv-ic">${typeIc(type, 14)}</span> ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
       ${arr.map(item => {
         const label = item.data?.bankName || item.data?.cardName || item.data?.investmentName || item.data?.network || item.data?.name || item.data?.serviceName || item.data?.email || item.id;
         return `<div class="entry">
           <div class="entry-main">
-            <div class="entry-ic">${typeIc[item.type] || '📦'}</div>
+            <div class="entry-ic">${typeIc(item.type, 18)}</div>
             <div class="entry-body">
               <div class="entry-name">${escHtml(label)}</div>
               <div class="entry-sub">Deleted ${age(item.deletedAt)} · ${daysLeft(item.deletedAt)}</div>

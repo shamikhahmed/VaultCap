@@ -92,7 +92,7 @@ const Loans = {
 
       return `<div class="entry" data-id="${l.id}">
         <div class="entry-main">
-          <div class="entry-ic">${l.type === 'lent' ? '💸' : '🤲'}</div>
+          <div class="entry-ic">${VC.icon(l.type === 'lent' ? 'arrow-right' : 'undo', 18)}</div>
           <div class="entry-body">
             <div class="entry-name">${escHtml(l.person || 'Unknown')}</div>
             <div class="entry-sub">${escHtml(l.date || '')}</div>
@@ -116,7 +116,7 @@ const Loans = {
       const settled  = loans.filter(l => l.status === 'Settled');
       const liveAll  = [...overdue, ...active];
       const totalAmt = sumLoansPKR(loans);
-      const title    = kind === 'borrowed' ? '🤲 I Owe' : '💸 They Owe Me';
+      const title    = kind === 'borrowed' ? 'I Owe' : 'They Owe Me';
       const color    = kind === 'borrowed' ? 'var(--err)' : 'var(--ok)';
       const addType  = kind;
 
@@ -150,7 +150,7 @@ const Loans = {
   },
 
   openAdd(type = 'borrowed') {
-    const title = type === 'borrowed' ? '🤲 I Owe (Borrowed)' : '💸 They Owe Me (Lent)';
+    const title = type === 'borrowed' ? 'I Owe (Borrowed)' : 'They Owe Me (Lent)';
     Modal.open(title, this.form({ type }), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Loans.save()">Save</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
@@ -239,7 +239,7 @@ const Loans = {
     const paid = payments.reduce((a, p) => a + (p.amount || 0), 0);
     const remaining = Math.max(0, (l.amount || 0) - paid);
     const cur = l.currency || S.user?.currency || 'PKR';
-    Modal.open('💰 Record Payment',
+    Modal.open('Record Payment',
       `<div class="fg"><label class="fl">Amount Paid *</label><input class="inp num-inp" id="lp-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" placeholder="0"></div>
       <div class="fg"><label class="fl">Date</label><input class="inp" id="lp-date" type="date" value="${escAttr(new Date().toISOString().split('T')[0])}"></div>
       <div class="fg"><label class="fl">Notes (optional)</label><input class="inp" id="lp-notes" placeholder="Transfer, cash…"></div>

@@ -86,7 +86,7 @@ const BCModule = {
 
     return '<div class="entry" style="flex-direction:column;align-items:stretch">' +
       '<div class="entry-main">' +
-        '<div class="entry-ic" style="background:var(--glass2);font-size:20px">🤝</div>' +
+        '<div class="entry-ic">' + VC.icon('refresh-cw', 18) + '</div>' +
         '<div class="entry-body">' +
           '<div class="entry-name entry-name--wrap">' + escHtml(bc.name || 'BC') + '</div>' +
           '<div class="entry-sub entry-sub--wrap">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
@@ -123,7 +123,7 @@ const BCModule = {
   openAdd(editIdx) {
     const bc = editIdx != null ? (S.bc || [])[editIdx] : {};
     const cur = S.user.currency || 'PKR';
-    Modal.open(editIdx != null ? '✏️ Edit BC' : '🤝 Join / Create a BC',
+    Modal.open(editIdx != null ? 'Edit BC' : 'Join / Create a BC',
       '<div class="fg"><label class="fl">BC Name</label>' +
         '<input class="inp" id="bc-name" value="' + (bc.name || '') + '" placeholder="e.g. Family BC, Office Committee 2026"></div>' +
 

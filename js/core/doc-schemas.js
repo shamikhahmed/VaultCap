@@ -4,7 +4,7 @@
 
 const DOC_SCHEMAS = {
   passport:{
-    label:'Passport',ic:'📘',
+    label:'Passport',ic:'id-card',
     fields:[
       {id:'docNumber',label:'Passport Number',ph:'e.g. AB1234567'},
       {id:'issuingCountry',label:'Issuing Country',ph:'e.g. United Kingdom'},
@@ -19,7 +19,7 @@ const DOC_SCHEMAS = {
     ]
   },
   nic:{
-    label:'National ID',ic:'🪪',
+    label:'National ID',ic:'id-card',
     fields:[
       {id:'docNumber',label:'ID Number',ph:'National ID number'},
       {id:'issuingCountry',label:'Issuing Country',ph:'Issuing country'},
@@ -31,7 +31,7 @@ const DOC_SCHEMAS = {
     ]
   },
   driving_license:{
-    label:'Driving Licence',ic:'🚗',
+    label:'Driving Licence',ic:'car',
     fields:[
       {id:'docNumber',label:'Licence Number',ph:'Driving licence number'},
       {id:'issuingCountry',label:'Issuing Country',ph:'Country'},
@@ -44,7 +44,7 @@ const DOC_SCHEMAS = {
     ]
   },
   visa:{
-    label:'Visa / Entry Permit',ic:'✈️',
+    label:'Visa / Entry Permit',ic:'arrows',
     fields:[
       {id:'docNumber',label:'Visa Number',ph:'Visa reference number'},
       {id:'visaType',label:'Visa Type',ph:'Tourist, Work, Student, ILR...',list:'Student,Work/Skilled Worker,Tourist,Family/Spouse,Student,Indefinite Leave to Remain,Business,Transit,Investor'},
@@ -58,7 +58,7 @@ const DOC_SCHEMAS = {
     ]
   },
   property_doc:{
-    label:'Property Document',ic:'🏠',
+    label:'Property Document',ic:'building',
     fields:[
       {id:'docSubType',label:'Document Type',ph:'Title deed, Sale agreement, Mortgage docs...',list:'Title Deed,Sale Agreement,Mortgage Documents,Property Survey,Planning Permission,Lease Agreement,Building Certificate,Insurance Policy'},
       {id:'propertyRef',label:'Property / Address',ph:'Which property does this relate to?'},
@@ -73,7 +73,7 @@ const DOC_SCHEMAS = {
     ]
   },
   insurance_doc:{
-    label:'Insurance Document',ic:'🛡️',
+    label:'Insurance Document',ic:'shield',
     fields:[
       {id:'docSubType',label:'Insurance Type',ph:'Health, Auto, Home, Life...',list:'Health,Auto/Car,Home,Life,Travel,Business,Pet,Gadget'},
       {id:'policyNumber',label:'Policy Number',ph:'Policy reference'},
@@ -88,7 +88,7 @@ const DOC_SCHEMAS = {
     ]
   },
   vehicle_reg:{
-    label:'Vehicle Registration',ic:'🚗',
+    label:'Vehicle Registration',ic:'car',
     fields:[
       {id:'regNumber',label:'Registration / Plate No.',ph:'e.g. ABC-1234'},
       {id:'vehicleMake',label:'Make / Brand',ph:'Toyota, BMW, Mercedes...'},
@@ -102,7 +102,7 @@ const DOC_SCHEMAS = {
     ]
   },
   tax:{
-    label:'Tax Document',ic:'📋',
+    label:'Tax Document',ic:'receipt',
     fields:[
       {id:'docSubType',label:'Tax Doc Type',ph:'Tax Return, Tax Certificate, VAT Reg...',list:'Income Tax Return,Tax Certificate,VAT Registration,NTN Certificate,Tax Clearance,CNIC Tax Filing,Corporate Tax'},
       {id:'taxYear',label:'Tax Year / Period',ph:'e.g. 2023-24'},
@@ -115,7 +115,7 @@ const DOC_SCHEMAS = {
     ]
   },
   medical:{
-    label:'Medical Record',ic:'🏥',
+    label:'Medical Record',ic:'cross',
     fields:[
       {id:'docSubType',label:'Record Type',ph:'Prescription, Test Result, Vaccination...',list:'Prescription,Test Results,Vaccination Record,Medical Report,Discharge Summary,Dental Records,Blood Type Card,Allergy Info'},
       {id:'holderName',label:'Patient Name',ph:'Patient name'},
@@ -127,7 +127,7 @@ const DOC_SCHEMAS = {
     ]
   },
   warranty:{
-    label:'Warranty / Receipt',ic:'🧾',
+    label:'Warranty / Receipt',ic:'receipt',
     fields:[
       {id:'productName',label:'Product Name',ph:'What is covered?'},
       {id:'serialNum',label:'Serial / Model Number',ph:'Product serial number'},
@@ -141,7 +141,7 @@ const DOC_SCHEMAS = {
     ]
   },
   contract:{
-    label:'Contract / Agreement',ic:'📝',
+    label:'Contract / Agreement',ic:'book',
     fields:[
       {id:'contractTitle',label:'Contract Title',ph:'e.g. Employment Agreement, NDA...'},
       {id:'parties',label:'Parties Involved',ph:'Names of all parties'},
@@ -153,7 +153,7 @@ const DOC_SCHEMAS = {
     ]
   },
   certificate:{
-    label:'Certificate / Award',ic:'🎓',
+    label:'Certificate / Award',ic:'star',
     fields:[
       {id:'certTitle',label:'Certificate Name',ph:'e.g. Bachelor of Science, AWS Certified...'},
       {id:'holderName',label:'Holder Name',ph:'Your name on certificate'},
@@ -165,7 +165,7 @@ const DOC_SCHEMAS = {
     ]
   },
   other:{
-    label:'Other Document',ic:'📄',
+    label:'Other Document',ic:'file',
     fields:[
       {id:'docSubType',label:'Document Description',ph:'What is this document?'},
       {id:'holderName',label:'Related Person/Entity',ph:'Who does this relate to?'},

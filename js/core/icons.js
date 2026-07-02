@@ -5,6 +5,20 @@ const VC_ICON_PATHS = {
   home: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z',
   wallet: ['M21 12V7H5a2 2 0 0 1 0-4h14v4', 'M3 5v14a2 2 0 0 0 2 2h16v-5', 'M18 12a2 2 0 1 0 0 4h4v-4h-4Z'],
   package: ['M16.5 9.4 7.55 4.24', 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z', 'M3.3 7 12 12l8.7-5', 'M12 22V12'],
+  layers: ['M12 2 2 7l10 5 10-5-10-5Z', 'M2 17l10 5 10-5', 'M2 12l10 5 10-5'],
+  car: ['M19 17h2c.6 0 1-.4 1-1v-3l-2-5H4L2 13v3c0 .6.4 1 1 1h2', 'M5 17h14', 'M7 17v1a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-1', 'M14 17v1a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-1', 'M5 13h14'],
+  laptop: ['M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Z', 'M6 20h12'],
+  gem: ['M6 3h12l4 7-10 13L2 10l4-7Z', 'M2 10h20', 'M12 22V10'],
+  building: ['M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z', 'M10 6h4', 'M10 10h4', 'M10 14h4', 'M10 18h4'],
+  'building-2': ['M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z', 'M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2', 'M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2', 'M10 6h4', 'M10 10h4', 'M10 14h4'],
+  repeat: ['M17 1l4 4-4 4', 'M3 11V9a4 4 0 0 1 4-4h14', 'M7 23l-4-4 4-4', 'M21 13v2a4 4 0 0 1-4 4H3'],
+  'refresh-cw': ['M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8', 'M21 3v5h-5', 'M3 12a9 9 0 0 1 9 9 9.75 9.75 0 0 1-6.74-2.74L3 16', 'M8 16H3v5'],
+  user: ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2', 'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z'],
+  grid: ['M3 3h7v7H3z', 'M14 3h7v7h-7z', 'M14 14h7v7h-7z', 'M3 14h7v7H3z'],
+  watch: ['M12 10v4l2 2', 'M6.5 4.5 8 6', 'M17.5 4.5 16 6', 'M12 2a8 8 0 0 0-8 8c0 1.8.6 3.5 1.6 4.9L12 22l6.4-7.1A8 8 0 0 0 20 10a8 8 0 0 0-8-8Z'],
+  ring: ['M2.5 8.5a2.5 2.5 0 0 1 5 0c0 .5-.2 1-.5 1.3L6 14h12l-1-4.2c-.3-.3-.5-.8-.5-1.3a2.5 2.5 0 0 1 5 0L22 14H2l.5-5.5Z'],
+  key: ['M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78Zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4'],
+  'trending-up': ['M22 7 13.5 15.5 8.5 10.5 2 17', 'M16 7h6v6'],
   'id-card': ['M16 10h2', 'M16 14h2', 'M6 18h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2Z', 'M6 10h6', 'M6 14h4'],
   more: ['M5 12h.01', 'M12 12h.01', 'M19 12h.01'],
   chart: ['M3 3v18h18', 'M7 16l4-4 4 4 5-6'],
@@ -52,6 +66,31 @@ const VC_ICON_PATHS = {
   menu: ['M4 6h16', 'M4 12h16', 'M4 18h16'],
   copy: ['M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2', 'M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z'],
   vault: ['M7 11V7a5 5 0 0 1 10 0v4', 'M5 11h14v10H5V11Z', 'M12 15v2'],
+  file: ['M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z', 'M14 2v6h6', 'M16 13H8', 'M16 17H8', 'M10 9H8'],
+};
+
+const VC_EMOJI_TO_ICON = {
+  '🏦': 'bank', '💳': 'card', '📈': 'chart', '💵': 'banknote', '🤝': 'handshake', '📋': 'repeat', '🔄': 'repeat',
+  '🏠': 'building', '🚗': 'car', '💻': 'laptop', '📱': 'smartphone', '📧': 'mail', '💼': 'briefcase', '🪪': 'id-card',
+  '👥': 'users', '👤': 'user', '📦': 'package', '🥇': 'gem', '🛡️': 'shield', '🔒': 'lock', '🔑': 'key',
+  '📊': 'chart', '📝': 'pencil', '✏️': 'pencil', '➕': 'plus', '🗑️': 'trash', '🔔': 'bell', '📅': 'calendar',
+  '✨': 'sparkles', '⚙️': 'settings', '📤': 'share', '📥': 'download', '🙈': 'eye-off', '💾': 'share',
+  '🎫': 'ticket', '📘': 'id-card', '✈️': 'arrows', '🏥': 'cross', '🧾': 'receipt', '🎓': 'star', '📄': 'file',
+  '⌚': 'watch', '💍': 'ring', '🏢': 'building-2', '💰': 'banknote', '🔍': 'search', '🚨': 'cross',
+  '🎬': 'chart', '🎵': 'star', '🔒': 'shield', '☁️': 'archive', '🤖': 'sparkles', '🎮': 'grid', '📰': 'book',
+  '💸': 'arrow-right', '🤲': 'undo', '👑': 'star', '🔋': 'gauge', '📡': 'smartphone', '🎧': 'smartphone',
+  '📷': 'file', '🗓': 'calendar', '⚠️': 'bell', '✓': 'target', '✔': 'target', '🎲': 'target', '🎯': 'target',
+};
+
+const VC_SUB_CAT_ICON = {
+  Streaming: 'chart', Music: 'star', VPN: 'shield', Cloud: 'archive', Productivity: 'briefcase',
+  Security: 'key', Fitness: 'target', Gaming: 'grid', AI: 'sparkles', Design: 'pencil',
+  Tools: 'settings', News: 'book', Business: 'building-2',
+};
+
+const VC_INVEST_TYPE_ICON = {
+  Stocks: 'chart', 'Mutual Funds': 'layers', ETFs: 'trending-up', Bonds: 'ticket', Sukuk: 'ticket',
+  Crypto: 'target', 'Fixed Deposit': 'bank', Pension: 'bank', Other: 'briefcase',
 };
 
 const VC = {
@@ -69,6 +108,68 @@ const VC = {
   modIcon(mod, size = 18) {
     const key = typeof mod === 'string' ? mod : mod?.ic;
     return this.icon(key || 'list', size);
+  },
+
+  assetIcon(type, size = 18) {
+    const map = {
+      property: 'building',
+      vehicle: 'car',
+      electronics: 'laptop',
+      gadget: 'laptop',
+      precious_metals: 'gem',
+      precious: 'gem',
+      watch: 'watch',
+      jewelry: 'ring',
+      subscription: 'repeat',
+      insurance: 'shield',
+      business: 'building-2',
+      loan: 'banknote',
+      other: 'package',
+    };
+    return this.icon(map[type] || 'package', size);
+  },
+
+  resolveIconKey(val) {
+    if (!val) return 'list';
+    if (VC_ICON_PATHS[val]) return val;
+    if (VC_EMOJI_TO_ICON[val]) return VC_EMOJI_TO_ICON[val];
+    if (VC_SUB_CAT_ICON[val]) return VC_SUB_CAT_ICON[val];
+    return 'list';
+  },
+
+  iconKey(val, size = 18, extraClass = '') {
+    return this.icon(this.resolveIconKey(val), size, extraClass);
+  },
+
+  investIcon(type, size = 18) {
+    return this.icon(VC_INVEST_TYPE_ICON[type] || 'trending-up', size);
+  },
+
+  expenseIcon(val, size = 18) {
+    return this.iconKey(val || 'repeat', size);
+  },
+
+  docIcon(schemaOrKey, size = 18) {
+    const key = typeof schemaOrKey === 'object' ? schemaOrKey.ic : schemaOrKey;
+    return this.iconKey(key, size);
+  },
+
+  cmdIcon(val, size = 16) {
+    if (val === '⌘' || val === '⎋' || val === '💬') {
+      const map = { '⌘': 'command', '⎋': 'cross', '💬': 'search' };
+      return this.icon(map[val] || 'list', size);
+    }
+    return this.iconKey(val, size);
+  },
+
+  trashIcon(type, size = 18) {
+    const map = {
+      banks: 'bank', cards: 'card', investments: 'chart', cash: 'banknote',
+      sims: 'smartphone', assets: 'layers', expenses: 'repeat', friends: 'user',
+      emails: 'mail', gadgets: 'laptop', digital: 'briefcase', loans: 'handshake',
+      vehicles: 'car', documents: 'id-card', bonds: 'ticket', bc: 'refresh-cw',
+    };
+    return this.icon(map[type] || 'package', size);
   },
 
   setBtnIcon(el, name, size = 18) {

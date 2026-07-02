@@ -9,14 +9,14 @@ function openMoneySheet() {
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
-    {id:'banks',ic:'🏦',n:'Banks'},
-    {id:'cards',ic:'💳',n:'Cards'},
-    {id:'cash',ic:'💵',n:'Cash'},
-    {id:'investments',ic:'📈',n:'Investments'},
-    {id:'loans',ic:'💸',n:'Loans'},
-    {id:'expenses',ic:'📋',n:'Expenses'},
-    {id:'bc',ic:'🤝',n:'Committees'},
-    {id:'bonds',ic:'🎫',n:'Bonds'},
+    {id:'banks',ic:'bank',n:'Banks'},
+    {id:'cards',ic:'card',n:'Cards'},
+    {id:'cash',ic:'banknote',n:'Cash'},
+    {id:'investments',ic:'trending-up',n:'Investments'},
+    {id:'loans',ic:'handshake',n:'Loans'},
+    {id:'expenses',ic:'repeat',n:'Expenses'},
+    {id:'bc',ic:'refresh-cw',n:'Committees'},
+    {id:'bonds',ic:'ticket',n:'Bonds'},
   ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
@@ -41,9 +41,9 @@ function openAssetsSheet() {
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
-    {id:'assets',ic:'🏠',n:'All Assets'},
-    {id:'vehicles',ic:'🚗',n:'Vehicles'},
-    {id:'gadgets',ic:'📱',n:'Gadgets'},
+    {id:'assets',ic:'layers',n:'All Assets'},
+    {id:'vehicles',ic:'car',n:'Vehicles'},
+    {id:'gadgets',ic:'laptop',n:'Gadgets'},
   ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
@@ -68,11 +68,11 @@ function openIdentitySheet() {
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
-    {id:'documents',ic:'🪪',n:'Documents'},
-    {id:'sims',ic:'📱',n:'SIM Cards'},
-    {id:'emails',ic:'📧',n:'Emails'},
-    {id:'digital',ic:'💼',n:'Digital'},
-    {id:'friends',ic:'👥',n:'Contacts'},
+    {id:'documents',ic:'id-card',n:'Documents'},
+    {id:'sims',ic:'smartphone',n:'SIM Cards'},
+    {id:'emails',ic:'mail',n:'Emails'},
+    {id:'digital',ic:'key',n:'Digital'},
+    {id:'friends',ic:'user',n:'Contacts'},
   ].filter(m => S.modules[m.id] !== false);
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
@@ -173,7 +173,7 @@ function initSidebar() {
 
 // ===================== BUILD NAV =====================
 function hubTileIcon(id, size = 22) {
-  const extra = { credit: 'gauge', gold: 'moon', vehicles: 'package', gadgets: 'smartphone' };
+  const extra = { credit: 'gauge', gold: 'gem', vehicles: 'car', gadgets: 'laptop' };
   const mod = ALL_MODULES.find((m) => m.id === id);
   return VC.icon(mod?.ic || extra[id] || 'list', size);
 }
@@ -185,7 +185,7 @@ function buildSettTabs() {
     ['profile', 'Profile', 'users'],
     ['security', 'Security', 'shield'],
     ['appearance', 'Appearance', 'settings'],
-    ['modules', 'Modules', 'package'],
+    ['modules', 'Modules', 'grid'],
     ['backup', 'Backup', 'share'],
     ['import', 'Import', 'download'],
     ['accessibility', 'Accessibility', 'eye'],
@@ -212,15 +212,15 @@ function renderFinanceHome() {
     {id:'banks',ic:'bank',label:'Banks',desc:(S.banks||[]).length+' accounts'},
     {id:'cards',ic:'card',label:'Cards',desc:(S.cards||[]).length+' cards'},
     {id:'cash',ic:'banknote',label:'Cash',desc:(S.cash||[]).length+' entries'},
-    {id:'investments',ic:'chart',label:'Investments',desc:(S.investments||[]).length+' positions'},
+    {id:'investments',ic:'trending-up',label:'Investments',desc:(S.investments||[]).length+' positions'},
     {id:'loans',ic:'handshake',label:'Loans',desc:(S.loans||[]).length+' loans'},
     {id:'credit',ic:'gauge',label:'Credit Score',desc:'Track scores'},
     {id:'zakat',ic:'moon',label:'Zakat',desc:'Calculate'},
     {id:'tax',ic:'receipt',label:'Tax',desc:'Tax calculator'},
     {id:'currency',ic:'arrows',label:'Currency',desc:'Net worth'},
-    {id:'gold',ic:'moon',label:'Metals',desc:'Gold & silver'},
-    {id:'expenses',ic:'list',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
-    {id:'bc',    ic:'users', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
+    {id:'gold',ic:'gem',label:'Metals',desc:'Gold & silver'},
+    {id:'expenses',ic:'repeat',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
+    {id:'bc',    ic:'refresh-cw', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
     {id:'bonds', ic:'ticket', label:'Prize Bonds & Savings', desc:(S.bonds||[]).length+' holdings'},
   ];
   const hidden = getTabPrefs().hiddenFinance || [];
@@ -252,8 +252,8 @@ function renderVaultHome() {
     {id:'digital',ic:'briefcase',label:'Digital',desc:'Accounts & subscriptions'},
     {id:'emails',ic:'mail',label:'Emails',desc:(S.emails||[]).length+' identities'},
     {id:'sims',ic:'smartphone',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
-    {id:'friends',ic:'users',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
-    {id:'gadgets',ic:'smartphone',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
+    {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
+    {id:'gadgets',ic:'laptop',label:'Gadgets',desc:(S.gadgets||[]).length+' devices'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
@@ -270,9 +270,9 @@ function renderAssetsHome() {
   const vehicleCount = (S.assets || []).filter(a => a.assetType === 'vehicle').length;
   const metalCount = (S.assets || []).filter(a => a.assetType === 'precious_metals' || a.assetType === 'precious').length;
   const modules = [
-    {id:'vehicles',ic:'package',label:'Vehicles',desc:vehicleCount+' vehicle'+(vehicleCount!==1?'s':'')},
-    {id:'assets',ic:'house',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
-    {id:'gold',ic:'moon',label:'Precious Metals',desc:metalCount ? metalCount+' holding'+(metalCount!==1?'s':'') : 'Gold & silver'},
+    {id:'vehicles',ic:'car',label:'Vehicles',desc:vehicleCount+' vehicle'+(vehicleCount!==1?'s':'')},
+    {id:'assets',ic:'layers',label:'Property & Assets',desc:(S.assets||[]).length+' items'},
+    {id:'gold',ic:'gem',label:'Precious Metals',desc:metalCount ? metalCount+' holding'+(metalCount!==1?'s':'') : 'Gold & silver'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
@@ -289,14 +289,14 @@ function renderHomeModules() {
   const mods = [
     { ic: 'bank', label: 'Banks' },
     { ic: 'card', label: 'Cards' },
-    { ic: 'chart', label: 'Invest' },
-    { ic: 'house', label: 'Assets' },
+    { ic: 'trending-up', label: 'Invest' },
+    { ic: 'layers', label: 'Assets' },
     { ic: 'smartphone', label: 'SIMs' },
     { ic: 'mail', label: 'Emails' },
-    { ic: 'package', label: 'Gadgets' },
+    { ic: 'laptop', label: 'Gadgets' },
     { ic: 'id-card', label: 'Docs' },
-    { ic: 'sync', label: 'Subs' },
-    { ic: 'briefcase', label: 'Logins' },
+    { ic: 'repeat', label: 'Subs' },
+    { ic: 'key', label: 'Logins' },
     { ic: 'shield', label: 'Security' },
     { ic: 'receipt', label: 'Expenses' },
   ];
@@ -361,7 +361,7 @@ function buildNav() {
   document.getElementById('btabs').innerHTML =
     `<div class="ti${S.currentPage === 'dashboard' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard'}" aria-label="Home" data-pg="dashboard"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
     `<div class="ti${moneyPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${moneyPages.has(S.currentPage)}" aria-label="Money" onclick="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
-    `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${assetsPages.has(S.currentPage)}" aria-label="Assets" onclick="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('package', 20)}</div><span>Assets</span></div>` +
+    `<div class="ti${assetsPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${assetsPages.has(S.currentPage)}" aria-label="Assets" onclick="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('layers', 20)}</div><span>Assets</span></div>` +
     `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" onclick="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
     `<div class="ti" role="tab" aria-selected="false" aria-label="More options" onclick="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
 

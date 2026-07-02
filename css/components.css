@@ -25,7 +25,12 @@ input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter
 }
 .entry:hover { border-color: var(--border2); box-shadow: 0 8px 20px rgba(6,12,30,.35); }
 .entry-main  { display: flex; align-items: center; gap: 12px; padding: 13px 14px 11px; }
-.entry-ic    { width: 42px; height: 42px; border-radius: 10px; background: var(--glass2); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.entry-ic    { width: 42px; height: 42px; border-radius: 10px; background: var(--glass2); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; color: var(--text2); }
+.entry-ic .vc-icon { display: block; }
+.chip-ic { display: inline-flex; align-items: center; vertical-align: middle; margin-right: 5px; color: inherit; }
+.chip.on .chip-ic { color: var(--accent-fg, #000); opacity: .85; }
+.sdiv-ic { display: inline-flex; align-items: center; vertical-align: middle; margin-right: 6px; color: var(--text2); }
+.empty-ios .ei-ic .vc-icon { color: var(--text3); opacity: .55; }
 .entry-body  { flex: 1; min-width: 0; }
 .entry-name  { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.1px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; margin-bottom: 2px; }
 .entry-name--wrap {

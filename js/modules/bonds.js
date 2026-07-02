@@ -108,7 +108,7 @@ const BondsModule = {
 
     return '<div class="entry">' +
       '<div class="entry-main">' +
-        '<div class="entry-ic" style="background:rgba(201,168,76,.15)">🎫</div>' +
+        '<div class="entry-ic">' + VC.icon('ticket', 18) + '</div>' +
         '<div class="entry-body">' +
           '<div class="entry-name">' + escHtml(b.name || 'Bond') + '</div>' +
           '<div class="entry-sub">' + escHtml(String(b.quantity || 1)) + ' × ' + escHtml(cur) + ' ' + (b.faceValue || b.amount || 0).toLocaleString() + ' · ' + escHtml(b.country || '') + '</div>' +
@@ -158,7 +158,7 @@ const BondsModule = {
     const userCountry = S.user.country || 'PK';
     const allTypes = Object.values(this.BOND_TYPES).flat();
 
-    Modal.open(editIdx != null ? '✏️ Edit Bond' : '🎫 Add Bond / Security',
+    Modal.open(editIdx != null ? 'Edit Bond' : 'Add Bond / Security',
       '<div class="fg"><label class="fl">Name / Label</label>' +
         '<input class="inp" id="bnd-name" value="' + (b.name || '') + '" placeholder="e.g. My Prize Bonds 2026"></div>' +
 
@@ -287,7 +287,7 @@ const BondsModule = {
   },
 
   openBulkImport() {
-    Modal.open('📋 Bulk Import Bond Numbers',
+    Modal.open('Bulk Import Bond Numbers',
       '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">Paste your prize bond numbers below — one per line. Select the bond type and they\'ll be imported as a single holding.</div>' +
       '<div class="fg"><label class="fl">Bond Type</label>' +
         '<select class="inp" id="bulk-type">' +
