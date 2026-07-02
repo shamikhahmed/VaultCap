@@ -11,7 +11,7 @@ const WorkspaceManager = {
       presets.map(([id, p]) => `
         <div class="entry" style="${current===id?'border-left:3px solid var(--accent)':''}" onclick="WorkspaceManager.apply('${id}')">
           <div class="entry-main">
-            <div class="entry-ic">${p.ic}</div>
+            <div class="entry-ic">${VC.icon(p.ic, 18)}</div>
             <div class="entry-body">
               <div class="entry-name">${p.name}</div>
               <div class="entry-sub">${p.desc}</div>

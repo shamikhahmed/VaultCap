@@ -82,7 +82,7 @@ const BCModule = {
     const progress = Math.round(((bc.currentRound || 1) / (bc.totalRounds || bc.members || 1)) * 100);
 
     const statusColor = myTurnDone ? 'var(--ok)' : myTurnNext ? 'var(--warn)' : 'var(--accent)';
-    const statusText = myTurnDone ? '✓ Turn complete' : myTurnNext ? '🔔 Your turn!' : bc.myTurnRound ? 'Turn: Round ' + bc.myTurnRound : 'Turn: TBD';
+    const statusText = myTurnDone ? 'Turn complete' : myTurnNext ? 'Your turn!' : bc.myTurnRound ? 'Turn: Round ' + bc.myTurnRound : 'Turn: TBD';
 
     return '<div class="entry" style="flex-direction:column;align-items:stretch">' +
       '<div class="entry-main">' +

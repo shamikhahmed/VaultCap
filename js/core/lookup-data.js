@@ -173,40 +173,40 @@ const BROKERS_DB=['Hargreaves Lansdown','AJ Bell','Trading 212','Freetrade','eTo
 
 /* → js/core/branding.js */
 const SUBS_DB=[
-  {n:'Netflix',c:'Streaming',ic:'🎬'},{n:'Disney+',c:'Streaming',ic:'🏰'},{n:'Amazon Prime',c:'Streaming',ic:'📦'},
-  {n:'Apple TV+',c:'Streaming',ic:'🍎'},{n:'YouTube Premium',c:'Streaming',ic:'▶️'},{n:'HBO Max',c:'Streaming',ic:'🎭'},
-  {n:'Spotify',c:'Music',ic:'🎵'},{n:'Apple Music',c:'Music',ic:'🎶'},{n:'Tidal',c:'Music',ic:'🌊'},
-  {n:'NordVPN',c:'VPN',ic:'🔒'},{n:'ExpressVPN',c:'VPN',ic:'🔒'},{n:'Surfshark',c:'VPN',ic:'🦈'},{n:'ProtonVPN',c:'VPN',ic:'⚛️'},
-  {n:'iCloud+',c:'Cloud',ic:'☁️'},{n:'Google One',c:'Cloud',ic:'💾'},{n:'Dropbox',c:'Cloud',ic:'📦'},
-  {n:'Microsoft 365',c:'Productivity',ic:'💼'},{n:'Adobe CC',c:'Productivity',ic:'🎨'},{n:'Notion',c:'Productivity',ic:'📝'},
-  {n:'1Password',c:'Security',ic:'🔑'},{n:'Bitwarden',c:'Security',ic:'🛡️'},
-  {n:'Pure Gym',c:'Fitness',ic:'🏋️'},{n:'David Lloyd',c:'Fitness',ic:'🎾'},{n:'Apple Fitness+',c:'Fitness',ic:'🍎'},{n:'Planet Fitness',c:'Fitness',ic:'🏋️'},
-  {n:'PlayStation Plus',c:'Gaming',ic:'🎮'},{n:'Xbox Game Pass',c:'Gaming',ic:'🎮'},{n:'Nintendo Online',c:'Gaming',ic:'🎮'},
-  {n:'LinkedIn Premium',c:'Business',ic:'💼'},{n:'ChatGPT Plus',c:'AI',ic:'🤖'},{n:'Claude Pro',c:'AI',ic:'🧠'},
-  {n:'Canva Pro',c:'Design',ic:'🎨'},{n:'Figma',c:'Design',ic:'🖌️'},{n:'Grammarly',c:'Tools',ic:'✍️'},
-  {n:'FT',c:'News',ic:'📰'},{n:'The Times',c:'News',ic:'📰'},
+  {n:'Netflix',c:'Streaming',ic:'chart'},{n:'Disney+',c:'Streaming',ic:'chart'},{n:'Amazon Prime',c:'Streaming',ic:'chart'},
+  {n:'Apple TV+',c:'Streaming',ic:'chart'},{n:'YouTube Premium',c:'Streaming',ic:'chart'},{n:'HBO Max',c:'Streaming',ic:'chart'},
+  {n:'Spotify',c:'Music',ic:'star'},{n:'Apple Music',c:'Music',ic:'star'},{n:'Tidal',c:'Music',ic:'star'},
+  {n:'NordVPN',c:'VPN',ic:'shield'},{n:'ExpressVPN',c:'VPN',ic:'shield'},{n:'Surfshark',c:'VPN',ic:'shield'},{n:'ProtonVPN',c:'VPN',ic:'shield'},
+  {n:'iCloud+',c:'Cloud',ic:'archive'},{n:'Google One',c:'Cloud',ic:'archive'},{n:'Dropbox',c:'Cloud',ic:'archive'},
+  {n:'Microsoft 365',c:'Productivity',ic:'briefcase'},{n:'Adobe CC',c:'Productivity',ic:'briefcase'},{n:'Notion',c:'Productivity',ic:'briefcase'},
+  {n:'1Password',c:'Security',ic:'key'},{n:'Bitwarden',c:'Security',ic:'key'},
+  {n:'Pure Gym',c:'Fitness',ic:'target'},{n:'David Lloyd',c:'Fitness',ic:'target'},{n:'Apple Fitness+',c:'Fitness',ic:'target'},{n:'Planet Fitness',c:'Fitness',ic:'target'},
+  {n:'PlayStation Plus',c:'Gaming',ic:'grid'},{n:'Xbox Game Pass',c:'Gaming',ic:'grid'},{n:'Nintendo Online',c:'Gaming',ic:'grid'},
+  {n:'LinkedIn Premium',c:'Business',ic:'building-2'},{n:'ChatGPT Plus',c:'AI',ic:'sparkles'},{n:'Claude Pro',c:'AI',ic:'sparkles'},
+  {n:'Canva Pro',c:'Design',ic:'pencil'},{n:'Figma',c:'Design',ic:'pencil'},{n:'Grammarly',c:'Tools',ic:'settings'},
+  {n:'FT',c:'News',ic:'book'},{n:'The Times',c:'News',ic:'book'},
 ];
 
 const EMAIL_PROVIDERS=[
-  {n:'Gmail',ic:'📧',color:'#ea4335'},{n:'Outlook/Hotmail',ic:'📮',color:'#0078d4'},
-  {n:'Apple iCloud Mail',ic:'🍎',color:'#555'},{n:'ProtonMail',ic:'🔒',color:'#6d4aff'},
-  {n:'Yahoo Mail',ic:'💜',color:'#720e9e'},{n:'Tutanota',ic:'🛡️',color:'#c63927'},
-  {n:'Zoho Mail',ic:'💼',color:'#cc4b00'},{n:'FastMail',ic:'⚡',color:'#2272b2'},
-  {n:'Custom Domain',ic:'🌐',color:'#666'},{n:'Other',ic:'📧',color:'#888'},
+  {n:'Gmail',ic:'mail',color:'#ea4335'},{n:'Outlook/Hotmail',ic:'mail',color:'#0078d4'},
+  {n:'Apple iCloud Mail',ic:'mail',color:'#555'},{n:'ProtonMail',ic:'shield',color:'#6d4aff'},
+  {n:'Yahoo Mail',ic:'mail',color:'#720e9e'},{n:'Tutanota',ic:'shield',color:'#c63927'},
+  {n:'Zoho Mail',ic:'briefcase',color:'#cc4b00'},{n:'FastMail',ic:'mail',color:'#2272b2'},
+  {n:'Custom Domain',ic:'arrows',color:'#666'},{n:'Other',ic:'mail',color:'#888'},
 ];
 
 const GADGET_TYPES=[
-  {n:'iPhone',ic:'📱',cat:'Phone'},{n:'Android Phone',ic:'📱',cat:'Phone'},{n:'Samsung Galaxy',ic:'📱',cat:'Phone'},
-  {n:'iPad',ic:'📲',cat:'Tablet'},{n:'iPad Pro',ic:'📲',cat:'Tablet'},{n:'Android Tablet',ic:'📲',cat:'Tablet'},
-  {n:'MacBook Air',ic:'💻',cat:'Laptop'},{n:'MacBook Pro',ic:'💻',cat:'Laptop'},{n:'Windows Laptop',ic:'💻',cat:'Laptop'},
-  {n:'iMac',ic:'🖥️',cat:'Desktop'},{n:'Mac Mini',ic:'🖥️',cat:'Desktop'},{n:'Mac Pro',ic:'🖥️',cat:'Desktop'},
-  {n:'Apple Watch',ic:'⌚',cat:'Wearable'},{n:'Samsung Watch',ic:'⌚',cat:'Wearable'},{n:'Garmin Watch',ic:'⌚',cat:'Wearable'},
-  {n:'AirPods',ic:'🎧',cat:'Audio'},{n:'AirPods Pro',ic:'🎧',cat:'Audio'},{n:'Sony WH-1000XM5',ic:'🎧',cat:'Audio'},
-  {n:'PlayStation 5',ic:'🎮',cat:'Gaming'},{n:'Xbox Series X',ic:'🎮',cat:'Gaming'},{n:'Nintendo Switch',ic:'🎮',cat:'Gaming'},
-  {n:'Amazon Echo',ic:'📢',cat:'Smart Home'},{n:'Google Nest',ic:'🏠',cat:'Smart Home'},{n:'Apple HomePod',ic:'🔊',cat:'Smart Home'},
-  {n:'External SSD',ic:'💾',cat:'Storage'},{n:'External HDD',ic:'💾',cat:'Storage'},{n:'USB Hub',ic:'🔌',cat:'Accessory'},
-  {n:'Camera (DSLR)',ic:'📷',cat:'Camera'},{n:'Camera (Mirrorless)',ic:'📷',cat:'Camera'},
-  {n:'Router/Mesh',ic:'📡',cat:'Network'},{n:'NAS Drive',ic:'🗄️',cat:'Network'},
+  {n:'iPhone',ic:'smartphone',cat:'Phone'},{n:'Android Phone',ic:'smartphone',cat:'Phone'},{n:'Samsung Galaxy',ic:'smartphone',cat:'Phone'},
+  {n:'iPad',ic:'smartphone',cat:'Tablet'},{n:'iPad Pro',ic:'smartphone',cat:'Tablet'},{n:'Android Tablet',ic:'smartphone',cat:'Tablet'},
+  {n:'MacBook Air',ic:'laptop',cat:'Laptop'},{n:'MacBook Pro',ic:'laptop',cat:'Laptop'},{n:'Windows Laptop',ic:'laptop',cat:'Laptop'},
+  {n:'iMac',ic:'laptop',cat:'Desktop'},{n:'Mac Mini',ic:'laptop',cat:'Desktop'},{n:'Mac Pro',ic:'laptop',cat:'Desktop'},
+  {n:'Apple Watch',ic:'watch',cat:'Wearable'},{n:'Samsung Watch',ic:'watch',cat:'Wearable'},{n:'Garmin Watch',ic:'watch',cat:'Wearable'},
+  {n:'AirPods',ic:'smartphone',cat:'Audio'},{n:'AirPods Pro',ic:'smartphone',cat:'Audio'},{n:'Sony WH-1000XM5',ic:'smartphone',cat:'Audio'},
+  {n:'PlayStation 5',ic:'grid',cat:'Gaming'},{n:'Xbox Series X',ic:'grid',cat:'Gaming'},{n:'Nintendo Switch',ic:'grid',cat:'Gaming'},
+  {n:'Amazon Echo',ic:'building',cat:'Smart Home'},{n:'Google Nest',ic:'building',cat:'Smart Home'},{n:'Apple HomePod',ic:'building',cat:'Smart Home'},
+  {n:'External SSD',ic:'archive',cat:'Storage'},{n:'External HDD',ic:'archive',cat:'Storage'},{n:'USB Hub',ic:'package',cat:'Accessory'},
+  {n:'Camera (DSLR)',ic:'file',cat:'Camera'},{n:'Camera (Mirrorless)',ic:'file',cat:'Camera'},
+  {n:'Router/Mesh',ic:'smartphone',cat:'Network'},{n:'NAS Drive',ic:'archive',cat:'Network'},
 ];
 
 const DIGITAL_SVCS=['PayPal','Wise','Revolut','Stripe','Crypto.com','Coinbase','Binance','Kraken','Cash App','Monzo','PayPay','Western Union','MoneyGram','Remitly','WorldRemit','Skrill','Neteller','Payoneer','Brex','JazzCash','EasyPaisa','NayaPay','Bybit','OKX'];
@@ -221,11 +221,11 @@ const DIGITAL_CATS=['Social Media','Messaging','Email Service','Streaming','Bank
 const COMMON_SERVICES=['Instagram','Twitter / X','TikTok','Facebook','LinkedIn','Snapchat','WhatsApp','Telegram','Discord','Reddit','Pinterest','YouTube','Twitch','BeReal','Threads','Signal','WeChat','ChatGPT','Claude','Gemini','Midjourney','Copilot','Perplexity','GitHub','GitLab','Vercel','Netlify','AWS','Google Cloud','Heroku','Figma','Canva','Adobe CC','Netflix','Spotify','Apple Music','Amazon','eBay','AliExpress','Noon','Namshi','Shopify','Etsy','PayPal','Stripe','Revolut','Wise','Binance','Coinbase','Kraken','OpenSea','Google','Apple ID','Microsoft','Dropbox','OneDrive','Notion','Trello','Slack','Zoom','Expedia','Booking.com','Airbnb','Uber','Lyft','Careem','Deliveroo','Just Eat','Uber Eats','Duolingo','Coursera','Udemy'];
 
 const WORKSPACE_PRESETS={
-  default:{name:'Default',ic:'🏠',desc:'All modules enabled',modules:{banks:true,cards:true,investments:true,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
-  minimal:{name:'Minimal',ic:'⚡',desc:'Cards, expenses, SIMs only',modules:{banks:true,cards:true,investments:false,sims:true,assets:false,expenses:true,emails:false,gadgets:false,digital:false,import:false,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
-  finance:{name:'Finance Pro',ic:'💰',desc:'Banks, cards, investments, expenses',modules:{banks:true,cards:true,investments:true,sims:false,assets:true,expenses:true,emails:false,gadgets:false,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
-  traveler:{name:'Traveler',ic:'✈️',desc:'Cards, SIMs, documents, emails',modules:{banks:true,cards:true,investments:false,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:false,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
-  privacy:{name:'Privacy First',ic:'🔒',desc:'Essential modules only, no import/tools',modules:{banks:true,cards:true,investments:false,sims:true,assets:false,expenses:true,emails:true,gadgets:false,digital:true,import:false,timeline:false,security:true,backup:true,recovery:true,workspace:true}},
-  business:{name:'Business',ic:'🏢',desc:'Full suite for professionals',modules:{banks:true,cards:true,investments:true,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
-  family:{name:'Family',ic:'👨‍👩‍👧',desc:'Assets, subscriptions, documents',modules:{banks:true,cards:true,investments:false,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:false,import:false,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  default:{name:'Default',ic:'grid',desc:'All modules enabled',modules:{banks:true,cards:true,investments:true,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  minimal:{name:'Minimal',ic:'gauge',desc:'Cards, expenses, SIMs only',modules:{banks:true,cards:true,investments:false,sims:true,assets:false,expenses:true,emails:false,gadgets:false,digital:false,import:false,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  finance:{name:'Finance Pro',ic:'banknote',desc:'Banks, cards, investments, expenses',modules:{banks:true,cards:true,investments:true,sims:false,assets:true,expenses:true,emails:false,gadgets:false,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  traveler:{name:'Traveler',ic:'arrows',desc:'Cards, SIMs, documents, emails',modules:{banks:true,cards:true,investments:false,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:false,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  privacy:{name:'Privacy First',ic:'lock',desc:'Essential modules only, no import/tools',modules:{banks:true,cards:true,investments:false,sims:true,assets:false,expenses:true,emails:true,gadgets:false,digital:true,import:false,timeline:false,security:true,backup:true,recovery:true,workspace:true}},
+  business:{name:'Business',ic:'building-2',desc:'Full suite for professionals',modules:{banks:true,cards:true,investments:true,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:true,import:true,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
+  family:{name:'Family',ic:'users',desc:'Assets, subscriptions, documents',modules:{banks:true,cards:true,investments:false,sims:true,assets:true,expenses:true,emails:true,gadgets:true,digital:false,import:false,timeline:true,security:true,backup:true,recovery:true,workspace:true}},
 };
