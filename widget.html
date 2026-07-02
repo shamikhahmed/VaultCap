@@ -210,6 +210,7 @@ body::before{
 <body>
 <div class="cap-scroll-progress" aria-hidden="true"></div>
 <div class="wrap" id="wrap"></div>
+<script src="js/core/icons.js"></script>
 <script>
 function fmt(n, cur) {
   const abs = Math.abs(n);
@@ -283,12 +284,12 @@ function render() {
         </div>
       </div>
       <div class="empty">
-        <div class="empty-ic">🔒</div>
+        <div class="empty-ic">${VC.icon('lock', 32)}</div>
         <div class="empty-title">No data yet</div>
         <div class="empty-sub">Open VaultCap and unlock your vault to populate this widget with your financial snapshot.</div>
         <a class="open-btn" href="index.html" style="display:inline-flex;text-decoration:none">Open VaultCap →</a>
       </div>
-      <div class="install-tip">💡 Add to Home Screen for quick access — Safari → Share → Add to Home Screen</div>`;
+      <div class="install-tip">${VC.icon('sparkles', 14)} Add to Home Screen for quick access — Safari → Share → Add to Home Screen</div>`;
     return;
   }
 
@@ -321,7 +322,7 @@ function render() {
 
     <div class="hero">
       <div class="hero-label">Vault Status</div>
-      <div class="hero-nw" style="font-size:22px;-webkit-text-fill-color:var(--text)">🔒 Locked</div>
+      <div class="hero-nw" style="font-size:22px;-webkit-text-fill-color:var(--text);display:flex;align-items:center;gap:8px">${VC.icon('lock', 20)} Locked</div>
       <div class="hero-name">Open VaultCap to view net worth</div>
     </div>
 
@@ -353,7 +354,7 @@ function render() {
 
     ${expiringCount > 0 ? `
     <div class="expiring">
-      <div class="expiring-hdr">⚠ ${expiringCount} item${expiringCount === 1 ? '' : 's'} expiring soon</div>
+      <div class="expiring-hdr">${VC.icon('bell', 14)} ${expiringCount} item${expiringCount === 1 ? '' : 's'} expiring soon</div>
       <div class="exp-item"><div class="exp-name">Open vault for details</div></div>
     </div>` : ''}
 
@@ -371,7 +372,7 @@ function render() {
         : `<span>Updated ${timeAgo(snap.updatedAt || snap.updated)}</span>`}
     </div>
 
-    <div class="install-tip">💡 Add to Home Screen — Safari → Share → Add to Home Screen</div>`;
+    <div class="install-tip">${VC.icon('sparkles', 14)} Add to Home Screen — Safari → Share → Add to Home Screen</div>`;
 }
 
 render();
