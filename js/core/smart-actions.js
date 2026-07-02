@@ -3,14 +3,14 @@
 
 const SmartAdd = {
   open() {
-    Modal.open('✨ Smart Add', `
+    Modal.open('Smart Add', `
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. VaultCap detects the type and pre-fills the form — works offline, no AI needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
         <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:13px;line-height:1.6"></textarea>
       </div>
       <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: bank + balance · card + last 4 · loan to someone · subscription · SIM number</div>
-    `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">✨ Detect &amp; Pre-fill</button>`);
+    `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" id="sa-run-btn" onclick="SmartAdd.run()">Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
 
@@ -18,7 +18,7 @@ const SmartAdd = {
     const text = (document.getElementById('sa-text')?.value || '').trim();
     if (!text) { Toast.show('Describe what you want to add', 'warning'); return; }
     const btn = document.getElementById('sa-run-btn');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Detecting...'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Detecting...'; }
 
     let parsed = null;
     if (typeof LlmAssist !== 'undefined' && LlmAssist.getConfig().enabled) {
@@ -29,7 +29,7 @@ const SmartAdd = {
         || (typeof AIImport !== 'undefined' && AIImport.parse ? (() => { const items = AIImport.parse(text); return items.length ? { module: items[0].type === 'expense' ? 'expense' : items[0].type, fields: items[0].data } : null; })() : null);
     }
 
-    if (btn) { btn.disabled = false; btn.textContent = '✨ Detect & Pre-fill'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Detect & Pre-fill'; }
 
     if (parsed && parsed.module) {
       Modal.close();
@@ -123,36 +123,36 @@ const CMD = {
   recentActions: [],
   addRecent(action) { this.recentActions = [action, ...this.recentActions.filter(a => a.label !== action.label)].slice(0, 8); },
   _allCmds: [
-    {icon:'✨',label:'Smart Add',action:()=>SmartAdd.open()},
-    {icon:'🏦',label:'Add Bank',action:()=>Banks.openAdd()},
-    {icon:'💳',label:'Add Card',action:()=>Cards.openAdd()},
-    {icon:'📈',label:'Add Investment',action:()=>Inv.openAdd()},
-    {icon:'💵',label:'Add Cash',action:()=>Cash.openAdd()},
-    {icon:'🤝',label:'Add Loan',action:()=>Loans.openAdd()},
-    {icon:'📱',label:'Add SIM',action:()=>Sims.openAdd()},
-    {icon:'🏠',label:'Add Asset',action:()=>Assets.openAdd()},
-    {icon:'📋',label:'Add Expense',action:()=>Exp.openAdd()},
-    {icon:'📧',label:'Add Email',action:()=>Emails.openAdd()},
-    {icon:'💻',label:'Add Device',action:()=>Assets.openAdd('electronics')},
-    {icon:'💼',label:'Add Login',action:()=>Digital.openAdd()},
-    {icon:'🪪',label:'Add Document',action:()=>DocsModule.openAdd()},
-    {icon:'📊',label:'Dashboard',action:()=>R.goto('dashboard')},
-    {icon:'⚙️',label:'Settings',action:()=>R.goto('settings')},
-    {icon:'🔒',label:'Lock Vault',action:()=>R.lock()},
-    {icon:'🚨',label:'Panic Lock',action:()=>PanicLock.trigger()},
-    {icon:'🎨',label:'Dark mode',action:()=>ThemeEngine.apply('dark')},
-    {icon:'🎨',label:'Light mode',action:()=>ThemeEngine.apply('light')},
-    {icon:'🎨',label:'System appearance',action:()=>ThemeEngine.apply('auto')},
-    {icon:'🎨',label:'Appearance',action:()=>ThemeEngine.openPicker()},
-    {icon:'📤',label:'Export Vault',action:()=>ExIm.export('vault')},
-    {icon:'📸',label:'Net Worth Snapshot',action:()=>Dash.snap()},
-    {icon:'🙈',label:'Privacy Mode',action:()=>togglePrivacy()},
-    {icon:'🗑️',label:'Trash',action:()=>R.goto('trash')},
-    {icon:'💾',label:'Backup',action:()=>R.goto('backup')},
-    {icon:'🔔',label:'Reminders',action:()=>R.goto('reminders')},
-    {icon:'🛡️',label:'Security',action:()=>R.goto('security')},
-    {icon:'📅',label:'Timeline',action:()=>R.goto('timeline')},
-    {icon:'📥',label:'Import',action:()=>R.goto('import')},
+    {ic:'sparkles',label:'Smart Add',action:()=>SmartAdd.open()},
+    {ic:'bank',label:'Add Bank',action:()=>Banks.openAdd()},
+    {ic:'card',label:'Add Card',action:()=>Cards.openAdd()},
+    {ic:'trending-up',label:'Add Investment',action:()=>Inv.openAdd()},
+    {ic:'banknote',label:'Add Cash',action:()=>Cash.openAdd()},
+    {ic:'handshake',label:'Add Loan',action:()=>Loans.openAdd()},
+    {ic:'smartphone',label:'Add SIM',action:()=>Sims.openAdd()},
+    {ic:'building',label:'Add Asset',action:()=>Assets.openAdd()},
+    {ic:'repeat',label:'Add Expense',action:()=>Exp.openAdd()},
+    {ic:'mail',label:'Add Email',action:()=>Emails.openAdd()},
+    {ic:'laptop',label:'Add Device',action:()=>Assets.openAdd('electronics')},
+    {ic:'briefcase',label:'Add Login',action:()=>Digital.openAdd()},
+    {ic:'id-card',label:'Add Document',action:()=>DocsModule.openAdd()},
+    {ic:'chart',label:'Dashboard',action:()=>R.goto('dashboard')},
+    {ic:'settings',label:'Settings',action:()=>R.goto('settings')},
+    {ic:'lock',label:'Lock Vault',action:()=>R.lock()},
+    {ic:'cross',label:'Panic Lock',action:()=>PanicLock.trigger()},
+    {ic:'sun',label:'Dark mode',action:()=>ThemeEngine.apply('dark')},
+    {ic:'sun',label:'Light mode',action:()=>ThemeEngine.apply('light')},
+    {ic:'sun',label:'System appearance',action:()=>ThemeEngine.apply('auto')},
+    {ic:'sun',label:'Appearance',action:()=>ThemeEngine.openPicker()},
+    {ic:'share',label:'Export Vault',action:()=>ExIm.export('vault')},
+    {ic:'chart',label:'Net Worth Snapshot',action:()=>Dash.snap()},
+    {ic:'eye-off',label:'Privacy Mode',action:()=>togglePrivacy()},
+    {ic:'trash',label:'Trash',action:()=>R.goto('trash')},
+    {ic:'share',label:'Backup',action:()=>R.goto('backup')},
+    {ic:'bell',label:'Reminders',action:()=>R.goto('reminders')},
+    {ic:'shield',label:'Security',action:()=>R.goto('security')},
+    {ic:'calendar',label:'Timeline',action:()=>R.goto('timeline')},
+    {ic:'download',label:'Import',action:()=>R.goto('import')},
   ],
   search(q) {
     const ql = q.toLowerCase(); cmdRes = [];
@@ -169,10 +169,10 @@ const CMD = {
         ].forEach(a => cmdRes.push(a));
       }
       [
-        { cat:'Navigate', items:[['📊','Dashboard',()=>R.goto('dashboard')],['🔔','Reminders',()=>R.goto('reminders')],['📅','Timeline',()=>R.goto('timeline')],['🛡️','Security',()=>R.goto('security')],['💾','Backup',()=>R.goto('backup')],['⚙️','Settings',()=>R.goto('settings')],['📥','Import',()=>R.goto('import')]] },
-        { cat:'Add Entry', items:[['🏦','Add Bank',()=>Banks.openAdd()],['💳','Add Card',()=>Cards.openAdd()],['📈','Add Investment',()=>Inv.openAdd()],['📱','Add SIM',()=>Sims.openAdd()],['🏠','Add Asset',()=>Assets.openAdd()],['📋','Add Expense',()=>Exp.openAdd()],['📧','Add Email',()=>Emails.openAdd()],['💻','Add Device',()=>Assets.openAdd('electronics')],['💼','Add Login',()=>Digital.openAdd()]] },
-        { cat:'Vault Actions', items:[['🎨','Appearance',()=>ThemeEngine.openPicker()],['📤','Export Encrypted Vault',()=>ExIm.export('vault')],['📸','Net Worth Snapshot',()=>Dash.snap()],['👝','Edit Wallet',()=>Dash.editWallet()],['🙈','Toggle Privacy Mode',()=>togglePrivacy()],['🔒','Lock Vault',()=>R.lock()],['🚨','Panic Lock',()=>PanicLock.trigger()]] },
-      ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ icon:i, label:l, action:a, cat })));
+        { cat:'Navigate', items:[['chart','Dashboard',()=>R.goto('dashboard')],['bell','Reminders',()=>R.goto('reminders')],['calendar','Timeline',()=>R.goto('timeline')],['shield','Security',()=>R.goto('security')],['share','Backup',()=>R.goto('backup')],['settings','Settings',()=>R.goto('settings')],['download','Import',()=>R.goto('import')]] },
+        { cat:'Add Entry', items:[['bank','Add Bank',()=>Banks.openAdd()],['card','Add Card',()=>Cards.openAdd()],['trending-up','Add Investment',()=>Inv.openAdd()],['smartphone','Add SIM',()=>Sims.openAdd()],['building','Add Asset',()=>Assets.openAdd()],['repeat','Add Expense',()=>Exp.openAdd()],['mail','Add Email',()=>Emails.openAdd()],['laptop','Add Device',()=>Assets.openAdd('electronics')],['briefcase','Add Login',()=>Digital.openAdd()]] },
+        { cat:'Vault Actions', items:[['sun','Appearance',()=>ThemeEngine.openPicker()],['share','Export Encrypted Vault',()=>ExIm.export('vault')],['chart','Net Worth Snapshot',()=>Dash.snap()],['wallet','Edit Wallet',()=>Dash.editWallet()],['eye-off','Toggle Privacy Mode',()=>togglePrivacy()],['lock','Lock Vault',()=>R.lock()],['cross','Panic Lock',()=>PanicLock.trigger()]] },
+      ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ ic:i, label:l, action:a, cat })));
     } else {
       const fm = this.fuzzyMatch.bind(this);
       const score = (name, q) => {
@@ -185,26 +185,26 @@ const CMD = {
       const weighted = [];
       this._allCmds.filter(c => fm(c.label, ql)).slice(0, 5).forEach(c => weighted.push({...c, cat:'Actions', _score:score(c.label,ql)+5}));
       (S.banks||[]).filter(b => fm(b.bankName || '', ql) || fm(b.notes || '', ql) || (b.tags||[]).some(t=>fm(t,ql))).forEach(b => {
-        const s = score(b.bankName,ql) + (fm(b.notes||'',ql)?1:0); weighted.push({ icon:'🏦', label:escHtml(b.bankName), subtitle:escHtml(b.currency+(b.last4?' · ****'+b.last4:'')), badge:'Bank', cat:'Banks', action:()=>Banks.detail(b.id), _score:s });
+        const s = score(b.bankName,ql) + (fm(b.notes||'',ql)?1:0); weighted.push({ ic:'bank', label:escHtml(b.bankName), subtitle:escHtml(b.currency+(b.last4?' · ****'+b.last4:'')), badge:'Bank', cat:'Banks', action:()=>Banks.detail(b.id), _score:s });
       });
       (S.cards||[]).filter(cv => fm(cv.cardName || '', ql) || fm(cv.last4 || '', ql) || (cv.tags||[]).some(t=>fm(t,ql))).forEach(cv => {
         const linkedBank = cv.linkedBankId ? (S.banks||[]).find(b=>b.id===cv.linkedBankId)?.bankName : cv.linkedBank;
-        const s = score(cv.cardName,ql) + (fm(cv.last4||'',ql)?2:0); weighted.push({ icon:'💳', label:escHtml(cv.cardName+(cv.last4?' ****'+cv.last4:'')), subtitle:escHtml(linkedBank?'Linked to: '+linkedBank:(cv.network||'')), badge:'Card', cat:'Cards', action:()=>Cards.openDetail(cv.id), _score:s });
+        const s = score(cv.cardName,ql) + (fm(cv.last4||'',ql)?2:0); weighted.push({ ic:'card', label:escHtml(cv.cardName+(cv.last4?' ****'+cv.last4:'')), subtitle:escHtml(linkedBank?'Linked to: '+linkedBank:(cv.network||'')), badge:'Card', cat:'Cards', action:()=>Cards.openDetail(cv.id), _score:s });
       });
-      (S.investments||[]).filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).forEach(i => weighted.push({ icon:'📈', label:i.investmentName||i.broker, subtitle:i.broker||'', badge:'Investment', cat:'Investments', action:()=>Inv.edit(i.id), _score:score(i.investmentName||i.broker,ql) }));
-      (S.loans||[]).filter(l => fm(l.person||'',ql) || fm(l.description||'',ql)).forEach(l => weighted.push({ icon:'🤝', label:l.person||'Loan', subtitle:(l.type==='lent'?'Lent':'Borrowed')+' · '+(l.currency||'')+(l.amount?' '+l.amount:''), badge:'Loan', cat:'Loans', action:()=>Loans.openAdd(), _score:score(l.person||'',ql) }));
-      (S.documents||[]).filter(d => fm(d.title||d.type||'',ql) || fm(d.docNumber||'',ql)).forEach(d => weighted.push({ icon:'🪪', label:d.title||d.type||'Document', subtitle:d.docNumber?'#'+d.docNumber:'', badge:'Doc', cat:'Documents', action:()=>DocsModule.render(), _score:score(d.title||d.type||'',ql) }));
-      (S.emails||[]).filter(e => fm(e.email, ql) || fm(e.provider || '', ql)).slice(0, 3).forEach(e => weighted.push({ icon:'📧', label:e.email, subtitle:e.provider||'', badge:'Email', cat:'Emails', action:()=>Emails.detail(e.id), _score:score(e.email,ql) }));
-      (S.gadgets||[]).filter(g => fm(g.name, ql) || fm(g.brand || '', ql) || fm(g.serialNum || '', ql)).slice(0, 3).forEach(g => weighted.push({ icon:g.ic || '💻', label:g.name+(g.storage?' · '+g.storage:''), subtitle:g.brand||'', badge:'Device', cat:'Devices', action:()=>Gadgets.detail(g.id), _score:score(g.name,ql) }));
-      (S.digital||[]).filter(d => fm(d.serviceName, ql) || fm(d.username || '', ql)).slice(0, 3).forEach(d => weighted.push({ icon:'💼', label:d.serviceName+(d.username?' · @'+d.username:''), subtitle:'', badge:'Login', cat:'Logins', action:()=>Digital.detail(d.id), _score:score(d.serviceName,ql) }));
-      (S.expenses||[]).filter(e => fm(e.name, ql)).slice(0, 3).forEach(e => weighted.push({ icon:e.icon || '📋', label:e.name, subtitle:e.currency+' '+e.amount+'/mo', badge:'Expense', cat:'Expenses', action:()=>Exp.edit(e.id), _score:score(e.name,ql) }));
-      (S.assets||[]).filter(a => fm(a.name, ql) || fm(a.assetType || '', ql)).slice(0, 3).forEach(a => weighted.push({ icon:'🏠', label:a.name, subtitle:a.assetType||'', badge:'Asset', cat:'Assets', action:()=>Assets.edit(a.id), _score:score(a.name,ql) }));
-      (S.sims||[]).filter(s => fm(s.network, ql) || fm(s.phone || '', ql)).slice(0, 3).forEach(s => weighted.push({ icon:'📱', label:s.network+' '+U.flag(s.country), subtitle:s.phone||'', badge:'SIM', cat:'SIMs', action:()=>Sims.detail(s.id), _score:score(s.network,ql) }));
-      (S.cash||[]).filter(c => fm(c.currency||'',ql) || fm(c.note||'',ql)).slice(0,3).forEach(c => weighted.push({ icon:'💵', label:c.currency+(c.amount?' · '+c.amount:''), subtitle:c.note||'', badge:'Cash', cat:'Cash', action:()=>Cash.openAdd(), _score:score(c.currency||'',ql) }));
-      (S.friends||[]).filter(f => fm(f.name||'',ql) || fm(f.phone||'',ql)).slice(0,3).forEach(f => weighted.push({ icon:'👤', label:f.name, subtitle:f.phone||'', badge:'Contact', cat:'Contacts', action:()=>Friends.render(), _score:score(f.name||'',ql) }));
+      (S.investments||[]).filter(i => fm(i.investmentName || '', ql) || fm(i.broker || '', ql)).forEach(i => weighted.push({ ic:'trending-up', label:i.investmentName||i.broker, subtitle:i.broker||'', badge:'Investment', cat:'Investments', action:()=>Inv.edit(i.id), _score:score(i.investmentName||i.broker,ql) }));
+      (S.loans||[]).filter(l => fm(l.person||'',ql) || fm(l.description||'',ql)).forEach(l => weighted.push({ ic:'handshake', label:l.person||'Loan', subtitle:(l.type==='lent'?'Lent':'Borrowed')+' · '+(l.currency||'')+(l.amount?' '+l.amount:''), badge:'Loan', cat:'Loans', action:()=>Loans.openAdd(), _score:score(l.person||'',ql) }));
+      (S.documents||[]).filter(d => fm(d.title||d.type||'',ql) || fm(d.docNumber||'',ql)).forEach(d => weighted.push({ ic:'id-card', label:d.title||d.type||'Document', subtitle:d.docNumber?'#'+d.docNumber:'', badge:'Doc', cat:'Documents', action:()=>DocsModule.render(), _score:score(d.title||d.type||'',ql) }));
+      (S.emails||[]).filter(e => fm(e.email, ql) || fm(e.provider || '', ql)).slice(0, 3).forEach(e => weighted.push({ ic:'mail', label:e.email, subtitle:e.provider||'', badge:'Email', cat:'Emails', action:()=>Emails.detail(e.id), _score:score(e.email,ql) }));
+      (S.gadgets||[]).filter(g => fm(g.name, ql) || fm(g.brand || '', ql) || fm(g.serialNum || '', ql)).slice(0, 3).forEach(g => weighted.push({ ic:g.ic || 'laptop', label:g.name+(g.storage?' · '+g.storage:''), subtitle:g.brand||'', badge:'Device', cat:'Devices', action:()=>Gadgets.detail(g.id), _score:score(g.name,ql) }));
+      (S.digital||[]).filter(d => fm(d.serviceName, ql) || fm(d.username || '', ql)).slice(0, 3).forEach(d => weighted.push({ ic:'briefcase', label:d.serviceName+(d.username?' · @'+d.username:''), subtitle:'', badge:'Login', cat:'Logins', action:()=>Digital.detail(d.id), _score:score(d.serviceName,ql) }));
+      (S.expenses||[]).filter(e => fm(e.name, ql)).slice(0, 3).forEach(e => weighted.push({ ic:e.icon || 'repeat', label:e.name, subtitle:e.currency+' '+e.amount+'/mo', badge:'Expense', cat:'Expenses', action:()=>Exp.edit(e.id), _score:score(e.name,ql) }));
+      (S.assets||[]).filter(a => fm(a.name, ql) || fm(a.assetType || '', ql)).slice(0, 3).forEach(a => weighted.push({ ic:'building', label:a.name, subtitle:a.assetType||'', badge:'Asset', cat:'Assets', action:()=>Assets.edit(a.id), _score:score(a.name,ql) }));
+      (S.sims||[]).filter(s => fm(s.network, ql) || fm(s.phone || '', ql)).slice(0, 3).forEach(s => weighted.push({ ic:'smartphone', label:s.network+' '+U.flag(s.country), subtitle:s.phone||'', badge:'SIM', cat:'SIMs', action:()=>Sims.detail(s.id), _score:score(s.network,ql) }));
+      (S.cash||[]).filter(c => fm(c.currency||'',ql) || fm(c.note||'',ql)).slice(0,3).forEach(c => weighted.push({ ic:'banknote', label:c.currency+(c.amount?' · '+c.amount:''), subtitle:c.note||'', badge:'Cash', cat:'Cash', action:()=>Cash.openAdd(), _score:score(c.currency||'',ql) }));
+      (S.friends||[]).filter(f => fm(f.name||'',ql) || fm(f.phone||'',ql)).slice(0,3).forEach(f => weighted.push({ ic:'user', label:f.name, subtitle:f.phone||'', badge:'Contact', cat:'Contacts', action:()=>Friends.render(), _score:score(f.name||'',ql) }));
       weighted.sort((a,b) => (b._score||0)-(a._score||0));
       weighted.forEach(r => cmdRes.push(r));
-      if (!cmdRes.length) cmdRes.push({ icon:'🔍', label:`No results for "${q}"`, cat:'', action:null });
+      if (!cmdRes.length) cmdRes.push({ ic:'search', label:`No results for "${q}"`, cat:'', action:null });
     }
     cmdIdx = -1;
     const hl = (text, q) => {
@@ -214,6 +214,11 @@ const CMD = {
       return text.slice(0, idx) + `<mark style="background:rgba(10,132,255,.25);color:var(--accent);border-radius:2px;padding:0 1px">${text.slice(idx, idx + q.length)}</mark>` + text.slice(idx + q.length);
     };
     let html = '', lastCat = null;
+    const cmdIc = (r) => {
+      if (typeof VC === 'undefined') return r.icon || '';
+      if (r.ic) return VC.icon(r.ic, 16);
+      return VC.cmdIcon(r.icon, 16);
+    };
     cmdRes.forEach((r, i) => {
       if (r.cat !== lastCat) {
         if (r.cat) html += `<div class="ci-cat">${r.cat}</div>`;
@@ -221,11 +226,11 @@ const CMD = {
       }
       const labelHtml = q ? hl(r.label, q) : r.label;
       if (!r.action) {
-        html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${r.icon}</span><span>${labelHtml}</span></div>`;
+        html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${cmdIc(r)}</span><span>${labelHtml}</span></div>`;
       } else {
         const badgeHtml = r.badge ? `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(123,95,255,.15);color:rgba(150,120,255,1);border:1px solid rgba(123,95,255,.2);margin-left:auto;flex-shrink:0">${r.badge}</span>` : '';
         const subHtml = r.subtitle ? `<div style="font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.subtitle}</div>` : '';
-        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${r.icon}</span><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
+        html += `<div class="ci" id="ci${i}" onclick="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${cmdIc(r)}</span><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
       }
     });
     document.getElementById('cmdList').innerHTML = html;

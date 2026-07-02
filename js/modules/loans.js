@@ -132,7 +132,7 @@ const Loans = {
         </div>`;
 
       if (liveAll.length === 0 && settled.length === 0) {
-        html += `<div class="empty-ios"><div class="ei-ic">💳</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track mortgages, personal loans, car finance — repayment schedules and interest calculations</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
+        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track mortgages, personal loans, car finance — repayment schedules and interest calculations</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
@@ -218,7 +218,7 @@ const Loans = {
 
   edit(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
-    Modal.open('✏️ Edit Loan', this.form(l), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Loans.save('${id}')">Update</button>`);
+    Modal.open('Edit Loan', this.form(l), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Loans.save('${id}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = l.currency || S.user.currency || 'PKR';

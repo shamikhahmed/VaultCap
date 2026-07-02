@@ -23,22 +23,22 @@ const Cash = {
       } else { sm.innerHTML = ''; }
     }
     if (!data.length) {
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">💵</div><div class="ei-title">No cash tracked</div><div class="ei-sub">Track physical cash in your wallet, home safe, office and more — multi-currency</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button type="button" class="btn btn-p" onclick="Cash.openAdd()">+ Add Cash</button></div></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${VC.icon('banknote',32)}</div><div class="ei-title">No cash tracked</div><div class="ei-sub">Track physical cash in your wallet, home safe, office and more — multi-currency</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button type="button" class="btn btn-p" onclick="Cash.openAdd()">+ Add Cash</button></div></div>`;
       return;
     }
-    const locIc = { Wallet:'👛', Home:'🏠', Office:'🏢', Car:'🚗', Other:'📦' };
+    const locIc = { Wallet:'wallet', Home:'building', Office:'building-2', Car:'car', Other:'package' };
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${locIc[c.location] || '💵'}</div><div class="entry-body"><div class="entry-name">${escHtml(c.location || 'Cash')}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}</div></div><div class="entry-acts">${U.icb('arrow-right',{onclick:`Cash.transfer('${c.id}')`,title:'Transfer'})}${U.actsEditDel('Cash', c.id)}</div></div></div>`).join('');
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.icon(locIc[c.location] || 'banknote', 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(c.location || 'Cash')}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}</div></div><div class="entry-acts">${U.icb('arrow-right',{onclick:`Cash.transfer('${c.id}')`,title:'Transfer'})}${U.actsEditDel('Cash', c.id)}</div></div></div>`).join('');
   },
   _pendingOwnerId: null,
   openAdd(prefill={}) {
     Cash._pendingOwnerId = prefill.ownerId || null;
-    const title = (prefill.ownerName||prefill._ownerName) ? `💵 Add Cash — ${escHtml(prefill.ownerName||prefill._ownerName)}` : '💵 Add Cash';
+    const title = (prefill.ownerName||prefill._ownerName) ? `Add Cash — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Cash';
     Modal.open(title, this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash.save()">Save</button>`);
     setTimeout(() => { const el = document.getElementById('cf-amt'); if (el) U.numInput(el, S.user.currency || 'PKR'); }, 60);
   },
   form(c = {}) {
-    return `<div class="fg"><label class="fl">Location *</label><select class="inp" id="cf-loc"><option value="Wallet">👛 Wallet</option><option value="Home">🏠 Home</option><option value="Office">🏢 Office</option><option value="Car">🚗 Car</option><option value="Other">📦 Other</option></select></div>
+    return `<div class="fg"><label class="fl">Location *</label><select class="inp" id="cf-loc"><option value="Wallet">Wallet</option><option value="Home">Home</option><option value="Office">Office</option><option value="Car">Car</option><option value="Other">Other</option></select></div>
     <div class="fr"><div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="cf-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(c.amount || '')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="cf-cur">${U.currencies()}</select></div></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="cf-notes" rows="2">${escAttr(c.notes || '')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(c.tags||[])}</div>`;
@@ -62,7 +62,7 @@ const Cash = {
   },
   edit(id) {
     const c = (S.cash || []).find(x => x.id === id); if (!c) return;
-    Modal.open('✏️ Edit Cash', this.form(c), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cash.save('${id}')">Update</button>`);
+    Modal.open('Edit Cash', this.form(c), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cash.save('${id}')">Update</button>`);
     setTimeout(() => {
       const loc = document.getElementById('cf-loc'); if (loc) loc.value = c.location || 'Wallet';
       const cur = document.getElementById('cf-cur'); if (cur) cur.value = c.currency || 'PKR';

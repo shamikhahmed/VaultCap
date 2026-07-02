@@ -48,7 +48,7 @@ const Onboarding = {
 
     if (this._step === 0) {
       content = `
-        <div style="font-size:40px;margin-bottom:16px">🔐</div>
+        <div style="font-size:40px;margin-bottom:16px">${typeof VC!=='undefined'?VC.icon('vault',40):''}</div>
         <div style="font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultCap</div>
         <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;margin-bottom:32px">Your private financial vault. Takes 30 seconds to personalise.</div>
         <button type="button" onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:320px;padding:16px;font-size:15px;font-weight:700">Get Started →</button>
@@ -93,16 +93,16 @@ const Onboarding = {
         <button type="button" onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
     } else if (this._step === 3) {
       const moduleOptions = [
-        { key:'banking',     icon:'🏦', label:'Banking & Cards',    desc:'Banks, cards, cash, credit' },
-        { key:'documents',   icon:'🪪', label:'Documents & ID',     desc:'Passport, licence, visas' },
-        { key:'family',      icon:'👨‍👩‍👧‍👦', label:'Family Vault',       desc:'Finance for family members' },
-        { key:'investments', icon:'📈', label:'Investments',         desc:'Stocks, funds, crypto, bonds' },
-        { key:'vehicles',    icon:'🚗', label:'Vehicles & Assets',   desc:'Cars, property, gadgets' },
-        { key:'expenses',    icon:'💸', label:'Expenses',            desc:'Daily spending tracker' },
-        { key:'zakat',       icon:'🌙', label:'Zakat',               desc:'Islamic wealth calculator' },
-        { key:'tax',         icon:'🧾', label:'Tax Calculator',      desc:'PK, UK, UAE tax tools' },
-        { key:'currency',    icon:'💱', label:'Currency & Metals',   desc:'Exchange rates, gold, silver' },
-        { key:'loans',       icon:'🤝', label:'Loans & Debts',       desc:'Money lent or borrowed' },
+        { key:'banking',     icon:'bank', label:'Banking & Cards',    desc:'Banks, cards, cash, credit' },
+        { key:'documents',   icon:'id-card', label:'Documents & ID',     desc:'Passport, licence, visas' },
+        { key:'family',      icon:'users', label:'Family Vault',       desc:'Finance for family members' },
+        { key:'investments', icon:'trending-up', label:'Investments',         desc:'Stocks, funds, crypto, bonds' },
+        { key:'vehicles',    icon:'car', label:'Vehicles & Assets',   desc:'Cars, property, gadgets' },
+        { key:'expenses',    icon:'arrow-right', label:'Expenses',            desc:'Daily spending tracker' },
+        { key:'zakat',       icon:'moon', label:'Zakat',               desc:'Islamic wealth calculator' },
+        { key:'tax',         icon:'receipt', label:'Tax Calculator',      desc:'PK, UK, UAE tax tools' },
+        { key:'currency',    icon:'arrows', label:'Currency & Metals',   desc:'Exchange rates, gold, silver' },
+        { key:'loans',       icon:'handshake', label:'Loans & Debts',       desc:'Money lent or borrowed' },
       ];
       content = `
         <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you want to manage?</div>
@@ -112,7 +112,7 @@ const Onboarding = {
             <div onclick="Onboarding._modules['${m.key}']=!Onboarding._modules['${m.key}'];this.style.borderColor=Onboarding._modules['${m.key}']?'var(--accent)':'var(--border)';this.querySelector('.mod-check').style.background=Onboarding._modules['${m.key}']?'var(--accent)':'transparent';this.querySelector('.mod-check').textContent=Onboarding._modules['${m.key}']?'✓':''"
               style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
               <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:20px">${m.icon}</span>
+                <span style="display:flex;align-items:center">${VC.icon(m.icon,18)}</span>
                 <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}">${this._modules[m.key]?'✓':''}</div>
               </div>
               <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
@@ -123,10 +123,10 @@ const Onboarding = {
         <button type="button" onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
     } else if (this._step === 4) {
       const prefs = [
-        { key: 'zakat',       icon: '🌙', label: 'Zakat Calculator', desc: 'Islamic annual wealth obligation' },
-        { key: 'family',      icon: '👨‍👩‍👧‍👦', label: 'Family Vault',    desc: 'Manage finances for your family' },
-        { key: 'business',    icon: '🏢', label: 'Business Accounts', desc: 'Separate business finances' },
-        { key: 'investments', icon: '📈', label: 'Investments',       desc: 'Track stocks, funds, crypto' },
+        { key: 'zakat',       icon: 'moon', label: 'Zakat Calculator', desc: 'Islamic annual wealth obligation' },
+        { key: 'family',      icon: 'users', label: 'Family Vault',    desc: 'Manage finances for your family' },
+        { key: 'business',    icon: 'building-2', label: 'Business Accounts', desc: 'Separate business finances' },
+        { key: 'investments', icon: 'trending-up', label: 'Investments',       desc: 'Track stocks, funds, crypto' },
       ];
       content = `
         <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you use?</div>
@@ -135,7 +135,7 @@ const Onboarding = {
           ${prefs.map(p => `
             <div onclick="Onboarding._prefs['${p.key}']=!Onboarding._prefs['${p.key}'];this.style.borderColor=Onboarding._prefs['${p.key}']?'var(--accent)':'var(--border)';this.querySelector('.pref-check').textContent=Onboarding._prefs['${p.key}']?'✓':''"
               style="padding:14px 16px;border-radius:14px;background:var(--glass);border:2px solid ${this._prefs[p.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
-              <span style="font-size:22px">${p.icon}</span>
+              <span style="display:flex;align-items:center">${VC.icon(p.icon,20)}</span>
               <div style="flex:1">
                 <div style="font-size:14px;font-weight:600;color:var(--text)">${p.label}</div>
                 <div style="font-size:12px;color:var(--text3)">${p.desc}</div>
@@ -154,21 +154,21 @@ const Onboarding = {
         <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:300px;margin-bottom:28px">Everything's set up. Here's what you can do right now:</div>
         <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
           <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="font-size:20px;flex-shrink:0">🏦</span>
+            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('bank',18)}</span>
             <div>
               <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Add your accounts</div>
               <div style="font-size:12px;color:var(--text3);line-height:1.5">Track banks, cards, cash, and investments in one place</div>
             </div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="font-size:20px;flex-shrink:0">📊</span>
+            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('chart',18)}</span>
             <div>
               <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">See your net worth</div>
               <div style="font-size:12px;color:var(--text3);line-height:1.5">Your dashboard shows a live total across all assets</div>
             </div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="font-size:20px;flex-shrink:0">🔒</span>
+            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('lock',18)}</span>
             <div>
               <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Stay private &amp; secure</div>
               <div style="font-size:12px;color:var(--text3);line-height:1.5">PIN lock, privacy blur, and offline-first — your data never leaves your device</div>

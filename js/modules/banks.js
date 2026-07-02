@@ -119,9 +119,9 @@ const Banks={
     const sort=document.getElementById('bSort')?.value||'name';
     const f=S.bF;
     // Chips
-    const chips=[['all','All'],['commercial','🏛️ Commercial'],['islamic','🕌 Islamic'],['digital','📱 Digital'],['international','🌐 International'],['microfinance','🏪 MFB'],['fav','⭐ Fav']];
+    const chips=[['all','All','list'],['commercial','Commercial','bank'],['islamic','Islamic','moon'],['digital','Digital','smartphone'],['international','International','arrows'],['microfinance','MFB','bank'],['fav','Fav','star']];
     const ci=document.getElementById('bChips');
-    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.bF='${v}';Banks.render()">${l}</div>`).join('');ci.dataset.built='1';}
+    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l,ic])=>`<div class="chip${v===f?' on':''}" onclick="S.bF='${v}';Banks.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');ci.dataset.built='1';}
     else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('on',chips[i][0]===f));
     const archivedCount=(S.banks||[]).filter(b=>b.archived).length;
     let data=S.banks.filter(b=>{
@@ -147,10 +147,10 @@ const Banks={
     initLongPress(el, id => {
       const b = S.banks.find(x => x.id === id); if (!b) return [];
       return [
-        {label:'Edit', icon:'✏️', action: () => Banks.edit(id)},
-        {label:'Copy IBAN', icon:'📋', action: () => b.iban && U.copy(b.iban)},
-        {label:'View Details', icon:'👁️', action: () => Banks.detail(id)},
-        {label:'Delete', icon:'🗑️', destructive: true, action: () => Banks.del(id)},
+        {label:'Edit', ic:'pencil', action: () => Banks.edit(id)},
+        {label:'Copy IBAN', ic:'copy', action: () => b.iban && U.copy(b.iban)},
+        {label:'View Details', ic:'eye', action: () => Banks.detail(id)},
+        {label:'Delete', ic:'trash', destructive: true, action: () => Banks.del(id)},
       ];
     });
   },
@@ -159,7 +159,7 @@ const Banks={
     const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:10px;background:rgba(123,95,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
     return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span style="font-size:9px;color:var(--warn)">🏢</span>':''}${b.jointAccount&&b.jointWith?' <span style="font-size:10px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.3);border-radius:4px;padding:1px 5px">👥 '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':'')})}${U.icb('eye',{onclick:`Banks.detail('${b.id}')`,ariaLabel:'View details'})}${U.icb('pencil',{onclick:`Banks.edit('${b.id}')`,ariaLabel:'Edit'})}${U.icb('archive',{onclick:`Banks.archive('${b.id}')`,title:b.archived?'Unarchive':'Archive'})}${U.icb('trash',{onclick:`Banks.del('${b.id}')`,ariaLabel:'Delete',class:'del'})}</div></div></div>`;
   },
-  emptyState(){return `<div class="empty-ios"><div class="ei-ic">🏦</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button type="button" class="btn btn-g" onclick="Settings.loadDemo()">🎮 Try Demo</button></div></div>`;},
+  emptyState(){return `<div class="empty-ios"><div class="ei-ic">${VC.icon('bank',32)}</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Banks.openAdd()">+ Add Bank</button><button type="button" class="btn btn-g" onclick="Settings.loadDemo()">Try Demo</button></div></div>`;},
   _showExample(){Modal.open('🏦 Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏦</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
   _pendingOwnerId: null,
   openAdd(prefill={}){
@@ -167,7 +167,7 @@ const Banks={
     Banks._openWithCountry(S.user.country||'PK', prefill.ownerName||prefill._ownerName||null);
   },
   _openWithCountry(cc, ownerName=null){
-    const title = ownerName ? `🏦 Add Bank — ${escHtml(ownerName)}` : '🏦 Add Bank';
+    const title = ownerName ? `Add Bank — ${escHtml(ownerName)}` : 'Add Bank';
     Modal.open(title,this.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Banks.save()">Save</button>`);
     this.bindCC();
     if(cc){setTimeout(()=>{const el=document.getElementById('bf-cc');if(el){el.value=cc;Banks._onCountryChange(cc);}},80);}
@@ -286,7 +286,7 @@ const Banks={
     if(typeof Haptic!=='undefined')Haptic.save();
     if(!editId){promptAddAnother('Bank','Banks.openAdd');setTimeout(()=>Toast.show(`Added ${name} — <button type="button" class="cpbtn" onclick="Cards.openAdd()">Add a card for this bank?</button>`,'info',6000),800);}
   },
-  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('✏️ Edit Bank',this.form(b),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
+  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('Edit Bank',this.form(b),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
   detail(id){
     const b=S.banks.find(x=>x.id===id);if(!b)return;
     const linkedCards=(typeof VaultRelations!=='undefined')?VaultRelations.cardsForBank(b.id):[];
@@ -295,7 +295,7 @@ const Banks={
     const relatedDocs=(S.documents||[]).filter(d=>(d.tags||[]).some(t=>(t||'').toLowerCase().includes(bName)||(bName.length>2&&bName.includes((t||'').toLowerCase())))||(d.notes||'').toLowerCase().includes(bName));
     const relatedDocsHtml=relatedDocs.length?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Related Documents (${relatedDocs.length})</div>${relatedDocs.map(d=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:16px">📄</span><div><div style="font-size:13px;font-weight:600;color:var(--text)">${d.name||d.docName||'Document'}</div><div style="font-size:11px;color:var(--text3)">${d.docType||''} ${d.expiryDate?'· Exp '+d.expiryDate:''}</div></div></div>`).join('')}</div>`:'';
     const auditHtml=typeof Audit!=='undefined'?Audit.render(b):'';
-    Modal.open(`🏦 ${b.bankName}`,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}${linkedCardsHtml}${relatedDocsHtml}${auditHtml}</div>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Banks.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(b.bankName,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}${linkedCardsHtml}${relatedDocsHtml}${auditHtml}</div>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Banks.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
   archive(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.archived=!b.archived;b.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(b.archived?'Archived':'Unarchived','info');},

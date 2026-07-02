@@ -49,7 +49,7 @@ const Friends = {
   },
   edit(id) {
     const f = (S.friends || []).find(x => x.id === id); if (!f) return;
-    Modal.open('✏️ Edit Friend', this.form(f), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Friends.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Friends.save('${id}')">Update</button>`);
+    Modal.open('Edit Friend', this.form(f), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Friends.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Friends.save('${id}')">Update</button>`);
   },
   del(id, fm = false) {
     if (!window.__vos_confirm('Move to Trash?')) return;

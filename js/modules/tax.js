@@ -280,7 +280,7 @@ const Tax = {
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
         📋 ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs ✏️</button>` : ''}
+        ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
         ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">⚠️ ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
@@ -784,7 +784,7 @@ const Tax = {
       <input data-f="rate" type="number" class="inp" value="${escAttr((s.rate * 100).toFixed(2))}" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
       <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>
     </div>`;
-  Modal.open('✏️ Edit Tax Slabs',
+  Modal.open('Edit Tax Slabs',
       `<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
       <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">
         <span>Label</span><span>From</span><span>To</span><span>Rate</span><span></span>

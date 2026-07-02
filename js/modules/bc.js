@@ -53,7 +53,7 @@ const BCModule = {
       '<button type="button" class="btn btn-p" style="width:100%" onclick="BCModule.openAdd()">+ Join / Create a BC</button>' +
 
       (bcs.length === 0 ?
-        '<div class="empty-ios"><div class="ei-ic">🤝</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
+        '<div class="empty-ios"><div class="ei-ic">' + VC.icon('handshake', 32) + '</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
         :
         bcs.map((bc, i) => BCModule._bcCard(bc, i)).join('')
       ) +
@@ -276,7 +276,7 @@ const BCModule = {
     const received = myTurnDone ? pot : 0;
     const net = received - paid;
 
-    Modal.open('🤝 ' + bc.name,
+    Modal.open(bc.name,
       '<div style="display:flex;flex-direction:column;gap:12px">' +
 
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
@@ -298,7 +298,7 @@ const BCModule = {
       ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
 
       (bc.type === 'ballot' && bc.role === 'organiser' ?
-        '<button type="button" onclick="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">🎲 Run Ballot Draw</button>'
+        '<button type="button" onclick="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">Run Ballot Draw</button>'
         : '') +
 
       '<button type="button" onclick="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
@@ -333,16 +333,16 @@ const BCModule = {
     const currentRound = bc.currentRound || 1;
     const winnerNum = Math.floor(Math.random() * (bc.members || 1)) + 1;
 
-    Modal.open('🎲 Ballot Draw — Round ' + currentRound,
+    Modal.open('Ballot Draw — Round ' + currentRound,
       '<div style="text-align:center;padding:20px">' +
-        '<div style="font-size:48px;margin-bottom:16px" id="ballot-icon">🎲</div>' +
+        '<div style="margin-bottom:16px;display:flex;justify-content:center" id="ballot-icon">' + VC.icon('target', 48) + '</div>' +
         '<div style="font-size:16px;color:var(--text3);margin-bottom:20px">Drawing for Round ' + currentRound + '...</div>' +
         '<div id="ballot-result" style="display:none">' +
           '<div style="font-size:13px;color:var(--text3);margin-bottom:8px">This round goes to:</div>' +
           '<div style="font-size:48px;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
           '<div style="font-size:13px;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
         '</div>' +
-        '<button type="button" onclick="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">🎲 Draw!</button>' +
+        '<button type="button" onclick="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">Draw!</button>' +
       '</div>',
       '<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button>'
     );
@@ -353,15 +353,15 @@ const BCModule = {
     const icon = document.getElementById('ballot-icon');
     const result = document.getElementById('ballot-result');
     if (btn) btn.style.display = 'none';
-    if (icon) icon.textContent = '🎲';
+    if (icon) icon.innerHTML = VC.icon('target', 48);
     let count = 0;
-    const emojis = ['🎲', '🎯', '🏆', '💫', '⭐', '🌟'];
+    const icons = ['target', 'star', 'sparkles', 'gem', 'chart', 'target'];
     const interval = setInterval(function() {
-      if (icon) icon.textContent = emojis[count % emojis.length];
+      if (icon) icon.innerHTML = VC.icon(icons[count % icons.length], 48);
       count++;
       if (count > 15) {
         clearInterval(interval);
-        if (icon) icon.textContent = '🏆';
+        if (icon) icon.innerHTML = VC.icon('star', 48);
         if (result) result.style.display = 'block';
       }
     }, 120);
