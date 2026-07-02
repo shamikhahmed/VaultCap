@@ -89,14 +89,14 @@ const DataIntegrity = {
     const total = r.highCount + r.posCount;
     const hasDups = total > 0;
     Modal.open(
-      '🔍 Data Integrity Check',
+      'Data Integrity Check',
       `<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">
         Scanned ${(S.banks||[]).length} banks, ${(S.cards||[]).length} cards, ${(S.documents||[]).length} documents.
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
-        ${r.highCount > 0 ? `<div style="padding:10px;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.2);border-radius:10px;font-size:13px;color:var(--err)">🔴 ${r.highCount} HIGH confidence duplicate${r.highCount>1?'s':''} — likely same record entered twice</div>` : '<div style="font-size:13px;color:var(--ok)">✅ No high-confidence duplicates</div>'}
-        ${r.posCount > 0 ? `<div style="padding:10px;background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:10px;font-size:13px;color:var(--warn)">🟡 ${r.posCount} POSSIBLE duplicate${r.posCount>1?'s':''} — review recommended</div>` : ''}
-        ${!hasDups ? '<div style="font-size:13px;color:var(--ok)">✅ No duplicates detected</div>' : ''}
+        ${r.highCount > 0 ? `<div style="padding:10px;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.2);border-radius:10px;font-size:13px;color:var(--err)">${r.highCount} HIGH confidence duplicate${r.highCount>1?'s':''} — likely same record entered twice</div>` : '<div style="font-size:13px;color:var(--ok)">No high-confidence duplicates</div>'}
+        ${r.posCount > 0 ? `<div style="padding:10px;background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:10px;font-size:13px;color:var(--warn)">${r.posCount} POSSIBLE duplicate${r.posCount>1?'s':''} — review recommended</div>` : ''}
+        ${!hasDups ? '<div style="font-size:13px;color:var(--ok)">No duplicates detected</div>' : ''}
       </div>
       <div style="font-size:11px;color:var(--text3);line-height:1.5">Note: Duplicate detection uses unique identifiers (account numbers, last 4 digits, document numbers) — two accounts at the same bank are NOT flagged as duplicates unless they share the same identifier.</div>`,
       `${hasDups ? '<button type="button" class="btn btn-g" onclick="Modal.close();DataIntegrity.showDuplicates()">Review →</button>' : ''}<button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`
@@ -135,7 +135,7 @@ const DataIntegrity = {
     };
 
     Modal.open(
-      '⚠️ Duplicate Review',
+      'Duplicate Review',
       `<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Review these entries. Only delete if you are certain they are the same record. Never auto-merge without your confirmation.</div>` +
       allDupes.map(renderDupe).join(''),
       `<button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`

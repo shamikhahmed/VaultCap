@@ -208,8 +208,12 @@ const Zakat = {
 
     const zakatDueDate = this._hawlDate ? new Date(new Date(this._hawlDate).getTime() + 354 * 86400000) : null;
     const zakatDaysLeft = zakatDueDate ? Math.ceil((zakatDueDate - Date.now()) / 86400000) : null;
+    const moonIc = typeof VC !== 'undefined' ? VC.icon('moon', 24) : '';
+    const ratesIc = isStale
+      ? (typeof VC !== 'undefined' ? VC.icon('bell', 12) : '')
+      : (typeof VC !== 'undefined' ? VC.icon('target', 12) : '');
     const zakatReminder = (zakatDaysLeft !== null && zakatDaysLeft <= 30 && zakatDaysLeft >= 0)
-      ? '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.4);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px"><div style="font-size:24px">🌙</div><div><div style="font-size:14px;font-weight:700;color:var(--text)">Zakat Due in ' + zakatDaysLeft + ' day' + (zakatDaysLeft !== 1 ? 's' : '') + '</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Review your zakatable assets below</div></div></div>'
+      ? '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.4);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px"><div class="chip-ic">' + moonIc + '</div><div><div style="font-size:14px;font-weight:700;color:var(--text)">Zakat Due in ' + zakatDaysLeft + ' day' + (zakatDaysLeft !== 1 ? 's' : '') + '</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Review your zakatable assets below</div></div></div>'
       : '';
 
     body.innerHTML =
@@ -217,12 +221,11 @@ const Zakat = {
       zakatReminder +
 
       '<div style="background:linear-gradient(135deg,rgba(76,175,80,.15),rgba(0,150,136,.1));border:1px solid rgba(76,175,80,.3);border-radius:16px;padding:16px">' +
-        '<div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">🌙 Zakat Calculator</div>' +
+        '<div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">Zakat Calculator</div>' +
         '<div style="font-size:12px;color:var(--text3);line-height:1.7">' +
           'Zakat is due on wealth above nisab held for one full lunar year (hawl). Rate: <strong style="color:#4caf50">2.5%</strong>' +
         '</div>' +
-        '<div style="font-size:10px;color:' + (isStale ? 'var(--warn)' : 'var(--ok)') + ';margin-top:8px">' +
-          (isStale ? '⚠️ ' : '✓ ') + 'Rates: ' + lastUpdated +
+        '<div style="font-size:10px;color:' + (isStale ? 'var(--warn)' : 'var(--ok)') + ';margin-top:8px;display:flex;align-items:center;gap:4px"><span class="chip-ic">' + ratesIc + '</span> Rates: ' + lastUpdated +
         '</div>' +
         '<div style="display:flex;gap:8px;margin-top:10px">' +
           '<button type="button" onclick="Zakat._mode=\'fbr\';Zakat._saveState();Zakat.render()" style="background:var(--glass2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;touch-action:manipulation">FBR Tax Mode →</button>' +
@@ -253,7 +256,7 @@ const Zakat = {
         '<input class="inp" type="date" id="zakat-hawl-date" value="' + (this._hawlDate || '') + '" onchange="Zakat._hawlDate=this.value;Zakat._saveState();Zakat.render()"></div></div>' +
         (this._hawlDate ? (
           '<div style="margin-top:10px;padding:10px 12px;border-radius:10px;background:' + (hawl.complete ? 'rgba(76,175,80,.1)' : 'rgba(255,152,0,.1)') + ';border:1px solid ' + (hawl.complete ? 'rgba(76,175,80,.3)' : 'rgba(255,152,0,.3)') + '">' +
-            '<div style="font-size:13px;font-weight:700;color:' + (hawl.complete ? 'var(--ok)' : 'var(--warn)') + '">' + (hawl.complete ? '✓' : '⏳') + ' ' + hawl.label + '</div>' +
+            '<div style="font-size:13px;font-weight:700;color:' + (hawl.complete ? 'var(--ok)' : 'var(--warn)') + '">' + hawl.label + '</div>' +
             (!hawl.complete ? '<div style="margin-top:6px;height:6px;background:rgba(255,255,255,.1);border-radius:999px"><div style="height:100%;width:' + Math.round((hawl.days / 354) * 100) + '%;background:var(--warn);border-radius:999px"></div></div>' : '') +
           '</div>'
         ) : '') +
@@ -301,7 +304,7 @@ const Zakat = {
       '</div>' +
 
       '<details style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-        '<summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">📖 Quranic & Hadith References <span style="color:var(--text3)">▾</span></summary>' +
+        '<summary style="font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between">Quranic & Hadith References <span style="color:var(--text3)">▾</span></summary>' +
         '<div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">' +
           '<div style="margin-bottom:10px"><strong style="color:var(--accent)">Surah At-Tawbah 9:103</strong><br>"Take from their wealth a charity by which you cleanse them and purify them."</div>' +
           '<div style="margin-bottom:10px"><strong style="color:var(--accent)">Surah Al-Baqarah 2:177</strong><br>"...and gave wealth, in spite of love for it, to relatives, orphans, the needy..."</div>' +
@@ -386,7 +389,7 @@ const Zakat = {
 
     if (!aboveNisab) {
       innerEl.innerHTML =
-        '<div style="font-size:18px;font-weight:800;color:var(--ok);margin-bottom:8px">✓ No Zakat Due</div>' +
+        '<div style="font-size:18px;font-weight:800;color:var(--ok);margin-bottom:8px">No Zakat Due</div>' +
         '<div style="font-size:13px;color:var(--text2)">Your zakatable wealth (' + fmt(netZakatable) + ') is below the nisab threshold (' + fmt(nisabValue) + ').</div>';
       return;
     }
@@ -408,7 +411,7 @@ const Zakat = {
           '<div style="font-size:11px;color:var(--text3);margin-top:4px">Zakat will be due in ' + hawl.remaining + ' days if wealth remains above nisab. Set your hawl date above.</div>' +
         '</div>'
       ) : '') +
-      '<button type="button" onclick="Zakat._printReport()" style="background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);color:#4caf50;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;width:100%">📄 Print / Save Report</button>';
+      '<button type="button" onclick="Zakat._printReport()" style="background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);color:#4caf50;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;width:100%">Print / Save Report</button>';
   },
 
   _renderFBR(body) {
@@ -436,7 +439,7 @@ const Zakat = {
     const threshold = 50000000;
     res.style.display = 'block';
     if (wealth <= threshold) {
-      res.innerHTML = '<div style="font-size:16px;font-weight:700;color:var(--ok)">✓ No wealth tax due</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Wealth is below PKR 5 crore threshold</div>';
+      res.innerHTML = '<div style="font-size:16px;font-weight:700;color:var(--ok)">No wealth tax due</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Wealth is below PKR 5 crore threshold</div>';
     } else {
       const tax = (wealth - threshold) * 0.01;
       res.innerHTML = '<div style="font-size:12px;color:var(--text3);margin-bottom:4px">FBR Wealth Tax Due</div><div style="font-size:28px;font-weight:900;color:#38bdf8">₨' + Math.round(tax).toLocaleString() + '</div><div style="font-size:12px;color:var(--text3)">1% of ₨' + Math.round(wealth - threshold).toLocaleString() + ' above threshold</div>';
@@ -472,7 +475,7 @@ const Zakat = {
     if (amountEl) lines.push('Zakat Due (2.5%): ' + amountEl.textContent);
     const w = window.open('', '_blank');
     if (w) {
-      w.document.write('<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:#111;background:#fff}h1{color:#4caf50}pre{font-size:14px;line-height:1.8}</style></head><body><h1>🌙 Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>');
+      w.document.write('<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:#111;background:#fff}h1{color:#4caf50}pre{font-size:14px;line-height:1.8}</style></head><body><h1>Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>');
       w.print();
     }
   },

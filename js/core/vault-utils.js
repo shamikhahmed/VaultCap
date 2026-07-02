@@ -55,7 +55,7 @@ const U = {
   },
   expBadge(e) {
     const s = U.expSt(e); if (!e) return '';
-    if (s === 'err')  return '<span class="badge b-err">⚠️ Exp</span>';
+    if (s === 'err')  return '<span class="badge b-err">Exp</span>';
     if (s === 'warn') return '<span class="badge b-warn">Soon</span>';
     return '<span class="badge b-ok">Valid</span>';
   },

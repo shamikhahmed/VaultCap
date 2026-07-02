@@ -148,7 +148,7 @@ const Tax = {
         nonfiler: {
           name:'Non-Filer',
           year:'2024-25',
-          note:'⚠️ Non-filers pay significantly higher rates. File your return to reduce your tax burden. Subject to additional withholding taxes on banking, property, and vehicle transactions.',
+          note:'Warning: Non-filers pay significantly higher rates. File your return to reduce your tax burden. Subject to additional withholding taxes on banking, property, and vehicle transactions.',
           slabs:[
             {label:'Exempt',min:0,max:600000,rate:0},
             {label:'Slab 1',min:600000,max:1200000,rate:0.075},
@@ -162,7 +162,7 @@ const Tax = {
         freelancer: {
           name:'Freelancer / IT Export',
           year:'2024-25',
-          note:'0.25% final tax on foreign remittances received through banking channels. ⚠️ Only applies to income remitted via proper banking channels (SWIFT, Raast, bank transfers). Cash or informal transfers do not qualify. Must register as IT exporter with PSEB/STZA for exemption.',
+          note:'0.25% final tax on foreign remittances received through banking channels. Warning: Only applies to income remitted via proper banking channels (SWIFT, Raast, bank transfers). Cash or informal transfers do not qualify. Must register as IT exporter with PSEB/STZA for exemption.',
           isFlat: true,
           flatRate: 0.0025,
           ni:[], extras:[]
@@ -278,10 +278,10 @@ const Tax = {
         ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" onclick="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--purple)':'var(--border)'};background:${this._filing===k?'rgba(123,95,255,.2)':'transparent'};color:${this._filing===k?'var(--purple)':'var(--text3)'}">${f.name}</button>`).join('')}
       </div>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
-        📋 ${filing.note}<br>
+        ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
         ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
-        ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">⚠️ ${surcharge}</div>` : ''}
+        ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">Warning: ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
       ${showBrackets ? `<div style="margin-top:20px">
@@ -356,8 +356,8 @@ const Tax = {
     <div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Asset Type</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='property'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">🏠 Property</button>
-        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='other'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">📈 Other Assets</button>
+        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='property'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Property</button>
+        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='other'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
       </div>
       <input type="hidden" id="cgt-type" value="${escAttr(t)}">
     </div>
@@ -445,12 +445,12 @@ const Tax = {
 
   _freezoneForm() {
     return `<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px;margin-bottom:16px">
-      <div style="font-size:15px;font-weight:800;color:var(--info);margin-bottom:12px">🏭 Free Zone Corporate Tax — Key Facts</div>
+      <div style="font-size:15px;font-weight:800;color:var(--info);margin-bottom:12px">Free Zone Corporate Tax — Key Facts</div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
         ${[['Qualifying Income Rate','0% — Zero corporate tax'],['Non-Qualifying Income','9% — Standard CT rate applies'],['QFZP Requirements','Adequate UAE substance, qualifying activities, group revenue < AED 750m'],['Registration','Must register with FTA as Qualifying Free Zone Person'],['Qualifying Activities','Manufacturing, logistics, distribution, fund management, qualified IP income']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${k}</span><span style="font-weight:700;color:var(--text);text-align:right;max-width:55%">${v}</span></div>`).join('')}
       </div>
       <div style="margin-top:14px;padding:10px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;font-size:12px;color:var(--warning)">
-        ⚠️ Seek a qualified UAE tax advisor to confirm QFZP eligibility — self-assessment is complex.
+        Warning: Seek a qualified UAE tax advisor to confirm QFZP eligibility — self-assessment is complex.
       </div>
     </div>
     <div id="tax-result"></div>`;
@@ -473,7 +473,7 @@ const Tax = {
       const res = document.getElementById('tax-result');
       if(!res) return;
       res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:16px">🧾 Tax Report — ${filing.name}</div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:16px">Tax Report — ${filing.name}</div>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">IT Export Proceeds</span><span style="font-weight:700">${fmt(income)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Final Tax (${(filing.flatRate*100).toFixed(2)}%)</span><span style="font-weight:700;color:var(--danger)">− ${fmt(tax)}</span></div>
@@ -520,8 +520,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 Tax Report — ${filing.name}${yearLabel}</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">Tax Report — ${filing.name}${yearLabel}</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Gross Income</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -553,8 +553,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800">🧾 VAT Report (5%)</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800">VAT Report (5%)</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>AED ${amount.toLocaleString()}</span></div>
@@ -577,8 +577,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800">🧾 VAT Report — ${rateLabels[rateKey]}</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800">VAT Report — ${rateLabels[rateKey]}</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>£${amount.toLocaleString()}</span></div>
@@ -604,8 +604,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 CGT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">CGT Report</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Total Gain</span><span style="font-weight:700">${fmt(gain)}</span></div>
@@ -638,8 +638,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 Dividend Tax Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">Dividend Tax Report</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Total Dividends</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -674,8 +674,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 IHT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">IHT Report</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Estate Value</span><span style="font-weight:700">${fmt(estate)}</span></div>
@@ -688,7 +688,7 @@ const Tax = {
           <span style="font-size:15px;font-weight:800">IHT Due (40%)</span>
           <span style="font-size:22px;font-weight:900;color:${tax>0?'var(--danger)':'var(--success)'}">${fmt(tax)}</span>
         </div>
-        ${tax===0?'<div style="font-size:12px;color:var(--success);text-align:center">✅ Below nil-rate band — no IHT due</div>':''}
+        ${tax===0?'<div style="font-size:12px;color:var(--success);text-align:center">Below nil-rate band — no IHT due</div>':''}
       </div>
     </div>`;
   },
@@ -720,8 +720,8 @@ const Tax = {
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:800;color:var(--text)">🧾 SDLT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">🖨️ Print</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text)">SDLT Report</div>
+        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Property Price</span><span style="font-weight:700">${fmt(price)}</span></div>
@@ -750,7 +750,7 @@ const Tax = {
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
-      <div style="font-size:14px;font-weight:800;margin-bottom:12px">🧾 Excise Tax Report</div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:12px">Excise Tax Report</div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Product</span><span style="font-weight:700;text-align:right;max-width:60%">${catLabel}</span></div>
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>AED ${amount.toLocaleString()}</span></div>
@@ -768,7 +768,7 @@ const Tax = {
     const filing = cfg?.filings[this._filing];
     const w = window.open('', '_blank');
     if (!w) { if(window.Toast) Toast.show('Allow pop-ups to print', 'warning'); return; }
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:#fff;color:#1a1a2e}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:24px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.8}.meta{background:#f1f3f5;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#555;line-height:1.7}.section{background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:14px}.row:last-child{border-bottom:none}.row .label{color:#555}.row .value{font-weight:600}.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}.btn-print{background:#1a237e;color:white}.btn-close{background:#f1f3f5;color:#333}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" onclick="window.print()">🖨️ Print</button><button type="button" class="btn btn-close" onclick="window.close()">✕ Close</button></div><div class="header"><h1>🧾 Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('🖨')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" onclick="window.close()">✕ Close Window</button></div></div></body></html>`);
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:#fff;color:#1a1a2e}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:24px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.8}.meta{background:#f1f3f5;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#555;line-height:1.7}.section{background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:14px}.row:last-child{border-bottom:none}.row .label{color:#555}.row .value{font-weight:600}.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}.btn-print{background:#1a237e;color:white}.btn-close{background:#f1f3f5;color:#333}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" onclick="window.print()">Print</button><button type="button" class="btn btn-close" onclick="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" onclick="window.close()">Close Window</button></div></div></body></html>`);
     w.document.close();
   },
 

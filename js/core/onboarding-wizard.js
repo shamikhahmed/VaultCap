@@ -77,7 +77,7 @@ const Onboarding = {
           <div id="ob-none-card" onclick="Onboarding._secondaryCountries=[];document.querySelectorAll('.ob-sec').forEach(el=>{el.style.borderColor='var(--border)';el.style.background='var(--glass)'});this.style.borderColor='var(--accent)';this.style.background='var(--glass2)'"
             class="ob-sec"
             style="padding:14px 12px;border-radius:14px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;grid-column:1/-1">
-            <span style="font-size:20px">🚫</span>
+            <span style="font-size:20px;display:flex">${typeof VC!=='undefined'?VC.icon('cross',20):''}</span>
             <span style="font-size:13px;font-weight:600;color:var(--text)">None — I only manage money in one country</span>
           </div>
           ${this._countries.filter(c=>c.code!==this._primaryCountry).map(c => `
@@ -109,11 +109,11 @@ const Onboarding = {
         <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px">You can change this anytime in Settings</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px;margin-bottom:20px;max-height:55vh;overflow-y:auto;padding:2px">
           ${moduleOptions.map(m => `
-            <div onclick="Onboarding._modules['${m.key}']=!Onboarding._modules['${m.key}'];this.style.borderColor=Onboarding._modules['${m.key}']?'var(--accent)':'var(--border)';this.querySelector('.mod-check').style.background=Onboarding._modules['${m.key}']?'var(--accent)':'transparent';this.querySelector('.mod-check').textContent=Onboarding._modules['${m.key}']?'✓':''"
+            <div onclick="Onboarding._modules['${m.key}']=!Onboarding._modules['${m.key}'];this.style.borderColor=Onboarding._modules['${m.key}']?'var(--accent)':'var(--border)';this.querySelector('.mod-check').style.background=Onboarding._modules['${m.key}']?'var(--accent)':'transparent'"
               style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
               <div style="display:flex;align-items:center;justify-content:space-between">
                 <span style="display:flex;align-items:center">${VC.icon(m.icon,18)}</span>
-                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}">${this._modules[m.key]?'✓':''}</div>
+                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
               </div>
               <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
               <div style="font-size:10px;color:var(--text3);line-height:1.3">${m.desc}</div>
@@ -133,23 +133,23 @@ const Onboarding = {
         <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Personalise your vault — hide what you don't need</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
           ${prefs.map(p => `
-            <div onclick="Onboarding._prefs['${p.key}']=!Onboarding._prefs['${p.key}'];this.style.borderColor=Onboarding._prefs['${p.key}']?'var(--accent)':'var(--border)';this.querySelector('.pref-check').textContent=Onboarding._prefs['${p.key}']?'✓':''"
+            <div onclick="Onboarding._prefs['${p.key}']=!Onboarding._prefs['${p.key}'];this.style.borderColor=Onboarding._prefs['${p.key}']?'var(--accent)':'var(--border)'"
               style="padding:14px 16px;border-radius:14px;background:var(--glass);border:2px solid ${this._prefs[p.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
               <span style="display:flex;align-items:center">${VC.icon(p.icon,20)}</span>
               <div style="flex:1">
                 <div style="font-size:14px;font-weight:600;color:var(--text)">${p.label}</div>
                 <div style="font-size:12px;color:var(--text3)">${p.desc}</div>
               </div>
-              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent)">${this._prefs[p.key]?'✓':''}</div>
+              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(123,95,255,.15)':'transparent'}"></div>
             </div>`).join('')}
         </div>
         <button type="button" onclick="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Continue →</button>
         <button type="button" onclick="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
     } else if (this._step === 5) {
       const country = this._countries.find(c => c.code === this._primaryCountry);
-      const flag = country ? country.flag : '🔐';
+      const flag = country ? country.flag : '';
       content = `
-        <div style="font-size:56px;margin-bottom:16px;animation:pgIn .4s ease both">${flag}</div>
+        <div style="font-size:56px;margin-bottom:16px;animation:pgIn .4s ease both;display:flex;justify-content:center">${country ? flag : (typeof VC !== 'undefined' ? VC.icon('vault', 48) : '')}</div>
         <div style="font-size:26px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center;letter-spacing:-0.5px">Your vault is ready.</div>
         <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:300px;margin-bottom:28px">Everything's set up. Here's what you can do right now:</div>
         <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
@@ -263,7 +263,7 @@ const Onboarding = {
   _finish() {
     const country = this._countries.find(c => c.code === this._primaryCountry);
     document.getElementById('onboarding-overlay')?.remove();
-    Toast.show('Vault personalised ✓', 'success');
+    Toast.show('Vault personalised', 'success');
     if (country) {
       Toast.show(`Currency set to ${country.currency} · Banks filtered to ${country.name}`, 'info', 4000);
     }
@@ -272,7 +272,7 @@ const Onboarding = {
   showSettingsCard() {
     return `
       <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:16px;margin:0 0 16px">
-        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">⚡ Personalise Your Vault</div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">Personalise Your Vault</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:12px">Set your country, currency, and preferences for a tailored experience.</div>
         <button type="button" onclick="Onboarding._primaryCountry=S.user.country||'';Onboarding._secondaryCountries=S.user.secondaryCountries||[];Onboarding.show()" class="btn btn-p btn-sm">Run Setup →</button>
       </div>`;

@@ -70,7 +70,7 @@ const PIN = {
         if (msg) msg.className = 'pin-msg err';
 
         if (S.fails >= 10) {
-          msg.textContent = '⚠️ Too many attempts';
+          msg.textContent = 'Too many attempts';
           this.showWipeGate();
           return;
         } else if (S.fails >= 5) {
@@ -114,7 +114,7 @@ const PIN = {
   showWipeGate() {
     if (PIN._wipeTimer) clearInterval(PIN._wipeTimer);
     let left = 60;
-    Modal.open('⚠️ Vault Protection',
+    Modal.open('Vault Protection',
       `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">10 failed PIN attempts. Recover with your <strong>master key</strong> or the vault will be permanently wiped.</p>
        <p style="font-size:12px;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
       `<button type="button" class="btn btn-p" onclick="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>

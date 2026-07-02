@@ -38,9 +38,9 @@ const Emergency = {
         ${e.showOnLockscreen?`
         <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
           <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">🆘 ${escHtml(e.name||'Name not set')}</div>
-          <div style="font-size:13px;color:var(--text2)">${e.phone?'📞 '+escHtml(e.phone):''}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'🩸 '+escHtml(e.bloodType):''}${e.allergies?' · ⚠️ '+escHtml(e.allergies.split('\n')[0]):''}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Emergency: ${escHtml(e.name||'Name not set')}</div>
+          <div style="font-size:13px;color:var(--text2)">${e.phone?'Phone: '+escHtml(e.phone):''}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'Blood: '+escHtml(e.bloodType):''}${e.allergies?' · Allergies: '+escHtml(e.allergies.split('\n')[0]):''}</div>
         </div>`:''}
       </div>`;
   },
@@ -79,7 +79,7 @@ const Emergency = {
         </div>
         ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
         ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
-        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠️ ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${escHtml(e.allergies)}</div></div>`:''}
+        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${escHtml(e.allergies)}</div></div>`:''}
         ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${escHtml(e.emergencyNote)}</div></div>`:''}
       </div>`,
       `<button type="button" class="btn btn-p" onclick="Modal.close()">Close</button>`
@@ -173,8 +173,8 @@ const DevDiag = {
           ${row('Trash', counts.trash)} ${row('Emails', counts.emails)}
           ${row('Last Backup', backup.label, backup.ok)}
           ${row('Backup Fingerprint', backup.fingerprint)}
-          ${integrity ? row('Integrity Issues', (integrity.highCount + integrity.posCount) === 0 ? 'None ✓' : `${integrity.highCount + integrity.posCount} found`, (integrity.highCount + integrity.posCount) === 0) : ''}
-          ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None ✓', true)}
+          ${integrity ? row('Integrity Issues', (integrity.highCount + integrity.posCount) === 0 ? 'None' : `${integrity.highCount + integrity.posCount} found`, (integrity.highCount + integrity.posCount) === 0) : ''}
+          ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None', true)}
           ${Object.entries(this._renderTimings).slice(0,5).map(([k,v]) => row(`Render: ${k}`, `${v}ms`)).join('')}
         </div>
         <button type="button" class="btn btn-g" onclick="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:11px">Copy Report</button>
@@ -235,13 +235,13 @@ const VaultRecovery = {
     const issues = this.validate();
     if (!issues.length) return false;
     const fixed = this.repair();
-    Modal.open('🔧 Vault Recovery',
+    Modal.open('Vault Recovery',
       `<div style="display:flex;flex-direction:column;gap:10px">
         <div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px">
-          <div style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">⚠️ Issues Detected</div>
+          <div style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">Issues Detected</div>
           ${issues.map(i => `<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${i}</div>`).join('')}
         </div>
-        ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">✓ Auto-repaired ${fixed} issue(s)</div>` : ''}
+        ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">Auto-repaired ${fixed} issue(s)</div>` : ''}
         <div style="font-size:12px;color:var(--text3);line-height:1.6">If problems persist, export a backup and restore from a previous .vos file.</div>
       </div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Dismiss</button><button type="button" class="btn btn-p" onclick="ExIm.export('vos');Modal.close()">Export Backup</button>`
@@ -282,12 +282,12 @@ const ContextSwitcher = {
         ${flag ? `<span aria-hidden="true">${flag}</span>` : ''}<span>${label}</span>
       </button>`;
     };
-    let pills = pill('ALL', 'All', '🌍');
+    let pills = pill('ALL', 'All', '');
     codes.forEach(code => pills += pill(code, U.cname(code), U.flag(code)));
     if (!primary) {
       pills += `<button type="button" class="ctx-pill ctx-pill--cta" onclick="ContextSwitcher.openManager()">+ Set home country</button>`;
     } else {
-      pills += `<button type="button" class="ctx-pill ctx-pill--icon" onclick="ContextSwitcher.openManager()" title="Manage countries">✏️</button>`;
+      pills += `<button type="button" class="ctx-pill ctx-pill--icon" onclick="ContextSwitcher.openManager()" title="Manage countries">${typeof VC !== 'undefined' ? VC.icon('pencil', 14) : 'Edit'}</button>`;
     }
     return `<div class="ctx-bar">${pills}</div>`;
   },
@@ -295,7 +295,7 @@ const ContextSwitcher = {
     const primary = S.user.country || '';
     const secondary = [...(S.user.secondaryCountries || [])];
     const pickList = COUNTRIES.filter(c => c.c !== 'OTHER');
-    Modal.open('🌍 Countries & Regions', `
+    Modal.open('Countries & Regions', `
       <p class="ctx-modal-intro">Choose your home country and any others where you hold accounts. Filter the dashboard by country, or tap <strong>All</strong> to see everything.</p>
       <div class="fg"><label class="fl">Home country</label>
         <select class="inp" id="ctx-primary">${pickList.map(c => `<option value="${c.c}">${c.f} ${c.n}</option>`).join('')}</select>

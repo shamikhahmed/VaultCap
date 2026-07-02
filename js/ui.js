@@ -361,7 +361,7 @@ const Dash={
           <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'✓':'⊕'} ${label}</div>`).join('')}
+          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
         </div>
       </div>
     </div>
@@ -573,7 +573,7 @@ const Settings={
     <div style="text-align:center;padding:8px 0">
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery master key was shown once when you created your vault. It is never stored in readable form on this device.</p>
       <div style="font-size:15px;font-weight:700;padding:18px;border-radius:var(--r);background:var(--glass2);color:${hasRecoveryKey?'var(--ok)':'var(--warn)'};margin-bottom:14px">
-        ${hasRecoveryKey?'✓ Recovery key configured on this device':'⚠️ No recovery key found — use a .vos backup if you forget your PIN'}
+        ${hasRecoveryKey?'Recovery key configured on this device':'No recovery key found — use a .vos backup if you forget your PIN'}
       </div>
       <p style="font-size:11px;color:var(--text3);line-height:1.6">If you saved your key on paper or in a password manager, use <strong>Forgot PIN → Use Master Key</strong> on the lock screen.</p>
     </div>`,`<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
@@ -645,7 +645,7 @@ const Settings={
     VaultProfiles.startDemo();
   },
   resetVault(){
-    if(!window.__vos_confirm('⚠️ A backup download will start first. This permanently deletes ALL vault data on this device.'))return;
+    if(!window.__vos_confirm('A backup download will start first. This permanently deletes ALL vault data on this device.'))return;
     if(_vaultEntityCount(Store._data()) > 0){
       try{ ExIm.export('vault'); }catch(e){}
     }
@@ -687,7 +687,7 @@ const ExIm={
       const runVaultExport=()=>{
         VaultDB.exportEncrypted().then(()=>{
           Activity.log('Exported','AES-256-GCM encrypted .vos');
-          Toast.show('Backup saved ✓','success',4000);
+          Toast.show('Backup saved','success',4000);
         }).catch(()=>Toast.show('Export failed — try again','error'));
       };
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
@@ -730,7 +730,7 @@ const ExIm={
       Modal.close();
       VaultDB.exportEncrypted().then(()=>{
         Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show('Backup saved ✓','success',4000);
+        Toast.show('Backup saved','success',4000);
       }).catch(()=>Toast.show('Export failed','error'));
     });
   },
@@ -741,7 +741,7 @@ const ExIm={
     Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
       this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
       Activity.log('Exported','Legacy AES-256-GCM .vos');
-      Toast.show('Legacy backup saved ✓','success',4000);
+      Toast.show('Legacy backup saved','success',4000);
     }).catch(()=>this._exportPlain(data));
   },
   _promptPinForLegacyImport(encRaw,onSuccess){
@@ -1105,7 +1105,7 @@ const QRSync = {
       Modal.open('Import from QR', `
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Successfully decoded vault data from QR codes.</p>
         <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
-        <p style="font-size:12px;color:var(--warn)">⚠ Existing items with matching IDs will be merged.</p>
+        <p style="font-size:12px;color:var(--warn)">Existing items with matching IDs will be merged.</p>
       `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
     } catch(e) { Toast.show('Failed to decode QR data', 'error'); }
   },
@@ -1426,11 +1426,11 @@ const ImportEngine={
       r.onload=e=>{
         Tesseract.recognize(e.target.result,'eng',{logger:m=>{if(m.status==='recognizing text')this.setStatus('OCR: '+Math.round(m.progress*100)+'%...',Math.round(m.progress*90));}})
           .then(({data:{text,confidence}})=>{
-            this.setStatus('✅ OCR complete — confidence '+Math.round(confidence)+'%',100);
+            this.setStatus('OCR complete — confidence '+Math.round(confidence)+'%',100);
             const results=this.parseOCRText(text);
             this.showResults(results,text);
           })
-          .catch(()=>{this.setStatus('❌ OCR failed — try a clearer image',0);});
+          .catch(()=>{this.setStatus('OCR failed — try a clearer image',0);});
       };
       r.readAsDataURL(file);
     };
@@ -1800,7 +1800,7 @@ const RecoveryCenter={
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Emergency Master Key</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery key was shown once during vault setup and cannot be displayed again. If you wrote it down, use it below to reset your PIN and restore access.</div>
       <div style="font-size:16px;font-weight:700;text-align:center;padding:18px;background:rgba(0,0,0,.35);border-radius:12px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
-        ${hasRecoveryKey?'✓ Recovery key configured':'⚠️ No recovery key on this device'}
+        ${hasRecoveryKey?'Recovery key configured':'No recovery key on this device'}
       </div>
       <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
       <div id="rc-copy" style="display:flex;gap:8px;margin-top:12px">
@@ -1812,7 +1812,7 @@ const RecoveryCenter={
       <div class="si" onclick="VaultSafety.restore()" style="cursor:pointer"><div class="sil"><div class="name">Restore previous save</div><div class="desc">Roll back to the copy made before your last change</div></div><button type="button" class="btn btn-g btn-sm">Restore →</button></div>
       <div class="si" onclick="Settings.useMasterKey()" style="cursor:pointer"><div class="sil"><div class="name">Use Master Key</div><div class="desc">Enter master key to reset your PIN</div></div><button type="button" class="btn btn-g btn-sm">Enter Key →</button></div>
       <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div class="sil"><div class="name">Restore from Backup</div><div class="desc">Import .vos vault to recover data</div></div><button type="button" class="btn btn-g btn-sm">Import →</button></div>
-      <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">⚠️ Delete all data — cannot be undone</div></div><button type="button" class="btn btn-d btn-sm">Reset</button></div>
+      <div class="si" onclick="Settings.resetVault()" style="cursor:pointer"><div class="sil"><div class="name">Reset Vault</div><div class="desc">Delete all data — cannot be undone</div></div><button type="button" class="btn btn-d btn-sm">Reset</button></div>
     </div></div>
     <!-- SECURITY CHECKLIST -->
     <div class="set-sec"><div class="set-title">Recovery Checklist</div><div class="set-card">
@@ -1822,13 +1822,13 @@ const RecoveryCenter={
         {done:!!S.decoyPin,label:'Decoy PIN configured',tip:'Shows fake vault under coercion'},
         {done:!!S.user.lastBackup,label:'Vault backed up',tip:'Export encrypted backup to safe location'},
         {done:S.autoLock,label:'Auto-lock enabled',tip:'Vault locks automatically when idle'},
-      ].map(({done,label,tip})=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">✓</span>':'<span style="color:var(--err);font-size:11px">Needed</span>'}</div>`).join('')}
+      ].map(({done,label,tip})=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">Done</span>':'<span style="color:var(--err);font-size:11px">Needed</span>'}</div>`).join('')}
     </div></div>
     <!-- VAULT HEALTH -->
     <div class="set-sec"><div class="set-title">Vault Diagnostics</div><div class="set-card">
       ${[
         {label:'Schema version',val:'v'+SCHEMA_VERSION},
-        {label:'Encryption',val:Crypto.available()?'AES-256-GCM ✅':'Basic'},
+        {label:'Encryption',val:Crypto.available()?'AES-256-GCM':'Basic'},
         {label:'Total entries',val:ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)+''},
         {label:'Activity records',val:S.activity.length+''},
         {label:'Last backup',val:S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never'},
@@ -1895,8 +1895,8 @@ const SelfCheck={
     const r=this.run();
     Modal.open('VaultCap Diagnostic',`
     <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Checked: ${this.lastCheck?.toLocaleTimeString()}</div>
-    ${r.errors.length?`<div style="margin-bottom:10px">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:12px">❌ ${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">✅ All systems healthy</div>'}
-    ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:12px">🔧 ${f}</div>`).join('')}</div>`:''}
+    ${r.errors.length?`<div style="margin-bottom:10px">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:12px">${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">All systems healthy</div>'}
+    ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:12px">${f}</div>`).join('')}</div>`:''}
     <div style="margin-top:12px;padding:10px;background:var(--glass);border-radius:10px">
       ${['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].map(k=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">${k}</span><strong>${(S[k]||[]).length}</strong></div>`).join('')}
       <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">documents</span><strong>${(S.documents||[]).length}</strong></div>
@@ -2078,7 +2078,7 @@ const SettingsNav = {
     const llmOn = cfg.enabled;
     const hasOverride = !!(S.user.llmApiKey || '').trim();
     return `<div class="set-sec"><div class="set-title">VaultCap Smart Import (included)</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? '✓ Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? 'Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
       <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
       <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
@@ -2183,7 +2183,7 @@ const VaultHealthCenter = {
           <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultCap</strong><br>
           <strong>Step 3:</strong> Tap Settings → Import → select your .vos backup file<br>
           <strong>Step 4:</strong> Enter your PIN to decrypt<br>
-          <strong>Step 5:</strong> Your entire vault is restored ✓<br><br>
+          <strong>Step 5:</strong> Your entire vault is restored.<br><br>
           <em style="color:var(--text3)">This is why regular backups are essential — without a backup file, your data cannot be recovered from a lost device.</em>
         </div>
       </details>
@@ -2199,16 +2199,16 @@ const VaultHealthCenter = {
         </div>
       </details>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">✓ Recovery Checklist</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Recovery Checklist</div>
         ${[
-          [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently ✓' : `Back up again — ${daysSince}d since last backup`],
+          [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently' : `Back up again — ${daysSince}d since last backup`],
           [!!fp, 'Backup fingerprint saved'],
           [!!(S.pin && S.pin !== '123456'), 'Custom PIN set'],
           [!!(S.user?.name), 'Profile name set'],
           [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
         ].map(([ok, label]) => `
           <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
-            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">${ok?'✓':'!'}</div>
+            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:${ok?'var(--ok)':'var(--err)'}">${ok?'OK':'!'}</div>
             <div style="font-size:12px;color:${ok?'var(--text2)':'var(--warn)'};">${label}</div>
           </div>`).join('')}
       </div>
@@ -2282,7 +2282,7 @@ const HelpCenter = {
           ${this._card('bank', 'Adding a bank account', 'Finance → Banks → + Add Bank. Fill in: bank name, country, account type (current/savings/islamic), currency, and optionally your IBAN, sort code, balance, and account holder name. You can also store your online banking PIN and app PIN securely.')}
           ${this._card('card', 'Adding a card', 'Finance → Cards → + Add Card. Fill in manually. Store the last 4 digits, expiry, CVV hint, and link it to a bank account. Front and back photos can be captured.')}
           ${this._card('arrows', 'Linking cards to banks', 'When adding a card, select the bank it belongs to in the "Linked Bank" field. Tap any bank entry and scroll down to see all linked cards automatically displayed.')}
-          ${this._card('archive', 'Archiving accounts', 'Tap the archive icon (🗂️) on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
+          ${this._card('archive', 'Archiving accounts', 'Tap the archive icon on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
           ${this._card('search', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by Pakistan, UK, or UAE. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
           ${this._card('star', 'Favouriting entries', 'Tap the star icon on any bank, card, or investment to mark it as a favourite. Favourites appear at the top of their list and in smart collections on the dashboard.')}
         </div>`,
@@ -2325,13 +2325,13 @@ const HelpCenter = {
           ${this._card('search', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
           ${this._card('search', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
           ${this._card('pin', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
-          ${this._card('⚡', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
+          ${this._card('sparkles', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
           ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('moon', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
-          ${this._card('☀️', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
+          ${this._card('sun', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
           ${this._card('settings', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
           ${this._card('sparkles', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
         </div>`,
