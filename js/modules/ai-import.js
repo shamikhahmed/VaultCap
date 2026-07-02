@@ -295,13 +295,13 @@ const AIImport = {
         'ondragleave="this.style.borderColor=\'var(--border)\'" ' +
         'ondrop="AIImport.handleDrop(event)" ' +
         'onclick="document.getElementById(\'ie-file\').click()">' +
-        '<div style="font-size:28px;margin-bottom:8px">📎</div>' +
+        '<div style="margin-bottom:8px;display:flex;justify-content:center">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
         '<div style="font-size:13px;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:4px">CSV, text, or image (OCR via Import page)</div>' +
         '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" onchange="AIImport.handleFile(this.files[0])">' +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">🔍 Detect &amp; Extract</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">Detect &amp; Extract</button>' +
 
       '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
 
@@ -345,7 +345,7 @@ const AIImport = {
 
     const btn = document.getElementById('ie-detect-btn');
     const resultsEl = document.getElementById('ie-results');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Analysing…'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Analysing…'; }
 
     try {
       let detected = null;
@@ -388,24 +388,27 @@ const AIImport = {
     } catch (e) {
       if (resultsEl) resultsEl.innerHTML = '<div style="color:var(--err);font-size:13px;padding:14px">Detection failed — ' + (e.message || 'unknown error') + '</div>';
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '🔍 Detect & Extract'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Detect & Extract'; }
     }
   },
 
   _renderResults(detected, container) {
     if (!container) return;
-    const typeLabels = { bank:'🏦 Bank', card:'💳 Card', loan:'🤝 Loan', document:'🪪 Document', cash:'💵 Cash', investment:'📈 Investment', gold:'🥇 Metal', bc:'🤝 Committee', bond:'🎫 Bond', expense:'📋 Expense', sim:'📱 SIM', email:'📧 Email' };
+    const typeLabels = { bank:'Bank', card:'Card', loan:'Loan', document:'Document', cash:'Cash', investment:'Investment', gold:'Metal', bc:'Committee', bond:'Bond', expense:'Expense', sim:'SIM', email:'Email' };
+    const typeIcons = { bank:'bank', card:'card', loan:'handshake', document:'id-card', cash:'banknote', investment:'chart', gold:'gem', bc:'handshake', bond:'ticket', expense:'repeat', sim:'smartphone', email:'mail' };
     const typeColors = { bank:'rgba(255,255,255,.15)', card:'rgba(52,199,89,.15)', loan:'rgba(255,159,10,.15)', document:'rgba(255,255,255,.15)', cash:'rgba(52,199,89,.15)', investment:'rgba(122,168,245,.15)', gold:'rgba(201,168,76,.15)', bc:'rgba(255,255,255,.15)', bond:'rgba(201,168,76,.15)', expense:'rgba(233,30,140,.12)', sim:'rgba(255,255,255,.12)' };
 
     let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
-      '<button type="button" class="btn btn-p btn-sm" onclick="AIImport.importSelected()">✅ Import Selected</button>' +
+      '<button type="button" class="btn btn-p btn-sm" onclick="AIImport.importSelected()">Import Selected</button>' +
     '</div>';
 
     html += detected.map(function(item, i) {
       const conf = item.confidence || 0;
       const borderColor = conf >= 0.9 ? 'rgba(52,199,89,.5)' : conf >= 0.7 ? 'rgba(255,159,10,.5)' : 'rgba(255,69,58,.5)';
-      const confLabel = conf >= 0.9 ? '✓ High confidence' : conf >= 0.7 ? '~ Medium confidence' : '? Review carefully';
+      const confLabel = conf >= 0.9 ? 'High confidence' : conf >= 0.7 ? 'Medium confidence' : 'Review carefully';
+      const typeIc = typeof VC !== 'undefined' ? VC.icon(typeIcons[item.type] || 'file', 14) : '';
+      const typeLabel = typeLabels[item.type] || item.type;
       const confColor = conf >= 0.9 ? 'var(--ok)' : conf >= 0.7 ? 'var(--warn)' : 'var(--err)';
       const fields = Object.entries(item.data || {}).filter(function(e) { return e[1] !== null && e[1] !== '' && e[1] !== 0 && !(Array.isArray(e[1]) && !e[1].length); });
 
@@ -413,7 +416,7 @@ const AIImport = {
         '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
           '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1">' +
             '<input type="checkbox" id="ie-chk-' + i + '" checked style="width:18px;height:18px;cursor:pointer">' +
-            '<div style="font-size:14px;font-weight:700;color:var(--text)">' + (typeLabels[item.type] || item.type) + '</div>' +
+            '<div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px"><span class="chip-ic">' + typeIc + '</span>' + typeLabel + '</div>' +
           '</label>' +
           '<div style="font-size:10px;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
         '</div>' +
@@ -432,7 +435,7 @@ const AIImport = {
       '</div>';
     }).join('');
 
-    html += '<button type="button" class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">✅ Import All Selected Items</button>';
+    html += '<button type="button" class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">Import All Selected Items</button>';
     container.innerHTML = html;
   },
 
@@ -514,10 +517,10 @@ const AIImport = {
     if (count > 0) {
       Store.save();
       if (typeof buildNav === 'function') buildNav();
-      Toast.show('Imported ' + count + ' item' + (count > 1 ? 's' : '') + ' ✓', 'success');
+      Toast.show('Imported ' + count + ' item' + (count > 1 ? 's' : ''), 'success');
       this._results = [];
       const resultsEl = document.getElementById('ie-results');
-      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.3);border-radius:12px;padding:14px;text-align:center;color:var(--ok);font-size:14px;font-weight:700">✓ ' + count + ' item' + (count > 1 ? 's' : '') + ' imported successfully</div>';
+      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.3);border-radius:12px;padding:14px;text-align:center;color:var(--ok);font-size:14px;font-weight:700">' + count + ' item' + (count > 1 ? 's' : '') + ' imported successfully</div>';
     } else {
       Toast.show('No items selected', 'warn');
     }

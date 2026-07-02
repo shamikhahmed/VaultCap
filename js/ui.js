@@ -1981,8 +1981,8 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">Security</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
-      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'✅ Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN ⚠️</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
@@ -1993,11 +1993,11 @@ const SettingsNav = {
     <div class="set-sec"><div class="set-title">Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
     <div class="set-sec"><div class="set-title">Security Report</div><div class="set-card">
       ${[
-        {label:'Encryption',val:'AES-256-GCM ✅',ok:true},
-        {label:'PIN',val:'Protected ✅',ok:true},
-        {label:'Storage',val:'Encrypted (IndexedDB) ✅',ok:true},
-        {label:'Auto-lock',val:S.autoLock?'Enabled ✅':'Disabled ⚠️',ok:S.autoLock},
-        {label:'Decoy PIN',val:S.decoyPin?'Configured ✅':'Not set',ok:!!S.decoyPin},
+        {label:'Encryption',val:'AES-256-GCM',ok:true},
+        {label:'PIN',val:'Protected',ok:true},
+        {label:'Storage',val:'Encrypted (IndexedDB)',ok:true},
+        {label:'Auto-lock',val:S.autoLock?'Enabled':'Disabled',ok:S.autoLock},
+        {label:'Decoy PIN',val:S.decoyPin?'Configured':'Not set',ok:!!S.decoyPin},
         {label:'Last backup',val:lastBackup,ok:!!S.user.lastBackup},
         {label:'Unlock sessions',val:sessionCount+' recorded',ok:true},
       ].map(({label,val,ok})=>`<div class="si"><div class="name">${label}</div><div style="font-size:12px;color:${ok?'var(--ok)':'var(--warn)'};text-align:right;flex:1">${val}</div></div>`).join('')}
@@ -2155,12 +2155,12 @@ const VaultHealthCenter = {
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <button type="button" onclick="ExIm.export('vault')" class="btn btn-p" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
-          <span style="font-size:24px">💾</span>
+          <span class="chip-ic">${VC.icon('share',24)}</span>
           <span style="font-size:12px;font-weight:700">Export Backup</span>
           <span style="font-size:10px;opacity:.7">Encrypted .vos file</span>
         </button>
         <button type="button" onclick="document.getElementById('importF-global').click()" class="btn btn-g" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;height:auto">
-          <span style="font-size:24px">📂</span>
+          <span class="chip-ic">${VC.icon('download',24)}</span>
           <span style="font-size:12px;font-weight:700">Restore Backup</span>
           <span style="font-size:10px;opacity:.7">Import .vos file</span>
         </button>

@@ -59,20 +59,21 @@ const CreditScore = {
         (d.lastChecked ? '<div style="font-size:11px;color:var(--text3)">Last checked: ' + new Date(d.lastChecked).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) + '</div>' : '') +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" onclick="CreditScore.openUpdate()">📊 Update Score</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" onclick="CreditScore.openUpdate()">Update Score</button>' +
 
       // Score breakdown tips
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
         '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px">What affects your score</div>' +
         [
-          ['💳', 'Payment History', '35%', 'Always pay on time — biggest factor'],
-          ['📊', 'Credit Utilisation', '30%', 'Keep card balances below 30% of limit'],
-          ['📅', 'Credit Age', '15%', 'Older accounts help — avoid closing old cards'],
-          ['🔍', 'New Credit', '10%', 'Avoid multiple applications in short periods'],
-          ['🏦', 'Credit Mix', '10%', 'Mix of cards, loans, and mortgage helps'],
+          ['card', 'Payment History', '35%', 'Always pay on time — biggest factor'],
+          ['chart', 'Credit Utilisation', '30%', 'Keep card balances below 30% of limit'],
+          ['calendar', 'Credit Age', '15%', 'Older accounts help — avoid closing old cards'],
+          ['search', 'New Credit', '10%', 'Avoid multiple applications in short periods'],
+          ['bank', 'Credit Mix', '10%', 'Mix of cards, loans, and mortgage helps'],
         ].map(function(f) {
+          const ic = typeof VC !== 'undefined' ? VC.icon(f[0], 18) : '';
           return '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">' +
-            '<div style="font-size:18px;flex-shrink:0">' + f[0] + '</div>' +
+            '<div class="chip-ic" style="flex-shrink:0">' + ic + '</div>' +
             '<div style="flex:1">' +
               '<div style="display:flex;align-items:center;justify-content:space-between">' +
                 '<div style="font-size:13px;color:var(--text);font-weight:600">' + f[1] + '</div>' +
@@ -145,7 +146,7 @@ const CreditScore = {
   openUpdate() {
     const d = this.get();
     const agencies = ['Experian', 'Equifax', 'TransUnion', 'ECIB (PK)', 'AECB (AE)', 'Other'];
-    Modal.open('📊 Update Credit Score',
+    Modal.open('Update Credit Score',
       '<div class="fg"><label class="fl">Your Credit Score</label>' +
         '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + (d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
       '<div id="cs-preview" style="text-align:center;padding:10px;font-size:24px;font-weight:900;color:var(--text3)"></div>' +
@@ -168,7 +169,7 @@ const CreditScore = {
     const el = document.getElementById('cs-preview');
     if (!el || !score) return;
     const color = score >= 800 ? 'var(--ok)' : score >= 700 ? '#34c759' : score >= 600 ? 'var(--warn)' : score >= 500 ? '#ff9f0a' : 'var(--err)';
-    const label = score >= 800 ? 'Excellent 🌟' : score >= 700 ? 'Good ✓' : score >= 600 ? 'Fair' : score >= 500 ? 'Poor' : 'Very Poor';
+    const label = score >= 800 ? 'Excellent' : score >= 700 ? 'Good' : score >= 600 ? 'Fair' : score >= 500 ? 'Poor' : 'Very Poor';
     el.style.color = color;
     el.textContent = score + ' — ' + label;
   },

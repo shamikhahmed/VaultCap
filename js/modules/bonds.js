@@ -64,7 +64,7 @@ const BondsModule = {
 
       (upcoming.length > 0 ? (
         '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">🎯 Upcoming Draws</div>' +
+          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Upcoming Draws</div>' +
           upcoming.map(function(b) {
             const type = BondsModule._getType(b.typeId);
             const nextDraw = BondsModule._nextDraw(type);
@@ -79,10 +79,10 @@ const BondsModule = {
       ) : '') +
 
       '<button type="button" class="btn btn-p" style="width:100%" onclick="BondsModule.openAdd()">+ Add Bond / Security</button>' +
-      '<button type="button" class="btn btn-g" style="width:100%" onclick="BondsModule.openBulkImport()">📋 Bulk Import Bond Numbers</button>' +
+      '<button type="button" class="btn btn-g" style="width:100%" onclick="BondsModule.openBulkImport()">Bulk Import Bond Numbers</button>' +
 
       (bonds.length === 0 ?
-        '<div class="empty-ios"><div class="ei-ic">🎫</div><div class="ei-title">No bonds yet</div><div class="ei-sub">Track prize bonds, premium bonds, NSS certificates, government securities across PK, UK and UAE</div></div>'
+        '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('ticket', 32) : '') + '</div><div class="ei-title">No bonds yet</div><div class="ei-sub">Track prize bonds, premium bonds, NSS certificates, government securities across PK, UK and UAE</div></div>'
         :
         bonds.map(function(b, i) { return BondsModule._bondCard(b, i); }).join('')
       ) +

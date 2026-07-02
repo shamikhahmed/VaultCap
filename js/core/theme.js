@@ -54,9 +54,9 @@ const ThemeEngine = {
   },
   openPicker() {
     const options = [
-      { id: 'dark', label: '🌙 Dark', preview: '#000000', accent: '#ffffff' },
-      { id: 'light', label: '☀️ Light', preview: '#ffffff', accent: '#000000' },
-      { id: 'auto', label: '⚙️ System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', accent: '#ffffff' },
+      { id: 'dark', label: 'Dark', icon: 'moon', preview: '#000000', accent: '#ffffff' },
+      { id: 'light', label: 'Light', icon: 'sun', preview: '#ffffff', accent: '#000000' },
+      { id: 'auto', label: 'System', icon: 'settings', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', accent: '#ffffff' },
     ];
     document.getElementById('themePicker').innerHTML = `
       <div style="display:grid;grid-template-columns:1fr;gap:10px">
@@ -65,7 +65,7 @@ const ThemeEngine = {
             <div style="width:40px;height:40px;border-radius:12px;background:${o.preview};border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center">
               <div style="width:12px;height:12px;border-radius:50%;background:${o.accent}"></div>
             </div>
-            <div style="font-size:14px;font-weight:600;color:var(--text)">${o.label}</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px">${typeof VC!=='undefined'?VC.icon(o.icon,16):''}${o.label}</div>
           </div>`).join('')}
       </div>`;
     document.getElementById('themeOv').classList.add('on');

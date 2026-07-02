@@ -171,7 +171,7 @@ const Family = {
     const headCard = head
       ? `<div onclick="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>
-          <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD 👑</div>
+          <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
             <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${escHtml(head.avatar || '👤')}</div>
             <div>
@@ -187,7 +187,7 @@ const Family = {
           <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
         : `<div onclick="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
-          <div style="font-size:32px;margin-bottom:8px">👑</div>
+          <div style="margin-bottom:8px;display:flex;justify-content:center">${VC.icon('star',32)}</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Set Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
         </div>`);
@@ -210,7 +210,7 @@ const Family = {
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
           <button type="button" class="btn btn-p btn-sm" onclick="Family.openAddMember(false)">+ Add</button>
         </div>
-        ${rest.length ? memberCards : '<div class="empty"><div class="empty-ic">👨‍👩‍👧‍👦</div><h3>No members yet</h3><p>Add family members to manage their finances</p></div>'}
+        ${rest.length ? memberCards : '<div class="empty"><div class="empty-ic">'+VC.icon('users',32)+'</div><h3>No members yet</h3><p>Add family members to manage their finances</p></div>'}
       </div>`;
   },
 
@@ -229,7 +229,7 @@ const Family = {
     const header = `<div class="cap-member-header">
       <div class="cap-member-avatar" aria-hidden="true">${escHtml(m.avatar || '👤')}</div>
       <div class="cap-member-meta">
-        <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' 👑' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
+        <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' <span class="badge b-acc">Head</span>' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
         <div class="cap-member-sub">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
       <button type="button" class="btn btn-g btn-sm" onclick="Family.editMember('${m.id}')">Edit</button>
@@ -428,13 +428,13 @@ const Family = {
   },
 
   _docRow(d) {
-    const schema = typeof DOC_SCHEMAS !== 'undefined' ? (DOC_SCHEMAS[d.docType] || DOC_SCHEMAS.other) : { ic:'🪪', label: d.docType || 'Document' };
+    const schema = typeof DOC_SCHEMAS !== 'undefined' ? (DOC_SCHEMAS[d.docType] || DOC_SCHEMAS.other) : { ic:'id-card', label: d.docType || 'Document' };
     const now = new Date();
     const exp = d.expiryDate ? new Date(d.expiryDate) : null;
     const daysLeft = exp ? Math.ceil((exp - now) / 864e5) : null;
     const expBadge = daysLeft !== null ? `<span class="badge ${daysLeft < 0 ? 'b-err' : daysLeft <= 30 ? 'b-warn' : 'b-muted'}">${daysLeft < 0 ? 'Expired' : 'Exp ' + exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'2-digit'})}</span>` : '';
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic">${schema.ic || '🪪'}</div>
+      <div class="entry-ic">${VC.iconKey(schema.ic || 'id-card', 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${schema.label || escHtml(d.docType || 'Document')}</div>
         <div class="entry-sub">${escHtml(d.holderName || '')}${d.docNumber ? ' · ' + escHtml(d.docNumber) : ''}</div>

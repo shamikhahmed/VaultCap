@@ -2,21 +2,21 @@ const GlobalSearch = {
   activeFilter: 'all',
 
   _TARGETS: [
-    { key: 'banks',       label: 'Bank',        icon: '🏦', fields: ['bankName','accountType','iban','notes','last4'] },
-    { key: 'cards',       label: 'Card',        icon: '💳', fields: ['cardName','network','last4','notes'] },
-    { key: 'investments', label: 'Investment',  icon: '📈', fields: ['investmentName','broker','ticker','type','notes'] },
-    { key: 'cash',        label: 'Cash',        icon: '💵', fields: ['label','currency','location','notes'] },
-    { key: 'loans',       label: 'Loan',        icon: '💸', fields: ['person','type','notes'] },
-    { key: 'documents',   label: 'Document',    icon: '🪪', fields: ['docType','holderName','docNumber','issuingCountry','notes'] },
-    { key: 'assets',      label: 'Asset',       icon: '🏠', fields: ['name','assetType','make','model','notes'] },
-    { key: 'friends',     label: 'Contact',     icon: '👥', fields: ['name','phone','email','notes'] },
-    { key: 'sims',        label: 'SIM',         icon: '📱', fields: ['network','phone','country','notes'] },
-    { key: 'emails',      label: 'Email',       icon: '📧', fields: ['email','provider','purpose','notes'] },
-    { key: 'expenses',    label: 'Subscription',icon: '🔄', fields: ['name','category','notes'] },
-    { key: 'gadgets',     label: 'Device',      icon: '💻', fields: ['name','brand','model','serialNum','notes'] },
-    { key: 'digital',     label: 'Login',       icon: '💼', fields: ['serviceName','username','category','notes'] },
-    { key: 'bc',          label: 'Committee',   icon: '🤝', fields: ['name','organiser','notes'] },
-    { key: 'bonds',       label: 'Bond',        icon: '🎫', fields: ['name','typeId','issuer','notes'] },
+    { key: 'banks',       label: 'Bank',        icon: 'bank', fields: ['bankName','accountType','iban','notes','last4'] },
+    { key: 'cards',       label: 'Card',        icon: 'card', fields: ['cardName','network','last4','notes'] },
+    { key: 'investments', label: 'Investment',  icon: 'trending-up', fields: ['investmentName','broker','ticker','type','notes'] },
+    { key: 'cash',        label: 'Cash',        icon: 'banknote', fields: ['label','currency','location','notes'] },
+    { key: 'loans',       label: 'Loan',        icon: 'arrow-right', fields: ['person','type','notes'] },
+    { key: 'documents',   label: 'Document',    icon: 'id-card', fields: ['docType','holderName','docNumber','issuingCountry','notes'] },
+    { key: 'assets',      label: 'Asset',       icon: 'building', fields: ['name','assetType','make','model','notes'] },
+    { key: 'friends',     label: 'Contact',     icon: 'users', fields: ['name','phone','email','notes'] },
+    { key: 'sims',        label: 'SIM',         icon: 'smartphone', fields: ['network','phone','country','notes'] },
+    { key: 'emails',      label: 'Email',       icon: 'mail', fields: ['email','provider','purpose','notes'] },
+    { key: 'expenses',    label: 'Subscription',icon: 'repeat', fields: ['name','category','notes'] },
+    { key: 'gadgets',     label: 'Device',      icon: 'laptop', fields: ['name','brand','model','serialNum','notes'] },
+    { key: 'digital',     label: 'Login',       icon: 'briefcase', fields: ['serviceName','username','category','notes'] },
+    { key: 'bc',          label: 'Committee',   icon: 'handshake', fields: ['name','organiser','notes'] },
+    { key: 'bonds',       label: 'Bond',        icon: 'ticket', fields: ['name','typeId','issuer','notes'] },
   ],
 
   _FILTER_KEYS: {
@@ -29,13 +29,14 @@ const GlobalSearch = {
   render() {
     const b = document.getElementById('searchBody'); if (!b) return;
     const filters = ['all','bank','card','investment','cash','loan','document','asset','contact','sim','email','subscription','device','login','committee','bond','family'];
-    const filterLabels = { all:'All', bank:'🏦 Banks', card:'💳 Cards', investment:'📈 Invest', cash:'💵 Cash', loan:'💸 Loans', document:'🪪 Docs', asset:'🏠 Assets', contact:'👥 Contacts', sim:'📱 SIMs', email:'📧 Emails', subscription:'🔄 Subs', device:'💻 Devices', login:'💼 Logins', committee:'🤝 BC', bond:'🎫 Bonds', family:'👨‍👩‍👧‍👦 Family' };
+    const filterLabels = { all:'All', bank:'Banks', card:'Cards', investment:'Invest', cash:'Cash', loan:'Loans', document:'Docs', asset:'Assets', contact:'Contacts', sim:'SIMs', email:'Emails', subscription:'Subs', device:'Devices', login:'Logins', committee:'BC', bond:'Bonds', family:'Family' };
+    const searchIc = typeof VC !== 'undefined' ? VC.icon('search', 16) : '';
     b.innerHTML = `
     <div style="padding:14px 14px 0;position:sticky;top:0;z-index:10;background:var(--bg2);padding-bottom:10px">
       <div style="position:relative;margin-bottom:10px">
-        <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none">🔍</span>
+        <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center">${searchIc}</span>
         <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:15px;border-radius:14px" oninput="GlobalSearch.search(this.value)" autocomplete="off">
-        <button type="button" onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3)">✕</button>
+        <button type="button" onclick="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--text3)">Clear</button>
       </div>
       <div class="cap-tab-bar cap-tab-bar--flush" role="tablist" aria-label="Search filters" style="padding:0 0 2px">
         ${filters.map(f => `<button type="button" class="cap-tab search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" role="tab" aria-selected="${GlobalSearch.activeFilter === f}" onclick="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</button>`).join('')}
@@ -106,7 +107,6 @@ const GlobalSearch = {
     const f = this.activeFilter;
     const results = [];
 
-    // Search entity modules
     this._TARGETS.forEach(t => {
       const filterKey = this._filterKeyFor(t.label);
       if (f !== 'all' && f !== filterKey) return;
@@ -130,40 +130,37 @@ const GlobalSearch = {
       });
     });
 
-    // Precious metals (S.assets)
     if (f === 'all' || f === 'asset') {
       (S.assets || []).filter(a => a.assetType === 'precious_metals' || a.assetType === 'precious').forEach(g => {
         const metal = (g.metal || g.metalType || 'gold').toLowerCase();
         const label = g.name || g.label || (metal === 'silver' ? 'Silver' : 'Gold');
         const sub = (metal === 'silver' ? 'Silver' : 'Gold') + ' · ' + (g.weight || 0) + ' ' + (g.unit || g.weightUnit || 'g');
         if (!ql || this._match(label, ql) || this._match(sub, ql)) {
-          results.push({ _label: 'Asset', _icon: metal === 'silver' ? '🥈' : '🥇', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: g.id, _valueStr: '' });
+          results.push({ _label: 'Asset', _icon: metal === 'silver' ? 'layers' : 'gem', _key: 'gold', _primary: label, _secondary: sub, _owner: '', _id: g.id, _valueStr: '' });
         }
       });
     }
 
-    // Family members
     if (f === 'all' || f === 'family') {
       (S.familyMembers || []).forEach(m => {
         const hit = !ql || this._match(m.name, ql) || this._match(m.phone, ql) || this._match(m.email, ql) || this._match(m.notes, ql);
         if (!hit) return;
-        results.push({ _label: 'Family Member', _icon: '👨‍👩‍👧‍👦', _key: 'family', _primary: m.name || '', _secondary: (m.relation || m.phone || ''), _owner: '', _id: m.id, _valueStr: '' });
+        results.push({ _label: 'Family Member', _icon: 'users', _key: 'family', _primary: m.name || '', _secondary: (m.relation || m.phone || ''), _owner: '', _id: m.id, _valueStr: '' });
       });
     }
 
     if (!results.length) {
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">🔍</div><div class="ei-title">${q ? 'No Results for &ldquo;' + escHtml(q) + '&rdquo;' : 'Vault is Empty'}</div><div class="ei-sub">${q ? 'Try different keywords, check spelling, or change the filter.' : 'Add entries using the + button or any module tab.'}</div></div>`;
+      const emptyIc = typeof VC !== 'undefined' ? VC.icon('search', 32) : '';
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${emptyIc}</div><div class="ei-title">${q ? 'No Results for &ldquo;' + escHtml(q) + '&rdquo;' : 'Vault is Empty'}</div><div class="ei-sub">${q ? 'Try different keywords, check spelling, or change the filter.' : 'Add entries using the + button or any module tab.'}</div></div>`;
       return;
     }
 
-    // Group by label
     const groups = {};
     results.forEach(r => {
       if (!groups[r._label]) groups[r._label] = [];
       groups[r._label].push(r);
     });
 
-    const _navAction = { bank:'Banks', card:'Cards', investment:'Investments', cash:'Cash', loan:'Loans', document:'Documents', asset:'Assets', contact:'Friends', sim:'Sims', email:'Emails', subscription:'Exp', device:'Gadgets', login:'Digital', committee:'BC', bond:'Bonds', 'Family Member':'Family' };
     const _gotoMap = { bank:'banks', card:'cards', investment:'investments', cash:'cash', loan:'loans', document:'documents', asset:'assets', contact:'friends', sim:'sims', email:'emails', subscription:'expenses', device:'gadgets', login:'digital', committee:'bc', bond:'bonds', 'Family Member':'family' };
 
     let html = `<div style="font-size:12px;color:var(--text3);padding:4px 14px 8px">${results.length} result${results.length !== 1 ? 's' : ''}${ql ? ' for "' + escHtml(q) + '"' : ''}</div>`;
@@ -172,10 +169,11 @@ const GlobalSearch = {
       const gotoKey = _gotoMap[groupLabel] || items[0]._key;
       html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 14px 4px">${escHtml(groupLabel)}s <span style="font-weight:400;opacity:.6">${items.length}</span></div>`;
       html += items.map(item => {
-        const ownerBadge = item._owner ? ` · 👤 ${escHtml(item._owner)}` : '';
+        const ownerBadge = item._owner ? ` · ${escHtml(item._owner)}` : '';
         const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
+        const rowIc = typeof VC !== 'undefined' ? VC.iconKey(item._icon, 22) : '';
         return `<div onclick="R.goto('${gotoKey}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" onmouseenter="this.style.background='var(--glass2)'" onmouseleave="this.style.background='var(--glass)'">
-          <div style="font-size:26px;flex-shrink:0">${item._icon}</div>
+          <div class="chip-ic" style="flex-shrink:0">${rowIc}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
             ${secLine ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}

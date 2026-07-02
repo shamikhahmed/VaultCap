@@ -52,10 +52,11 @@ const CapDemo = (() => {
       document.body.prepend(el);
     }
     el.hidden = false;
+    const demoIc = typeof VC !== 'undefined' ? VC.icon('target', 16) : '';
     el.innerHTML =
-      '<span aria-hidden="true">🎯</span>' +
+      '<span class="chip-ic" aria-hidden="true">' + demoIc + '</span>' +
       `<p>${messageHtml}</p>` +
-      `<button type="button" class="cap-demo-banner__dismiss" aria-label="Dismiss demo banner">✕</button>`;
+      `<button type="button" class="cap-demo-banner__dismiss" aria-label="Dismiss demo banner">Close</button>`;
     el.querySelector('.cap-demo-banner__dismiss')?.addEventListener('click', () => dismissBanner(appKey));
   }
 

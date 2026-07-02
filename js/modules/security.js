@@ -22,13 +22,13 @@ const SecurityCenter={
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
       ${[
-        {ic:'🔐',label:'Encryption',val:enc,ok:Crypto.available()},
-        {ic:'🔑',label:'PIN Strength',val:usingDefaultPIN?'⚠️ Default PIN!':'Custom PIN set',ok:!usingDefaultPIN},
-        {ic:'⏱️',label:'Auto-Lock',val:S.autoLock?(S.lockMins?S.lockMins+' min':'On'):'Off',ok:S.autoLock},
-        {ic:'💾',label:'Last Backup',val:hasBackup?(backupAge===0?'Today':backupAge+' days ago'):'Never',ok:hasBackup&&backupAge<=7},
-        {ic:'🎭',label:'Decoy PIN',val:S.decoyPin?'Set ✅':'Not configured',ok:!!S.decoyPin},
-        {ic:'📋',label:'Clipboard Clear',val:S.clipSecs+'s auto-clear',ok:S.clipSecs<=30},
-      ].map(({ic,label,val,ok})=>`<div style="background:var(--glass);border:1px solid ${ok?'var(--border)':'rgba(255,100,100,.25)'};border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:18px">${ic}</span><span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">${label}</span></div><div style="font-size:13px;font-weight:600;color:${ok?'var(--text)':'var(--warn)'}">${val}</div></div>`).join('')}
+        {ic:'vault',label:'Encryption',val:enc,ok:Crypto.available()},
+        {ic:'key',label:'PIN Strength',val:usingDefaultPIN?'Default PIN!':'Custom PIN set',ok:!usingDefaultPIN},
+        {ic:'clock',label:'Auto-Lock',val:S.autoLock?(S.lockMins?S.lockMins+' min':'On'):'Off',ok:S.autoLock},
+        {ic:'share',label:'Last Backup',val:hasBackup?(backupAge===0?'Today':backupAge+' days ago'):'Never',ok:hasBackup&&backupAge<=7},
+        {ic:'eye-off',label:'Decoy PIN',val:S.decoyPin?'Set':'Not configured',ok:!!S.decoyPin},
+        {ic:'list',label:'Clipboard Clear',val:S.clipSecs+'s auto-clear',ok:S.clipSecs<=30},
+      ].map(({ic,label,val,ok})=>`<div style="background:var(--glass);border:1px solid ${ok?'var(--border)':'rgba(255,100,100,.25)'};border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span class="chip-ic">${typeof VC!=='undefined'?VC.icon(ic,18):''}</span><span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">${label}</span></div><div style="font-size:13px;font-weight:600;color:${ok?'var(--text)':'var(--warn)'}">${val}</div></div>`).join('')}
     </div>
     ${[
       usingDefaultPIN&&{sev:'err',msg:'Using default PIN 123456 — change it immediately',btn:'Change PIN',act:'Settings.changePIN()'},
@@ -38,7 +38,7 @@ const SecurityCenter={
       expCards>0&&{sev:'warn',msg:expCards+' card'+(expCards>1?'s are':' is')+' expired or expiring soon',btn:'Review Cards',act:"R.goto('cards')"},
       !hasBackup&&{sev:'err',msg:'No backup created — your data is at risk',btn:'Backup Now',act:"ExIm.export('vault')"},
       backupAge>30&&hasBackup&&{sev:'warn',msg:'Last backup was '+backupAge+' days ago',btn:'Backup Now',act:"ExIm.export('vault')"},
-    ].filter(Boolean).map(({sev,msg,btn,act})=>`<div class="insight ${sev==='err'?'err':'warn'}" style="margin-bottom:8px"><div class="insight-ic">${sev==='err'?'❌':'⚠️'}</div><div class="insight-body"><div class="insight-title">${msg}</div></div><button type="button" class="btn btn-g btn-sm" onclick="${act}">${btn}</button></div>`).join('') || '<div class="insight ok"><div class="insight-ic">✅</div><div class="insight-body"><div class="insight-title">No security issues found</div><div class="insight-sub">Your vault is well-configured</div></div></div>'}
+    ].filter(Boolean).map(({sev,msg,btn,act})=>`<div class="insight ${sev==='err'?'err':'warn'}" style="margin-bottom:8px"><div class="insight-ic">${typeof VC!=='undefined'?VC.icon(sev==='err'?'cross':'bell',18):''}</div><div class="insight-body"><div class="insight-title">${msg}</div></div><button type="button" class="btn btn-g btn-sm" onclick="${act}">${btn}</button></div>`).join('') || '<div class="insight ok"><div class="insight-ic">'+(typeof VC!=='undefined'?VC.icon('target',18):'')+'</div><div class="insight-body"><div class="insight-title">No security issues found</div><div class="insight-sub">Your vault is well-configured</div></div></div>'}
     <div class="set-sec" style="margin-top:14px"><div class="set-title">Security Actions</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()">Change</button></div>
       <div class="si"><div class="sil"><div class="name">Set Decoy PIN</div><div class="desc">Show fake vault under coercion</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()">Set</button></div>
