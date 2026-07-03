@@ -61,6 +61,30 @@ const VaultRelations = {
     adcb: 'adcb',
     mashreq: 'mashreq',
     rakbank: 'rakbank',
+    rak: 'rakbank',
+    ei: 'emirates islamic',
+    'emirates islamic': 'emirates islamic',
+    liv: 'liv',
+    stanchart: 'standard chartered',
+    'stan chart': 'standard chartered',
+    capitalone: 'capital one',
+    'capital one': 'capital one',
+    aqua: 'aqua',
+    vanquis: 'vanquis',
+    curve: 'curve',
+    caxton: 'caxton',
+    fairfx: 'fairfx',
+    tesco: 'tesco bank',
+    'tesco bank': 'tesco bank',
+    'm and s': 'm&s bank',
+    'marks and spencer': 'm&s bank',
+    sainsbury: 'sainsbury s bank',
+    asda: 'asda money',
+    'post office': 'post office money',
+    'john lewis': 'john lewis',
+    marbles: 'marbles',
+    aa: 'aa finance',
+    rac: 'rac finance',
   },
 
   _norm(s) {
@@ -116,6 +140,7 @@ const VaultRelations = {
     const card = this._norm(cardName);
     if (!card || !list.length) return null;
 
+    const cardFirst = card.split(' ')[0] || '';
     let best = null;
     let bestScore = 0;
     for (const bank of list) {
@@ -123,7 +148,8 @@ const VaultRelations = {
         if (!key || key.length < 2) continue;
         if (!this._hasToken(card, key)) continue;
         let score = key.length * 10;
-        if (card === key || card.startsWith(key + ' ')) score += 20;
+        if (card === key || card.startsWith(key + ' ')) score += 40;
+        if (cardFirst && (cardFirst === key || key.startsWith(cardFirst) || cardFirst.startsWith(key))) score += 80;
         if (score > bestScore) {
           bestScore = score;
           best = bank;
@@ -135,36 +161,36 @@ const VaultRelations = {
   },
 
   /** Catalog bank entry for a card name (even if user has no bank yet). */
-  catalogBankForCard(cardName) {
+  catalogBankForCard(cardName, preferCountry) {
     const card = this._norm(cardName);
     if (!card || typeof SMART_DB === 'undefined') return null;
     const banks = SMART_DB.banks || [];
+    const cardMeta = (SMART_DB.cards || []).find((c) => this._norm(c.name) === card);
+    const country = preferCountry || (cardMeta && cardMeta.country) || '';
 
+    const cardFirst = card.split(' ')[0] || '';
     let best = null;
     let bestScore = 0;
     for (const b of banks) {
       const keys = [b.name, ...(b.aliases || [])].map((k) => this._norm(k)).filter(Boolean);
-      for (const key of keys) {
-        if (key.length < 3 || !this._hasToken(card, key)) continue;
+      // Reverse issuer aliases that point at this bank
+      Object.entries(this._ISSUER_ALIASES).forEach(([alias, target]) => {
+        const bn = this._norm(b.name);
+        if (bn === target || bn.includes(target) || target.includes(bn)) keys.push(alias);
+      });
+      for (const key of [...new Set(keys)]) {
+        if (key.length < 2 || !this._hasToken(card, key)) continue;
         let score = key.length * 10;
-        if (card.startsWith(key)) score += 20;
+        if (card.startsWith(key + ' ') || card === key) score += 40;
+        if (cardFirst && (cardFirst === key || key.startsWith(cardFirst) || cardFirst.startsWith(key))) score += 80;
+        if (country && b.country === country) score += 60;
         if (score > bestScore) {
           bestScore = score;
           best = b;
         }
       }
     }
-    if (best) return best;
-
-    for (const [alias, target] of Object.entries(this._ISSUER_ALIASES)) {
-      if (!this._hasToken(card, alias)) continue;
-      const cat = banks.find((b) => {
-        const bn = this._norm(b.name);
-        return bn === target || bn.includes(target) || target.includes(bn);
-      });
-      if (cat) return cat;
-    }
-    return null;
+    return bestScore >= 30 ? best : null;
   },
 
   /** Match existing bank, or create one from SMART_DB catalog. */

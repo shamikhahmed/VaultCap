@@ -73,8 +73,11 @@ function loadDemoProfile(type) {
     // HBL — standard, gold, infinity, world elite
     _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Visa Debit',network:'Visa',cardType:'Debit',category:'Standard',country:'PK',last4:'3310',expiry:'07/27',currency:'PKR'}),
     _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Gold Mastercard',network:'Mastercard',cardType:'Credit',category:'Gold',country:'PK',last4:'8842',expiry:'08/28',currency:'PKR',limit:500000,annualFee:5000}),
+    _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Prestige Visa Infinite',network:'Visa',cardType:'Credit',category:'Premium',country:'PK',last4:'5501',expiry:'10/29',currency:'PKR',limit:3000000,annualFee:30000,favorite:true,notes:'Prestige Infinite — top HBL tier'}),
+    _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Prestige World Elite',network:'Mastercard',cardType:'Credit',category:'Premium',country:'PK',last4:'5502',expiry:'10/29',currency:'PKR',limit:3000000,annualFee:30000,notes:'Prestige World Elite'}),
     _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Meezan Infinity Visa',network:'Visa',cardType:'Credit',category:'Islamic',country:'PK',last4:'6620',expiry:'03/29',currency:'PKR',limit:1500000,annualFee:12000,notes:'Infinity tier — lounge + travel'}),
-    _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Premier World Elite',network:'Mastercard',cardType:'Credit',category:'Premium',country:'PK',last4:'1108',expiry:'12/28',currency:'PKR',limit:2500000,annualFee:25000,favorite:true,notes:'World Elite — concierge + airport lounge'}),
+    _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Premier World Elite',network:'Mastercard',cardType:'Credit',category:'Premium',country:'PK',last4:'1108',expiry:'12/28',currency:'PKR',limit:2500000,annualFee:25000,notes:'World Elite — concierge + airport lounge'}),
+    _card({bankId:bankHbl,bankName:'HBL',cardName:'HBL Virtual Card',network:'Visa',cardType:'Virtual',category:'Virtual',country:'PK',last4:'3344',expiry:'11/28',currency:'PKR',notes:'Small virtual card'}),
     // MCB — gold
     _card({bankId:bankMcb,bankName:'MCB Bank',cardName:'MCB Gold Credit',network:'Mastercard',cardType:'Credit',category:'Gold',country:'PK',last4:'4477',expiry:'06/28',currency:'PKR',limit:750000,annualFee:6000}),
     // Emirates NBD — gold + premium
@@ -192,7 +195,7 @@ function loadDemoProfile(type) {
     { id: childId, name: 'Ayaan Khan', avatar: 'AK', relation: 'Son', isHead: false, role: 'viewer', dob: '2015-08-22', notes: 'Junior ISA', createdAt: ts, updatedAt: ts },
   ];
   S.banks.forEach((b, i) => { b.ownerId = i < 3 ? headId : (i < 5 ? spouseId : headId); });
-  S.cards.forEach((c, i) => { c.ownerId = i < 7 ? headId : spouseId; });
+  S.cards.forEach((c, i) => { c.ownerId = i < 9 ? headId : spouseId; });
   S.cash.forEach((c, i) => { c.ownerId = i === 0 ? headId : spouseId; });
   S.investments.forEach((inv, i) => { inv.ownerId = i < 4 ? headId : spouseId; });
   S.assets.forEach((a, i) => { a.ownerId = i < 2 ? headId : spouseId; });
