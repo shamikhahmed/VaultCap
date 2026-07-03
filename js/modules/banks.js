@@ -283,7 +283,10 @@ const Banks={
     if(typeof Validators!=='undefined'&&!Validators.run(item,'bank'))return;
     const auto=autoTags('bank',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
     if(editId){S.banks=S.banks.map(x=>x.id===editId?item:x);if(typeof Audit!=='undefined')Audit.log(item,'edited');}else{S.banks.push(item);if(typeof Audit!=='undefined')Audit.log(item,'created');}
+    if(typeof autoLink==='function')autoLink('bank',item);
+    const linkedN=typeof VaultRelations!=='undefined'?VaultRelations.linkCardsToBank(item):0;
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
+    if(linkedN>0)Toast.show(`Linked ${linkedN} card${linkedN===1?'':'s'} to ${name}`,'info',3500);
     if(typeof Haptic!=='undefined')Haptic.save();
     if(!editId){promptAddAnother('Bank','Banks.openAdd');setTimeout(()=>Toast.show(`Added ${name} — <button type="button" class="cpbtn" onclick="Cards.openAdd()">Add a card for this bank?</button>`,'info',6000),800);}
   },

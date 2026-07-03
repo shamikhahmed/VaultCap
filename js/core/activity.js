@@ -29,7 +29,12 @@ function autoLink(module, item) {
   const n = s => (s||'').toLowerCase().trim();
   S._pendingLinks = S._pendingLinks || [];
 
-  if (module === 'card') {
+  if (module === 'card' && typeof VaultRelations !== 'undefined') {
+    const bank = VaultRelations.linkCard(item, { createBank: false });
+    if (!bank && item.cardName) {
+      S._pendingLinks.push({ type:'card', id:item.id, matchName:n(item.cardName), field:'linkedBankId', targetModule:'banks' });
+    }
+  } else if (module === 'card') {
     const cardLow = n(item.cardName || '');
     const bank = (S.banks||[]).find(b => {
       const bn = n(b.bankName);
@@ -37,12 +42,16 @@ function autoLink(module, item) {
     });
     if (bank) {
       item.linkedBankId = bank.id;
+      item.linkedBank = bank.bankName;
     } else if (cardLow) {
       S._pendingLinks.push({ type:'card', id:item.id, matchName:cardLow, field:'linkedBankId', targetModule:'banks' });
     }
   }
 
   if (module === 'bank') {
+    if (typeof VaultRelations !== 'undefined') {
+      VaultRelations.linkCardsToBank(item);
+    }
     const bankLow = n(item.bankName || '');
     const stillPending = [];
     S._pendingLinks.forEach(link => {
@@ -50,7 +59,10 @@ function autoLink(module, item) {
           (link.matchName.includes(bankLow) || bankLow.includes(link.matchName.split(' ')[0]))) {
         const arr = link.type === 'card' ? S.cards : S.expenses;
         const target = (arr||[]).find(x => x.id === link.id);
-        if (target) target[link.field] = item.id;
+        if (target) {
+          target[link.field] = item.id;
+          if (link.type === 'card') target.linkedBank = item.bankName;
+        }
       } else {
         stillPending.push(link);
       }

@@ -431,25 +431,27 @@ const Cards={
     const _linkedBankName=document.getElementById('cf-bank')?.value||document.getElementById('cf-mybank')?.value||'';
     const _oid = editId ? (S.cards.find(x=>x.id===editId)?.ownerId||'self') : (Cards._pendingOwnerId||'self');
     if (!editId) Cards._pendingOwnerId = null;
+    const _skipAutoLink=_linkedBankName==='__other__';
     const _bankLinkName=(_linkedBankName&&_linkedBankName!=='__other__')?_linkedBankName:'';
-    const _bankLink=(_bankLinkName?(S.banks.find(b=>b.bankName===_bankLinkName)||null):null);
+    let _bankLink=_bankLinkName?(S.banks.find(b=>b.bankName===_bankLinkName)||null):null;
+    // Auto-link any card name → bank (match existing or create from SMART_DB catalog)
+    if(!_bankLink&&!_skipAutoLink&&typeof VaultRelations!=='undefined'){
+      const banksBefore=(S.banks||[]).length;
+      _bankLink=VaultRelations.ensureBankForCard(name);
+      if(_bankLink&&(S.banks||[]).length>banksBefore){
+        Toast.show(_bankLink.bankName+' added to Banks','info',3000);
+      }
+    }
     const item={id:id2,cardName:name,network:document.getElementById('cf-net').value,cardType:document.getElementById('cf-type').value,category:document.getElementById('cf-cat').value,country:document.getElementById('cf-cc').value,holderName:document.getElementById('cf-holder').value.trim(),last4:_l4v,cardNumber:fullNumRaw||'',expiry:document.getElementById('cf-exp').value.trim(),cvv:document.getElementById('cf-cvv').value.trim(),cardPin:document.getElementById('cf-cpin').value.trim(),rewardsProgram:document.getElementById('cf-rprog').value.trim(),rewardsPoints:parseInt(document.getElementById('cf-pts').value)||0,ownership:document.getElementById('cf-own').value,annualFee:parseFloat(document.getElementById('cf-fee').value)||0,limit:parseFloat(document.getElementById('cf-limit')?.value)||0,username:document.getElementById('cf-user').value.trim(),pwdHint:document.getElementById('cf-pwd').value.trim(),notes:document.getElementById('cf-notes').value.trim(),tags:U.getTags(),favorite:document.getElementById('cf-fav').checked,jointAccount:document.getElementById('cf-joint')?.checked||false,jointWith:document.getElementById('cf-joint-person')?.value||'',issuer:name.split(' ')[0],linkedBankId:_bankLink?_bankLink.id:'',linkedBank:_bankLink?_bankLink.bankName:'',frontPhoto,backPhoto,ownerId:_oid,owners:[_oid],updatedAt:new Date().toISOString(),createdAt:editId?S.cards.find(x=>x.id===editId)?.createdAt:new Date().toISOString()};
     if(typeof Validators!=='undefined'&&!Validators.run(item,'card'))return;
     const auto=autoTags('card',item);item.tags=[...new Set([...(item.tags||[]),...auto])];
+    if(typeof autoLink==='function')autoLink('card',item);
     if(editId){S.cards=S.cards.map(x=>x.id===editId?item:x);if(typeof Audit!=='undefined')Audit.log(item,'edited');}else{S.cards.push(item);if(typeof Audit!=='undefined')Audit.log(item,'created');}
     const _cPhotoBytes=S.cards.reduce((a,c)=>a+(c.frontPhoto||'').length+(c.backPhoto||'').length,0)/1.37;
     if(_cPhotoBytes>10*1024*1024)Toast.show('Storage is getting large. Consider removing old photos.','warning',5000);
     Activity.log((editId?'Edited':'Added')+' card',name);Store.save();Modal.close();this.render();Toast.show((editId?'Updated':'Added')+': '+name,'success');
     if(typeof Haptic!=='undefined')Haptic.save();
-    if(!editId){
-      const cLow=name.toLowerCase();
-      const bMatch=SMART_DB.banks.find(b=>cLow.includes(b.name.toLowerCase()));
-      if(bMatch){
-        const bExists=(S.banks||[]).some(b=>b.bankName.toLowerCase()===bMatch.name.toLowerCase());
-        if(!bExists){S.banks.push({id:U.id(),bankName:bMatch.name,country:bMatch.country,currency:bMatch.currency,bankType:bMatch.type,accountType:'Current',createdAt:new Date().toISOString()});Store.save();Toast.show(bMatch.name+' added to Banks','info',3000);}
-      }
-      promptAddAnother('Card','Cards.openAdd');
-    }
+    if(!editId)promptAddAnother('Card','Cards.openAdd');
   },
   edit(id){
     const c=S.cards.find(x=>x.id===id);if(!c)return;

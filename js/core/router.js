@@ -66,6 +66,11 @@ const R = {
     }
     S.unlocked = true; S.decoy = false;
     window._vosUnlocked = true;
+    // Backfill bank↔card links for any orphan cards (existing vaults)
+    if (typeof VaultRelations !== 'undefined') {
+      const linked = VaultRelations.linkOrphanCards({ createBank: false });
+      if (linked > 0) Store.save();
+    }
     ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
     document.getElementById('app').style.display = 'flex';

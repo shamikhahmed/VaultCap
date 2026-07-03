@@ -480,6 +480,15 @@ const SMART_DB = {
       const type = document.getElementById('cf-type'); if (type) type.value = match.type;
       const cat = document.getElementById('cf-cat'); if (cat) cat.value = match.category;
       const cc = document.getElementById('cf-cc'); if (cc) cc.value = match.country;
+      // Pre-select linked bank in form when user has that bank (or catalog match)
+      const bankSel = document.getElementById('cf-mybank');
+      if (bankSel && typeof VaultRelations !== 'undefined') {
+        const bank = VaultRelations.matchBankForCard(match.name) || VaultRelations.matchBankForCard(val);
+        if (bank) {
+          bankSel.value = bank.bankName;
+          Cards._bankSelected?.(bank.bankName);
+        }
+      }
     }, 50);
   },
   fillSim(val) {
