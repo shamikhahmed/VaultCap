@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function () {
-  var BUILD = '4.9.2';
+  var BUILD = '4.9.3';
   var KEY = 'vaultcap_build';
   if (localStorage.getItem(KEY) === BUILD) return;
   localStorage.setItem(KEY, BUILD);
@@ -27,7 +27,7 @@
   Promise.all(tasks).then(reload).catch(reload);
 })();
 </script>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google.com https://cdn.jsdelivr.net https://*.gstatic.com; connect-src 'self' https://cdn.jsdelivr.net https://open.er-api.com https://api.metals.live; frame-src 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google.com https://cdn.jsdelivr.net https://*.gstatic.com; connect-src 'self' https://cdn.jsdelivr.net https://open.er-api.com https://api.metals.live https://vaultos-llm-proxy.shamikhahmed.workers.dev; frame-src 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -154,7 +154,7 @@
       <div class="pd" id="pd4"></div>
       <div class="pd" id="pd5"></div>
     </div>
-    <div class="pin-msg" id="pmsg"></div>
+    <div class="pin-msg" id="pmsg" aria-live="polite"></div>
     <!-- kept for JS compatibility -->
     <div class="lk-bar" id="lkBar"><div class="lk-fill" id="lkFill"></div></div>
   </div>
@@ -162,21 +162,21 @@
   <!-- BOT: keypad + hint -->
   <div class="lk-bot">
     <div class="keypad">
-      <button class="key" onclick="PIN.in('1')">1</button>
-      <button class="key" onclick="PIN.in('2')"><span>2</span><span class="key-sub">ABC</span></button>
-      <button class="key" onclick="PIN.in('3')"><span>3</span><span class="key-sub">DEF</span></button>
-      <button class="key" onclick="PIN.in('4')"><span>4</span><span class="key-sub">GHI</span></button>
-      <button class="key" onclick="PIN.in('5')"><span>5</span><span class="key-sub">JKL</span></button>
-      <button class="key" onclick="PIN.in('6')"><span>6</span><span class="key-sub">MNO</span></button>
-      <button class="key" onclick="PIN.in('7')"><span>7</span><span class="key-sub">PQRS</span></button>
-      <button class="key" onclick="PIN.in('8')"><span>8</span><span class="key-sub">TUV</span></button>
-      <button class="key" onclick="PIN.in('9')"><span>9</span><span class="key-sub">WXYZ</span></button>
+      <button class="key" onclick="PIN.in('1')" aria-label="1">1</button>
+      <button class="key" onclick="PIN.in('2')" aria-label="2"><span>2</span><span class="key-sub">ABC</span></button>
+      <button class="key" onclick="PIN.in('3')" aria-label="3"><span>3</span><span class="key-sub">DEF</span></button>
+      <button class="key" onclick="PIN.in('4')" aria-label="4"><span>4</span><span class="key-sub">GHI</span></button>
+      <button class="key" onclick="PIN.in('5')" aria-label="5"><span>5</span><span class="key-sub">JKL</span></button>
+      <button class="key" onclick="PIN.in('6')" aria-label="6"><span>6</span><span class="key-sub">MNO</span></button>
+      <button class="key" onclick="PIN.in('7')" aria-label="7"><span>7</span><span class="key-sub">PQRS</span></button>
+      <button class="key" onclick="PIN.in('8')" aria-label="8"><span>8</span><span class="key-sub">TUV</span></button>
+      <button class="key" onclick="PIN.in('9')" aria-label="9"><span>9</span><span class="key-sub">WXYZ</span></button>
       <button class="key act" onclick="ThemeEngine.openPicker()" aria-label="Appearance"><span data-vc-icon="grid" data-vc-size="20" aria-hidden="true"></span></button>
-      <button class="key" onclick="PIN.in('0')">0</button>
-      <button class="key act" onclick="PIN.del()">⌫</button>
+      <button class="key" onclick="PIN.in('0')" aria-label="0">0</button>
+      <button class="key act" onclick="PIN.del()" aria-label="Delete">⌫</button>
     </div>
     <div class="lk-hint">
-      <span id="forgotPinLink" onclick="(function(){ if(typeof forgotPINFromLock === 'function'){ forgotPINFromLock(); } else if(window.Settings && typeof window.Settings.forgotPIN === 'function'){ window.Settings.forgotPIN(); } else { alert('To recover your vault: go to Settings → Security → Forgot PIN'); } })()" style="font-size:13px;color:var(--text3);margin-top:20px;background:none;border:none;cursor:pointer">Forgot PIN?</span>
+      <button type="button" id="forgotPinLink" onclick="(function(){ if(typeof forgotPINFromLock === 'function'){ forgotPINFromLock(); } else if(window.Settings && typeof window.Settings.forgotPIN === 'function'){ window.Settings.forgotPIN(); } else { alert('To recover your vault: go to Settings → Security → Forgot PIN'); } })()" style="font-size:13px;color:var(--text3);margin-top:20px;background:none;border:none;cursor:pointer">Forgot PIN?</button>
     </div>
   </div>
   <button id="emergencyLockBtn" onclick="Emergency.showLockscreen()" style="display:none;position:absolute;bottom:calc(env(safe-area-inset-bottom, 0px) + 24px);left:50%;transform:translateX(-50%);background:rgba(255,59,48,.15);border:1px solid rgba(255,59,48,.4);color:var(--err);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:nowrap"><span data-vc-icon="cross" data-vc-size="13" style="display:inline-flex;align-items:center;justify-content:center"></span> Emergency Info</button>
@@ -379,12 +379,19 @@
 <!-- Pages rendered dynamically -->
 <div class="page on" id="pg-dashboard">
 <div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="overflow:hidden;min-width:0"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
-<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;position:relative" class="dash-toolbar">
 <button class="btn btn-g btn-sm" id="currBtn" onclick="Dash.toggleCurrency()" title="Display currency" style="min-width:44px;padding:6px 8px;font-size:11px">GBP</button>
-<button class="icb" onclick="R.goto('settings')" title="Settings" style="width:34px;height:34px" data-vc-icon="settings" data-vc-size="18"></button>
-<button class="btn btn-g btn-sm" onclick="CMD.open()" style="padding:6px 8px;font-size:11px;display:none" id="dashCmdBtn">⌘K</button>
-<button class="icb" onclick="togglePrivacy()" title="Privacy" style="width:34px;height:34px" data-vc-icon="eye-off" data-vc-size="18"></button>
-<button class="icb" onclick="R.lock()" title="Lock vault" style="width:34px;height:34px" data-vc-icon="lock" data-vc-size="18"></button></div></div></div>
+<button class="icb dash-act-desktop" onclick="R.goto('settings')" title="Settings" style="width:32px;height:32px" data-vc-icon="settings" data-vc-size="18"></button>
+<button class="btn btn-g btn-sm dash-act-desktop" onclick="CMD.open()" style="padding:6px 8px;font-size:11px;display:none" id="dashCmdBtn">⌘K</button>
+<button class="icb dash-act-desktop" onclick="togglePrivacy()" title="Privacy" style="width:32px;height:32px" data-vc-icon="eye-off" data-vc-size="18"></button>
+<button class="icb dash-act-desktop" onclick="R.lock()" title="Lock vault" style="width:32px;height:32px" data-vc-icon="lock" data-vc-size="18"></button>
+<button class="icb dash-act-more" id="dashMoreBtn" onclick="Dash.toggleMore(event)" title="More actions" style="width:32px;height:32px;display:none" data-vc-icon="more" data-vc-size="18"></button>
+<div class="dash-more-menu" id="dashMoreMenu" role="menu" aria-hidden="true">
+<button type="button" class="dash-more-item" role="menuitem" onclick="R.goto('settings');Dash.closeMore()"><span data-vc-icon="settings" data-vc-size="16"></span>Settings</button>
+<button type="button" class="dash-more-item" role="menuitem" onclick="CMD.open();Dash.closeMore()"><span data-vc-icon="search" data-vc-size="16"></span>Search</button>
+<button type="button" class="dash-more-item" role="menuitem" onclick="togglePrivacy();Dash.closeMore()"><span data-vc-icon="eye-off" data-vc-size="16"></span>Privacy</button>
+<button type="button" class="dash-more-item" role="menuitem" onclick="R.lock();Dash.closeMore()"><span data-vc-icon="lock" data-vc-size="16"></span>Lock vault</button>
+</div></div></div></div>
 <div class="pb" id="dashBody"></div>
 </div>
 <div class="page" id="pg-banks"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Vault</span><span class="cap-title">Banks</span></h2><div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="Banks.openAdd()">+ Add</button></div></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="bQ" placeholder="Search banks..." oninput="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" onchange="Banks.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
@@ -437,8 +444,9 @@
 </main>
 
 <!-- FAB -->
+<div class="fab-scrim" id="fabScrim" onclick="FAB.close()" aria-hidden="true"></div>
 <button class="fab" id="fab" onclick="FAB.toggle()" aria-label="Add item" aria-haspopup="true" aria-expanded="false">＋</button>
-<div class="fab-menu" id="fabMenu"></div>
+<div class="fab-menu" id="fabMenu" role="menu" aria-label="Quick actions"></div>
 
 <!-- BOTTOM TABS -->
 <div class="btabs"><div class="btabs-in" id="btabs"></div></div>
@@ -463,49 +471,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" onclick="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=4.9.2"></script>
-<script>window.VER='4.9.2';</script>
-<script src="js/core/constants.js?v=4.9.2"></script>
-<script src="js/core/validators.js?v=4.9.2"></script>
-<script src="js/core/vault-meta.js?v=4.9.2"></script>
-<script src="js/core/theme.js?v=4.9.2"></script>
-<script src="js/core/lazy-loader.js?v=4.9.2"></script>
-<script src="js/core/vault-profiles.js?v=4.9.2"></script>
-<script src="js/core/lock-recovery.js?v=4.9.2"></script>
-<script src="js/core/store-engine.js?v=4.9.2"></script>
-<script src="js/core/crypto.js?v=4.9.2"></script>
-<script src="js/core/migrate.js?v=4.9.2"></script>
-<script src="js/core/smart-db.js?v=4.9.2"></script>
-<script src="js/core/onboarding-flow.js?v=4.9.2"></script>
-<script src="js/core/pin.js?v=4.9.2"></script>
-<script src="js/core/router.js?v=4.9.2"></script>
-<script src="js/core/demo-boot.js?v=4.9.2"></script>
-<script src="js/core/family-pickers.js?v=4.9.2"></script>
-<script src="js/modules/rates.js?v=4.9.2"></script>
-<script src="js/modules/currency-engine.js?v=4.9.2"></script>
-<script src="js/core/lookup-data.js?v=4.9.2"></script>
-<script src="js/core/doc-schemas.js?v=4.9.2"></script>
-<script src="js/core/vault-safety.js?v=4.9.2"></script>
-<script src="js/core/module-registry.js?v=4.9.2"></script>
-<script src="js/core/icons.js?v=4.9.2"></script>
-<script src="js/core/vault-relations.js?v=4.9.2"></script>
-<script src="js/core/data-integrity.js?v=4.9.2"></script>
-<script src="js/core/branding.js?v=4.9.2"></script>
-<script src="js/core/focus-trap.js?v=4.9.2"></script>
-<script src="js/core/vault-health.js?v=4.9.2"></script>
-<script src="js/core/modal.js?v=4.9.2"></script>
-<script src="js/core/activity.js?v=4.9.2"></script>
-<script src="js/core/vault-utils.js?v=4.9.2"></script>
-<script src="js/core/emergency.js?v=4.9.2"></script>
-<script src="js/core/onboarding-wizard.js?v=4.9.2"></script>
-<script src="js/core/ios-interactions.js?v=4.9.2"></script>
-<script src="js/core/nav-ui.js?v=4.9.2"></script>
-<script src="js/core/smart-actions.js?v=4.9.2"></script>
-<script src="js/core/workspace-security.js?v=4.9.2"></script>
-<script src="js/core/demo-profiles.js?v=4.9.2"></script>
-<script src="js/core/app-helpers.js?v=4.9.2"></script>
-<script src="js/app.js?v=4.9.2"></script>
-<script src="js/ui.js?v=4.9.2"></script>
+<script src="js/storage.js?v=4.9.3"></script>
+<script>window.VER='4.9.3';</script>
+<script src="dist/vaultcap.bundle.js?v=4.9.3"></script>
 <script>
 (function () {
   function syncDemoBanner() {
@@ -537,42 +505,17 @@
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 })();
 </script>
-<script src="js/modules/banks.js?v=4.9.2"></script>
-<script src="js/modules/cards.js?v=4.9.2"></script>
-<script src="js/modules/sims.js?v=4.9.2"></script>
-<script src="js/modules/investments.js?v=4.9.2"></script>
-<script src="js/modules/cash.js?v=4.9.2"></script>
-<script src="js/modules/loans.js?v=4.9.2"></script>
-<script src="js/modules/friends.js?v=4.9.2"></script>
-<script src="js/modules/family.js?v=4.9.2"></script>
-<script src="js/modules/assets.js?v=4.9.2"></script>
-<script src="js/modules/expenses.js?v=4.9.2"></script>
-<script src="js/modules/documents.js?v=4.9.2"></script>
-<script src="js/modules/emails.js?v=4.9.2"></script>
-<script src="js/modules/gadgets.js?v=4.9.2"></script>
-<script src="js/modules/digital.js?v=4.9.2"></script>
-<script src="js/modules/alerts.js?v=4.9.2"></script>
-<script src="js/modules/timeline.js?v=4.9.2"></script>
-<script src="js/modules/security.js?v=4.9.2"></script>
-<script src="js/modules/search.js?v=4.9.2"></script>
-<script src="js/modules/vehicles.js?v=4.9.2"></script>
-<script src="js/modules/reminders.js?v=4.9.2"></script>
-<script src="js/modules/trash.js?v=4.9.2"></script>
-<script src="js/modules/currency.js?v=4.9.2"></script>
-<script src="js/modules/gold.js?v=4.9.2"></script>
-<script src="js/modules/zakat.js?v=4.9.2"></script>
-<script src="js/modules/bc.js?v=4.9.2"></script>
-<script src="js/modules/bonds.js?v=4.9.2"></script>
-<script src="js/modules/creditScore.js?v=4.9.2"></script>
-<script src="js/modules/tax.js?v=4.9.2"></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw-v51.js').catch(() => {});
 }
 </script>
-<script src="js/capricorn-motion.js?v=4.9.2"></script>
-<script src="js/cap-demo-mode.js?v=4.9.2"></script>
-<script src="js/capricorn-premium-nav.js?v=4.9.2"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      if (window.CapPremiumNav) CapPremiumNav.init({ nav: '#btabs, #sbNav', item: '.ti, .ni' });
+      if (window.CapricornMotion) CapricornMotion.init();
+    });
+</script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
       if (window.CapPremiumNav) CapPremiumNav.init({ nav: '#btabs, #sbNav', item: '.ti, .ni' });

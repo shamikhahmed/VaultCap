@@ -54,7 +54,7 @@ function applyDecoyUnlock(decoyData) {
   S.decoy = true;
   S.fails = 0;
   S.lockedUntil = 0;
-  try { sessionStorage.removeItem('vos_fails'); localStorage.removeItem('vos_fails'); } catch(e) {}
+  try { LockoutStore.clear(); } catch(e) {}
   const hasCustomVault = decoyData && !decoyData._decoy &&
     ((decoyData.banks && decoyData.banks.length) || (decoyData.cards && decoyData.cards.length) ||
      (decoyData.documents && decoyData.documents.length));

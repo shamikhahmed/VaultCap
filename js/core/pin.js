@@ -57,7 +57,7 @@ const PIN = {
       const kind = (result && typeof result === 'object') ? result.kind : result;
       if (kind === 'real') {
         S.fails = 0; S.lockedUntil = 0;
-        try { sessionStorage.removeItem('vos_fails'); localStorage.removeItem('vos_fails'); localStorage.removeItem('vo_pin'); } catch(e) {}
+        try { LockoutStore.clear(); localStorage.removeItem('vo_pin'); } catch(e) {}
         Store.save();
         setTimeout(() => R.unlock(), 180);
       } else if (kind === 'decoy') {
@@ -91,8 +91,8 @@ const PIN = {
           }
         }
         // Persist AFTER lockedUntil is set so reload restores the full lockout state
+        LockoutStore.save(S.fails, S.lockedUntil);
         if (VaultDB.sessionKey) { Store.save(); }
-        else { try { sessionStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil })); localStorage.removeItem('vos_fails'); } catch(e) {} }
         Activity.log('Failed PIN #' + S.fails);
         if (S.fails >= 3) {
           const fpl = document.getElementById('forgotPinLink');
@@ -155,17 +155,25 @@ const PIN = {
     const hasVaultDB = await VaultDB.isInitialized();
 
     if (oldData && !hasVaultDB) {
-      if (oldData.noPin || pin === String(oldData.pin)) {
+      if (await PinHash.verifyLegacy(pin, oldData)) {
         Object.assign(S, oldData);
+        delete S.pin;
         try {
           await VaultDB.init(pin || '000000');
+          if (pin && !oldData.noPin) {
+            if (!S.vaultMeta) S.vaultMeta = {};
+            S.vaultMeta.pinHash = await PinHash.digest(pin);
+          }
           await VaultDB.save(Store._data());
           localStorage.removeItem('vos3');
           Store._savePrefs();
-        } catch(e) { console.warn('[VaultDB] migration error:', e); }
+        } catch(e) {
+          if (typeof Toast !== 'undefined') Toast.show('Vault migration failed — restore from backup', 'error', 8000);
+          console.warn('[VaultDB] migration error:', e);
+        }
         return { kind: 'real' };
       }
-      if (oldData.decoyPin && pin === String(oldData.decoyPin)) {
+      if (oldData.decoyPin && PinHash.timingSafeEqual(pin, String(oldData.decoyPin))) {
         return { kind: 'decoy', data: null };
       }
       return null;

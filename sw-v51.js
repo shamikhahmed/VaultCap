@@ -1,13 +1,24 @@
-const CACHE = 'vaultcap-v52';
+const CACHE = 'vaultcap-v54';
 const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './widget-data.json',
   './icon.svg',
   './icon-mark.svg',
   './icon-192.png',
   './icon-512.png',
   './icon-1024.png',
-  './manifest.json',
-  './index.html',
+  './css/capricorn-core.css',
+  './css/base.css',
+  './css/layout.css',
+  './css/components.css',
+  './css/themes.css',
+  './js/storage.js',
+  './dist/vaultcap.bundle.js',
 ];
+
+const PRECACHE = new Set(ASSETS.map((p) => new URL(p, self.location).href));
 
 function isCodeAsset(url) {
   return /\.(js|css|html)(\?|$)/i.test(url.pathname);
@@ -31,6 +42,22 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
+
+  if (PRECACHE.has(url.href)) {
+    e.respondWith(
+      caches.match(e.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(e.request).then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+          }
+          return res;
+        }).catch(() => caches.match('./index.html'));
+      })
+    );
+    return;
+  }
 
   if (isCodeAsset(url)) {
     e.respondWith(

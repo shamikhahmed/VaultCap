@@ -160,7 +160,7 @@ const BondsModule = {
 
     Modal.open(editIdx != null ? 'Edit Bond' : 'Add Bond / Security',
       '<div class="fg"><label class="fl">Name / Label</label>' +
-        '<input class="inp" id="bnd-name" value="' + (b.name || '') + '" placeholder="e.g. My Prize Bonds 2026"></div>' +
+        '<input class="inp" id="bnd-name" value="' + escAttr(b.name || '') + '" placeholder="e.g. My Prize Bonds 2026"></div>' +
 
       '<div class="fg"><label class="fl">Type</label>' +
         '<select class="inp" id="bnd-type" onchange="BondsModule._onTypeChange()">' +
@@ -197,7 +197,7 @@ const BondsModule = {
         '<input class="inp" type="date" id="bnd-date" value="' + (b.purchaseDate || '') + '"></div>' +
 
       '<div class="fg"><label class="fl">Bond Numbers (optional, one per line)</label>' +
-        '<textarea class="inp" id="bnd-numbers" rows="3" placeholder="Optional: paste bond numbers here, one per line">' + ((b.bondNumbers || []).join('\n')) + '</textarea></div>' +
+        '<textarea class="inp" id="bnd-numbers" rows="3" placeholder="Optional: paste bond numbers here, one per line">' + escHtml((b.bondNumbers || []).join('\n')) + '</textarea></div>' +
 
       '<div class="fg"><label class="fl">Maturity Date (for fixed securities)</label>' +
         '<input class="inp" type="date" id="bnd-maturity" value="' + (b.maturityDate || '') + '"></div>' +
@@ -206,7 +206,7 @@ const BondsModule = {
         '<input class="inp num-inp" type="number" id="bnd-rate" min="0" step="0.01" value="' + (b.annualRate || '') + '" placeholder="e.g. 15.5"></div>' +
 
       '<div class="fg"><label class="fl">Notes</label>' +
-        '<textarea class="inp" id="bnd-notes" rows="2">' + (b.notes || '') + '</textarea></div>',
+        '<textarea class="inp" id="bnd-notes" rows="2">' + escHtml(b.notes || '') + '</textarea></div>',
 
       '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button type="button" class="btn btn-p" onclick="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'

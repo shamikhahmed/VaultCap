@@ -25,6 +25,8 @@ npm-debug.log*
 # Build artifacts
 dist/
 build/
+www/
+ios/
 
 # Logs
 *.log

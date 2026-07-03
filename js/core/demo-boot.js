@@ -30,7 +30,7 @@ async function ensureDemoVaultReady() {
   if (VaultProfiles.active() !== 'demo') return;
   S.fails = 0;
   S.lockedUntil = 0;
-  try { sessionStorage.removeItem('vos_fails'); localStorage.removeItem('vos_fails'); } catch (e) {}
+  try { LockoutStore.clear(); } catch (e) {}
   if (await demoVaultUnlockable()) return;
   await seedDemoVault();
 }

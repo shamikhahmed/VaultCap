@@ -75,6 +75,7 @@ const Store = {
     if (VaultDB.sessionKey) {
       this._pendingSave = VaultDB.save(data).catch(e => {
         console.warn('[VaultDB] save error:', e);
+        if (typeof Toast !== 'undefined') Toast.show('Vault save failed — check storage or export a backup', 'error', 8000);
         try {
           const fails = JSON.parse(localStorage.getItem('vos_failed_ops') || '[]');
           fails.unshift({ op: 'save', at: new Date().toISOString(), err: String(e).slice(0, 100) });
@@ -150,7 +151,9 @@ const Store = {
         if (typeof VaultMeta !== 'undefined') VaultMeta.migrateFromLocalStorage();
         return true;
       }
-    } catch(e) {}
+    } catch(e) {
+      if (typeof Toast !== 'undefined') Toast.show('Failed to load vault — try again or restore from backup', 'error', 8000);
+    }
     return false;
   },
 

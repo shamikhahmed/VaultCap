@@ -102,17 +102,11 @@ async function App() {
     k.addEventListener('click', function() { if (navigator.vibrate) navigator.vibrate(6); });
   });
 
-  // Restore brute-force state from sessionStorage (pre-unlock — not bypassable via localStorage clear)
   try {
-    const raw = sessionStorage.getItem('vos_fails') || localStorage.getItem('vos_fails');
-    const fc = JSON.parse(raw || 'null');
+    const fc = typeof LockoutStore !== 'undefined' ? LockoutStore.load() : null;
     if (fc) {
       S.fails = fc.fails || 0;
       S.lockedUntil = fc.lockedUntil || 0;
-      if (sessionStorage.getItem('vos_fails') == null) {
-        sessionStorage.setItem('vos_fails', JSON.stringify({ fails: S.fails, lockedUntil: S.lockedUntil }));
-        localStorage.removeItem('vos_fails');
-      }
     }
   } catch(e) {}
 

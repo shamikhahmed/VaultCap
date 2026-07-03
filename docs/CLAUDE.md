@@ -17,23 +17,27 @@ For iPhone PWA: Safari → Share → Add to Home Screen.
 
 ## Architecture
 
-VaultCap is a fully client-side, zero-dependency personal finance/identity vault PWA. No framework, no build system, no npm.
+VaultCap is a client-side encrypted finance/identity vault PWA. Uses vanilla JS, Playwright E2E, optional Capacitor iOS wrapper.
 
-### File Layout
+```bash
+python3 -m http.server 8765
+# or: npx playwright test
+```
 
-| File | Role |
-|------|------|
-| `index.html` | Single-page app shell — all HTML, routing targets, lock/onboard/home/app screens |
-| `js/app.js` | Core engine (~1200 lines): global constants, state, storage, security, routing, all data modules (Banks, Cards, Investments, Cash, Loans, Friends, SIMs, Assets, Expenses, Emails, Gadgets, Digital, Vehicles, Reminders) |
-| `js/ui.js` | UI modules (~1040 lines): Dashboard, Settings, Export/Import, WhatsNew, ImportEngine, Links, BackupCenter, RecoveryCenter, SelfCheck |
-| `css/base.css` | CSS custom properties, reset, typography scale |
-| `css/layout.css` | Navigation, page layout, responsive breakpoints |
-| `css/components.css` | Reusable UI components (cards, buttons, modals, toasts, toggles) |
-| `css/themes.css` | 5 theme overrides applied via body class names |
+Demo PIN: **123456**
 
-### Global State (`S`)
+## Architecture (current — v4.9.x)
 
-All application data lives in one mutable object `S` (`app.js:505`). It is serialised to `localStorage['vos3']` via `Store.save()` and loaded via `Store.load()`. Schema migrations run at startup via `Migrate.run()` (`SCHEMA_VERSION = 4`).
+| Layer | Role |
+|-------|------|
+| `index.html` | SPA shell, 70+ script tags, SW registration (`sw-v51.js`) |
+| `js/core/store-engine.js` | Global state `S` + `Store.save/load` |
+| `js/storage.js` | **VaultDB** — IndexedDB + AES-256-GCM |
+| `js/core/migrate.js` | Schema migrations (`SCHEMA_VERSION` = 13) |
+| `js/modules/*` | Feature modules (banks, cards, family, zakat, …) |
+| `js/ui.js` | Dashboard, settings, export/import, QR sync |
+
+**Storage:** Primary persistence is encrypted **IndexedDB** via `VaultDB`, not `localStorage['vos3']` (legacy migration only). All features are free — no paywall.
 
 Key properties:
 - `S.user` — profile, theme, currency, net worth history

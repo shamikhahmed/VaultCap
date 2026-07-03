@@ -29,6 +29,15 @@ const U = {
   fmt:      n  => new Intl.NumberFormat().format(n || 0),
   curSym:   c  => CUR_SYM[(c || 'GBP').toUpperCase()] || ((c || 'GBP').toUpperCase() + ' '),
   /** Formats a base-PKR value into the user's display currency with K/M suffix. */
+  /** Formats a value already in display currency (not PKR base). */
+  fmtDisplay(n, cur) {
+    cur = (cur || (typeof S !== 'undefined' && S.user && S.user.currency) || 'GBP').toUpperCase();
+    const val = Math.abs(Math.round(n || 0));
+    const sym = U.curSym(cur);
+    if (val >= 1000000) return sym + (val / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+    if (val >= 1000) return sym + (val / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return sym + val.toLocaleString();
+  },
   fmtCur(pkr, cur) {
     cur = (cur || (typeof S !== 'undefined' && S.user && S.user.currency) || 'GBP').toUpperCase();
     const val = typeof CurrencyEngine !== 'undefined'

@@ -1,7 +1,10 @@
-PWA screenshots for `manifest.json` (`vaultcap-1.png`, `vaultcap-2.png`).
+PWA + marketing screenshots (`vaultcap-1-dark.png`, `vaultcap-2-dark.png` for `manifest.json` and OG tags).
 
 Regenerate after UI changes:
 
 ```bash
-CAPTURE_SCREENSHOTS=1 npx playwright test tests/screenshots.spec.js
+npm run build:js
+npm run capture:screenshots
 ```
+
+Promo copies (`vaultcap-1-dark.png`, etc.) are written at end of capture run from dashboard + banks mobile dark shots.

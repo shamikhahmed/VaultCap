@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-01T20:02:08.192Z",
+  "generatedAt": "2026-07-03T15:29:17.361Z",
   "themes": [
     "dark",
     "light"
@@ -794,14 +794,7 @@
               "desktop": "light/desktop/tools/security.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/security-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/security-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "backup",
@@ -846,7 +839,8 @@
               "desktop": "dark/desktop/tools/recovery-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/recovery-scroll.png"
+              "mobile": "light/mobile/tools/recovery-scroll.png",
+              "desktop": "light/desktop/tools/recovery-scroll.png"
             }
           }
         },
@@ -1422,14 +1416,7 @@
               "desktop": "light/desktop/forms/expense-add.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/forms/expense-add-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/forms/expense-add-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "friend-add",

@@ -135,6 +135,8 @@ async function fastGalleryUnlock(page) {
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
     localStorage.setItem('vos_wn_ver', '4.9.2');
+    localStorage.removeItem('vc_lockout_v1_demo');
+    localStorage.removeItem('vc_lockout_v1_personal');
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
@@ -179,6 +181,8 @@ async function unlockDemoVault(page) {
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
     localStorage.setItem('vos_wn_ver', '4.9.2');
+    localStorage.removeItem('vc_lockout_v1_demo');
+    localStorage.removeItem('vc_lockout_v1_personal');
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
@@ -210,13 +214,35 @@ async function unlockDemoVault(page) {
     await startExploring.click();
   }
 
+  let unlocked = await page.evaluate(() => document.getElementById('app')?.style.display === 'flex');
+  if (!unlocked) {
+    await page.evaluate(async () => {
+      document.getElementById('splashScreen')?.remove();
+      if (typeof ensureDemoVaultReady === 'function') await ensureDemoVaultReady();
+      loadDemoProfile('business');
+      S.user.onboardingComplete = true;
+      if (S.modules) S.modules.family = true;
+      S.pin = '123456';
+      S.fails = 0;
+      S.lockedUntil = 0;
+      try { LockoutStore.clear(); } catch (e) {}
+      Store.save();
+      localStorage.removeItem('vo_demo_guide_pending');
+      ['pgHome', 'pgLock', 'pgOnboard', 'pgProfilePicker'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      R.unlock();
+    });
+  }
+
   await page.waitForFunction(
     () => document.getElementById('app')?.style.display === 'flex',
-    { timeout: 15000 },
+    { timeout: 30000 },
   );
   await page.waitForFunction(
     () => document.getElementById('dashGreet')?.textContent?.trim().length > 0,
-    { timeout: 15000 },
+    { timeout: 30000 },
   );
   await dismissOverlays(page);
 }

@@ -268,12 +268,24 @@ const CMD = {
 // ===================== FAB =====================
 const FAB = {
   toggle() {
-    const m = document.getElementById('fabMenu'), btn = document.getElementById('fab');
-    const o = m.classList.toggle('on'); btn.classList.toggle('open', o); btn.textContent = o ? 'Close' : '+';
+    const m = document.getElementById('fabMenu'), btn = document.getElementById('fab'), scrim = document.getElementById('fabScrim');
+    const o = m.classList.toggle('on');
+    btn.classList.toggle('open', o);
+    btn.textContent = o ? 'Close' : '＋';
+    btn.setAttribute('aria-expanded', o ? 'true' : 'false');
+    if (scrim) {
+      scrim.classList.toggle('on', o);
+      scrim.setAttribute('aria-hidden', o ? 'false' : 'true');
+    }
   },
   close() {
-    const m = document.getElementById('fabMenu'), btn = document.getElementById('fab');
+    const m = document.getElementById('fabMenu'), btn = document.getElementById('fab'), scrim = document.getElementById('fabScrim');
     m.classList.remove('on'); btn.classList.remove('open'); btn.textContent = '＋';
+    btn.setAttribute('aria-expanded', 'false');
+    if (scrim) {
+      scrim.classList.remove('on');
+      scrim.setAttribute('aria-hidden', 'true');
+    }
   }
 };
 

@@ -42,7 +42,7 @@
 
 ## PWA / supply chain
 
-- Static assets served from GitHub Pages; verify `sw.js` cache version when updating.
+- Static assets served from GitHub Pages; verify `sw-v51.js` cache version when updating.
 - Do not commit `.env`, wrangler secrets, or raw API keys to the repository.
 - Subresource integrity: review third-party scripts (`vendor/tesseract.min.js`) when upgrading.
 

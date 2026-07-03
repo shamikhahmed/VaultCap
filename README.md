@@ -71,18 +71,17 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 
 ```
 VaultCap/
-├── index.html           # App shell
+├── index.html              # App shell (loads dist/vaultcap.bundle.js)
+├── dist/                   # Generated bundle — run npm run build:js
 ├── js/
-│   ├── app.js           # Core engine — routing, security, all data modules
-│   └── ui.js            # Dashboard, Settings, Export, Smart Import
-├── css/                 # 4 CSS files — base, layout, components, themes
-├── pitch.html           # 20-slide pitch deck
-├── widget.html          # Standalone net worth widget
-├── landing.html         # Marketing landing page
+│   ├── bundle-order.json   # Module load order for bundler
+│   ├── core/               # Crypto, PIN, lockout, store, router
+│   └── modules/            # Banks, cards, family, etc.
+├── scripts/build-bundle.mjs
+├── css/                    # base, layout, components, themes
+├── landing.html            # Marketing landing page
 ├── docs/
-│   ├── GUIDE.md         # User documentation
-│   └── PRESENTATION.md  # Product deck
-└── sw.js                # Service worker (offline PWA)
+└── sw-v51.js               # Service worker (offline PWA)
 ```
 
 **Stack:** Vanilla JS · Web Crypto API · localStorage · Tesseract.js · optional LLM API key (optional)
@@ -117,13 +116,20 @@ VaultCap/
 
 **Demo PIN:** `123456` — load demo data from Settings → Load Demo
 
-**Local:**
+**Local dev:**
 ```bash
 git clone https://github.com/shamikhahmed/VaultCap.git
 cd VaultCap
-python3 -m http.server 8080
-# open http://localhost:8080
+npm ci
+npm run build:js    # required — dist/ is not committed
+npm run serve       # http://127.0.0.1:8765
 ```
+
+**Tests:** `npm run test:e2e` (builds bundle first). **XSS audit:** `npm run audit:xss`.
+
+**GitHub Pages / deploy:** always run `npm run build:js` before publish — `index.html` loads `dist/vaultcap.bundle.js`.
+
+**Screenshots:** `npm run capture:screenshots` then commit `assets/screenshots/` (PWA manifest + OG images).
 
 ---
 

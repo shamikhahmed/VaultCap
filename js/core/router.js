@@ -44,7 +44,7 @@ const R = {
     const sp = document.getElementById('switchProfileBtn');
     if (sp) sp.style.display = (VaultProfiles.isDemo() || VaultProfiles.isDevMode() || localStorage.getItem('vo_used_demo') === '1') ? '' : 'none';
     const fp = document.getElementById('forgotPinLink');
-    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : 'none';
+    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : (S.fails >= 3 ? 'inline' : 'none');
     ThemeEngine.renderDots();
   },
   showHome() {

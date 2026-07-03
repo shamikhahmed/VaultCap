@@ -88,7 +88,7 @@ const Dash={
     const cur = S.user.currency || 'GBP';
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
     const cmdBtn = document.getElementById('dashCmdBtn');
-    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(min-width:769px)').matches ? 'none' : '';
+    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(max-width:480px)').matches ? 'none' : (window.matchMedia('(min-width:769px)').matches ? 'none' : '');
 
     const _COUNTRY_CUR_MAP = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const homeCur = (S.user.homeCurrency || _COUNTRY_CUR_MAP[S.user.country] || 'PKR').toUpperCase();
@@ -186,11 +186,11 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;align-items:start">${breakdown.map(x=>`<div style="display:flex;align-items:flex-start;gap:6px;min-height:22px"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0;margin-top:3px"></div><div style="font-size:11px;color:var(--text3);flex:1;line-height:1.35;display:flex;align-items:center;gap:4px"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div><div style="font-size:11px;font-weight:700;color:var(--text);line-height:1.35;white-space:nowrap;text-align:right" class="sens">${fmt(x.value)}</div></div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
-    const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ −') + (cur + ' ' + Math.abs(nwChange).toLocaleString());
+    const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ −') + U.fmtDisplay(nwChange, cur);
     const sparkline = _nwSparkline(histDisplay.length ? histDisplay : [{v:nwDisplay,d:todayStr}]);
     const _COUNTRY_CUR = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
@@ -201,7 +201,7 @@ const Dash={
     const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.02em" class="sens">'+fmt(nwPKR)+'</div>' +
+      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens">'+fmt(nwPKR)+'</div>' +
       ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
       multiCurHtml +
@@ -222,7 +222,7 @@ const Dash={
     const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
     const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
     const moneyCell = (total, color, label, page) =>
-      '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px"><div style="font-size:17px;font-weight:900;color:' + color + ';line-height:1.2" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
+      '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
       '<div style="margin:14px 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
@@ -272,7 +272,7 @@ const Dash={
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
     const quickStatCell = (value, label, onclick) =>
       '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
-      '<div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">' + value + '</div>' +
+      '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
     const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
       quickStatCell(entityTotal, 'Records') +
@@ -503,6 +503,22 @@ const Dash={
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+  },
+  toggleMore(e) {
+    e?.stopPropagation();
+    const m = document.getElementById('dashMoreMenu');
+    if (!m) return;
+    const willOpen = !m.classList.contains('on');
+    if (!willOpen) { this.closeMore(); return; }
+    m.classList.add('on');
+    m.setAttribute('aria-hidden', 'false');
+    setTimeout(() => document.addEventListener('click', () => this.closeMore(), { once: true }), 0);
+  },
+  closeMore() {
+    const m = document.getElementById('dashMoreMenu');
+    if (!m) return;
+    m.classList.remove('on');
+    m.setAttribute('aria-hidden', 'true');
   }
 };
 
@@ -871,70 +887,61 @@ const ExIm={
 
 // ===================== QR SYNC =====================
 const QRSync = {
-  async exportQR() {
-    // Build essential-only payload — no photos, no activity, no trash
-    const stripped = arr => (arr||[]).map(item => {
+  _stripPhotos(arr) {
+    return (arr || []).map(item => {
       const c = Object.assign({}, item);
       delete c.frontPhoto; delete c.backPhoto; delete c.photo;
       return c;
     });
-    const payload = JSON.stringify({
-      ver:'4.0', exported:new Date().toISOString(),
-      banks: stripped(S.banks),
-      cards: stripped(S.cards),
-      investments: stripped(S.investments),
-      cash: stripped(S.cash),
-      loans: stripped(S.loans),
-      sims: stripped(S.sims),
-      friends: stripped(S.friends),
-      assets: stripped(S.assets),
-      expenses: stripped(S.expenses),
-      documents: stripped(S.documents),
-      vehicles: stripped(S.vehicles),
-    });
+  },
 
-    // Compress if available
-    let encoded;
-    const CHUNK = 1800;
-    const canCompress = typeof CompressionStream !== 'undefined';
-    if (canCompress) {
-      try {
-        const cs = new CompressionStream('deflate-raw');
-        const writer = cs.writable.getWriter();
-        writer.write(new TextEncoder().encode(payload));
-        writer.close();
-        const chunks = [];
-        const reader = cs.readable.getReader();
-        while (true) { const {done, value} = await reader.read(); if (done) break; chunks.push(value); }
-        const compressed = new Uint8Array(chunks.reduce((a,b)=>a+b.length,0));
-        let offset = 0;
-        for (const chunk of chunks) { compressed.set(chunk, offset); offset += chunk.length; }
-        encoded = btoa(String.fromCharCode(...compressed)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-      } catch(e) { encoded = btoa(unescape(encodeURIComponent(payload))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''); }
-    } else {
-      encoded = btoa(unescape(encodeURIComponent(payload)));
-    }
+  _buildPayload() {
+    const s = this._stripPhotos;
+    return {
+      ver: '4.1', exported: new Date().toISOString(),
+      banks: s(S.banks), cards: s(S.cards), investments: s(S.investments),
+      cash: s(S.cash), loans: s(S.loans), sims: s(S.sims), friends: s(S.friends),
+      assets: s(S.assets), expenses: s(S.expenses), emails: s(S.emails),
+      gadgets: s(S.gadgets), digital: s(S.digital), documents: s(S.documents),
+      vehicles: s(S.vehicles), bonds: s(S.bonds), bc: s(S.bc),
+      familyMembers: s(S.familyMembers),
+    };
+  },
 
-    const chunkSize = canCompress ? CHUNK : 800;
+  _syncKeys() {
+    return ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital','documents','vehicles','bonds','bc','familyMembers'];
+  },
+
+  async exportQR() {
+    if (!Crypto.available()) { Toast.show('Encryption unavailable on this device', 'error'); return; }
+    const syncCode = String(Math.floor(100000 + Math.random() * 900000));
+    QRSync._syncCode = syncCode;
+    let enc;
+    try {
+      enc = await Crypto.encrypt(JSON.stringify(this._buildPayload()), syncCode);
+    } catch (e) { Toast.show('Failed to encrypt sync payload', 'error'); return; }
+    const encoded = enc.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    const CHUNK = 1200;
     const chunks = [];
-    for (let i = 0; i < encoded.length; i += chunkSize) chunks.push(encoded.slice(i, i + chunkSize));
+    for (let i = 0; i < encoded.length; i += CHUNK) chunks.push(encoded.slice(i, i + CHUNK));
     const total = chunks.length;
 
     QRSync._qrChunks = chunks;
     QRSync._qrTotal = total;
     QRSync._qrEncoded = encoded;
+    QRSync._qrEncrypted = true;
 
     Modal.open('Sync to Another Device', `
       <div style="text-align:center;padding:8px 0">
-        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Scan this QR code from the other device.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Scan QR on target device. Enter this one-time code there after scanning.</p>
+        <div style="font-size:28px;font-weight:800;letter-spacing:10px;font-family:var(--mono);color:var(--accent);margin-bottom:14px">${syncCode}</div>
         <div id="qrChunkLabel" style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
         <div id="qrContainer" style="display:inline-block;background:#fff;padding:10px;border-radius:12px;margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
           ${total>1?'<button type="button" class="btn btn-s btn-sm" id="qrPrevBtn" onclick="QRSync._showChunk(-1)" style="display:none">← Prev</button>':''}
           ${total>1?'<button type="button" class="btn btn-p btn-sm" id="qrNextBtn" onclick="QRSync._showChunk(1)">Next →</button>':''}
-          <button type="button" class="btn btn-g btn-sm" onclick="U.copy(QRSync._qrEncoded,'QR data')">Copy as text</button>
         </div>
-        <p style="font-size:11px;color:var(--text3);margin-top:10px">One-time use — expires when dialog closes.</p>
+        <p style="font-size:11px;color:var(--text3);margin-top:10px">AES-256-GCM encrypted. Code never sent over network. One-time — expires when dialog closes.</p>
       </div>
     `, `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Done</button>`);
 
@@ -942,7 +949,7 @@ const QRSync = {
     setTimeout(() => QRSync._renderQRChunk(0), 200);
   },
 
-  _qrChunks: [], _qrTotal: 0, _qrCurrent: 0, _qrEncoded: '',
+  _qrChunks: [], _qrTotal: 0, _qrCurrent: 0, _qrEncoded: '', _qrEncrypted: false, _importEncrypted: false, _pendingEnc: '', _syncCode: '',
 
   _showChunk(dir) {
     const next = QRSync._qrCurrent + dir;
@@ -961,7 +968,9 @@ const QRSync = {
     if (prevBtn) prevBtn.style.display = idx > 0 ? '' : 'none';
     if (nextBtn) nextBtn.style.display = idx < QRSync._qrTotal - 1 ? '' : 'none';
     el.innerHTML = '';
-    const chunkData = JSON.stringify({ v:'vos2', i:idx, t:QRSync._qrTotal, d:QRSync._qrChunks[idx] });
+    const chunkObj = { v: 'vos2', i: idx, t: QRSync._qrTotal, d: QRSync._qrChunks[idx] };
+    if (QRSync._qrEncrypted) chunkObj.e = 1;
+    const chunkData = JSON.stringify(chunkObj);
     const draw = () => {
       if (typeof QRCode !== 'undefined') {
         try { new QRCode(el, { text: chunkData, width:260, height:260, correctLevel: QRCode.CorrectLevel.L }); }
@@ -1031,10 +1040,11 @@ const QRSync = {
     try {
       const parsed = JSON.parse(raw);
 
-      // v2 multi-chunk format (matches current exportQR)
+      // v2 multi-chunk format (encrypted when e:1)
       if (parsed.v === 'vos2') {
-        const { i, t, d } = parsed;
+        const { i, t, d, e } = parsed;
         if (typeof i !== 'number' || typeof t !== 'number' || !d) { Toast.show('Invalid QR chunk', 'error'); return; }
+        if (i === 0) QRSync._importEncrypted = !!e;
         QRSync._importCollected[i] = d;
         QRSync._importTotal = t;
         const collected = Object.keys(QRSync._importCollected).length;
@@ -1074,7 +1084,17 @@ const QRSync = {
       QRSync._importCollected = {}; QRSync._importTotal = 0;
       const joined = parts.join('');
 
-      // URL-safe base64 → standard base64
+      if (QRSync._importEncrypted) {
+        QRSync._pendingEnc = joined;
+        Modal.open('Enter Sync Code', `
+          <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Enter the 6-digit code shown on the source device.</p>
+          <div class="fg"><label class="fl">Sync Code</label><input class="inp" id="qrCodeIn" maxlength="6" inputmode="numeric" placeholder="123456" style="text-align:center;font-size:24px;letter-spacing:8px;font-family:var(--mono)"></div>
+          <div class="ferr" id="qrCodeErr"></div>
+        `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._decryptChunkPayload()">Decrypt & Preview</button>`);
+        return;
+      }
+
+      Toast.show('Unencrypted legacy QR — only import from a device you trust', 'warn', 6000);
       const b64 = joined.replace(/-/g,'+').replace(/_/g,'/');
       const binary = atob(b64);
       const bytes = new Uint8Array(binary.length);
@@ -1099,22 +1119,44 @@ const QRSync = {
       }
 
       const data = JSON.parse(payload);
-      const counts = ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','documents','vehicles']
-        .map(k => `${(data[k]||[]).length} ${k}`).filter(s=>!s.startsWith('0')).join(', ');
-
-      Modal.open('Import from QR', `
-        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Successfully decoded vault data from QR codes.</p>
-        <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
-        <p style="font-size:12px;color:var(--warn)">Existing items with matching IDs will be merged.</p>
-      `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
+      QRSync._confirmImport(data);
     } catch(e) { Toast.show('Failed to decode QR data', 'error'); }
+  },
+
+  async _decryptChunkPayload() {
+    const code = document.getElementById('qrCodeIn')?.value.trim();
+    if (!code || code.length !== 6) {
+      const e = document.getElementById('qrCodeErr');
+      if (e) e.textContent = 'Enter the 6-digit sync code';
+      return;
+    }
+    try {
+      const b64 = QRSync._pendingEnc.replace(/-/g, '+').replace(/_/g, '/');
+      const raw = await Crypto.decrypt(b64, code);
+      const data = JSON.parse(raw);
+      QRSync._pendingEnc = '';
+      QRSync._confirmImport(data);
+    } catch (e) {
+      const err = document.getElementById('qrCodeErr');
+      if (err) err.textContent = 'Wrong code or corrupted data';
+    }
+  },
+
+  _confirmImport(data) {
+    const counts = QRSync._syncKeys()
+      .map(k => `${(data[k]||[]).length} ${k}`).filter(s => !s.startsWith('0')).join(', ');
+    Modal.open('Import from QR', `
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Successfully decoded vault data from QR codes.</p>
+      <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
+      <p style="font-size:12px;color:var(--warn)">Existing items with matching IDs will be merged.</p>
+    `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="QRSync._applyImport(${encodeURIComponent(JSON.stringify(data))})">Merge & Import</button>`);
   },
 
   _applyImport(encoded) {
     try {
       const data = JSON.parse(decodeURIComponent(encoded));
       const now = t => t ? new Date(t).getTime() : 0;
-      ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital','documents','vehicles'].forEach(k => {
+      QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
         data[k].forEach(item => {
           const existing = (S[k]||[]).find(x => x.id === item.id);
@@ -1157,7 +1199,7 @@ const QRSync = {
       const raw = await Crypto.decrypt(enc, code);
       const data = JSON.parse(raw);
       const now = t => t ? new Date(t).getTime() : 0;
-      ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital'].forEach(k => {
+      QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
         data[k].forEach(item => {
           const existing = (S[k]||[]).find(x => x.id === item.id);
@@ -1213,7 +1255,7 @@ const WhatsNew={
 
 const ImportEngine={
   render(){
-    const b=document.getElementById('importBody');if(!b)return;
+    const b=document.getElementById('aiImportBody')||document.getElementById('importBody');if(!b)return;
     b.innerHTML=`
     <div style="display:flex;flex-direction:column;gap:14px;padding-bottom:40px">
       <!-- DRAG/UPLOAD ZONE -->

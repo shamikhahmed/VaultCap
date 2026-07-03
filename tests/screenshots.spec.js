@@ -332,6 +332,7 @@ async function scrollPageTop(page) {
   await page.evaluate(() => {
     const pb = document.querySelector('.page.on .pb');
     if (pb) pb.scrollTop = 0;
+    document.querySelector('.page.on')?.querySelectorAll('[style*="overflow-x"]').forEach((el) => { el.scrollLeft = 0; });
   });
 }
 
@@ -443,6 +444,7 @@ test.describe('VaultCap screen gallery', () => {
           document.getElementById('pgHome').style.display = 'none';
           document.getElementById('pgLock').style.display = 'flex';
           if (typeof PIN !== 'undefined') PIN.reset();
+          if (typeof R !== 'undefined' && R.startClock) R.startClock();
         });
         await captureViewport(page, theme, viewport, authSection, AUTH_SCREENS[1].id, AUTH_SCREENS[1].label, `${theme}/${viewport}/auth/lock.png`, false);
 

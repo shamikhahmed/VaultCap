@@ -303,6 +303,11 @@ const AIImport = {
 
       '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">Detect &amp; Extract</button>' +
 
+      '<div id="ie-status" style="display:none;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center">' +
+        '<div id="ie-status-text" style="font-size:13px;color:var(--text2)"></div>' +
+        '<div style="background:var(--border);border-radius:2px;height:4px;margin-top:10px;overflow:hidden"><div id="ie-progress" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s var(--ease)"></div></div>' +
+      '</div>' +
+
       '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
 
       '<div id="ie-results"></div>' +

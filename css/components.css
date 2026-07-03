@@ -560,23 +560,58 @@ body:not(.light) .u-highlight-card {
 .fab:hover { transform: scale(1.08); }
 .fab.open  { transform: rotate(45deg); background: var(--err); box-shadow: 0 4px 18px rgba(255,64,96,.4); }
 @media (max-width: 768px) { .fab { display: flex; } }
+.fab-scrim {
+  position: fixed; inset: 0; z-index: 298;
+  background: rgba(0,0,0,.44);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s var(--ease);
+}
+.fab-scrim.on { opacity: 1; pointer-events: auto; }
 .fab-menu {
-  position: fixed; bottom: calc(var(--tabh) + var(--sb) + 78px); right: 13px;
-  z-index: 299; display: flex; flex-direction: column; gap: 7px;
-  pointer-events: none; opacity: 0; transform: translateY(8px); transition: all .2s var(--ease);
+  position: fixed; bottom: calc(var(--tabh) + var(--sb) + 78px); right: 16px; left: 16px;
+  max-width: 340px; margin-left: auto;
+  z-index: 299; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  padding: 12px; background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.45);
+  max-height: min(52vh, 380px); overflow-y: auto;
+  pointer-events: none; opacity: 0; transform: translateY(10px) scale(.98);
+  transition: all .2s var(--ease);
 }
 .fab-menu.on { pointer-events: auto; opacity: 1; transform: none; }
 .fmi {
-  display: flex; align-items: center; gap: 9px;
-  background: color-mix(in srgb, var(--bg2) 95%, transparent);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border2); border-radius: 12px;
-  padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
-  white-space: nowrap; box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  display: flex; align-items: center; gap: 8px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 12px; cursor: pointer; font-size: 12px; font-weight: 600;
+  white-space: nowrap; box-shadow: none;
   transition: var(--t); animation: fabIn .18s var(--spring) backwards;
+  min-width: 0;
 }
 .fmi:hover { border-color: var(--accent); background: var(--glass2); }
-@keyframes fabIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+@keyframes fabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ─ Dashboard toolbar (mobile overflow) ─ */
+.dash-more-menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 172px; background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 6px; box-shadow: 0 10px 28px rgba(0,0,0,.38);
+  z-index: 400; opacity: 0; pointer-events: none;
+  transform: translateY(-4px); transition: opacity .15s var(--ease), transform .15s var(--ease);
+}
+.dash-more-menu.on { opacity: 1; pointer-events: auto; transform: none; }
+.dash-more-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 12px; border: none; background: transparent;
+  color: var(--text); font-size: 13px; font-weight: 600;
+  border-radius: 8px; cursor: pointer; text-align: left;
+}
+.dash-more-item:hover, .dash-more-item:focus-visible { background: var(--glass2); outline: none; }
+@media (max-width: 480px) {
+  .dash-act-desktop { display: none !important; }
+  .dash-act-more { display: flex !important; }
+}
 
 /* ─ PIN keypad ─ */
 .keypad {

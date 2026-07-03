@@ -55,7 +55,7 @@ const CreditScore = {
             '<div style="font-size:13px;font-weight:700;color:' + scoreColor + ';margin-top:4px">' + scoreLabel + '</div>' +
           '</div>' +
         '</div>' +
-        (d.agency ? '<div style="font-size:12px;color:var(--text3);margin-bottom:4px">Reported by ' + d.agency + '</div>' : '') +
+        (d.agency ? '<div style="font-size:12px;color:var(--text3);margin-bottom:4px">Reported by ' + escHtml(d.agency) + '</div>' : '') +
         (d.lastChecked ? '<div style="font-size:11px;color:var(--text3)">Last checked: ' + new Date(d.lastChecked).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) + '</div>' : '') +
       '</div>' +
 
@@ -148,16 +148,16 @@ const CreditScore = {
     const agencies = ['Experian', 'Equifax', 'TransUnion', 'ECIB (PK)', 'AECB (AE)', 'Other'];
     Modal.open('Update Credit Score',
       '<div class="fg"><label class="fl">Your Credit Score</label>' +
-        '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + (d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
+        '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + escAttr(d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
       '<div id="cs-preview" style="text-align:center;padding:10px;font-size:24px;font-weight:900;color:var(--text3)"></div>' +
       '<div class="fg"><label class="fl">Reporting Agency</label>' +
         '<select class="inp" id="cs-agency">' +
-          agencies.map(function(a) { return '<option value="' + a + '"' + (d.agency === a ? ' selected' : '') + '>' + a + '</option>'; }).join('') +
+          agencies.map(function(a) { return '<option value="' + escAttr(a) + '"' + (d.agency === a ? ' selected' : '') + '>' + escHtml(a) + '</option>'; }).join('') +
         '</select></div>' +
       '<div class="fg"><label class="fl">Date Checked</label>' +
         '<input class="inp" type="date" id="cs-date" value="' + (d.lastChecked ? d.lastChecked.split('T')[0] : new Date().toISOString().split('T')[0]) + '"></div>' +
       '<div class="fg"><label class="fl">Notes (optional)</label>' +
-        '<textarea class="inp" id="cs-notes" rows="2">' + (d.notes || '') + '</textarea></div>',
+        '<textarea class="inp" id="cs-notes" rows="2">' + escHtml(d.notes || '') + '</textarea></div>',
       '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
       '<button type="button" class="btn btn-p" onclick="CreditScore.saveScore()">Save</button>'
     );

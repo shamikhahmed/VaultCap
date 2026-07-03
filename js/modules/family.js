@@ -34,6 +34,38 @@ const Family = {
     return `<span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(123,95,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
   },
 
+  _initials(name) {
+    const p = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return '?';
+    if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+    return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+  },
+
+  _hueFromName(name) {
+    let h = 0;
+    const s = String(name || 'member');
+    for (let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i) * 17) % 360;
+    return h;
+  },
+
+  avatarHtml(name, size = 52) {
+    const initials = this._initials(name);
+    const hue = this._hueFromName(name);
+    const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.36));
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,hsl(${hue},68%,42%),hsl(${(hue + 36) % 360},70%,52%));display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;color:#fff;letter-spacing:-.02em;flex-shrink:0;font-family:var(--font)">${escHtml(initials)}</div>`;
+  },
+
+  _avatarFieldHtml(name) {
+    const preview = this.avatarHtml(name || 'Member', 48).replace(/^<div /, '<div id="fam-av-preview" ');
+    return `<div class="fg"><label class="fl">Avatar</label><div style="display:flex;align-items:center;gap:12px">${preview}<div style="font-size:12px;color:var(--text3);line-height:1.45">Initials from name.</div></div></div>`;
+  },
+
+  _syncAvatarPreview(name) {
+    const el = document.getElementById('fam-av-preview');
+    if (!el) return;
+    el.outerHTML = this.avatarHtml(name || 'Member', 48).replace(/^<div /, '<div id="fam-av-preview" ');
+  },
+
   // Legacy API — used by search module and dashboard
   get() {
     const members = this.allMembers();
@@ -105,7 +137,7 @@ const Family = {
     S.familyMembers = S.familyMembers.map(m => m.isHead ? {
       ...m,
       name: p.name || m.name,
-      avatar: p.avatar || m.avatar,
+      avatar: this._initials(p.name || m.name),
       dob: p.dob || m.dob,
       phone: p.phone || m.phone,
       email: p.email || m.email,
@@ -173,7 +205,7 @@ const Family = {
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>
           <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
-            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${escHtml(head.avatar || '👤')}</div>
+            ${this.avatarHtml(head.name, 60)}
             <div>
               <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)} ${this._roleBadge(head.role || 'admin')}</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">${_stat(head.id)}</div>
@@ -182,7 +214,7 @@ const Family = {
         </div>`
       : (S.user.name
         ? `<div onclick="Family.confirmHeadFromProfile()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
-          <div style="margin-bottom:8px;display:flex;justify-content:center">${S.user.avatar ? escHtml(S.user.avatar) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
+          <div style="margin-bottom:8px;display:flex;justify-content:center">${S.user.name ? this.avatarHtml(S.user.name, 48) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Use ${escHtml(S.user.name)} as Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
@@ -194,7 +226,7 @@ const Family = {
 
     const memberCards = rest.map(m =>
       `<div onclick="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
-        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,213,255,.2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${escHtml(m.avatar || '👤')}</div>
+        ${this.avatarHtml(m.name, 52)}
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
@@ -227,7 +259,7 @@ const Family = {
     const backBtn = `<button type="button" class="cap-subchrome-back" onclick="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
 
     const header = `<div class="cap-member-header">
-      <div class="cap-member-avatar" aria-hidden="true">${escHtml(m.avatar || '👤')}</div>
+      ${this.avatarHtml(m.name, 64)}
       <div class="cap-member-meta">
         <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' <span class="badge b-acc">Head</span>' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
         <div class="cap-member-sub">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
@@ -493,15 +525,12 @@ const Family = {
   },
 
   openAddMember(isHead) {
-    const p = isHead ? this._profileSnapshot() : { name:'', avatar:'👤', dob:'', phone:'', email:'' };
-    const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
-    const defaultAv = p.avatar || '👤';
+    const p = isHead ? this._profileSnapshot() : { name:'', dob:'', phone:'', email:'' };
     Modal.open(isHead ? 'Head of Family' : 'Add Family Member',
       `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${defaultAv===a?'var(--accent)':'var(--glass)'};border:1px solid ${defaultAv===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
-        <input type="hidden" id="fam-av-input" value="${escHtml(defaultAv)}">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name"></div>
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name" oninput="Family._syncAvatarPreview(this.value)"></div>
+        ${this._avatarFieldHtml(p.name || '')}
         ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL3"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fam-rel" value="" list="fRelDL3" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
           <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date" value="${escHtml(p.dob || '')}"></div>
@@ -523,7 +552,7 @@ const Family = {
     const member = {
       id: U.id(),
       name,
-      avatar: document.getElementById('fam-av-input')?.value || '👤',
+      avatar: this._initials(name),
       relation: isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || ''),
       isHead: !!isHead,
       role: isHead ? 'admin' : (document.getElementById('fam-role')?.value || 'viewer'),
@@ -547,12 +576,10 @@ const Family = {
   editMember(id) {
     const m = this.getMember(id);
     if (!m) return;
-    const avatars = ['👤','👨','👩','👦','👧','👴','👵','👱‍♂️','👱‍♀️','🧑'];
     Modal.open(m.isHead ? 'Edit Head of Family' : 'Edit Member',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${avatars.map(a => `<div onclick="document.querySelectorAll('.fam-av-pick').forEach(x=>{x.style.background='var(--glass)';x.style.border='1px solid var(--border)'});this.style.background='var(--accent)';this.style.border='1px solid var(--accent)';document.getElementById('fam-av-input').value='${a}'" class="fam-av-pick" style="font-size:24px;padding:6px;border-radius:10px;cursor:pointer;background:${(m.avatar||'👤')===a?'var(--accent)':'var(--glass)'};border:1px solid ${(m.avatar||'👤')===a?'var(--accent)':'var(--border)'}">${a}</div>`).join('')}</div>
-        <input type="hidden" id="fam-av-input" value="${escHtml(m.avatar || '👤')}">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name"></div>
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name" oninput="Family._syncAvatarPreview(this.value)"></div>
+        ${this._avatarFieldHtml(m.name)}
         ${!m.isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL4"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fam-rel" value="${escHtml(m.relation || '')}" list="fRelDL4" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
           <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date" value="${escHtml(m.dob || '')}"></div>
@@ -576,7 +603,7 @@ const Family = {
       return {
         ...m,
         name,
-        avatar: document.getElementById('fam-av-input')?.value || m.avatar,
+        avatar: this._initials(name),
         relation: m.isHead ? 'Head of Family' : (document.getElementById('fam-rel')?.value?.trim() || m.relation || ''),
         role: document.getElementById('fam-role')?.value || m.role || (m.isHead ? 'admin' : 'viewer'),
         dob:   document.getElementById('fam-dob')?.value   || m.dob,

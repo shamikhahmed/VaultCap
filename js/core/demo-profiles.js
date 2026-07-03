@@ -144,9 +144,9 @@ function loadDemoProfile(type) {
   const spouseId = id();
   const childId = id();
   S.familyMembers = [
-    { id: headId, name: 'Alex Khan', avatar: '👨‍💼', relation: 'Head of Family', isHead: true, role: 'admin', dob: '1988-04-15', phone: '+44 7700 123456', email: 'alex.khan@gmail.com', notes: 'Primary account holder', createdAt: ts, updatedAt: ts },
-    { id: spouseId, name: 'Sara Khan', avatar: '👩', relation: 'Spouse', isHead: false, role: 'viewer', phone: '+44 7700 654321', notes: 'Joint finances', createdAt: ts, updatedAt: ts },
-    { id: childId, name: 'Ayaan Khan', avatar: '👦', relation: 'Son', isHead: false, role: 'viewer', dob: '2015-08-22', notes: 'Junior ISA', createdAt: ts, updatedAt: ts },
+    { id: headId, name: 'Alex Khan', avatar: 'AK', relation: 'Head of Family', isHead: true, role: 'admin', dob: '1988-04-15', phone: '+44 7700 123456', email: 'alex.khan@gmail.com', notes: 'Primary account holder', createdAt: ts, updatedAt: ts },
+    { id: spouseId, name: 'Sara Khan', avatar: 'SK', relation: 'Spouse', isHead: false, role: 'viewer', phone: '+44 7700 654321', notes: 'Joint finances', createdAt: ts, updatedAt: ts },
+    { id: childId, name: 'Ayaan Khan', avatar: 'AK', relation: 'Son', isHead: false, role: 'viewer', dob: '2015-08-22', notes: 'Junior ISA', createdAt: ts, updatedAt: ts },
   ];
   S.banks.forEach((b, i) => { b.ownerId = i < 3 ? headId : (i < 5 ? spouseId : headId); });
   S.cards.forEach((c, i) => { c.ownerId = i < 3 ? headId : spouseId; });

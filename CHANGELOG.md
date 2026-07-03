@@ -1,5 +1,29 @@
 # Changelog — VaultCap
 
+## 4.9.3 (2026-07-03) — PWA hardening + UI polish
+
+### Security & reliability
+- Persistent pre-auth lockout store (`js/core/lockout-store.js`)
+- Legacy PIN hash migration hardened (`js/core/pin-hash.js`)
+- XSS audit script (`scripts/xss-audit.mjs`) + module fixes
+- Single IIFE bundle path (`scripts/build-bundle.mjs`, `js/bundle-order.json`)
+
+### Product
+- Capacitor / native iOS path removed — browser PWA only
+- Family initials avatars (no emoji picker)
+- FAB menu: scrim + 2-col panel
+- Dashboard mobile toolbar overflow menu
+- Currency display / breakdown layout fixes
+- Smart Assistant copy (no fake LLM marketing)
+
+### Tooling
+- GitHub Actions CI: `build:js`, `audit:xss`, Playwright
+- Screenshot gallery regen (89 screens) + promo assets
+- Lockout E2E coverage
+
+### Version
+- Bumped to `4.9.3` · SW cache `vaultcap-v54`
+
 ## 4.9.2 (2026-06-30) — CRUD E2E + VaultDB binary import + WebKit Safari
 
 ### Tests

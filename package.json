@@ -3,6 +3,11 @@
   "private": true,
   "scripts": {
     "serve": "python3 -m http.server 8765",
+    "build": "npm run build:js",
+    "build:js": "node scripts/build-bundle.mjs",
+    "audit:xss": "node scripts/xss-audit.mjs",
+    "prebuild:js": "node scripts/build-bundle.mjs",
+    "pretest:e2e": "npm run build:js",
     "test:e2e": "playwright test",
     "test:a11y": "playwright test tests/a11y.spec.js",
     "test:e2e:safari": "playwright test --project=webkit-iphone",
@@ -14,14 +19,10 @@
     "gallery:view": "python3 -m http.server 8765",
     "icons:generate": "node scripts/generate-icons.mjs",
     "icons:ios": "node scripts/generate-ios-icons.mjs",
-    "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh",
-    "cap:init": "npx cap add ios 2>/dev/null || true && npx cap sync ios",
-    "cap:sync": "npx cap sync ios",
-    "cap:ios": "npx cap open ios"
+    "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
-    "@capacitor/cli": "^7.2.0"
+    "@playwright/test": "^1.52.0"
   },
   "version": "1.0.0",
   "description": "[![Live App](https://img.shields.io/badge/Live%20App-VaultCap-ffffff?style=for-the-badge&labelColor=000000)](https://shamikhahmed.github.io/VaultCap) [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap) [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)",
@@ -32,9 +33,7 @@
   },
   "dependencies": {
     "playwright": "^1.60.0",
-    "playwright-core": "^1.60.0",
-    "@capacitor/core": "^7.2.0",
-    "@capacitor/ios": "^7.2.0"
+    "playwright-core": "^1.60.0"
   },
   "repository": {
     "type": "git",

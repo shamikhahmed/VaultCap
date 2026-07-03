@@ -413,8 +413,8 @@ body.hide-btabs #fab { display: none !important; }
 #pgOnboard {
   position: fixed; inset: 0; z-index: 991; background: var(--bg);
   display: none; flex-direction: column; align-items: center;
-  justify-content: flex-start;
-  padding: calc(var(--st) + 40px) 24px calc(var(--sb) + 24px);
+  justify-content: center;
+  padding: calc(var(--st) + 24px) 20px calc(var(--sb) + 24px);
   overflow-y: auto; overflow-x: hidden;
 }
 #pgOnboard::before {
@@ -433,7 +433,14 @@ body.hide-btabs #fab { display: none !important; }
 .ob-step.on { display: flex; animation: obIn .32s var(--ease); }
 .ob-ic    { font-size: 52px; margin-bottom: 4px; }
 .ob-title { font-size: 24px; font-weight: 800; letter-spacing: -.4px; line-height: 1.2; }
-.ob-sub   { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 300px; }
+.ob-sub   { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: min(300px, 100%); }
+
+/* ─ Dashboard: prevent horizontal overflow on narrow phones ─ */
+#dashBody {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+#dashBody > * { max-width: 100%; min-width: 0; box-sizing: border-box; }
 #ob5      { align-items: center; text-align: center; }
 @media (min-width: 769px) { #pgOnboard { padding-bottom: 0 !important; } }
 
