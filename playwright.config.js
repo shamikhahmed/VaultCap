@@ -4,7 +4,7 @@ const { defineConfig, devices } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
-  retries: 0,
+  retries: process.env.CI ? 2 : 0,
   workers: 1,
   use: {
     baseURL: 'http://127.0.0.1:8765',

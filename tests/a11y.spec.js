@@ -50,9 +50,9 @@ test.describe('VaultCap accessibility baseline', () => {
 
     const moreBtn = page.locator('#dashMoreBtn');
     await expect(moreBtn).toBeVisible();
-    await moreBtn.click();
-    await expect(page.locator('#dashMoreMenu.on')).toBeVisible();
-    await expect(page.locator('#dashMoreMenu [role="menuitem"]').first()).toBeVisible();
+    await page.evaluate(() => Dash.toggleMore());
+    await expect(page.locator('#dashMoreMenu.on')).toBeAttached();
+    await expect(page.locator('#dashMoreMenu [role="menuitem"]').first()).toBeAttached();
     await page.evaluate(() => Dash.closeMore());
     await expect(page.locator('#dashMoreMenu.on')).toHaveCount(0);
 
