@@ -1,11 +1,37 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const {
-  resize,
-  assertVaultCapMobile,
-  assertVaultCapDesktop,
-} = require('../../capricorn-tooling/shared/testing/viewport-helpers');
 const { unlockDemoVault } = require('./demo-unlock');
+
+const VIEWPORTS = {
+  mobile: { width: 375, height: 812 },
+  desktop: { width: 1280, height: 800 },
+};
+
+/** @param {import('@playwright/test').Page} page */
+async function resize(page, name) {
+  const vp = VIEWPORTS[name];
+  if (!vp) throw new Error(`Unknown viewport: ${name}`);
+  await page.setViewportSize(vp);
+  await page.waitForTimeout(120);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Expect} ex
+ */
+async function assertVaultCapMobile(page, ex) {
+  await ex(page.locator('#sidebar')).toBeHidden();
+  await ex(page.locator('.btabs')).toBeVisible();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Expect} ex
+ */
+async function assertVaultCapDesktop(page, ex) {
+  await ex(page.locator('#sidebar')).toBeVisible();
+  await ex(page.locator('.btabs')).toBeHidden();
+}
 
 test.describe('VaultCap viewport contract', () => {
   test.beforeEach(async ({ page }) => {
