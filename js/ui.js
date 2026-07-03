@@ -161,8 +161,8 @@ const Dash={
       return !isNaN(dt) && dt <= in60 && dt >= now;
     });
     const allExpiring = [
-      ...expiringCards.map(c => ({name:c.cardName||c.name, type:'card', days:Math.round((new Date('20'+c.expiry.split('/')[1]+'-'+c.expiry.split('/')[0]+'-01')-now)/(1000*60*60*24))})),
-      ...expiringDocs.map(d => ({name:d.holderName||d.docType||d.title||'Document', type:'doc', days:Math.round((new Date(docExpiry(d))-now)/(1000*60*60*24))}))
+      ...expiringCards.map(c => ({id:c.id, name:c.cardName||c.name, type:'card', days:Math.round((new Date('20'+c.expiry.split('/')[1]+'-'+c.expiry.split('/')[0]+'-01')-now)/(1000*60*60*24))})),
+      ...expiringDocs.map(d => ({id:d.id, name:d.holderName||d.docType||d.title||'Document', type:'doc', days:Math.round((new Date(docExpiry(d))-now)/(1000*60*60*24))}))
     ].sort((a,b) => a.days-b.days);
 
     // Backup reminder
@@ -312,6 +312,8 @@ const Dash={
     ${firstStepsBanner}
     ${nwHero}
 
+    ${moneySum}
+
     ${breakdownHtml}
 
     ${familyWidget}
@@ -323,13 +325,15 @@ const Dash={
     ${quickStats}
 
     <!-- WALLET -->
-    ${S.modules.cards && wCards.length > 0 ? `
+    ${S.modules.cards !== false && (S.cards||[]).length ? `
     <div style="margin:0 16px 16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
-        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
+        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
-      <div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>
+      ${wCards.length
+        ? `<div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
+        : `<button type="button" onclick="Dash.editWallet()" style="width:100%;background:var(--glass);border:1px dashed var(--border2);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;text-align:left"><div style="font-size:13px;font-weight:600;color:var(--text)">Set today's wallet</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Pick which cards you're carrying</div></button>`}
     </div>` : ''}
 
     <!-- EXPIRY ALERTS -->
@@ -337,7 +341,7 @@ const Dash={
     <div style="margin:0 16px 16px">
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
       ${allExpiring.slice(0,3).map(x => `
-        <div style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div onclick="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="chip-ic" style="flex-shrink:0">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
@@ -466,10 +470,30 @@ const Dash={
     Modal.open('Carrying Today',`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} onchange="if(this.checked){S.wallet=[...new Set([...S.wallet,'${c.id}'])]}else{S.wallet=S.wallet.filter(x=>x!=='${c.id}')}"><span class="chip-ic">${_uiIcon('card',16)}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div style="font-size:11px;color:var(--text3)">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Store.save();Modal.close();Dash.render()">Save</button>`);
   },
   editNW(){
-    Modal.open('Net Worth',`<div class="fg"><label class="fl">Amount</label><input class="inp" id="nwv" type="number" value="${S.user.netWorth}"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="nwc">${U.currencies()}</select></div>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="S.user.netWorth=parseFloat(document.getElementById('nwv').value)||0;S.user.currency=document.getElementById('nwc').value;Store.save();Modal.close();Dash.render();Toast.show('Updated','success')">Save</button>`);
-    setTimeout(()=>{const c=document.getElementById('nwc');if(c)c.value=S.user.currency||'GBP';},50);
+    // Net worth is live-computed from banks/cash/investments/assets — open breakdown instead of a dead manual field
+    this.showNWBreakdown();
   },
-  snap(){S.user.nwHistory.push({v:S.user.netWorth,d:new Date().toISOString().slice(0,10)});if(S.user.nwHistory.length>24)S.user.nwHistory.shift();Store.save();Toast.show('Snapshot saved','success');},
+  openExpiring(type, id) {
+    if (!id) { R.goto(type === 'card' ? 'cards' : 'documents'); return; }
+    if (type === 'card' && typeof Cards !== 'undefined' && Cards.openDetail) {
+      R.goto('cards'); setTimeout(() => Cards.openDetail(id), 80); return;
+    }
+    if (type === 'doc') {
+      R.goto('documents');
+      setTimeout(() => {
+        if (typeof Documents !== 'undefined' && Documents.openDetail) Documents.openDetail(id);
+        else if (typeof Docs !== 'undefined' && Docs.openDetail) Docs.openDetail(id);
+        else if (typeof DocsModule !== 'undefined' && DocsModule.openDetail) DocsModule.openDetail(id);
+      }, 80);
+    }
+  },
+  snap(){
+    const nw = typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.computeNetWorthPKR().nwPKR : (S.user.netWorth || 0);
+    S.user.nwHistory = S.user.nwHistory || [];
+    S.user.nwHistory.push({v:nw,d:new Date().toISOString().slice(0,10),base:'PKR'});
+    if(S.user.nwHistory.length>24)S.user.nwHistory.shift();
+    Store.save();Toast.show('Snapshot saved','success');
+  },
   toggleCurrency(){
     Modal.open('Display Currency',`
       <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Choose how amounts <strong>display</strong> on the dashboard. Your real balances stay the same — only the currency label changes (e.g. PKR 1,000,000 ≈ GBP 2,840).</p>
@@ -2120,7 +2144,7 @@ const SettingsNav = {
     const llmOn = cfg.enabled;
     const hasOverride = !!(S.user.llmApiKey || '').trim();
     return `<div class="set-sec"><div class="set-title">VaultCap Smart Import (included)</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Enhanced AI parsing</div><div class="desc">${cfg.bundled && !hasOverride ? 'Included with VaultCap — no setup needed. Smart Parser offline fallback always on.' : 'Uses your override key when set; otherwise bundled VaultCap parsing.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Smart Assistant (optional LLM)</div><div class="desc">${cfg.bundled && !hasOverride ? 'Optional assist — Smart Parser always works offline without it.' : 'Uses your override key when set; Smart Parser stays the offline default.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
       <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
       <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>

@@ -24,7 +24,7 @@ const Friends = {
       return;
     }
     el.innerHTML = data.map(f => {
-      const loans = (S.loans || []).filter(l => l.person === f.name && l.status !== 'Settled');
+      const loans = (S.loans || []).filter(l => l.status !== 'Settled' && (l.friendId === f.id || (!l.friendId && l.person === f.name)));
       const badge = loans.length ? `<span class="badge b-warn">${loans.length} loan${loans.length > 1 ? 's' : ''}</span>` : '';
       return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.icon('user', 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(f.name)}</div><div class="entry-sub">${escHtml(f.phone || '')}${f.notes ? (f.phone ? ' · ' : '') + escHtml(f.notes) : ''}</div><div class="entry-meta">${badge}</div></div><div class="entry-acts">${U.actsEditDel('Friends', f.id)}</div></div></div>`;
     }).join('');
@@ -40,9 +40,27 @@ const Friends = {
   save(editId = null) {
     const name = document.getElementById('ff-name').value.trim();
     if (!name) { Toast.show('Name required', 'warning'); return; }
-    const item = { id: editId || U.id(), name, phone: document.getElementById('ff-phone').value.trim(), notes: document.getElementById('ff-notes').value.trim(), createdAt: editId ? (S.friends || []).find(x => x.id === editId)?.createdAt : new Date().toISOString() };
+    const prev = editId ? (S.friends || []).find(x => x.id === editId) : null;
+    const item = { id: editId || U.id(), name, phone: document.getElementById('ff-phone').value.trim(), notes: document.getElementById('ff-notes').value.trim(), createdAt: prev?.createdAt || new Date().toISOString() };
     if (!S.friends) S.friends = [];
-    if (editId) S.friends = S.friends.map(x => x.id === editId ? item : x); else S.friends.push(item);
+    if (editId) {
+      S.friends = S.friends.map(x => x.id === editId ? item : x);
+      // Keep loan person labels in sync when contact renamed
+      if (prev && prev.name !== name) {
+        (S.loans || []).forEach(l => {
+          if (l.friendId === editId || (!l.friendId && l.person === prev.name)) {
+            l.person = name;
+            l.friendId = editId;
+          }
+        });
+      }
+    } else {
+      S.friends.push(item);
+      // Attach orphan loans that already use this name
+      (S.loans || []).forEach(l => {
+        if (!l.friendId && (l.person || '').toLowerCase() === name.toLowerCase()) l.friendId = item.id;
+      });
+    }
     Activity.log((editId ? 'Edited' : 'Added') + ' friend', name);
     Store.save(); Modal.close(); this.render();
     Toast.show(`${editId ? 'Updated' : 'Added'}: ${name}`, 'success');

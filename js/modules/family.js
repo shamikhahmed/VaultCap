@@ -22,7 +22,7 @@ const Family = {
   ownerName(ownerId) {
     if (!ownerId || ownerId === 'self') return '';
     const m = this.getMember(ownerId);
-    return m ? m.name : ownerId;
+    return m ? m.name : 'Former member';
   },
 
   _roleLabel(role) {
@@ -537,7 +537,7 @@ const Family = {
           <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(p.phone || '')}" placeholder="+44..."></div>
         </div>
         <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(p.email || '')}" placeholder="email@example.com"></div>
-        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${isHead ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${!isHead ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
+        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${isHead ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${!isHead ? ' selected' : ''}>Viewer — label only (not enforced yet)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
@@ -586,7 +586,7 @@ const Family = {
           <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(m.phone || '')}" placeholder="+92..."></div>
         </div>
         <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(m.email || '')}" placeholder="email@example.com"></div>
-        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — read-only (stub)</option></select></div>
+        <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — label only (not enforced yet)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
       </div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +

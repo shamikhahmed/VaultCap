@@ -48,6 +48,44 @@ const GlobalSearch = {
 
   setFilter(f) { this.activeFilter = f; this.render(); setTimeout(() => document.getElementById('gs-input')?.focus(), 60); },
 
+  /** Open the module page, then the specific record detail when possible. */
+  open(key, id) {
+    const pageMap = {
+      banks: 'banks', cards: 'cards', investments: 'investments', cash: 'cash', loans: 'loans',
+      documents: 'documents', assets: 'assets', friends: 'friends', sims: 'sims', emails: 'emails',
+      expenses: 'expenses', gadgets: 'gadgets', digital: 'digital', bc: 'bc', bonds: 'bonds',
+      family: 'family', gold: 'assets',
+    };
+    const page = pageMap[key] || key;
+    R.goto(page);
+    if (!id) return;
+    setTimeout(() => {
+      try {
+        if (key === 'banks' && typeof Banks !== 'undefined') Banks.detail(id);
+        else if (key === 'cards' && typeof Cards !== 'undefined') Cards.openDetail(id);
+        else if (key === 'investments' && typeof Inv !== 'undefined' && Inv.detail) Inv.detail(id);
+        else if (key === 'investments' && typeof Inv !== 'undefined' && Inv.edit) Inv.edit(id);
+        else if (key === 'cash' && typeof Cash !== 'undefined' && Cash.detail) Cash.detail(id);
+        else if (key === 'cash' && typeof Cash !== 'undefined' && Cash.edit) Cash.edit(id);
+        else if (key === 'loans' && typeof Loans !== 'undefined' && Loans.detail) Loans.detail(id);
+        else if (key === 'loans' && typeof Loans !== 'undefined' && Loans.edit) Loans.edit(id);
+        else if (key === 'documents' && typeof DocsModule !== 'undefined') DocsModule.openDetail(id);
+        else if (key === 'assets' && typeof Assets !== 'undefined') Assets.detail(id);
+        else if (key === 'gold' && typeof Assets !== 'undefined') Assets.edit(id);
+        else if (key === 'friends' && typeof Friends !== 'undefined' && Friends.edit) Friends.edit(id);
+        else if (key === 'sims' && typeof Sims !== 'undefined') Sims.detail(id);
+        else if (key === 'emails' && typeof Emails !== 'undefined') Emails.detail(id);
+        else if (key === 'expenses' && typeof Exp !== 'undefined' && Exp.edit) Exp.edit(id);
+        else if (key === 'gadgets' && typeof Gadgets !== 'undefined') Gadgets.detail(id);
+        else if (key === 'digital' && typeof Digital !== 'undefined') Digital.detail(id);
+        else if (key === 'bc' && typeof BCModule !== 'undefined') BCModule.openDetail(id);
+        else if (key === 'bonds' && typeof Bonds !== 'undefined' && Bonds.detail) Bonds.detail(id);
+        else if (key === 'bonds' && typeof Bonds !== 'undefined' && Bonds.edit) Bonds.edit(id);
+        else if (key === 'family' && typeof Family !== 'undefined') Family.openMember(id);
+      } catch (e) { /* page open is enough */ }
+    }, 100);
+  },
+
   highlight(text, q) {
     if (!q || !text) return escHtml(text || '');
     const str = String(text);
@@ -172,7 +210,7 @@ const GlobalSearch = {
         const ownerBadge = item._owner ? ` · ${escHtml(item._owner)}` : '';
         const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
         const rowIc = typeof VC !== 'undefined' ? VC.iconKey(item._icon, 22) : '';
-        return `<div onclick="R.goto('${gotoKey}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" onmouseenter="this.style.background='var(--glass2)'" onmouseleave="this.style.background='var(--glass)'">
+        return `<div onclick="GlobalSearch.open('${item._key}','${item._id||''}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" onmouseenter="this.style.background='var(--glass2)'" onmouseleave="this.style.background='var(--glass)'">
           <div class="chip-ic" style="flex-shrink:0">${rowIc}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>

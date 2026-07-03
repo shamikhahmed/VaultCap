@@ -5,6 +5,7 @@ const Toast = {
   show(msg, type = 'info', dur = 3200) {
     const w = document.getElementById('toastWrap');
     const t = document.createElement('div');
+    if (type === 'warn') type = 'warning';
     const icons = { success:'target', error:'cross', warning:'bell', info:'search' };
     const cls   = { success:'ok', error:'err', warning:'wrn', info:'inf' };
     t.className = `toast ${cls[type] || 'inf'}`;

@@ -19,9 +19,10 @@ function loadDemoProfile(type) {
   S.user.email = 'alex.khan@gmail.com';
   S.user.phone = '+44 7700 123456';
   S.user.dob = '1988-04-15';
+  // History in PKR base (live NW is computed; sparkline must use same base)
   S.user.nwHistory = [
-    {v:42000,d:'2025-12-01'},{v:44500,d:'2026-01-01'},{v:43800,d:'2026-02-01'},
-    {v:46200,d:'2026-03-01'},{v:47800,d:'2026-04-01'},{v:51200,d:'2026-05-01'}
+    {v:148000000,d:'2025-12-01',base:'PKR'},{v:152000000,d:'2026-01-01',base:'PKR'},{v:150500000,d:'2026-02-01',base:'PKR'},
+    {v:155000000,d:'2026-03-01',base:'PKR'},{v:158000000,d:'2026-04-01',base:'PKR'},{v:162000000,d:'2026-05-01',base:'PKR'}
   ];
 
   // Banks (6) — stable IDs so cards link by linkedBankId
@@ -98,9 +99,17 @@ function loadDemoProfile(type) {
   S.investments.push({id:id(),investmentName:'Tesla Inc',broker:'Trading 212',type:'Stocks',ticker:'TSLA',country:'GB',currency:'GBP',amountInvested:2200,currentValue:1980,riskLevel:'High',ownership:'personal',tags:['GIA'],createdAt:ts});
   S.investments.push({id:id(),investmentName:'iShares Gold ETF',broker:'Hargreaves Lansdown',type:'Stocks',ticker:'SGLN',country:'GB',currency:'GBP',amountInvested:3000,currentValue:3510,riskLevel:'Low',ownership:'personal',tags:['Commodities','ISA'],createdAt:ts});
 
-  // Loans (4: 2 lent, 2 borrowed)
-  S.loans.push({id:id(),person:'Usman Malik',type:'lent',amount:2500,currency:'GBP',status:'Active',date:'2025-09-10',dueDate:'2026-09-10',notes:'For car repairs',createdAt:ts});
-  S.loans.push({id:id(),person:'Tariq (Brother)',type:'lent',amount:350000,currency:'PKR',status:'Active',date:'2025-06-01',dueDate:'2026-06-01',notes:'Business loan',createdAt:ts});
+  // Friends first (stable ids for loan links)
+  const friendUsman = id();
+  const friendTariq = id();
+  const friendSophie = id();
+  S.friends.push({id:friendUsman,name:'Usman Malik',phone:'+44 7700 987654',notes:'Old uni friend, Manchester',createdAt:ts});
+  S.friends.push({id:friendTariq,name:'Tariq Khan',phone:'+92 321 9876543',notes:'Brother — in Lahore',createdAt:ts});
+  S.friends.push({id:friendSophie,name:'Sophie Williams',phone:'+44 7800 234567',notes:'Work colleague',createdAt:ts});
+
+  // Loans (4: 2 lent, 2 borrowed) — friendId links contacts
+  S.loans.push({id:id(),person:'Usman Malik',friendId:friendUsman,type:'lent',amount:2500,currency:'GBP',status:'Active',date:'2025-09-10',dueDate:'2026-09-10',notes:'For car repairs',createdAt:ts});
+  S.loans.push({id:id(),person:'Tariq Khan',friendId:friendTariq,type:'lent',amount:350000,currency:'PKR',status:'Active',date:'2025-06-01',dueDate:'2026-06-01',notes:'Business loan',createdAt:ts});
   S.loans.push({id:id(),person:'Barclays Mortgage',type:'borrowed',amount:185000,currency:'GBP',status:'Active',date:'2021-03-15',dueDate:'2046-03-15',notes:'Home mortgage — monthly £920',createdAt:ts});
   S.loans.push({id:id(),person:'HSBC Personal Loan',type:'borrowed',amount:8000,currency:'GBP',status:'Active',date:'2024-07-01',dueDate:'2027-07-01',notes:'Home renovation — £250/month',createdAt:ts});
 
@@ -123,16 +132,16 @@ function loadDemoProfile(type) {
   S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',dataPlan:30,planType:'Monthly',createdAt:ts});
   S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',dataPlan:10,planType:'Monthly',createdAt:ts});
 
-  // Expenses (4)
-  S.expenses.push({id:id(),name:'Netflix',amount:17.99,currency:'GBP',category:'Streaming',frequency:'monthly',active:true,createdAt:ts});
-  S.expenses.push({id:id(),name:'PureGym',amount:22.99,currency:'GBP',category:'Fitness',frequency:'monthly',active:true,createdAt:ts});
-  S.expenses.push({id:id(),name:'Council Tax',amount:142,currency:'GBP',category:'Housing',frequency:'monthly',active:true,createdAt:ts});
-  S.expenses.push({id:id(),name:'O2 Phone Bill',amount:35,currency:'GBP',category:'Telecom',frequency:'monthly',active:true,createdAt:ts});
+  // Expenses (4) — billed from linked bank/card where possible
+  const cardBarclaysDebit = (S.cards || []).find(c => c.cardName === 'Barclays Visa Debit');
+  const cardMonzo = (S.cards || []).find(c => c.cardName === 'Monzo Visa Debit');
+  S.expenses.push({id:id(),name:'Netflix',amount:17.99,currency:'GBP',category:'Streaming',frequency:'monthly',active:true,fromType:'card',fromId:cardBarclaysDebit?.id||'',from:cardBarclaysDebit?'Card: Barclays Visa Debit ****4821':'',createdAt:ts});
+  S.expenses.push({id:id(),name:'PureGym',amount:22.99,currency:'GBP',category:'Fitness',frequency:'monthly',active:true,fromType:'card',fromId:cardMonzo?.id||'',from:cardMonzo?'Card: Monzo Visa Debit ****7732':'',createdAt:ts});
+  S.expenses.push({id:id(),name:'Council Tax',amount:142,currency:'GBP',category:'Housing',frequency:'monthly',active:true,fromType:'bank',fromId:bankBarclays,from:'Bank: Barclays',createdAt:ts});
+  S.expenses.push({id:id(),name:'O2 Phone Bill',amount:35,currency:'GBP',category:'Telecom',frequency:'monthly',active:true,fromType:'bank',fromId:bankMonzo,from:'Bank: Monzo',createdAt:ts});
 
-  // Friends (3)
-  S.friends.push({id:id(),name:'Usman Malik',phone:'+44 7700 987654',notes:'Old uni friend, Manchester',createdAt:ts});
-  S.friends.push({id:id(),name:'Tariq Khan',phone:'+92 321 9876543',notes:'Brother — in Lahore',createdAt:ts});
-  S.friends.push({id:id(),name:'Sophie Williams',phone:'+44 7800 234567',notes:'Work colleague',createdAt:ts});
+  // Today's wallet — cards you're carrying
+  S.wallet = [cardBarclaysDebit?.id, cardMonzo?.id].filter(Boolean);
 
   // BC / Committees (2)
   S.bc.push({id:id(),name:'Family BC 2026',role:'participant',type:'ballot',members:10,contribution:10000,currency:'PKR',frequency:'monthly',totalRounds:10,myTurnRound:7,currentRound:4,startDate:'2026-01-01',paymentDay:5,organiser:'Ammi',notes:'Family rotating committee',memberList:[],paymentHistory:[],createdAt:ts,updatedAt:ts});

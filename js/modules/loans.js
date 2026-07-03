@@ -132,7 +132,7 @@ const Loans = {
         </div>`;
 
       if (liveAll.length === 0 && settled.length === 0) {
-        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track mortgages, personal loans, car finance — repayment schedules and interest calculations</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
+        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track who you owe and who owes you — amounts, due dates, and partial payments</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
@@ -181,8 +181,10 @@ const Loans = {
     if (!amt)    { Toast.show('Enter an amount', 'warning'); return; }
     const type    = document.getElementById('lf-type').value;
     const existing = editId ? (S.loans || []).find(x => x.id === editId) : null;
+    const friendMatch = (S.friends || []).find(f => (f.name || '').toLowerCase() === person.toLowerCase());
     const item = {
       id: editId || U.id(), person, type,
+      friendId: friendMatch ? friendMatch.id : (existing?.friendId || ''),
       status:   existing?.status || 'Active',
       payments: existing?.payments || [],
       amount:   amt,
