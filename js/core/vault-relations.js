@@ -245,6 +245,9 @@ const VaultRelations = {
         let score = key.length * 10;
         if (card === key || card.startsWith(key + ' ')) score += 40;
         if (cardFirst && (cardFirst === key || key.startsWith(cardFirst) || cardFirst.startsWith(key))) score += 80;
+        // Prefer longer bank full-name prefix (HBL Pay beats HBL)
+        const bn = this._norm(bank.bankName || bank.name);
+        if (bn && (card === bn || card.startsWith(bn + ' '))) score += 200 + bn.length;
         if (score > bestScore) {
           bestScore = score;
           best = bank;
@@ -279,6 +282,9 @@ const VaultRelations = {
         if (card.startsWith(key + ' ') || card === key) score += 40;
         if (cardFirst && (cardFirst === key || key.startsWith(cardFirst) || cardFirst.startsWith(key))) score += 80;
         if (country && b.country === country) score += 60;
+        // Prefer longer bank full-name prefix (HBL Pay beats HBL)
+        const bn = this._norm(b.name);
+        if (bn && (card === bn || card.startsWith(bn + ' '))) score += 200 + bn.length;
         if (score > bestScore) {
           bestScore = score;
           best = b;
