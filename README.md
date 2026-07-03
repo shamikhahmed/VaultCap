@@ -90,11 +90,20 @@ VaultCap/
 
 ## Getting Started
 
-**Live:** https://shamikhahmed.github.io/VaultCap
+**Live:** https://shamikhahmed.github.io/VaultCap  
+**Install (all devices):** https://shamikhahmed.github.io/VaultCap/install.html  
+**Launch plan:** [LAUNCH.md](./LAUNCH.md)
 
-**iPhone:** Safari → Share → Add to Home Screen
+**No account.** PIN = password. Master key = recovery. Data encrypted on-device (AES-256-GCM).
 
-**Android:** Chrome → Menu → Add to Home Screen
+| Device | Install |
+|--------|---------|
+| iPhone / iPad | Safari → Share → Add to Home Screen |
+| Android | Chrome → Install app / Add to Home screen |
+| Windows | Edge/Chrome → Install VaultCap |
+| Mac | Safari Add to Dock / Chrome Install |
+
+App Store / Play / Microsoft Store need developer accounts + review — website PWA ships first.
 
 ## iPhone test checklist
 

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Install VaultCap on iPhone, Android, Windows, Mac — encrypted vault, no account.">
+  <meta name="theme-color" content="#000000">
+  <title>Install VaultCap — Phone, Laptop, Desktop</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root{--bg:#080808;--bg2:#0f0f0f;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.1);--text:#f0f0f0;--dim:#adadad;--ok:#00d68f;--font:-apple-system,system-ui,sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+    a{color:inherit}
+    .nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(8,8,8,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .logo{font-weight:800;font-size:17px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 18px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+    .btn-p{background:#fff;color:#000}
+    .btn-s{background:var(--card);border:1px solid var(--border);color:var(--text)}
+    .wrap{max-width:820px;margin:0 auto;padding:32px 20px 80px}
+    h1{font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+    .lead{color:var(--dim);font-size:17px;margin-bottom:28px;max-width:560px}
+    .grid{display:grid;gap:12px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px}
+    .card h2{font-size:16px;font-weight:800;margin-bottom:8px}
+    .card ol,.card ul{margin:0 0 0 18px;color:var(--dim);font-size:14px}
+    .card li{margin:6px 0}
+    .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(0,214,143,.12);color:var(--ok);margin-bottom:10px}
+    .badge.warn{background:rgba(255,180,0,.12);color:#ffb400}
+    .sec{margin-top:40px;padding-top:28px;border-top:1px solid var(--border)}
+    .sec h2{font-size:22px;font-weight:800;margin-bottom:12px}
+    .sec p,.sec li{color:var(--dim);font-size:14px}
+    .sec ul{margin:10px 0 0 18px}
+    .cta{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+    code{font-size:12px;background:var(--card);padding:2px 6px;border-radius:4px}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="landing.html" class="logo">VaultCap</a>
+    <div style="display:flex;gap:8px">
+      <a class="btn btn-s" href="landing.html">Home</a>
+      <a class="btn btn-p" href="index.html">Open app</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <h1>Install VaultCap</h1>
+    <p class="lead">Works as an app on your phone and laptop — no App Store wait required. Data stays encrypted on your device. No account. No cloud login.</p>
+
+    <div class="cta">
+      <a class="btn btn-p" href="index.html" id="openApp">Open VaultCap</a>
+      <button type="button" class="btn btn-s" id="installBtn" style="display:none">Install this device</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <span class="badge">Ready now</span>
+        <h2>iPhone / iPad (Safari)</h2>
+        <ol>
+          <li>Open <a href="index.html"><strong>VaultCap</strong></a> in Safari</li>
+          <li>Tap Share <strong>□↑</strong></li>
+          <li>Tap <strong>Add to Home Screen</strong></li>
+          <li>Open from home screen — runs like a native app</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <span class="badge">Ready now</span>
+        <h2>Android (Chrome)</h2>
+        <ol>
+          <li>Open VaultCap in Chrome</li>
+          <li>Menu <strong>⋮</strong> → <strong>Install app</strong> or <strong>Add to Home screen</strong></li>
+          <li>Launch from app drawer — works offline</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <span class="badge">Ready now</span>
+        <h2>Windows (Edge / Chrome)</h2>
+        <ol>
+          <li>Open VaultCap in Edge or Chrome</li>
+          <li>Address bar → install icon, or Menu → <strong>Install VaultCap</strong></li>
+          <li>Opens in its own window; pin to taskbar / Start</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <span class="badge">Ready now</span>
+        <h2>Mac (Safari / Chrome)</h2>
+        <ol>
+          <li><strong>Safari:</strong> File → <strong>Add to Dock</strong> (macOS Sonoma+)</li>
+          <li><strong>Chrome:</strong> Menu → <strong>Install VaultCap</strong></li>
+          <li>Opens as standalone app from Dock / Applications</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <span class="badge warn">Store listings (week 2+)</span>
+        <h2>App Store / Play / Microsoft Store</h2>
+        <ol>
+          <li>Need Apple / Google / Microsoft developer accounts</li>
+          <li>Native wrappers (Capacitor / PWA Builder / TWA) + review</li>
+          <li>Review often takes days — website PWA ships first</li>
+        </ol>
+        <p style="margin-top:10px;font-size:13px;color:var(--dim)">Launch plan: website install this week. Store packages after accounts + review.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>How your data is protected</h2>
+      <p><strong>No email / password account.</strong> That would need our servers. VaultCap is zero-knowledge:</p>
+      <ul>
+        <li><strong>6-digit PIN</strong> — your password. Unlocks the vault on this device only.</li>
+        <li><strong>AES-256-GCM</strong> — vault encrypted before it touches disk.</li>
+        <li><strong>PBKDF2 (310k)</strong> — PIN → key; slow for attackers, fast for you.</li>
+        <li><strong>IndexedDB / local storage</strong> — encrypted blob stays in the browser profile on your phone or laptop.</li>
+        <li><strong>Master recovery key</strong> — shown once at setup. Save it offline. Recovers vault if you forget PIN.</li>
+        <li><strong>Decoy PIN</strong> — optional second PIN opens an empty vault under duress.</li>
+        <li><strong>Lockout</strong> — failed PIN attempts slow down, then block.</li>
+      </ul>
+      <p style="margin-top:12px">PIN and keys <strong>never leave your device</strong>. We cannot reset your PIN. Export <code>.vos</code> backups yourself for a second device.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Why not email + password?</h2>
+      <p>Cloud login means we store accounts, reset passwords, and become a target. VaultCap’s model: <strong>you hold the keys</strong>. PIN = password. Master key = recovery. Optional Smart Assistant never needs your vault PIN.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Move to a new phone</h2>
+      <ol style="margin-left:18px;color:var(--dim);font-size:14px">
+        <li>Old device: Settings → Backup → export encrypted <code>.vos</code></li>
+        <li>Or use QR sync between devices on the same network</li>
+        <li>New device: install PWA → import backup → enter PIN / master key</li>
+      </ol>
+    </div>
+
+    <div class="cta" style="margin-top:32px">
+      <a class="btn btn-p" href="index.html">Open VaultCap now</a>
+      <a class="btn btn-s" href="SECURITY.md">Security notes</a>
+      <a class="btn btn-s" href="privacy.html">Privacy</a>
+    </div>
+  </div>
+
+  <script>
+    let deferred;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferred = e;
+      const b = document.getElementById('installBtn');
+      if (b) b.style.display = '';
+    });
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (!deferred) return;
+      deferred.prompt();
+      await deferred.userChoice;
+      deferred = null;
+      document.getElementById('installBtn').style.display = 'none';
+    });
+  </script>
+</body>
+</html>

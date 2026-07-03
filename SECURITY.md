@@ -1,5 +1,20 @@
 # VaultCap — Security Notes
 
+## How data is stored (user-facing)
+
+VaultCap does **not** use email/password accounts. That would require our servers.
+
+| Piece | What it is |
+|-------|------------|
+| **PIN (6 digits)** | Your password — unlocks the vault on this device only |
+| **Master recovery key** | Shown once at setup — recover if PIN forgotten |
+| **AES-256-GCM vault** | Encrypted blob in browser storage (IndexedDB / localStorage) |
+| **PBKDF2 310k** | Derives encryption key from PIN — never sent anywhere |
+| **Decoy PIN** | Optional — opens empty vault under duress |
+| **`.vos` export** | Your backup file — move to another device yourself |
+
+**PIN and keys never leave the device.** We cannot reset your PIN. No cloud login, no “forgot password” email.
+
 ## Threat model boundaries
 
 | Boundary | In scope | Out of scope |
