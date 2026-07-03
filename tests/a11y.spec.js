@@ -36,4 +36,35 @@ test.describe('VaultCap accessibility baseline', () => {
     });
     expect(reduced).toBe(true);
   });
+
+  test('FAB menu and dashboard overflow are keyboard-reachable', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
+    await fastGalleryUnlock(page);
+    await dismissOverlays(page);
+
+    await page.evaluate(() => R.goto('dashboard', true));
+    await expect(page.locator('#pg-dashboard.on')).toBeVisible();
+
+    const moreBtn = page.locator('#dashMoreBtn');
+    await expect(moreBtn).toBeVisible();
+    await moreBtn.click();
+    await expect(page.locator('#dashMoreMenu.on')).toBeVisible();
+    await expect(page.locator('#dashMoreMenu [role="menuitem"]').first()).toBeVisible();
+    await page.evaluate(() => Dash.closeMore());
+    await expect(page.locator('#dashMoreMenu.on')).toHaveCount(0);
+
+    const fab = page.locator('#fab');
+    await expect(fab).toBeAttached();
+    await expect(fab).toHaveAttribute('aria-haspopup', 'true');
+    await page.evaluate(() => FAB.toggle());
+    await expect(page.locator('#fabMenu.on')).toBeVisible();
+    await expect(fab).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#fabScrim.on')).toBeAttached();
+    await page.evaluate(() => FAB.close());
+    await expect(page.locator('#fabMenu.on')).toHaveCount(0);
+    await expect(fab).toHaveAttribute('aria-expanded', 'false');
+  });
 });

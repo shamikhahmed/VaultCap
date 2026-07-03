@@ -38,3 +38,8 @@ playwright-report/
 # Agent notes (local only)
 memory/
 .cursor/
+.claude/
+
+# Local runtime / widget scratch
+widget-data.json
+

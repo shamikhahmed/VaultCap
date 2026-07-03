@@ -127,7 +127,7 @@ npm run serve       # http://127.0.0.1:8765
 
 **Tests:** `npm run test:e2e` (builds bundle first). **XSS audit:** `npm run audit:xss`.
 
-**GitHub Pages / deploy:** always run `npm run build:js` before publish — `index.html` loads `dist/vaultcap.bundle.js`.
+**GitHub Pages / deploy:** push to `main` runs `.github/workflows/pages.yml` (`npm run build:js` then publish). Local: always `npm run build:js` before serve — `index.html` loads `dist/vaultcap.bundle.js`.
 
 **Screenshots:** `npm run capture:screenshots` then commit `assets/screenshots/` (PWA manifest + OG images).
 
