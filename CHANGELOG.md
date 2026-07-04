@@ -1,5 +1,13 @@
 # Changelog — VaultCap
 
+## 4.9.5 (2026-07-04) — Recovery trust + shell polish
+
+- Forgot PIN: Capricorn Systems support only; zero-knowledge copy (we cannot open vault)
+- Vault ID (`VC-XXXX-XXXX`) on recovery + Settings → About (ticket label, not a key)
+- Footer: single safe-area pad (`--tabh`); More menu header fixed under status bar
+- Crisp canvas PWA / Apple touch icons (less iOS blur)
+- SW cache `vaultcap-v57`
+
 ## 4.9.4 (2026-07-04) — Nav IA + footer/monochrome polish
 
 - Wealth-aware nav: Banking / Wealth / Cashflow (not Money vs Assets)
@@ -7,7 +15,7 @@
 - Monochrome accents restored (no blue/gold bleed from Capricorn defaults)
 - Hidden modules leave nav, sheets, dashboard, and active page
 - Removed dead More sheet + duplicate CapPremiumNav init
-- Bumped to `4.9.4` · SW cache `vaultcap-v55`
+- Bumped to `4.9.5` · SW cache `vaultcap-v55`
 
 ## 4.9.3 (2026-07-03) — PWA hardening + UI polish
 

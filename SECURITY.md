@@ -13,7 +13,17 @@ VaultCap does **not** use email/password accounts. That would require our server
 | **Decoy PIN** | Optional — opens empty vault under duress |
 | **`.vos` export** | Your backup file — move to another device yourself |
 
-**PIN and keys never leave the device.** We cannot reset your PIN. No cloud login, no “forgot password” email.
+**PIN and keys never leave the device.** Capricorn Systems **cannot** open your vault, reset your PIN, or read your data. No cloud login, no remote unlock.
+
+### Forgot PIN / support
+
+| What you have | What happens |
+|---------------|--------------|
+| **Master key** (shown once at setup) | Enter it on-device → set a new PIN. Encryption is never bypassed. |
+| **`.vos` backup** | Import on this or another device, then unlock with PIN/master key. |
+| **Neither** | Only option is reset (wipe). Support cannot recover ciphertext. |
+
+**Vault ID** (`VC-XXXX-XXXX`) is a public ticket label in Settings → About and on the recovery screen. It is **not** a password. Share it with `support@capricornsystems.com` so we can track your question. We only guide you through master-key or backup restore **on your device** — we never hold keys that decrypt your vault.
 
 ## Threat model boundaries
 

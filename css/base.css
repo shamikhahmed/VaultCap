@@ -18,7 +18,10 @@
   --mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
   --font-system: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
-  --tabh: 68px; --sbw: 280px;
+  /* Tab bar: content height only; safe-area applied once in --tabh */
+  --tab-content-h: 52px;
+  --tabh: calc(var(--tab-content-h) + env(safe-area-inset-bottom, 0px));
+  --sbw: 280px;
   --st: env(safe-area-inset-top); --sb: env(safe-area-inset-bottom);
 
   /* Typography scale */

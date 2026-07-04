@@ -108,7 +108,8 @@ function openMore() {
   document.getElementById('moreOverlay')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'moreOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
+  // Header outside scroll — never slides under status bar / Dynamic Island
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;background:var(--bg);';
   const vis = id => id === 'dashboard' || id === 'search' || id === 'settings' || id === 'backup' || id === 'security' || id === 'help' || isModOn(id);
   const navGroups = [
     { label:'Home', items:[
@@ -138,23 +139,25 @@ function openMore() {
       {id:'backup',n:'Backup'},{id:'security',n:'Security'},{id:'settings',n:'Settings'},{id:'help',n:'Help'},
     ]},
   ].filter(g => g.items.length > 0);
-  overlay.innerHTML =
-    '<div style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0) + 20px) 16px 12px;position:sticky;top:0;background:var(--bg);z-index:1;border-bottom:1px solid var(--border)">' +
-    '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
-    '<button type="button" onclick="document.getElementById(\'moreOverlay\')?.remove()" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1">×</button>' +
-    '</div>' +
-    navGroups.map(group =>
-      '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
-      group.items.map(m =>
-        '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
-        '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
-        '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
-        '</div>'
-      ).join('') +
-      '</div></div>'
+  const bodyHtml = navGroups.map(group =>
+    '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
+    group.items.map(m =>
+      '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
+      '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
+      '</div>'
     ).join('') +
-    '<div style="height:20px"></div>';
+    '</div></div>'
+  ).join('') + '<div style="height:24px"></div>';
+  overlay.innerHTML =
+    '<div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);z-index:2">' +
+    '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
+    '<button type="button" onclick="document.getElementById(\'moreOverlay\')?.remove()" aria-label="Close" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1;min-width:44px;min-height:44px">×</button>' +
+    '</div>' +
+    '<div style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 88px)">' +
+    bodyHtml +
+    '</div>';
   document.body.appendChild(overlay);
 }
 function closeMore() {

@@ -146,7 +146,7 @@ button, .icb, .key, .ti, .ni, .chip, .wc-act-btn { touch-action: manipulation; u
 .inp {
   width: 100%; padding: 12px 14px; background: var(--glass2);
   border: 1px solid var(--border2); border-radius: 8px;
-  color: var(--text); font-size: 15px; font-family: var(--font);
+  color: var(--text); font-size: 16px; font-family: var(--font);
   outline: none; transition: border-color .15s, box-shadow .15s;
   min-height: 44px;
 }
@@ -551,7 +551,7 @@ body:not(.light) .u-highlight-card {
 /* ─ FAB ─ */
 .fab,
 .fab.cap-premium-fab {
-  position: fixed; bottom: calc(var(--tabh) + env(safe-area-inset-bottom, 0px) + 14px); right: 16px;
+  position: fixed; bottom: calc(var(--tabh) + 14px); right: 16px;
   width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--accent-fg);
   border: none; font-size: 22px; cursor: pointer;
   box-shadow: 0 4px 18px var(--glow), 0 2px 8px rgba(0,0,0,.4);
@@ -570,7 +570,7 @@ body:not(.light) .u-highlight-card {
 }
 .fab-scrim.on { opacity: 1; pointer-events: auto; }
 .fab-menu {
-  position: fixed; bottom: calc(var(--tabh) + env(safe-area-inset-bottom, 0px) + 78px); right: 16px; left: 16px;
+  position: fixed; bottom: calc(var(--tabh) + 78px); right: 16px; left: 16px;
   max-width: 340px; margin-left: auto;
   z-index: 299; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   padding: 12px; background: var(--bg2); border: 1px solid var(--border2);

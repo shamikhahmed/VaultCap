@@ -130,21 +130,12 @@ async function showMasterKeyModal(mk) {
 window.Settings = window.Settings || {};
 
 window.Settings.forgotPIN = function() {
+  if (typeof forgotPINFromLock === 'function') {
+    forgotPINFromLock();
+    return;
+  }
   Modal.open('Forgot PIN',
-    '<div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">' +
-    '<div onclick="Modal.close();window.Settings.useMasterKey()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('key', 28) : '') + '</div>' +
-    '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Use Master Key</div><div style="font-size:13px;color:var(--text2)">Enter the master key you saved when setting up</div></div>' +
-    '</div>' +
-    '<div onclick="Modal.close();document.getElementById(\'importF-global\')?.click()" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
-    '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Restore from Backup</div><div style="font-size:13px;color:var(--text2)">Import a .vault backup file to recover access</div></div>' +
-    '</div>' +
-    '<div onclick="Modal.close();window.Settings.resetVault()" style="background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:12px;padding:16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">' +
-    '<div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('bell', 28) : '') + '</div>' +
-    '<div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Last resort — permanently wipes all data</div></div>' +
-    '</div>' +
-    '</div>',
+    '<div style="font-size:13px;color:var(--text2);line-height:1.6">Use Master Key or restore a .vos backup. Capricorn Systems cannot open your vault.</div>',
     '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
   );
 };

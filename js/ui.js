@@ -2184,9 +2184,12 @@ const SettingsNav = {
   },
 
   _about() {
-    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">About VaultCap</div><div class="set-card">
-      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'} — Enterprise Edition`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems'],['Demo PIN','123456']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
-      <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">Tip: On iPhone — open in Safari → Share → Add to Home Screen for the full app experience</div></div>
+    const vaultId = typeof getVaultId === 'function' ? getVaultId() : '—';
+    return `<div class="set-sec"><div class="set-title">About VaultCap</div><div class="set-card">
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'}`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil" style="flex:1;min-width:140px"><div class="name">Vault ID</div><div class="desc">Public ticket ID only — not a password. Capricorn Systems cannot open your vault with it.</div></div><div style="display:flex;align-items:center;gap:8px"><code style="font-family:var(--mono);font-weight:700;letter-spacing:.06em">${vaultId}</code><button type="button" class="btn btn-g btn-sm" onclick="copyVaultId()">Copy</button></div></div>
+      <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">Support: support@capricornsystems.com — include Vault ID. We guide recovery on your device; we never hold your PIN or master key.</div></div>
+      <div class="si"><div class="name" style="font-size:12px;color:var(--text3)">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-g btn-full btn-sm" onclick="SelfCheck.renderReport()">Run Diagnostics</button>
         <button type="button" class="btn btn-g btn-full btn-sm" onclick="WhatsNew.show()">What's New</button>
