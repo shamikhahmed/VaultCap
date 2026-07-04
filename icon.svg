@@ -1,8 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="VaultCap">
-  <rect width="512" height="512" rx="112" fill="#000000"/>
-  <rect x="106" y="106" width="300" height="300" rx="68" fill="#FFFFFF"/>
-  <rect x="166" y="248" width="180" height="132" rx="28" fill="#000000"/>
-  <path d="M196 248V206c0-33.137 26.863-60 60-60s60 26.863 60 60v42" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round"/>
-  <circle cx="256" cy="300" r="18" fill="#FFFFFF"/>
-  <rect x="244" y="300" width="24" height="36" rx="10" fill="#FFFFFF"/>
+  <!-- Full-bleed black — works for any + maskable crops -->
+  <rect width="512" height="512" fill="#000000"/>
+  <!-- App plate (safe zone ~80% for Android adaptive) -->
+  <rect x="72" y="72" width="368" height="368" rx="88" fill="#FFFFFF"/>
+  <!-- Vault body -->
+  <rect x="156" y="236" width="200" height="148" rx="36" fill="#000000"/>
+  <!-- Shackle -->
+  <path d="M196 236v-40c0-33.137 26.863-60 60-60s60 26.863 60 60v40"
+        fill="none" stroke="#000000" stroke-width="28" stroke-linecap="round"/>
+  <!-- Keyhole -->
+  <circle cx="256" cy="292" r="22" fill="#FFFFFF"/>
+  <rect x="244" y="292" width="24" height="44" rx="12" fill="#FFFFFF"/>
 </svg>

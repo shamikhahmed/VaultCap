@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v55';
+const CACHE = 'vaultcap-v56';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,9 @@ const ASSETS = [
   './icon-mark.svg',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-512.png',
   './icon-1024.png',
+  './apple-touch-icon.png',
   './css/capricorn-core.css',
   './css/base.css',
   './css/layout.css',
