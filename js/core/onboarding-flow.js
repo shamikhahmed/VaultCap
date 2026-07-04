@@ -109,11 +109,21 @@ const OB = {
       return;
     }
     const fmt = mk ? mk.match(/.{1,6}/g).join('-') : text;
+    window._obRecoveryCopied = true;
+    const btn = document.getElementById('ob-recovery-continue');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(fmt).then(() => Toast.show('Recovery key copied — store it safely', 'success', 4000));
     } else {
       Toast.show('Copy: ' + fmt, 'info', 8000);
     }
+  },
+  ackRecovery() {
+    if (!window._obRecoveryCopied) {
+      Toast.show('Copy your recovery key first — you cannot view it again', 'warn', 4000);
+      return;
+    }
+    this.next(6);
   },
   next(step) {
     obStep = step + 1;
@@ -169,6 +179,7 @@ const OB = {
         await VaultDB.saveRecovery(mk);
         const fmt = mk.match(/.{1,6}/g).join('-');
         window._obRecoveryKey = mk;
+        window._obRecoveryCopied = false;
         const el = document.getElementById('ob-recovery-key');
         if (el) {
           el.textContent = fmt;
@@ -234,19 +245,18 @@ const OB = {
       const ov = document.createElement('div');
       ov.id = 'quickStartOv';
       ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:24px';
+      const qsItems = [
+        {icon:'bank', title:'Add your first bank', sub:'Accounts, IBANs & login details', action:"Banks.openAdd();document.getElementById('quickStartOv').remove()", mod:'banks'},
+        {icon:'id-card', title:'Add your ID', sub:'Passport, NIC, driving licence', action:"DocsModule.openAdd();document.getElementById('quickStartOv').remove()", mod:'documents'},
+        {icon:'smartphone', title:'Add your SIM', sub:'Mobile numbers & networks', action:"Sims.openAdd();document.getElementById('quickStartOv').remove()", mod:'sims'},
+      ].filter(i => typeof isModOn === 'function' ? isModOn(i.mod) : true);
       ov.innerHTML = `
         <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
-          <div onclick="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs &amp; login details</div></div><span style="color:var(--accent)">→</span>
-          </div>
-          <div onclick="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('id-card', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
-          </div>
-          <div onclick="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
-          </div>
+          ${qsItems.map((i, idx) => `<div onclick="${i.action}" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s ${0.05 + idx * 0.1}s both">
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon(i.icon, 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">${i.title}</div><div style="font-size:12px;color:var(--text2)">${i.sub}</div></div><span style="color:var(--accent)">→</span>
+          </div>`).join('') || '<div style="font-size:13px;color:var(--text2);text-align:center">Enable modules in Settings to see shortcuts here.</div>'}
         </div>
         <button type="button" onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
       `;

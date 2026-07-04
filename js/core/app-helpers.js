@@ -20,6 +20,13 @@ function applyReduceMotion(on) {
 }
 window.applyReduceMotion = applyReduceMotion;
 
+function applyHighContrast(on) {
+  S.highContrast = !!on;
+  document.body.classList.toggle('hc', S.highContrast);
+  Store.save();
+}
+window.applyHighContrast = applyHighContrast;
+
 // ===================== DEBOUNCE =====================
 function debounce(fn, ms) {
   let t;

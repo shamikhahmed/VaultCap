@@ -27,6 +27,7 @@ const Modal = {
     modal.style.transform = '';
     modal.style.transition = '';
     document.getElementById('overlay').classList.add('on');
+    document.body.classList.add('modal-open');
     this._initSwipe();
     if (typeof FocusTrap !== 'undefined') FocusTrap.trap(modal);
     // Wire amount formatting to numeric inputs in modal
@@ -51,6 +52,7 @@ const Modal = {
     modal.style.transform = '';
     modal.style.transition = '';
     document.getElementById('overlay').classList.remove('on');
+    document.body.classList.remove('modal-open');
     ['cf-cvv','cf-cpin','bf-pin','bf-appPin','cf-pwd','bf-pwd'].forEach(id => {
       const f = document.getElementById(id); if (f) f.value = '';
     });
@@ -106,6 +108,11 @@ async function storeMasterKeyHash(key) {
   const h = await hashString(key);
   localStorage.setItem(recoveryKeyStorageKey(), h);
 }
+
+function isModalOpen() {
+  return document.getElementById('overlay')?.classList.contains('on');
+}
+window.isModalOpen = isModalOpen;
 
 function recoveryKeyStorageKey() {
   const p = localStorage.getItem('vo_active_profile') || 'personal';

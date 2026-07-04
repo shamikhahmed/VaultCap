@@ -10,18 +10,18 @@ const PIN = {
     document.getElementById('lkBar').style.display = 'none';
   },
   in(n) {
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     if (pe.length >= 6) return;
     if (Date.now() < S.lockedUntil) { this.showLo(); return; }
     if (S.noPin) { R.unlock(); return; }
     pe += n; this.dots();
     if (navigator.vibrate) navigator.vibrate(6);
     if (pe.length === 6) {
-      const fpl = document.getElementById('forgotPinLink');
-      if (fpl) fpl.style.display = 'none';
       setTimeout(() => this.verify(), 130);
     }
   },
   del() {
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     pe = pe.slice(0, -1);
     const msg = document.getElementById('pmsg');
     if (msg) msg.className = 'pin-msg';
@@ -94,10 +94,6 @@ const PIN = {
         LockoutStore.save(S.fails, S.lockedUntil);
         if (VaultDB.sessionKey) { Store.save(); }
         Activity.log('Failed PIN #' + S.fails);
-        if (S.fails >= 3) {
-          const fpl = document.getElementById('forgotPinLink');
-          if (fpl) fpl.style.display = 'inline';
-        }
         setTimeout(() => {
           [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
           this.dots();
@@ -112,20 +108,19 @@ const PIN = {
   },
 
   showWipeGate() {
-    if (PIN._wipeTimer) clearInterval(PIN._wipeTimer);
-    let left = 60;
+    PIN.cancelWipe();
     Modal.open('Vault Protection',
-      `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">10 failed PIN attempts. Recover with your <strong>master key</strong> or the vault will be permanently wiped.</p>
-       <p style="font-size:12px;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
-      `<button type="button" class="btn btn-p" onclick="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>
-       <button type="button" class="btn btn-d btn-sm" onclick="PIN._executeWipe()">Wipe Now</button>`
+      `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">10 failed PIN attempts. Use your <strong>master recovery key</strong> to set a new PIN without losing data.</p>
+       <p style="font-size:12px;color:var(--text3);line-height:1.55">Your vault is not wiped automatically. Only reset manually if you choose to start over.</p>`,
+      `<button type="button" class="btn btn-p" onclick="PIN.cancelWipe();Modal.close();if(typeof forgotPINFromLock==='function')forgotPINFromLock();else if(window.Settings)Settings.useMasterKey()">Recover with Master Key</button>
+       <button type="button" class="btn btn-g" onclick="PIN.cancelWipe();Modal.close();PIN.reset()">Try PIN Again</button>
+       <button type="button" class="btn btn-d btn-sm" onclick="PIN._confirmWipe()">Reset Vault…</button>`
     );
-    PIN._wipeTimer = setInterval(() => {
-      left--;
-      const el = document.getElementById('wipe-cd');
-      if (el) el.textContent = String(left);
-      if (left <= 0) PIN._executeWipe();
-    }, 1000);
+  },
+  _confirmWipe() {
+    PIN.cancelWipe();
+    Modal.close();
+    if (typeof window._resetVault === 'function') window._resetVault();
   },
   cancelWipe() {
     if (PIN._wipeTimer) { clearInterval(PIN._wipeTimer); PIN._wipeTimer = null; }

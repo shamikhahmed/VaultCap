@@ -1,12 +1,13 @@
-// VaultOS — © 2026 Shamikh Ahmed. Source-available. See LICENSE.
+// VaultCap — © 2026 Capricorn Systems. Source-available. See LICENSE.
 // Centralised constants — future migration target from app.js
 
 const VAULT_VERSION = 7;
-const VER = window.VER || '4.9.5';
+const VER = window.VER || '4.9.6';
 const APP_VERSION = VER;
 window.VER = VER;
-const MAX_STORAGE_MB = 5;
 const BACKUP_REMINDER_DAYS = 30;
+window.BACKUP_REMINDER_DAYS = BACKUP_REMINDER_DAYS;
+const MAX_STORAGE_MB = 5;
 const MAX_AUDIT_ENTRIES = 10;
 const MAX_SEARCH_RESULTS = 50;
 const PIN_MIN_LENGTH = 6;

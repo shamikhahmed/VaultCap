@@ -98,25 +98,145 @@ window._verifyMasterKey = async function() {
   if (h !== stored) { setErr('Incorrect master key — please check and try again.'); return; }
   const hasSlot = !!(await VaultDB.loadRecovery(input).catch(() => null));
   Modal.close();
-  setTimeout(() => {
-    Modal.open('Set New PIN',
-      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Master key verified.' + (hasSlot ? ' Your vault data will be restored.' : ' No recovery snapshot found — vault will be re-initialised.') + '</div>' +
-      '<input class="inp" id="newPinA" type="password" inputmode="numeric" maxlength="8" placeholder="New PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem;margin-bottom:8px">' +
-      '<input class="inp" id="newPinB" type="password" inputmode="numeric" maxlength="8" placeholder="Confirm PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem">' +
-      '<div id="newPinErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:16px"></div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="window._applyNewPIN(\'' + input + '\',' + hasSlot + ')">Set PIN →</button>'
-    );
-  }, 300);
+  setTimeout(() => RecoveryPinUI.open(input, hasSlot), 300);
 };
 
-window._applyNewPIN = async function(masterKey, hasSlot) {
-  const a = document.getElementById('newPinA')?.value || '';
-  const b = document.getElementById('newPinB')?.value || '';
-  const err = document.getElementById('newPinErr');
+const RecoveryPinUI = {
+  _masterKey: '',
+  _hasSlot: false,
+  _step: 'enter',
+  _pinA: '',
+  _pinB: '',
+
+  open(masterKey, hasSlot) {
+    this._masterKey = masterKey;
+    this._hasSlot = !!hasSlot;
+    this._step = 'enter';
+    this._pinA = '';
+    this._pinB = '';
+    this._render();
+  },
+
+  _keypadHtml() {
+    const k = (d, label, sub) =>
+      `<button type="button" class="key recovery-key" onclick="RecoveryPinUI.key('${d}')" aria-label="${label}">${label}${sub ? `<span class="key-sub">${sub}</span>` : ''}</button>`;
+    return (
+      '<div class="keypad recovery-keypad">' +
+      k('1', '1') + k('2', '2', 'ABC') + k('3', '3', 'DEF') +
+      k('4', '4', 'GHI') + k('5', '5', 'JKL') + k('6', '6', 'MNO') +
+      k('7', '7', 'PQRS') + k('8', '8', 'TUV') + k('9', '9', 'WXYZ') +
+      '<button type="button" class="key act recovery-key" aria-hidden="true" tabindex="-1"></button>' +
+      k('0', '0') +
+      '<button type="button" class="key act recovery-key" onclick="RecoveryPinUI.del()" aria-label="Delete">⌫</button>' +
+      '</div>'
+    );
+  },
+
+  _render() {
+    const isConfirm = this._step === 'confirm';
+    const len = isConfirm ? this._pinB.length : this._pinA.length;
+    const dots = [0, 1, 2, 3, 4, 5].map(i =>
+      `<div class="pd${i < len ? ' on' : ''}"></div>`
+    ).join('');
+    const slotMsg = this._hasSlot ? 'Your vault data will be restored.' : 'No recovery snapshot — vault will be re-initialised.';
+    Modal.open('Set New PIN',
+      '<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;text-align:center">' +
+      'Master key verified. ' + slotMsg + '</div>' +
+      '<div class="recovery-pin-wrap">' +
+      '<div class="pin-dots recovery-pdots">' + dots + '</div>' +
+      '<div class="pin-msg recovery-pmsg">' + (isConfirm ? 'Confirm your new PIN' : 'Choose a 6-digit PIN') + '</div>' +
+      '<div id="recoveryPinErr" style="color:var(--err);font-size:12px;text-align:center;min-height:18px;margin:6px 0 10px"></div>' +
+      this._keypadHtml() +
+      '</div>',
+      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" onclick="RecoveryPinUI.submit()" id="recoveryPinSaveBtn">Save PIN</button>'
+    );
+  },
+
+  _updateDots() {
+    const isConfirm = this._step === 'confirm';
+    const len = isConfirm ? this._pinB.length : this._pinA.length;
+    const wrap = document.querySelector('.recovery-pdots');
+    if (!wrap) return;
+    wrap.querySelectorAll('.pd').forEach((d, i) => {
+      d.className = 'pd' + (i < len ? ' on' : '');
+    });
+    const msg = document.querySelector('.recovery-pmsg');
+    if (msg && !msg.classList.contains('err')) {
+      msg.textContent = len > 0 ? (len + ' of 6') : (isConfirm ? 'Confirm your new PIN' : 'Choose a 6-digit PIN');
+    }
+  },
+
+  key(n) {
+    if (this._step === 'enter') {
+      if (this._pinA.length >= 6) return;
+      this._pinA += n;
+    } else {
+      if (this._pinB.length >= 6) return;
+      this._pinB += n;
+    }
+    if (navigator.vibrate) navigator.vibrate(6);
+    this._updateDots();
+    const len = this._step === 'enter' ? this._pinA.length : this._pinB.length;
+    if (len === 6) {
+      setTimeout(() => {
+        if (this._step === 'enter') {
+          this._step = 'confirm';
+          this._pinB = '';
+          this._render();
+        } else {
+          this.submit();
+        }
+      }, 180);
+    }
+  },
+
+  del() {
+    if (this._step === 'enter') {
+      this._pinA = this._pinA.slice(0, -1);
+    } else {
+      this._pinB = this._pinB.slice(0, -1);
+    }
+    const err = document.getElementById('recoveryPinErr');
+    if (err) err.textContent = '';
+    const msg = document.querySelector('.recovery-pmsg');
+    if (msg) msg.className = 'pin-msg recovery-pmsg';
+    this._updateDots();
+  },
+
+  submit() {
+    const err = document.getElementById('recoveryPinErr');
+    const setErr = msg => { if (err) err.textContent = msg; };
+    const msg = document.querySelector('.recovery-pmsg');
+    if (this._step === 'enter') {
+      if (!/^\d{6}$/.test(this._pinA)) { setErr('PIN must be exactly 6 digits.'); return; }
+      this._step = 'confirm';
+      this._pinB = '';
+      this._render();
+      return;
+    }
+    if (!/^\d{6}$/.test(this._pinB)) { setErr('Confirm your 6-digit PIN.'); return; }
+    if (this._pinA !== this._pinB) {
+      setErr('PINs do not match — try again.');
+      if (msg) { msg.className = 'pin-msg recovery-pmsg err'; msg.textContent = 'PINs did not match'; }
+      this._step = 'enter';
+      this._pinA = '';
+      this._pinB = '';
+      setTimeout(() => this._render(), 600);
+      return;
+    }
+    window._applyNewPIN(this._masterKey, this._hasSlot, this._pinA);
+  },
+};
+window.RecoveryPinUI = RecoveryPinUI;
+
+window._applyNewPIN = async function(masterKey, hasSlot, pin) {
+  const a = pin || document.getElementById('newPinA')?.value || '';
+  const b = pin || document.getElementById('newPinB')?.value || '';
+  const err = document.getElementById('recoveryPinErr') || document.getElementById('newPinErr');
   const setErr = msg => { if(err){err.textContent=msg;} };
   if (!/^\d{6}$/.test(a)) { setErr('PIN must be exactly 6 digits.'); return; }
-  if (a !== b) { setErr('PINs do not match.'); return; }
+  if (pin ? false : a !== b) { setErr('PINs do not match.'); return; }
   try {
     if (hasSlot && masterKey) {
       await VaultDB.recoverAccess(masterKey, a);
@@ -125,9 +245,10 @@ window._applyNewPIN = async function(masterKey, hasSlot) {
       Store.save();
     }
     Modal.close();
-    Toast.show('PIN updated — please log in with your new PIN', 'success', 5000);
+    PIN.reset();
+    Toast.show('PIN updated — log in with your new PIN', 'success', 5000);
   } catch(e) {
-    setErr('Could not update PIN. Try resetting the vault.');
+    setErr('Could not update PIN. Try restoring from backup or reset vault.');
   }
 };
 

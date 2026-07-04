@@ -64,6 +64,9 @@ async function App() {
 
   document.addEventListener('keydown', function(e) {
     if (S.unlocked) return;
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     const lk = document.getElementById('pgLock');
     if (!lk || lk.style.display === 'none') return;
     if (e.key >= '0' && e.key <= '9') { e.preventDefault(); PIN.in(e.key); }
