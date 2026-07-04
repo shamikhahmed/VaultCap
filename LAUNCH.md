@@ -2,7 +2,7 @@
 
 **Live app:** https://shamikhahmed.github.io/VaultCap  
 **Install guide:** [install.html](./install.html)  
-**Version:** 4.9.3
+**Version:** 4.9.6 (beta readiness)
 
 ## What “ready” means
 
@@ -77,7 +77,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 
 ### Day 7 — Public launch
 - [ ] Announce website + install guide
-- [ ] Pin GitHub release / tag `v4.9.3`
+- [ ] Pin GitHub release / tag `v4.9.6`
 - [ ] Submit Play/Apple packages if ready (review continues after launch)
 
 ---

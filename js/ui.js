@@ -167,8 +167,9 @@ const Dash={
 
     // Backup reminder
     const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
+    const backupDays = typeof BACKUP_REMINDER_DAYS !== 'undefined' ? BACKUP_REMINDER_DAYS : 30;
     const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
-    const backupNeeded = daysSinceBackup > 14 && !VaultProfiles.isDemo();
+    const backupNeeded = daysSinceBackup > backupDays && !VaultProfiles.isDemo();
 
     // Vault health — single source: VaultHealth service
     const health = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
@@ -714,7 +715,7 @@ const Settings={
         </div>
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();document.getElementById('importF-global')?.click()">
           <div style="font-weight:700;margin-bottom:4px">Restore from Backup</div>
-          <div style="font-size:12px;color:var(--text2)">Import a .vault backup file to recover access</div>
+          <div style="font-size:12px;color:var(--text2)">Import a .vos backup file to recover access</div>
         </div>
         <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();Settings.resetVault()">
           <div style="font-weight:700;color:var(--err);margin-bottom:4px">Reset Vault</div>
@@ -767,6 +768,17 @@ const Settings={
 
 // ===================== EXPORT / IMPORT =====================
 const ExIm={
+  _backupFingerprint(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const arr = new Uint8Array(8);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(b => chars[b % chars.length]).join('');
+  },
+  _markBackupExported(){
+    S.user.lastBackup = new Date().toISOString();
+    S.user.lastBackupFingerprint = this._backupFingerprint();
+    Store.save();
+  },
   _exportMeta(fmt='json'){
     return {
       _meta:{
@@ -782,11 +794,12 @@ const ExIm={
   },
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
-      S.user.lastBackup=new Date().toISOString();
       const runVaultExport=()=>{
         VaultDB.exportEncrypted().then(()=>{
+          ExIm._markBackupExported();
+          const fp = S.user.lastBackupFingerprint;
           Activity.log('Exported','AES-256-GCM encrypted .vos');
-          Toast.show('Backup saved','success',4000);
+          Toast.show(fp ? 'Backup saved · fingerprint ' + fp : 'Backup saved','success',5000);
         }).catch(()=>Toast.show('Export failed — try again','error'));
       };
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
@@ -799,7 +812,7 @@ const ExIm={
       return;
     }
     const data={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-    S.user.lastBackup=new Date().toISOString();Store.save();
+    ExIm._markBackupExported();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
       S.banks.forEach(b=>csv+=`Bank,"${b.bankName}","${b.country}","${b.currency}","${b.balance||0}","${(b.notes||'').replace(/"/g,'""')}"\n`);
@@ -809,7 +822,7 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultCap-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};ExIm._markBackupExported();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
@@ -828,8 +841,10 @@ const ExIm={
       if(!r||r.slot!=='main'){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
       Modal.close();
       VaultDB.exportEncrypted().then(()=>{
+        ExIm._markBackupExported();
+        const fp = S.user.lastBackupFingerprint;
         Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show('Backup saved','success',4000);
+        Toast.show(fp ? 'Backup saved · fingerprint ' + fp : 'Backup saved','success',5000);
       }).catch(()=>Toast.show('Export failed','error'));
     });
   },
@@ -839,8 +854,10 @@ const ExIm={
     const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
       this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      ExIm._markBackupExported();
+      const fp = S.user.lastBackupFingerprint;
       Activity.log('Exported','Legacy AES-256-GCM .vos');
-      Toast.show('Legacy backup saved','success',4000);
+      Toast.show(fp ? 'Legacy backup saved · ' + fp : 'Legacy backup saved','success',5000);
     }).catch(()=>this._exportPlain(data));
   },
   _promptPinForLegacyImport(encRaw,onSuccess){
@@ -1312,24 +1329,20 @@ const WhatsNew={
     Modal.open('Welcome to VaultCap v'+VER,`
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Standalone Documents Module</div>
-        <div style="font-size:12px;color:var(--text2)">Passports, IDs, Visas, Contracts, Tax docs — 13 adaptive schemas with intelligent fields</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Customizable dashboard</div>
+        <div style="font-size:12px;color:var(--text2)">Show or hide sections and pin Quick Access shortcuts from the grid icon on your dashboard.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Smart Bulk Import</div>
-        <div style="font-size:12px;color:var(--text2)">Paste text, Excel, Word, CSV, PDF — auto-detects banks, cards, investments, SIMs. Edit before importing.</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Improved recovery flow</div>
+        <div style="font-size:12px;color:var(--text2)">Master key recovery uses a dedicated PIN pad. Forgot PIN is always visible on the lock screen.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Tabbed Settings Center</div>
-        <div style="font-size:12px;color:var(--text2)">8-section Settings: Profile, Security, Appearance, Modules, Backup, Import, Accessibility, About</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Backup fingerprints</div>
+        <div style="font-size:12px;color:var(--text2)">Each .vos export shows an 8-character fingerprint — note it down to verify your backup file later.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Self-Check Engine</div>
-        <div style="font-size:12px;color:var(--text2)">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
-      </div>
-      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">8 New Premium Themes</div>
-        <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Privacy blur & layout polish</div>
+        <div style="font-size:12px;color:var(--text2)">Stronger privacy mode, consistent dashboard spacing, and a flush bottom tab bar on iPhone.</div>
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultCap →</button>`);
@@ -2209,7 +2222,7 @@ const SettingsNav = {
     const hasOverride = !!(S.user.llmApiKey || '').trim();
     return `<div class="set-sec"><div class="set-title">VaultCap Smart Import (included)</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Smart Assistant (optional LLM)</div><div class="desc">${cfg.bundled && !hasOverride ? 'Optional assist — Smart Parser always works offline without it.' : 'Uses your override key when set; Smart Parser stays the offline default.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
+      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Override the bundled Smart Import proxy — leave blank for default</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://vaultos-llm-proxy.shamikhahmed.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
       <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
       <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
     </div></div>
@@ -2224,6 +2237,7 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">Accessibility</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">High Contrast</div><div class="desc">Stronger borders and text contrast</div></div><label class="tog"><input type="checkbox" ${S.highContrast?'checked':''} onchange="applyHighContrast(this.checked);Toast.show('High contrast '+(S.highContrast?'on':'off'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
     </div></div>`;
   },
@@ -2336,7 +2350,7 @@ const VaultHealthCenter = {
         ${[
           [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently' : `Back up again — ${daysSince}d since last backup`],
           [!!fp, 'Backup fingerprint saved'],
-          [!!(S.pin && S.pin !== '123456'), 'Custom PIN set'],
+          [!!S.user?.setupProgress?.pinSet, 'Custom PIN set'],
           [!!(S.user?.name), 'Profile name set'],
           [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
         ].map(([ok, label]) => `
@@ -2440,17 +2454,17 @@ const HelpCenter = {
           ${this._card('share', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
           ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('smartphone', 'If you lose your phone', '1. Open VaultCap in any browser. 2. Import your .vos backup file. 3. Enter your PIN or use your master recovery key if you forgot the PIN. Your vault is fully restored on that device.')}
           ${this._card('clock', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
           ${this._card('archive', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,
       'security': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('vault', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
-          ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
-          ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
-          ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
-          ${this._card('cross', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
+      ${this._card('vault', 'How your PIN works', 'Your PIN is never sent to any server. It derives the key that encrypts your vault on this device. If you forget it, use your master recovery key or a .vos backup — Capricorn Systems cannot reset your PIN remotely.')}
+      ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM with PBKDF2 (310k iterations) — the same family of standards used by major financial institutions. Data is encrypted before it is saved locally.')}
+      ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault. Your real data remains hidden.')}
+      ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this without your PIN.')}
+      ${this._card('cross', 'Brute force protection', 'After 3 wrong PIN attempts, the vault locks for 30 seconds. After 5 attempts, for 5 minutes. After 10 attempts, you must recover with your master key or reset the vault — data is never wiped automatically.')}
           ${this._card('trash', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
         </div>`,
       'search': `
@@ -2463,19 +2477,19 @@ const HelpCenter = {
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('moon', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
-          ${this._card('sun', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
+      ${this._card('moon', 'Dark mode', 'Pure black background with monochrome accents. The default. Ideal for OLED screens — saves battery and looks great at night.')}
+      ${this._card('sun', 'Light mode', 'Clean light background with monochrome accents. Best for bright environments and daytime use.')}
           ${this._card('settings', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
           ${this._card('sparkles', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
         </div>`,
       'faq': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('book', 'Is my data safe?', 'Yes. Your data never leaves your device. It is encrypted with AES-256-GCM using your PIN. No server, no cloud, no account required. The only way to access your data is with your PIN and your device (or a backup file).')}
-          ${this._card('book', 'What happens if this website goes down?', 'Your data is stored on your device, not on any server. Even if the URL disappears, your data is safe. Export a .vos backup and you can open it on any device using any browser, anytime.')}
-          ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
-          ${this._card('book', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
-          ${this._card('book', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
-          ${this._card('book', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+      ${this._card('book', 'Is my data safe?', 'Your vault data stays on your device, encrypted with AES-256-GCM. No account is required. Optional features (live FX rates, Smart Import LLM) use the network but never send your PIN or full vault.')}
+      ${this._card('book', 'What happens if this website goes down?', 'Your data is stored on your device, not on our servers. Export a .vos backup and you can restore on any device using any browser.')}
+      ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. QR sync works on the same network. There is no automatic cloud sync — this keeps your data private.')}
+      ${this._card('book', 'What if I forget my PIN?', 'Use Forgot PIN on the lock screen. If you saved your master recovery key, you can set a new PIN without losing data. If you have a .vos backup, import it. Without either, the vault cannot be opened.')}
+      ${this._card('book', 'Is this app free?', 'Yes, completely free during beta. No ads. Revenue features may come later — the core vault will stay privacy-first.')}
+      ${this._card('book', 'Does it work offline?', 'Yes. Install as a PWA (Add to Home Screen). Core vault features work offline. Live rates and optional Smart Import LLM need a connection when you use them.')}
           ${this._card('book', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };

@@ -113,6 +113,8 @@ function isModalOpen() {
   return document.getElementById('overlay')?.classList.contains('on');
 }
 window.isModalOpen = isModalOpen;
+
+function recoveryKeyStorageKey() {
   const p = localStorage.getItem('vo_active_profile') || 'personal';
   return p === 'personal' ? 'vo_mkh' : 'vo_mkh_' + p;
 }

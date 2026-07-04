@@ -47,7 +47,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - **AES-256-GCM** encryption via Web Crypto API
 - **PBKDF2** key derivation (310,000 iterations, SHA-256)
 - **IndexedDB** encrypted storage — never leaves your device
-- PIN brute-force lockout (30s → 5 min → vault wipe)
+- PIN brute-force lockout (30s → 5 min → master key recovery required)
 - **Decoy PIN** — shows empty vault to protect under duress
 - Fully offline — no internet required after install
 

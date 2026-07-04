@@ -55,7 +55,7 @@ VaultCap does **not** use email/password accounts. That would require our server
 ### Bundled LLM architecture
 
 - **Client:** `js/config/llm-bundled.js` → `js/modules/llm-assist.js`
-- **Proxy:** `https://VaultCap-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
+- **Proxy:** `https://vaultos-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
 - **Worker secret:** Real API key stored via `wrangler secret put LLM_API_KEY` — not in git
 - **Fallback:** Smart Parser if proxy fails or is disabled
 

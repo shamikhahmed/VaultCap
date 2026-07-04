@@ -3,6 +3,8 @@ const { test, expect } = require('@playwright/test');
 
 const SATELLITE_PAGES = [
   '/landing.html',
+  '/install.html',
+  '/security.html',
   '/pitch.html',
   '/presentation.html',
   '/changelog.html',

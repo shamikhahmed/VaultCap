@@ -79,6 +79,7 @@ const R = {
     buildNav();
     this.goto('dashboard');
     setTimeout(() => Dash.render(), 50);
+    setTimeout(() => this.applyHashRoute(), 120);
     Activity.log('Vault unlocked');
     if (typeof RatesEngine !== 'undefined') {
       RatesEngine.init().then(() => {
@@ -117,7 +118,7 @@ const R = {
         window._backupPrompted = true;
         const _lb = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
         const _days = _lb ? Math.floor((Date.now() - _lb) / (1000*60*60*24)) : 999;
-        if (_days > 14 && !VaultProfiles.isDemo()) {
+        if (_days > (typeof BACKUP_REMINDER_DAYS !== 'undefined' ? BACKUP_REMINDER_DAYS : 30) && !VaultProfiles.isDemo()) {
           Toast.show(
             _days >= 999
               ? 'You have never backed up your vault. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
@@ -151,6 +152,17 @@ const R = {
       Activity.log('Vault locked');
     };
     Store.flush().then(finishLock).catch(finishLock);
+  },
+  applyHashRoute() {
+    const raw = (location.hash || '').replace(/^#/, '').trim();
+    if (!raw || !S.unlocked) return;
+    if (raw === 'add') {
+      this.goto('dashboard');
+      setTimeout(() => { if (typeof FAB !== 'undefined') FAB.toggle(); }, 350);
+      return;
+    }
+    const pg = raw.split('/')[0];
+    if (document.getElementById('pg-' + pg)) this.goto(pg);
   },
   goto(pg, force = false) {
     if (pg === 'ai-import') pg = 'import';

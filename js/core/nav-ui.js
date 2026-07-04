@@ -327,14 +327,16 @@ function renderVaultHome() {
     {id:'emails',ic:'mail',label:'Emails',desc:(S.emails||[]).length+' identities'},
     {id:'sims',ic:'smartphone',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
-  ];
-  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+  ].filter(m => isModOn(m.id));
+  b.innerHTML = modules.length
+    ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
       <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
-    </div>`).join('') + '</div>';
+    </div>`).join('') + '</div>'
+    : '<div style="padding:24px 16px;text-align:center;color:var(--text3);font-size:13px">No identity modules enabled. Turn them on in Settings → Modules.</div>';
 }
 
 function renderAssetsHome() {
