@@ -10,18 +10,18 @@ const PIN = {
     document.getElementById('lkBar').style.display = 'none';
   },
   in(n) {
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     if (pe.length >= 6) return;
     if (Date.now() < S.lockedUntil) { this.showLo(); return; }
     if (S.noPin) { R.unlock(); return; }
     pe += n; this.dots();
     if (navigator.vibrate) navigator.vibrate(6);
     if (pe.length === 6) {
-      const fpl = document.getElementById('forgotPinLink');
-      if (fpl) fpl.style.display = 'none';
       setTimeout(() => this.verify(), 130);
     }
   },
   del() {
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     pe = pe.slice(0, -1);
     const msg = document.getElementById('pmsg');
     if (msg) msg.className = 'pin-msg';
@@ -94,10 +94,6 @@ const PIN = {
         LockoutStore.save(S.fails, S.lockedUntil);
         if (VaultDB.sessionKey) { Store.save(); }
         Activity.log('Failed PIN #' + S.fails);
-        if (S.fails >= 3) {
-          const fpl = document.getElementById('forgotPinLink');
-          if (fpl) fpl.style.display = 'inline';
-        }
         setTimeout(() => {
           [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd'; });
           this.dots();
