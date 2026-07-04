@@ -223,13 +223,13 @@ const Dash={
     const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
-    const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
+    const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
       '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
-      (S.modules.banks !== false ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
-      (S.modules.investments !== false ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
-      (S.modules.cash !== false ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
+      (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
+      (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
+      (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
       '</div></div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
@@ -243,9 +243,9 @@ const Dash={
       return a + toB(x.currentValue||x.purchasePrice||0, x.currency);
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
-    const assetSum = assetCount > 0 ?
+    const assetSum = isModOn('assets') && assetCount > 0 ?
       '<div onclick="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Assets</div>' +
+      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
       '<div style="font-size:22px;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
       '<div style="text-align:right"><div style="font-size:28px;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
       '<div style="font-size:10px;color:var(--text3)">items</div></div></div>' : '';
@@ -295,10 +295,10 @@ const Dash={
       {icon:'file', label:'Document', module:'documents', action:"DocsModule.openAdd()"},
       {icon:'card', label:'Card', module:'cards', action:"Cards.openAdd()"},
       {icon:'trending-up', label:'Investment', module:'investments', action:"Inv.openAdd()"},
-    ].filter(i => S.modules[i.module] !== false);
+    ].filter(i => isModOn(i.module));
     const firstStepsBanner = totalItems === 0 && firstStepItems.length ? `
-    <div style="margin:0 16px 16px;background:linear-gradient(135deg,rgba(123,95,255,.12),rgba(0,213,255,.07));border:1px solid rgba(123,95,255,.25);border-radius:20px;padding:18px 16px">
-      <div style="font-size:13px;font-weight:700;color:rgba(123,95,255,.9);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
+    <div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border2);border-radius:20px;padding:18px 16px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -325,7 +325,7 @@ const Dash={
     ${quickStats}
 
     <!-- WALLET -->
-    ${S.modules.cards !== false && (S.cards||[]).length ? `
+    ${isModOn('cards') && (S.cards||[]).length ? `
     <div style="margin:0 16px 16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
@@ -554,11 +554,24 @@ const Settings={
   },
   render(){ this.refresh(); },
   toggleMod(id,v){
-    S.modules[id]=v;Store.save();buildNav();
+    S.modules[id]=!!v;
+    // Property module gates vehicles / gadgets / metals shortcuts
+    if(id==='assets'){ S.modules.vehicles=!!v; S.modules.gadgets=!!v; S.modules.gold=!!v; }
+    Store.save();
+    buildNav._cacheKey='';
+    buildNav();
     const tp=getTabPrefs();tp.hiddenFinance=tp.hiddenFinance||[];
-    const finIds=['banks','cards','cash','credit','investments','loans','expenses','tax','currency','gold','zakat','bc','bonds'];
+    const finIds=['banks','cards','cash','loans','expenses','bc'];
     if(finIds.includes(id)){if(!v){if(!tp.hiddenFinance.includes(id))tp.hiddenFinance.push(id);}else{tp.hiddenFinance=tp.hiddenFinance.filter(x=>x!==id);}}
     saveTabPrefs(tp);
+    // Leave page if it belongs to hidden module
+    if(!v && typeof isPageModOn==='function' && !isPageModOn(S.currentPage)){
+      if(typeof R!=='undefined') R.goto('dashboard');
+    } else if(S.currentPage==='dashboard' && typeof Dash!=='undefined'){
+      Dash.render();
+    } else if(S.currentPage==='finance-home'){ renderFinanceHome(); }
+    else if(S.currentPage==='assets-home'){ renderAssetsHome(); }
+    else if(S.currentPage==='vault-home'){ renderVaultHome(); }
     Toast.show(`${v?'Enabled':'Hidden'}: ${ALL_MODULES.find(m=>m.id===id)?.n}`,'info',1500);
   },
   editCountries(){ ContextSwitcher.openManager(); },
@@ -2110,10 +2123,15 @@ const SettingsNav = {
   },
 
   _modules() {
-    return `<div class="set-sec"><div class="set-title">Active Modules</div><div class="set-card">
-      ${(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>`<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`).join('')}
-      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div>
-    </div></div>`;
+    const order = ['Family','Banking','Wealth','Cashflow','Identity','Planning','Tools'];
+    const mods = typeof ALL_MODULES !== 'undefined' ? ALL_MODULES : [];
+    const byGroup = {};
+    mods.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
+    const row = m => `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} onchange="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`;
+    const sections = order.filter(g => byGroup[g]?.length).map(g =>
+      `<div class="set-sec"><div class="set-title">${g}</div><div class="set-card">${byGroup[g].map(row).join('')}</div></div>`
+    ).join('');
+    return sections + `<div class="set-sec"><div class="set-card"><div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div></div></div>`;
   },
 
   _backup() {

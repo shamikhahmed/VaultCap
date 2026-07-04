@@ -202,7 +202,7 @@ const Family = {
 
     const headCard = head
       ? `<div onclick="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#00D5FF)"></div>
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
           <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
             ${this.avatarHtml(head.name, 60)}

@@ -549,9 +549,9 @@ body:not(.light) .u-highlight-card {
 .ci-info:hover { background: none; color: var(--text2); }
 
 /* ─ FAB ─ */
-.fab.cap-premium-fab { color: var(--accent-fg); }
-.fab {
-  position: fixed; bottom: calc(var(--tabh) + var(--sb) + 14px); right: 16px;
+.fab,
+.fab.cap-premium-fab {
+  position: fixed; bottom: calc(var(--tabh) + env(safe-area-inset-bottom, 0px) + 14px); right: 16px;
   width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--accent-fg);
   border: none; font-size: 22px; cursor: pointer;
   box-shadow: 0 4px 18px var(--glow), 0 2px 8px rgba(0,0,0,.4);
@@ -570,7 +570,7 @@ body:not(.light) .u-highlight-card {
 }
 .fab-scrim.on { opacity: 1; pointer-events: auto; }
 .fab-menu {
-  position: fixed; bottom: calc(var(--tabh) + var(--sb) + 78px); right: 16px; left: 16px;
+  position: fixed; bottom: calc(var(--tabh) + env(safe-area-inset-bottom, 0px) + 78px); right: 16px; left: 16px;
   max-width: 340px; margin-left: auto;
   z-index: 299; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   padding: 12px; background: var(--bg2); border: 1px solid var(--border2);
@@ -706,7 +706,7 @@ body:not(.light) .u-highlight-card {
 .module-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; }
 .mod-opt { background: var(--glass); border: 2px solid var(--border); border-radius: 14px; padding: 13px 8px; cursor: pointer; transition: var(--t); text-align: center; position: relative; }
 .mod-opt:hover    { border-color: var(--border2); }
-.mod-opt.on       { border-color: var(--accent); background: rgba(0,128,255,0.08); }
+.mod-opt.on       { border-color: var(--accent); background: var(--glow); }
 .mod-opt .mic     { font-size: 22px; margin-bottom: 5px; }
 .mod-opt .mname   { font-size: 11px; font-weight: 700; }
 .mod-opt .mchk    { position: absolute; top: 6px; right: 6px; font-size: 12px; opacity: 0; }
@@ -717,7 +717,7 @@ body:not(.light) .u-highlight-card {
 .sec-opts { display: flex; flex-direction: column; gap: 10px; width: 100%; }
 .so { background: var(--glass); border: 2px solid var(--border); border-radius: var(--r); padding: 14px 18px; cursor: pointer; transition: var(--t); text-align: left; }
 .so:hover { border-color: var(--border2); }
-.so.on    { border-color: var(--accent); background: rgba(0,128,255,0.08); }
+.so.on    { border-color: var(--accent); background: var(--glow); }
 .so h4    { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
 .so p     { font-size: 12px; color: var(--text2); }
 
@@ -1049,7 +1049,7 @@ body.light .glass { background: var(--bg); border: 1px solid var(--border); }
 
 /* Chips & badges */
 body.light .chip { background: var(--glass2); border-color: var(--border); color: var(--text2); }
-body.light .chip.on { background: rgba(37,99,235,.12); border-color: rgba(37,99,235,.3); color: var(--accent); }
+body.light .chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 body.light .badge { background: var(--glass2); color: var(--text2); }
 body.light .badge.b-ok { background: rgba(22,163,74,.12); color: #16a34a; }
 body.light .badge.b-err { background: rgba(220,38,38,.12); color: #dc2626; }
@@ -1071,7 +1071,7 @@ body.light .si .name { color: var(--text); }
 body.light .si .desc { color: var(--text3); }
 
 /* FAB */
-body.light .fab { background: var(--accent); box-shadow: 0 4px 16px rgba(37,99,235,.3); }
+body.light .fab { background: var(--accent); box-shadow: 0 4px 16px var(--glow); }
 body.light .fmi { background: var(--bg); border: 1px solid var(--border); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
 
 /* Dashboard sections */
@@ -1132,8 +1132,18 @@ body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
 .tab-pill.on,
 .search-chip.on,
 .perf-tab.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
   color: var(--accent-fg, #000) !important;
   box-shadow: none !important;
+}
+.ni.cap-premium-item.on,
+.nav-tab.cap-premium-item.on {
+  color: var(--text) !important;
+}
+.cap-tab-indicator {
+  background: var(--glass2) !important;
+  border-color: var(--border) !important;
 }
 
 .ctx-bar {

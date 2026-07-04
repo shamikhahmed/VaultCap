@@ -1,5 +1,14 @@
 # Changelog — VaultCap
 
+## 4.9.4 (2026-07-04) — Nav IA + footer/monochrome polish
+
+- Wealth-aware nav: Banking / Wealth / Cashflow (not Money vs Assets)
+- Fixed bottom tab gap (double padding + `cap-has-floating-nav` body pad)
+- Monochrome accents restored (no blue/gold bleed from Capricorn defaults)
+- Hidden modules leave nav, sheets, dashboard, and active page
+- Removed dead More sheet + duplicate CapPremiumNav init
+- Bumped to `4.9.4` · SW cache `vaultcap-v55`
+
 ## 4.9.3 (2026-07-03) — PWA hardening + UI polish
 
 ### Security & reliability

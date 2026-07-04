@@ -158,6 +158,10 @@ const R = {
       S.aF = alias.filter;
       pg = alias.target;
     }
+    if (typeof isPageModOn === 'function' && !isPageModOn(pg)) {
+      Toast.show('Module hidden — enable in Settings', 'info', 2000);
+      pg = 'dashboard';
+    }
     updatePageChrome(pg);
     const prev = S.currentPage;
     // Save scroll position for the page we're leaving

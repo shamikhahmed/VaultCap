@@ -16,6 +16,8 @@ body.light {
   --text3: #666666;
   --accent: #000000;
   --accent-fg: #ffffff;
+  --cap-accent: #000000;
+  --cap-accent-contrast: #ffffff;
   --glow: rgba(0,0,0,0.12);
   --purple: #333333;
   --chart-1: rgba(0,0,0,0.88);

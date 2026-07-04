@@ -190,18 +190,20 @@ body.demo-banner-active #app {
 .ios-group > .sdiv:first-child,
 .ios-group > .csec-h:first-child { margin-top: 0; }
 
-/* Bottom tab clearance — only when tabs visible */
-body:not(.hide-btabs) .main,
-body:not(.hide-btabs) .page.on > .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); }
-body.hide-btabs .main,
-body.hide-btabs .page.on > .pb { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
+/* Bottom tab clearance — pad scroll body only (never body/.main — that floats tabs up) */
+body.cap-has-floating-nav { padding-bottom: 0 !important; }
+body:not(.hide-btabs) .page.on > .pb {
+  padding-bottom: calc(var(--tabh) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+body.hide-btabs .page.on > .pb {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+}
 @media (min-width: 769px) {
-  body .main, body .page.on > .pb { padding-bottom: 24px !important; }
+  body .page.on > .pb { padding-bottom: 24px !important; }
 }
 
 /* Spacer not needed — page .pb already pads for fixed bottom tabs */
-.btabs-spacer { height: 0; flex-shrink: 0; overflow: hidden; }
-body.hide-btabs .btabs-spacer { display: none; height: 0; }
+.btabs-spacer { display: none; height: 0; flex-shrink: 0; overflow: hidden; pointer-events: none; }
 
 /* Settings page chrome */
 .settings-chrome {

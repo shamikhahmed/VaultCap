@@ -6,6 +6,7 @@
   --border: rgba(255,255,255,0.12); --border2: rgba(255,255,255,0.18); --border3: rgba(255,255,255,0.28);
   --text: #ffffff; --text2: #c8c8c8; --text3: #8a8a8a;
   --accent: #ffffff; --accent-fg: #000000; --glow: rgba(255,255,255,0.18);
+  --cap-accent: #ffffff; --cap-accent-contrast: #000000;
   --purple: #cccccc; --indigo: #ffffff;
   --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --info: #64d2ff;
   --on-accent: #ffffff;
