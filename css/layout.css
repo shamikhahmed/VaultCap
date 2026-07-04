@@ -366,7 +366,41 @@ body.hide-btabs #fab { display: none !important; }
   #lkClock { font-size: 38px; }
 }
 @media (min-width: 769px) { #pgLock { padding-bottom: 0 !important; } }
-/* Prevent GPU compositing blur on lock screen interactive elements */
+/* Prevent lock screen keypad from stealing input while a modal is open */
+body.modal-open #pgLock .keypad,
+body.modal-open #pgLock .key {
+  pointer-events: none;
+}
+body.modal-open #pgLock {
+  filter: blur(4px) brightness(0.55);
+  -webkit-filter: blur(4px) brightness(0.55);
+}
+body.modal-open #pgLock .lk-mark,
+body.modal-open #pgLock .pin-dots,
+body.modal-open #pgLock #lkClock,
+body.modal-open #pgLock #lkDate,
+body.modal-open #pgLock .lk-mid {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Recovery PIN pad inside modal */
+.recovery-pin-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0 0;
+}
+.recovery-pdots { margin-bottom: 8px; }
+.recovery-pmsg { margin-bottom: 4px; min-height: 18px; }
+.recovery-keypad {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.recovery-keypad .recovery-key {
+  touch-action: manipulation;
+}
 #pgLock .lk-mark, #pgLock .lk-brand, #pgLock .lk-brand-name,
 #pgLock .pin-dots, #pgLock #lkClock, #pgLock #lkDate, #pgLock .lk-mid {
   filter: none !important;
