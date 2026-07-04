@@ -224,7 +224,7 @@ const Dash={
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (S.modules.banks !== false || S.modules.investments !== false || S.modules.cash !== false) ?
-      '<div style="margin:14px 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
+      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
       (S.modules.banks !== false ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
@@ -410,7 +410,7 @@ const Dash={
 
     <!-- RECENT ACTIVITY -->
     ${S.activity.length > 0 ? `
-    <div style="margin:16px 16px 24px">
+    <div style="margin:0 16px 16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
         <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
@@ -427,6 +427,7 @@ const Dash={
       </div>
     </div>` : ''}
   `;
+    if (typeof VC !== 'undefined' && VC.refreshShellIcons) VC.refreshShellIcons();
   },
   donut(data,total){
     const r=30,cx=42,cy=42;let angle=-Math.PI/2;let paths='';

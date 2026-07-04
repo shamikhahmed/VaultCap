@@ -103,6 +103,9 @@ function openMore() {
   overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 100px)';
   const vis = id => S.modules[id] !== false;
   const navGroups = [
+    { label:'Home', items:[
+      {id:'dashboard',n:'Dashboard'},{id:'family',n:'Family Vault'},
+    ].filter(m => m.id === 'dashboard' || vis(m.id))},
     { label:'Money', items:[
       {id:'banks',n:'Banks'},{id:'cards',n:'Cards'},{id:'cash',n:'Cash'},{id:'investments',n:'Investments'},
       {id:'loans',n:'Loans'},{id:'expenses',n:'Expenses'},{id:'bc',n:'Committees'},{id:'bonds',n:'Bonds'},
@@ -112,10 +115,12 @@ function openMore() {
       {id:'documents',n:'Documents'},{id:'sims',n:'SIM Cards'},{id:'emails',n:'Emails'},
       {id:'digital',n:'Digital'},{id:'friends',n:'Contacts'},
     ].filter(m => vis(m.id))},
+    { label:'Planning', items:[
+      {id:'zakat',n:'Zakat'},{id:'tax',n:'Tax'},{id:'credit',n:'Credit Score'},{id:'currency',n:'Currency'},
+    ].filter(m => vis(m.id))},
     { label:'Tools', items:[
-      {id:'zakat',n:'Zakat'},{id:'tax',n:'Tax'},{id:'currency',n:'Currency'},{id:'import',n:'Smart Import'},
-      {id:'credit',n:'Credit Score'},{id:'reminders',n:'Reminders'},{id:'alerts',n:'Alerts'},
-      {id:'timeline',n:'Timeline'},{id:'search',n:'Search'},{id:'trash',n:'Trash'},{id:'family',n:'Family Vault'},
+      {id:'import',n:'Smart Import'},{id:'reminders',n:'Reminders'},{id:'alerts',n:'Alerts'},
+      {id:'timeline',n:'Timeline'},{id:'search',n:'Search'},{id:'trash',n:'Trash'},
     ].filter(m => vis(m.id))},
     { label:'System', items:[
       {id:'backup',n:'Backup'},{id:'security',n:'Security'},{id:'settings',n:'Settings'},{id:'help',n:'Help'},
@@ -208,17 +213,13 @@ function renderFinanceHome() {
   const b = document.getElementById('finance-home-body');
   if (!b) return;
   const ctxBar = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.bar('finance-home') : '';
+  // Money only — zakat/tax/credit/currency live under Planning (More menu)
   const allModules = [
     {id:'banks',ic:'bank',label:'Banks',desc:(S.banks||[]).length+' accounts'},
     {id:'cards',ic:'card',label:'Cards',desc:(S.cards||[]).length+' cards'},
     {id:'cash',ic:'banknote',label:'Cash',desc:(S.cash||[]).length+' entries'},
     {id:'investments',ic:'trending-up',label:'Investments',desc:(S.investments||[]).length+' positions'},
     {id:'loans',ic:'handshake',label:'Loans',desc:(S.loans||[]).length+' loans'},
-    {id:'credit',ic:'gauge',label:'Credit Score',desc:'Track scores'},
-    {id:'zakat',ic:'moon',label:'Zakat',desc:'Calculate'},
-    {id:'tax',ic:'receipt',label:'Tax',desc:'Tax calculator'},
-    {id:'currency',ic:'arrows',label:'Currency',desc:'Net worth'},
-    {id:'gold',ic:'gem',label:'Metals',desc:'Gold & silver'},
     {id:'expenses',ic:'repeat',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
     {id:'bc',    ic:'refresh-cw', label:'Committee (BC)',       desc:(S.bc||[]).length+' committees'},
     {id:'bonds', ic:'ticket', label:'Prize Bonds & Savings', desc:(S.bonds||[]).length+' holdings'},
@@ -226,13 +227,7 @@ function renderFinanceHome() {
   const hidden = getTabPrefs().hiddenFinance || [];
   const modules = allModules.filter(m => {
     if (hidden.includes(m.id)) return false;
-    if (m.id === 'zakat' && S.user?.showZakat === false) return false;
-    if (S.modules) {
-      const modKey = { banks:'banks', cards:'banks', cash:'banks', credit:'banks',
-        investments:'investments', loans:'loans', expenses:'expenses', tax:'tax',
-        currency:'currency', gold:'currency', zakat:'zakat', bc:'bc', bonds:'bonds' }[m.id];
-      if (modKey && S.modules[modKey] === false) return false;
-    }
+    if (S.modules && S.modules[m.id] === false) return false;
     return true;
   });
   b.innerHTML = ctxBar + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
@@ -316,7 +311,7 @@ function buildNav() {
   const active = ALL_MODULES.filter(m => S.modules[m.id]);
   const extras = [{ id:'settings', n:'Settings', ic:'settings' }, { id:'trash', n:'Trash', ic:'trash' }, { id:'reminders', n:'Reminders', ic:'bell' }, { id:'sync', n:'Sync', ic:'sync' }];
   const appVer = (typeof window !== 'undefined' && window.VER) || (typeof VER !== 'undefined' ? VER : (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '4.8.2'));
-  const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + appVer;
+  const navKey = active.map(m => m.id).sort().join(',') + '|' + (S.user?.country || '') + '|' + appVer + '|nav-v3';
   const sbNav = document.getElementById('sbNav');
   const btabs = document.getElementById('btabs');
   if (sbNav && btabs && navKey === buildNav._cacheKey && sbNav.children.length) {
@@ -326,16 +321,20 @@ function buildNav() {
   buildNav._cacheKey = navKey;
 
   const groups = {
-    Finance:  'Finance',
-    Assets:   'Assets & Property',
+    Family:   'Family',
+    Finance:  'Money',
+    Assets:   'Assets',
     Identity: 'Identity',
+    Planning: 'Planning',
     Tools:    'Tools',
   };
+  const groupOrder = ['Family', 'Finance', 'Assets', 'Identity', 'Planning', 'Tools'];
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
   let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></div>`;
-  Object.entries(groups).forEach(([grp, label]) => {
+  groupOrder.forEach((grp) => {
+    const label = groups[grp];
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>

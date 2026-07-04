@@ -244,6 +244,7 @@ const R = {
       settings:    () => {
         buildNav();
         buildSettTabs();
+        if (typeof VC !== 'undefined' && VC.refreshShellIcons) VC.refreshShellIcons();
         if (typeof SettingsNav !== 'undefined') {
           setTimeout(() => { SettingsNav.show(SettingsNav.current || 'profile'); if (typeof SelfCheck !== 'undefined') SelfCheck.run(); }, 50);
         } else if (typeof Settings !== 'undefined' && Settings.refresh) {

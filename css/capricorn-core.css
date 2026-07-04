@@ -1333,16 +1333,18 @@ body.cap-has-scene > #root {
   font-size: 2.5rem;
   line-height: 1;
   margin-bottom: 0.75rem;
+  color: var(--cap-text, #f5f5f7);
 }
+.empty-ios .ei-ic .vc-icon { color: var(--cap-text, #f5f5f7); opacity: 0.92; }
 .empty-ios .ei-title {
-  font: 700 var(--cap-text-lg, 1.0625rem) var(--cap-font-body, system-ui);
+  font: 800 var(--cap-text-lg, 1.125rem) var(--cap-font-body, system-ui);
   color: var(--cap-text, #f5f5f7);
   letter-spacing: -0.02em;
   margin-bottom: 0.35rem;
 }
 .empty-ios .ei-sub {
-  font: 400 var(--cap-text-sm, 0.8125rem) var(--cap-font-body, system-ui);
-  color: var(--cap-text-secondary, rgba(245, 245, 247, 0.72));
+  font: 500 0.9375rem var(--cap-font-body, system-ui);
+  color: var(--cap-text-secondary, rgba(245, 245, 247, 0.88));
   line-height: 1.55;
   max-width: 22rem;
   margin: 0 auto 1rem;

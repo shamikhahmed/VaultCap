@@ -199,7 +199,8 @@ body.hide-btabs .page.on > .pb { padding-bottom: calc(env(safe-area-inset-bottom
   body .main, body .page.on > .pb { padding-bottom: 24px !important; }
 }
 
-.btabs-spacer { height: calc(env(safe-area-inset-bottom, 0px) + 56px); flex-shrink: 0; }
+/* Spacer not needed — page .pb already pads for fixed bottom tabs */
+.btabs-spacer { height: 0; flex-shrink: 0; overflow: hidden; }
 body.hide-btabs .btabs-spacer { display: none; height: 0; }
 
 /* Settings page chrome */
