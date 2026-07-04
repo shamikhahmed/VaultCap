@@ -42,7 +42,10 @@ const CapPremiumNav = (() => {
     obs.observe(nav, { attributes: true, subtree: true, attributeFilter: ['class'] });
     syncIndicators(nav, itemSelector);
 
-    document.body.classList.add('cap-has-floating-nav');
+    /* VaultCap uses fixed full-width .btabs — only floating pill navs need body pad */
+    const isFloatingPill = nav.classList.contains('floating-tab-bar') ||
+      (nav.matches('#nav, nav.nav') && !nav.classList.contains('btabs'));
+    if (isFloatingPill) document.body.classList.add('cap-has-floating-nav');
     return nav;
   }
 

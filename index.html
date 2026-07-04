@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function () {
-  var BUILD = '4.9.5';
+  var BUILD = '4.9.6';
   var KEY = 'vaultcap_build';
   if (localStorage.getItem(KEY) === BUILD) return;
   localStorage.setItem(KEY, BUILD);
@@ -382,12 +382,14 @@
 <div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="overflow:hidden;min-width:0"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
 <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;position:relative" class="dash-toolbar">
 <button class="btn btn-g btn-sm" id="currBtn" onclick="Dash.toggleCurrency()" title="Display currency" style="min-width:44px;padding:6px 8px;font-size:11px">GBP</button>
+<button type="button" class="icb dash-act-desktop" id="dashCustomizeBtn" onclick="Dash.openCustomize()" title="Customize dashboard" aria-label="Customize dashboard" style="width:36px;height:36px" data-vc-icon="grid" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-desktop" id="dashSettingsBtn" onclick="R.goto('settings')" title="Settings" aria-label="Settings" style="width:36px;height:36px" data-vc-icon="settings" data-vc-size="18"></button>
 <button type="button" class="btn btn-g btn-sm dash-act-desktop" onclick="CMD.open()" style="padding:6px 8px;font-size:11px;display:none" id="dashCmdBtn">⌘K</button>
 <button type="button" class="icb dash-act-desktop" id="dashPrivacyBtn" onclick="togglePrivacy()" title="Privacy" aria-label="Privacy" style="width:36px;height:36px" data-vc-icon="eye-off" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-desktop" id="dashLockBtn" onclick="R.lock()" title="Lock vault" aria-label="Lock vault" style="width:36px;height:36px" data-vc-icon="lock" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-more" id="dashMoreBtn" onclick="Dash.toggleMore(event)" title="More actions" aria-label="More actions" style="width:36px;height:36px;display:none" data-vc-icon="more" data-vc-size="18"></button>
 <div class="dash-more-menu" id="dashMoreMenu" role="menu" aria-hidden="true">
+<button type="button" class="dash-more-item" role="menuitem" onclick="Dash.openCustomize();Dash.closeMore()"><span data-vc-icon="grid" data-vc-size="16"></span>Customize</button>
 <button type="button" class="dash-more-item" role="menuitem" onclick="R.goto('settings');Dash.closeMore()"><span data-vc-icon="settings" data-vc-size="16"></span>Settings</button>
 <button type="button" class="dash-more-item" role="menuitem" onclick="CMD.open();Dash.closeMore()"><span data-vc-icon="search" data-vc-size="16"></span>Search</button>
 <button type="button" class="dash-more-item" role="menuitem" onclick="togglePrivacy();Dash.closeMore()"><span data-vc-icon="eye-off" data-vc-size="16"></span>Privacy</button>
@@ -466,9 +468,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" onclick="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=4.9.5"></script>
-<script>window.VER='4.9.5';</script>
-<script src="dist/vaultcap.bundle.js?v=4.9.5"></script>
+<script src="js/storage.js?v=4.9.6"></script>
+<script>window.VER='4.9.6';</script>
+<script src="dist/vaultcap.bundle.js?v=4.9.6"></script>
 <script>
 (function () {
   function syncDemoBanner() {

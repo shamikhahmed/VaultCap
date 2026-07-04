@@ -183,13 +183,46 @@ body::before { display: none; }
 .skel-avatar  { width: 40px; height: 40px; border-radius: 50%; }
 .skel-card    { height: 80px; border-radius: var(--r); }
 
-/* ─ Privacy mode ─ */
-body.privacy .sens {
-  filter: blur(6px);
-  -webkit-filter: blur(6px);
+/* ─ Privacy mode — blur + mask sensitive financial / identity data ─ */
+body.privacy .sens,
+body.privacy .wc-mini,
+body.privacy .dash-nw-amount,
+body.privacy .dash-stat-n,
+body.privacy .hero-value,
+body.privacy [class*="fmt"],
+body.privacy .entry-val,
+body.privacy .entry-amt,
+body.privacy .card-num,
+body.privacy .bal-val,
+body.privacy .inv-val,
+body.privacy .cash-val {
+  filter: blur(12px) saturate(0.2);
+  -webkit-filter: blur(12px) saturate(0.2);
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
+}
+body.privacy .sens,
+body.privacy .wc-mini,
+body.privacy .dash-nw-amount,
+body.privacy .hero-value,
+body.privacy .entry-val,
+body.privacy .entry-amt,
+body.privacy .bal-val,
+body.privacy .inv-val,
+body.privacy .cash-val {
+  color: transparent !important;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+}
+body.privacy .wc-mini * {
+  filter: inherit;
+  -webkit-filter: inherit;
+}
+body.privacy img.sens,
+body.privacy .wc-mini img {
+  opacity: 0.15;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
 }
 
 /* ─ Screenshot / devtools blur (applied via JS on visibility/devtools detection) ─ */
