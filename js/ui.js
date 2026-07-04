@@ -186,7 +186,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div class="dash-block"><div class="dash-card"><div class="dash-kicker">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap" class="sens">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -198,11 +198,11 @@ const Dash={
       ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+    const nwHero = '<div class="dash-block"><div class="dash-card dash-card--hero">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens">'+fmt(nwPKR)+'</div>' +
-      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
+      '<div class="dash-kicker">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
+      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens dash-nw-amount">'+fmt(nwPKR)+'</div>' +
+      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'" class="sens">'+(nwChangeStr)+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
       multiCurHtml +
       '</div></div>';
@@ -210,10 +210,10 @@ const Dash={
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
     const familyWidget = familyMC > 0
-      ? '<div style="padding:0 16px;margin-top:14px"><div onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
+      ? '<div class="dash-block"><div class="dash-card" onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border-color:rgba(0,213,255,.2);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
         '<div style="display:flex;align-items:center;flex-shrink:0">' + _uiIcon('users', 24) + '</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Family Vault</div>' +
-        '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
+        '<div style="font-size:12px;color:var(--text3);margin-top:2px" class="sens">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
         '<div style="font-size:18px;color:var(--text3)">›</div>' +
         '</div></div>'
       : '';
@@ -224,13 +224,13 @@ const Dash={
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
-      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
+      '<div class="dash-block"><div class="dash-card">' +
+      '<div class="dash-kicker"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
       (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
       (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
       (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
-      '</div></div>' : '';
+      '</div></div></div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
@@ -244,18 +244,18 @@ const Dash={
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
     const assetSum = isModOn('assets') && assetCount > 0 ?
-      '<div onclick="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
+      '<div class="dash-block"><div class="dash-card" onclick="R.goto(\'assets\')" style="cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
+      '<div><div class="dash-kicker" style="margin-bottom:4px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
       '<div style="font-size:22px;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
       '<div style="text-align:right"><div style="font-size:28px;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
-      '<div style="font-size:10px;color:var(--text3)">items</div></div></div>' : '';
+      '<div style="font-size:10px;color:var(--text3)">items</div></div></div></div>' : '';
 
     const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
     const _reminders = (S.reminders || []).filter(r => !r.done).sort((a,b) => new Date(a.dueDate||0) - new Date(b.dueDate||0)).slice(0, 2);
     const _allActions = [..._alerts.map(a => ({...a, _type:'alert'})), ..._reminders.map(r => ({...r, _type:'reminder'}))].slice(0, 4);
     const upcomingActions = _allActions.length ?
-      '<div style="margin:0 16px 16px">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
+      '<div class="dash-block"><div class="dash-kicker"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
+      '<div class="dash-card" style="padding-top:8px;padding-bottom:8px">' +
       _allActions.map((a,i) => {
         const daysLeft = a.dueDate ? Math.ceil((new Date(a.dueDate) - new Date()) / 86400000) : null;
         const urgency = daysLeft !== null && daysLeft <= 7 ? 'var(--err)' : daysLeft !== null && daysLeft <= 30 ? 'var(--warn)' : 'var(--text3)';
@@ -265,7 +265,7 @@ const Dash={
           (daysLeft !== null ? '<div style="font-size:11px;color:' + urgency + '">' + (daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Today' : daysLeft + ' days left') + '</div>' : '') +
           '</div></div>';
       }).join('') +
-      '</div>' : '';
+      '</div></div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : 'All');
@@ -274,14 +274,14 @@ const Dash={
       '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
       '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
-    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
+    const quickStats = '<div class="dash-block"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
       quickStatCell(entityTotal, 'Records') +
       quickStatCell(activeCountryLabel, 'Country') +
       quickStatCell(lastBackupLabel, 'Backup', "R.goto('settings');setTimeout(function(){SettingsNav.show('backup')},80)") +
-      '</div>';
+      '</div></div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
-    <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div class="dash-block dash-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
@@ -297,7 +297,7 @@ const Dash={
       {icon:'trending-up', label:'Investment', module:'investments', action:"Inv.openAdd()"},
     ].filter(i => isModOn(i.module));
     const firstStepsBanner = totalItems === 0 && firstStepItems.length ? `
-    <div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border2);border-radius:20px;padding:18px 16px">
+    <div class="dash-block dash-card">
       <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
@@ -306,42 +306,49 @@ const Dash={
       </div>
     </div>` : '';
 
-    b.innerHTML = `
-    ${ctxBar}
-    ${setupBanner}
-    ${firstStepsBanner}
-    ${nwHero}
+    const dashPrefs = typeof getDashPrefs === 'function' ? getDashPrefs() : { sections: {}, quickAccess: ['banks','cards','documents','investments'] };
+    const dashOn = (id) => typeof isDashSectionOn === 'function' ? isDashSectionOn(id) : true;
 
-    ${moneySum}
+    const quickAccessMods = (dashPrefs.quickAccess || [])
+      .map(id => (typeof DASH_QUICK_MODULES !== 'undefined' ? DASH_QUICK_MODULES : []).find(m => m.id === id))
+      .filter(m => m && isModOn(m.id));
+    const quickAccessHtml = quickAccessMods.length ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker">Quick Access</div>
+        <button type="button" onclick="Dash.openCustomize()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
+      </div>
+      <div class="dash-quick-grid">
+        ${quickAccessMods.map(m => `
+          <button type="button" class="dash-quick-tile" onclick="R.goto('${m.page}')">
+            <span class="chip-ic" style="flex-shrink:0">${_uiIcon(m.ic, 22)}</span>
+            <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.label}</span>
+          </button>`).join('')}
+      </div>
+    </div>` : (dashOn('quickaccess') ? `
+    <div class="dash-block dash-card" style="text-align:center">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px">No quick access shortcuts yet</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Pick banks, documents, investments, and more.</div>
+      <button type="button" class="btn btn-p btn-sm" onclick="Dash.openCustomize()">Customize dashboard</button>
+    </div>` : '');
 
-    ${breakdownHtml}
-
-    ${familyWidget}
-
-    ${assetSum}
-
-    ${upcomingActions}
-
-    ${quickStats}
-
-    <!-- WALLET -->
-    ${isModOn('cards') && (S.cards||[]).length ? `
-    <div style="margin:0 16px 16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
-        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">${wCards.length ? 'Edit' : 'Set'} →</button>
+    const walletHtml = isModOn('cards') && (S.cards||[]).length ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
+        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
       ${wCards.length
         ? `<div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
-        : `<button type="button" onclick="Dash.editWallet()" style="width:100%;background:var(--glass);border:1px dashed var(--border2);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;text-align:left"><div style="font-size:13px;font-weight:600;color:var(--text)">Set today's wallet</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Pick which cards you're carrying</div></button>`}
-    </div>` : ''}
+        : `<button type="button" onclick="Dash.editWallet()" class="dash-card" style="width:100%;border-style:dashed;cursor:pointer;touch-action:manipulation;text-align:left;font-family:inherit"><div style="font-size:13px;font-weight:600;color:var(--text)">Set today's wallet</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Pick which cards you're carrying</div></button>`}
+    </div>` : '';
 
-    <!-- EXPIRY ALERTS -->
-    ${allExpiring.length ? `
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
+    const expiringHtml = allExpiring.length ? `
+    <div class="dash-block">
+      <div class="dash-kicker"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
       ${allExpiring.slice(0,3).map(x => `
-        <div onclick="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
+        <div class="dash-card" onclick="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border-color:${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="chip-ic" style="flex-shrink:0">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
@@ -351,12 +358,13 @@ const Dash={
           </div>
           <div style="font-size:18px;color:var(--text3)">›</div>
         </div>`).join('')}
-    </div>` : ''}
+      </div>
+    </div>` : '';
 
-    <!-- VAULT HEALTH -->
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+    const healthHtml = `
+    <div class="dash-block">
+      <div class="dash-kicker"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
+      <div class="dash-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:13px;font-weight:600;color:var(--text)">Security Score</div>
           <div style="font-size:20px;font-weight:900;color:${healthColor}">${health}%</div>
@@ -368,64 +376,64 @@ const Dash={
           ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
         </div>
       </div>
-    </div>
+    </div>`;
 
-    <!-- BACKUP REMINDER -->
-    ${backupNeeded ? `
-    <div onclick="ExIm.export('vos')" style="margin:0 16px 16px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:14px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
+    const backupHtml = backupNeeded ? `
+    <div class="dash-block dash-card" onclick="ExIm.export('vos')" style="background:rgba(255,152,0,.1);border-color:rgba(255,152,0,.3);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
       <span class="chip-ic" style="flex-shrink:0">${_uiIcon('share', 24)}</span>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:700;color:var(--warn)">${daysSinceBackup >= 999 ? 'Never backed up' : `Last backup: ${daysSinceBackup} days ago`}</div>
         <div style="font-size:11px;color:var(--text3)">Tap to export encrypted backup — protect your data</div>
       </div>
       <div style="font-size:18px;color:var(--text3)">›</div>
-    </div>` : ''}
+    </div>` : '';
 
-    <!-- QUICK ACTIONS -->
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Quick Actions</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        ${[
-          {icon:'bank',label:'Add Bank',action:"Banks.openAdd()"},
-          {icon:'card',label:'Add Card',action:"Cards.openAdd()"},
-          {icon:'file',label:'Add Document',action:"R.goto('documents')"},
-          {icon:'banknote',label:'Add Cash',action:"Cash.openAdd()"},
-        ].map(a => `
-          <button type="button" onclick="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text);overflow:hidden">
-            <span class="chip-ic" style="flex-shrink:0">${_uiIcon(a.icon, 22)}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.label}</span>
-          </button>`).join('')}
-      </div>
-    </div>
-
-    <!-- SMART COLLECTIONS -->
-    ${(() => {
+    const collectionsHtml = (() => {
       const cols = [
         { label:'Expiring Soon', icon:'bell', count:allExpiring.length, action:"R.goto('alerts')", color:'rgba(255,152,0,.1)', border:'rgba(255,152,0,.3)' },
         { label:'Archived', icon:'package', count:[...(S.banks||[]),...(S.cards||[])].filter(x=>x.archived).length, action:"R.goto('banks')", color:'rgba(123,95,255,.1)', border:'rgba(123,95,255,.3)' },
         { label:'Loans Active', icon:'handshake', count:(S.loans||[]).filter(l=>l.status!=='Settled').length, action:"R.goto('loans')", color:'rgba(255,69,58,.1)', border:'rgba(255,69,58,.3)' },
         { label:'Investments', icon:'trending-up', count:(S.investments||[]).length, action:"R.goto('investments')", color:'rgba(0,213,255,.1)', border:'rgba(0,213,255,.3)' },
       ].filter(c => c.count > 0);
-      return cols.length ? `<div style="margin:0 16px 16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div onclick="${c.action}" style="background:${c.color};border:1px solid ${c.border};border-radius:12px;padding:12px 14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px"><span class="chip-ic">${_uiIcon(c.icon, 20)}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
-    })()}
+      return cols.length ? `<div class="dash-block"><div class="dash-kicker">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div class="dash-card" onclick="${c.action}" style="background:${c.color};border-color:${c.border};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;padding:12px 14px"><span class="chip-ic">${_uiIcon(c.icon, 20)}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
+    })();
 
-    <!-- RECENT ACTIVITY -->
-    ${S.activity.length > 0 ? `
-    <div style="margin:0 16px 16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
-        <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
+    const activityHtml = S.activity.length > 0 ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker">Recent Activity</div>
+        <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
       </div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div class="dash-card" style="padding:0;overflow:hidden">
         ${S.activity.slice(0,5).map((a,i) => `
           <div style="padding:12px 16px;${i<Math.min(S.activity.length,5)-1?'border-bottom:1px solid var(--border)':''};display:flex;align-items:center;gap:12px">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent,var(--purple));flex-shrink:0"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.a||'Activity'}</div>
               <div style="font-size:11px;color:var(--text3)">${Activity.ago(a.t)}</div>
             </div>
           </div>`).join('')}
       </div>
-    </div>` : ''}
+    </div>` : '';
+
+    b.innerHTML = `
+    ${ctxBar}
+    ${setupBanner}
+    ${firstStepsBanner}
+    ${dashOn('networth') ? nwHero : ''}
+    ${dashOn('money') ? moneySum : ''}
+    ${dashOn('breakdown') ? breakdownHtml : ''}
+    ${dashOn('family') ? familyWidget : ''}
+    ${dashOn('property') ? assetSum : ''}
+    ${dashOn('upcoming') ? upcomingActions : ''}
+    ${dashOn('stats') ? quickStats : ''}
+    ${dashOn('wallet') ? walletHtml : ''}
+    ${dashOn('expiring') ? expiringHtml : ''}
+    ${dashOn('health') ? healthHtml : ''}
+    ${dashOn('backup') ? backupHtml : ''}
+    ${dashOn('quickaccess') ? quickAccessHtml : ''}
+    ${dashOn('collections') ? collectionsHtml : ''}
+    ${dashOn('activity') ? activityHtml : ''}
   `;
     if (typeof VC !== 'undefined' && VC.refreshShellIcons) VC.refreshShellIcons();
   },
@@ -460,7 +468,7 @@ const Dash={
     <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" alt="" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">`:''}${bankName}</div>
     <div style="font-size:${f3};font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.15);padding:2px 6px;border-radius:99px;white-space:nowrap">${(c.cardType||'').toUpperCase()}</div>
   </div>
-  <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
+  <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0" class="sens card-num">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
   <div style="display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1">
     <div style="font-size:${f3};color:rgba(255,255,255,.7)">${c.expiry||''}</div>
     ${netSvg[c.network]||`<div style="font-size:${f3};color:rgba(255,255,255,.6);font-weight:700">${c.network||''}</div>`}
@@ -528,6 +536,43 @@ const Dash={
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+  },
+  openCustomize() {
+    const prefs = typeof getDashPrefs === 'function' ? getDashPrefs() : { sections: {}, quickAccess: [] };
+    const sections = typeof DASH_SECTIONS !== 'undefined' ? DASH_SECTIONS : [];
+    const modules = typeof DASH_QUICK_MODULES !== 'undefined' ? DASH_QUICK_MODULES : [];
+    const sectionRows = sections.map(s => `
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer">
+        <input type="checkbox" data-dash-section="${s.id}" ${prefs.sections[s.id] !== false ? 'checked' : ''} style="margin-top:3px">
+        <span style="flex:1"><span style="display:block;font-size:13px;font-weight:600;color:var(--text)">${s.label}</span><span style="display:block;font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4">${s.desc}</span></span>
+      </label>`).join('');
+    const quickRows = modules.filter(m => isModOn(m.id)).map(m => `
+      <label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
+        <input type="checkbox" data-dash-quick="${m.id}" ${(prefs.quickAccess || []).includes(m.id) ? 'checked' : ''}>
+        <span class="chip-ic">${_uiIcon(m.ic, 16)}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text)">${m.label}</span>
+      </label>`).join('');
+    Modal.open('Customize Dashboard', `
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:14px">Choose which sections appear on your dashboard and pin your favourite modules to Quick Access. Saved on this device only.</p>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Sections</div>
+      <div style="margin-bottom:16px">${sectionRows}</div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Quick Access</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${quickRows}</div>`,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Dash.saveCustomize()">Save</button>`);
+  },
+  saveCustomize() {
+    const sections = {};
+    document.querySelectorAll('[data-dash-section]').forEach(el => {
+      sections[el.getAttribute('data-dash-section')] = el.checked;
+    });
+    const quickAccess = [];
+    document.querySelectorAll('[data-dash-quick]').forEach(el => {
+      if (el.checked) quickAccess.push(el.getAttribute('data-dash-quick'));
+    });
+    if (typeof saveDashPrefs === 'function') saveDashPrefs({ sections, quickAccess });
+    Modal.close();
+    this.render();
+    Toast.show('Dashboard updated', 'success');
   },
   toggleMore(e) {
     e?.stopPropagation();
