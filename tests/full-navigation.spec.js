@@ -5,7 +5,7 @@ const { unlockDemoVault, dismissOverlays } = require('./demo-unlock');
 const ALL_PAGES = [
   'dashboard', 'banks', 'cards', 'investments', 'cash', 'loans', 'friends', 'sims',
   'assets', 'expenses', 'emails', 'digital', 'alerts', 'documents',
-  'search', 'import', 'timeline', 'security', 'backup', 'recovery', 'workspace',
+  'search', 'import', 'timeline', 'security', 'backup', 'workspace',
   'reminders', 'trash', 'emergency', 'recovery-center', 'help',
   'currency', 'bc', 'bonds', 'zakat', 'credit', 'tax', 'family', 'sync',
   'settings', 'finance-home', 'vault-home', 'assets-home',

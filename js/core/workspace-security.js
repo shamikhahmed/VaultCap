@@ -51,7 +51,6 @@ const PanicLock = {
 
 // ===================== DECOY MODE =====================
 function applyDecoyUnlock(decoyData) {
-  S.decoy = true;
   S.fails = 0;
   S.lockedUntil = 0;
   try { LockoutStore.clear(); } catch(e) {}
@@ -59,20 +58,37 @@ function applyDecoyUnlock(decoyData) {
     ((decoyData.banks && decoyData.banks.length) || (decoyData.cards && decoyData.cards.length) ||
      (decoyData.documents && decoyData.documents.length));
   if (hasCustomVault) {
-    Object.assign(S, decoyData);
-    S.decoy = true;
+    _applyDecoySnapshot(decoyData);
     Activity.log('Vault unlocked (decoy)');
-    Store.save();
-    R.unlock();
+    R.unlock({ decoy: true });
     return;
   }
   loadDecoyData();
-  R.unlock();
+  R.unlock({ decoy: true });
+}
+
+function _applyDecoySnapshot(data) {
+  _clearDecoySensitiveState();
+  Object.assign(S, data);
+  S.decoy = true;
+  S.documents = [];
+  S.familyMembers = [];
+  S.bc = [];
+  S.bonds = [];
+  S.trash = [];
+  S.importedFiles = [];
+}
+
+function _clearDecoySensitiveState() {
+  S.banks = []; S.cards = []; S.investments = []; S.cash = []; S.loans = [];
+  S.friends = []; S.sims = []; S.assets = []; S.expenses = []; S.emails = [];
+  S.gadgets = []; S.digital = []; S.documents = []; S.vehicles = []; S.bc = [];
+  S.bonds = []; S.activity = []; S.wallet = []; S.trash = []; S.familyMembers = [];
+  S.importedFiles = []; S._pendingLinks = [];
 }
 
 function loadDecoyData() {
-  S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
-  S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.activity=[]; S.wallet=[]; S.vehicles=[];
+  _clearDecoySensitiveState();
   const id = U.id, ts = () => new Date().toISOString();
   const names = ['Ali Hassan','Sara Ahmed','Omar Khan','Fatima Malik'];
   const dName = names[Math.floor(Math.random() * names.length)];
@@ -108,9 +124,8 @@ function loadDecoyData() {
   S.user.name = dName;
   S.user.netWorth = cashAmt + st.cur;
   S.user.currency = 'PKR';
-  Activity.log('Vault unlocked');
-  Store.save();
-  R.goto('dashboard');
+  S.decoy = true;
+  Activity.log('Vault unlocked (decoy)');
 }
 
 // ===================== DEMO PROFILES =====================

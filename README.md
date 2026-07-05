@@ -48,7 +48,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - **PBKDF2** key derivation (310,000 iterations, SHA-256)
 - **IndexedDB** encrypted storage — never leaves your device
 - PIN brute-force lockout (30s → 5 min → master key recovery required)
-- **Decoy PIN** — shows empty vault to protect under duress
+- **Decoy PIN** — second PIN shows a convincing fake vault under duress; real data stays hidden
 - Fully offline — no internet required after install
 
 ---
@@ -58,7 +58,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - **Smart Add** — describe what to add, Smart Parser (optional LLM) detects and pre-fills the form
 - **Smart Import** — paste any text, Smart Parser / LLM extracts structured financial data
 - **Live rates** — real-time FX (PKR/GBP/AED/USD) and gold/silver prices
-- **PDF export** — full financial summary as print-ready PDF
+- **PDF export** — financial summary and **ID document copies** (passport/CNIC photos) as print-ready PDF
 - **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
 - **Multi-country** — filter by Pakistan, UK, UAE
 - **Dark & light modes** — plus system appearance on supported devices

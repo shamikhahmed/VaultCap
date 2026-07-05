@@ -31,12 +31,14 @@ const DocsModule={
     ci.innerHTML=cats.map(([v,l,ic])=>`<div class="chip${this.filter===v?' on':''}" onclick="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');
     const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
     const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
+    const withPhotos=(S.documents||[]).filter(d=>d.frontPhoto||d.backPhoto).length;
+    const toolbar=withPhotos?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:0 2px"><button type="button" class="btn btn-g btn-sm" onclick="DocsModule.exportAllPhotosPDF()">Export all ID copies (PDF)</button></div>`:'';
     if(!docs.length){
-      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">${VC.icon('id-card',32)}</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
+      el.innerHTML=toolbar+`<div class="empty-ios"><div class="ei-ic">${VC.icon('id-card',32)}</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;
     }
     const now=new Date();
-    el.innerHTML=docs.map(d=>{
+    el.innerHTML=toolbar+docs.map(d=>{
       const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
       const exp=d.expiryDate?new Date(d.expiryDate):null;
       const daysLeft=exp?Math.ceil((exp-now)/864e5):null;
@@ -230,7 +232,68 @@ const DocsModule={
         +'</div>';
     }
     const rows=schema.fields.map(f=>{const v=d[f.id];return v?U.drRow(f.label,v):''}).filter(Boolean).join('');
-    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button>`+
+      (d.frontPhoto||d.backPhoto?`<button type="button" class="btn btn-g" onclick="DocsModule.exportPhotosPDF('${id}')">Export copy (PDF)</button>`:'')+
+      (d.frontPhoto?`<button type="button" class="btn btn-g" onclick="DocsModule.downloadPhoto('${id}','front')">Save front image</button>`:'')+
+      (d.backPhoto?`<button type="button" class="btn btn-g" onclick="DocsModule.downloadPhoto('${id}','back')">Save back image</button>`:'')+
+      `<button type="button" class="btn btn-p" onclick="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
+  },
+  _docMetaRows(d, schema){
+    return schema.fields.map(f=>{const v=d[f.id];return v?`<tr><td style="padding:6px 12px 6px 0;color:#666;font-size:13px;vertical-align:top">${f.label}</td><td style="padding:6px 0;font-size:13px;font-weight:600">${escHtml(String(v))}</td></tr>`:''}).filter(Boolean).join('');
+  },
+  _printHtml(title, bodyHtml){
+    const w=window.open('','_blank');
+    if(!w){Toast.show('Allow pop-ups to export PDF','warn');return null;}
+    w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+escAttr(title)+'</title><style>@page{margin:12mm}body{font-family:-apple-system,system-ui,sans-serif;color:#111;margin:0;padding:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:14px;color:#666;font-weight:600;margin:0 0 16px}.meta{margin-bottom:20px}img{max-width:100%;height:auto;border:1px solid #ddd;border-radius:8px;margin:12px 0;page-break-inside:avoid}.page{page-break-after:always}.page:last-child{page-break-after:auto}.foot{font-size:11px;color:#888;margin-top:24px}.no-print{margin-bottom:16px}@media print{.no-print{display:none!important}}</style></head><body>'+bodyHtml+'</body></html>');
+    w.document.close();
+    return w;
+  },
+  exportPhotosPDF(id){
+    if(S.decoy){Toast.show('Export disabled in decoy mode','warn');return;}
+    const d=(S.documents||[]).find(x=>x.id===id);
+    if(!d||(!d.frontPhoto&&!d.backPhoto)){Toast.show('No photos on this document','warn');return;}
+    const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
+    const meta=this._docMetaRows(d,schema);
+    const imgs=[d.frontPhoto?`<div><div style="font-size:12px;color:#666;margin-bottom:6px">Front</div><img src="data:image/jpeg;base64,${d.frontPhoto}" alt="Front"></div>`:'',d.backPhoto?`<div><div style="font-size:12px;color:#666;margin-bottom:6px">Back</div><img src="data:image/jpeg;base64,${d.backPhoto}" alt="Back"></div>`:''].join('');
+    const html='<div class="no-print"><button type="button" onclick="window.print()" style="padding:10px 18px;border-radius:8px;border:none;background:#111;color:#fff;font-weight:700;cursor:pointer;margin-right:8px">Print / Save PDF</button><button type="button" onclick="window.close()" style="padding:10px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">Close</button></div>'+
+      '<h1>'+escHtml(schema.label)+'</h1><h2>VaultCap document copy · '+new Date().toLocaleDateString('en-GB')+'</h2>'+
+      (meta?'<table class="meta">'+meta+'</table>':'')+imgs+
+      '<div class="foot">Exported from VaultCap. For official use, verify against the original document.</div>';
+    const w=this._printHtml(schema.label+' — copy',html);
+    if(w)setTimeout(()=>w.focus(),300);
+    Activity.log('Exported document PDF',schema.label);
+  },
+  exportAllPhotosPDF(){
+    if(S.decoy){Toast.show('Export disabled in decoy mode','warn');return;}
+    const docs=(S.documents||[]).filter(d=>d.frontPhoto||d.backPhoto);
+    if(!docs.length){Toast.show('No documents with photos','warn');return;}
+    const pages=docs.map(d=>{
+      const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
+      const meta=this._docMetaRows(d,schema);
+      const imgs=[d.frontPhoto?`<img src="data:image/jpeg;base64,${d.frontPhoto}" alt="Front">`:'',d.backPhoto?`<img src="data:image/jpeg;base64,${d.backPhoto}" alt="Back">`:''].join('');
+      return '<div class="page"><h1>'+escHtml(schema.label)+'</h1>'+(d.holderName?'<h2>'+escHtml(d.holderName)+'</h2>':'')+(meta?'<table class="meta">'+meta+'</table>':'')+imgs+'</div>';
+    }).join('');
+    const html='<div class="no-print"><button type="button" onclick="window.print()" style="padding:10px 18px;border-radius:8px;border:none;background:#111;color:#fff;font-weight:700;cursor:pointer;margin-right:8px">Print / Save PDF</button><button type="button" onclick="window.close()" style="padding:10px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">Close</button></div>'+
+      '<h1>ID & document copies</h1><h2>'+docs.length+' document(s) · '+new Date().toLocaleDateString('en-GB')+'</h2>'+pages+
+      '<div class="foot">Exported from VaultCap. Handle securely — contains identity document images.</div>';
+    const w=this._printHtml('VaultCap document copies',html);
+    if(w)setTimeout(()=>w.focus(),300);
+    Activity.log('Exported all document copies PDF',docs.length+' docs');
+  },
+  downloadPhoto(id,side){
+    if(S.decoy){Toast.show('Export disabled in decoy mode','warn');return;}
+    const d=(S.documents||[]).find(x=>x.id===id);
+    if(!d)return;
+    const b64=side==='back'?d.backPhoto:d.frontPhoto;
+    if(!b64){Toast.show('No photo on this side','warn');return;}
+    const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
+    const slug=(schema.label||'document').replace(/\s+/g,'-').toLowerCase();
+    const a=document.createElement('a');
+    a.href='data:image/jpeg;base64,'+b64;
+    a.download=slug+'-'+side+'-'+new Date().toISOString().slice(0,10)+'.jpg';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    Toast.show('Image saved','success');
   },
   _openPhotoFull(base64){
     const v=document.createElement('div');

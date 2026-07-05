@@ -692,7 +692,13 @@ const Settings={
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">When someone enters this PIN, they see a convincing fake vault with realistic-looking data. Your real data stays hidden. Perfect for coercion or border device inspections.</p>
     <div class="fg"><label class="fl">Decoy PIN (6 digits, must differ from real PIN)</label><input class="inp" id="dp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="dp-err"></div>`,
-    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="Settings.removeDecoy()">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+  },
+  removeDecoy(){
+    const finish=()=>{S.decoyPin='';Store.save();Modal.close();Settings.refresh();Toast.show('Decoy PIN removed','success');};
+    if(typeof VaultDB!=='undefined'&&VaultDB.clearDecoySlot){
+      VaultDB.clearDecoySlot().then(finish).catch(finish);
+    } else finish();
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
@@ -792,7 +798,8 @@ const ExIm={
       exported:new Date().toISOString(),
     };
   },
-  export(fmt='vault'){if(fmt==='vos')fmt='vault';
+  export(fmt='vault'){if(S.decoy){Toast.show('Export disabled in decoy mode — lock and use your real PIN','warn',5000);return;}
+    if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
       const runVaultExport=()=>{
         VaultDB.exportEncrypted().then(()=>{
@@ -2085,7 +2092,7 @@ const SettingsNav = {
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
       <button type="button" class="btn btn-p btn-sm" onclick="Settings.editCountries()">Set countries →</button>
     </div>` : '';
-    return `${setupNudge}${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
+    return `${setupNudge}${!S.user.onboardingComplete ? '<div class="set-sec"><div class="set-card"><div style="padding:14px;font-size:13px;color:var(--text2);line-height:1.55">Finish setup: add your name and countries in Profile, then export your first backup.</div></div></div>' : ''}
     <div class="set-sec"><div class="set-title">Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
@@ -2125,6 +2132,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Panic Lock Button</div><div class="desc">Floating button — instantly lock and hide sensitive values</div></div><label class="tog"><input type="checkbox" ${S.panicEnabled!==false?'checked':''} onchange="S.panicEnabled=this.checked;Store.save();if(typeof R!=='undefined')R._syncPanicButton();Toast.show('Panic button '+(S.panicEnabled?'enabled':'hidden'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">Run Vault Integrity Check</button></div></div></div>
@@ -2436,7 +2444,8 @@ const HelpCenter = {
       'documents': `
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('id-card', 'Supported document types', 'Passport, National ID (NIC/CNIC), Driving Licence, Visa, Emirates ID, Property Documents, Insurance, Vehicle Registration, Tax Documents, Medical Records, Warranties, Contracts, Certificates.')}
-          ${this._card('file', 'Photographing documents', 'When adding a document, tap "Capture Front" and "Capture Back" to photograph using your camera. Images are compressed and stored encrypted inside your vault. Useful for passports and ID cards.')}
+          ${this._card('file', 'Photographing documents', 'When adding a document, tap Capture Front and Capture Back to photograph using your camera. Images are compressed and stored encrypted inside your vault.')}
+      ${this._card('share', 'Export ID copies (PDF or images)', 'Open any document with photos → Export copy (PDF) prints a shareable PDF of passport/CNIC scans with metadata. Save front/back image downloads JPEG files. Documents page → Export all ID copies (PDF) bundles every document with photos.')}
           ${this._card('clock', 'Expiry alerts', 'Documents with expiry dates automatically appear in the Timeline and generate reminders 30 days before expiry. The dashboard also shows an "Expiring Soon" smart collection.')}
           ${this._card('search', 'Finding documents', 'Use the search bar at the top of the Documents page, or use Cmd+K to search globally. You can search by document name, holder name, document number, or country.')}
           ${this._card('pin', 'Tagging documents', 'Add tags like "uk", "urgent", "family", "business" to any document. Use the preset chips in the form or type your own. Filter and search by tag across the whole vault.')}
@@ -2462,7 +2471,8 @@ const HelpCenter = {
         <div style="display:flex;flex-direction:column;gap:12px">
       ${this._card('vault', 'How your PIN works', 'Your PIN is never sent to any server. It derives the key that encrypts your vault on this device. If you forget it, use your master recovery key or a .vos backup — Capricorn Systems cannot reset your PIN remotely.')}
       ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM with PBKDF2 (310k iterations) — the same family of standards used by major financial institutions. Data is encrypted before it is saved locally.')}
-      ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault. Your real data remains hidden.')}
+      ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. Under coercion, enter the decoy PIN — it shows a convincing fake vault with sample banks and cards. Your real vault is never saved or exposed. Lock and use your real PIN to return.')}
+      ${this._card('cross', 'Panic lock', 'Enable the floating panic button in Settings → Security, or type "panic lock" in the command palette (⌘K). Instantly blurs sensitive values and locks the vault.')}
       ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this without your PIN.')}
       ${this._card('cross', 'Brute force protection', 'After 3 wrong PIN attempts, the vault locks for 30 seconds. After 5 attempts, for 5 minutes. After 10 attempts, you must recover with your master key or reset the vault — data is never wiped automatically.')}
           ${this._card('trash', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
@@ -2472,8 +2482,9 @@ const HelpCenter = {
           ${this._card('search', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
           ${this._card('search', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
           ${this._card('pin', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
-          ${this._card('sparkles', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
-          ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
+      ${this._card('sparkles', 'Command palette', 'Press ⌘K (desktop) or tap search. Run actions: lock vault, export, panic lock, dark mode, add bank. Press ? for keyboard shortcuts.')}
+      ${this._card('chart', 'Dashboard customize', 'Tap the grid icon on the dashboard to show/hide sections and pin quick-access modules.')}
+      ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">

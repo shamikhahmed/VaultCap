@@ -33,7 +33,6 @@
   "js/core/activity.js",
   "js/core/vault-utils.js",
   "js/core/emergency.js",
-  "js/core/onboarding-wizard.js",
   "js/core/ios-interactions.js",
   "js/core/nav-ui.js",
   "js/core/smart-actions.js",

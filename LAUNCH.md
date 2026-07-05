@@ -29,7 +29,7 @@ VaultCap is **zero-knowledge**. Do **not** add email/password login for v1 — t
 | **Master recovery key** | Offline recovery if PIN forgotten |
 | **AES-256-GCM + PBKDF2 310k** | Encrypts vault before storage |
 | **IndexedDB / localStorage** | Encrypted data on device only |
-| **Decoy PIN** | Optional empty vault under duress |
+| **Decoy PIN** | Optional fake vault under duress (sample data, real vault untouched) |
 | **Lockout** | Slows / blocks brute force |
 | **`.vos` export** | User-owned backup / device move |
 

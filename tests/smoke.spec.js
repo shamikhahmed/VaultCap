@@ -25,7 +25,7 @@ test.describe('VaultCap smoke', () => {
       return !splash || splash.style.display === 'none' || splash.style.opacity === '0';
     }, { timeout: 12000 });
     await expect(
-      page.locator('#pgLock, #pgHome, #pgOnboard, #app').getByText('VaultCap').first()
+      page.locator('#pgLock:visible, #pgHome:visible, #pgOnboard:visible, #app:visible').getByText('VaultCap').first()
     ).toBeVisible({ timeout: 10000 });
     const screen = page.locator('#pgLock:visible, #pgHome:visible, #pgOnboard:visible, #app:visible').first();
     await expect(screen).toBeVisible();
