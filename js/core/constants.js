@@ -2,7 +2,7 @@
 // Centralised constants — future migration target from app.js
 
 const VAULT_VERSION = 7;
-const VER = window.VER || '4.9.8';
+const VER = window.VER || '4.9.9';
 const APP_VERSION = VER;
 window.VER = VER;
 const BACKUP_REMINDER_DAYS = 30;

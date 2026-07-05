@@ -10,9 +10,13 @@ const TINY_JPEG = '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLD
 async function seedDemoDecoySlot(page) {
   await page.evaluate(async () => {
     if (typeof ensureDemoVaultReady === 'function') await ensureDemoVaultReady();
+    await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
+    Store.save();
+    await Store.flush();
     await VaultDB.saveDecoySlot('000000', { _decoy: true });
     S.decoyPin = '000000';
-    if (typeof Store !== 'undefined') Store.save();
+    Store.save();
+    await Store.flush();
   });
 }
 

@@ -15,7 +15,7 @@ test.describe('Travel Mode', () => {
       modules: { ...S.modules },
     }));
 
-    await page.evaluate(() => TravelMode.enable('GB'));
+    await page.evaluate(async () => { await TravelMode.enable('GB'); });
 
     const after = await page.evaluate(() => ({
       active: S.user.travelModeActive,
@@ -39,7 +39,7 @@ test.describe('Travel Mode', () => {
     await expect(page.locator('.travel-banner')).toBeVisible();
     await expect(page.locator('.travel-banner')).toContainText('Travel Mode');
 
-    await page.evaluate(() => TravelMode.disable());
+    await page.evaluate(async () => { await TravelMode.disable(); });
 
     const restored = await page.evaluate(() => ({
       active: S.user.travelModeActive,

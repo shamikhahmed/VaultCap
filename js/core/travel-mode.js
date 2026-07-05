@@ -34,6 +34,11 @@ const TravelMode = {
     Object.assign(S.modules, preset.modules);
   },
 
+  _persist() {
+    Store.save();
+    return Store.flush();
+  },
+
   enable(countryCode) {
     if (S.decoy) {
       Toast.show('Travel Mode is not available in decoy vault', 'warn');
@@ -55,29 +60,31 @@ const TravelMode = {
       S.privacyMode = true;
       document.body.classList.add('privacy');
     }
-    Store.save();
-    buildNav();
-    if (typeof R !== 'undefined' && S.unlocked) {
-      R.goto('dashboard');
-      setTimeout(() => { if (typeof Dash !== 'undefined') Dash.render(); }, 80);
-    }
     Activity.log('Travel Mode enabled', S.user.travelCountry || '');
     Toast.show('Travel Mode on — cards, SIMs, documents prioritized', 'success', 3500);
+    return this._persist().then(() => {
+      buildNav();
+      if (typeof R !== 'undefined' && S.unlocked) {
+        R.goto('dashboard');
+        setTimeout(() => { if (typeof Dash !== 'undefined') Dash.render(); }, 80);
+      }
+    });
   },
 
   disable() {
-    if (!this.isActive()) return;
+    if (!this.isActive()) return Promise.resolve();
     this._restore();
     S.user.travelModeActive = false;
     delete S.user.travelCountry;
-    Store.save();
-    buildNav();
-    if (typeof R !== 'undefined' && S.unlocked) {
-      R.goto('dashboard');
-      setTimeout(() => { if (typeof Dash !== 'undefined') Dash.render(); }, 80);
-    }
     Activity.log('Travel Mode disabled');
     Toast.show('Travel Mode off — full vault restored', 'info', 3000);
+    return this._persist().then(() => {
+      buildNav();
+      if (typeof R !== 'undefined' && S.unlocked) {
+        R.goto('dashboard');
+        setTimeout(() => { if (typeof Dash !== 'undefined') Dash.render(); }, 80);
+      }
+    });
   },
 
   toggle() {

@@ -40,8 +40,11 @@ async function unlockDemoVaultWithPin(pin) {
   await ensureDemoVaultReady();
   let result = await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
   if (!result || result.slot !== 'main') {
-    await seedDemoVault();
-    result = await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
+    const initialized = await VaultDB.isInitialized();
+    if (!initialized) {
+      await seedDemoVault();
+      result = await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
+    }
   }
   return result && result.slot === 'main' ? result : null;
 }
