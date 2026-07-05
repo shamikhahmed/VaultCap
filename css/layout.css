@@ -640,6 +640,21 @@ body.modal-open #pgLock .lk-mid {
 }
 .offline-bar.on { display: block; }
 
+/* ─ Travel Mode banner ─ */
+.travel-banner {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; margin-bottom: 12px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(0, 213, 255, 0.12), rgba(123, 95, 255, 0.08));
+  border: 1px solid rgba(0, 213, 255, 0.25);
+}
+.travel-banner-main { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.travel-banner-chip {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 8px; border-radius: 6px; background: rgba(0, 213, 255, 0.2); color: var(--accent);
+}
+.travel-banner-text { font-size: 12px; color: var(--text2); }
+.travel-banner-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
 /* ─ Panic lock button ─ */
 .panic-btn {
   position: fixed; bottom: calc(var(--sb) + 8px); left: 8px; width: 44px; height: 44px;

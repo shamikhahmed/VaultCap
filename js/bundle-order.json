@@ -37,6 +37,7 @@
   "js/core/nav-ui.js",
   "js/core/smart-actions.js",
   "js/core/workspace-security.js",
+  "js/core/travel-mode.js",
   "js/core/demo-profiles.js",
   "js/core/app-helpers.js",
   "js/app.js",

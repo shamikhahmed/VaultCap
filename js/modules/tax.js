@@ -237,6 +237,31 @@ const Tax = {
     this.render();
   },
 
+  /** Pure slab + NI + extras calculator (used by UI and e2e audit tests). */
+  computeSlabTax(income, slabs, niBands, extrasList) {
+    let tax = 0;
+    const breakdown = [];
+    (slabs || []).forEach(slab => {
+      const from = slab.min;
+      const to = slab.max === Infinity ? income : Math.min(slab.max, income);
+      if (to <= from || income <= from) return;
+      const taxable = to - from;
+      const slabTax = taxable * slab.rate;
+      if (slabTax > 0) breakdown.push({ label: slab.label, rate: slab.rate, taxable, tax: slabTax });
+      tax += slabTax;
+    });
+    let ni = 0;
+    (niBands || []).forEach(band => {
+      const niIncome = Math.min(income, band.max) - band.min;
+      if (niIncome > 0) ni += niIncome * band.rate;
+    });
+    let extras = 0;
+    (extrasList || []).forEach(e => { extras += e.annual || 0; });
+    const total = tax + ni + extras;
+    const takeHome = income - total;
+    return { tax, ni, extras, total, takeHome, breakdown };
+  },
+
   render() {
     const body = document.getElementById('pg-tax-body');
     if(!body) return;
@@ -488,28 +513,7 @@ const Tax = {
     }
 
     const slabs = this._getActiveSlabs(filing);
-    let tax = 0;
-    const breakdown = [];
-    slabs.forEach(slab=>{
-      const from = slab.min;
-      const to = slab.max===Infinity ? income : Math.min(slab.max, income);
-      if(to<=from || income<=from) return;
-      const taxable = to - from;
-      const slabTax = taxable * slab.rate;
-      if(slabTax > 0) breakdown.push({label:slab.label, rate:slab.rate, taxable, tax:slabTax});
-      tax += slabTax;
-    });
-
-    let ni = 0;
-    (filing.ni||[]).forEach(band=>{
-      const niIncome = Math.min(income, band.max) - band.min;
-      if(niIncome>0) ni += niIncome * band.rate;
-    });
-    let extras = 0;
-    (filing.extras||[]).forEach(e=>extras+=e.annual||0);
-
-    const total = tax + ni + extras;
-    const takeHome = income - total;
+    const { tax, ni, extras, total, takeHome, breakdown } = this.computeSlabTax(income, slabs, filing.ni, filing.extras);
     const effectiveRate = income>0?((total/income)*100).toFixed(1):0;
     const yearLabel = filing.taxYears ? ` (${this._taxYear})` : '';
 

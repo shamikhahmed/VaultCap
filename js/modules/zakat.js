@@ -13,6 +13,28 @@ const Zakat = {
     return (typeof S !== 'undefined' && S.user && S.user.currency) ? S.user.currency : 'PKR';
   },
 
+  /** Pure zakat math — 2.5% on net zakatable wealth above nisab (used by UI and audit tests). */
+  computeZakatDue(params) {
+    const p = params || {};
+    const cash = p.cash || 0;
+    const invest = p.invest || 0;
+    const gold = p.gold || 0;
+    const silver = p.silver || 0;
+    const loansGiven = p.loansGiven || 0;
+    const business = p.business || 0;
+    const bc = p.bc || 0;
+    const bonds = p.bonds || 0;
+    const other = p.other || 0;
+    const loansOwed = p.loansOwed || 0;
+    const deductions = p.deductions || 0;
+    const nisabValue = p.nisabValue || 0;
+    const total = cash + invest + gold + silver + loansGiven + business + bc + bonds + other;
+    const netZakatable = total - loansOwed - deductions;
+    const aboveNisab = netZakatable >= nisabValue;
+    const zakatDue = aboveNisab ? netZakatable * 0.025 : 0;
+    return { total, netZakatable, aboveNisab, zakatDue };
+  },
+
   _nisabValue(currency) {
     if (typeof RatesEngine === 'undefined') {
       return this._nisabType === 'gold' ? 1400000 : 140000;

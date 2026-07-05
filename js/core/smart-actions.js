@@ -147,6 +147,9 @@ const CMD = {
     {ic:'share',label:'Export Vault',action:()=>ExIm.export('vault')},
     {ic:'chart',label:'Net Worth Snapshot',action:()=>Dash.snap()},
     {ic:'eye-off',label:'Privacy Mode',action:()=>togglePrivacy()},
+    {ic:'globe',label:'Travel Mode',action:()=>typeof TravelMode!=='undefined'?TravelMode.toggle():Toast.show('Travel Mode unavailable','warning')},
+    {ic:'globe',label:'Enable Travel Mode',action:()=>typeof TravelMode!=='undefined'?TravelMode.openEnableModal():null},
+    {ic:'globe',label:'Exit Travel Mode',action:()=>typeof TravelMode!=='undefined'?TravelMode.disable():null},
     {ic:'trash',label:'Trash',action:()=>R.goto('trash')},
     {ic:'share',label:'Backup',action:()=>R.goto('backup')},
     {ic:'bell',label:'Reminders',action:()=>R.goto('reminders')},
@@ -171,7 +174,7 @@ const CMD = {
       [
         { cat:'Navigate', items:[['chart','Dashboard',()=>R.goto('dashboard')],['bell','Reminders',()=>R.goto('reminders')],['calendar','Timeline',()=>R.goto('timeline')],['shield','Security',()=>R.goto('security')],['share','Backup',()=>R.goto('backup')],['settings','Settings',()=>R.goto('settings')],['download','Import',()=>R.goto('import')]] },
         { cat:'Add Entry', items:[['bank','Add Bank',()=>Banks.openAdd()],['card','Add Card',()=>Cards.openAdd()],['trending-up','Add Investment',()=>Inv.openAdd()],['smartphone','Add SIM',()=>Sims.openAdd()],['building','Add Asset',()=>Assets.openAdd()],['repeat','Add Expense',()=>Exp.openAdd()],['mail','Add Email',()=>Emails.openAdd()],['laptop','Add Device',()=>Assets.openAdd('electronics')],['briefcase','Add Login',()=>Digital.openAdd()]] },
-        { cat:'Vault Actions', items:[['sun','Appearance',()=>ThemeEngine.openPicker()],['share','Export Encrypted Vault',()=>ExIm.export('vault')],['chart','Net Worth Snapshot',()=>Dash.snap()],['wallet','Edit Wallet',()=>Dash.editWallet()],['eye-off','Toggle Privacy Mode',()=>togglePrivacy()],['lock','Lock Vault',()=>R.lock()],['cross','Panic Lock',()=>PanicLock.trigger()]] },
+        { cat:'Vault Actions', items:[['sun','Appearance',()=>ThemeEngine.openPicker()],['share','Export Encrypted Vault',()=>ExIm.export('vault')],['chart','Net Worth Snapshot',()=>Dash.snap()],['wallet','Edit Wallet',()=>Dash.editWallet()],['eye-off','Toggle Privacy Mode',()=>togglePrivacy()],['globe','Travel Mode',()=>typeof TravelMode!=='undefined'?TravelMode.toggle():Toast.show('Travel Mode unavailable','warning')],['lock','Lock Vault',()=>R.lock()],['cross','Panic Lock',()=>PanicLock.trigger()]] },
       ].forEach(({ cat, items }) => items.forEach(([i, l, a]) => cmdRes.push({ ic:i, label:l, action:a, cat })));
     } else {
       const fm = this.fuzzyMatch.bind(this);

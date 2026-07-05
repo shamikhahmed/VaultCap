@@ -137,12 +137,23 @@ const PIN = {
 
     // ── Demo vault: fixed PIN + auto-repair stale encrypted store ───────────
     if (VaultProfiles.isDemo()) {
-      if (String(pin) !== VaultProfiles.DEMO_PIN) return null;
-      const result = await unlockDemoVaultWithPin(pin);
-      if (!result) return null;
-      Object.assign(S, result.data);
-      S.pin = VaultProfiles.DEMO_PIN;
-      return { kind: 'real' };
+      if (String(pin) === VaultProfiles.DEMO_PIN) {
+        const result = await unlockDemoVaultWithPin(pin);
+        if (!result) return null;
+        Object.assign(S, result.data);
+        S.pin = VaultProfiles.DEMO_PIN;
+        return { kind: 'real' };
+      }
+      await ensureDemoVaultReady();
+      const decoyTry = await VaultDB.tryPin(pin);
+      if (decoyTry && decoyTry.slot === 'decoy') {
+        VaultDB.sessionKey = null;
+        return { kind: 'decoy', data: decoyTry.data };
+      }
+      if (S.decoyPin && String(pin) === String(S.decoyPin)) {
+        return { kind: 'decoy', data: null };
+      }
+      return null;
     }
 
     // ── Migration path: old localStorage data ──────────────────────────────

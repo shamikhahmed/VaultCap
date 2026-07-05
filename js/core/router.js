@@ -79,6 +79,13 @@ const R = {
     document.getElementById('app').style.display = 'flex';
     document.getElementById('fab').style.display = 'flex';
     buildNav();
+    if (!isDecoy && typeof TravelMode !== 'undefined' && TravelMode.isActive()) {
+      TravelMode._applyTravelerModules();
+      if (!S.privacyMode) {
+        S.privacyMode = true;
+        document.body.classList.add('privacy');
+      }
+    }
     this.goto('dashboard');
     setTimeout(() => Dash.render(), 50);
     setTimeout(() => this.applyHashRoute(), 120);

@@ -419,6 +419,7 @@ const Dash={
 
     b.innerHTML = `
     ${ctxBar}
+    ${typeof TravelMode !== 'undefined' ? TravelMode.bannerHtml() : ''}
     ${setupBanner}
     ${firstStepsBanner}
     ${dashOn('networth') ? nwHero : ''}
@@ -2134,6 +2135,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Panic Lock Button</div><div class="desc">Floating button — instantly lock and hide sensitive values</div></div><label class="tog"><input type="checkbox" ${S.panicEnabled!==false?'checked':''} onchange="S.panicEnabled=this.checked;Store.save();if(typeof R!=='undefined')R._syncPanicButton();Toast.show('Panic button '+(S.panicEnabled?'enabled':'hidden'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
+      ${typeof TravelMode !== 'undefined' ? TravelMode.settingsRow() : ''}
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
@@ -2399,6 +2401,7 @@ const HelpCenter = {
       { id:'family',          icon:'users', label:'Family Vault' },
       { id:'backup',          icon:'share', label:'Backup & Restore' },
       { id:'security',        icon:'lock', label:'Security & PIN' },
+      { id:'travel',          icon:'globe', label:'Travel Mode' },
       { id:'search',          icon:'search', label:'Search & Tags' },
       { id:'themes',          icon:'grid', label:'Themes' },
       { id:'faq',             icon:'book', label:'FAQ' },
@@ -2476,6 +2479,15 @@ const HelpCenter = {
       ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this without your PIN.')}
       ${this._card('cross', 'Brute force protection', 'After 3 wrong PIN attempts, the vault locks for 30 seconds. After 5 attempts, for 5 minutes. After 10 attempts, you must recover with your master key or reset the vault — data is never wiped automatically.')}
           ${this._card('trash', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
+        </div>`,
+      'travel': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+      ${this._card('globe', 'What is Travel Mode?', 'One tap to optimize VaultCap while abroad: Traveler workspace (cards, SIMs, documents, emails), optional country filter, privacy blur on, and dashboard shortcuts to passport/ID and today\'s wallet.')}
+      ${this._card('settings', 'How to enable', 'Settings → Security → Travel Mode → Enable. Or press ⌘K and type "Travel Mode". Pick a focus country (PK, GB, AE) or leave as All countries.')}
+      ${this._card('eye-off', 'Privacy while traveling', 'Travel Mode turns on privacy blur automatically so balances and sensitive values are hidden in public. Toggle off in Settings or exit Travel Mode when home.')}
+      ${this._card('id-card', 'Quick document access', 'The dashboard banner shows Documents, Wallet, and Exit. Use Documents for passport/CNIC scans; Wallet for today\'s cash and cards in your pocket.')}
+      ${this._card('lock', 'Decoy vault', 'Travel Mode is disabled in decoy vault — enable it only on your real PIN. Decoy mode shows a fake vault and never writes your real data.')}
+      ${this._card('chart', 'Exit Travel Mode', 'Tap Exit on the dashboard banner or Settings → Travel Mode → Turn Off. Your previous workspace, modules, country filter, and privacy setting are restored exactly.')}
         </div>`,
       'search': `
         <div style="display:flex;flex-direction:column;gap:12px">

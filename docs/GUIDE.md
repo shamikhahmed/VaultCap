@@ -183,7 +183,7 @@ Each backup file uses a unique random **salt** and **IV** — so two exports of 
 
 ### Decoy vault
 
-Go to **Settings → Security → Set Decoy PIN**. If someone forces you to open the app, enter the decoy PIN — it shows a completely empty vault. Your real data remains locked behind your real PIN.
+Go to **Settings → Security → Set Decoy PIN**. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with sample banks and cards. Your real data is never written to disk in decoy mode. Lock and enter your real PIN to return.
 
 ### Auto-lock
 
@@ -216,6 +216,10 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 **Archiving** — Tap 🗂️ on any entry to archive it (hide without deleting). Useful for old accounts you want to keep a record of. Tap "Show archived" to reveal them.
 
 **Privacy mode** — Settings → Security → Privacy Mode blurs all sensitive values on screen. Useful in public.
+
+**Travel Mode** — Settings → Security → Travel Mode (or ⌘K → "Travel Mode"). One tap for abroad: Traveler workspace (cards, SIMs, documents, emails), optional country filter, privacy blur on, dashboard shortcuts to Documents and Wallet. Tap Exit to restore your previous layout.
+
+**Calculations** — Tax (PK/GB/UAE slabs + NI), Zakat (2.5% on net zakatable wealth above nisab), BC pot (members × contribution), and loan remaining balance are computed in-app. Run `npm run test:e2e -- tests/calculations.spec.js` to audit formulas in CI.
 
 **Themes** — Dark, Light, or System (follows device). Settings → Appearance, lock-screen appearance button, or ⌘K → "dark mode" / "light mode".
 
