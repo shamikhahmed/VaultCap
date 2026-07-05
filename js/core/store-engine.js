@@ -37,7 +37,7 @@ const Store = {
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs,
-      privacyMode: S.privacyMode, largeText: S.largeText, reduceMotion: S.reduceMotion
+      privacyMode: S.privacyMode, workspace: S.workspace || 'default', panicEnabled: S.panicEnabled !== false, largeText: S.largeText, reduceMotion: S.reduceMotion
     };
   },
 
@@ -70,6 +70,7 @@ const Store = {
   },
 
   save() {
+    if (S.decoy) return;
     const data = this._data();
     this._savePrefs();
     if (VaultDB.sessionKey) {

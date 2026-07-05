@@ -224,6 +224,69 @@ function saveTabPrefs(prefs) {
   localStorage.setItem('vo_tab_prefs', JSON.stringify(prefs));
 }
 
+const DASH_SECTIONS = [
+  { id: 'networth', label: 'Net Worth', desc: 'Hero card with total and trend', default: true },
+  { id: 'money', label: 'Money', desc: 'Banks, investments, and cash totals', default: true },
+  { id: 'breakdown', label: 'Breakdown', desc: 'Net worth allocation chart', default: true },
+  { id: 'family', label: 'Family Vault', desc: 'Combined family net worth', default: true },
+  { id: 'property', label: 'Property', desc: 'Assets and property summary', default: true },
+  { id: 'upcoming', label: 'Upcoming', desc: 'Alerts and reminders due soon', default: true },
+  { id: 'stats', label: 'Quick Stats', desc: 'Records, country, and backup date', default: true },
+  { id: 'wallet', label: "Today's Wallet", desc: 'Cards you are carrying today', default: true },
+  { id: 'expiring', label: 'Expiring Soon', desc: 'Cards and documents nearing expiry', default: true },
+  { id: 'health', label: 'Vault Health', desc: 'Security score and checks', default: true },
+  { id: 'backup', label: 'Backup Reminder', desc: 'Prompt when backup is overdue', default: true },
+  { id: 'quickaccess', label: 'Quick Access', desc: 'Your chosen shortcuts', default: true },
+  { id: 'collections', label: 'Smart Collections', desc: 'Grouped counts and filters', default: true },
+  { id: 'activity', label: 'Recent Activity', desc: 'Latest vault changes', default: true },
+];
+
+const DASH_QUICK_MODULES = [
+  { id: 'banks', ic: 'bank', label: 'Banks', page: 'banks', action: "Banks.openAdd()" },
+  { id: 'cards', ic: 'card', label: 'Cards', page: 'cards', action: "Cards.openAdd()" },
+  { id: 'documents', ic: 'file', label: 'Documents', page: 'documents', action: "DocsModule.openAdd()" },
+  { id: 'investments', ic: 'trending-up', label: 'Investments', page: 'investments', action: "Inv.openAdd()" },
+  { id: 'cash', ic: 'banknote', label: 'Cash', page: 'cash', action: "Cash.openAdd()" },
+  { id: 'loans', ic: 'handshake', label: 'Loans', page: 'loans', action: "Loans.openAdd('borrowed')" },
+  { id: 'expenses', ic: 'repeat', label: 'Expenses', page: 'expenses', action: "Exp.openAdd()" },
+  { id: 'assets', ic: 'building', label: 'Property', page: 'assets', action: "Assets.openAdd()" },
+  { id: 'bonds', ic: 'ticket', label: 'Bonds', page: 'bonds', action: "R.goto('bonds')" },
+  { id: 'family', ic: 'users', label: 'Family', page: 'family', action: "Family.openAddMember(false)" },
+  { id: 'alerts', ic: 'bell', label: 'Alerts', page: 'alerts', action: "R.goto('alerts')" },
+  { id: 'timeline', ic: 'clock', label: 'Timeline', page: 'timeline', action: "R.goto('timeline')" },
+];
+
+function defaultDashPrefs() {
+  return {
+    sections: Object.fromEntries(DASH_SECTIONS.map(s => [s.id, s.default])),
+    quickAccess: ['banks', 'cards', 'documents', 'investments'],
+  };
+}
+
+function getDashPrefs() {
+  try {
+    const raw = localStorage.getItem('vo_dash_prefs');
+    if (raw) {
+      const p = JSON.parse(raw);
+      const base = defaultDashPrefs();
+      return {
+        sections: { ...base.sections, ...(p.sections || {}) },
+        quickAccess: Array.isArray(p.quickAccess) && p.quickAccess.length ? p.quickAccess : base.quickAccess,
+      };
+    }
+  } catch (e) {}
+  return defaultDashPrefs();
+}
+
+function saveDashPrefs(prefs) {
+  localStorage.setItem('vo_dash_prefs', JSON.stringify(prefs));
+}
+
+function isDashSectionOn(id) {
+  const p = getDashPrefs();
+  return p.sections[id] !== false;
+}
+
 function financeHomeTile(m) {
   return `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
@@ -264,14 +327,16 @@ function renderVaultHome() {
     {id:'emails',ic:'mail',label:'Emails',desc:(S.emails||[]).length+' identities'},
     {id:'sims',ic:'smartphone',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
-  ];
-  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
+  ].filter(m => isModOn(m.id));
+  b.innerHTML = modules.length
+    ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
     modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
       <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
-    </div>`).join('') + '</div>';
+    </div>`).join('') + '</div>'
+    : '<div style="padding:24px 16px;text-align:center;color:var(--text3);font-size:13px">No identity modules enabled. Turn them on in Settings → Modules.</div>';
 }
 
 function renderAssetsHome() {

@@ -14,6 +14,17 @@ const BCModule = {
     participant: 'Participant',
   },
 
+  /** Round pot = members × contribution per round (audit tests). */
+  computePot(members, contribution) {
+    return (members || 0) * (contribution || 0);
+  },
+
+  /** Total paid through current round (capped at total rounds). */
+  computePaid(currentRound, totalRounds, members, contribution) {
+    const rounds = Math.min(currentRound || 1, totalRounds || members || 1);
+    return rounds * (contribution || 0);
+  },
+
   render() {
     const el = document.getElementById('pg-bc-body');
     if (!el) return;

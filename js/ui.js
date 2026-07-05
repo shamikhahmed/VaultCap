@@ -167,8 +167,9 @@ const Dash={
 
     // Backup reminder
     const lastBackup = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
+    const backupDays = typeof BACKUP_REMINDER_DAYS !== 'undefined' ? BACKUP_REMINDER_DAYS : 30;
     const daysSinceBackup = lastBackup ? Math.floor((Date.now() - lastBackup) / (1000*60*60*24)) : 999;
-    const backupNeeded = daysSinceBackup > 14 && !VaultProfiles.isDemo();
+    const backupNeeded = daysSinceBackup > backupDays && !VaultProfiles.isDemo();
 
     // Vault health — single source: VaultHealth service
     const health = typeof VaultHealth !== 'undefined' ? VaultHealth.score() : 0;
@@ -186,7 +187,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div class="dash-block"><div class="dash-card"><div class="dash-kicker">Net Worth Breakdown</div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap" class="sens">− ${fmt(debtPKR)}</span></div>`:''}</div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -198,11 +199,11 @@ const Dash={
       ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+    const nwHero = '<div class="dash-block"><div class="dash-card dash-card--hero">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens">'+fmt(nwPKR)+'</div>' +
-      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
+      '<div class="dash-kicker">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
+      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens dash-nw-amount">'+fmt(nwPKR)+'</div>' +
+      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'" class="sens">'+(nwChangeStr)+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
       multiCurHtml +
       '</div></div>';
@@ -210,10 +211,10 @@ const Dash={
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
     const familyWidget = familyMC > 0
-      ? '<div style="padding:0 16px;margin-top:14px"><div onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
+      ? '<div class="dash-block"><div class="dash-card" onclick="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border-color:rgba(0,213,255,.2);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
         '<div style="display:flex;align-items:center;flex-shrink:0">' + _uiIcon('users', 24) + '</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Family Vault</div>' +
-        '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
+        '<div style="font-size:12px;color:var(--text3);margin-top:2px" class="sens">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
         '<div style="font-size:18px;color:var(--text3)">›</div>' +
         '</div></div>'
       : '';
@@ -224,13 +225,13 @@ const Dash={
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
-      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
+      '<div class="dash-block"><div class="dash-card">' +
+      '<div class="dash-kicker"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
       (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
       (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
       (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
-      '</div></div>' : '';
+      '</div></div></div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
@@ -244,18 +245,18 @@ const Dash={
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
     const assetSum = isModOn('assets') && assetCount > 0 ?
-      '<div onclick="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
+      '<div class="dash-block"><div class="dash-card" onclick="R.goto(\'assets\')" style="cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
+      '<div><div class="dash-kicker" style="margin-bottom:4px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
       '<div style="font-size:22px;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
       '<div style="text-align:right"><div style="font-size:28px;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
-      '<div style="font-size:10px;color:var(--text3)">items</div></div></div>' : '';
+      '<div style="font-size:10px;color:var(--text3)">items</div></div></div></div>' : '';
 
     const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
     const _reminders = (S.reminders || []).filter(r => !r.done).sort((a,b) => new Date(a.dueDate||0) - new Date(b.dueDate||0)).slice(0, 2);
     const _allActions = [..._alerts.map(a => ({...a, _type:'alert'})), ..._reminders.map(r => ({...r, _type:'reminder'}))].slice(0, 4);
     const upcomingActions = _allActions.length ?
-      '<div style="margin:0 16px 16px">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
+      '<div class="dash-block"><div class="dash-kicker"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
+      '<div class="dash-card" style="padding-top:8px;padding-bottom:8px">' +
       _allActions.map((a,i) => {
         const daysLeft = a.dueDate ? Math.ceil((new Date(a.dueDate) - new Date()) / 86400000) : null;
         const urgency = daysLeft !== null && daysLeft <= 7 ? 'var(--err)' : daysLeft !== null && daysLeft <= 30 ? 'var(--warn)' : 'var(--text3)';
@@ -265,7 +266,7 @@ const Dash={
           (daysLeft !== null ? '<div style="font-size:11px;color:' + urgency + '">' + (daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Today' : daysLeft + ' days left') + '</div>' : '') +
           '</div></div>';
       }).join('') +
-      '</div>' : '';
+      '</div></div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
     const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : 'All');
@@ -274,14 +275,14 @@ const Dash={
       '<div' + (onclick ? ' onclick="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
       '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
       '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
-    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
+    const quickStats = '<div class="dash-block"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
       quickStatCell(entityTotal, 'Records') +
       quickStatCell(activeCountryLabel, 'Country') +
       quickStatCell(lastBackupLabel, 'Backup', "R.goto('settings');setTimeout(function(){SettingsNav.show('backup')},80)") +
-      '</div>';
+      '</div></div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
-    <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div class="dash-block dash-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
@@ -297,7 +298,7 @@ const Dash={
       {icon:'trending-up', label:'Investment', module:'investments', action:"Inv.openAdd()"},
     ].filter(i => isModOn(i.module));
     const firstStepsBanner = totalItems === 0 && firstStepItems.length ? `
-    <div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border2);border-radius:20px;padding:18px 16px">
+    <div class="dash-block dash-card">
       <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
@@ -306,42 +307,49 @@ const Dash={
       </div>
     </div>` : '';
 
-    b.innerHTML = `
-    ${ctxBar}
-    ${setupBanner}
-    ${firstStepsBanner}
-    ${nwHero}
+    const dashPrefs = typeof getDashPrefs === 'function' ? getDashPrefs() : { sections: {}, quickAccess: ['banks','cards','documents','investments'] };
+    const dashOn = (id) => typeof isDashSectionOn === 'function' ? isDashSectionOn(id) : true;
 
-    ${moneySum}
+    const quickAccessMods = (dashPrefs.quickAccess || [])
+      .map(id => (typeof DASH_QUICK_MODULES !== 'undefined' ? DASH_QUICK_MODULES : []).find(m => m.id === id))
+      .filter(m => m && isModOn(m.id));
+    const quickAccessHtml = quickAccessMods.length ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker">Quick Access</div>
+        <button type="button" onclick="Dash.openCustomize()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">Edit →</button>
+      </div>
+      <div class="dash-quick-grid">
+        ${quickAccessMods.map(m => `
+          <button type="button" class="dash-quick-tile" onclick="R.goto('${m.page}')">
+            <span class="chip-ic" style="flex-shrink:0">${_uiIcon(m.ic, 22)}</span>
+            <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.label}</span>
+          </button>`).join('')}
+      </div>
+    </div>` : (dashOn('quickaccess') ? `
+    <div class="dash-block dash-card" style="text-align:center">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px">No quick access shortcuts yet</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Pick banks, documents, investments, and more.</div>
+      <button type="button" class="btn btn-p btn-sm" onclick="Dash.openCustomize()">Customize dashboard</button>
+    </div>` : '');
 
-    ${breakdownHtml}
-
-    ${familyWidget}
-
-    ${assetSum}
-
-    ${upcomingActions}
-
-    ${quickStats}
-
-    <!-- WALLET -->
-    ${isModOn('cards') && (S.cards||[]).length ? `
-    <div style="margin:0 16px 16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
-        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">${wCards.length ? 'Edit' : 'Set'} →</button>
+    const walletHtml = isModOn('cards') && (S.cards||[]).length ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
+        <button type="button" onclick="Dash.editWallet()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
       ${wCards.length
         ? `<div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
-        : `<button type="button" onclick="Dash.editWallet()" style="width:100%;background:var(--glass);border:1px dashed var(--border2);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;text-align:left"><div style="font-size:13px;font-weight:600;color:var(--text)">Set today's wallet</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Pick which cards you're carrying</div></button>`}
-    </div>` : ''}
+        : `<button type="button" onclick="Dash.editWallet()" class="dash-card" style="width:100%;border-style:dashed;cursor:pointer;touch-action:manipulation;text-align:left;font-family:inherit"><div style="font-size:13px;font-weight:600;color:var(--text)">Set today's wallet</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Pick which cards you're carrying</div></button>`}
+    </div>` : '';
 
-    <!-- EXPIRY ALERTS -->
-    ${allExpiring.length ? `
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
+    const expiringHtml = allExpiring.length ? `
+    <div class="dash-block">
+      <div class="dash-kicker"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
       ${allExpiring.slice(0,3).map(x => `
-        <div onclick="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
+        <div class="dash-card" onclick="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border-color:${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="chip-ic" style="flex-shrink:0">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
@@ -351,12 +359,13 @@ const Dash={
           </div>
           <div style="font-size:18px;color:var(--text3)">›</div>
         </div>`).join('')}
-    </div>` : ''}
+      </div>
+    </div>` : '';
 
-    <!-- VAULT HEALTH -->
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
+    const healthHtml = `
+    <div class="dash-block">
+      <div class="dash-kicker"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
+      <div class="dash-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:13px;font-weight:600;color:var(--text)">Security Score</div>
           <div style="font-size:20px;font-weight:900;color:${healthColor}">${health}%</div>
@@ -368,64 +377,65 @@ const Dash={
           ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
         </div>
       </div>
-    </div>
+    </div>`;
 
-    <!-- BACKUP REMINDER -->
-    ${backupNeeded ? `
-    <div onclick="ExIm.export('vos')" style="margin:0 16px 16px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:14px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
+    const backupHtml = backupNeeded ? `
+    <div class="dash-block dash-card" onclick="ExIm.export('vos')" style="background:rgba(255,152,0,.1);border-color:rgba(255,152,0,.3);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
       <span class="chip-ic" style="flex-shrink:0">${_uiIcon('share', 24)}</span>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:700;color:var(--warn)">${daysSinceBackup >= 999 ? 'Never backed up' : `Last backup: ${daysSinceBackup} days ago`}</div>
         <div style="font-size:11px;color:var(--text3)">Tap to export encrypted backup — protect your data</div>
       </div>
       <div style="font-size:18px;color:var(--text3)">›</div>
-    </div>` : ''}
+    </div>` : '';
 
-    <!-- QUICK ACTIONS -->
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Quick Actions</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        ${[
-          {icon:'bank',label:'Add Bank',action:"Banks.openAdd()"},
-          {icon:'card',label:'Add Card',action:"Cards.openAdd()"},
-          {icon:'file',label:'Add Document',action:"R.goto('documents')"},
-          {icon:'banknote',label:'Add Cash',action:"Cash.openAdd()"},
-        ].map(a => `
-          <button type="button" onclick="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text);overflow:hidden">
-            <span class="chip-ic" style="flex-shrink:0">${_uiIcon(a.icon, 22)}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.label}</span>
-          </button>`).join('')}
-      </div>
-    </div>
-
-    <!-- SMART COLLECTIONS -->
-    ${(() => {
+    const collectionsHtml = (() => {
       const cols = [
         { label:'Expiring Soon', icon:'bell', count:allExpiring.length, action:"R.goto('alerts')", color:'rgba(255,152,0,.1)', border:'rgba(255,152,0,.3)' },
         { label:'Archived', icon:'package', count:[...(S.banks||[]),...(S.cards||[])].filter(x=>x.archived).length, action:"R.goto('banks')", color:'rgba(123,95,255,.1)', border:'rgba(123,95,255,.3)' },
         { label:'Loans Active', icon:'handshake', count:(S.loans||[]).filter(l=>l.status!=='Settled').length, action:"R.goto('loans')", color:'rgba(255,69,58,.1)', border:'rgba(255,69,58,.3)' },
         { label:'Investments', icon:'trending-up', count:(S.investments||[]).length, action:"R.goto('investments')", color:'rgba(0,213,255,.1)', border:'rgba(0,213,255,.3)' },
       ].filter(c => c.count > 0);
-      return cols.length ? `<div style="margin:0 16px 16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div onclick="${c.action}" style="background:${c.color};border:1px solid ${c.border};border-radius:12px;padding:12px 14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px"><span class="chip-ic">${_uiIcon(c.icon, 20)}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
-    })()}
+      return cols.length ? `<div class="dash-block"><div class="dash-kicker">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div class="dash-card" onclick="${c.action}" style="background:${c.color};border-color:${c.border};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;padding:12px 14px"><span class="chip-ic">${_uiIcon(c.icon, 20)}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
+    })();
 
-    <!-- RECENT ACTIVITY -->
-    ${S.activity.length > 0 ? `
-    <div style="margin:0 16px 16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
-        <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent,var(--purple));background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
+    const activityHtml = S.activity.length > 0 ? `
+    <div class="dash-block">
+      <div class="dash-kicker-row">
+        <div class="dash-kicker">Recent Activity</div>
+        <button type="button" onclick="R.goto('timeline')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">See all →</button>
       </div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div class="dash-card" style="padding:0;overflow:hidden">
         ${S.activity.slice(0,5).map((a,i) => `
           <div style="padding:12px 16px;${i<Math.min(S.activity.length,5)-1?'border-bottom:1px solid var(--border)':''};display:flex;align-items:center;gap:12px">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent,var(--purple));flex-shrink:0"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.a||'Activity'}</div>
               <div style="font-size:11px;color:var(--text3)">${Activity.ago(a.t)}</div>
             </div>
           </div>`).join('')}
       </div>
-    </div>` : ''}
+    </div>` : '';
+
+    b.innerHTML = `
+    ${ctxBar}
+    ${typeof TravelMode !== 'undefined' ? TravelMode.bannerHtml() : ''}
+    ${setupBanner}
+    ${firstStepsBanner}
+    ${dashOn('networth') ? nwHero : ''}
+    ${dashOn('money') ? moneySum : ''}
+    ${dashOn('breakdown') ? breakdownHtml : ''}
+    ${dashOn('family') ? familyWidget : ''}
+    ${dashOn('property') ? assetSum : ''}
+    ${dashOn('upcoming') ? upcomingActions : ''}
+    ${dashOn('stats') ? quickStats : ''}
+    ${dashOn('wallet') ? walletHtml : ''}
+    ${dashOn('expiring') ? expiringHtml : ''}
+    ${dashOn('health') ? healthHtml : ''}
+    ${dashOn('backup') ? backupHtml : ''}
+    ${dashOn('quickaccess') ? quickAccessHtml : ''}
+    ${dashOn('collections') ? collectionsHtml : ''}
+    ${dashOn('activity') ? activityHtml : ''}
   `;
     if (typeof VC !== 'undefined' && VC.refreshShellIcons) VC.refreshShellIcons();
   },
@@ -460,7 +470,7 @@ const Dash={
     <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" alt="" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">`:''}${bankName}</div>
     <div style="font-size:${f3};font-weight:800;letter-spacing:.8px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.15);padding:2px 6px;border-radius:99px;white-space:nowrap">${(c.cardType||'').toUpperCase()}</div>
   </div>
-  <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
+  <div style="font-size:${f2};font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.95);font-family:monospace;position:relative;z-index:1;margin:${mb1} 0" class="sens card-num">${c.last4?'**** '+c.last4:'•••• ••••'}</div>
   <div style="display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1">
     <div style="font-size:${f3};color:rgba(255,255,255,.7)">${c.expiry||''}</div>
     ${netSvg[c.network]||`<div style="font-size:${f3};color:rgba(255,255,255,.6);font-weight:700">${c.network||''}</div>`}
@@ -528,6 +538,43 @@ const Dash={
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Close</button>`);
+  },
+  openCustomize() {
+    const prefs = typeof getDashPrefs === 'function' ? getDashPrefs() : { sections: {}, quickAccess: [] };
+    const sections = typeof DASH_SECTIONS !== 'undefined' ? DASH_SECTIONS : [];
+    const modules = typeof DASH_QUICK_MODULES !== 'undefined' ? DASH_QUICK_MODULES : [];
+    const sectionRows = sections.map(s => `
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer">
+        <input type="checkbox" data-dash-section="${s.id}" ${prefs.sections[s.id] !== false ? 'checked' : ''} style="margin-top:3px">
+        <span style="flex:1"><span style="display:block;font-size:13px;font-weight:600;color:var(--text)">${s.label}</span><span style="display:block;font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4">${s.desc}</span></span>
+      </label>`).join('');
+    const quickRows = modules.filter(m => isModOn(m.id)).map(m => `
+      <label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--glass);border:1px solid var(--border);border-radius:12px;cursor:pointer">
+        <input type="checkbox" data-dash-quick="${m.id}" ${(prefs.quickAccess || []).includes(m.id) ? 'checked' : ''}>
+        <span class="chip-ic">${_uiIcon(m.ic, 16)}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text)">${m.label}</span>
+      </label>`).join('');
+    Modal.open('Customize Dashboard', `
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:14px">Choose which sections appear on your dashboard and pin your favourite modules to Quick Access. Saved on this device only.</p>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Sections</div>
+      <div style="margin-bottom:16px">${sectionRows}</div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Quick Access</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${quickRows}</div>`,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Dash.saveCustomize()">Save</button>`);
+  },
+  saveCustomize() {
+    const sections = {};
+    document.querySelectorAll('[data-dash-section]').forEach(el => {
+      sections[el.getAttribute('data-dash-section')] = el.checked;
+    });
+    const quickAccess = [];
+    document.querySelectorAll('[data-dash-quick]').forEach(el => {
+      if (el.checked) quickAccess.push(el.getAttribute('data-dash-quick'));
+    });
+    if (typeof saveDashPrefs === 'function') saveDashPrefs({ sections, quickAccess });
+    Modal.close();
+    this.render();
+    Toast.show('Dashboard updated', 'success');
   },
   toggleMore(e) {
     e?.stopPropagation();
@@ -646,7 +693,13 @@ const Settings={
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">When someone enters this PIN, they see a convincing fake vault with realistic-looking data. Your real data stays hidden. Perfect for coercion or border device inspections.</p>
     <div class="fg"><label class="fl">Decoy PIN (6 digits, must differ from real PIN)</label><input class="inp" id="dp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="dp-err"></div>`,
-    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="Settings.removeDecoy()">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+  },
+  removeDecoy(){
+    const finish=()=>{S.decoyPin='';Store.save();Modal.close();Settings.refresh();Toast.show('Decoy PIN removed','success');};
+    if(typeof VaultDB!=='undefined'&&VaultDB.clearDecoySlot){
+      VaultDB.clearDecoySlot().then(finish).catch(finish);
+    } else finish();
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
@@ -669,7 +722,7 @@ const Settings={
         </div>
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();document.getElementById('importF-global')?.click()">
           <div style="font-weight:700;margin-bottom:4px">Restore from Backup</div>
-          <div style="font-size:12px;color:var(--text2)">Import a .vault backup file to recover access</div>
+          <div style="font-size:12px;color:var(--text2)">Import a .vos backup file to recover access</div>
         </div>
         <div style="background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.2);border-radius:var(--r);padding:14px;cursor:pointer;touch-action:manipulation" onclick="Modal.close();Settings.resetVault()">
           <div style="font-weight:700;color:var(--err);margin-bottom:4px">Reset Vault</div>
@@ -722,6 +775,17 @@ const Settings={
 
 // ===================== EXPORT / IMPORT =====================
 const ExIm={
+  _backupFingerprint(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const arr = new Uint8Array(8);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(b => chars[b % chars.length]).join('');
+  },
+  _markBackupExported(){
+    S.user.lastBackup = new Date().toISOString();
+    S.user.lastBackupFingerprint = this._backupFingerprint();
+    Store.save();
+  },
   _exportMeta(fmt='json'){
     return {
       _meta:{
@@ -735,13 +799,15 @@ const ExIm={
       exported:new Date().toISOString(),
     };
   },
-  export(fmt='vault'){if(fmt==='vos')fmt='vault';
+  export(fmt='vault'){if(S.decoy){Toast.show('Export disabled in decoy mode — lock and use your real PIN','warn',5000);return;}
+    if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
-      S.user.lastBackup=new Date().toISOString();
       const runVaultExport=()=>{
         VaultDB.exportEncrypted().then(()=>{
+          ExIm._markBackupExported();
+          const fp = S.user.lastBackupFingerprint;
           Activity.log('Exported','AES-256-GCM encrypted .vos');
-          Toast.show('Backup saved','success',4000);
+          Toast.show(fp ? 'Backup saved · fingerprint ' + fp : 'Backup saved','success',5000);
         }).catch(()=>Toast.show('Export failed — try again','error'));
       };
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
@@ -754,7 +820,7 @@ const ExIm={
       return;
     }
     const data={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-    S.user.lastBackup=new Date().toISOString();Store.save();
+    ExIm._markBackupExported();
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
       S.banks.forEach(b=>csv+=`Bank,"${b.bankName}","${b.country}","${b.currency}","${b.balance||0}","${(b.notes||'').replace(/"/g,'""')}"\n`);
@@ -764,7 +830,7 @@ const ExIm={
       S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultCap-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
     }
-    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};ExIm._markBackupExported();
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
@@ -783,8 +849,10 @@ const ExIm={
       if(!r||r.slot!=='main'){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
       Modal.close();
       VaultDB.exportEncrypted().then(()=>{
+        ExIm._markBackupExported();
+        const fp = S.user.lastBackupFingerprint;
         Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show('Backup saved','success',4000);
+        Toast.show(fp ? 'Backup saved · fingerprint ' + fp : 'Backup saved','success',5000);
       }).catch(()=>Toast.show('Export failed','error'));
     });
   },
@@ -794,8 +862,10 @@ const ExIm={
     const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
       this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      ExIm._markBackupExported();
+      const fp = S.user.lastBackupFingerprint;
       Activity.log('Exported','Legacy AES-256-GCM .vos');
-      Toast.show('Legacy backup saved','success',4000);
+      Toast.show(fp ? 'Legacy backup saved · ' + fp : 'Legacy backup saved','success',5000);
     }).catch(()=>this._exportPlain(data));
   },
   _promptPinForLegacyImport(encRaw,onSuccess){
@@ -1267,24 +1337,20 @@ const WhatsNew={
     Modal.open('Welcome to VaultCap v'+VER,`
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Standalone Documents Module</div>
-        <div style="font-size:12px;color:var(--text2)">Passports, IDs, Visas, Contracts, Tax docs — 13 adaptive schemas with intelligent fields</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Customizable dashboard</div>
+        <div style="font-size:12px;color:var(--text2)">Show or hide sections and pin Quick Access shortcuts from the grid icon on your dashboard.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Smart Bulk Import</div>
-        <div style="font-size:12px;color:var(--text2)">Paste text, Excel, Word, CSV, PDF — auto-detects banks, cards, investments, SIMs. Edit before importing.</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Improved recovery flow</div>
+        <div style="font-size:12px;color:var(--text2)">Master key recovery uses a dedicated PIN pad. Forgot PIN is always visible on the lock screen.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Tabbed Settings Center</div>
-        <div style="font-size:12px;color:var(--text2)">8-section Settings: Profile, Security, Appearance, Modules, Backup, Import, Accessibility, About</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Backup fingerprints</div>
+        <div style="font-size:12px;color:var(--text2)">Each .vos export shows an 8-character fingerprint — note it down to verify your backup file later.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Self-Check Engine</div>
-        <div style="font-size:12px;color:var(--text2)">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
-      </div>
-      <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">8 New Premium Themes</div>
-        <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Privacy blur & layout polish</div>
+        <div style="font-size:12px;color:var(--text2)">Stronger privacy mode, consistent dashboard spacing, and a flush bottom tab bar on iPhone.</div>
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Start Using VaultCap →</button>`);
@@ -2027,7 +2093,7 @@ const SettingsNav = {
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
       <button type="button" class="btn btn-p btn-sm" onclick="Settings.editCountries()">Set countries →</button>
     </div>` : '';
-    return `${setupNudge}${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
+    return `${setupNudge}${!S.user.onboardingComplete ? '<div class="set-sec"><div class="set-card"><div style="padding:14px;font-size:13px;color:var(--text2);line-height:1.55">Finish setup: add your name and countries in Profile, then export your first backup.</div></div></div>' : ''}
     <div class="set-sec"><div class="set-title">Profile</div><div class="set-card">
       <div class="si" onclick="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
@@ -2067,7 +2133,9 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Panic Lock Button</div><div class="desc">Floating button — instantly lock and hide sensitive values</div></div><label class="tog"><input type="checkbox" ${S.panicEnabled!==false?'checked':''} onchange="S.panicEnabled=this.checked;Store.save();if(typeof R!=='undefined')R._syncPanicButton();Toast.show('Panic button '+(S.panicEnabled?'enabled':'hidden'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm" onclick="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
+      ${typeof TravelMode !== 'undefined' ? TravelMode.settingsRow() : ''}
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g" onclick="DataIntegrity.run()" style="width:100%">Run Vault Integrity Check</button></div></div></div>
     <div class="set-sec"><div class="set-title">Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
@@ -2164,7 +2232,7 @@ const SettingsNav = {
     const hasOverride = !!(S.user.llmApiKey || '').trim();
     return `<div class="set-sec"><div class="set-title">VaultCap Smart Import (included)</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Smart Assistant (optional LLM)</div><div class="desc">${cfg.bundled && !hasOverride ? 'Optional assist — Smart Parser always works offline without it.' : 'Uses your override key when set; Smart Parser stays the offline default.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
+      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Override the bundled Smart Import proxy — leave blank for default</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://vaultos-llm-proxy.shamikhahmed.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
       <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
       <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
     </div></div>
@@ -2179,6 +2247,7 @@ const SettingsNav = {
     return `<div class="set-sec"><div class="set-title">Accessibility</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} onchange="S.privacyMode=this.checked;document.body.classList.toggle('privacy',S.privacyMode);Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} onchange="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">High Contrast</div><div class="desc">Stronger borders and text contrast</div></div><label class="tog"><input type="checkbox" ${S.highContrast?'checked':''} onchange="applyHighContrast(this.checked);Toast.show('High contrast '+(S.highContrast?'on':'off'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} onchange="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
     </div></div>`;
   },
@@ -2291,7 +2360,7 @@ const VaultHealthCenter = {
         ${[
           [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently' : `Back up again — ${daysSince}d since last backup`],
           [!!fp, 'Backup fingerprint saved'],
-          [!!(S.pin && S.pin !== '123456'), 'Custom PIN set'],
+          [!!S.user?.setupProgress?.pinSet, 'Custom PIN set'],
           [!!(S.user?.name), 'Profile name set'],
           [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
         ].map(([ok, label]) => `
@@ -2332,6 +2401,7 @@ const HelpCenter = {
       { id:'family',          icon:'users', label:'Family Vault' },
       { id:'backup',          icon:'share', label:'Backup & Restore' },
       { id:'security',        icon:'lock', label:'Security & PIN' },
+      { id:'travel',          icon:'globe', label:'Travel Mode' },
       { id:'search',          icon:'search', label:'Search & Tags' },
       { id:'themes',          icon:'grid', label:'Themes' },
       { id:'faq',             icon:'book', label:'FAQ' },
@@ -2377,7 +2447,8 @@ const HelpCenter = {
       'documents': `
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('id-card', 'Supported document types', 'Passport, National ID (NIC/CNIC), Driving Licence, Visa, Emirates ID, Property Documents, Insurance, Vehicle Registration, Tax Documents, Medical Records, Warranties, Contracts, Certificates.')}
-          ${this._card('file', 'Photographing documents', 'When adding a document, tap "Capture Front" and "Capture Back" to photograph using your camera. Images are compressed and stored encrypted inside your vault. Useful for passports and ID cards.')}
+          ${this._card('file', 'Photographing documents', 'When adding a document, tap Capture Front and Capture Back to photograph using your camera. Images are compressed and stored encrypted inside your vault.')}
+      ${this._card('share', 'Export ID copies (PDF or images)', 'Open any document with photos → Export copy (PDF) prints a shareable PDF of passport/CNIC scans with metadata. Save front/back image downloads JPEG files. Documents page → Export all ID copies (PDF) bundles every document with photos.')}
           ${this._card('clock', 'Expiry alerts', 'Documents with expiry dates automatically appear in the Timeline and generate reminders 30 days before expiry. The dashboard also shows an "Expiring Soon" smart collection.')}
           ${this._card('search', 'Finding documents', 'Use the search bar at the top of the Documents page, or use Cmd+K to search globally. You can search by document name, holder name, document number, or country.')}
           ${this._card('pin', 'Tagging documents', 'Add tags like "uk", "urgent", "family", "business" to any document. Use the preset chips in the form or type your own. Filter and search by tag across the whole vault.')}
@@ -2395,42 +2466,53 @@ const HelpCenter = {
           ${this._card('share', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
           ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('smartphone', 'If you lose your phone', '1. Open VaultCap in any browser. 2. Import your .vos backup file. 3. Enter your PIN or use your master recovery key if you forgot the PIN. Your vault is fully restored on that device.')}
           ${this._card('clock', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
           ${this._card('archive', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,
       'security': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('vault', 'How your PIN works', 'Your PIN is never stored anywhere — not on your device, not on any server. It is used as a key to encrypt and decrypt your data. Only you know it. If you forget it, your data cannot be recovered without a backup.')}
-          ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM encryption — the same standard used by banks, governments, and military organisations. Your data is encrypted before being saved, and decrypted only when you unlock with your PIN.')}
-          ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with realistic-looking data. Your real data remains hidden.')}
-          ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this information without your PIN.')}
-          ${this._card('cross', 'Brute force protection', 'After 5 wrong PIN attempts, the vault locks for an increasing time period. Failed attempts are logged and persist across page reloads.')}
+      ${this._card('vault', 'How your PIN works', 'Your PIN is never sent to any server. It derives the key that encrypts your vault on this device. If you forget it, use your master recovery key or a .vos backup — Capricorn Systems cannot reset your PIN remotely.')}
+      ${this._card('lock', 'Encryption standard', 'VaultCap uses AES-256-GCM with PBKDF2 (310k iterations) — the same family of standards used by major financial institutions. Data is encrypted before it is saved locally.')}
+      ${this._card('eye-off', 'Decoy vault', 'Set a second PIN in Settings → Security → Decoy PIN. Under coercion, enter the decoy PIN — it shows a convincing fake vault with sample banks and cards. Your real vault is never saved or exposed. Lock and use your real PIN to return.')}
+      ${this._card('cross', 'Panic lock', 'Enable the floating panic button in Settings → Security, or type "panic lock" in the command palette (⌘K). Instantly blurs sensitive values and locks the vault.')}
+      ${this._card('🆘', 'Emergency access', 'Settings → Tools → Emergency. Add your name, blood type, allergies, and emergency contact. Enable "Show on Lock Screen" — first responders can see this without your PIN.')}
+      ${this._card('cross', 'Brute force protection', 'After 3 wrong PIN attempts, the vault locks for 30 seconds. After 5 attempts, for 5 minutes. After 10 attempts, you must recover with your master key or reset the vault — data is never wiped automatically.')}
           ${this._card('trash', 'Sensitive field auto-clear', 'CVV numbers, card PINs, and passwords are automatically cleared from forms when you close a modal — they are never left visible on screen.')}
+        </div>`,
+      'travel': `
+        <div style="display:flex;flex-direction:column;gap:12px">
+      ${this._card('globe', 'What is Travel Mode?', 'One tap to optimize VaultCap while abroad: Traveler workspace (cards, SIMs, documents, emails), optional country filter, privacy blur on, and dashboard shortcuts to passport/ID and today\'s wallet.')}
+      ${this._card('settings', 'How to enable', 'Settings → Security → Travel Mode → Enable. Or press ⌘K and type "Travel Mode". Pick a focus country (PK, GB, AE) or leave as All countries.')}
+      ${this._card('eye-off', 'Privacy while traveling', 'Travel Mode turns on privacy blur automatically so balances and sensitive values are hidden in public. Toggle off in Settings or exit Travel Mode when home.')}
+      ${this._card('id-card', 'Quick document access', 'The dashboard banner shows Documents, Wallet, and Exit. Use Documents for passport/CNIC scans; Wallet for today\'s cash and cards in your pocket.')}
+      ${this._card('lock', 'Decoy vault', 'Travel Mode is disabled in decoy vault — enable it only on your real PIN. Decoy mode shows a fake vault and never writes your real data.')}
+      ${this._card('chart', 'Exit Travel Mode', 'Tap Exit on the dashboard banner or Settings → Travel Mode → Turn Off. Your previous workspace, modules, country filter, and privacy setting are restored exactly.')}
         </div>`,
       'search': `
         <div style="display:flex;flex-direction:column;gap:12px">
           ${this._card('search', 'Global search', 'Tap the search icon in the FAB menu, or press Cmd+K on desktop. Search finds banks, cards, documents, investments, loans, contacts, and more — all at once.')}
           ${this._card('search', 'Typo-tolerant search', 'The search engine uses fuzzy matching — you can make small typos and still find what you\'re looking for. "Barcays" will find "Barclays". "pasport" will find "Passport".')}
           ${this._card('pin', 'Tagging system', 'Add tags to any entry (banks, cards, documents, loans, investments, cash, vehicles). Use preset chips or type your own. Tags are searchable and filterable across the whole vault.')}
-          ${this._card('sparkles', 'Command palette', 'Press Cmd+K to open the command palette. Type to search data, or run actions: "lock vault", "export", "dark mode", "add bank". Weighted results show best matches first.')}
-          ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
+      ${this._card('sparkles', 'Command palette', 'Press ⌘K (desktop) or tap search. Run actions: lock vault, export, panic lock, dark mode, add bank. Press ? for keyboard shortcuts.')}
+      ${this._card('chart', 'Dashboard customize', 'Tap the grid icon on the dashboard to show/hide sections and pin quick-access modules.')}
+      ${this._card('chart', 'Smart collections', 'The dashboard automatically shows: Expiring Soon, Active Loans, Archived Items, and Investments — based on your actual data. These update in real time.')}
         </div>`,
       'themes': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('moon', 'Dark mode', 'Pure black background with blue accent. The default. Ideal for OLED screens — saves battery and looks great at night.')}
-          ${this._card('sun', 'Light mode', 'Clean white background with blue accent. Best for bright environments and daytime use.')}
+      ${this._card('moon', 'Dark mode', 'Pure black background with monochrome accents. The default. Ideal for OLED screens — saves battery and looks great at night.')}
+      ${this._card('sun', 'Light mode', 'Clean light background with monochrome accents. Best for bright environments and daytime use.')}
           ${this._card('settings', 'System appearance', 'Follows your device light/dark setting automatically. Updates when your OS theme changes.')}
           ${this._card('sparkles', 'Switching appearance', 'Settings → Appearance, tap the home-screen dots, or open the Command Palette (Cmd+K) and type "dark mode" or "light mode".')}
         </div>`,
       'faq': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('book', 'Is my data safe?', 'Yes. Your data never leaves your device. It is encrypted with AES-256-GCM using your PIN. No server, no cloud, no account required. The only way to access your data is with your PIN and your device (or a backup file).')}
-          ${this._card('book', 'What happens if this website goes down?', 'Your data is stored on your device, not on any server. Even if the URL disappears, your data is safe. Export a .vos backup and you can open it on any device using any browser, anytime.')}
-          ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
-          ${this._card('book', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
-          ${this._card('book', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
-          ${this._card('book', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+      ${this._card('book', 'Is my data safe?', 'Your vault data stays on your device, encrypted with AES-256-GCM. No account is required. Optional features (live FX rates, Smart Import LLM) use the network but never send your PIN or full vault.')}
+      ${this._card('book', 'What happens if this website goes down?', 'Your data is stored on your device, not on our servers. Export a .vos backup and you can restore on any device using any browser.')}
+      ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. QR sync works on the same network. There is no automatic cloud sync — this keeps your data private.')}
+      ${this._card('book', 'What if I forget my PIN?', 'Use Forgot PIN on the lock screen. If you saved your master recovery key, you can set a new PIN without losing data. If you have a .vos backup, import it. Without either, the vault cannot be opened.')}
+      ${this._card('book', 'Is this app free?', 'Yes, completely free during beta. No ads. Revenue features may come later — the core vault will stay privacy-first.')}
+      ${this._card('book', 'Does it work offline?', 'Yes. Install as a PWA (Add to Home Screen). Core vault features work offline. Live rates and optional Smart Import LLM need a connection when you use them.')}
           ${this._card('book', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };

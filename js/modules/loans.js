@@ -1,6 +1,11 @@
 const Loans = {
   _friendName: '',
 
+  /** Remaining balance after payments (pure helper for UI and audit tests). */
+  computeRemaining(amount, paid) {
+    return Math.max(0, (amount || 0) - (paid || 0));
+  },
+
   addFriend(btnEl) {
     const name = this._friendName;
     if (!name) return;

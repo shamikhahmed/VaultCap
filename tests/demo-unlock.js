@@ -226,7 +226,9 @@ async function unlockDemoVault(page) {
       S.fails = 0;
       S.lockedUntil = 0;
       try { LockoutStore.clear(); } catch (e) {}
-      Store.save();
+      await VaultDB.init(VaultProfiles.DEMO_PIN);
+      await VaultDB.save(Store._data());
+      await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
       localStorage.removeItem('vo_demo_guide_pending');
       ['pgHome', 'pgLock', 'pgOnboard', 'pgProfilePicker'].forEach((id) => {
         const el = document.getElementById(id);
@@ -244,6 +246,25 @@ async function unlockDemoVault(page) {
     () => document.getElementById('dashGreet')?.textContent?.trim().length > 0,
     { timeout: 30000 },
   );
+  await page.evaluate(async () => {
+    if (typeof ensureDemoVaultReady === 'function') await ensureDemoVaultReady();
+    S.autoLock = false;
+    let result = await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
+    if (!result || result.slot !== 'main') {
+      if (typeof loadDemoProfile === 'function') loadDemoProfile('business');
+      S.user.onboardingComplete = true;
+      if (S.modules) S.modules.family = true;
+      S.pin = VaultProfiles.DEMO_PIN;
+      S.fails = 0;
+      S.lockedUntil = 0;
+      await VaultDB.init(VaultProfiles.DEMO_PIN);
+      await VaultDB.save(Store._data());
+      result = await VaultDB.tryPin(VaultProfiles.DEMO_PIN);
+    }
+    if (result && result.slot === 'main') Object.assign(S, result.data);
+    Store.save();
+    await Store.flush();
+  });
   await dismissOverlays(page);
 }
 

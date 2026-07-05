@@ -25,7 +25,6 @@ function mkEntity(type, fields = {}) {
 /* → js/core/data-integrity.js */
 
 /* → js/core/emergency.js */
-/* → js/core/onboarding-wizard.js */
 /* → js/core/vault-health.js */
 /* → js/core/modal.js */
 /* → js/core/activity.js */
@@ -64,6 +63,9 @@ async function App() {
 
   document.addEventListener('keydown', function(e) {
     if (S.unlocked) return;
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     const lk = document.getElementById('pgLock');
     if (!lk || lk.style.display === 'none') return;
     if (e.key >= '0' && e.key <= '9') { e.preventDefault(); PIN.in(e.key); }
@@ -80,6 +82,8 @@ async function App() {
     if ((e.metaKey || e.ctrlKey) && e.key === '1') { e.preventDefault(); if (S.unlocked) R.goto('dashboard'); }
     if ((e.metaKey || e.ctrlKey) && e.key === '2') { e.preventDefault(); if (S.unlocked) R.goto('banks'); }
     if ((e.metaKey || e.ctrlKey) && e.key === '3') { e.preventDefault(); if (S.unlocked) R.goto('cards'); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); if (S.unlocked) R.goto('settings'); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'e') { e.preventDefault(); if (S.unlocked && !S.decoy && typeof ExIm !== 'undefined') ExIm.export('vos'); }
     if (e.key === 'Escape') { CMD.close(); Modal.close(); FAB.close(); ThemeEngine.closePicker(); }
     if (e.key === '?' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') { e.preventDefault(); if (S.unlocked) CMD.showHelp(); }
   });

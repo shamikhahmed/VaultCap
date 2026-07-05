@@ -19,8 +19,14 @@ async function openSettings(page) {
 test.describe('VaultCap smoke', () => {
   test('loads welcome or lock screen', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-    await expect(page.getByRole('heading', { name: 'VaultCap' })).toBeVisible({ timeout: 15000 });
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => {
+      const splash = document.getElementById('splashScreen');
+      return !splash || splash.style.display === 'none' || splash.style.opacity === '0';
+    }, { timeout: 12000 });
+    await expect(
+      page.locator('#pgLock:visible, #pgHome:visible, #pgOnboard:visible, #app:visible').getByText('VaultCap').first()
+    ).toBeVisible({ timeout: 10000 });
     const screen = page.locator('#pgLock:visible, #pgHome:visible, #pgOnboard:visible, #app:visible').first();
     await expect(screen).toBeVisible();
   });

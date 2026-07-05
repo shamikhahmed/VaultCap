@@ -2,7 +2,7 @@
 
 **Live app:** https://shamikhahmed.github.io/VaultCap  
 **Install guide:** [install.html](./install.html)  
-**Version:** 4.9.3
+**Version:** 4.9.6 (beta readiness)
 
 ## What “ready” means
 
@@ -29,7 +29,7 @@ VaultCap is **zero-knowledge**. Do **not** add email/password login for v1 — t
 | **Master recovery key** | Offline recovery if PIN forgotten |
 | **AES-256-GCM + PBKDF2 310k** | Encrypts vault before storage |
 | **IndexedDB / localStorage** | Encrypted data on device only |
-| **Decoy PIN** | Optional empty vault under duress |
+| **Decoy PIN** | Optional fake vault under duress (sample data, real vault untouched) |
 | **Lockout** | Slows / blocks brute force |
 | **`.vos` export** | User-owned backup / device move |
 
@@ -77,7 +77,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 
 ### Day 7 — Public launch
 - [ ] Announce website + install guide
-- [ ] Pin GitHub release / tag `v4.9.3`
+- [ ] Pin GitHub release / tag `v4.9.6`
 - [ ] Submit Play/Apple packages if ready (review continues after launch)
 
 ---

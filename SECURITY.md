@@ -10,7 +10,7 @@ VaultCap does **not** use email/password accounts. That would require our server
 | **Master recovery key** | Shown once at setup — recover if PIN forgotten |
 | **AES-256-GCM vault** | Encrypted blob in browser storage (IndexedDB / localStorage) |
 | **PBKDF2 310k** | Derives encryption key from PIN — never sent anywhere |
-| **Decoy PIN** | Optional — opens empty vault under duress |
+| **Decoy PIN** | Optional — fake vault with sample data; real vault untouched |
 | **`.vos` export** | Your backup file — move to another device yourself |
 
 **PIN and keys never leave the device.** Capricorn Systems **cannot** open your vault, reset your PIN, or read your data. No cloud login, no remote unlock.
@@ -55,7 +55,7 @@ VaultCap does **not** use email/password accounts. That would require our server
 ### Bundled LLM architecture
 
 - **Client:** `js/config/llm-bundled.js` → `js/modules/llm-assist.js`
-- **Proxy:** `https://VaultCap-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
+- **Proxy:** `https://vaultos-llm-proxy.shamikhahmed.workers.dev` (see `worker/llm-proxy.js`)
 - **Worker secret:** Real API key stored via `wrangler secret put LLM_API_KEY` — not in git
 - **Fallback:** Smart Parser if proxy fails or is disabled
 

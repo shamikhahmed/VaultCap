@@ -86,7 +86,7 @@ test.describe('VaultCap data integrity', () => {
     });
 
     expect(audit.counts.banks).toBe(6);
-    expect(audit.counts.cards).toBe(5);
+    expect(audit.counts.cards).toBe(15);
     expect(audit.counts.investments).toBe(6);
     expect(audit.counts.cash).toBe(3);
     expect(audit.counts.loans).toBe(4);

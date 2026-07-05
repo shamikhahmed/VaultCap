@@ -183,7 +183,7 @@ Each backup file uses a unique random **salt** and **IV** — so two exports of 
 
 ### Decoy vault
 
-Go to **Settings → Security → Set Decoy PIN**. If someone forces you to open the app, enter the decoy PIN — it shows a completely empty vault. Your real data remains locked behind your real PIN.
+Go to **Settings → Security → Set Decoy PIN**. If someone forces you to open the app, enter the decoy PIN — it shows a convincing fake vault with sample banks and cards. Your real data is never written to disk in decoy mode. Lock and enter your real PIN to return.
 
 ### Auto-lock
 
@@ -205,9 +205,9 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 
 ## Tips and Tricks
 
-**Command palette** — Press ⌘K (desktop) or tap the search icon to open the command palette. You can search all your data or run actions: `lock vault`, `export`, `theme midnight`, `add bank`.
+**Command palette** — Press ⌘K (desktop) or tap the search icon. Search your vault or run actions: `lock vault`, `export`, `panic lock`, `dark mode`, `add bank`. Press `?` for all keyboard shortcuts.
 
-**Keyboard shortcuts** — ⌘L to lock, ⌘N to add new entry, ⌘F to search, ⌘1–⌘3 to switch nav tabs.
+**Keyboard shortcuts** — ⌘K command palette · ⌘L lock · ⌘N add · ⌘F search · ⌘S settings · ⌘E export backup · ⌘1–⌘3 dashboard/banks/cards · `?` help · On the lock screen, type digits 0–9 without tapping the pad.
 
 **Tags** — Add tags to any entry. Tags are searchable, filterable, and shared across all modules. Use tags like `uk`, `business`, `urgent`, `halal`, `family`.
 
@@ -215,13 +215,25 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 
 **Archiving** — Tap 🗂️ on any entry to archive it (hide without deleting). Useful for old accounts you want to keep a record of. Tap "Show archived" to reveal them.
 
-**Privacy mode** — Tap the 👁️ icon in settings to enable privacy mode. All sensitive values (balances, card numbers, PINs) are blurred on screen. Useful when using the app in public.
+**Privacy mode** — Settings → Security → Privacy Mode blurs all sensitive values on screen. Useful in public.
 
-**Themes** — 5 themes available: Midnight (black), Graphite (dark grey gold), Cloud (white), Ivory (warm cream), Blossom (pink). Switch instantly via Settings → Appearance or ⌘K → "theme".
+**Travel Mode** — Settings → Security → Travel Mode (or ⌘K → "Travel Mode"). One tap for abroad: Traveler workspace (cards, SIMs, documents, emails), optional country filter, privacy blur on, dashboard shortcuts to Documents and Wallet. Tap Exit to restore your previous layout.
 
-**PWA install** — On iPhone: Safari → Share → Add to Home Screen. On Android: browser menu → Install app. VaultCap works fully offline after installation.
+**Calculations** — Tax (PK/GB/UAE slabs + NI), Zakat (2.5% on net zakatable wealth above nisab), BC pot (members × contribution), and loan remaining balance are computed in-app. Run `npm run test:e2e -- tests/calculations.spec.js` to audit formulas in CI.
 
-**Pull to refresh** — Pull down on any list page to force a re-render and refresh counters.
+**Themes** — Dark, Light, or System (follows device). Settings → Appearance, lock-screen appearance button, or ⌘K → "dark mode" / "light mode".
+
+**Decoy PIN** — Settings → Security → Decoy PIN. A second PIN shows a convincing fake vault (sample banks/cards). Your real vault is never written to disk in decoy mode. Lock and enter your real PIN to return.
+
+**Panic lock** — Settings → Security → enable Panic Lock Button, or ⌘K → "panic lock". Blurs sensitive values and locks immediately.
+
+**Dashboard customize** — Tap the grid icon on the dashboard to toggle sections and pin quick-access modules.
+
+**Document copies** — Identity → Documents → open any ID with photos → **Export copy (PDF)** or save front/back JPEG. Use **Export all ID copies (PDF)** on the Documents page to bundle every scan.
+
+**PWA install** — See [install.html](../install.html). iPhone: Safari → Share → Add to Home Screen. Android: Install app from Chrome menu.
+
+**Pull to refresh** — Pull down on dashboard or list pages to refresh.
 
 ---
 
@@ -237,7 +249,7 @@ Your data is stored on your device, not on any server. Even if the URL disappear
 Export a `.vos` backup from one device and import it on another. There is no automatic sync — this is intentional, to keep your data private.
 
 **What if I forget my PIN?**
-Your PIN cannot be recovered — it is never stored anywhere. If you have a `.vos` backup and remember your old PIN, you can restore from that. This is why regular backups and PIN memory are essential.
+Tap **Forgot PIN?** on the lock screen. Use your **master recovery key** (shown once at setup) or import a `.vos` backup. Capricorn Systems cannot reset your PIN remotely.
 
 **Is this app free?**
 Yes, completely free. No ads, no subscriptions, no premium tier.
@@ -352,17 +364,18 @@ Go to **Finance → Tax** and select your country tab:
 
 ## Widget (Home Screen Snapshot)
 
-Go to **Settings → Home Screen Widget** to open the widget page. Add it to your iPhone/Android home screen:
-- **iPhone**: Safari → Share → Add to Home Screen
+Open **[widget.html](../widget.html)** (or add it to your home screen from Safari/Chrome):
+
+- **iPhone**: Safari → open widget page → Share → Add to Home Screen
 - **Android**: Chrome → Menu → Add to Home Screen
 
-The widget shows your net worth, vault health, expiring items, and backup status — all read from a local snapshot updated every time you unlock.
+The widget shows net worth summary, vault counts, expiring items, and backup status from a local snapshot updated when you lock the vault.
 
 ---
 
 ## Notifications
 
-Go to **Settings → Notifications** and tap **Enable** to allow browser notifications.
+Go to **Tools → Reminders** and tap **Enable notifications** to allow browser alerts.
 
 VaultCap will alert you when:
 - Documents expire in the next 7 days
@@ -370,7 +383,7 @@ VaultCap will alert you when:
 - Loans are due in the next 7 days
 - BC payments are due in 3 days
 
-Notifications fire automatically 2.5 seconds after you unlock your vault.
+Notifications fire shortly after you unlock your vault (not from Settings).
 
 ---
 
@@ -378,12 +391,12 @@ Notifications fire automatically 2.5 seconds after you unlock your vault.
 
 Transfer your vault to another device without cloud storage:
 
-1. On the **source device**: Settings → Sync → Export via QR
-2. Scan all QR codes shown (large vaults split into multiple chunks)
-3. On the **receiving device**: Settings → Sync → Import via QR
-4. Scan the same QR codes — data merges automatically
+1. On the **source device**: Settings → Backup → QR Sync → Export via QR
+2. Note the **6-digit sync code** shown on screen
+3. Scan all QR codes (large vaults split into chunks; photos are stripped for size)
+4. On the **receiving device**: Import via QR, enter the sync code, scan the same codes
 
-Data is compressed and transferred as base64 chunks. No internet required.
+Payloads are AES-encrypted. No cloud account required. Same Wi‑Fi/network recommended.
 
 ---
 
@@ -432,6 +445,19 @@ Export a complete snapshot of your vault as a print-ready PDF.
 **What's included:** Net worth breakdown, banks, cards, active loans, investments with P&L, gold/silver holdings, BC committees, prize bonds, documents expiring in the next 90 days.
 
 **Privacy:** The PDF is generated entirely on your device — nothing is sent to any server.
+
+---
+
+## Document copies (Passport / CNIC / ID photos)
+
+Export scanned ID images for sharing with banks, landlords, or employers:
+
+1. **Single document** — Identity → Documents → tap a document with photos → **Export copy (PDF)** (print/save as PDF) or **Save front/back image** (JPEG download)
+2. **All IDs at once** — Documents page → **Export all ID copies (PDF)** when you have multiple scanned documents
+
+Metadata (holder name, document number, expiry) is included on the PDF cover page. Handle exports securely — they contain identity images.
+
+**Note:** Decoy mode disables exports to protect your real vault.
 
 ---
 

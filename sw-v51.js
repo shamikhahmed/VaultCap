@@ -1,21 +1,20 @@
-const CACHE = 'vaultcap-v57';
+const CACHE = 'vaultcap-v61';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './widget-data.json',
   './icon.svg',
   './icon-mark.svg',
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './icon-1024.png',
   './apple-touch-icon.png',
   './css/capricorn-core.css',
   './css/base.css',
   './css/layout.css',
   './css/components.css',
   './css/themes.css',
+  './css/identity.css',
   './js/storage.js',
   './dist/vaultcap.bundle.js',
 ];
@@ -28,7 +27,9 @@ function isCodeAsset(url) {
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(async (c) => {
+      await Promise.allSettled(ASSETS.map((a) => c.add(a)));
+    }).then(() => self.skipWaiting())
   );
 });
 

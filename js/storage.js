@@ -246,6 +246,15 @@ const VaultDB = (() => {
       });
     },
 
+    async hasDecoy() {
+      try {
+        const buf = await _idbGet('decoy');
+        return !!buf;
+      } catch(e) {
+        return false;
+      }
+    },
+
     // Download current encrypted blob as a .vos file.
     async exportEncrypted() {
       const buf = await _idbGet('main');

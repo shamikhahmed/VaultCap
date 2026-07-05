@@ -180,7 +180,7 @@ function loadDemoProfile(type) {
   S.user.lastBackup = daysAgo(3); // Recent backup → +20 to security score
   S.autoLock = true;
   S.lockMins = 5;
-  S.decoyPin = '0000'; // Demo decoy → +8 to security score
+  S.decoyPin = '000000'; // Demo decoy → +8 to security score
   S.emergency = { enabled: true, name: 'Alex Khan', contact: '+44 7700 123456', notes: 'Keep calm and call family' };
 
   // Seed realistic activity history for demo

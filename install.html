@@ -119,10 +119,10 @@
         <li><strong>PBKDF2 (310k)</strong> — PIN → key; slow for attackers, fast for you.</li>
         <li><strong>IndexedDB / local storage</strong> — encrypted blob stays in the browser profile on your phone or laptop.</li>
         <li><strong>Master recovery key</strong> — shown once at setup. Save it offline. Recovers vault if you forget PIN.</li>
-        <li><strong>Decoy PIN</strong> — optional second PIN opens an empty vault under duress.</li>
+        <li><strong>Decoy PIN</strong> — optional second PIN shows a fake vault; real data stays hidden.</li>
         <li><strong>Lockout</strong> — failed PIN attempts slow down, then block.</li>
       </ul>
-      <p style="margin-top:12px">PIN and keys <strong>never leave your device</strong>. We cannot reset your PIN. Export <code>.vos</code> backups yourself for a second device.</p>
+      <p style="margin-top:12px">PIN and keys <strong>never leave your device</strong>. We cannot reset your PIN remotely — use your master key or a <code>.vos</code> backup on the lock screen.</p>
     </div>
 
     <div class="sec">
@@ -139,9 +139,23 @@
       </ol>
     </div>
 
+    <div class="sec">
+      <h2>Beta testing checklist</h2>
+      <p>Before sharing with testers, confirm on a real phone:</p>
+      <ol style="margin-left:18px;color:var(--dim);font-size:14px;line-height:1.7">
+        <li>Complete onboarding — copy master recovery key before continuing</li>
+        <li>Add a bank + document with photos, export <code>.vos</code> and try <strong>Export copy (PDF)</strong> on the document</li>
+        <li>Test decoy PIN (Settings → Security) — fake vault only; lock and use real PIN to return</li>
+        <li>Enable <strong>Travel Mode</strong> (Settings → Security) — traveler layout, privacy blur, document shortcuts</li>
+        <li>Lock → unlock with PIN; try Forgot PIN → master key flow</li>
+        <li>Install as PWA (Add to Home Screen) and re-open from home screen</li>
+        <li>Toggle dashboard sections (grid icon) and privacy blur</li>
+      </ol>
+    </div>
+
     <div class="cta" style="margin-top:32px">
       <a class="btn btn-p" href="index.html">Open VaultCap now</a>
-      <a class="btn btn-s" href="SECURITY.md">Security notes</a>
+      <a class="btn btn-s" href="security.html">Security</a>
       <a class="btn btn-s" href="privacy.html">Privacy</a>
     </div>
   </div>

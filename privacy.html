@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#000000">
 <title>Privacy Policy — VaultCap</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -13,62 +13,50 @@ nav{margin-bottom:28px;font-size:14px}
 nav a{margin-right:12px;color:#adadad}
 h1{font-size:1.75rem;margin:24px 0 12px;letter-spacing:-.02em}
 h2{font-size:1.15rem;margin:20px 0 8px;color:#ffffff}
-h3{font-size:1rem;margin:16px 0 6px}
 p,li{font-size:15px;color:#adadad;margin-bottom:10px}
 ul{margin:8px 0 16px 20px}
 code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-size:.9em}
 footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:#adadad}
 </style>
-
-  <link rel="stylesheet" href="css/capricorn-core.css">
 </head>
 <body>
-<div class="cap-scroll-progress" aria-hidden="true"></div>
 <nav>
   <a href="landing.html">← VaultCap</a>
   <a href="index.html">App</a>
-  <a href="presentation.html">Presentation</a>
-  <a href="pitch.html">Pitch</a>
+  <a href="install.html">Install</a>
+  <a href="security.html">Security</a>
 </nav>
-<article><h1>VaultCap — Privacy Policy</h1>
-<p><strong>Last updated:</strong> June 10, 2026</p>
-<p>VaultCap is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it.</p>
+<article>
+<h1>VaultCap — Privacy Policy</h1>
+<p><strong>Last updated:</strong> July 2026</p>
+<p>VaultCap is an offline-first Progressive Web App by <strong>Capricorn Systems</strong>. Your vault data stays on your device unless you explicitly export it.</p>
+
 <h2>What we collect</h2>
-<ul><li><strong>Nothing by default.</strong> No accounts, analytics SDKs, or third-party trackers ship in this app.</li>
-<li><strong>Smart Import (optional):</strong> When enabled, text you paste for parsing is sent to the configured LLM endpoint. See Smart Import / LLM below.</li>
-<p></ul></p>
+<ul>
+<li><strong>Nothing by default.</strong> No accounts, analytics SDKs, or third-party trackers ship in the app.</li>
+<li><strong>Smart Import (optional):</strong> When enabled, text you paste for parsing may be sent to the configured LLM endpoint. Your PIN and full vault are never sent.</li>
+</ul>
+
 <h2>Storage</h2>
-<ul><li>App state is stored in <strong>localStorage</strong> and/or <strong>IndexedDB</strong> in your browser.</li>
+<ul>
+<li>App state is stored in <strong>localStorage</strong> and/or <strong>IndexedDB</strong> in your browser.</li>
 <li>Uninstalling or clearing site data removes local copies.</li>
 <li>Encrypted <code>.vos</code> backups are files you control — we never receive them.</li>
-<p></ul></p>
+</ul>
+
 <h2>Network</h2>
-<ul><li><strong>Live FX / gold rates:</strong> Public rate APIs with 6-hour cache; no personal data sent.</li>
-<li><strong>Smart Import / LLM:</strong> See below.</li>
+<ul>
+<li><strong>Live FX / gold rates:</strong> Public rate APIs with caching; no personal data sent.</li>
+<li><strong>Smart Import / LLM:</strong> Optional. Bundled proxy: <code>https://vaultos-llm-proxy.shamikhahmed.workers.dev</code></li>
 <li>GitHub Pages serves static files only — no server-side access to your vault.</li>
-<p></ul></p>
-<h2>Smart Import / LLM</h2>
-<p>VaultCap offers three parsing paths for Smart Add:</p>
-<p>1. <strong>Smart Parser (default, offline)</strong> — Rule-based parsing on-device. No network. No data leaves your browser.</p>
-<p>2. <strong>Bundled LLM (shipped)</strong> — VaultCap includes <code>js/config/llm-bundled.js</code> with a proxy provider. Requests go to the Cloudflare Worker at <code>https://VaultCap-llm-proxy.shamikhahmed.workers.dev</code> (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
-<p>3. <strong>Custom key (optional)</strong> — Paste your own API key or proxy URL in Settings → Import. Stored in localStorage on your device only.</p>
-<p>The Cloudflare Worker uses Workers AI (<code>@cf/meta/llama-3.1-8b-instruct</code>). If the proxy is unavailable, Smart Parser is used automatically.</p>
-<p><strong>Important:</strong> Bundled credentials are visible in the public PWA bundle. Treat Smart Import text as non-secret; do not paste full account numbers or passwords into Smart Add.</p>
+</ul>
+
 <h2>Children</h2>
-<ul><li>VaultCap is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.</li>
-<p></ul></p>
+<p>VaultCap is intended for adults managing their own finances and identity. Parents should supervise shared devices and exports.</p>
+
 <h2>Contact</h2>
-<p>Built by Capricorn Systems — issues via the [VaultCap GitHub repository](https://github.com/shamikhahmed/VaultCap).</p>
+<p>Capricorn Systems — <a href="https://github.com/shamikhahmed/VaultCap/issues">GitHub issues</a> or <a href="mailto:support@capricornsystems.com">support@capricornsystems.com</a></p>
 </article>
-<footer>© 2026 Shamikh Ahmed · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
-
-  <canvas id="cap-scene" class="cap-scene-canvas cap-scene-canvas--subtle" aria-hidden="true"></canvas>
-
-  <script src="js/vendor/gsap.min.js"></script>
-  <script src="js/vendor/ScrollTrigger.min.js"></script>
-  <script src="js/capricorn-scene.js"></script>
-  <script src="js/capricorn-motion.js"></script>
-  <script src="js/capricorn-cinematic.js"></script>
-  <script>document.addEventListener('DOMContentLoaded',function(){if(window.CapCinematic)CapCinematic.init({canvas:'#cap-scene'});});</script>
+<footer>© 2026 Capricorn Systems · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
 </body>
 </html>

@@ -44,7 +44,7 @@ const R = {
     const sp = document.getElementById('switchProfileBtn');
     if (sp) sp.style.display = (VaultProfiles.isDemo() || VaultProfiles.isDevMode() || localStorage.getItem('vo_used_demo') === '1') ? '' : 'none';
     const fp = document.getElementById('forgotPinLink');
-    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : (S.fails >= 3 ? 'inline' : 'none');
+    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : 'inline';
     if (typeof getVaultId === 'function') getVaultId();
     ThemeEngine.renderDots();
   },
@@ -57,18 +57,20 @@ const R = {
     if (typeof renderHomeModules === 'function') renderHomeModules();
     if (typeof VC !== 'undefined') VC.refreshShellIcons();
   },
-  unlock() {
+  unlock(opts = {}) {
+    const isDecoy = !!opts.decoy;
     // Run live family migration if S.familyMembers is missing but S.family has data
-    if ((!S.familyMembers || !S.familyMembers.length) && S.family) {
+    if (!isDecoy && (!S.familyMembers || !S.familyMembers.length) && S.family) {
       const _fLive = S.family;
       if ((_fLive.head && _fLive.head.name) || (_fLive.members && _fLive.members.length)) {
         try { Migrate._runFamilyV13(S); Store.save(); } catch(e) {}
       }
     }
-    S.unlocked = true; S.decoy = false;
+    S.unlocked = true;
+    S.decoy = isDecoy;
     window._vosUnlocked = true;
     // Backfill bank↔card links for any orphan cards (existing vaults)
-    if (typeof VaultRelations !== 'undefined') {
+    if (!isDecoy && typeof VaultRelations !== 'undefined') {
       const linked = VaultRelations.linkOrphanCards({ createBank: false });
       if (linked > 0) Store.save();
     }
@@ -77,8 +79,16 @@ const R = {
     document.getElementById('app').style.display = 'flex';
     document.getElementById('fab').style.display = 'flex';
     buildNav();
+    if (!isDecoy && typeof TravelMode !== 'undefined' && TravelMode.isActive()) {
+      TravelMode._applyTravelerModules();
+      if (!S.privacyMode) {
+        S.privacyMode = true;
+        document.body.classList.add('privacy');
+      }
+    }
     this.goto('dashboard');
     setTimeout(() => Dash.render(), 50);
+    setTimeout(() => this.applyHashRoute(), 120);
     Activity.log('Vault unlocked');
     if (typeof RatesEngine !== 'undefined') {
       RatesEngine.init().then(() => {
@@ -90,6 +100,7 @@ const R = {
       if (dashPb) pullToRefresh(dashPb, () => Dash.render());
     }, 500);
     setTimeout(() => {
+      if (isDecoy) return;
       if (typeof DataIntegrity !== 'undefined') {
         const r = DataIntegrity.check();
         const issues = r.highCount + r.posCount;
@@ -97,9 +108,11 @@ const R = {
       }
     }, 2000);
     setTimeout(() => {
+      if (isDecoy) return;
       if (typeof VaultRecovery !== 'undefined') VaultRecovery.check();
     }, 1500);
     setTimeout(() => {
+      if (isDecoy) return;
       if (typeof VaultSafety !== 'undefined') VaultSafety.maybeOfferRestore();
     }, 2200);
     if (VaultProfiles.isDemo() && localStorage.getItem('vo_demo_guide_pending') === '1') {
@@ -112,12 +125,14 @@ const R = {
     setTimeout(() => {
       if (typeof Reminders !== 'undefined' && Reminders.checkAndNotify) Reminders.checkAndNotify();
     }, 2500);
+    this._syncPanicButton();
     setTimeout(() => {
+      if (isDecoy) return;
       if (!window._backupPrompted) {
         window._backupPrompted = true;
         const _lb = S.user?.lastBackup ? new Date(S.user.lastBackup) : null;
         const _days = _lb ? Math.floor((Date.now() - _lb) / (1000*60*60*24)) : 999;
-        if (_days > 14 && !VaultProfiles.isDemo()) {
+        if (_days > (typeof BACKUP_REMINDER_DAYS !== 'undefined' ? BACKUP_REMINDER_DAYS : 30) && !VaultProfiles.isDemo()) {
           Toast.show(
             _days >= 999
               ? 'You have never backed up your vault. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
@@ -131,9 +146,9 @@ const R = {
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const before = (S.trash||[]).length;
     S.trash = (S.trash||[]).filter(item => new Date(item.deletedAt).getTime() > cutoff);
-    if (S.trash.length < before) Store.save();
-    if (S.autoLock) this.resetTimer();
-    setTimeout(() => WhatsNew.check(), 800);
+    if (S.trash.length < before && !isDecoy) Store.save();
+    if (S.autoLock && !isDecoy) this.resetTimer();
+    if (!isDecoy) setTimeout(() => WhatsNew.check(), 800);
     // OB (index.html inline onboarding) is the active system; Onboarding overlay is retired.
     if (S._clockTimer) clearInterval(S._clockTimer);
   },
@@ -147,13 +162,26 @@ const R = {
       document.getElementById('fab').style.display = 'none';
       Modal.close();
       Store._saveWidgetSnapshot();
+      this._syncPanicButton();
       this.showLock();
       Activity.log('Vault locked');
     };
     Store.flush().then(finishLock).catch(finishLock);
   },
+  applyHashRoute() {
+    const raw = (location.hash || '').replace(/^#/, '').trim();
+    if (!raw || !S.unlocked) return;
+    if (raw === 'add') {
+      this.goto('dashboard');
+      setTimeout(() => { if (typeof FAB !== 'undefined') FAB.toggle(); }, 350);
+      return;
+    }
+    const pg = raw.split('/')[0];
+    if (document.getElementById('pg-' + pg)) this.goto(pg);
+  },
   goto(pg, force = false) {
     if (pg === 'ai-import') pg = 'import';
+    if (pg === 'recovery') pg = 'recovery-center';
     const alias = PAGE_ALIASES[pg];
     if (alias) {
       S.aF = alias.filter;
@@ -290,6 +318,12 @@ const R = {
     upd();
     if (S._clockTimer) clearInterval(S._clockTimer);
     S._clockTimer = setInterval(upd, 10000);
+  },
+  _syncPanicButton() {
+    const btn = document.getElementById('panicBtn');
+    if (!btn) return;
+    const show = S.unlocked && S.panicEnabled && !S.decoy;
+    btn.style.display = show ? 'flex' : 'none';
   }
 };
 
