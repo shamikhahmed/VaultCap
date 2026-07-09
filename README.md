@@ -144,10 +144,10 @@ npm run serve       # http://127.0.0.1:8765
 
 ## Roadmap
 
-- [ ] Expenses — category charts
-- [ ] Assets — purchase vs current value P&L
-- [ ] Cash — multi-currency totals
-- [ ] SIMs — contract expiry reminders
+- [x] Expenses — category charts *(v5.0.0: bar chart + donut + monthly overview)*
+- [x] Assets — purchase vs current value P&L *(v5.0.0: row badges + portfolio summary)*
+- [x] Cash — multi-currency totals *(v5.0.0: dashboard breakdown + module summary)*
+- [x] SIMs — contract expiry reminders *(v5.0.0: contract end + recharge alerts/timeline)*
 
 ---
 
