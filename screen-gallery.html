@@ -211,6 +211,7 @@
       includeScroll: true,
       flatItems: [],
       lightboxIndex: -1,
+      lightboxEntries: [],
       cacheBust: '',
     };
 
@@ -280,7 +281,39 @@
       return pickThemePath(bucket, theme);
     }
 
-    function renderCard(item, scroll = false) {
+    function cardEntryVisible(item, scroll) {
+      const bucket = scroll ? item.scroll : item.files;
+      if (!bucket?.dark && !bucket?.light) return false;
+      if (!hasViewportShot(bucket, 'dark') && !hasViewportShot(bucket, 'light')) return false;
+      if (state.scrollOnly) return scroll;
+      if (scroll) return state.includeScroll;
+      return true;
+    }
+
+    function collectDisplayEntries() {
+      const entries = [];
+      const items = visibleItems();
+      const bySection = new Map();
+      for (const item of items) {
+        if (!bySection.has(item.sectionId)) {
+          bySection.set(item.sectionId, { label: item.sectionLabel, items: [] });
+        }
+        bySection.get(item.sectionId).items.push(item);
+      }
+      for (const sec of state.manifest.sections) {
+        const group = bySection.get(sec.id);
+        if (!group) continue;
+        for (const item of group.items) {
+          const modes = state.scrollOnly ? [true] : [false, ...(state.includeScroll ? [true] : [])];
+          for (const scroll of modes) {
+            if (cardEntryVisible(item, scroll)) entries.push({ item, scroll, sectionLabel: group.label });
+          }
+        }
+      }
+      return entries;
+    }
+
+    function renderCard(item, scroll = false, lbIndex = null) {
       const rel = getItemImage(item, state.theme, scroll);
       const tag = scroll ? 'scroll' : 'viewport';
       const cardId = `${item.id}${scroll ? '-scroll' : ''}`;
@@ -289,12 +322,14 @@
         state.theme !== 'compare' && !rel &&
         (hasViewportShot(bucket, 'dark') || hasViewportShot(bucket, 'light'));
 
+      const idxAttr = lbIndex != null ? ` data-lb-index="${lbIndex}"` : '';
+
       if (state.theme === 'compare' && !scroll) {
         const dark = pickThemePath(item.files, 'dark');
         const light = pickThemePath(item.files, 'light');
         if (!dark && !light) return '';
         return `
-          <article class="card" tabindex="0" role="button" data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
+          <article class="card"${idxAttr} tabindex="0" role="button" data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
             <div class="compare">
               <div><div class="compare-label">Dark</div><img src="${imgSrc(dark)}" alt="${item.label} dark" loading="lazy" /></div>
               <div><div class="compare-label">Light</div><img src="${imgSrc(light)}" alt="${item.label} light" loading="lazy" /></div>
@@ -306,7 +341,7 @@
       if (!rel) {
         if (!missing) return '';
         return `
-          <article class="card missing" data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
+          <article class="card missing"${idxAttr} data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
             <div class="missing-pill">No ${state.viewport} shot</div>
             <div class="meta">
               <div class="label">${item.label}</div>
@@ -316,7 +351,7 @@
       }
 
       return `
-        <article class="card" tabindex="0" role="button" data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
+        <article class="card"${idxAttr} tabindex="0" role="button" data-id="${cardId}" data-item-id="${item.id}" data-scroll="${scroll}">
           <img src="${imgSrc(rel)}" alt="${item.label}" loading="lazy" />
           <div class="meta">
             <div class="label">${item.label}</div>
@@ -326,18 +361,19 @@
     }
 
     function render() {
-      const items = visibleItems();
-      if (!items.length) {
+      const entries = collectDisplayEntries();
+      state.lightboxEntries = entries;
+
+      if (!entries.length) {
         gallery.innerHTML = '<p class="empty">No screens match current filters.</p>';
         return;
       }
 
       const bySection = new Map();
-      for (const item of items) {
-        if (!bySection.has(item.sectionId)) {
-          bySection.set(item.sectionId, { label: item.sectionLabel, items: [] });
-        }
-        bySection.get(item.sectionId).items.push(item);
+      for (const entry of entries) {
+        const id = entry.item.sectionId;
+        if (!bySection.has(id)) bySection.set(id, { label: entry.sectionLabel, entries: [] });
+        bySection.get(id).entries.push(entry);
       }
 
       let html = '';
@@ -345,57 +381,34 @@
         const group = bySection.get(sec.id);
         if (!group) continue;
         html += `<section class="section" id="section-${sec.id}"><h2>${group.label}</h2><div class="grid">`;
-        for (const item of group.items) {
-          if (state.scrollOnly) {
-            html += renderCard(item, true);
-          } else {
-            if (item.files?.dark || item.files?.light) {
-              if (hasViewportShot(item.files, 'dark') || hasViewportShot(item.files, 'light')) html += renderCard(item, false);
-            }
-            if (state.includeScroll && (item.scroll?.dark || item.scroll?.light)) {
-              if (hasViewportShot(item.scroll, 'dark') || hasViewportShot(item.scroll, 'light')) html += renderCard(item, true);
-            }
-          }
+        for (const entry of group.entries) {
+          const idx = state.lightboxEntries.indexOf(entry);
+          html += renderCard(entry.item, entry.scroll, idx);
         }
         html += '</div></section>';
       }
       gallery.innerHTML = html;
 
-      gallery.querySelectorAll('.card').forEach((card, idx) => {
-        card.addEventListener('click', () => openLightbox(idx));
+      gallery.querySelectorAll('.card[data-lb-index]').forEach((card) => {
+        const open = () => openLightbox(Number(card.dataset.lbIndex));
+        card.addEventListener('click', open);
         card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(idx); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
         });
       });
     }
 
-    function getRenderableCards() {
-      const cards = [];
-      const items = visibleItems();
-      for (const item of items) {
-        if (state.scrollOnly) {
-          if (item.scroll?.dark || item.scroll?.light) cards.push({ item, scroll: true });
-        } else {
-          if (item.files?.dark || item.files?.light) cards.push({ item, scroll: false });
-          if (state.includeScroll && (item.scroll?.dark || item.scroll?.light)) {
-            cards.push({ item, scroll: true });
-          }
-        }
-      }
-      return cards;
-    }
-
     function openLightbox(index) {
-      const cards = getRenderableCards();
-      if (index < 0 || index >= cards.length) return;
+      const entries = state.lightboxEntries || [];
+      if (index < 0 || index >= entries.length) return;
       state.lightboxIndex = index;
-      updateLightbox(cards);
+      updateLightbox(entries);
       $('#lightbox').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
-    function updateLightbox(cards) {
-      const { item, scroll } = cards[state.lightboxIndex];
+    function updateLightbox(entries) {
+      const { item, scroll } = entries[state.lightboxIndex];
       const content = $('#lb-content');
       const caption = $('#lb-caption');
       const suffix = scroll ? ' (scroll)' : '';
@@ -411,7 +424,9 @@
           </div>`;
       } else {
         const rel = getItemImage(item, state.theme, scroll);
-        content.innerHTML = `<img src="${imgSrc(rel)}" alt="${item.label}" />`;
+        content.innerHTML = rel
+          ? `<img src="${imgSrc(rel)}" alt="${item.label}" />`
+          : `<p style="color:#fff;text-align:center;padding:24px">No ${state.viewport} shot for ${state.theme}${suffix}</p>`;
       }
       caption.textContent = `${item.label} — ${item.sectionLabel}${suffix}`;
     }
@@ -532,15 +547,17 @@
     $('#lightbox').addEventListener('click', (e) => { if (e.target.id === 'lightbox') closeLightbox(); });
     $('#lb-prev').addEventListener('click', (e) => {
       e.stopPropagation();
-      const cards = getRenderableCards();
-      state.lightboxIndex = (state.lightboxIndex - 1 + cards.length) % cards.length;
-      updateLightbox(cards);
+      const entries = state.lightboxEntries || [];
+      if (!entries.length) return;
+      state.lightboxIndex = (state.lightboxIndex - 1 + entries.length) % entries.length;
+      updateLightbox(entries);
     });
     $('#lb-next').addEventListener('click', (e) => {
       e.stopPropagation();
-      const cards = getRenderableCards();
-      state.lightboxIndex = (state.lightboxIndex + 1) % cards.length;
-      updateLightbox(cards);
+      const entries = state.lightboxEntries || [];
+      if (!entries.length) return;
+      state.lightboxIndex = (state.lightboxIndex + 1) % entries.length;
+      updateLightbox(entries);
     });
     document.addEventListener('keydown', (e) => {
       if (!$('#lightbox').classList.contains('open')) return;
@@ -556,7 +573,7 @@
     }
   </script>
   <script type="application/json" id="gallery-manifest-embedded">{
-  "generatedAt": "2026-07-09T13:01:33.541Z",
+  "generatedAt": "2026-07-09T14:31:34.091Z",
   "themes": [
     "dark",
     "light"
@@ -826,10 +843,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/finance/banks-scroll.png"
+              "mobile": "dark/mobile/finance/banks-scroll.png",
+              "desktop": "dark/desktop/finance/banks-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/banks-scroll.png"
+              "mobile": "light/mobile/finance/banks-scroll.png",
+              "desktop": "light/desktop/finance/banks-scroll.png"
             }
           }
         },
@@ -887,10 +906,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/finance/investments-scroll.png"
+              "mobile": "dark/mobile/finance/investments-scroll.png",
+              "desktop": "dark/desktop/finance/investments-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/investments-scroll.png"
+              "mobile": "light/mobile/finance/investments-scroll.png",
+              "desktop": "light/desktop/finance/investments-scroll.png"
             }
           }
         },
@@ -909,10 +930,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/finance/loans-scroll.png"
+              "mobile": "dark/mobile/finance/loans-scroll.png",
+              "desktop": "dark/desktop/finance/loans-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/loans-scroll.png"
+              "mobile": "light/mobile/finance/loans-scroll.png",
+              "desktop": "light/desktop/finance/loans-scroll.png"
             }
           }
         },
@@ -1031,7 +1054,14 @@
               "desktop": "light/desktop/finance/tax.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/finance/tax-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/finance/tax-scroll.png"
+            }
+          }
         },
         {
           "id": "zakat",
@@ -1323,7 +1353,16 @@
               "desktop": "light/desktop/tools/security.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/tools/security-scroll.png",
+              "desktop": "dark/desktop/tools/security-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/tools/security-scroll.png",
+              "desktop": "light/desktop/tools/security-scroll.png"
+            }
+          }
         },
         {
           "id": "backup",
@@ -1368,8 +1407,7 @@
               "desktop": "dark/desktop/tools/recovery-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/recovery-scroll.png",
-              "desktop": "light/desktop/tools/recovery-scroll.png"
+              "mobile": "light/mobile/tools/recovery-scroll.png"
             }
           }
         },
@@ -1446,7 +1484,16 @@
               "desktop": "light/desktop/tools/reminders.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/tools/reminders-scroll.png",
+              "desktop": "dark/desktop/tools/reminders-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/tools/reminders-scroll.png",
+              "desktop": "light/desktop/tools/reminders-scroll.png"
+            }
+          }
         },
         {
           "id": "alerts",
@@ -1640,7 +1687,14 @@
               "desktop": "light/desktop/settings/import.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/settings/import-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/settings/import-scroll.png"
+            }
+          }
         },
         {
           "id": "accessibility",
@@ -1902,7 +1956,14 @@
               "desktop": "light/desktop/forms/loan-borrowed.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/forms/loan-borrowed-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/forms/loan-borrowed-scroll.png"
+            }
+          }
         },
         {
           "id": "loan-lent",
@@ -1917,7 +1978,14 @@
               "desktop": "light/desktop/forms/loan-lent.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/forms/loan-lent-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/forms/loan-lent-scroll.png"
+            }
+          }
         },
         {
           "id": "sim-add",
@@ -2071,10 +2139,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/forms/bc-add-scroll.png"
+              "mobile": "dark/mobile/forms/bc-add-scroll.png",
+              "desktop": "dark/desktop/forms/bc-add-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/forms/bc-add-scroll.png"
+              "mobile": "light/mobile/forms/bc-add-scroll.png",
+              "desktop": "light/desktop/forms/bc-add-scroll.png"
             }
           }
         },

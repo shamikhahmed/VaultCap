@@ -16,7 +16,7 @@
 - [x] `npm run build:js` green
 - [x] `npm run audit:xss` green (prior run)
 - [x] `npm run test:e2e` green (exit 0 after fixes)
-- [ ] `npm run test:e2e:safari` green
+- [x] `npm run test:e2e:safari` green
 - [x] Landing/install CTAs wired
 - [x] Version badges match `VERSION.json` (5.0.0)
 - [x] Privacy: delete-vault / no-account copy clear

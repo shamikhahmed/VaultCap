@@ -44,6 +44,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [x] Bank↔card linking + catalog
 - [x] Dashboard / search / expense / loan link UX
 - [x] `npm run test:e2e` green on `main` (v5.0.0)
+- [x] `npm run test:e2e:safari` green (11 passed, webkit-iphone)
 - [x] `npm run audit:xss` green
 - [ ] Manual smoke: unlock, add bank+card, backup export, lock
 
@@ -88,6 +89,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 npm run build:js
 npm run audit:xss
 npm run test:e2e
+npm run test:e2e:safari
 npm run gallery          # Regenerate screen gallery + embed manifest
 ```
 

@@ -11,7 +11,7 @@ const VIEWPORT_SIZES = {
   mobile: { width: 390, height: 844 },
   desktop: { width: 1280, height: 900 },
 };
-const SCROLL_MIN = 180;
+const SCROLL_MIN = 80;
 
 const APP_PAGES = {
   hubs: {
@@ -264,24 +264,47 @@ async function hideDemoBanner(page) {
   });
 }
 
-/** @param {import('@playwright/test').Page} page @param {string} relPath @param {object} item @param {'dark'|'light'} theme @param {'mobile'|'desktop'} viewport @param {'page'|'modal'} target */
-async function maybeScrollShot(page, relPath, item, theme, viewport, target = 'page') {
-  const overflow = await page.evaluate((kind) => {
-    const el = kind === 'modal'
-      ? document.getElementById('mBody')
-      : document.querySelector('.page.on .pb');
-    if (!el) return 0;
-    return el.scrollHeight - el.clientHeight;
+/** @param {import('@playwright/test').Page} page @param {'page'|'modal'} target */
+async function findScrollTarget(page, target) {
+  return page.evaluate((kind) => {
+    if (kind === 'modal') {
+      const el = document.getElementById('mBody');
+      if (!el) return null;
+      const overflow = el.scrollHeight - el.clientHeight;
+      return overflow > 0 ? { kind: 'modal', overflow } : null;
+    }
+    const candidates = [
+      '.page.on .pb',
+      '.page.on #dashBody',
+      '.page.on',
+    ];
+    let best = null;
+    for (const sel of candidates) {
+      const el = document.querySelector(sel);
+      if (!el) continue;
+      const overflow = el.scrollHeight - el.clientHeight;
+      if (!best || overflow > best.overflow) best = { kind: 'page', selector: sel, overflow };
+    }
+    return best && best.overflow > 0 ? best : null;
   }, target);
+}
 
-  if (overflow < SCROLL_MIN) return null;
-
-  await page.evaluate((kind) => {
-    const el = kind === 'modal'
-      ? document.getElementById('mBody')
-      : document.querySelector('.page.on .pb');
+/** @param {import('@playwright/test').Page} page @param {object} target */
+async function scrollTargetToEnd(page, target) {
+  await page.evaluate((t) => {
+    let el = null;
+    if (t.kind === 'modal') el = document.getElementById('mBody');
+    else if (t.selector) el = document.querySelector(t.selector);
     if (el) el.scrollTop = el.scrollHeight;
   }, target);
+}
+
+/** @param {import('@playwright/test').Page} page @param {string} relPath @param {object} item @param {'dark'|'light'} theme @param {'mobile'|'desktop'} viewport @param {'page'|'modal'} target */
+async function maybeScrollShot(page, relPath, item, theme, viewport, target = 'page') {
+  const scrollTarget = await findScrollTarget(page, target);
+  if (!scrollTarget || scrollTarget.overflow < SCROLL_MIN) return null;
+
+  await scrollTargetToEnd(page, scrollTarget);
   await page.waitForTimeout(250);
 
   const scrollRel = relPath.replace(/\.png$/, '-scroll.png');
@@ -330,8 +353,8 @@ async function closeOverlays(page) {
 /** @param {import('@playwright/test').Page} page */
 async function scrollPageTop(page) {
   await page.evaluate(() => {
-    const pb = document.querySelector('.page.on .pb');
-    if (pb) pb.scrollTop = 0;
+    document.querySelectorAll('.page.on .pb, .page.on #dashBody, .page.on').forEach((el) => { el.scrollTop = 0; });
+    document.getElementById('mBody') && (document.getElementById('mBody').scrollTop = 0);
     document.querySelector('.page.on')?.querySelectorAll('[style*="overflow-x"]').forEach((el) => { el.scrollLeft = 0; });
   });
 }
