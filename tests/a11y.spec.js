@@ -1,13 +1,13 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { fastGalleryUnlock, dismissOverlays } = require('./demo-unlock');
+const { unlockDemoVault, dismissOverlays } = require('./demo-unlock');
 
 test.describe('VaultCap accessibility baseline', () => {
   test('shell landmarks and controls', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
     await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
-    await fastGalleryUnlock(page);
+    await unlockDemoVault(page);
     await dismissOverlays(page);
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -42,10 +42,11 @@ test.describe('VaultCap accessibility baseline', () => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
     await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
-    await fastGalleryUnlock(page);
+    await unlockDemoVault(page);
     await dismissOverlays(page);
 
     await page.evaluate(() => R.goto('dashboard', true));
+    await page.waitForFunction(() => document.getElementById('app')?.style.display === 'flex');
     await expect(page.locator('#pg-dashboard.on')).toBeVisible();
 
     const moreBtn = page.locator('#dashMoreBtn');
@@ -56,6 +57,7 @@ test.describe('VaultCap accessibility baseline', () => {
     await page.evaluate(() => Dash.closeMore());
     await expect(page.locator('#dashMoreMenu.on')).toHaveCount(0);
 
+    await page.evaluate(() => R.goto('banks', true));
     const fab = page.locator('#fab');
     await expect(fab).toBeAttached();
     await expect(fab).toHaveAttribute('aria-haspopup', 'true');

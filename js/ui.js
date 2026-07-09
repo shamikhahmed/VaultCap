@@ -221,6 +221,13 @@ const Dash={
     const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
     const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
     const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
+    const cashByCur = {};
+    ctxFilter(S.cash||[]).forEach(c => { const cur = c.currency || 'PKR'; cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0); });
+    const cashCurKeys = Object.keys(cashByCur);
+    const cashBreakdown = cashCurKeys.length > 1
+      ? '<div style="font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
+        cashCurKeys.map(cur => '<span class="sens">' + U.fmt(cashByCur[cur]) + ' ' + cur + '</span>').join(' · ') + '</div>'
+      : '';
     const moneyCell = (total, color, label, page) =>
       '<div onclick="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
@@ -230,7 +237,8 @@ const Dash={
       (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
       (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
       (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
-      '</div></div>' : '';
+      '</div>' + (isModOn('cash') && cashBreakdown ? cashBreakdown : '') +
+      '</div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {

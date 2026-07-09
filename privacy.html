@@ -31,34 +31,32 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
   <a href="pitch.html">Pitch</a>
 </nav>
 <article><h1>VaultCap — Privacy Policy</h1>
-<p><strong>Last updated:</strong> June 10, 2026</p>
-<p>VaultCap is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it.</p>
+<p><strong>Last updated:</strong> July 9, 2026</p>
+<p>VaultCap is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it. There are no accounts — you unlock with a PIN you choose locally.</p>
 <h2>What we collect</h2>
 <ul><li><strong>Nothing by default.</strong> No accounts, analytics SDKs, or third-party trackers ship in this app.</li>
-<li><strong>Smart Import (optional):</strong> When enabled, text you paste for parsing is sent to the configured LLM endpoint. See Smart Import / LLM below.</li>
-<p></ul></p>
-<h2>Storage</h2>
+<li><strong>Smart Import (optional):</strong> Only when you enable LLM parsing in Settings, text you paste for parsing may be sent to your configured endpoint. See Smart Import below.</li></ul>
+<h2>Storage &amp; deleting your data</h2>
 <ul><li>App state is stored in <strong>localStorage</strong> and/or <strong>IndexedDB</strong> in your browser.</li>
-<li>Uninstalling or clearing site data removes local copies.</li>
-<li>Encrypted <code>.vos</code> backups are files you control — we never receive them.</li>
-<p></ul></p>
+<li><strong>Delete vault:</strong> Settings → Security → Delete Vault removes all local data and resets the app.</li>
+<li><strong>Clear site data:</strong> In your browser, clear storage for this site to remove all copies without opening the app.</li>
+<li>Uninstalling the PWA or clearing site data removes local copies permanently.</li>
+<li>Encrypted <code>.vos</code> backups are files you control — we never receive them.</li></ul>
 <h2>Network</h2>
 <ul><li><strong>Live FX / gold rates:</strong> Public rate APIs with 6-hour cache; no personal data sent.</li>
-<li><strong>Smart Import / LLM:</strong> See below.</li>
-<li>GitHub Pages serves static files only — no server-side access to your vault.</li>
-<p></ul></p>
-<h2>Smart Import / LLM</h2>
+<li><strong>Smart Import / LLM:</strong> Off by default. See below.</li>
+<li>GitHub Pages serves static files only — no server-side access to your vault.</li></ul>
+<h2>Smart Import (Smart Assistant)</h2>
 <p>VaultCap offers three parsing paths for Smart Add:</p>
 <p>1. <strong>Smart Parser (default, offline)</strong> — Rule-based parsing on-device. No network. No data leaves your browser.</p>
-<p>2. <strong>Bundled LLM (shipped)</strong> — VaultCap includes <code>js/config/llm-bundled.js</code> with a proxy provider. Requests go to the Cloudflare Worker at <code>https://VaultCap-llm-proxy.shamikhahmed.workers.dev</code> (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
+<p>2. <strong>Bundled LLM (opt-in)</strong> — Disabled by default in <code>js/config/llm-bundled.js</code>. If you enable it in Settings → Import, requests may go to the configured Cloudflare Worker proxy (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
 <p>3. <strong>Custom key (optional)</strong> — Paste your own API key or proxy URL in Settings → Import. Stored in localStorage on your device only.</p>
-<p>The Cloudflare Worker uses Workers AI (<code>@cf/meta/llama-3.1-8b-instruct</code>). If the proxy is unavailable, Smart Parser is used automatically.</p>
-<p><strong>Important:</strong> Bundled credentials are visible in the public PWA bundle. Treat Smart Import text as non-secret; do not paste full account numbers or passwords into Smart Add.</p>
+<p>If the proxy is unavailable or disabled, Smart Parser is used automatically.</p>
+<p><strong>Important:</strong> Do not paste full account numbers or passwords into Smart Add. Treat pasted text as non-secret.</p>
 <h2>Children</h2>
-<ul><li>VaultCap is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.</li>
-<p></ul></p>
+<ul><li>VaultCap is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.</li></ul>
 <h2>Contact</h2>
-<p>Built by Capricorn Systems — issues via the [VaultCap GitHub repository](https://github.com/shamikhahmed/VaultCap).</p>
+<p>Built by Capricorn Systems — issues via the <a href="https://github.com/shamikhahmed/VaultCap">VaultCap GitHub repository</a>.</p>
 </article>
 <footer>© 2026 Shamikh Ahmed · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
 

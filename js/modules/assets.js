@@ -57,6 +57,27 @@ const Assets = {
     ];
     const ci = document.getElementById('aChips');
     if (ci) ci.innerHTML = chips.map(([v,l,ic]) => `<div class="chip${v===f?' on':''}" onclick="S.aF='${v}';Assets.render()"><span class="chip-ic">${VC.icon(ic, 12)}</span>${l}</div>`).join('');
+    let smEl = document.getElementById('aSummary');
+    if (!smEl && ci && ci.parentElement) {
+      smEl = document.createElement('div');
+      smEl.id = 'aSummary';
+      ci.parentElement.insertBefore(smEl, ci);
+    }
+    const allAssets = (S.assets || []).filter(a => f === 'all' || a.assetType === f || (f === 'precious_metals' && a.assetType === 'precious'));
+    if (smEl) {
+      const withPnl = allAssets.filter(a => (a.purchasePrice > 0) && (a.currentValue > 0));
+      if (withPnl.length) {
+        const cur = S.user.currency || 'PKR';
+        const toB = (v, c) => typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.toBase(v || 0, c || cur) : (v || 0);
+        const fromB = (v, c) => typeof CurrencyEngine !== 'undefined' ? CurrencyEngine.fromBase(v || 0, c || cur) : (v || 0);
+        const totalCost = withPnl.reduce((s, a) => s + toB(a.purchasePrice, a.currency), 0);
+        const totalVal = withPnl.reduce((s, a) => s + toB(a.currentValue, a.currency), 0);
+        const pnl = totalVal - totalCost;
+        const pnlPct = totalCost ? (pnl / totalCost * 100).toFixed(1) : '0';
+        const pnlColor = pnl >= 0 ? 'var(--ok)' : 'var(--err)';
+        smEl.innerHTML = `<div class="widget" style="margin-bottom:12px"><div class="wh"><span class="vc-icon-wrap">${VC.icon('trending-up', 16)}</span>Portfolio P&amp;L</div><div style="display:flex;gap:0;flex-wrap:wrap"><div style="flex:1;min-width:80px;padding:4px 8px 4px 0;border-right:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Cost basis</div><div style="font-size:18px;font-weight:900;color:var(--text)" class="sens">${U.fmt(Math.round(fromB(totalCost, cur)))} <span style="font-size:11px;font-weight:400;color:var(--text3)">${cur}</span></div></div><div style="flex:1;min-width:80px;padding:4px 8px"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Current value</div><div style="font-size:18px;font-weight:900;color:var(--accent)" class="sens">${U.fmt(Math.round(fromB(totalVal, cur)))}</div></div><div style="flex:1;min-width:80px;padding:4px 8px;border-left:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Gain / Loss</div><div style="font-size:18px;font-weight:900;color:${pnlColor}" class="sens">${pnl >= 0 ? '+' : '−'}${U.fmt(Math.round(Math.abs(fromB(pnl, cur))))} <span style="font-size:11px">(${pnl >= 0 ? '+' : ''}${pnlPct}%)</span></div></div></div><div style="font-size:10px;color:var(--text3);padding:6px 14px 0;border-top:1px solid var(--border)">${withPnl.length} asset${withPnl.length !== 1 ? 's' : ''} with purchase price</div></div>`;
+      } else { smEl.innerHTML = ''; }
+    }
     let data = (S.assets||[]).filter(a => f==='all' || a.assetType===f || (f==='precious_metals' && a.assetType==='precious'));
     if(typeof ContextSwitcher!=='undefined'&&ContextSwitcher.get()!=='ALL'){data=data.filter(a=>(a.country||'').toUpperCase()===ContextSwitcher.get());}
     const el = document.getElementById('aItems'); if (!el) return;

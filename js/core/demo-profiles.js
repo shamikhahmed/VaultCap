@@ -128,9 +128,9 @@ function loadDemoProfile(type) {
   // Vehicles (1) — MOT due in 60 days
   S.vehicles.push({id:id(),make:'Toyota',model:'Hilux',year:'2022',regPlate:'EH22 KHN',fuel:'Diesel',mileage:38000,motExpiry:daysFromNow(60),taxExpiry:daysFromNow(28),insuranceExpiry:daysFromNow(92),insuranceProvider:'Admiral',createdAt:ts});
 
-  // SIMs (2)
-  S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',dataPlan:30,planType:'Monthly',createdAt:ts});
-  S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',dataPlan:10,planType:'Monthly',createdAt:ts});
+  // SIMs (2) — recharge + contract reminders for demo alerts
+  S.sims.push({id:id(),network:'O2',country:'GB',simType:'Physical',status:'Active',phone:'+44 7700 123456',dataPlan:30,planType:'Monthly',nextRecharge:daysFromNow(12),rechargeReminder:true,contractEnd:daysFromNow(45),contractReminder:true,createdAt:ts});
+  S.sims.push({id:id(),network:'Jazz',country:'PK',simType:'Physical',status:'Active',phone:'+92 300 1234567',dataPlan:10,planType:'Monthly',nextRecharge:daysFromNow(5),rechargeReminder:true,contractEnd:daysFromNow(22),contractReminder:true,createdAt:ts});
 
   // Expenses (4) — billed from linked bank/card where possible
   const cardBarclaysDebit = (S.cards || []).find(c => c.cardName === 'Barclays Visa Debit');

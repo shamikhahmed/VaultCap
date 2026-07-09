@@ -17,6 +17,7 @@ const Timeline={
       if(c.expiry){const[m,y]=c.expiry.split('/');addEv(new Date(2000+parseInt(y),parseInt(m)-1,1),c.cardName+' expires','card','card',()=>Cards.edit(c.id));}
     });
     S.sims.filter(s=>s.nextRecharge&&s.rechargeReminder).forEach(s=>{addEv(s.nextRecharge,s.network+' recharge','sim','smartphone',()=>Sims.edit(s.id));});
+    S.sims.filter(s=>s.contractEnd&&s.contractReminder!==false).forEach(s=>{addEv(s.contractEnd,s.network+' contract ends','sim','smartphone',()=>Sims.edit(s.id));});
     S.assets.filter(a=>a.renewalDate).forEach(a=>{addEv(a.renewalDate,a.name+' renewal','asset','shield',()=>Assets.edit(a.id));});
     S.assets.filter(a=>a.assetType==='property'&&a.mortgEnd).forEach(a=>{addEv(a.mortgEnd,a.name+' mortgage ends','mortgage','bank',()=>Assets.edit(a.id));});
     S.assets.filter(a=>a.assetType==='property'&&a.handoverDate).forEach(a=>{addEv(a.handoverDate,a.name+' handover','property','building',()=>Assets.edit(a.id));});
@@ -55,6 +56,7 @@ const Timeline={
     };
     S.cards.forEach(cv=>{if(cv.expiry){const[m,y]=cv.expiry.split('/');addEv(new Date(2000+parseInt(y),parseInt(m)-1,1),cv.cardName,'card');}});
     S.sims.filter(s=>s.nextRecharge).forEach(s=>addEv(s.nextRecharge,s.network,'smartphone'));
+    S.sims.filter(s=>s.contractEnd).forEach(s=>addEv(s.contractEnd,s.network+' contract','smartphone'));
     S.assets.filter(a=>a.renewalDate).forEach(a=>addEv(a.renewalDate,a.name,'shield'));
     S.gadgets.filter(g=>g.warranty).forEach(g=>addEv(g.warranty,g.name,'laptop'));
     S.expenses.filter(e=>e.renewalDate).forEach(e=>addEv(e.renewalDate,e.name,e.icon||'repeat'));

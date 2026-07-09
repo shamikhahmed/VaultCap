@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v57';
+const CACHE = 'vaultcap-v58';
 const ASSETS = [
   './',
   './index.html',

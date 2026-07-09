@@ -1,5 +1,18 @@
 # Changelog — VaultCap
 
+## 5.0.0 (2026-07-09) — Phase 2 product + soft launch prep
+
+### Product
+- Expenses: category bar chart alongside donut + monthly overview
+- Assets: portfolio P&L summary widget (cost basis vs current value)
+- Dashboard: per-currency cash breakdown in Money widget when multi-currency
+- SIMs: contract end date + alerts + timeline; demo recharge/contract reminders
+
+### Trust & QA
+- Privacy policy: delete-vault path, no-account copy, LLM opt-in only (Smart Assistant)
+- E2E fixes: demo card count (15), dashboard/FAB keyboard test uses full vault unlock
+- SW cache `vaultcap-v58`
+
 ## 4.9.5 (2026-07-04) — Recovery trust + shell polish
 
 - Forgot PIN: Capricorn Systems support only; zero-knowledge copy (we cannot open vault)
