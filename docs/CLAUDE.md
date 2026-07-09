@@ -4,7 +4,7 @@ This file provides guidance for AI coding assistants when working with code in t
 
 ## Running the App
 
-No build step — open `index.html` directly in a browser, or serve it with any static file server:
+No build required for dev — open `index.html` or serve static. **Ship:** `npm run build:js` (bundle → `dist/vaultcap.bundle.js`, gitignored; CI builds on Pages deploy).
 
 ```bash
 python3 -m http.server 8080
@@ -26,7 +26,7 @@ python3 -m http.server 8765
 
 Demo PIN: **123456**
 
-## Architecture (current — v4.9.x)
+## Architecture (current — v5.0.x)
 
 | Layer | Role |
 |-------|------|

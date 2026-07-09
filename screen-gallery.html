@@ -175,7 +175,7 @@
 <body>
   <header>
     <h1>VaultCap Screen Gallery</h1>
-    <p class="sub" id="stats">Loading manifest…</p>
+    <p class="sub" id="stats">Loading manifest… · v5.0.0</p>
     <div class="toolbar">
       <button type="button" class="btn active" data-viewport="mobile" id="btnMobile">Mobile</button>
       <button type="button" class="btn" data-viewport="desktop" id="btnDesktop">Browser</button>
@@ -556,7 +556,7 @@
     }
   </script>
   <script type="application/json" id="gallery-manifest-embedded">{
-  "generatedAt": "2026-07-03T15:29:17.361Z",
+  "generatedAt": "2026-07-09T13:01:33.541Z",
   "themes": [
     "dark",
     "light"
@@ -772,16 +772,7 @@
               "desktop": "light/desktop/hubs/finance-home.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/hubs/finance-home-scroll.png",
-              "desktop": "dark/desktop/hubs/finance-home-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/hubs/finance-home-scroll.png",
-              "desktop": "light/desktop/hubs/finance-home-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "vault-home",
@@ -940,10 +931,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/finance/expenses-scroll.png"
+              "mobile": "dark/mobile/finance/expenses-scroll.png",
+              "desktop": "dark/desktop/finance/expenses-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/expenses-scroll.png"
+              "mobile": "light/mobile/finance/expenses-scroll.png",
+              "desktop": "light/desktop/finance/expenses-scroll.png"
             }
           }
         },
@@ -960,14 +953,7 @@
               "desktop": "light/desktop/finance/bc.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/bc-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/bc-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "bonds",
@@ -1045,14 +1031,7 @@
               "desktop": "light/desktop/finance/tax.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/tax-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/tax-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "zakat",
@@ -1098,14 +1077,7 @@
               "desktop": "light/desktop/identity/documents.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/identity/documents-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/identity/documents-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "digital",
@@ -1700,10 +1672,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/settings/about-scroll.png"
+              "mobile": "dark/mobile/settings/about-scroll.png",
+              "desktop": "dark/desktop/settings/about-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/settings/about-scroll.png"
+              "mobile": "light/mobile/settings/about-scroll.png",
+              "desktop": "light/desktop/settings/about-scroll.png"
             }
           }
         }
@@ -1973,7 +1947,14 @@
               "desktop": "light/desktop/forms/expense-add.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/forms/expense-add-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/forms/expense-add-scroll.png"
+            }
+          }
         },
         {
           "id": "friend-add",

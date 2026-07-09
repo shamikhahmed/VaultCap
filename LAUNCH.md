@@ -2,7 +2,7 @@
 
 **Live app:** https://shamikhahmed.github.io/VaultCap  
 **Install guide:** [install.html](./install.html)  
-**Version:** 4.9.3
+**Version:** 5.0.0 · **Soft launch** (PWA + install link — no app stores, no public release tag)
 
 ## What “ready” means
 
@@ -10,8 +10,8 @@
 |---------|---------|--------|
 | Website (browser) | **Ship** | Already live via GitHub Pages |
 | Install as app (PWA) | **Ship** | iPhone, Android, Windows, Mac — see install.html |
-| Google Play | Prepare | Needs Play Console ($25) + TWA/PWA Builder package |
-| Apple App Store | Prepare | Needs Apple Developer ($99/yr) + native wrapper + review (often >7 days) |
+| Google Play | **Deferred** | User decision — skip this sprint |
+| Apple App Store | **Deferred** | User decision — skip this sprint |
 | Mac App Store | Later | Same Apple account; extra Mac packaging |
 | Microsoft Store | Prepare | PWA submit via Partner Center |
 
@@ -43,14 +43,14 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [x] PWA live on GitHub Pages (`npm run build:js` in Pages workflow)
 - [x] Bank↔card linking + catalog
 - [x] Dashboard / search / expense / loan link UX
-- [ ] `npm run test:e2e` green on `main`
-- [ ] `npm run audit:xss` green
+- [x] `npm run test:e2e` green on `main` (v5.0.0)
+- [x] `npm run audit:xss` green
 - [ ] Manual smoke: unlock, add bank+card, backup export, lock
 
 ### Day 2 — Install surface
 - [x] `install.html` — all platforms
-- [ ] Landing CTAs → Install + Open
-- [ ] Privacy / SECURITY links from install page
+- [x] Landing CTAs → Install + Open
+- [x] Privacy / SECURITY links from install page
 - [ ] Demo PIN only in demo vault (never production default)
 
 ### Day 3 — Security pass
@@ -60,9 +60,9 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [ ] Bundled LLM proxy: optional, documented, Smart Parser default
 
 ### Day 4 — Content + trust
-- [ ] Landing version badge matches VERSION.json
-- [ ] Screenshots current in manifest
-- [ ] Privacy policy accurate (local storage, no account)
+- [x] Landing version badge matches VERSION.json (5.0.0)
+- [x] Screenshots current in manifest (`npm run gallery` — 2026-07-09)
+- [x] Privacy policy accurate (local storage, no account, delete vault, LLM opt-in)
 
 ### Day 5 — Store prep (optional)
 - [ ] Create Google Play developer account
@@ -70,15 +70,15 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [ ] Package Android TWA via [PWA Builder](https://www.pwabuilder.com/) pointing at live URL
 - [ ] Capacitor iOS only if Apple account ready (was removed; re-add only for store)
 
-### Day 6 — Soft launch
+### Day 6 — Soft launch (current)
 - [ ] Share install.html with 5–10 testers
 - [ ] Collect: install friction, PIN clarity, backup understanding
 - [ ] Fix P0 bugs only
 
-### Day 7 — Public launch
+### Day 7 — Public launch (deferred)
 - [ ] Announce website + install guide
-- [ ] Pin GitHub release / tag `v4.9.3`
-- [ ] Submit Play/Apple packages if ready (review continues after launch)
+- [ ] Pin GitHub release / tag `v5.0.0` *(skipped for soft launch)*
+- [ ] App stores — deferred
 
 ---
 
@@ -88,6 +88,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 npm run build:js
 npm run audit:xss
 npm run test:e2e
+npm run gallery          # Regenerate screen gallery + embed manifest
 ```
 
 Deploy: push `main` → Pages workflow builds bundle and publishes.

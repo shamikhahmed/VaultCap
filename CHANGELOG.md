@@ -11,6 +11,7 @@
 ### Trust & QA
 - Privacy policy: delete-vault path, no-account copy, LLM opt-in only (Smart Assistant)
 - E2E fixes: demo card count (15), dashboard/FAB keyboard test uses full vault unlock
+- Screen gallery regen (89 screens × 2 themes × 2 viewports) + docs sync for v5.0.0
 - SW cache `vaultcap-v58`
 
 ## 4.9.5 (2026-07-04) — Recovery trust + shell polish

@@ -115,11 +115,20 @@ Built for Shamikh's life — designed for millions like it.
 
 **Demo PIN:** `123456` → Settings → Load Demo
 
-Try Smart Add, zakat auto-fill, document expiry timeline.
+Try Smart Add, expense category charts, asset P&L summary, multi-currency cash on dashboard, SIM contract reminders, zakat auto-fill.
 
 ---
 
-## Slide 12 — Close
+## Slide 12 — Analytics (v5.0)
+
+- **Expenses** — bar chart + donut + monthly/yearly totals
+- **Assets** — portfolio P&L widget + per-row gain/loss
+- **Cash** — per-currency breakdown on dashboard Money widget
+- **SIMs** — recharge + contract expiry in alerts & timeline
+
+---
+
+## Slide 13 — Close
 
 > *Your entire financial life. Encrypted. Offline. Always with you.*
 

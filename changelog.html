@@ -29,27 +29,31 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
   <a href="index.html">App</a>
   <a href="presentation.html">Presentation</a>
   <a href="pitch.html">Pitch</a>
+  <a href="screen-gallery.html">Gallery</a>
 </nav>
 <article><h1>Changelog — VaultCap</h1>
-<h2>4.3.6 (2026-06-16)</h2>
-<h3>Phase 2 — Quality</h3>
-<ul><li>Playwright smoke tests verified (lock screen, settings shell)</li>
-<li><code>privacy.html</code> / <code>changelog.html</code> landing pages from PRIVACY.md / CHANGELOG.md</li>
-<li>Docs truth pass: bundled LLM + Cloudflare worker proxy documented accurately</li>
-<p></ul></p>
-<h3>Smart Import / LLM</h3>
-<ul><li><strong>Bundled LLM</strong> via <code>js/config/llm-bundled.js</code> — proxy provider, no user key required</li>
-<li><strong>Cloudflare Worker</strong> at <code>https://VaultCap-llm-proxy.shamikhahmed.workers.dev</code> (<code>worker/llm-proxy.js</code>)</li>
-<li>Workers AI backend (<code>@cf/meta/llama-3.1-8b-instruct</code>) with Smart Parser offline fallback</li>
-<li>Optional custom API key override in Settings → Import</li>
-<p></ul></p>
-<h3>PWA & icons</h3>
-<ul><li>PNG maskable icons (192/512), service worker cache bump (<code>VaultCap-v20</code>)</li>
-<li>Offline Tesseract OCR for document capture</li>
-<p></ul></p>
-<h3>Docs</h3>
-<ul><li>PRIVACY.md, SECURITY.md, CHANGELOG.md aligned with shipped LLM architecture</li>
-<p></ul></p></article>
+<p>Full history: <a href="CHANGELOG.md">CHANGELOG.md</a> on GitHub.</p>
+<h2>5.0.0 (2026-07-09) — Phase 2 product + soft launch prep</h2>
+<h3>Product</h3>
+<ul>
+<li>Expenses: category bar chart alongside donut + monthly overview</li>
+<li>Assets: portfolio P&amp;L summary widget (cost basis vs current value)</li>
+<li>Dashboard: per-currency cash breakdown in Money widget when multi-currency</li>
+<li>SIMs: contract end date + alerts + timeline; demo recharge/contract reminders</li>
+</ul>
+<h3>Trust &amp; QA</h3>
+<ul>
+<li>Privacy policy: delete-vault path, no-account copy, LLM opt-in only (Smart Assistant)</li>
+<li>E2E fixes: demo card count, dashboard/FAB keyboard test</li>
+<li>SW cache <code>vaultcap-v58</code></li>
+</ul>
+<h2>4.9.5 (2026-07-04) — Recovery trust + shell polish</h2>
+<ul>
+<li>Forgot PIN: zero-knowledge recovery copy; Vault ID on Settings → About</li>
+<li>Footer safe-area + More menu header fixes</li>
+<li>SW cache <code>vaultcap-v57</code></li>
+</ul>
+</article>
 <footer>© 2026 Shamikh Ahmed · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
 
   <canvas id="cap-scene" class="cap-scene-canvas cap-scene-canvas--subtle" aria-hidden="true"></canvas>

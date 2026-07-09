@@ -1,6 +1,6 @@
 # VaultCap UI Audit — 250-Point Checklist
 
-**Version:** 4.9.2 · **Audited:** 2026-07-02  
+**Version:** 5.0.0 · **Audited:** 2026-07-02 (gallery regen 2026-07-09)
 **Legend:** ✅ Pass · ⚠️ Partial · ❌ Fail
 
 ## Summary
@@ -312,7 +312,7 @@
 | 10.14 | iOS AppIcon asset catalog | ✅ |
 | 10.15 | npm run icons:generate | ✅ |
 | 10.16 | npm run icons:ios | ✅ |
-| 10.17 | Version sync VER/manifest/SW | ⚠️ |
+| 10.17 | Version sync VER/manifest/SW | ✅ v5.0.0 |
 | 10.18 | Build cache bust ?v= | ✅ |
 | 10.19 | Service worker unregister on bump | ✅ |
 | 10.20 | Render ephemeral FS note | ✅ |

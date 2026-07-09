@@ -138,7 +138,7 @@ npm run serve       # http://127.0.0.1:8765
 
 **GitHub Pages / deploy:** push to `main` runs `.github/workflows/pages.yml` (`npm run build:js` then publish). Local: always `npm run build:js` before serve — `index.html` loads `dist/vaultcap.bundle.js`.
 
-**Screenshots:** `npm run capture:screenshots` then commit `assets/screenshots/` (PWA manifest + OG images).
+**Screenshots:** `npm run gallery` (or `npm run capture:screenshots`) then commit `assets/screenshots/` + `screen-gallery.html` embed. Viewer: [screen-gallery.html](screen-gallery.html) or `npm run gallery:view`.
 
 ---
 

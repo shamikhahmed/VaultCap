@@ -29,7 +29,7 @@
 - [x] **Cash** — multi-currency breakdown on dashboard Money widget
 - [x] **SIMs** — contract expiry field + alerts + timeline + demo data
 
-Each feature: `feat/<name>` branch → implement → e2e → merge
+- [x] Gallery regen for v5.0.0 Phase 2 UI (`npm run gallery`)
 
 ## Deferred
 

@@ -466,7 +466,23 @@ Smart Add uses Smart Parser (optional LLM) to detect what you're describing and 
 - "Netflix £17.99 monthly subscription" → opens Expense form pre-filled
 - "My Jazz SIM +92 300 1234567" → opens SIM form pre-filled
 
-**Requires:** optional LLM API key key set in Settings → Smart Import. Falls back to pattern matching if no key is set.
+**Requires:** Smart Parser runs offline by default. Optional LLM in Settings → Import (opt-in). Falls back to pattern matching if LLM disabled or unavailable.
+
+---
+
+## Analytics & reminders (v5.0)
+
+### Expense charts
+Finance → Expenses shows monthly/yearly totals, top categories, a **category bar chart**, and a donut when you have multiple categories. Paused subscriptions are excluded from totals.
+
+### Asset P&L
+Property & assets → each row with purchase price + current value shows gain/loss badge. Filter chips show a **Portfolio P&L** summary (cost basis, current value, combined gain/loss).
+
+### Cash — multi-currency
+Finance → Cash lists per-location balances. Dashboard **Money** widget shows combined cash total; when you hold more than one currency, a per-currency breakdown appears under Cash.
+
+### SIM reminders
+Identity → SIM cards → edit → **Recharge Reminder** (next date + enable) and **Contract / Plan Expiry** (contract end + alert). Surfaced in Alerts, Timeline, and Reminders when within threshold.
 
 ---
 
