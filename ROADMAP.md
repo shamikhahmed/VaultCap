@@ -19,7 +19,7 @@ Current shipped state. See `CHANGELOG.md` for how we got here.
 ## Next (ordered)
 1. Phase 1 launch checklist (brain note): full e2e re-run, soft launch install link to select testers
 2. Review 4 remote meridian/* beta branches — merge or delete (beta-complete, beta-readiness, dashboard-spacing, pin-recovery-fix)
-3. Align script names to Cap Standard contract (`verify` alias)
+3. Align script names to Cap Standard contract (`verify` alias) — DONE 2026-07-11
 
 ## Later
 - App Store / Play / MS Store — deferred by decision (PWA + install.html only)

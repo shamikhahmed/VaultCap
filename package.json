@@ -13,13 +13,14 @@
     "test:e2e:safari": "playwright test --project=webkit-iphone",
     "test:e2e:ui": "playwright test --ui",
     "capture:screenshots": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js",
-    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view → http://127.0.0.1:8765/screen-gallery.html'",
+    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view \u2192 http://127.0.0.1:8765/screen-gallery.html'",
     "gallery:embed": "node scripts/embed-gallery-manifest.mjs",
     "gallery:open": "open screen-gallery.html",
     "gallery:view": "python3 -m http.server 8765",
     "icons:generate": "node scripts/generate-icons.mjs",
     "icons:ios": "node scripts/generate-ios-icons.mjs",
-    "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh"
+    "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh",
+    "verify": "npm run build:js && npm run audit:xss && npm run test:e2e"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0"
