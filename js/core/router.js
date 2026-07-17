@@ -123,7 +123,7 @@ const R = {
               ? 'You have never backed up your vault. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>'
               : `Last backup was ${_days} days ago. <button type="button" class="cpbtn" onclick="ExIm.export(\'vos\')">Backup Now</button>`,
             'warn', 8000
-          );
+          , true);
         }
       }
     }, 3000);

@@ -45,7 +45,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 ## Security
 
 - **AES-256-GCM** encryption via Web Crypto API
-- **PBKDF2** key derivation (310,000 iterations, SHA-256)
+- **PBKDF2** key derivation (600,000 iterations, SHA-256)
 - **IndexedDB** encrypted storage — vault ciphertext stays on device (optional FX/metal rates + logo proxy are opt-in network)
 - PIN brute-force lockout (30s → 5 min → vault wipe)
 - **Decoy PIN** — shows empty vault to protect under duress

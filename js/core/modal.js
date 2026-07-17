@@ -2,15 +2,26 @@
 /* Toast, Modal — UI dialog layer */
 
 const Toast = {
-  show(msg, type = 'info', dur = 3200) {
+  /**
+   * @param {string} msg
+   * @param {string} [type]
+   * @param {number} [dur]
+   * @param {boolean|object} [opts] - true/{html:true} = trusted HTML (caller must escape user data)
+   */
+  show(msg, type = 'info', dur = 3200, opts) {
     const w = document.getElementById('toastWrap');
+    if (!w) return;
     const t = document.createElement('div');
     if (type === 'warn') type = 'warning';
     const icons = { success:'target', error:'cross', warning:'bell', info:'search' };
     const cls   = { success:'ok', error:'err', warning:'wrn', info:'inf' };
     t.className = `toast ${cls[type] || 'inf'}`;
     const ic = (typeof VC !== 'undefined' ? VC.icon(icons[type] || 'search', 16) : '');
-    t.innerHTML = `<span class="chip-ic">${ic}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${msg}</span><button type="button" onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0">×</button>`;
+    const allowHtml = opts === true || (opts && opts.html === true);
+    const body = allowHtml
+      ? String(msg ?? '')
+      : (typeof escHtml === 'function' ? escHtml(msg) : String(msg ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+    t.innerHTML = `<span class="chip-ic">${ic}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${body}</span><button type="button" aria-label="Dismiss" onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0;min-width:44px;min-height:44px">×</button>`;
     w.appendChild(t);
     setTimeout(() => { t.style.animation = 'slideIn .25s reverse'; setTimeout(() => t.remove(), 240); }, dur);
   }

@@ -175,7 +175,7 @@ The Recovery Center shows a health score (0–100) based on how recently you bac
 
 Your PIN is used as the key for **AES-256-GCM** encryption — the same standard used by banks and governments worldwide.
 
-Key derivation uses **PBKDF2 with 310,000 iterations and SHA-256** — making brute-force attacks computationally expensive even if someone obtains your encrypted data.
+Key derivation uses **PBKDF2 with 600,000 iterations and SHA-256** — making brute-force attacks computationally expensive even if someone obtains your encrypted data.
 
 Each backup file uses a unique random **salt** and **IV** — so two exports of the same vault produce completely different encrypted files.
 

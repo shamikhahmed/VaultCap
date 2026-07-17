@@ -62,7 +62,7 @@ Each data module follows this pattern:
 
 - **PIN**: 6-digit; verified by `PIN.verify()` (`app.js:751`); lockout after failed attempts
 - **Decoy mode**: entering `S.decoyPin` loads `loadDecoyData()` — fake data shown instead of real vault
-- **Encryption**: `Crypto` object (`app.js:439`) uses Web Crypto API — PBKDF2 key derivation (310 000 iterations, SHA-256) → AES-256-GCM; used for `.vos` encrypted backup exports
+- **Encryption**: `Crypto` object (`app.js:439`) uses Web Crypto API — PBKDF2 key derivation (600 000 iterations, SHA-256) → AES-256-GCM; used for `.vos` encrypted backup exports
 - **Panic lock**: `PanicLock.trigger()` — immediately locks and blanks `.sens` elements
 - **Privacy mode**: adds `privacy` class to `<body>`; `.sens` elements are blurred
 - **Auto-lock**: triggered on `visibilitychange` when `S.autoLock` is true

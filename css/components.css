@@ -83,11 +83,12 @@ input[type="number"], input.num-inp { font-variant-numeric: tabular-nums; letter
 .fmi .vc-icon { flex-shrink: 0; }
 .icb .vc-icon { pointer-events: none; color: inherit; }
 .icb {
-  width: 36px; height: 36px; min-width: 36px; min-height: 36px;
+  width: 44px; height: 44px; min-width: 44px; min-height: 44px;
   border-radius: var(--rsm); background: var(--glass2);
   border: 1px solid var(--border); color: var(--text); font-size: 13px; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center;
   transition: var(--t); flex-shrink: 0;
+  touch-action: manipulation;
 }
 .icb:hover              { background: var(--glass3); color: var(--text); border-color: var(--border2); }
 .icb.fav.on             { color: var(--warn); }
@@ -640,7 +641,7 @@ body:not(.light) .u-highlight-card {
   font-size: 18px;
 }
 .key.act:active { background: rgba(255,255,255,0.1) !important; transform: scale(0.9) !important; }
-.key-sub { font-size: 8px; letter-spacing: 1.5px; color: var(--text3); margin-top: 1px; font-weight: 600; }
+.key-sub { font-size: 11px; letter-spacing: 1px; color: var(--text3); margin-top: 1px; font-weight: 600; }
 @media (max-width: 375px) { .keypad { max-width: 252px !important; gap: 8px !important; } .key { height: 58px !important; font-size: 19px !important; } }
 @media (max-width: 280px)  { .keypad { max-width: 210px !important; gap: 6px !important; } .key { height: 50px !important; font-size: 16px !important; } }
 @media (orientation: landscape) and (max-height: 500px) { .keypad { max-width: 240px; gap: 6px !important; } .key { height: 52px !important; } }

@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v59';
+const CACHE = 'vaultcap-v60';
 const ASSETS = [
   './',
   './index.html',
@@ -65,14 +65,15 @@ self.addEventListener('fetch', (e) => {
   if (PRECACHE.has(url.href)) {
     e.respondWith(
       caches.match(e.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(e.request).then((res) => {
+        const net = fetch(e.request).then((res) => {
           if (res && res.ok) {
             const copy = res.clone();
             caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
           }
           return res;
-        }).catch(() => caches.match('./index.html'));
+        }).catch(() => cached || caches.match('./index.html'));
+        // Stale-while-revalidate: return cache immediately when present
+        return cached || net;
       })
     );
     return;

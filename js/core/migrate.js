@@ -9,7 +9,7 @@ const Migrate = {
     if (!stored) return;
     const sv = stored.schemaVersion || 1;
     if (sv >= SCHEMA_VERSION) return;
-    console.log(`VaultCap: migrating schema v${sv} → v${SCHEMA_VERSION}`);
+    if(window.__VC_DEBUG)console.log(`VaultCap: migrating schema v${sv} → v${SCHEMA_VERSION}`);
     if (sv < 2 && !stored.modules) {
       stored.modules = { banks:true, cards:true, investments:true, sims:true, assets:true, expenses:true, emails:true, gadgets:true, digital:true, import:true, timeline:true, security:true };
     }
@@ -135,7 +135,7 @@ const Migrate = {
         localStorage.setItem('vo_gold_migrated', '1');
       } catch(e) {}
       stored.schemaVersion = 10;
-      console.log('[VaultCap] Migrated schema v9 → v10: vehicles/gadgets/gold consolidated into assets');
+      if(window.__VC_DEBUG)console.log('[VaultCap] Migrated schema v9 → v10: vehicles/gadgets/gold consolidated into assets');
     }
     if (sv < 11) {
       try {
@@ -156,7 +156,7 @@ const Migrate = {
           }));
         }
         localStorage.setItem('vo_family_migrated', '1');
-        console.log('[VaultCap] Migrated family data v10 → v11');
+        if(window.__VC_DEBUG)console.log('[VaultCap] Migrated family data v10 → v11');
       } catch(e) {}
       stored.schemaVersion = 11;
     }
@@ -170,7 +170,7 @@ const Migrate = {
         }));
       });
       stored.schemaVersion = 12;
-      console.log('[VaultCap] Migrated schema v11 → v12: owners array backfilled');
+      if(window.__VC_DEBUG)console.log('[VaultCap] Migrated schema v11 → v12: owners array backfilled');
     }
     if (sv < 13) {
       const _now13 = new Date().toISOString();
@@ -263,7 +263,7 @@ const Migrate = {
         if (stored.family.members) stored.family.members = stored.family.members.map(m => ({ ...m, banks: [], cards: [], docs: [], cash: [] }));
       }
       stored.schemaVersion = 13;
-      console.log('[VaultCap] Migrated schema v12 → v13: family members flattened into S.familyMembers');
+      if(window.__VC_DEBUG)console.log('[VaultCap] Migrated schema v12 → v13: family members flattened into S.familyMembers');
     }
     if (stored.cards) {
       stored.cards = stored.cards.map(c => {
@@ -355,7 +355,7 @@ const Migrate = {
       if (store.family.head) store.family.head = { ...store.family.head, banks: [], cards: [], docs: [], cash: [] };
       if (store.family.members) store.family.members = store.family.members.map(m => ({ ...m, banks: [], cards: [], docs: [], cash: [] }));
     }
-    console.log('[VaultCap] Live migration: family → familyMembers (' + newMembers.length + ' members)');
+    if(window.__VC_DEBUG)console.log('[VaultCap] Live migration: family → familyMembers (' + newMembers.length + ' members)');
   }
 };
 

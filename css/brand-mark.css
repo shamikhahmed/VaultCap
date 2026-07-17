@@ -4,9 +4,9 @@
   flex-shrink: 0;
   object-fit: contain;
 }
-.vc-mark--sm { width: 28px; height: 28px; border-radius: 7px; }
-.vc-mark--md { width: 40px; height: 40px; border-radius: 10px; }
-.vc-mark--lg { width: 72px; height: 72px; border-radius: 16px; }
+
+
+
 .vc-mark--xl {
   width: 90px; height: 90px; border-radius: 28px;
   box-shadow: 0 20px 60px rgba(255, 255, 255, 0.12);

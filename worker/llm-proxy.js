@@ -1,7 +1,7 @@
 /**
  * VaultOS Privacy Proxy — Cloudflare Worker
  * - POST /parse  — LLM parse (auth required)
- * - GET  /logo?domain=hbl.com&sz=128 — bank logo proxy (no auth)
+ * - GET  /logo?domain=hbl.com&sz=128 — bank logo proxy (no auth, origin allowlisted)
  *   Server fetches Google/DDG/Clearbit; client never contacts those hosts.
  *
  * Deploy: cd worker && npx wrangler deploy
@@ -14,13 +14,31 @@ If nothing found return [].`;
 
 const DOMAIN_RE = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/i;
 
+const ORIGIN_ALLOW = [
+  'https://shamikhahmed.github.io',
+  'http://127.0.0.1:8765',
+  'http://localhost:8765',
+  'http://127.0.0.1:5500',
+  'http://localhost:5500',
+];
+
+function corsHeaders(request) {
+  const origin = request.headers.get('Origin') || '';
+  const allowed =
+    ORIGIN_ALLOW.includes(origin) ||
+    /^https:\/\/[a-z0-9-]+\.pages\.dev$/i.test(origin) ||
+    /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/i.test(origin);
+  return {
+    'Access-Control-Allow-Origin': allowed ? origin : ORIGIN_ALLOW[0],
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Vary': 'Origin',
+  };
+}
+
 export default {
   async fetch(request, env, ctx) {
-    const cors = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    };
+    const cors = corsHeaders(request);
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors });
 
     const url = new URL(request.url);
@@ -29,7 +47,7 @@ export default {
     }
 
     if (request.method === 'GET' && url.pathname === '/logo') {
-      return handleLogo(url, cors, env, ctx);
+      return handleLogo(request, url, cors, env, ctx);
     }
 
     if (request.method !== 'POST' || url.pathname !== '/parse') {
@@ -69,19 +87,21 @@ export default {
   },
 };
 
-async function handleLogo(url, cors, env, ctx) {
+async function handleLogo(request, url, cors, env, ctx) {
   const domain = (url.searchParams.get('domain') || '').trim().toLowerCase();
   const sz = Math.min(256, Math.max(16, parseInt(url.searchParams.get('sz') || '128', 10) || 128));
   if (!domain || domain.length > 200 || !DOMAIN_RE.test(domain)) {
     return json({ error: 'invalid domain' }, cors, 400);
   }
 
-  const cacheKey = new Request(`https://logo-cache.vaultcap.internal/${domain}?sz=${sz}`);
+  const acao = cors['Access-Control-Allow-Origin'];
+  const cacheKey = new Request(`https://logo-cache.vaultcap.internal/v2/${domain}?sz=${sz}`);
   const cache = caches.default;
   const cached = await cache.match(cacheKey);
   if (cached) {
     const h = new Headers(cached.headers);
-    h.set('Access-Control-Allow-Origin', '*');
+    h.set('Access-Control-Allow-Origin', acao);
+    h.set('Vary', 'Origin');
     h.set('X-Logo-Cache', 'HIT');
     return new Response(cached.body, { status: cached.status, headers: h });
   }
@@ -107,7 +127,8 @@ async function handleLogo(url, cors, env, ctx) {
         headers: {
           'Content-Type': ct.includes('image') ? ct : 'image/png',
           'Cache-Control': 'public, max-age=604800, immutable',
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': acao,
+          'Vary': 'Origin',
           'X-Logo-Cache': 'MISS',
           'X-Logo-Source': new URL(src).hostname,
         },

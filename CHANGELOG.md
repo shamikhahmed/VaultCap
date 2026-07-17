@@ -16,6 +16,18 @@
 - Removed iCloud duplicate junk files
 
 ### Added
+
+### Hardening (same release)
+- Toast escapes user text by default (XSS); HTML undo toasts opt-in
+- Drop owner name from `vos_prefs`; widget counts only while unlocked
+- LLM: proxy-only (no direct Anthropic/OpenAI from browser)
+- Worker CORS origin allowlist; logo cache v2
+- PIN keypad radiogroup a11y; `.icb` 44px touch; `.key-sub` 11px
+- Plaintext JSON/CSV export confirmation warning
+- SW v60 stale-while-revalidate for precache
+- Dead JS removed: schema.js, cap-validators, capricorn-deck, cap-desktop-nav
+- Deduped GSAP loads on pitch/presentation; package.json cleanup
+
 - `js/core/bank-catalog.js` — expanded PK/UK/UAE/US bank domain map
 - `npm run logos:fetch` — build-time logo downloader
 - SW v59 bank-logo cache-first

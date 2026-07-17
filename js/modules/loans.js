@@ -212,7 +212,7 @@ const Loans = {
         const friendId = U.id();
         S.friends.push({ id: friendId, name: person, createdAt: new Date().toISOString() });
         Store.save();
-        Toast.show(`${person} added to Friends. <button type="button" class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000);
+        Toast.show(`${typeof escHtml==='function'?escHtml(person):person} added to Friends. <button type="button" class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000, true);
       }
       promptAddAnother('Loan', `Loans.openAdd('${type}')`);
     }

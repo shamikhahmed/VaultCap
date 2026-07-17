@@ -213,7 +213,7 @@ const Banks={
     Activity.log((editId?'Edited':'Added')+' bank',name);Store.save();Modal.close();this.render();Toast.show(`${editId?'Updated':'Added'}: ${name}`,'success');
     if(linkedN>0)Toast.show(`Linked ${linkedN} card${linkedN===1?'':'s'} to ${name}`,'info',3500);
     if(typeof Haptic!=='undefined')Haptic.save();
-    if(!editId){promptAddAnother('Bank','Banks.openAdd');setTimeout(()=>Toast.show(`Added ${name} — <button type="button" class="cpbtn" onclick="Cards.openAdd()">Add a card for this bank?</button>`,'info',6000),800);}
+    if(!editId){promptAddAnother('Bank','Banks.openAdd');setTimeout(()=>Toast.show(`Added ${typeof escHtml==='function'?escHtml(name):name} — <button type="button" class="cpbtn" onclick="Cards.openAdd()">Add a card for this bank?</button>`,'info',6000, true),800);}
   },
   edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('Edit Bank',this.form(b),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Banks.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
   detail(id){
@@ -235,6 +235,6 @@ const Banks={
     S.banks=S.banks.filter(x=>x.id!==id);
     if(typeof Haptic!=='undefined')Haptic.del();
     Activity.log('Trashed bank',b.bankName);Store.save();if(fm)Modal.close();this.render();
-    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
   }
 };

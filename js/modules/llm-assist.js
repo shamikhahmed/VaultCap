@@ -128,41 +128,9 @@ const LlmAssist = {
       if (j.items) return JSON.stringify(j.items);
       throw new Error('proxy empty');
     }
-    const sys = 'Extract financial records from user text. Return ONLY valid JSON array. Each item: {"type":"bank|card|loan|document|cash|investment|gold|bc|bond|expense|sim|email","confidence":0-1,"data":{...}}. Use snake_case field names matching: bankName,balance,iban,cardName,last4,expiry,person,amount,dueDate,network,phone,label,investmentName,broker,name. If nothing found return [].';
-    if (cfg.provider === 'openai') {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + cfg.apiKey },
-        body: JSON.stringify({
-          model: cfg.model || 'gpt-4o-mini',
-          messages: [{ role: 'system', content: sys }, { role: 'user', content: text }],
-          temperature: 0.1,
-        }),
-      });
-      if (!res.ok) throw new Error('openai ' + res.status);
-      const j = await res.json();
-      return j.choices?.[0]?.message?.content || '[]';
-    }
-    // Anthropic direct (browser) — works with sk-ant-* keys only
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': cfg.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: cfg.model,
-        max_tokens: 2048,
-        system: sys,
-        messages: [{ role: 'user', content: text }],
-      }),
-    });
-    if (!res.ok) throw new Error('anthropic ' + res.status);
-    const j = await res.json();
-    const block = (j.content || []).find((b) => b.type === 'text');
-    return block?.text || '[]';
+    // Direct browser LLM calls removed — keys must stay off the page (XSS risk + CSP).
+    // Configure proxyUrl in Settings / llm-bundled.js.
+    throw new Error('LLM proxy required — set Smart Assistant proxy URL in Settings');
   },
 
   _normalize(raw) {

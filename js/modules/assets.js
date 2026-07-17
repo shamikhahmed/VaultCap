@@ -265,6 +265,6 @@ const Assets = {
     S.assets = S.assets.filter(x => x.id!==id);
     Activity.log('Trashed asset', a.name);
     Store.save(); if (fm) Modal.close(); this.render();
-    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`, 'info', 6000);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
   }
 };

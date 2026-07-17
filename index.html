@@ -147,22 +147,22 @@
       <div class="lk-brand-name">VaultCap</div>
     </div>
     <div id="lkSub" class="lk-sub">Enter your PIN</div>
-    <div class="pin-dots" id="pdots">
-      <div class="pd" id="pd0"></div>
-      <div class="pd" id="pd1"></div>
-      <div class="pd" id="pd2"></div>
-      <div class="pd" id="pd3"></div>
-      <div class="pd" id="pd4"></div>
-      <div class="pd" id="pd5"></div>
+    <div class="pin-dots" id="pdots" role="group" aria-label="PIN progress">
+      <div class="pd" id="pd0" aria-hidden="true"></div>
+      <div class="pd" id="pd1" aria-hidden="true"></div>
+      <div class="pd" id="pd2" aria-hidden="true"></div>
+      <div class="pd" id="pd3" aria-hidden="true"></div>
+      <div class="pd" id="pd4" aria-hidden="true"></div>
+      <div class="pd" id="pd5" aria-hidden="true"></div>
     </div>
-    <div class="pin-msg" id="pmsg" aria-live="polite"></div>
+    <div class="pin-msg" id="pmsg" role="status" aria-live="polite" aria-atomic="true"></div>
     <!-- kept for JS compatibility -->
     <div class="lk-bar" id="lkBar"><div class="lk-fill" id="lkFill"></div></div>
   </div>
 
   <!-- BOT: keypad + hint -->
   <div class="lk-bot">
-    <div class="keypad">
+    <div class="keypad" role="group" aria-label="PIN keypad">
       <button class="key" onclick="PIN.in('1')" aria-label="1">1</button>
       <button class="key" onclick="PIN.in('2')" aria-label="2"><span>2</span><span class="key-sub">ABC</span></button>
       <button class="key" onclick="PIN.in('3')" aria-label="3"><span>3</span><span class="key-sub">DEF</span></button>

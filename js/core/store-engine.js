@@ -43,9 +43,10 @@ const Store = {
 
   _savePrefs() {
     try {
+      // Never store owner name in plaintext prefs (readable while locked)
       localStorage.setItem('vos_prefs', JSON.stringify({
         theme: S.user.theme, fontScale: S.fontScale, highContrast: S.highContrast,
-        name: S.user.name, hasVault: true, reduceMotion: S.reduceMotion, largeText: S.largeText
+        hasVault: true, reduceMotion: S.reduceMotion, largeText: S.largeText
       }));
     } catch(e) {}
   },
@@ -104,6 +105,14 @@ const Store = {
 
   _saveWidgetSnapshot() {
     try {
+      // Counts are privacy-sensitive while locked — only store locked flag + timestamp unless unlocked
+      if (!S.unlocked) {
+        localStorage.setItem('VaultCap_widget', JSON.stringify({
+          locked: true,
+          updatedAt: new Date().toISOString(),
+        }));
+        return;
+      }
       const now = Date.now();
       const in30 = now + 30 * 24 * 60 * 60 * 1000;
       const expiringCount = [
@@ -122,7 +131,7 @@ const Store = {
       ].length;
 
       localStorage.setItem('VaultCap_widget', JSON.stringify({
-        locked: !S.unlocked,
+        locked: false,
         bankCount: (S.banks || []).length,
         cardCount: (S.cards || []).length,
         documentCount: (S.documents || []).length,

@@ -647,14 +647,14 @@ const Settings={
         <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Copy and store this key somewhere safe. It can reset your PIN.</p>
         <div id="mk-display" style="font-family:var(--mono);font-size:1rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`);
+      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`, true);
   },
   setDecoyPIN(){
     Modal.open('Set Decoy PIN',`
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">When someone enters this PIN, they see a convincing fake vault with realistic-looking data. Your real data stays hidden. Perfect for coercion or border device inspections.</p>
     <div class="fg"><label class="fl">Decoy PIN (6 digits, must differ from real PIN)</label><input class="inp" id="dp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
     <div class="ferr" id="dp-err"></div>`,
-    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`);
+    `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>${S.decoyPin?'<button type="button" class="btn btn-d btn-sm" onclick="S.decoyPin=\'\';Store.save();Modal.close();Settings.refresh();Toast.show(\'Decoy PIN removed\')">Remove</button>':''}<button type="button" class="btn btn-p" onclick="Settings.saveDecoy()">Set Decoy PIN</button>`, true);
   },
   saveDecoy(){
     const p=document.getElementById('dp-pin').value;
@@ -753,6 +753,7 @@ const ExIm={
       });
       return;
     }
+    if (!window.__vos_confirm('WARNING: This exports your vault UNENCRYPTED. Anyone with the file can read every bank, card, password hint, and document. Prefer encrypted .vos backup instead. Continue?')) return;
     const data={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     S.user.lastBackup=new Date().toISOString();Store.save();
     if(fmt==='csv'){
@@ -1962,7 +1963,7 @@ const RecoveryCenter={
         <div style="font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
         <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.6">Use <strong>Forgot PIN → Master Key</strong> on the lock screen.</p>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`);
+      `<button type="button" class="btn btn-g" onclick="navigator.clipboard.writeText('${fmt.replace(/'/g,"\\'")}').then(()=>Toast.show('Copied','success'))">Copy</button><button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`, true);
   }
 };
 
@@ -1974,7 +1975,7 @@ const SelfCheck={
     this.checkCriticalDOM();this.checkDataIntegrity();
     this.autoRepair();this.lastCheck=new Date();
     if(this.errors.length)console.warn('[VaultCap SelfCheck]',this.errors);
-    if(this.fixes.length)console.info('[VaultCap AutoFixed]',this.fixes);
+    if(this.fixes.length)if(window.__VC_DEBUG)console.info('[VaultCap AutoFixed]',this.fixes);
     return{errors:this.errors,fixes:this.fixes};
   },
   checkStateArrays(){
@@ -2093,7 +2094,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save(, true);Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
@@ -2311,7 +2312,7 @@ const VaultHealthCenter = {
         <div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.8">
           • Your PIN never leaves your device — it is used locally as an encryption key<br>
           • Encryption algorithm: <strong>AES-256-GCM</strong> — the same standard used by banks and governments<br>
-          • Key derivation: <strong>PBKDF2 with 310,000 iterations</strong> — makes brute-force attacks computationally expensive<br>
+          • Key derivation: <strong>PBKDF2 with 600,000 iterations</strong> — makes brute-force attacks computationally expensive<br>
           • Each backup uses a unique random salt and IV — two backups of the same data produce completely different encrypted files<br>
           • No server ever receives your data, PIN, or encryption key<br><br>
           <em style="color:var(--text3)">In simple terms: your data is scrambled using your PIN, and only your PIN can unscramble it.</em>
