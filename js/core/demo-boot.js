@@ -11,6 +11,7 @@ async function seedDemoVault() {
   try {
     await VaultDB.wipe();
   } catch (e) { /* non-fatal */ }
+  VaultDB.setAuthMode('pin');
   await VaultDB.init(VaultProfiles.DEMO_PIN);
   await VaultDB.save(Store._data());
   Store._savePrefs();

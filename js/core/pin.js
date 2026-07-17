@@ -150,6 +150,11 @@ const PIN = {
       return { kind: 'real' };
     }
 
+    // Passphrase-mode vaults must not unlock via 6-digit keypad
+    if (typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'passphrase') {
+      return null;
+    }
+
     // ── Migration path: old localStorage data ──────────────────────────────
     const oldData = Store.loadRaw();
     const hasVaultDB = await VaultDB.isInitialized();
@@ -186,6 +191,54 @@ const PIN = {
     Object.assign(S, result.data);
     return { kind: 'real' };
   },
+
+  submitPassphrase() {
+    if (Date.now() < S.lockedUntil) { this.showLo(); return; }
+    const inp = document.getElementById('ppUnlockInp');
+    const msg = document.getElementById('pmsg');
+    const pp = (inp && inp.value) || '';
+    if (pp.length < 12) {
+      if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Enter your vault passphrase'; }
+      return;
+    }
+    if (msg) { msg.className = 'pin-msg'; msg.textContent = 'Verifying…'; }
+    this._verifyPassphrase(pp).then(result => {
+      const kind = (result && typeof result === 'object') ? result.kind : result;
+      if (kind === 'real') {
+        S.fails = 0; S.lockedUntil = 0;
+        try { LockoutStore.clear(); } catch (e) {}
+        Store.save();
+        if (inp) inp.value = '';
+        setTimeout(() => R.unlock(), 180);
+      } else if (kind === 'decoy') {
+        applyDecoyUnlock(result && result.data);
+      } else {
+        S.fails++;
+        if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Wrong passphrase'; }
+        LockoutStore.save(S.fails, S.lockedUntil);
+        if (S.fails >= 5) {
+          S.lockedUntil = Date.now() + 300000;
+          this.countdown(300);
+        } else if (S.fails >= 3) {
+          S.lockedUntil = Date.now() + 30000;
+          this.countdown(30);
+        }
+        if (VaultDB.sessionKey) Store.save();
+        Activity.log('Failed passphrase #' + S.fails);
+      }
+    }).catch(() => {
+      if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Error — try again'; }
+    });
+  },
+
+  async _verifyPassphrase(pp) {
+    const result = await VaultDB.tryPin(pp);
+    if (!result) return null;
+    if (result.slot === 'decoy') return { kind: 'decoy', data: result.data };
+    Object.assign(S, result.data);
+    return { kind: 'real' };
+  },
+
   countdown(s) {
     let r = s;
     const bar  = document.getElementById('lkBar');

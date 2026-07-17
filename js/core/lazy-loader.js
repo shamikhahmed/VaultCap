@@ -50,6 +50,8 @@ const VaultLazy = (() => {
       );
     },
     tesseract() { return loadLocal('vendor/tesseract.min.js'); },
+    async smartDb() { return loadLocal('js/core/smart-db.js'); },
+    tax() { return loadLocal('js/modules/tax.js'); },
     async llmStack() {
       await loadLocal('js/config/llm-bundled.js');
       await loadLocal('js/modules/llm-assist.js');
@@ -62,6 +64,8 @@ const VaultLazy = (() => {
         jsqr: () => this.jsqr(),
         tesseract: () => this.tesseract(),
         llm: () => this.llmStack(),
+        smartDb: () => this.smartDb(),
+        tax: () => this.tax(),
       };
       return map[kind] ? map[kind]() : Promise.resolve();
     },

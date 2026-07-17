@@ -101,6 +101,23 @@ const VaultDB = (() => {
     try { localStorage.setItem(_kdfKey(), String(n)); } catch (e) {}
   }
 
+  function _authModeKey() {
+    const p = _profileId();
+    return p === 'personal' ? 'vos_auth_mode' : 'vos_auth_mode_' + p;
+  }
+
+  function _getAuthMode() {
+    try {
+      const m = localStorage.getItem(_authModeKey());
+      if (m === 'passphrase' || m === 'pin') return m;
+    } catch (e) {}
+    return 'pin';
+  }
+
+  function _setAuthMode(mode) {
+    try { localStorage.setItem(_authModeKey(), mode === 'passphrase' ? 'passphrase' : 'pin'); } catch (e) {}
+  }
+
   async function _deriveKey(pin, iterations) {
     const enc = new TextEncoder();
     const iters = iterations || _getKdfIters();
@@ -185,6 +202,8 @@ const VaultDB = (() => {
       } catch (e) { /* non-fatal */ }
       const buf = await _encrypt(_key, data);
       await _idbPut('main', buf);
+      // Always keep a decoy-sized ciphertext slot so "has decoy?" is not forensic
+      try { await this._ensureDecoyPadding(buf.byteLength); } catch (e) {}
     },
 
     async loadPinBackup() {
@@ -295,16 +314,66 @@ const VaultDB = (() => {
       await _idbPut('decoy', buf);
     },
 
-    // Remove decoy slot.
+    // Replace real decoy with random padding (slot always present).
     async clearDecoySlot() {
-      const db = await _getDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('vault', 'readwrite');
-        tx.objectStore('vault').delete('decoy');
-        tx.oncomplete = resolve;
-        tx.onerror    = e => reject(e.target.error);
-      });
+      await this._writePaddingDecoy();
     },
+
+    async _ensureDecoyPadding(mainBytes) {
+      const existing = await _idbGet('decoy');
+      if (existing) return;
+      await this._writePaddingDecoy(mainBytes);
+    },
+
+    async _writePaddingDecoy(sizeHint) {
+      const raw = crypto.getRandomValues(new Uint8Array(32));
+      const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt']);
+      const noise = {
+        _pad: true,
+        _noise: Array.from(crypto.getRandomValues(new Uint8Array(48))),
+      };
+      let buf = await _encrypt(key, noise);
+      // Match main blob size roughly so slot length is not a tell
+      const target = Math.max(buf.byteLength, Math.min(sizeHint || 0, 65536));
+      if (buf.byteLength < target) {
+        const padded = new Uint8Array(target);
+        padded.set(buf);
+        crypto.getRandomValues(padded.subarray(buf.byteLength));
+        buf = padded;
+      }
+      await _idbPut('decoy', buf);
+    },
+
+    getAuthMode() { return _getAuthMode(); },
+    setAuthMode(mode) { _setAuthMode(mode); },
+
+    /** Re-encrypt vault with passphrase KDF (offline-strong). */
+    async upgradeToPassphrase(currentSecret, passphrase) {
+      const pp = String(passphrase || '');
+      if (pp.length < 12) throw new Error('Passphrase must be at least 12 characters');
+      if (/^\d{6}$/.test(pp)) throw new Error('Passphrase cannot be a 6-digit PIN');
+      const result = await this.tryPin(currentSecret);
+      if (!result || result.slot !== 'main') throw new Error('Current PIN/passphrase incorrect');
+      _setKdfIters(KDF_TARGET);
+      _key = await _deriveKey(pp, KDF_TARGET);
+      await this.save(result.data);
+      _setAuthMode('passphrase');
+      return true;
+    },
+
+    /** Change passphrase when already in passphrase mode. */
+    async changePassphrase(oldPp, newPp) {
+      const a = String(oldPp || ''), b = String(newPp || '');
+      if (b.length < 12) throw new Error('Passphrase must be at least 12 characters');
+      if (/^\d{6}$/.test(b)) throw new Error('Passphrase cannot be a 6-digit PIN');
+      const result = await this.tryPin(a);
+      if (!result || result.slot !== 'main') throw new Error('Current passphrase incorrect');
+      _setKdfIters(KDF_TARGET);
+      _key = await _deriveKey(b, KDF_TARGET);
+      await this.save(result.data);
+      _setAuthMode('passphrase');
+    },
+
 
     // Download current encrypted blob as a .vos file.
     // Deprecated device-bound export — use ExIm.export('vault') for portable .vos

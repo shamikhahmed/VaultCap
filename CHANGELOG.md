@@ -1,3 +1,18 @@
+## [5.0.2] — 2026-07-17
+
+### Security
+- Passphrase-as-vault-key: onboarding encrypts with 12+ passphrase (PIN metadata only); lock UI switches by `vos_auth_mode`
+- Settings: Strengthen / Change passphrase; PIN vaults get upgrade toast
+- Decoy IDB slot always written (padding) so presence is not a tell
+
+### Performance
+- Lazy-load `smart-db.js` + `tax.js` off critical bundle; SW precaches both (`vaultcap-v61`)
+- Unlock awaits SMART_DB before nav / relation backfill
+
+### Cleanup
+- Removed orphan `assets/screenshots/{pages,finance,...}` trees (gallery uses dark/light only)
+- Fixed `VaultLazy.llmStack` async syntax
+
 ## [5.0.1] — 2026-07-17
 
 ### Security

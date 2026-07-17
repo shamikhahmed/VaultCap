@@ -187,6 +187,10 @@ const Cards={
   toggleCarry(id){if(S.wallet.includes(id))S.wallet=S.wallet.filter(x=>x!==id);else S.wallet.push(id);Store.save();this.render();Toast.show(S.wallet.includes(id)?'Added to wallet':'Removed from wallet','info',1500);},
   _pendingOwnerId: null,
   openAdd(prefill={}){
+    if (typeof SMART_DB === 'undefined' && typeof VaultLazy !== 'undefined') {
+      VaultLazy.ensure('smartDb').then(() => Cards.openAdd(prefill)).catch(() => Toast.show('Card catalog failed to load', 'error'));
+      return;
+    }
     Cards._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `Add Card — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Card';
     const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">Scan Card with Camera</button></div>`;

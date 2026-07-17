@@ -35,9 +35,23 @@ const R = {
     lk.style.display = 'flex';
     PIN.reset();
     this.startClock();
+    const usePp = !VaultProfiles.isDemo() && typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'passphrase';
+    const dots = document.getElementById('pdots');
+    const keypad = document.querySelector('.lk-bot .keypad');
+    const ppBox = document.getElementById('ppUnlock');
+    if (dots) dots.style.display = usePp ? 'none' : '';
+    if (keypad) keypad.style.display = usePp ? 'none' : '';
+    if (ppBox) {
+      ppBox.style.display = usePp ? 'block' : 'none';
+      if (usePp) {
+        const inp = document.getElementById('ppUnlockInp');
+        if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 200); }
+      }
+    }
     const sub = document.getElementById('lkSub');
     if (sub) {
       if (VaultProfiles.isDemo()) sub.textContent = 'Demo vault · PIN ' + VaultProfiles.DEMO_PIN;
+      else if (usePp) sub.textContent = 'Enter vault passphrase';
       else if (S.user.name) sub.textContent = 'Welcome back, ' + S.user.name;
       else sub.textContent = 'Enter your 6-digit PIN';
     }
@@ -58,37 +72,54 @@ const R = {
     if (typeof VC !== 'undefined') VC.refreshShellIcons();
   },
   unlock() {
-    // Run live family migration if S.familyMembers is missing but S.family has data
-    if ((!S.familyMembers || !S.familyMembers.length) && S.family) {
-      const _fLive = S.family;
-      if ((_fLive.head && _fLive.head.name) || (_fLive.members && _fLive.members.length)) {
-        try { Migrate._runFamilyV13(S); Store.save(); } catch(e) {}
+    const finish = () => {
+      // Run live family migration if S.familyMembers is missing but S.family has data
+      if ((!S.familyMembers || !S.familyMembers.length) && S.family) {
+        const _fLive = S.family;
+        if ((_fLive.head && _fLive.head.name) || (_fLive.members && _fLive.members.length)) {
+          try { Migrate._runFamilyV13(S); Store.save(); } catch(e) {}
+        }
       }
+      S.unlocked = true; S.decoy = false;
+      window._vosUnlocked = true;
+      // Prompt legacy PIN vaults to strengthen encryption (once per session)
+      if (!VaultProfiles.isDemo() && typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'pin' && !window._vosStrengthenPrompted) {
+        window._vosStrengthenPrompted = true;
+        setTimeout(() => {
+          if (typeof Toast !== 'undefined') {
+            Toast.show('Strengthen encryption: Settings → Security → Strengthen (passphrase)', 'warning', 7000);
+          }
+        }, 1200);
+      }
+      // Backfill bank↔card links for any orphan cards (existing vaults)
+      if (typeof VaultRelations !== 'undefined') {
+        const linked = VaultRelations.linkOrphanCards({ createBank: false });
+        if (linked > 0) Store.save();
+      }
+      ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+      const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('fab').style.display = 'flex';
+      buildNav();
+      this.goto('dashboard');
+      setTimeout(() => Dash.render(), 50);
+      Activity.log('Vault unlocked');
+      if (typeof RatesEngine !== 'undefined') {
+        RatesEngine.init().then(() => {
+          if (S.currentPage === 'dashboard' && typeof Dash !== 'undefined') Dash.render();
+        });
+      }
+      setTimeout(() => {
+        const dashPb = document.getElementById('dashBody');
+        if (dashPb) pullToRefresh(dashPb, () => Dash.render());
+      }, 500);
+    };
+    // Catalog used by nav + relations — load before UI (offline via SW precache)
+    if (typeof VaultLazy !== 'undefined' && typeof SMART_DB === 'undefined') {
+      VaultLazy.ensure('smartDb').then(finish).catch(finish);
+    } else {
+      finish();
     }
-    S.unlocked = true; S.decoy = false;
-    window._vosUnlocked = true;
-    // Backfill bank↔card links for any orphan cards (existing vaults)
-    if (typeof VaultRelations !== 'undefined') {
-      const linked = VaultRelations.linkOrphanCards({ createBank: false });
-      if (linked > 0) Store.save();
-    }
-    ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
-    const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    document.getElementById('fab').style.display = 'flex';
-    buildNav();
-    this.goto('dashboard');
-    setTimeout(() => Dash.render(), 50);
-    Activity.log('Vault unlocked');
-    if (typeof RatesEngine !== 'undefined') {
-      RatesEngine.init().then(() => {
-        if (S.currentPage === 'dashboard' && typeof Dash !== 'undefined') Dash.render();
-      });
-    }
-    setTimeout(() => {
-      const dashPb = document.getElementById('dashBody');
-      if (dashPb) pullToRefresh(dashPb, () => Dash.render());
-    }, 500);
     setTimeout(() => {
       if (typeof DataIntegrity !== 'undefined') {
         const r = DataIntegrity.check();
@@ -204,8 +235,16 @@ const R = {
     if (prev === pg && !force) return;
     const renders = {
       dashboard:   () => Dash.render(),
-      banks:       () => { const t=Date.now(); Banks.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('banks',Date.now()-t); },
-      cards:       () => { const t=Date.now(); Cards.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('cards',Date.now()-t); },
+      banks:       () => {
+        const run = () => { const t=Date.now(); Banks.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('banks',Date.now()-t); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('smartDb').then(run).catch(run);
+        else run();
+      },
+      cards:       () => {
+        const run = () => { const t=Date.now(); Cards.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('cards',Date.now()-t); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('smartDb').then(run).catch(run);
+        else run();
+      },
       investments: () => { const t=Date.now(); Inv.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('investments',Date.now()-t); },
       cash:        () => Cash.render(),
       loans:       () => { const t=Date.now(); Loans.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('loans',Date.now()-t); },
@@ -243,7 +282,11 @@ const R = {
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
-      tax:         () => { if (typeof Tax !== 'undefined') Tax.render(); },
+      tax:         () => {
+        const run = () => { if (typeof Tax !== 'undefined') Tax.render(); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('tax').then(run).catch(() => Toast.show('Tax module failed to load', 'error'));
+        else run();
+      },
       family:      () => { if (typeof Family !== 'undefined') Family.render(); },
       sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">'+(typeof VC!=='undefined'?VC.icon('sync',32):'')+'</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {

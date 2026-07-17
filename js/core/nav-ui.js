@@ -320,7 +320,7 @@ function renderHomeModules() {
 }
 
 function buildNav() {
-  if (S.user && S.user.country) {
+  if (S.user && S.user.country && typeof SMART_DB !== 'undefined' && Array.isArray(SMART_DB.banks)) {
     const uc = S.user.country;
     SMART_DB.banks.sort((a, b) => (a.country === uc ? 0 : 1) - (b.country === uc ? 0 : 1));
   }

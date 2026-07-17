@@ -90,6 +90,10 @@ const Banks={
   _showExample(){Modal.open('Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${VC.icon('bank',18)}</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
   _pendingOwnerId: null,
   openAdd(prefill={}){
+    if (typeof SMART_DB === 'undefined' && typeof VaultLazy !== 'undefined') {
+      VaultLazy.ensure('smartDb').then(() => Banks.openAdd(prefill)).catch(() => Toast.show('Bank catalog failed to load', 'error'));
+      return;
+    }
     Banks._pendingOwnerId = prefill.ownerId || null;
     Banks._openWithCountry(S.user.country||'PK', prefill.ownerName||prefill._ownerName||null);
   },

@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v60';
+const CACHE = 'vaultcap-v61';
 const ASSETS = [
   './',
   './index.html',
@@ -17,6 +17,8 @@ const ASSETS = [
   './css/components.css',
   './css/themes.css',
   './js/storage.js',
+  './js/core/smart-db.js',
+  './js/modules/tax.js',
   './dist/vaultcap.bundle.js',
 ];
 

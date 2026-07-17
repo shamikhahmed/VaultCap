@@ -621,13 +621,63 @@ const Settings={
     const o=document.getElementById('cp-cur').value,n=document.getElementById('cp-new').value,c=document.getElementById('cp-con').value;
     if(!/^\d{6}$/.test(n)){document.getElementById('cp-err').textContent='New PIN must be 6 digits';return;}
     if(n!==c){document.getElementById('cp-err').textContent='PINs do not match';return;}
-    // Verify old PIN via VaultDB (PIN not kept in S after first unlock)
+    // Passphrase-mode: PIN is metadata only (hash), encryption key unchanged
+    if(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase'){
+      if(!S.vaultMeta)S.vaultMeta={};
+      PinHash.digest(n).then(h=>{
+        S.vaultMeta.pinHash=h;Store.save();
+        Modal.close();Activity.log('PIN changed');Toast.show('PIN updated','success');
+      });
+      return;
+    }
     VaultDB.tryPin(o).then(result=>{
       if(!result){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
       VaultDB.changePin(o,n).then(()=>{Store.save();}).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
-      // Recovery slot doesn't need updating here — master key recovery is PIN-independent
       Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
     });
+  },
+  upgradePassphrase(){
+    Modal.open('Strengthen Encryption',`
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Re-encrypt your vault with a <strong>passphrase</strong> (12+ chars). A 6-digit PIN is too weak against offline attack if someone copies your device storage.</p>
+      <div class="fg"><label class="fl">Current PIN</label><input class="inp" id="up-cur" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
+      <div class="fg"><label class="fl">New passphrase</label><input class="inp" id="up-pp" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
+      <div class="fg"><label class="fl">Confirm passphrase</label><input class="inp" id="up-pp2" type="password" autocomplete="new-password" placeholder="Repeat"></div>
+      <div class="ferr" id="up-err"></div>`,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings._doUpgradePassphrase()">Strengthen</button>`);
+  },
+  _doUpgradePassphrase(){
+    const err=document.getElementById('up-err');
+    const cur=document.getElementById('up-cur')?.value||'';
+    const a=document.getElementById('up-pp')?.value||'';
+    const b=document.getElementById('up-pp2')?.value||'';
+    if(a.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
+    if(a!==b){err.textContent='Passphrases do not match';return;}
+    if(/^\d{6}$/.test(a)){err.textContent='Do not use a 6-digit PIN as passphrase';return;}
+    err.textContent='Re-encrypting…';
+    VaultDB.upgradeToPassphrase(cur,a).then(()=>{
+      Modal.close();Settings.refresh();
+      Toast.show('Vault now passphrase-encrypted — unlock with passphrase next time','success',5000);
+      Activity.log('Upgraded to passphrase encryption');
+    }).catch(e=>{err.textContent=e.message||'Upgrade failed';});
+  },
+  changePassphrase(){
+    Modal.open('Change Passphrase',`
+      <div class="fg"><label class="fl">Current passphrase</label><input class="inp" id="chpp-cur" type="password" autocomplete="current-password"></div>
+      <div class="fg"><label class="fl">New passphrase</label><input class="inp" id="chpp-new" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
+      <div class="fg"><label class="fl">Confirm</label><input class="inp" id="chpp-con" type="password" autocomplete="new-password"></div>
+      <div class="ferr" id="chpp-err"></div>`,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings._doChangePassphrase()">Update</button>`);
+  },
+  _doChangePassphrase(){
+    const err=document.getElementById('chpp-err');
+    const o=document.getElementById('chpp-cur')?.value||'';
+    const n=document.getElementById('chpp-new')?.value||'';
+    const c=document.getElementById('chpp-con')?.value||'';
+    if(n.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
+    if(n!==c){err.textContent='Passphrases do not match';return;}
+    VaultDB.changePassphrase(o,n).then(()=>{
+      Modal.close();Toast.show('Passphrase updated','success');Activity.log('Passphrase changed');
+    }).catch(e=>{err.textContent=e.message||'Failed';});
   },
   showMasterKey(){
     const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
@@ -2091,10 +2141,11 @@ const SettingsNav = {
     const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
     const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
     return `<div class="set-sec"><div class="set-title">Security</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">${(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase')?'Passphrase (strong) — resists offline attack':'PIN only — upgrade recommended'}</div></div>${(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase')?'<button type="button" class="btn btn-g btn-sm" onclick="Settings.changePassphrase()" style="touch-action:manipulation">Change</button>':'<button type="button" class="btn btn-p btn-sm" onclick="Settings.upgradePassphrase()" style="touch-action:manipulation">Strengthen</button>'}</div>
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save(, true);Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} onchange="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" onchange="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
