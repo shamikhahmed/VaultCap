@@ -46,10 +46,10 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 
 - **AES-256-GCM** encryption via Web Crypto API
 - **PBKDF2** key derivation (310,000 iterations, SHA-256)
-- **IndexedDB** encrypted storage — never leaves your device
+- **IndexedDB** encrypted storage — vault ciphertext stays on device (optional FX/metal rates + logo proxy are opt-in network)
 - PIN brute-force lockout (30s → 5 min → vault wipe)
 - **Decoy PIN** — shows empty vault to protect under duress
-- Fully offline — no internet required after install
+- Offline-first — core vault works with no internet; rates/logos use cache + privacy proxy when online
 
 ---
 
@@ -81,6 +81,7 @@ VaultCap/
 ├── css/                    # base, layout, components, themes
 ├── landing.html            # Marketing landing page
 ├── docs/
+├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
 └── sw-v51.js               # Service worker (offline PWA)
 ```
 

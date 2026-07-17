@@ -20,22 +20,23 @@
     "icons:generate": "node scripts/generate-icons.mjs",
     "icons:ios": "node scripts/generate-ios-icons.mjs",
     "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh",
-    "verify": "npm run build:js && npm run audit:xss && npm run test:e2e"
+    "verify": "npm run build:js && npm run audit:xss && npm run test:e2e",
+    "logos:fetch": "node scripts/fetch-bank-logos.mjs",
+    "logos": "npm run logos:fetch"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "playwright": "^1.60.0",
+    "playwright-core": "^1.60.0"
   },
-  "version": "1.0.0",
-  "description": "[![Live App](https://img.shields.io/badge/Live%20App-VaultCap-ffffff?style=for-the-badge&labelColor=000000)](https://shamikhahmed.github.io/VaultCap) [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap) [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)",
+  "version": "5.0.1",
+  "description": "VaultCap \u2014 encrypted offline life vault PWA by Capricorn Systems",
   "main": "playwright.config.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
-  "dependencies": {
-    "playwright": "^1.60.0",
-    "playwright-core": "^1.60.0"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shamikhahmed/VaultCap.git"

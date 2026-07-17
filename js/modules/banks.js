@@ -26,86 +26,10 @@ function _initialsLogo(initials, color, size) {
 function getBankLogo(bankName, size) {
   size = size || 36;
   if (!bankName) return _initialsLogo('BK', '#888888', size);
-  const name = bankName.toUpperCase();
-  const s = size + 'px';
-  const r = Math.round(size * 0.28) + 'px';
-
-  const DOMAINS = {
-    // Pakistan
-    'HBL': 'hbl.com', 'HABIB': 'hbl.com',
-    'UBL': 'ubl.com.pk', 'UNITED BANK': 'ubl.com.pk',
-    'MCB': 'mcb.com.pk',
-    'ABL': 'abl.com', 'ALLIED': 'abl.com',
-    'NBP': 'nbp.com.pk', 'NATIONAL BANK': 'nbp.com.pk',
-    'MEEZAN': 'meezanbank.com',
-    'FAYSAL': 'faysalbank.com',
-    'ASKARI': 'askaribank.com.pk',
-    'BANK ALFALAH': 'bankalfalah.com', 'ALFALAH': 'bankalfalah.com',
-    'SUMMIT': 'summitbank.com.pk',
-    'SILK': 'silkbank.com.pk',
-    'JAZZCASH': 'jazzcash.com.pk', 'JAZZ CASH': 'jazzcash.com.pk',
-    'EASYPAISA': 'easypaisa.com.pk',
-    'NAYAPAY': 'nayapay.com',
-    'SADAPAY': 'sadapay.com',
-    'ZINDIGI': 'zindigi.com',
-    'STANDARD CHARTERED': 'sc.com',
-    // UK
-    'BARCLAYS': 'barclays.co.uk',
-    'LLOYDS': 'lloydsbank.com',
-    'NATWEST': 'natwest.com', 'NAT WEST': 'natwest.com',
-    'HSBC': 'hsbc.co.uk',
-    'SANTANDER': 'santander.co.uk',
-    'NATIONWIDE': 'nationwide.co.uk',
-    'MONZO': 'monzo.com',
-    'STARLING': 'starlingbank.com',
-    'REVOLUT': 'revolut.com',
-    'WISE': 'wise.com',
-    'MONESE': 'monese.com',
-    'HALIFAX': 'halifax.co.uk',
-    'FIRST DIRECT': 'firstdirect.com',
-    'METRO': 'metrobankonline.co.uk',
-    'TSB': 'tsb.co.uk',
-    'CO-OP': 'co-operativebank.co.uk', 'COOP': 'co-operativebank.co.uk',
-    'VIRGIN': 'virginmoney.com',
-    'CHASE': 'chase.co.uk',
-    // UAE
-    'EMIRATES NBD': 'emiratesnbd.com', 'ENBD': 'emiratesnbd.com',
-    'FAB': 'bankfab.com', 'FIRST ABU DHABI': 'bankfab.com',
-    'ADCB': 'adcb.com',
-    'RAKBANK': 'rakbank.ae', 'RAK BANK': 'rakbank.ae',
-    'MASHREQ': 'mashreq.com',
-    'DIB': 'dib.ae', 'DUBAI ISLAMIC': 'dib.ae',
-    'ADIB': 'adib.ae', 'ABU DHABI ISLAMIC': 'adib.ae',
-    'CBD': 'cbd.ae',
-    'NOOR': 'noorbank.com',
-    'WIO': 'wio.io',
-    // International
-    'CITI': 'citibank.com',
-    'DEUTSCHE': 'db.com',
-    'JPMORGAN': 'jpmorgan.com', 'JP MORGAN': 'jpmorgan.com',
-    'AMEX': 'americanexpress.com', 'AMERICAN EXPRESS': 'americanexpress.com',
-    'BANK OF AMERICA': 'bankofamerica.com',
-    'WELLS FARGO': 'wellsfargo.com',
-  };
-
-  let domain = null;
-  for (const key of Object.keys(DOMAINS)) {
-    if (name.includes(key)) { domain = DOMAINS[key]; break; }
-  }
-
+  if (typeof LogoEngine !== 'undefined') return LogoEngine.html(bankName, size);
   const initials = bankName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
-  const colors = ['#888888','#777777','#666666','#555555','#444444','#999999','#aaaaaa'];
-  const fallbackColor = colors[bankName.charCodeAt(0) % colors.length];
-
-  if (domain) {
-    const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.35)) + 'px';
-    return `<div style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0;background:${fallbackColor};display:flex;align-items:center;justify-content:center">` +
-      `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="" width="${size}" height="${size}" style="border-radius:${r};object-fit:cover" ` +
-      `onerror="this.parentElement.innerHTML='<div style=\\'font-size:${fs};font-weight:900;color:#fff;font-family:Arial\\'>${initials}</div>'"` +
-      `></div>`;
-  }
-
-  return _initialsLogo(initials, fallbackColor, size);
+  const color = (typeof brandColor === 'function') ? brandColor(bankName) : '#888888';
+  return _initialsLogo(initials || 'BK', color, size);
 }
 
 const Banks={
@@ -143,6 +67,7 @@ const Banks={
     const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Banks._showArchived=!Banks._showArchived;Banks.render()">${Banks._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const byCC={};data.forEach(b=>{const k=b.country||'OTHER';(byCC[k]=byCC[k]||[]).push(b);});
     el.innerHTML=archiveToggle+Object.entries(byCC).map(([cc,items])=>`<div><div class="csec-h"><span style="font-size:18px">${U.flag(cc)}</span><span class="csec-name">${U.cname(cc)}</span><span class="csec-cnt">${items.length}</span></div>${items.map(b=>this.row(b)).join('')}</div>`).join('');
+    if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
     initSwipeDelete(el);
     initLongPress(el, id => {
       const b = S.banks.find(x => x.id === id); if (!b) return [];

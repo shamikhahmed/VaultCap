@@ -43,3 +43,6 @@ memory/
 # Local runtime / widget scratch
 widget-data.json
 
+# iCloud duplicate copies
+* 2.*
+* 2

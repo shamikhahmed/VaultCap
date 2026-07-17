@@ -135,22 +135,42 @@ const RatesEngine = {
       }
 
       let metals = null;
-      try {
-        const mRes = await Promise.race([
-          fetch('https://api.metals.live/v1/spot'),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
-        ]);
-        if (mRes.ok) {
+      const metalSources = [
+        'https://api.metals.live/v1/spot',
+        'https://data-asg.goldprice.org/dbXRates/USD',
+      ];
+      for (const src of metalSources) {
+        try {
+          const mRes = await Promise.race([
+            fetch(src),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
+          ]);
+          if (!mRes.ok) continue;
           const mData = await mRes.json();
           if (Array.isArray(mData)) {
             metals = {};
             mData.forEach(m => { if (m.metal && m.price) metals[m.metal] = m.price; });
+          } else if (mData && mData.items && mData.items[0]) {
+            // goldprice.org shape
+            const item = mData.items[0];
+            metals = {
+              gold: item.xauPrice || item.currencies?.find?.(c => c.curr === 'USD')?.xauPrice,
+              silver: item.xagPrice || item.currencies?.find?.(c => c.curr === 'USD')?.xagPrice,
+            };
+            if (!metals.gold && !metals.silver) metals = null;
           } else if (mData && typeof mData === 'object') {
             metals = mData;
           }
+          if (metals && (metals.gold || metals.silver || metals.xau || metals.XAU)) {
+            if (metals.xau && !metals.gold) metals.gold = metals.xau;
+            if (metals.XAU && !metals.gold) metals.gold = metals.XAU;
+            if (metals.xag && !metals.silver) metals.silver = metals.xag;
+            break;
+          }
+          metals = null;
+        } catch (e) {
+          metals = null;
         }
-      } catch(e) {
-        metals = null;
       }
 
       const existing = this._cache() || {};

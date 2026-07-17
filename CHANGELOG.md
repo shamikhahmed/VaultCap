@@ -1,3 +1,25 @@
+## [5.0.1] — 2026-07-17
+
+### Security
+- Bank logos: bundled locally (`assets/banks/`) + privacy LogoEngine; client never calls Google favicons
+- CF worker `GET /logo` privacy proxy for unknown banks (server-side fetch + cache)
+- Vault KDF: PBKDF2-SHA256 raised to 600k with silent migrate from 310k on unlock
+- Master-key recovery: PBKDF2 (legacy SHA-256 still accepted)
+- Portable `.vos` export now requires 12+ char passphrase (PIN rejected); salt embedded
+- Deprecated device-bound `VaultDB.exportEncrypted` raw blob export
+- CSP: removed Google/cdnjs/jsdelivr from img/script; `blob:` for cached logos
+- Crypto base64 encode uses chunked conversion (no stack blow on large vaults)
+
+### Fixed
+- Metals rates: fallback to goldprice.org when metals.live fails
+- package.json version synced to 5.0.0; playwright deps cleaned
+- Removed iCloud duplicate junk files
+
+### Added
+- `js/core/bank-catalog.js` — expanded PK/UK/UAE/US bank domain map
+- `npm run logos:fetch` — build-time logo downloader
+- SW v59 bank-logo cache-first
+
 # Changelog — VaultCap
 
 ## 5.0.0 (2026-07-09) — Phase 2 product + soft launch prep

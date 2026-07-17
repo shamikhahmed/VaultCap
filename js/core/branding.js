@@ -2,49 +2,20 @@
 // Bank branding — logo domains, brand colors, card gradients — extracted from app.js (refactor 4.4.0)
 
 // ── Bank logo / brand helpers ──
-const BANK_DOMAINS={
-  'HBL':'hbl.com','Habib Bank':'hbl.com','HBL Bank':'hbl.com',
-  'Meezan Bank':'meezanbank.com','Meezan':'meezanbank.com',
-  'UBL':'ubl.com','MCB Bank':'mcb.com.pk','MCB':'mcb.com.pk',
-  'Bank Alfalah':'bankalfalah.com','Alfalah':'bankalfalah.com',
-  'Allied Bank':'abl.com','Allied':'abl.com',
-  'Askari Bank':'askaribank.com','Askari':'askaribank.com',
-  'Bank Al Habib':'bankalhabib.com','BAHL':'bankalhabib.com',
-  'Habib Metro Bank':'habibmetro.com','Habib Metro':'habibmetro.com',
-  'Faysal Bank':'faysalbank.com','Faysal':'faysalbank.com',
-  'Bank Islami':'bankislami.com','Islami':'bankislami.com',
-  'Sadapay':'sadapay.com','NayaPay':'nayapay.com','Zindigi':'zindigi.com',
-  'JazzCash':'jazzcash.com.pk','EasyPaisa':'easypaisa.com',
-  'NBP':'nbp.com.pk','Bank of Punjab':'bop.com.pk',
-  'Silkbank':'silkbank.com','Silk Bank':'silkbank.com',
-  'Soneri Bank':'soneribank.com','Soneri':'soneribank.com',
-  'JS Bank':'jsbl.com','JS':'jsbl.com',
-  'Standard Chartered PK':'sc.com','Standard Chartered':'sc.com',
-  'HSBC':'hsbc.com','HSBC UK':'hsbc.co.uk',
-  'Monzo':'monzo.com',
-  'Starling Bank':'starlingbank.com','Starling':'starlingbank.com',
-  'Revolut':'revolut.com','Wise':'wise.com',
-  'Barclays':'barclays.co.uk','Barclaycard':'barclays.co.uk',
-  'NatWest':'natwest.com',
-  'Lloyds Bank':'lloydsbank.com','Lloyds':'lloydsbank.com',
-  'Santander UK':'santander.co.uk','Santander':'santander.co.uk',
-  'Halifax':'halifax.co.uk','Nationwide':'nationwide.co.uk',
-  'Metro Bank':'metrobankonline.co.uk','TSB':'tsb.co.uk','TSB Bank':'tsb.co.uk',
-  'Chase UK':'chase.co.uk','First Direct':'firstdirect.com',
-  'Atom Bank':'atombank.co.uk','Atom':'atombank.co.uk',
-  'Emirates NBD':'emiratesnbd.com','ENBD':'emiratesnbd.com','Emirates':'emiratesnbd.com',
-  'FAB':'bankfab.com','ADCB':'adcb.com',
-  'Mashreq Bank':'mashreq.com','Mashreq':'mashreq.com',
-  'ADIB':'adib.ae','Dubai Islamic Bank':'dib.ae','DIB':'dib.ae',
-  'RAKBank':'rakbank.ae','RAK Bank':'rakbank.ae','RAKBANK':'rakbank.ae',
-  'Wio Bank':'wio.com','Wio':'wio.com',
-  'Liv.':'liv.ae','Liv':'liv.ae',
-  'Al Rayan Bank':'alrayanbank.co.uk',
-  'Citibank':'citibank.com','Citi':'citibank.com','Citi Bank':'citibank.com',
-  'Chase':'chase.com','Chase Bank':'chase.com',
-  'Bank of America':'bankofamerica.com',
-  'Wells Fargo':'wellsfargo.com','Wells':'wellsfargo.com',
-};
+// Merges BANK_CATALOG (full list) with legacy aliases for older saved names.
+const BANK_DOMAINS = Object.assign({}, (typeof BANK_CATALOG !== 'undefined' ? BANK_CATALOG : {}), {
+  'UBL': 'ubl.com.pk',
+  'Askari Bank': 'askaribank.com.pk',
+  'Askari': 'askaribank.com.pk',
+  'Bank Islami': 'bankislami.com.pk',
+  'Islami': 'bankislami.com.pk',
+  'EasyPaisa': 'easypaisa.com.pk',
+  'Silkbank': 'silkbank.com.pk',
+  'Silk Bank': 'silkbank.com.pk',
+  'Wio Bank': 'wio.io',
+  'Wio': 'wio.io',
+  'HSBC': 'hsbc.co.uk',
+});
 
 const BANK_COLORS={
   'HBL':'#1a3a6b','Meezan Bank':'#006400','UBL':'#8b0000','MCB Bank':'#1a1a2e',
@@ -59,10 +30,16 @@ function bankDomain(name){
   if(!name)return null;
   const n=name.trim();
   if(BANK_DOMAINS[n])return BANK_DOMAINS[n];
+  if(typeof BANK_CATALOG!=='undefined'&&BANK_CATALOG[n])return BANK_CATALOG[n];
   const lc=n.toLowerCase();
   // Case-insensitive exact match
   for(const[k,v]of Object.entries(BANK_DOMAINS)){
     if(k.toLowerCase()===lc)return v;
+  }
+  if(typeof BANK_CATALOG!=='undefined'){
+    for(const[k,v]of Object.entries(BANK_CATALOG)){
+      if(k.toLowerCase()===lc)return v;
+    }
   }
   // First word of bank name starts any key
   const firstWord=lc.split(' ')[0];
@@ -92,10 +69,12 @@ function brandColor(name){
   return '#1a1a2e';
 }
 
-function bankLogo(bankName,country){
-  const domain=bankDomain(bankName);
-  if(!domain)return '';
-  return `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover" onerror="this.style.display='none'" loading="lazy">`;
+function bankLogo(bankName, country) {
+  if (typeof LogoEngine !== 'undefined') return LogoEngine.html(bankName, 36);
+  const domain = bankDomain(bankName);
+  if (!domain) return '';
+  const local = `assets/banks/${String(domain).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.png`;
+  return `<img src="${local}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover" onerror="this.style.display='none'" loading="lazy">`;
 }
 
 function cardGradient(c){

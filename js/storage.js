@@ -78,24 +78,60 @@ const VaultDB = (() => {
   }
 
   // ── Key derivation ─────────────────────────────────────────────────────────
+  // Target: 600k (OWASP). Existing vaults may still be on 310k — migrate on unlock.
 
-  async function _deriveKey(pin) {
+  const KDF_TARGET = 600000;
+  const KDF_LEGACY = 310000;
+
+  function _kdfKey() {
+    const p = _profileId();
+    return p === 'personal' ? 'vos_kdf_iters' : 'vos_kdf_iters_' + p;
+  }
+
+  function _getKdfIters() {
+    try {
+      const v = parseInt(localStorage.getItem(_kdfKey()) || '', 10);
+      if (v === KDF_TARGET || v === KDF_LEGACY) return v;
+    } catch (e) {}
+    // Unknown / first run after upgrade: prefer legacy so unlock still works
+    return KDF_LEGACY;
+  }
+
+  function _setKdfIters(n) {
+    try { localStorage.setItem(_kdfKey(), String(n)); } catch (e) {}
+  }
+
+  async function _deriveKey(pin, iterations) {
     const enc = new TextEncoder();
+    const iters = iterations || _getKdfIters();
     const km  = await crypto.subtle.importKey(
       'raw', enc.encode(String(pin)), 'PBKDF2', false, ['deriveKey']
     );
     return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt: _getSalt(), iterations: 310000, hash: 'SHA-256' },
+      { name: 'PBKDF2', salt: _getSalt(), iterations: iters, hash: 'SHA-256' },
       km,
       { name: 'AES-GCM', length: 256 },
       false, ['encrypt', 'decrypt']
     );
   }
 
-  // ── Master-key derivation (SHA-256 based, fast — for recovery slot only) ───
+  // ── Master-key derivation (PBKDF2 + vault salt — recovery slot) ────────────
 
   async function _deriveMasterKey(masterKey) {
-    const enc = new TextEncoder().encode(masterKey + ':vaultos-recovery-v1');
+    const enc = new TextEncoder();
+    const km = await crypto.subtle.importKey(
+      'raw', enc.encode(String(masterKey) + ':vaultos-recovery-v2'), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: _getSalt(), iterations: KDF_TARGET, hash: 'SHA-256' },
+      km,
+      { name: 'AES-GCM', length: 256 },
+      false, ['encrypt', 'decrypt']
+    );
+  }
+
+  async function _deriveMasterKeyLegacy(masterKey) {
+    const enc = new TextEncoder().encode(String(masterKey) + ':vaultos-recovery-v1');
     const hash = await crypto.subtle.digest('SHA-256', enc);
     return crypto.subtle.importKey('raw', hash, 'AES-GCM', false, ['encrypt', 'decrypt']);
   }
@@ -131,7 +167,11 @@ const VaultDB = (() => {
 
     // Derive key from PIN and store in memory. Call before save/load.
     async init(pin) {
-      _key = await _deriveKey(pin);
+      const has = await (async () => {
+        try { return !!(await _idbGet('main')); } catch (e) { return false; }
+      })();
+      if (!has) _setKdfIters(KDF_TARGET);
+      _key = await _deriveKey(pin, has ? _getKdfIters() : KDF_TARGET);
       await _getDB();
     },
 
@@ -213,16 +253,36 @@ const VaultDB = (() => {
     // Try to decrypt 'main' slot then 'decoy' slot with the given PIN.
     // Returns { slot: 'main'|'decoy', data } or null on failure.
     async tryPin(pin) {
-      const key = await _deriveKey(pin);
-      for (const slot of ['main', 'decoy']) {
-        const buf = await _idbGet(slot);
-        if (!buf) continue;
-        try {
-          const data = await _decrypt(key, buf);
-          _key = key;
-          return { slot, data };
-        } catch(e) {
-          // wrong key for this slot
+      const itersToTry = [_getKdfIters()];
+      if (!itersToTry.includes(KDF_LEGACY)) itersToTry.push(KDF_LEGACY);
+      if (!itersToTry.includes(KDF_TARGET)) itersToTry.push(KDF_TARGET);
+
+      for (const iters of itersToTry) {
+        const key = await _deriveKey(pin, iters);
+        for (const slot of ['main', 'decoy']) {
+          const buf = await _idbGet(slot);
+          if (!buf) continue;
+          try {
+            const data = await _decrypt(key, buf);
+            _key = key;
+            // Migrate vault to stronger KDF after successful unlock
+            if (iters !== KDF_TARGET && slot === 'main') {
+              try {
+                _key = await _deriveKey(pin, KDF_TARGET);
+                await this.save(data);
+                _setKdfIters(KDF_TARGET);
+              } catch (migErr) {
+                _key = key;
+                _setKdfIters(iters);
+                console.warn('[VaultDB] KDF migrate deferred:', migErr);
+              }
+            } else {
+              _setKdfIters(iters === KDF_TARGET ? KDF_TARGET : iters);
+            }
+            return { slot, data };
+          } catch(e) {
+            // wrong key / wrong iters for this slot
+          }
         }
       }
       return null;
@@ -247,18 +307,9 @@ const VaultDB = (() => {
     },
 
     // Download current encrypted blob as a .vos file.
+    // Deprecated device-bound export — use ExIm.export('vault') for portable .vos
     async exportEncrypted() {
-      const buf = await _idbGet('main');
-      if (!buf) throw new Error('No vault data to export');
-      const blob = new Blob([buf], { type: 'application/octet-stream' });
-      const url  = URL.createObjectURL(blob);
-      const a    = Object.assign(document.createElement('a'), {
-        href: url,
-        download: 'vaultos-' + new Date().toISOString().slice(0, 10) + '.vos'
-      });
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+      throw new Error('Use ExIm portable export (passphrase-encrypted .vos)');
     },
 
     // Wipe all vault data and clear session key.
@@ -289,8 +340,13 @@ const VaultDB = (() => {
       try {
         const buf = await _idbGet('recovery');
         if (!buf) return null;
-        const rkey = await _deriveMasterKey(masterKey);
-        return await _decrypt(rkey, buf);
+        try {
+          const rkey = await _deriveMasterKey(masterKey);
+          return await _decrypt(rkey, buf);
+        } catch (e1) {
+          const rkey = await _deriveMasterKeyLegacy(masterKey);
+          return await _decrypt(rkey, buf);
+        }
       } catch(e) {
         return null;
       }

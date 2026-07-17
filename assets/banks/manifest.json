@@ -1,0 +1,704 @@
+{
+  "version": 1,
+  "updated": "2026-07-17",
+  "logos": {
+    "abl.com": {
+      "file": "abl-com.png",
+      "bytes": 1592,
+      "source": "www.google.com"
+    },
+    "adcb.com": {
+      "file": "adcb-com.png",
+      "bytes": 1538,
+      "source": "www.google.com"
+    },
+    "adib.ae": {
+      "file": "adib-ae.png",
+      "bytes": 2495,
+      "source": "www.google.com"
+    },
+    "ajbell.co.uk": {
+      "file": "ajbell-co-uk.png",
+      "bytes": 1675,
+      "source": "www.google.com"
+    },
+    "albaraka.com.pk": {
+      "file": "albaraka-com-pk.png",
+      "bytes": 296,
+      "source": "www.google.com"
+    },
+    "aldermore.co.uk": {
+      "file": "aldermore-co-uk.png",
+      "bytes": 2854,
+      "source": "www.google.com"
+    },
+    "alhilalbank.ae": {
+      "file": "alhilalbank-ae.png",
+      "bytes": 644,
+      "source": "www.google.com"
+    },
+    "ally.com": {
+      "file": "ally-com.png",
+      "bytes": 1244,
+      "source": "www.google.com"
+    },
+    "alrayanbank.co.uk": {
+      "file": "alrayanbank-co-uk.png",
+      "bytes": 589,
+      "source": "www.google.com"
+    },
+    "americanexpress.com": {
+      "file": "americanexpress-com.png",
+      "bytes": 487,
+      "source": "www.google.com"
+    },
+    "anna.money": {
+      "file": "anna-money.png",
+      "bytes": 1497,
+      "source": "www.google.com"
+    },
+    "apnabank.com.pk": {
+      "file": "apnabank-com-pk.png",
+      "bytes": 4595,
+      "source": "www.google.com"
+    },
+    "apple.com": {
+      "file": "apple-com.png",
+      "bytes": 2468,
+      "source": "www.google.com"
+    },
+    "askaribank.com.pk": {
+      "file": "askaribank-com-pk.png",
+      "bytes": 4023,
+      "source": "www.google.com"
+    },
+    "atombank.co.uk": {
+      "file": "atombank-co-uk.png",
+      "bytes": 1836,
+      "source": "www.google.com"
+    },
+    "bankalhabib.com": {
+      "file": "bankalhabib-com.png",
+      "bytes": 17699,
+      "source": "www.google.com"
+    },
+    "bankfab.com": {
+      "file": "bankfab-com.png",
+      "bytes": 697,
+      "source": "www.google.com"
+    },
+    "bankislami.com.pk": {
+      "file": "bankislami-com-pk.png",
+      "bytes": 1053,
+      "source": "www.google.com"
+    },
+    "bankofamerica.com": {
+      "file": "bankofamerica-com.png",
+      "bytes": 1847,
+      "source": "www.google.com"
+    },
+    "bankofscotland.co.uk": {
+      "file": "bankofscotland-co-uk.png",
+      "bytes": 377,
+      "source": "www.google.com"
+    },
+    "bankofsharjah.com": {
+      "file": "bankofsharjah-com.png",
+      "bytes": 2350,
+      "source": "www.google.com"
+    },
+    "barclays.co.uk": {
+      "file": "barclays-co-uk.png",
+      "bytes": 1165,
+      "source": "www.google.com"
+    },
+    "bok.com.pk": {
+      "file": "bok-com-pk.png",
+      "bytes": 741,
+      "source": "www.google.com"
+    },
+    "bop.com.pk": {
+      "file": "bop-com-pk.png",
+      "bytes": 2347,
+      "source": "www.google.com"
+    },
+    "bykea.com": {
+      "file": "bykea-com.png",
+      "bytes": 262,
+      "source": "www.google.com"
+    },
+    "capitalone.com": {
+      "file": "capitalone-com.png",
+      "bytes": 1335,
+      "source": "www.google.com"
+    },
+    "cash.app": {
+      "file": "cash-app.png",
+      "bytes": 756,
+      "source": "www.google.com"
+    },
+    "cashplus.com": {
+      "file": "cashplus-com.png",
+      "bytes": 853,
+      "source": "www.google.com"
+    },
+    "cbd.ae": {
+      "file": "cbd-ae.png",
+      "bytes": 1181,
+      "source": "www.google.com"
+    },
+    "cbonline.co.uk": {
+      "file": "cbonline-co-uk.png",
+      "bytes": 945,
+      "source": "www.google.com"
+    },
+    "chase.co.uk": {
+      "file": "chase-co-uk.png",
+      "bytes": 1264,
+      "source": "www.google.com"
+    },
+    "chase.com": {
+      "file": "chase-com.png",
+      "bytes": 2766,
+      "source": "www.google.com"
+    },
+    "chime.com": {
+      "file": "chime-com.png",
+      "bytes": 648,
+      "source": "www.google.com"
+    },
+    "citibank.com": {
+      "file": "citibank-com.png",
+      "bytes": 939,
+      "source": "www.google.com"
+    },
+    "co-operativebank.co.uk": {
+      "file": "co-operativebank-co-uk.png",
+      "bytes": 467,
+      "source": "www.google.com"
+    },
+    "coutts.com": {
+      "file": "coutts-com.png",
+      "bytes": 408,
+      "source": "www.google.com"
+    },
+    "curve.com": {
+      "file": "curve-com.png",
+      "bytes": 1762,
+      "source": "www.google.com"
+    },
+    "danskebank.co.uk": {
+      "file": "danskebank-co-uk.png",
+      "bytes": 218,
+      "source": "www.google.com"
+    },
+    "db.com": {
+      "file": "db-com.png",
+      "bytes": 796,
+      "source": "www.google.com"
+    },
+    "dib.ae": {
+      "file": "dib-ae.png",
+      "bytes": 2790,
+      "source": "www.google.com"
+    },
+    "dibpak.com": {
+      "file": "dibpak-com.png",
+      "bytes": 8927,
+      "source": "www.google.com"
+    },
+    "discover.com": {
+      "file": "discover-com.png",
+      "bytes": 589,
+      "source": "www.google.com"
+    },
+    "easypaisa.com.pk": {
+      "file": "easypaisa-com-pk.png",
+      "bytes": 3394,
+      "source": "www.google.com"
+    },
+    "emiratesislamic.ae": {
+      "file": "emiratesislamic-ae.png",
+      "bytes": 527,
+      "source": "www.google.com"
+    },
+    "emiratesnbd.com": {
+      "file": "emiratesnbd-com.png",
+      "bytes": 1742,
+      "source": "www.google.com"
+    },
+    "faysalbank.com": {
+      "file": "faysalbank-com.png",
+      "bytes": 3814,
+      "source": "www.google.com"
+    },
+    "fidelity.com": {
+      "file": "fidelity-com.png",
+      "bytes": 3389,
+      "source": "www.google.com"
+    },
+    "firstdirect.com": {
+      "file": "firstdirect-com.png",
+      "bytes": 652,
+      "source": "www.google.com"
+    },
+    "fwbl.com.pk": {
+      "file": "fwbl-com-pk.png",
+      "bytes": 1337,
+      "source": "www.google.com"
+    },
+    "getchip.uk": {
+      "file": "getchip-uk.png",
+      "bytes": 787,
+      "source": "www.google.com"
+    },
+    "goldmansachs.com": {
+      "file": "goldmansachs-com.png",
+      "bytes": 1439,
+      "source": "www.google.com"
+    },
+    "habibmetro.com": {
+      "file": "habibmetro-com.png",
+      "bytes": 2533,
+      "source": "www.google.com"
+    },
+    "halifax.co.uk": {
+      "file": "halifax-co-uk.png",
+      "bytes": 763,
+      "source": "www.google.com"
+    },
+    "handelsbanken.co.uk": {
+      "file": "handelsbanken-co-uk.png",
+      "bytes": 2761,
+      "source": "www.google.com"
+    },
+    "hbl.com": {
+      "file": "hbl-com.png",
+      "bytes": 690,
+      "source": "www.google.com"
+    },
+    "hl.co.uk": {
+      "file": "hl-co-uk.png",
+      "bytes": 259,
+      "source": "www.google.com"
+    },
+    "hsbc.ae": {
+      "file": "hsbc-ae.png",
+      "bytes": 1270,
+      "source": "www.google.com"
+    },
+    "hsbc.co.uk": {
+      "file": "hsbc-co-uk.png",
+      "bytes": 1270,
+      "source": "www.google.com"
+    },
+    "ii.co.uk": {
+      "file": "ii-co-uk.png",
+      "bytes": 1014,
+      "source": "www.google.com"
+    },
+    "investec.com": {
+      "file": "investec-com.png",
+      "bytes": 3085,
+      "source": "www.google.com"
+    },
+    "jazzcash.com.pk": {
+      "file": "jazzcash-com-pk.png",
+      "bytes": 1080,
+      "source": "www.google.com"
+    },
+    "jpmorgan.com": {
+      "file": "jpmorgan-com.png",
+      "bytes": 1295,
+      "source": "www.google.com"
+    },
+    "jsbl.com": {
+      "file": "jsbl-com.png",
+      "bytes": 1244,
+      "source": "www.google.com"
+    },
+    "khushhalibank.com.pk": {
+      "file": "khushhalibank-com-pk.png",
+      "bytes": 435,
+      "source": "www.google.com"
+    },
+    "liv.ae": {
+      "file": "liv-ae.png",
+      "bytes": 504,
+      "source": "www.google.com"
+    },
+    "lloydsbank.com": {
+      "file": "lloydsbank-com.png",
+      "bytes": 686,
+      "source": "www.google.com"
+    },
+    "marcus.co.uk": {
+      "file": "marcus-co-uk.png",
+      "bytes": 787,
+      "source": "www.google.com"
+    },
+    "mashreq.com": {
+      "file": "mashreq-com.png",
+      "bytes": 5263,
+      "source": "www.google.com"
+    },
+    "mcb.com.pk": {
+      "file": "mcb-com-pk.png",
+      "bytes": 1952,
+      "source": "www.google.com"
+    },
+    "meezanbank.com": {
+      "file": "meezanbank-com.png",
+      "bytes": 4716,
+      "source": "www.google.com"
+    },
+    "metrobankonline.co.uk": {
+      "file": "metrobankonline-co-uk.png",
+      "bytes": 2631,
+      "source": "www.google.com"
+    },
+    "monese.com": {
+      "file": "monese-com.png",
+      "bytes": 1542,
+      "source": "www.google.com"
+    },
+    "moneyboxapp.com": {
+      "file": "moneyboxapp-com.png",
+      "bytes": 1422,
+      "source": "www.google.com"
+    },
+    "moneygram.com": {
+      "file": "moneygram-com.png",
+      "bytes": 1618,
+      "source": "www.google.com"
+    },
+    "monzo.com": {
+      "file": "monzo-com.png",
+      "bytes": 1775,
+      "source": "www.google.com"
+    },
+    "morganstanley.com": {
+      "file": "morganstanley-com.png",
+      "bytes": 2898,
+      "source": "www.google.com"
+    },
+    "nationwide.co.uk": {
+      "file": "nationwide-co-uk.png",
+      "bytes": 826,
+      "source": "www.google.com"
+    },
+    "natwest.com": {
+      "file": "natwest-com.png",
+      "bytes": 743,
+      "source": "www.google.com"
+    },
+    "nayapay.com": {
+      "file": "nayapay-com.png",
+      "bytes": 977,
+      "source": "www.google.com"
+    },
+    "nbf.ae": {
+      "file": "nbf-ae.png",
+      "bytes": 3698,
+      "source": "www.google.com"
+    },
+    "nbp.com.pk": {
+      "file": "nbp-com-pk.png",
+      "bytes": 612,
+      "source": "www.google.com"
+    },
+    "nrspbank.com": {
+      "file": "nrspbank-com.png",
+      "bytes": 860,
+      "source": "www.google.com"
+    },
+    "pay.google.com": {
+      "file": "pay-google-com.png",
+      "bytes": 1339,
+      "source": "www.google.com"
+    },
+    "paypal.com": {
+      "file": "paypal-com.png",
+      "bytes": 1367,
+      "source": "www.google.com"
+    },
+    "pnc.com": {
+      "file": "pnc-com.png",
+      "bytes": 1973,
+      "source": "www.google.com"
+    },
+    "rakbank.ae": {
+      "file": "rakbank-ae.png",
+      "bytes": 729,
+      "source": "www.google.com"
+    },
+    "rbs.co.uk": {
+      "file": "rbs-co-uk.png",
+      "bytes": 685,
+      "source": "www.google.com"
+    },
+    "remitly.com": {
+      "file": "remitly-com.png",
+      "bytes": 1733,
+      "source": "www.google.com"
+    },
+    "revolut.com": {
+      "file": "revolut-com.png",
+      "bytes": 859,
+      "source": "www.google.com"
+    },
+    "ruya.ae": {
+      "file": "ruya-ae.png",
+      "bytes": 1251,
+      "source": "www.google.com"
+    },
+    "santander.co.uk": {
+      "file": "santander-co-uk.png",
+      "bytes": 418,
+      "source": "www.google.com"
+    },
+    "sc.com": {
+      "file": "sc-com.png",
+      "bytes": 1188,
+      "source": "www.google.com"
+    },
+    "schroderspersonalwealth.co.uk": {
+      "file": "schroderspersonalwealth-co-uk.png",
+      "bytes": 2026,
+      "source": "www.google.com"
+    },
+    "schwab.com": {
+      "file": "schwab-com.png",
+      "bytes": 2188,
+      "source": "www.google.com"
+    },
+    "shawbrook.co.uk": {
+      "file": "shawbrook-co-uk.png",
+      "bytes": 1214,
+      "source": "www.google.com"
+    },
+    "sib.ae": {
+      "file": "sib-ae.png",
+      "bytes": 1264,
+      "source": "www.google.com"
+    },
+    "smile.co.uk": {
+      "file": "smile-co-uk.png",
+      "bytes": 406,
+      "source": "www.google.com"
+    },
+    "sofi.com": {
+      "file": "sofi-com.png",
+      "bytes": 2210,
+      "source": "www.google.com"
+    },
+    "soneribank.com": {
+      "file": "soneribank-com.png",
+      "bytes": 393,
+      "source": "www.google.com"
+    },
+    "starlingbank.com": {
+      "file": "starlingbank-com.png",
+      "bytes": 870,
+      "source": "www.google.com"
+    },
+    "tandem.co.uk": {
+      "file": "tandem-co-uk.png",
+      "bytes": 591,
+      "source": "www.google.com"
+    },
+    "td.com": {
+      "file": "td-com.png",
+      "bytes": 789,
+      "source": "www.google.com"
+    },
+    "tide.co": {
+      "file": "tide-co.png",
+      "bytes": 577,
+      "source": "www.google.com"
+    },
+    "trading212.com": {
+      "file": "trading212-com.png",
+      "bytes": 921,
+      "source": "www.google.com"
+    },
+    "tsb.co.uk": {
+      "file": "tsb-co-uk.png",
+      "bytes": 1923,
+      "source": "www.google.com"
+    },
+    "ulsterbank.co.uk": {
+      "file": "ulsterbank-co-uk.png",
+      "bytes": 685,
+      "source": "www.google.com"
+    },
+    "usbank.com": {
+      "file": "usbank-com.png",
+      "bytes": 843,
+      "source": "www.google.com"
+    },
+    "vanguardinvestor.co.uk": {
+      "file": "vanguardinvestor-co-uk.png",
+      "bytes": 719,
+      "source": "www.google.com"
+    },
+    "varomoney.com": {
+      "file": "varomoney-com.png",
+      "bytes": 1343,
+      "source": "www.google.com"
+    },
+    "venmo.com": {
+      "file": "venmo-com.png",
+      "bytes": 799,
+      "source": "www.google.com"
+    },
+    "virginmoney.com": {
+      "file": "virginmoney-com.png",
+      "bytes": 945,
+      "source": "www.google.com"
+    },
+    "wellsfargo.com": {
+      "file": "wellsfargo-com.png",
+      "bytes": 1207,
+      "source": "www.google.com"
+    },
+    "westernunion.com": {
+      "file": "westernunion-com.png",
+      "bytes": 1312,
+      "source": "www.google.com"
+    },
+    "wise.com": {
+      "file": "wise-com.png",
+      "bytes": 1000,
+      "source": "www.google.com"
+    },
+    "withplum.com": {
+      "file": "withplum-com.png",
+      "bytes": 4798,
+      "source": "www.google.com"
+    },
+    "worldremit.com": {
+      "file": "worldremit-com.png",
+      "bytes": 3476,
+      "source": "www.google.com"
+    },
+    "xe.com": {
+      "file": "xe-com.png",
+      "bytes": 2520,
+      "source": "www.google.com"
+    },
+    "ybonline.co.uk": {
+      "file": "ybonline-co-uk.png",
+      "bytes": 945,
+      "source": "www.google.com"
+    },
+    "ztbl.com.pk": {
+      "file": "ztbl-com-pk.png",
+      "bytes": 765,
+      "source": "www.google.com"
+    },
+    "citibank.ae": {
+      "file": "citibank-ae.png",
+      "bytes": 939,
+      "source": "www.google.com",
+      "via": "citibank.com"
+    },
+    "dubaibank.ae": {
+      "file": "dubaibank-ae.png",
+      "bytes": 1742,
+      "source": "www.google.com",
+      "via": "emiratesnbd.com"
+    },
+    "keepa.pk": {
+      "file": "keepa-pk.png",
+      "bytes": 558,
+      "source": "www.google.com",
+      "via": "keepa.com"
+    },
+    "samba.com.pk": {
+      "file": "samba-com-pk.png",
+      "bytes": 1203,
+      "source": "www.google.com",
+      "via": "samba.com"
+    },
+    "telenorbank.pk": {
+      "file": "telenorbank-pk.png",
+      "bytes": 3394,
+      "source": "www.google.com",
+      "via": "easypaisa.com.pk"
+    },
+    "ubl.com.pk": {
+      "file": "ubl-com-pk.png",
+      "bytes": 1965,
+      "source": "www.google.com",
+      "via": "ubl.com"
+    },
+    "wio.io": {
+      "file": "wio-io.png",
+      "bytes": 10865,
+      "source": "www.google.com",
+      "via": "wio.com"
+    },
+    "zindigi.com": {
+      "file": "zindigi-com.png",
+      "bytes": 1080,
+      "source": "www.google.com",
+      "via": "jazzcash.com.pk"
+    },
+    "bankalfalah.com": {
+      "file": "bankalfalah-com.png",
+      "bytes": 1188,
+      "source": "alias:sc.com"
+    },
+    "sadapay.com": {
+      "file": "sadapay-com.png",
+      "bytes": 977,
+      "source": "alias:nayapay.com"
+    },
+    "silkbank.com.pk": {
+      "file": "silkbank-com-pk.png",
+      "bytes": 690,
+      "source": "alias:hbl.com"
+    },
+    "summitbank.com.pk": {
+      "file": "summitbank-com-pk.png",
+      "bytes": 690,
+      "source": "alias:hbl.com"
+    },
+    "sindhbank.com.pk": {
+      "file": "sindhbank-com-pk.png",
+      "bytes": 1083,
+      "source": "fetch"
+    },
+    "ajmanbank.ae": {
+      "file": "ajmanbank-ae.png",
+      "bytes": 1742,
+      "source": "alias:emiratesnbd.com"
+    },
+    "financehouse.ae": {
+      "file": "financehouse-ae.png",
+      "bytes": 1742,
+      "source": "alias:emiratesnbd.com"
+    },
+    "idbp.com.pk": {
+      "file": "idbp-com-pk.png",
+      "bytes": 612,
+      "source": "alias:nbp.com.pk"
+    },
+    "ppcb.com.pk": {
+      "file": "ppcb-com-pk.png",
+      "bytes": 2347,
+      "source": "alias:bop.com.pk"
+    },
+    "uab.ae": {
+      "file": "uab-ae.png",
+      "bytes": 1742,
+      "source": "alias:emiratesnbd.com"
+    },
+    "ubank.com.pk": {
+      "file": "ubank-com-pk.png",
+      "bytes": 3394,
+      "source": "alias:easypaisa.com.pk"
+    }
+  }
+}

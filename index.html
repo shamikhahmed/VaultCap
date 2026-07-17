@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function () {
-  var BUILD = '5.0.0';
+  var BUILD = '5.0.1';
   var KEY = 'vaultcap_build';
   if (localStorage.getItem(KEY) === BUILD) return;
   localStorage.setItem(KEY, BUILD);
@@ -27,7 +27,7 @@
   Promise.all(tasks).then(reload).catch(reload);
 })();
 </script>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google.com https://cdn.jsdelivr.net https://*.gstatic.com; connect-src 'self' https://cdn.jsdelivr.net https://open.er-api.com https://api.metals.live https://vaultos-llm-proxy.shamikhahmed.workers.dev; frame-src 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://open.er-api.com https://api.frankfurter.app https://api.metals.live https://data-asg.goldprice.org https://vaultos-llm-proxy.shamikhahmed.workers.dev; frame-src 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -466,9 +466,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" onclick="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=5.0.0"></script>
-<script>window.VER='5.0.0';</script>
-<script src="dist/vaultcap.bundle.js?v=5.0.0"></script>
+<script src="js/storage.js?v=5.0.1"></script>
+<script>window.VER='5.0.1';</script>
+<script src="dist/vaultcap.bundle.js?v=5.0.1"></script>
 <script>
 (function () {
   function syncDemoBanner() {

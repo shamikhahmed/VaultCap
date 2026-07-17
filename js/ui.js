@@ -746,18 +746,10 @@ const ExIm={
   export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
       S.user.lastBackup=new Date().toISOString();
-      const runVaultExport=()=>{
-        VaultDB.exportEncrypted().then(()=>{
-          Activity.log('Exported','AES-256-GCM encrypted .vos');
-          Toast.show('Backup saved','success',4000);
-        }).catch(()=>Toast.show('Export failed — try again','error'));
-      };
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
-        if(VaultDB.sessionKey){ runVaultExport(); return; }
-        VaultDB.isInitialized().then(init=>{
-          if(init) ExIm._promptPinForExport();
-          else ExIm._exportLegacyVault();
-        });
+        // Portable .vos: Crypto.encrypt embeds salt — works on any device.
+        // Requires export passphrase (not just 6-digit PIN) so cloud backups stay strong.
+        ExIm._promptExportPassphrase();
       });
       return;
     }
@@ -777,25 +769,52 @@ const ExIm={
     this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
     return;},
-  _promptPinForExport(){
-    Modal.open('Export Backup',`
-      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to create an encrypted backup file.</p>
-      <div class="fg"><label class="fl">PIN</label><input class="inp" id="exp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
-      <div class="ferr" id="exp-pin-err"></div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doPinExport()">Export</button>`);
+  _promptExportPassphrase(){
+    Modal.open('Encrypted Backup',`
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">
+        Create a <strong>portable</strong> AES-256-GCM <code>.vos</code> backup.
+        Use a strong passphrase (12+ chars) — <em>not</em> your 6-digit PIN.
+        Cloud storage (iCloud/Drive) is only safe with a strong passphrase.
+      </p>
+      <div class="fg"><label class="fl">Export passphrase</label><input class="inp" id="exp-pass" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
+      <div class="fg"><label class="fl">Confirm passphrase</label><input class="inp" id="exp-pass2" type="password" autocomplete="new-password" placeholder="Repeat passphrase"></div>
+      <div class="ferr" id="exp-pass-err"></div>`,
+      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doPassphraseExport()">Export</button>`);
   },
-  _doPinExport(){
-    const pin=document.getElementById('exp-pin')?.value||'';
-    if(!/^\d{6}$/.test(pin)){document.getElementById('exp-pin-err').textContent='Enter your 6-digit PIN';return;}
-    VaultDB.tryPin(pin).then(r=>{
-      if(!r||r.slot!=='main'){document.getElementById('exp-pin-err').textContent='Incorrect PIN';return;}
+  _doPassphraseExport(){
+    const err=document.getElementById('exp-pass-err');
+    const a=document.getElementById('exp-pass')?.value||'';
+    const b=document.getElementById('exp-pass2')?.value||'';
+    if(a.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
+    if(a!==b){err.textContent='Passphrases do not match';return;}
+    if(/^\d{6}$/.test(a)){err.textContent='Do not use your PIN — choose a strong passphrase';return;}
+    if(!Crypto.available()){err.textContent='Crypto unavailable in this browser';return;}
+    const payload={
+      ...this._exportMeta('vault'),
+      _vaultVersion:typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:13,
+      _exportedAt:new Date().toISOString(),
+      _appVersion:typeof VER!=='undefined'?VER:'5.0.0',
+      _kdf:'pbkdf2-sha256-600k',
+      user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,
+      cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],
+      sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,
+      digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,
+      family:S.family||{},familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{},
+      emergency:S.emergency||{},vehicles:S.vehicles||[],
+    };
+    err.textContent='Encrypting…';
+    Crypto.encrypt(JSON.stringify(payload),a).then(enc=>{
       Modal.close();
-      VaultDB.exportEncrypted().then(()=>{
-        Activity.log('Exported','AES-256-GCM encrypted .vos');
-        Toast.show('Backup saved','success',4000);
-      }).catch(()=>Toast.show('Export failed','error'));
+      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      Activity.log('Exported','AES-256-GCM portable .vos');
+      Toast.show('Encrypted backup saved — store passphrase safely','success',5000);
+    }).catch(e=>{
+      err.textContent='Export failed — try again';
+      console.warn('[ExIm] export',e);
     });
   },
+  _promptPinForExport(){ this._promptExportPassphrase(); },
+  _doPinExport(){ this._doPassphraseExport(); },
   _exportLegacyVault(){
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
@@ -810,19 +829,23 @@ const ExIm={
     ExIm._legacyImportCb=onSuccess;
     ExIm._legacyImportEnc=encRaw;
     Modal.open('Import Backup',`
-      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter your vault PIN to decrypt this legacy backup file.</p>
-      <div class="fg"><label class="fl">PIN</label><input class="inp" id="imp-pin" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter the export passphrase used when this .vos was created.</p>
+      <div class="fg"><label class="fl">Export passphrase</label><input class="inp" id="imp-pin" type="password" autocomplete="current-password" placeholder="Passphrase"></div>
       <div class="ferr" id="imp-pin-err"></div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doLegacyImportDecrypt()">Decrypt</button>`);
   },
   _doLegacyImportDecrypt(){
     const pin=document.getElementById('imp-pin')?.value||'';
-    if(!/^\d{6}$/.test(pin)){document.getElementById('imp-pin-err').textContent='Enter your 6-digit PIN';return;}
-    const pw=pin+'_vos4_'+(S.user?.name||'');
-    Crypto.decrypt(ExIm._legacyImportEnc,pw).then(plain=>{
-      Modal.close();
-      if(ExIm._legacyImportCb) ExIm._legacyImportCb(JSON.parse(plain));
-    }).catch(()=>{document.getElementById('imp-pin-err').textContent='Wrong PIN or corrupted file';});
+    if(!pin||pin.length<4){document.getElementById('imp-pin-err').textContent='Enter export passphrase';return;}
+    const attempts=[pin, pin+'_vos4_'+(S.user?.name||'')];
+    const tryNext=(i)=>{
+      if(i>=attempts.length){document.getElementById('imp-pin-err').textContent='Wrong passphrase or corrupted file';return;}
+      Crypto.decrypt(ExIm._legacyImportEnc,attempts[i]).then(plain=>{
+        Modal.close();
+        if(ExIm._legacyImportCb) ExIm._legacyImportCb(JSON.parse(plain));
+      }).catch(()=>tryNext(i+1));
+    };
+    tryNext(0);
   },
   _exportPlain(data){
     this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));

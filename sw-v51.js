@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v58';
+const CACHE = 'vaultcap-v59';
 const ASSETS = [
   './',
   './index.html',
@@ -44,6 +44,23 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
+
+  // Bank logos — cache-first, never hit Google from client
+  if (url.pathname.includes('/assets/banks/')) {
+    e.respondWith(
+      caches.match(e.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(e.request).then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+          }
+          return res;
+        });
+      })
+    );
+    return;
+  }
 
   if (PRECACHE.has(url.href)) {
     e.respondWith(

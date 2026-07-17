@@ -84,6 +84,7 @@ const Cards={
     const carrySection=carrying.length?`<div class="sdiv"><span class="chip-ic">${VC.icon('card',12)}</span> Carrying Today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
     const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
     el.innerHTML=walletHtml+archiveToggle+limitBanner+carrySection+restSection;
+    if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
     requestAnimationFrame(() => {
       const pg = document.getElementById('pg-cards');
       const pb = pg?.querySelector('.pb');
@@ -109,11 +110,13 @@ const Cards={
     const bankName=c.issuer||((c.cardName||'').split(' ')[0]);
     const typeLabel=(c.cardType||'CARD').toUpperCase();
 
-    // Bank logo — pill with favicon + initials fallback
-    const _dom=bankDomain(c.cardName||bankName,c.country);
-    const _initials=(bankName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
-    const logoHtml=_dom
-      ? `<div class="wcard-logo-pill"><img src="https://www.google.com/s2/favicons?sz=32&domain=${_dom}" alt="" width="18" height="18" style="border-radius:3px;display:block" onerror="this.parentElement.innerHTML='<span style=\\'font-size:11px;font-weight:700;color:#fff\\'>${_initials}</span>'"></div>`
+    // Bank logo — local bundle / LogoEngine (never Google)
+    const logoSrc = (typeof LogoEngine !== 'undefined')
+      ? LogoEngine.html(c.cardName || bankName, 18)
+      : '';
+    const _initials = (bankName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+    const logoHtml = logoSrc
+      ? `<div class="wcard-logo-pill" style="padding:0;overflow:hidden;background:transparent">${logoSrc}</div>`
       : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
