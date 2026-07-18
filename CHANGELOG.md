@@ -1,3 +1,11 @@
+## [5.1.1] — 2026-07-18
+
+### Security
+- Full CSP kill of HTML inline handlers (`onclick` / `oninput` / `onchange` / `onkeydown` / `onerror` / drag / mouse attrs)
+- `script-src 'self'` only — no `'unsafe-inline'` / `'unsafe-eval'` for scripts
+- New `Act` event delegation + `ActHelpers` for complex UI actions (safe interpreter, no `eval`)
+- External boot scripts (`js/boot-*.js`); SW cache `vaultcap-v63`
+
 ## [5.1.0] — 2026-07-18
 
 ### UX

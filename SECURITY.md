@@ -11,6 +11,7 @@ VaultCap is a **100% free**, consumer, offline-first PWA. No account. No subscri
 | **Backup key** | Generated when you export a `.vos` file. Needed with the file to restore on another device. Not your PIN. |
 | **Decoy PIN** | Optional. Opens a convincing fake vault under duress. |
 | **Biometrics (optional)** | WebAuthn Face ID / Touch ID / Windows Hello. When PRF is supported, can restore session key; otherwise confirms identity before PIN. |
+| **CSP** | App shell: `script-src 'self'` — no inline script handlers, no `eval`. UI uses `data-act*` + `Act` / `ActHelpers`. |
 
 ## Honest limits
 
@@ -18,6 +19,7 @@ VaultCap is a **100% free**, consumer, offline-first PWA. No account. No subscri
 - Keep the device locked, use a recovery key, and export encrypted `.vos` backups with the generated backup key.
 - Optional FX / metals rates may fetch when online. Core vault data stays on-device.
 - Smart Help is a **rules-based** in-app assistant — not a cloud LLM.
+- `style-src` still allows `'unsafe-inline'` for theme/CSS variables (scripts do not).
 
 ## What we never do
 

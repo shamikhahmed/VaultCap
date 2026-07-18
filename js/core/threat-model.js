@@ -71,7 +71,7 @@ const ThreatModel = {
 
     if (typeof Modal !== 'undefined') {
       Modal.open('Security & privacy model', body,
-        '<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Got it</button>');
+        '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Got it</button>');
     }
   },
 

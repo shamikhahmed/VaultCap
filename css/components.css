@@ -1297,3 +1297,15 @@ body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
 /* ── Misc ── */
 .drk { color: var(--text); font-weight: var(--fw-bold); }
 .drv { color: var(--text2); font-size: var(--fs-meta); }
+
+/* CSP-safe hover (no onmouse* attrs) */
+.vos-cta-lift{transition:transform .15s,box-shadow .15s}
+.vos-cta-lift:hover{transform:translateY(-2px);box-shadow:0 12px 36px var(--glow)}
+.vos-hover-glass{transition:background .15s}
+.vos-hover-glass:hover{background:var(--glass2)!important}
+
+/* CSP-safe hover (no onmouse* attrs) */
+.vos-cta-lift{transition:transform .15s,box-shadow .15s}
+.vos-cta-lift:hover{transform:translateY(-2px);box-shadow:0 12px 36px var(--glow)}
+.vos-hover-glass{transition:background .15s}
+.vos-hover-glass:hover{background:var(--glass2)!important}

@@ -182,7 +182,7 @@ const Family = {
     const hideBal = !!S.familyHideBalances;
     const hideToggle = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
       <div><div style="font-size:13px;font-weight:700;color:var(--text)">Hide balances</div><div style="font-size:11px;color:var(--text3)">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
-      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} onchange="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
+      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
     </div>`;
 
     const _stat = (id) => {
@@ -206,7 +206,7 @@ const Family = {
     const rest = members.filter(m => !m.isHead);
 
     const headCard = head
-      ? `<div onclick="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
+      ? `<div data-act="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(123,95,255,.25),rgba(0,213,255,.15));border:1px solid rgba(123,95,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
           <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(123,95,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
@@ -218,19 +218,19 @@ const Family = {
           </div>
         </div>`
       : (S.user.name
-        ? `<div onclick="Family.confirmHeadFromProfile()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
+        ? `<div data-act="Family.confirmHeadFromProfile()" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
           <div style="margin-bottom:8px;display:flex;justify-content:center">${S.user.name ? this.avatarHtml(S.user.name, 48) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Use ${escHtml(S.user.name)} as Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
-        : `<div onclick="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
+        : `<div data-act="Family.openAddMember(true)" style="background:rgba(123,95,255,.08);border:2px dashed rgba(123,95,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
           <div style="margin-bottom:8px;display:flex;justify-content:center">${VC.icon('star',32)}</div>
           <div style="font-size:15px;font-weight:700;color:var(--text)">Set Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
         </div>`);
 
     const memberCards = rest.map(m =>
-      `<div onclick="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
+      `<div data-act="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
         ${this.avatarHtml(m.name, 52)}
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
@@ -246,7 +246,7 @@ const Family = {
         ${headCard}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
-          <button type="button" class="btn btn-p btn-sm" onclick="Family.openAddMember(false)">+ Add</button>
+          <button type="button" class="btn btn-p btn-sm" data-act="Family.openAddMember(false)">+ Add</button>
         </div>
         ${rest.length ? memberCards : '<div class="empty"><div class="empty-ic">'+VC.icon('users',32)+'</div><h3>No members yet</h3><p>Add family members to manage their finances</p></div>'}
       </div>`;
@@ -259,10 +259,10 @@ const Family = {
     const tabs = this._visibleTabs();
 
     const tabBar = `<div class="cap-tab-bar" role="tablist" aria-label="Family member sections">
-      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" onclick="Family._switchTab('${t.id}')"><span class="chip-ic">${VC.icon(t.icon,12)}</span>${t.label}</button>`).join('')}
+      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" data-act="Family._switchTab('${t.id}')"><span class="chip-ic">${VC.icon(t.icon,12)}</span>${t.label}</button>`).join('')}
     </div>`;
 
-    const backBtn = `<button type="button" class="cap-subchrome-back" onclick="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
+    const backBtn = `<button type="button" class="cap-subchrome-back" data-act="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
 
     const header = `<div class="cap-member-header">
       ${this.avatarHtml(m.name, 64)}
@@ -270,7 +270,7 @@ const Family = {
         <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' <span class="badge b-acc">Head</span>' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
         <div class="cap-member-sub">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
-      <button type="button" class="btn btn-g btn-sm" onclick="Family.editMember('${m.id}')">Edit</button>
+      <button type="button" class="btn btn-g btn-sm" data-act="Family.editMember('${m.id}')">Edit</button>
     </div>`;
 
     body.innerHTML = `<div class="cap-subchrome">${backBtn}${header}${tabBar}<div id="fm-tab-body" class="cap-tab-panel" role="tabpanel">${this._tabContent(m)}</div></div>`;
@@ -313,7 +313,7 @@ const Family = {
         m.notes && ['Notes', escHtml(m.notes)],
       ].filter(Boolean);
       return `<div class="cap-member-stats">
-        ${stats.map(s => `<button type="button" class="cap-stat-tile" onclick="Family._switchTab('${s.tab}')">
+        ${stats.map(s => `<button type="button" class="cap-stat-tile" data-act="Family._switchTab('${s.tab}')">
           <div class="cap-stat-tile-val">${s.n}</div>
           <div class="cap-stat-tile-lbl"><span class="chip-ic">${VC.icon(s.ic,12)}</span>${s.l}</div>
         </button>`).join('')}
@@ -323,44 +323,44 @@ const Family = {
 
     if (this._tab === 'banks') {
       const items = (S.banks || []).filter(b => b.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
+      return `<button type="button" data-act="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
         (items.length ? items.map(b => this._bankRow(b)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No banks added yet</div>');
     }
 
     if (this._tab === 'cards') {
       const items = (S.cards || []).filter(c => c.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
+      return `<button type="button" data-act="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
         (items.length ? items.map(c => this._cardRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cards added yet</div>');
     }
 
     if (this._tab === 'cash') {
       const items = (S.cash || []).filter(c => c.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
+      return `<button type="button" data-act="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
         (items.length ? items.map(c => this._cashRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cash entries yet</div>');
     }
 
     if (this._tab === 'investments') {
       const items = (S.investments || []).filter(i => i.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
+      return `<button type="button" data-act="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
         (items.length ? items.map(i => this._invRow(i)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No investments added yet</div>');
     }
 
     if (this._tab === 'assets') {
       const items = (S.assets || []).filter(a => a.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
+      return `<button type="button" data-act="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
         (items.length ? items.map(a => this._assetRow(a)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No assets added yet</div>');
     }
 
     if (this._tab === 'documents') {
       const items = (S.documents || []).filter(d => d.ownerId === id);
-      return `<button type="button" onclick="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
+      return `<button type="button" data-act="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
         (items.length ? items.map(d => this._docRow(d)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added yet</div>');
     }
 
     if (this._tab === 'notes') {
       return `<div class="fg"><label class="fl">Private notes for ${escHtml(m.name)}</label>
         <textarea class="inp" id="fam-member-notes" rows="6" placeholder="Medical info, emergency contacts, school details…">${escHtml(m.notes || '')}</textarea></div>
-        <button type="button" class="btn btn-p btn-full" style="margin-top:10px" onclick="Family._saveNotes('${id}')">Save Notes</button>`;
+        <button type="button" class="btn btn-p btn-full" style="margin-top:10px" data-act="Family._saveNotes('${id}')">Save Notes</button>`;
     }
 
     return '';
@@ -535,7 +535,7 @@ const Family = {
     Modal.open(isHead ? 'Head of Family' : 'Add Family Member',
       `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name" oninput="Family._syncAvatarPreview(this.value)"></div>
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name" data-act-input="Family._syncAvatarPreview(this.value)"></div>
         ${this._avatarFieldHtml(p.name || '')}
         ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL3"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fam-rel" value="" list="fRelDL3" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
@@ -546,8 +546,8 @@ const Family = {
         <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${isHead ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${!isHead ? ' selected' : ''}>Viewer — label only (not enforced yet)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2"></textarea></div>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      `<button type="button" class="btn btn-p" onclick="Family._saveNewMember(${isHead})">Save</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>` +
+      `<button type="button" class="btn btn-p" data-act="Family._saveNewMember(${isHead})">Save</button>`
     );
   },
 
@@ -584,7 +584,7 @@ const Family = {
     if (!m) return;
     Modal.open(m.isHead ? 'Edit Head of Family' : 'Edit Member',
       `<div style="display:flex;flex-direction:column;gap:10px">
-        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name" oninput="Family._syncAvatarPreview(this.value)"></div>
+        <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name" data-act-input="Family._syncAvatarPreview(this.value)"></div>
         ${this._avatarFieldHtml(m.name)}
         ${!m.isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL4"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fam-rel" value="${escHtml(m.relation || '')}" list="fRelDL4" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
@@ -595,9 +595,9 @@ const Family = {
         <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — label only (not enforced yet)</option></select></div>
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>` +
-      (!m.isHead ? `<button type="button" class="btn btn-d btn-sm" onclick="Family._deleteMember('${id}')">Delete</button>` : '') +
-      `<button type="button" class="btn btn-p" onclick="Family._updateMember('${id}')">Save</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>` +
+      (!m.isHead ? `<button type="button" class="btn btn-d btn-sm" data-act="Family._deleteMember('${id}')">Delete</button>` : '') +
+      `<button type="button" class="btn btn-p" data-act="Family._updateMember('${id}')">Save</button>`
     );
   },
 

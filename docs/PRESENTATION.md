@@ -42,10 +42,13 @@ Expats and multi-country households juggle:
 | Layer | Standard |
 |-------|----------|
 | Encryption | AES-256-GCM |
-| Key derivation | PBKDF2 · 310k iterations · SHA-256 |
+| Key derivation | PBKDF2 · 600k iterations · SHA-256 |
 | Storage | IndexedDB encrypted blobs |
+| Unlock | 6-digit PIN · optional WebAuthn |
+| Recovery | Recovery key (setup) · backup key (`.vos` export) |
 | Duress | Decoy PIN → empty vault |
 | Lockout | Brute-force cooldown → wipe |
+| CSP | `script-src 'self'` — no inline handlers / no `eval` |
 
 Your PIN never leaves your device.
 
@@ -59,6 +62,7 @@ Your PIN never leaves your device.
 - **Prize Bonds** — bulk import, draw calendar
 - **Zakat** — AAOIFI calculator, live nisab, hawl tracker
 - **Tax** — Pakistan, UK, UAE slabs
+- **Bills** — dashboard due-soon widget
 
 ---
 
@@ -71,11 +75,17 @@ Your PIN never leaves your device.
 
 ---
 
-## Slide 7 — AI features (optional)
+## Slide 7 — Smart features (honest)
 
-- **Smart Add** — describe in English → pre-filled form
-- **Smart Import** — paste statement text → structured data
-- Requires optional LLM API key key; pattern fallback offline
+- **Smart Add / Smart Import** — rules-based Smart Parser (optional LLM only if you opt in)
+- **Smart Help** — offline rules assistant (not cloud AI)
+- Works fully offline for core vault
+
+---
+
+## Version
+
+**v5.1.1** — PIN-first · 100% free · CSP hardened
 
 ---
 

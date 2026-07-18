@@ -33,6 +33,18 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.0
 </nav>
 <article><h1>Changelog — VaultCap</h1>
 <p>Full history: <a href="CHANGELOG.md">CHANGELOG.md</a> on GitHub.</p>
+<h2>5.1.1 (2026-07-18) — CSP kill</h2>
+<ul>
+<li>Removed all HTML inline handlers (<code>onclick</code> / <code>onerror</code> / drag / mouse attrs)</li>
+<li><code>script-src 'self'</code> only — <code>Act</code> + <code>ActHelpers</code> for <code>data-act*</code> (no <code>eval</code>)</li>
+<li>External boot scripts; SW cache <code>vaultcap-v63</code></li>
+</ul>
+<h2>5.1.0 (2026-07-18) — PIN-first · free forever</h2>
+<ul>
+<li>Daily unlock = 6-digit PIN; generated recovery + backup keys</li>
+<li>Smart Help (rules-based), optional WebAuthn, bills widget</li>
+<li>100% free consumer product — no B2B/pricing</li>
+</ul>
 <h2>5.0.0 (2026-07-09) — Phase 2 product + soft launch prep</h2>
 <h3>Product</h3>
 <ul>

@@ -957,7 +957,7 @@ body {
 <div id="nav-dots"></div>
 
 <!-- PDF Export button -->
-<button id="export-btn" onclick="window.print()">⬇ Export PDF</button>
+<button id="export-btn" type="button">⬇ Export PDF</button>
 
 <!-- ═══════════════════════════════════════════════════════════════
      SECTION 1 — CINEMATIC OPENER
@@ -1639,6 +1639,9 @@ slides.forEach((_, i) => {
   dot.onclick = () => slides[i].scrollIntoView({ behavior: 'smooth' });
   navDots.appendChild(dot);
 });
+
+const exportBtn = document.getElementById('export-btn');
+if (exportBtn) exportBtn.onclick = () => window.print();
 
 function updateDots() {
   const dots = navDots.querySelectorAll('.nav-dot');

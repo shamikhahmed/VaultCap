@@ -50,7 +50,7 @@ const BCModule = {
         '</div>'
       ) : '') +
 
-      '<button type="button" class="btn btn-p" style="width:100%" onclick="BCModule.openAdd()">+ Join / Create a BC</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" data-act="BCModule.openAdd()">+ Join / Create a BC</button>' +
 
       (bcs.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">' + VC.icon('handshake', 32) + '</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
@@ -134,7 +134,7 @@ const BCModule = {
             '<option value="organiser"' + (bc.role === 'organiser' ? ' selected' : '') + '>Organiser</option>' +
           '</select></div>' +
         '<div class="fg"><label class="fl">BC Type</label>' +
-          '<select class="inp" id="bc-type" onchange="BCModule._onTypeChange()">' +
+          '<select class="inp" id="bc-type" data-act-change="BCModule._onTypeChange()">' +
             Object.entries(BCModule.TYPES).map(function(e) {
               return '<option value="' + e[0] + '"' + (bc.type === e[0] ? ' selected' : '') + '>' + e[1] + '</option>';
             }).join('') +
@@ -145,9 +145,9 @@ const BCModule = {
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Total Members</label>' +
-          '<input class="inp num-inp" type="number" id="bc-members" min="2" value="' + (bc.members || '') + '" placeholder="e.g. 10" oninput="BCModule._updatePot()"></div>' +
+          '<input class="inp num-inp" type="number" id="bc-members" min="2" value="' + (bc.members || '') + '" placeholder="e.g. 10" data-act-input="BCModule._updatePot()"></div>' +
         '<div class="fg"><label class="fl">Contribution/Round</label>' +
-          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bc-contribution" value="' + (bc.contribution || '') + '" placeholder="e.g. 10,000" oninput="BCModule._updatePot()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bc-contribution" value="' + (bc.contribution || '') + '" placeholder="e.g. 10,000" data-act-input="BCModule._updatePot()"></div>' +
       '</div>' +
 
       '<div class="fr">' +
@@ -190,8 +190,8 @@ const BCModule = {
 
       '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
 
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" data-act="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
     setTimeout(function() {
       BCModule._updatePot();
@@ -298,10 +298,10 @@ const BCModule = {
       ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
 
       (bc.type === 'ballot' && bc.role === 'organiser' ?
-        '<button type="button" onclick="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">Run Ballot Draw</button>'
+        '<button type="button" data-act="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">Run Ballot Draw</button>'
         : '') +
 
-      '<button type="button" onclick="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
+      '<button type="button" data-act="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
 
       (bc.notes ? '<div style="font-size:12px;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
 
@@ -310,7 +310,7 @@ const BCModule = {
         : '') +
 
       '</div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="BCModule.edit(' + i + ');Modal.close()">Edit</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="BCModule.edit(' + i + ');Modal.close()">Edit</button>'
     );
   },
 
@@ -342,9 +342,9 @@ const BCModule = {
           '<div style="font-size:48px;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
           '<div style="font-size:13px;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
         '</div>' +
-        '<button type="button" onclick="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">Draw!</button>' +
+        '<button type="button" data-act="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">Draw!</button>' +
       '</div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button>'
     );
   },
 

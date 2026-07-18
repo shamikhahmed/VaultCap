@@ -74,7 +74,7 @@ function bankLogo(bankName, country) {
   const domain = bankDomain(bankName);
   if (!domain) return '';
   const local = `assets/banks/${String(domain).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.png`;
-  return `<img src="${local}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover" onerror="this.style.display='none'" loading="lazy">`;
+  return `<img src="${local}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover" data-act-error="ActHelpers.hideEl(this)" loading="lazy">`;
 }
 
 function cardGradient(c){

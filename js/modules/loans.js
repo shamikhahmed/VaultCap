@@ -128,11 +128,11 @@ const Loans = {
               ? `<div style="font-size:12px;color:var(--text3)">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${fmtSum(totalAmt)}</span></div>`
               : `<div style="font-size:12px;color:var(--text3)">Nothing here yet</div>`}
           </div>
-          <button type="button" class="btn btn-p btn-sm" onclick="Loans.openAdd('${addType}')">+ Add</button>
+          <button type="button" class="btn btn-p btn-sm" data-act="Loans.openAdd('${addType}')">+ Add</button>
         </div>`;
 
       if (liveAll.length === 0 && settled.length === 0) {
-        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track who you owe and who owes you — amounts, due dates, and partial payments</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Loans.openAdd()">+ Add Loan</button></div></div>`;
+        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track who you owe and who owes you — amounts, due dates, and partial payments</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="Loans.openAdd()">+ Add Loan</button></div></div>`;
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
@@ -151,7 +151,7 @@ const Loans = {
 
   openAdd(type = 'borrowed') {
     const title = type === 'borrowed' ? 'I Owe (Borrowed)' : 'They Owe Me (Lent)';
-    Modal.open(title, this.form({ type }), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Loans.save()">Save</button>`);
+    Modal.open(title, this.form({ type }), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Loans.save()">Save</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = S.user.currency || 'PKR';
@@ -212,7 +212,7 @@ const Loans = {
         const friendId = U.id();
         S.friends.push({ id: friendId, name: person, createdAt: new Date().toISOString() });
         Store.save();
-        Toast.show(`${typeof escHtml==='function'?escHtml(person):person} added to Friends. <button type="button" class="cpbtn" onclick="S.friends=S.friends.filter(f=>f.id!=='${friendId}');Store.save();this.closest('.toast').remove();Toast.show('Removed from Friends','info',1800)">Undo</button>`, 'info', 5000, true);
+        Toast.show(`${typeof escHtml==='function'?escHtml(person):person} added to Friends. <button type="button" class="cpbtn" data-act="ActHelpers.removeFriendUndo('${friendId}',this)">Undo</button>`, 'info', 5000, true);
       }
       promptAddAnother('Loan', `Loans.openAdd('${type}')`);
     }
@@ -220,7 +220,7 @@ const Loans = {
 
   edit(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
-    Modal.open('Edit Loan', this.form(l), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Loans.save('${id}')">Update</button>`);
+    Modal.open('Edit Loan', this.form(l), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Loans.save('${id}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = l.currency || S.user.currency || 'PKR';
@@ -250,7 +250,7 @@ const Loans = {
         <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
         <div>Remaining: <strong style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Loans.savePayment('${id}')">Record</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Loans.savePayment('${id}')">Record</button>`
     );
     setTimeout(() => {
       const amtEl = document.getElementById('lp-amt');

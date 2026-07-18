@@ -26,18 +26,21 @@ python3 -m http.server 8765
 
 Demo PIN: **123456**
 
-## Architecture (current — v5.0.x)
+## Architecture (current — v5.1.x)
 
 | Layer | Role |
 |-------|------|
-| `index.html` | SPA shell, 70+ script tags, SW registration (`sw-v51.js`) |
+| `index.html` | SPA shell + CSP (`script-src 'self'`); boot scripts external |
+| `js/boot-*.js` | Cache-bust, `VER`, SW register |
+| `js/core/act-*.js` | CSP-safe `data-act*` delegation (no `eval`) |
 | `js/core/store-engine.js` | Global state `S` + `Store.save/load` |
 | `js/storage.js` | **VaultDB** — IndexedDB + AES-256-GCM |
-| `js/core/migrate.js` | Schema migrations (`SCHEMA_VERSION` = 13) |
+| `js/core/migrate.js` | Schema migrations |
 | `js/modules/*` | Feature modules (banks, cards, family, zakat, …) |
 | `js/ui.js` | Dashboard, settings, export/import, QR sync |
+| `sw-v51.js` | Service worker (`vaultcap-v63`) |
 
-**Storage:** Primary persistence is encrypted **IndexedDB** via `VaultDB`, not `localStorage['vos3']` (legacy migration only). All features are free — no paywall.
+**Storage:** Primary persistence is encrypted **IndexedDB** via `VaultDB`. **100% free** — no paywall / no required cloud AI.
 
 Key properties:
 - `S.user` — profile, theme, currency, net worth history

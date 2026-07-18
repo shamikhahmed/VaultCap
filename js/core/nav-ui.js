@@ -4,7 +4,7 @@
 function moneySheetTile(m) {
   const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
   const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-  return '<div onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+  return '<div data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
 }
 
 function openMoneySheet() {
@@ -30,7 +30,7 @@ function openMoneySheet() {
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+items.map(moneySheetTile).join('')+'</div>';
   const body = (banking.length || cashflow.length)
     ? section('Banking', banking) + section('Cashflow', cashflow)
-    : '<div style="text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'moneySheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>';
+    : '<div style="text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'moneySheet\')">Enable in Settings →</button></div>';
   overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
     '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
     '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Money' + ctxLabel + '</div>' +
@@ -60,8 +60,8 @@ function openAssetsSheet() {
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
-    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'assetsSheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>') +
+      return '<div data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -89,8 +89,8 @@ function openIdentitySheet() {
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
-    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" onclick="document.getElementById(\'identitySheet\')?.remove();R.goto(\'settings\');setTimeout(function(){SettingsNav.show(\'modules\')},80)">Enable in Settings →</button></div>') +
+      return '<div data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -143,7 +143,7 @@ function openMore() {
     '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
     group.items.map(m =>
-      '<div onclick="document.getElementById(\'moreOverlay\')?.remove();R.goto(\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
+      '<div data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
       '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
       '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
       '</div>'
@@ -153,7 +153,7 @@ function openMore() {
   overlay.innerHTML =
     '<div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);z-index:2">' +
     '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
-    '<button type="button" onclick="document.getElementById(\'moreOverlay\')?.remove()" aria-label="Close" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1;min-width:44px;min-height:44px">×</button>' +
+    '<button type="button" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'\')" aria-label="Close" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1;min-width:44px;min-height:44px">×</button>' +
     '</div>' +
     '<div style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 88px)">' +
     bodyHtml +
@@ -213,7 +213,7 @@ function buildSettTabs() {
   ];
   const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'profile';
   el.innerHTML = tabs.map(([id, label, ic]) =>
-    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" onclick="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
+    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
   ).join('');
 }
 
@@ -225,7 +225,7 @@ function saveTabPrefs(prefs) {
 }
 
 function financeHomeTile(m) {
-  return `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+  return `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
@@ -266,7 +266,7 @@ function renderVaultHome() {
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+    modules.map(m => `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
@@ -286,7 +286,7 @@ function renderAssetsHome() {
     {id:'assets',ic:'layers',label:'Property',desc:(S.assets||[]).length+' items'+(vehicleCount||metalCount?' · inc. vehicles & metals':'')},
   ].filter(m => isModOn(m.id));
   b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div onclick="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
+    modules.map(m => `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
       <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
       <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
@@ -375,11 +375,11 @@ function buildNav() {
   document.getElementById('btabs').setAttribute('role', 'tablist');
   document.getElementById('btabs').setAttribute('aria-label', 'Main navigation');
   document.getElementById('btabs').innerHTML =
-    `<div class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" onclick="R.goto('dashboard')"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
-    `<div class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" onclick="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
-    `<div class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" onclick="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</div><span>Wealth</span></div>` +
-    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" onclick="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
-    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" onclick="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
+    `<div class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" data-act="R.goto('dashboard')"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
+    `<div class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" data-act="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
+    `<div class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" data-act="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</div><span>Wealth</span></div>` +
+    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" data-act="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
+    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" data-act="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [
@@ -389,14 +389,14 @@ function buildNav() {
     { id: 'cards', icon: 'card', label: 'Card', obj: 'Cards' },
   ].filter(q => isModOn(q.id) && document.getElementById('pg-' + q.id));
   const fabItems = [
-    ...quickAdds.map(q => `<div class="fmi" onclick="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</div>`),
-    '<div class="fmi" onclick="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</div>',
-    '<div class="fmi" onclick="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</div>',
-    '<div class="fmi" onclick="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</div>',
-    '<div class="fmi" onclick="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</div>',
-    '<div class="fmi" onclick="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</div>',
-    '<div class="fmi" onclick="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</div>',
-    '<div class="fmi" onclick="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</div>'
+    ...quickAdds.map(q => `<div class="fmi" data-act="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</div>`),
+    '<div class="fmi" data-act="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</div>',
+    '<div class="fmi" data-act="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</div>',
+    '<div class="fmi" data-act="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</div>',
+    '<div class="fmi" data-act="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</div>',
+    '<div class="fmi" data-act="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</div>',
+    '<div class="fmi" data-act="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</div>',
+    '<div class="fmi" data-act="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</div>'
   ];
   document.getElementById('fabMenu').innerHTML = fabItems.join('');
   patchNavActiveState();

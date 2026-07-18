@@ -14,11 +14,11 @@ This is the trade-off: complete privacy, in exchange for complete responsibility
 
 ## Getting Started (5 Steps)
 
-### Step 1 — Set a strong PIN
+### Step 1 — Set a 6-digit PIN
 
-Go to **Settings → Security → Change PIN**. Your PIN is the encryption key for your entire vault. Pick something memorable but not obvious. Do not use 123456 (the demo PIN).
+During setup (or **Settings → Security**), choose a PIN. VaultCap shows a **recovery key** once — copy it somewhere safe. Daily unlock is PIN only (optional biometrics).
 
-> Without your PIN, your backup file cannot be opened. There is no "forgot PIN" flow.
+> Forgot PIN? Use recovery key / master-key flow on the lock screen. Exported `.vos` backups need the **backup key** shown at export — not your PIN.
 
 ### Step 2 — Add your primary country
 
@@ -34,7 +34,7 @@ Go to **Identity → Documents → + Add Document**. Store passports, driving li
 
 ### Step 5 — Export your first backup
 
-Go to **Settings → Backup & Export → Export Vault**. A `.vos` file downloads — save it to iCloud Drive, Google Drive, or email it to yourself. **Do this now.** You cannot recover data without a backup if you lose your device.
+Go to **Settings → Backup & Export → Export Vault**. Copy the generated **backup key**, then download the `.vos` file — save both somewhere safe (iCloud Drive, Google Drive, or printed). **Do this now.** You cannot restore without the file **and** the backup key.
 
 ---
 
@@ -470,7 +470,7 @@ Smart Add uses Smart Parser (optional LLM) to detect what you're describing and 
 
 ---
 
-## Analytics & reminders (v5.0)
+## Analytics & reminders (v5.1+)
 
 ### Expense charts
 Finance → Expenses shows monthly/yearly totals, top categories, a **category bar chart**, and a donut when you have multiple categories. Paused subscriptions are excluded from totals.

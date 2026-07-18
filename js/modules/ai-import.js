@@ -294,14 +294,14 @@ const AIImport = {
         'ondragover="event.preventDefault();this.style.borderColor=\'var(--accent)\'" ' +
         'ondragleave="this.style.borderColor=\'var(--border)\'" ' +
         'ondrop="AIImport.handleDrop(event)" ' +
-        'onclick="document.getElementById(\'ie-file\').click()">' +
+        'data-act="document.getElementById(\'ie-file\').click()">' +
         '<div style="margin-bottom:8px;display:flex;justify-content:center">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
         '<div style="font-size:13px;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:4px">CSV, text, or image (OCR via Import page)</div>' +
-        '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" onchange="AIImport.handleFile(this.files[0])">' +
+        '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" data-act-change="AIImport.handleFile(this.files[0])">' +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" onclick="AIImport.detect()">Detect &amp; Extract</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" data-act="AIImport.detect()">Detect &amp; Extract</button>' +
 
       '<div id="ie-status" style="display:none;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center">' +
         '<div id="ie-status-text" style="font-size:13px;color:var(--text2)"></div>' +
@@ -405,7 +405,7 @@ const AIImport = {
 
     let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
-      '<button type="button" class="btn btn-p btn-sm" onclick="AIImport.importSelected()">Import Selected</button>' +
+      '<button type="button" class="btn btn-p btn-sm" data-act="AIImport.importSelected()">Import Selected</button>' +
     '</div>';
 
     html += detected.map(function(item, i) {
@@ -433,14 +433,14 @@ const AIImport = {
               '<div style="font-size:11px;color:var(--text3);min-width:100px;text-transform:capitalize">' + key.replace(/([A-Z])/g, ' $1').trim() + '</div>' +
               '<input style="flex:1;background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px" ' +
                 'value="' + displayVal.replace(/"/g, '&quot;') + '" ' +
-                'oninput="AIImport._results[' + i + '].data[\'' + key + '\']=this.value">' +
+                'data-act-input="ActHelpers.setAiResult(' + i + ',\'' + key + '\',this.value)">' +
             '</div>';
           }).join('') +
         '</div>' +
       '</div>';
     }).join('');
 
-    html += '<button type="button" class="btn btn-p" style="width:100%;margin-top:4px" onclick="AIImport.importSelected()">Import All Selected Items</button>';
+    html += '<button type="button" class="btn btn-p" style="width:100%;margin-top:4px" data-act="AIImport.importSelected()">Import All Selected Items</button>';
     container.innerHTML = html;
   },
 

@@ -17,7 +17,7 @@ const Emergency = {
             <div style="font-size:14px;font-weight:600;color:var(--text)">Show on Lock Screen</div>
             <div style="font-size:12px;color:var(--text3)">Accessible without PIN</div>
           </div>
-          <label class="tog"><input type="checkbox" ${e.showOnLockscreen?'checked':''} onchange="Emergency.toggleLockscreen(this.checked)"><span class="ts"></span></label>
+          <label class="tog"><input type="checkbox" ${e.showOnLockscreen?'checked':''} data-act-change="Emergency.toggleLockscreen(this.checked)"><span class="ts"></span></label>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
           ${[
@@ -34,7 +34,7 @@ const Emergency = {
             }
           </div>`).join('')}
         </div>
-        <button type="button" class="btn btn-p" onclick="Emergency.save()" style="width:100%">Save Emergency Info</button>
+        <button type="button" class="btn btn-p" data-act="Emergency.save()" style="width:100%">Save Emergency Info</button>
         ${e.showOnLockscreen?`
         <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
           <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
@@ -82,7 +82,7 @@ const Emergency = {
         ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${escHtml(e.allergies)}</div></div>`:''}
         ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${escHtml(e.emergencyNote)}</div></div>`:''}
       </div>`,
-      `<button type="button" class="btn btn-p" onclick="Modal.close()">Close</button>`
+      `<button type="button" class="btn btn-p" data-act="Modal.close()">Close</button>`
     );
   },
 };
@@ -177,7 +177,7 @@ const DevDiag = {
           ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None', true)}
           ${Object.entries(this._renderTimings).slice(0,5).map(([k,v]) => row(`Render: ${k}`, `${v}ms`)).join('')}
         </div>
-        <button type="button" class="btn btn-g" onclick="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:11px">Copy Report</button>
+        <button type="button" class="btn btn-g" data-act="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:11px">Copy Report</button>
       `;
     }, 50);
   },
@@ -244,7 +244,7 @@ const VaultRecovery = {
         ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">Auto-repaired ${fixed} issue(s)</div>` : ''}
         <div style="font-size:12px;color:var(--text3);line-height:1.6">If problems persist, export a backup and restore from a previous .vos file.</div>
       </div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Dismiss</button><button type="button" class="btn btn-p" onclick="ExIm.export('vos');Modal.close()">Export Backup</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Dismiss</button><button type="button" class="btn btn-p" data-act="ExIm.export('vos');Modal.close()">Export Backup</button>`
     );
     return true;
   },
@@ -278,16 +278,16 @@ const ContextSwitcher = {
     const active = this.get();
     const pill = (code, label, flag) => {
       const isActive = active === code;
-      return `<button type="button" class="ctx-pill${isActive ? ' on' : ''}" onclick="ContextSwitcher.set('${code}')">
+      return `<button type="button" class="ctx-pill${isActive ? ' on' : ''}" data-act="ContextSwitcher.set('${code}')">
         ${flag ? `<span aria-hidden="true">${flag}</span>` : ''}<span>${label}</span>
       </button>`;
     };
     let pills = pill('ALL', 'All', '');
     codes.forEach(code => pills += pill(code, U.cname(code), U.flag(code)));
     if (!primary) {
-      pills += `<button type="button" class="ctx-pill ctx-pill--cta" onclick="ContextSwitcher.openManager()">+ Set home country</button>`;
+      pills += `<button type="button" class="ctx-pill ctx-pill--cta" data-act="ContextSwitcher.openManager()">+ Set home country</button>`;
     } else {
-      pills += `<button type="button" class="ctx-pill ctx-pill--icon" onclick="ContextSwitcher.openManager()" title="Manage countries">${typeof VC !== 'undefined' ? VC.icon('pencil', 14) : 'Edit'}</button>`;
+      pills += `<button type="button" class="ctx-pill ctx-pill--icon" data-act="ContextSwitcher.openManager()" title="Manage countries">${typeof VC !== 'undefined' ? VC.icon('pencil', 14) : 'Edit'}</button>`;
     }
     return `<div class="ctx-bar">${pills}</div>`;
   },
@@ -309,7 +309,7 @@ const ContextSwitcher = {
         </div>
       </div>
       <div class="fg"><label class="fl">Display currency</label><select class="inp" id="ctx-currency">${U.currencies()}</select></div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ContextSwitcher.saveManager()">Save</button>`);
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="ContextSwitcher.saveManager()">Save</button>`);
     setTimeout(() => {
       const p = document.getElementById('ctx-primary');
       if (p) {

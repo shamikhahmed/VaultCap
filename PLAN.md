@@ -1,8 +1,10 @@
 # VaultCap — Sprint Plan (2026-07-09)
 
-**Version target:** 5.0.0 (Phase 2 shipped)  
+**Version target:** 5.1.1 (CSP hardened · PIN-first)  
 **Distribution:** PWA + install.html only — **no app stores this sprint**  
 **Launch:** Soft — share install link with select testers; no public announce / release tag yet
+
+> Historical Phase 2 plan below kept for reference. Current ship = `CHANGELOG.md` / `VERSION.json`.
 
 ## Phase 0 — Foundation
 

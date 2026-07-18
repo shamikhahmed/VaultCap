@@ -2,7 +2,7 @@
 
 **Live app:** https://shamikhahmed.github.io/VaultCap  
 **Install guide:** [install.html](./install.html)  
-**Version:** 5.0.0 · **Soft launch** (PWA + install link — no app stores, no public release tag)
+**Version:** 5.1.1 · **Soft launch** (PWA + install link — no app stores, no public release tag)
 
 ## What “ready” means
 
@@ -25,9 +25,10 @@ VaultCap is **zero-knowledge**. Do **not** add email/password login for v1 — t
 
 | Control | Role |
 |---------|------|
-| **6-digit PIN** | Password — unlocks vault on this device |
-| **Master recovery key** | Offline recovery if PIN forgotten |
-| **AES-256-GCM + PBKDF2 310k** | Encrypts vault before storage |
+| **6-digit PIN** | Daily unlock — derives vault key (PBKDF2 ~600k) |
+| **Recovery key** | Offline recovery if PIN forgotten |
+| **Backup key** | Generated at `.vos` export — required with file |
+| **AES-256-GCM + PBKDF2 600k** | Encrypts vault before storage |
 | **IndexedDB / localStorage** | Encrypted data on device only |
 | **Decoy PIN** | Optional empty vault under duress |
 | **Lockout** | Slows / blocks brute force |
@@ -43,7 +44,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [x] PWA live on GitHub Pages (`npm run build:js` in Pages workflow)
 - [x] Bank↔card linking + catalog
 - [x] Dashboard / search / expense / loan link UX
-- [x] `npm run test:e2e` green on `main` (v5.0.0)
+- [x] `npm run test:e2e` green on `main` (v5.1.1)
 - [x] `npm run test:e2e:safari` green (11 passed, webkit-iphone)
 - [x] `npm run audit:xss` green
 - [ ] Manual smoke: unlock, add bank+card, backup export, lock
@@ -61,7 +62,7 @@ PIN and keys never leave the device. We cannot reset a forgotten PIN without the
 - [ ] Bundled LLM proxy: optional, documented, Smart Parser default
 
 ### Day 4 — Content + trust
-- [x] Landing version badge matches VERSION.json (5.0.0)
+- [x] Landing version badge matches VERSION.json (5.1.1)
 - [x] Screenshots current in manifest (`npm run gallery` — 2026-07-09)
 - [x] Privacy policy accurate (local storage, no account, delete vault, LLM opt-in)
 

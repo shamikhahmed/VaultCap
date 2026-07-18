@@ -46,7 +46,7 @@ function _supportBlockHtml() {
     '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">Your Vault ID</div>' +
     '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
     '<code style="font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.08em;color:var(--text)">' + vid + '</code>' +
-    '<button type="button" class="btn btn-g btn-sm" onclick="copyVaultId()">Copy</button>' +
+    '<button type="button" class="btn btn-g btn-sm" data-act="copyVaultId()">Copy</button>' +
     '</div>' +
     '<div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.45">' +
     'Find this anytime in Settings → About. Use it when you contact support so we can track your ticket. ' +
@@ -67,23 +67,23 @@ window.forgotPINFromLock = async function() {
     'Only you can unlock this vault. Pick an option you control:' +
     '</div>' +
     (hasRecovery
-      ? '<div onclick="Modal.close();setTimeout(window._recoverWithKey,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('key', 28) + '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Recover with Master Key</div><div style="font-size:13px;color:var(--text2)">Key shown once at setup — restores access on this device</div></div></div>'
+      ? '<div data-act="Modal.close();setTimeout(window._recoverWithKey,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('key', 28) + '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Recover with Master Key</div><div style="font-size:13px;color:var(--text2)">Key shown once at setup — restores access on this device</div></div></div>'
       : '<div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;opacity:.45">' + _lrIcon('key', 28) + '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Recover with Master Key</div><div style="font-size:13px;color:var(--text2)">No master key set up for this vault</div></div></div>') +
-    '<div onclick="Modal.close();document.getElementById(\'importF-global\')?.click()" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('download', 28) + '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Restore from backup</div><div style="font-size:13px;color:var(--text2)">Import your .vos file — still encrypted until you unlock</div></div></div>' +
-    '<div onclick="Modal.close();setTimeout(window._resetVault,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('cross', 28) + '<div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Permanently deletes all data on this device</div></div></div>' +
+    '<div data-act="Modal.close();document.getElementById(\'importF-global\')?.click()" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('download', 28) + '<div><div style="font-weight:700;font-size:15px;margin-bottom:3px">Restore from backup</div><div style="font-size:13px;color:var(--text2)">Import your .vos file — still encrypted until you unlock</div></div></div>' +
+    '<div data-act="Modal.close();setTimeout(window._resetVault,200)" style="display:flex;align-items:center;gap:14px;padding:16px;background:rgba(255,64,96,.06);border:1px solid rgba(255,64,96,.25);border-radius:14px;cursor:pointer;touch-action:manipulation">' + _lrIcon('cross', 28) + '<div><div style="font-weight:700;font-size:15px;color:var(--err);margin-bottom:3px">Reset Vault</div><div style="font-size:13px;color:var(--text2)">Permanently deletes all data on this device</div></div></div>' +
     _supportBlockHtml() +
     '</div>',
-    '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
+    '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Cancel</button>'
   );
 };
 
 window._recoverWithKey = function() {
   Modal.open('Master Key Recovery',
     '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Enter your 24-character master key to restore vault access. Capricorn Systems never has this key.</div>' +
-    '<input class="inp" id="mkInput" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:center;font-size:16px" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
+    '<input class="inp" id="mkInput" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:center;font-size:16px" autocomplete="off" autocorrect="off" spellcheck="false" data-act-input="ActHelpers.upperAlnumDash(this)">' +
     '<div id="mkErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:16px"></div>',
-    '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-    '<button type="button" class="btn btn-p" onclick="window._verifyMasterKey()">Verify →</button>'
+    '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+    '<button type="button" class="btn btn-p" data-act="window._verifyMasterKey()">Verify →</button>'
   );
 };
 
@@ -104,8 +104,8 @@ window._verifyMasterKey = async function() {
       '<input class="inp" id="newPinA" type="password" inputmode="numeric" maxlength="8" placeholder="New PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem;margin-bottom:8px">' +
       '<input class="inp" id="newPinB" type="password" inputmode="numeric" maxlength="8" placeholder="Confirm PIN" style="text-align:center;letter-spacing:.2em;font-size:1.4rem">' +
       '<div id="newPinErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:16px"></div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="window._applyNewPIN(\'' + input + '\',' + hasSlot + ')">Set PIN →</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" data-act="window._applyNewPIN(\'' + input + '\',' + hasSlot + ')">Set PIN →</button>'
     );
   }, 300);
 };
@@ -136,8 +136,8 @@ window._resetVault = function() {
     '<div style="font-size:14px;font-weight:700;color:var(--err);margin-bottom:8px">This permanently deletes ALL vault data.</div>' +
     '<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">Type <strong>RESET</strong> to confirm. This cannot be undone.</div>' +
     '<input class="inp" id="resetConfirm" placeholder="RESET" autocorrect="off" autocapitalize="characters" style="text-align:center;font-weight:700;letter-spacing:.15em;font-size:16px">',
-    '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-    '<button type="button" class="btn btn-d" onclick="window._confirmReset()">Delete Everything</button>'
+    '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+    '<button type="button" class="btn btn-d" data-act="window._confirmReset()">Delete Everything</button>'
   );
 };
 

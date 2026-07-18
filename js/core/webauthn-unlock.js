@@ -275,8 +275,8 @@ const WebAuthnUnlock = (() => {
           + '<p style="font-size:12px;color:var(--text3);line-height:1.5">When PRF is supported, biometrics can restore your vault session key. Otherwise biometrics only confirm identity before PIN entry. Re-register after changing PIN.</p>'
           + '<div class="fg"><label class="fl">Confirm current PIN</label><input class="inp" id="wa-pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="6-digit PIN"></div>'
           + '<div class="ferr" id="wa-err"></div>',
-          '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>'
-          + '<button type="button" class="btn btn-p" onclick="WebAuthnUnlock._doEnable()">Register</button>');
+          '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>'
+          + '<button type="button" class="btn btn-p" data-act="WebAuthnUnlock._doEnable()">Register</button>');
         setTimeout(() => document.getElementById('wa-pin')?.focus(), 80);
         return true;
       }
@@ -310,8 +310,8 @@ const WebAuthnUnlock = (() => {
       return '<div class="si"><div class="sil"><div class="name">Biometric unlock</div>'
         + '<div class="desc">WebAuthn / Face ID / Touch ID — ' + status + '</div></div>'
         + (on
-          ? '<button type="button" class="btn btn-d btn-sm" onclick="WebAuthnUnlock.disable()">Disable</button>'
-          : '<button type="button" class="btn btn-g btn-sm"' + (sup ? '' : ' disabled') + ' onclick="WebAuthnUnlock.enable()">Enable</button>')
+          ? '<button type="button" class="btn btn-d btn-sm" data-act="WebAuthnUnlock.disable()">Disable</button>'
+          : '<button type="button" class="btn btn-g btn-sm"' + (sup ? '' : ' disabled') + ' data-act="WebAuthnUnlock.enable()">Enable</button>')
         + '</div>';
     },
 

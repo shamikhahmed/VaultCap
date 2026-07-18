@@ -113,11 +113,11 @@ const U = {
     const defaults = ['Personal','Business','Primary','Secondary','Joint','Emergency','Savings','Travel','Islamic','Backup','Crypto','Family'];
     const all = [...defaults, ...(S.tags || [])].filter((v, i, a) => v && a.indexOf(v) === i);
     let html = '<div class="tags" id="tagPick">';
-    all.forEach(t => { const safe = escHtml(t); html += `<span class="tag${sel.indexOf(t) >= 0 ? ' on' : ''}" onclick="this.classList.toggle('on')">${safe}</span>`; });
+    all.forEach(t => { const safe = escHtml(t); html += `<span class="tag${sel.indexOf(t) >= 0 ? ' on' : ''}" data-act="ActHelpers.classToggle(this,'on')">${safe}</span>`; });
     html += '</div>';
     html += '<div style="display:flex;gap:7px;margin-top:7px">';
-    html += '<input class="inp" id="custTagIn" placeholder="Add tag..." style="flex:1" onkeydown="if(event.key===\'Enter\')U.addTag()">';
-    html += '<button type="button" class="btn btn-g btn-sm" onclick="U.addTag()">+</button></div>';
+    html += '<input class="inp" id="custTagIn" placeholder="Add tag..." style="flex:1" data-act-keydown="if(event.key===\'Enter\')U.addTag()">';
+    html += '<button type="button" class="btn btn-g btn-sm" data-act="U.addTag()">+</button></div>';
     return html;
   },
   addTag() {
@@ -141,7 +141,7 @@ const U = {
     let attrs = `type="button" class="${cls}"`;
     if (ariaLabel) attrs += ` aria-label="${escAttr(ariaLabel)}"`;
     if (title) attrs += ` title="${escAttr(title)}"`;
-    if (onclick) attrs += ` onclick="${onclick}"`;
+    if (onclick) attrs += ` data-act="${onclick}"`;
     return `<button ${attrs}>${iconHtml}</button>`;
   },
   actsViewEditDel(prefix, id, view = 'detail') {
@@ -286,8 +286,8 @@ function promptAddAnother(moduleLabel, openFn) {
     box-shadow:var(--shadowlg);animation:slideIn .25s var(--spring);white-space:nowrap;
   `;
   bar.innerHTML = `<span style="font-size:13px;color:var(--text2)">Add another ${moduleLabel}?</span>
-    <button type="button" class="btn btn-p btn-sm" onclick="document.getElementById('add-another-bar').remove();(${openFn})()">Yes</button>
-    <button type="button" class="btn btn-g btn-sm" onclick="document.getElementById('add-another-bar').remove()">No</button>`;
+    <button type="button" class="btn btn-p btn-sm" data-open-fn="${String(openFn).replace(/"/g, '&quot;')}" data-act="ActHelpers.addAnotherFromBtn(this)">Yes</button>
+    <button type="button" class="btn btn-g btn-sm" data-act="document.getElementById('add-another-bar').remove()">No</button>`;
   document.body.appendChild(bar);
   // Auto-dismiss after 8s
   setTimeout(() => { if (bar.isConnected) bar.remove(); }, 8000);

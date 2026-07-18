@@ -13,8 +13,8 @@ const VaultSafety = {
     if (backupCount < 3 || backupCount <= mainCount) return;
     Modal.open('↩ Restore previous vault?',
       `<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">A saved copy from before your last change is available (${backupCount} entries vs ${mainCount} now). This can recover data after an accidental demo load or bad import.</div>`,
-      `<button type="button" class="btn btn-g" onclick="sessionStorage.setItem('vo_restore_offer_dismissed','1');Modal.close()">Keep current</button>` +
-      `<button type="button" class="btn btn-p" onclick="VaultSafety.restore()">Restore previous →</button>`
+      `<button type="button" class="btn btn-g" data-act="ActHelpers.dismissRestoreOffer()">Keep current</button>` +
+      `<button type="button" class="btn btn-p" data-act="VaultSafety.restore()">Restore previous →</button>`
     );
   },
 

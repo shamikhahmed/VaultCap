@@ -194,7 +194,7 @@ const LogoEngine = {
     // Optimistic local img; onerror keeps initials parent; LogoEngine.hydrate upgrades later
     return `<div data-logo-bank="${safeName}" style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0;background:${color};display:flex;align-items:center;justify-content:center">` +
       `<img src="${local}" alt="" width="${size}" height="${size}" style="border-radius:${r};object-fit:cover;display:block" ` +
-      `onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')"` +
+      `data-act-error="ActHelpers.hideImgShowNext(this)"` +
       `>` +
       `<span style="display:none;font-size:${fs};font-weight:900;color:#fff;font-family:Arial">${initials}</span>` +
       `</div>`;

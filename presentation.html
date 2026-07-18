@@ -218,7 +218,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
 <div id="progress"></div>
 <div id="counter">01 / 26</div>
 <div id="dots"></div>
-<button id="fsBtn" onclick="toggleFS()">Fullscreen</button>
+<button id="fsBtn" type="button">Fullscreen</button>
 
 <div id="deck" data-cap-deck="pro">
 
@@ -884,7 +884,7 @@ h2 { font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.025em; 
     <a href="https://shamikhahmed.github.io/VaultCap/landing.html" style="font-size:12px;color:var(--text2);text-decoration:underline">Landing page</a>
     <a href="https://shamikhahmed.github.io/VaultCap/docs/GUIDE.md" style="font-size:12px;color:var(--text2);text-decoration:underline">User guide</a>
   </div>
-  <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:11px;color:var(--text3);text-align:right;line-height:1.7">Built by Shamikh Ahmed<br>Director, NEWS Logistics · Founder, TheSolution360<br>July 2026 · v5.0.0</div>
+  <div class="anim" style="position:absolute;bottom:44px;right:36px;font-size:11px;color:var(--text3);text-align:right;line-height:1.7">Built by Shamikh Ahmed<br>Director, NEWS Logistics · Founder, TheSolution360<br>July 2026 · v5.1.1</div>
 </div>
 
 </div><!-- /deck -->
@@ -1039,6 +1039,8 @@ function toggleFS(){
   if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
   else document.exitFullscreen?.();
 }
+const fsBtn = document.getElementById('fsBtn');
+if (fsBtn) fsBtn.onclick = toggleFS;
 
 if(typeof VC!=='undefined'){document.querySelectorAll('[data-vc-icon]').forEach(el=>VC.setBtnIcon(el,el.dataset.vcIcon,parseInt(el.dataset.vcSize||'20',10)));if(mg)mg.innerHTML=mods.map(m=>`<div class="mod-tile">${VC.icon(m.ic,24)}<div class="mod-label">${m.n}</div></div>`).join('');}
 // Boot

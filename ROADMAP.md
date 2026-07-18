@@ -1,9 +1,9 @@
 # VaultCap — Roadmap
 
-> Updated 2026-07-11. Fleet order & standard: `capricorn-tooling/shared/CAP-STANDARD.md`.
+> Updated 2026-07-18. Fleet order & standard: `capricorn-tooling/shared/CAP-STANDARD.md`.
 
-## Now — v5.0.0
-Current shipped state. See `CHANGELOG.md` for how we got here.
+## Now — v5.1.1
+PIN-first unlock, Smart Help, WebAuthn, bills widget, **CSP kill** (`script-src 'self'`, `Act`/`data-act*`). See `CHANGELOG.md`.
 
 ## Cap Standard gaps
 | Cap Standard item | Status |
@@ -15,14 +15,15 @@ Current shipped state. See `CHANGELOG.md` for how we got here.
 | CI gate | ✅ |
 | PWA polish | ✅ |
 | Demo mode | ✅ |
+| CSP (no HTML handlers) | ✅ |
 
 ## Next (ordered)
-1. Phase 1 launch checklist (brain note): full e2e re-run, soft launch install link to select testers
-2. Review 4 remote meridian/* beta branches — merge or delete (beta-complete, beta-readiness, dashboard-spacing, pin-recovery-fix)
-3. Align script names to Cap Standard contract (`verify` alias) — DONE 2026-07-11
+1. Soft-launch install link to select testers; watch SW cache adoption (`vaultcap-v63`)
+2. Review remote meridian/* beta branches — merge or delete
+3. Optional: tighten `style-src` (fonts/themes) when ready
 
 ## Later
-- App Store / Play / MS Store — deferred by decision (PWA + install.html only)
+- App Store / Play / MS Store — deferred (PWA + install.html only)
 - Support contact on trust pages — skipped by decision
 
 ## Ground rules

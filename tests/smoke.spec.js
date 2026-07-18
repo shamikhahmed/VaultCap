@@ -6,7 +6,7 @@ const DEMO_PIN = '123456';
 
 async function enterPin(page, pin) {
   for (const digit of pin) {
-    await page.locator(`#pgLock button.key[onclick="PIN.in('${digit}')"]`).click();
+    await page.locator(`#pgLock button.key[data-act="PIN.in('${digit}')"]`).click();
   }
 }
 

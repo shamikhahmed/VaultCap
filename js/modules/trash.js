@@ -21,7 +21,7 @@ const Trash = {
       if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
       return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
     };
-    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" onclick="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
+    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" data-act="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
       <div class="sdiv"><span class="sdiv-ic">${typeIc(type, 14)}</span> ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
       ${arr.map(item => {

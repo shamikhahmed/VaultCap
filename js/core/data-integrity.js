@@ -99,7 +99,7 @@ const DataIntegrity = {
         ${!hasDups ? '<div style="font-size:13px;color:var(--ok)">No duplicates detected</div>' : ''}
       </div>
       <div style="font-size:11px;color:var(--text3);line-height:1.5">Note: Duplicate detection uses unique identifiers (account numbers, last 4 digits, document numbers) — two accounts at the same bank are NOT flagged as duplicates unless they share the same identifier.</div>`,
-      `${hasDups ? '<button type="button" class="btn btn-g" onclick="Modal.close();DataIntegrity.showDuplicates()">Review →</button>' : ''}<button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`
+      `${hasDups ? '<button type="button" class="btn btn-g" data-act="Modal.close();DataIntegrity.showDuplicates()">Review →</button>' : ''}<button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>`
     );
   },
 
@@ -138,7 +138,7 @@ const DataIntegrity = {
       'Duplicate Review',
       `<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Review these entries. Only delete if you are certain they are the same record. Never auto-merge without your confirmation.</div>` +
       allDupes.map(renderDupe).join(''),
-      `<button type="button" class="btn btn-p" onclick="Modal.close()">Done</button>`
+      `<button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>`
     );
   }
 };

@@ -54,7 +54,7 @@ const BackupVerify = (() => {
 
     if (typeof Modal !== 'undefined') {
       Modal.open('Backup verified', body,
-        '<button type="button" class="btn btn-p btn-full" onclick="Modal.close();BackupVerify._clear()">Done</button>');
+        '<button type="button" class="btn btn-p btn-full" data-act="Modal.close();BackupVerify._clear()">Done</button>');
     }
     _fileEnc = null;
     if (typeof Activity !== 'undefined') Activity.log('Verified backup', keyLabel || 'dry-run');
@@ -97,8 +97,8 @@ const BackupVerify = (() => {
             '<p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter the backup key from when this <strong>.vos</strong> was exported. Preview only — nothing is written to your vault.</p>'
             + '<div class="fg"><label class="fl">Backup key</label><input class="inp" id="bv-key" type="password" autocomplete="off" placeholder="Backup key"></div>'
             + '<div class="ferr" id="bv-err"></div>',
-            '<button type="button" class="btn btn-g" onclick="Modal.close();BackupVerify._clear()">Cancel</button>'
-            + '<button type="button" class="btn btn-p" onclick="BackupVerify._submitKey()">Verify</button>');
+            '<button type="button" class="btn btn-g" data-act="Modal.close();BackupVerify._clear()">Cancel</button>'
+            + '<button type="button" class="btn btn-p" data-act="BackupVerify._submitKey()">Verify</button>');
           setTimeout(() => document.getElementById('bv-key')?.focus(), 80);
         }
         return;

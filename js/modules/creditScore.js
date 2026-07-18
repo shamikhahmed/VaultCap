@@ -59,7 +59,7 @@ const CreditScore = {
         (d.lastChecked ? '<div style="font-size:11px;color:var(--text3)">Last checked: ' + new Date(d.lastChecked).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) + '</div>' : '') +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" onclick="CreditScore.openUpdate()">Update Score</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" data-act="CreditScore.openUpdate()">Update Score</button>' +
 
       // Score breakdown tips
       '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
@@ -135,7 +135,7 @@ const CreditScore = {
               '<div style="font-size:13px;color:var(--text);font-weight:600">' + l[0] + ' ' + l[1] + '</div>' +
               '<div style="font-size:11px;color:var(--text3)">' + l[3] + '</div>' +
             '</div>' +
-            '<button type="button" onclick="window.open(\'' + l[2] + '\',\'_blank\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
+            '<button type="button" data-act="window.open(\'' + l[2] + '\',\'_blank\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
           '</div>';
         }).join('') +
       '</div>' +
@@ -148,7 +148,7 @@ const CreditScore = {
     const agencies = ['Experian', 'Equifax', 'TransUnion', 'ECIB (PK)', 'AECB (AE)', 'Other'];
     Modal.open('Update Credit Score',
       '<div class="fg"><label class="fl">Your Credit Score</label>' +
-        '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + escAttr(d.score || '') + '" placeholder="e.g. 750" oninput="CreditScore._preview(this.value)"></div>' +
+        '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + escAttr(d.score || '') + '" placeholder="e.g. 750" data-act-input="CreditScore._preview(this.value)"></div>' +
       '<div id="cs-preview" style="text-align:center;padding:10px;font-size:24px;font-weight:900;color:var(--text3)"></div>' +
       '<div class="fg"><label class="fl">Reporting Agency</label>' +
         '<select class="inp" id="cs-agency">' +
@@ -158,8 +158,8 @@ const CreditScore = {
         '<input class="inp" type="date" id="cs-date" value="' + (d.lastChecked ? d.lastChecked.split('T')[0] : new Date().toISOString().split('T')[0]) + '"></div>' +
       '<div class="fg"><label class="fl">Notes (optional)</label>' +
         '<textarea class="inp" id="cs-notes" rows="2">' + escHtml(d.notes || '') + '</textarea></div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="CreditScore.saveScore()">Save</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" data-act="CreditScore.saveScore()">Save</button>'
     );
     if (d.score) this._preview(d.score);
   },

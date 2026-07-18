@@ -21,7 +21,7 @@ const Toast = {
     const body = allowHtml
       ? String(msg ?? '')
       : (typeof escHtml === 'function' ? escHtml(msg) : String(msg ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
-    t.innerHTML = `<span class="chip-ic">${ic}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${body}</span><button type="button" aria-label="Dismiss" onclick="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0;min-width:44px;min-height:44px">×</button>`;
+    t.innerHTML = `<span class="chip-ic">${ic}</span><span style="flex:1;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${body}</span><button type="button" aria-label="Dismiss" data-act="this.closest('.toast').remove()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0;min-width:44px;min-height:44px">×</button>`;
     w.appendChild(t);
     setTimeout(() => { t.style.animation = 'slideIn .25s reverse'; setTimeout(() => t.remove(), 240); }, dur);
   }
@@ -139,7 +139,7 @@ async function showMasterKeyModal(mk) {
     '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">This is your vault recovery key. <strong>Write it down and keep it safe.</strong> You cannot view it again here.</div>' +
     '<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px;word-break:break-all">' + fmt + '</div>' +
     '<div style="font-size:11px;color:var(--text3);text-align:center">If you forget your PIN, this key lets you recover your vault data.</div>',
-    '<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">I\'ve saved it</button>'
+    '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">I\'ve saved it</button>'
   );
 }
 
@@ -156,7 +156,7 @@ window.Settings.forgotPIN = function() {
   }
   Modal.open('Forgot PIN',
     '<div style="font-size:13px;color:var(--text2);line-height:1.6">Use Master Key or restore a .vos backup. Capricorn Systems cannot open your vault.</div>',
-    '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Cancel</button>'
+    '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Cancel</button>'
   );
 };
 
@@ -164,11 +164,11 @@ window.Settings.useMasterKey = function() {
   Modal.open('Enter Master Key',
     '<div style="display:flex;flex-direction:column;gap:12px">' +
     '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultCap.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
-    '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,\'\')">' +
+    '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" data-act-input="ActHelpers.upperAlnumDash(this)">' +
     '<div id="mk-err" style="color:var(--err);font-size:12px;min-height:16px;text-align:center"></div>' +
     '</div>',
-    '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-    '<button type="button" class="btn btn-p" onclick="window.Settings.verifyMasterKey()">Verify & Reset PIN</button>'
+    '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+    '<button type="button" class="btn btn-p" data-act="window.Settings.verifyMasterKey()">Verify & Reset PIN</button>'
   );
 };
 

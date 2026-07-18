@@ -72,14 +72,14 @@ const BondsModule = {
               '<div><div style="font-size:13px;color:var(--text)">' + b.name + '</div>' +
               '<div style="font-size:11px;color:var(--text3)">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
               '<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
-              '<button type="button" onclick="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
+              '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
             '</div>';
           }).join('') +
         '</div>'
       ) : '') +
 
-      '<button type="button" class="btn btn-p" style="width:100%" onclick="BondsModule.openAdd()">+ Add Bond / Security</button>' +
-      '<button type="button" class="btn btn-g" style="width:100%" onclick="BondsModule.openBulkImport()">Bulk Import Bond Numbers</button>' +
+      '<button type="button" class="btn btn-p" style="width:100%" data-act="BondsModule.openAdd()">+ Add Bond / Security</button>' +
+      '<button type="button" class="btn btn-g" style="width:100%" data-act="BondsModule.openBulkImport()">Bulk Import Bond Numbers</button>' +
 
       (bonds.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('ticket', 32) : '') + '</div><div class="ei-title">No bonds yet</div><div class="ei-sub">Track prize bonds, premium bonds, NSS certificates, government securities across PK, UK and UAE</div></div>'
@@ -163,7 +163,7 @@ const BondsModule = {
         '<input class="inp" id="bnd-name" value="' + escAttr(b.name || '') + '" placeholder="e.g. My Prize Bonds 2026"></div>' +
 
       '<div class="fg"><label class="fl">Type</label>' +
-        '<select class="inp" id="bnd-type" onchange="BondsModule._onTypeChange()">' +
+        '<select class="inp" id="bnd-type" data-act-change="BondsModule._onTypeChange()">' +
           allTypes.map(function(t) {
             return '<option value="' + t.id + '" data-currency="' + t.currency + '" data-value="' + t.value + '"' + (b.typeId === t.id ? ' selected' : '') + '>' + t.name + '</option>';
           }).join('') +
@@ -171,14 +171,14 @@ const BondsModule = {
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Quantity</label>' +
-          '<input class="inp num-inp" type="number" id="bnd-qty" min="1" value="' + (b.quantity || 1) + '" oninput="BondsModule._updateTotal()"></div>' +
+          '<input class="inp num-inp" type="number" id="bnd-qty" min="1" value="' + (b.quantity || 1) + '" data-act-input="BondsModule._updateTotal()"></div>' +
         '<div class="fg"><label class="fl">Face Value Each</label>' +
-          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bnd-fv" value="' + (b.faceValue || b.amount || '') + '" placeholder="0" oninput="BondsModule._updateTotal()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bnd-fv" value="' + (b.faceValue || b.amount || '') + '" placeholder="0" data-act-input="BondsModule._updateTotal()"></div>' +
       '</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Currency</label>' +
-          '<select class="inp" id="bnd-currency" onchange="BondsModule._updateTotal()">' +
+          '<select class="inp" id="bnd-currency" data-act-change="BondsModule._updateTotal()">' +
             ['PKR','GBP','AED','USD'].map(function(c) {
               return '<option value="' + c + '"' + ((b.currency || 'PKR') === c ? ' selected' : '') + '>' + c + '</option>';
             }).join('') +
@@ -208,8 +208,8 @@ const BondsModule = {
       '<div class="fg"><label class="fl">Notes</label>' +
         '<textarea class="inp" id="bnd-notes" rows="2">' + escHtml(b.notes || '') + '</textarea></div>',
 
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" data-act="BondsModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
     );
     setTimeout(function() {
       BondsModule._updateTotal();
@@ -297,8 +297,8 @@ const BondsModule = {
         '</select></div>' +
       '<div class="fg"><label class="fl">Bond Numbers (one per line)</label>' +
         '<textarea class="inp" id="bulk-numbers" rows="8" placeholder="123456&#10;789012&#10;345678&#10;..."></textarea></div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>' +
-      '<button type="button" class="btn btn-p" onclick="BondsModule.processBulkImport()">Import</button>'
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
+      '<button type="button" class="btn btn-p" data-act="BondsModule.processBulkImport()">Import</button>'
     );
   },
 

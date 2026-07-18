@@ -272,15 +272,15 @@ const Tax = {
 
     body.innerHTML = `<div style="padding:16px">
       <div style="display:flex;gap:6px;margin-bottom:16px">
-        ${['GB','PK','AE'].map(c=>`<button type="button" onclick="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
+        ${['GB','PK','AE'].map(c=>`<button type="button" data-act="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
-        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" onclick="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--purple)':'var(--border)'};background:${this._filing===k?'rgba(123,95,255,.2)':'transparent'};color:${this._filing===k?'var(--purple)':'var(--text3)'}">${f.name}</button>`).join('')}
+        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--purple)':'var(--border)'};background:${this._filing===k?'rgba(123,95,255,.2)':'transparent'};color:${this._filing===k?'var(--purple)':'var(--text3)'}">${f.name}</button>`).join('')}
       </div>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
         ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" onclick="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
+        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
         ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">Warning: ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
@@ -302,8 +302,8 @@ const Tax = {
     const isSalariedPK = this._country === 'PK' && this._filing === 'salaried';
     const ty = this._taxYear;
     const yearToggle = isSalariedPK ? `<div style="display:flex;gap:8px;margin-bottom:12px">
-      <button type="button" onclick="Tax._setTaxYear('2024-25')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2024-25'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2024-25'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2024-25'?'var(--info)':'var(--text3)'}">2024-25</button>
-      <button type="button" onclick="Tax._setTaxYear('2025-26')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2025-26'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2025-26'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2025-26'?'var(--info)':'var(--text3)'}">2025-26</button>
+      <button type="button" data-act="Tax._setTaxYear('2024-25')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2024-25'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2024-25'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2024-25'?'var(--info)':'var(--text3)'}">2024-25</button>
+      <button type="button" data-act="Tax._setTaxYear('2025-26')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2025-26'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2025-26'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2025-26'?'var(--info)':'var(--text3)'}">2025-26</button>
     </div>` : '';
     const isFlat = filing && filing.isFlat;
     return `${yearToggle}<div style="margin-bottom:16px">
@@ -311,7 +311,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
+    <button type="button" data-act="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -321,7 +321,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
+    <button type="button" data-act="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -330,7 +330,7 @@ const Tax = {
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">VAT Rate</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        ${[['standard','Standard (20%)'],['reduced','Reduced (5%)'],['zero','Zero (0%)']].map(([v,l])=>`<button type="button" onclick="Tax._gbVatRate='${v}';document.getElementById('gbvat-rate').value='${v}';document.querySelectorAll('.gbvat-btn').forEach(b=>b.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="gbvat-btn" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${rate===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
+        ${[['standard','Standard (20%)'],['reduced','Reduced (5%)'],['zero','Zero (0%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxVat('${v}',this)" class="gbvat-btn" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${rate===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
       <input type="hidden" id="gbvat-rate" value="${escAttr(rate)}">
     </div>
@@ -339,7 +339,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
+    <button type="button" data-act="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -348,16 +348,16 @@ const Tax = {
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Income Tax Band</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button type="button" onclick="document.querySelectorAll('.cgt-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('cgt-band').value='basic'" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='basic'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Basic Rate</button>
-        <button type="button" onclick="document.querySelectorAll('.cgt-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('cgt-band').value='higher'" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='higher'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Higher / Additional</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','basic','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='basic'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Basic Rate</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','higher','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='higher'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Higher / Additional</button>
       </div>
       <input type="hidden" id="cgt-band" value="${escAttr(b)}">
     </div>
     <div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Asset Type</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='property'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Property</button>
-        <button type="button" onclick="document.querySelectorAll('.cgt-type').forEach(x=>x.style.background='transparent');this.style.background='rgba(123,95,255,.2)';document.getElementById('cgt-type').value='other'" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','property','rgba(123,95,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Property</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','other','rgba(123,95,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
       </div>
       <input type="hidden" id="cgt-type" value="${escAttr(t)}">
     </div>
@@ -366,7 +366,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter total gain"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
+    <button type="button" data-act="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -375,7 +375,7 @@ const Tax = {
     return `<div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Income Tax Band</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        ${[['basic','Basic (8.75%)'],['higher','Higher (33.75%)'],['additional','Additional (39.35%)']].map(([v,l])=>`<button type="button" onclick="document.querySelectorAll('.div-band').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)';document.getElementById('div-band').value='${v}'" class="div-band" style="flex:1;padding:8px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${dv===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
+        ${[['basic','Basic (8.75%)'],['higher','Higher (33.75%)'],['additional','Additional (39.35%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxChip('div-band','div-band','${v}','rgba(0,213,255,.2)',this)" class="div-band" style="flex:1;padding:8px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${dv===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
       <input type="hidden" id="div-band" value="${escAttr(dv)}">
     </div>
@@ -384,7 +384,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter dividend income"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
+    <button type="button" data-act="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -399,11 +399,11 @@ const Tax = {
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button type="button" onclick="document.getElementById('iht-spouse').value='yes';document.querySelectorAll('.iht-sp').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Transferring spouse NRB</button>
-      <button type="button" onclick="document.getElementById('iht-spouse').value='no';document.querySelectorAll('.iht-sp').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
+      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','yes','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Transferring spouse NRB</button>
+      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','no','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
     </div>
     <input type="hidden" id="iht-spouse" value="${escAttr(sp)}">
-    <button type="button" onclick="Tax.calculateIHT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate IHT</button>
+    <button type="button" data-act="Tax.calculateIHT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate IHT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -415,16 +415,16 @@ const Tax = {
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px;margin-bottom:12px">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button type="button" onclick="document.getElementById('sdlt-ftb').value='yes';document.querySelectorAll('.sdlt-ftb').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">First-Time Buyer</button>
-      <button type="button" onclick="document.getElementById('sdlt-ftb').value='no';document.querySelectorAll('.sdlt-ftb').forEach(x=>x.style.background='transparent');this.style.background='rgba(0,213,255,.2)'" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Standard</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','yes','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">First-Time Buyer</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','no','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Standard</button>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button type="button" onclick="document.getElementById('sdlt-add').value='yes';document.querySelectorAll('.sdlt-add').forEach(x=>x.style.background='transparent');this.style.background='rgba(255,152,0,.2)'" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='yes'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Additional Property (+3%)</button>
-      <button type="button" onclick="document.getElementById('sdlt-add').value='no';document.querySelectorAll('.sdlt-add').forEach(x=>x.style.background='transparent');this.style.background='rgba(255,152,0,.2)'" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='no'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Main Residence</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','yes','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='yes'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Additional Property (+3%)</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','no','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='no'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Main Residence</button>
     </div>
     <input type="hidden" id="sdlt-ftb" value="${escAttr(ft)}">
     <input type="hidden" id="sdlt-add" value="${escAttr(ad)}">
-    <button type="button" onclick="Tax.calculateSDLT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate SDLT</button>
+    <button type="button" data-act="Tax.calculateSDLT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate SDLT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -439,7 +439,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" onclick="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
+    <button type="button" data-act="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -521,7 +521,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">Tax Report — ${filing.name}${yearLabel}</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Gross Income</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -554,7 +554,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800">VAT Report (5%)</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>AED ${amount.toLocaleString()}</span></div>
@@ -578,7 +578,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800">VAT Report — ${rateLabels[rateKey]}</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Net Amount</span><span>£${amount.toLocaleString()}</span></div>
@@ -605,7 +605,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">CGT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Total Gain</span><span style="font-weight:700">${fmt(gain)}</span></div>
@@ -639,7 +639,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">Dividend Tax Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Total Dividends</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -675,7 +675,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">IHT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Estate Value</span><span style="font-weight:700">${fmt(estate)}</span></div>
@@ -721,7 +721,7 @@ const Tax = {
     res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">SDLT Report</div>
-        <button type="button" onclick="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
+        <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Property Price</span><span style="font-weight:700">${fmt(price)}</span></div>
@@ -768,7 +768,7 @@ const Tax = {
     const filing = cfg?.filings[this._filing];
     const w = window.open('', '_blank');
     if (!w) { if(window.Toast) Toast.show('Allow pop-ups to print', 'warning'); return; }
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:#fff;color:#1a1a2e}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:24px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.8}.meta{background:#f1f3f5;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#555;line-height:1.7}.section{background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:14px}.row:last-child{border-bottom:none}.row .label{color:#555}.row .value{font-weight:600}.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}.btn-print{background:#1a237e;color:white}.btn-close{background:#f1f3f5;color:#333}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" onclick="window.print()">Print</button><button type="button" class="btn btn-close" onclick="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" onclick="window.close()">Close Window</button></div></div></body></html>`);
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:#fff;color:#1a1a2e}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:24px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.8}.meta{background:#f1f3f5;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#555;line-height:1.7}.section{background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:14px}.row:last-child{border-bottom:none}.row .label{color:#555}.row .value{font-weight:600}.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}.btn-print{background:#1a237e;color:white}.btn-close{background:#f1f3f5;color:#333}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" data-act="window.print()">Print</button><button type="button" class="btn btn-close" data-act="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" data-act="window.close()">Close Window</button></div></div></body></html>`);
     w.document.close();
   },
 
@@ -782,7 +782,7 @@ const Tax = {
       <input data-f="min" type="number" class="inp" value="${escAttr(s.min === 0 ? 0 : (s.min || ''))}" placeholder="From" style="font-size:12px;padding:8px">
       <input data-f="max" type="number" class="inp" value="${escAttr(s.max === Infinity ? '' : (s.max || ''))}" placeholder="To (∞)" style="font-size:12px;padding:8px">
       <input data-f="rate" type="number" class="inp" value="${escAttr((s.rate * 100).toFixed(2))}" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
-      <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>
+      <button type="button" data-act="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>
     </div>`;
   Modal.open('Edit Tax Slabs',
       `<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
@@ -790,8 +790,8 @@ const Tax = {
         <span>Label</span><span>From</span><span>To</span><span>Rate</span><span></span>
       </div>
       <div id="tax-slab-rows">${slabs.map(rowHtml).join('')}</div>
-      <button type="button" class="btn btn-g btn-sm" style="margin-top:8px;width:100%" onclick="Tax._addSlabRow()">+ Add Slab</button>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Tax._saveSlabs()">Save</button>`);
+      <button type="button" class="btn btn-g btn-sm" style="margin-top:8px;width:100%" data-act="Tax._addSlabRow()">+ Add Slab</button>`,
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Tax._saveSlabs()">Save</button>`);
   },
 
   _addSlabRow() {
@@ -809,7 +809,7 @@ const Tax = {
       <input data-f="min" type="number" class="inp" value="${escAttr(min || '')}" placeholder="From" style="font-size:12px;padding:8px">
       <input data-f="max" type="number" class="inp" value="" placeholder="To (∞)" style="font-size:12px;padding:8px">
       <input data-f="rate" type="number" class="inp" value="0" min="0" max="100" step="0.01" style="font-size:12px;padding:8px;text-align:right">
-      <button type="button" onclick="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>`;
+      <button type="button" data-act="this.closest('.tax-slab-row').remove()" style="background:none;border:none;color:var(--err);font-size:18px;cursor:pointer;padding:0" aria-label="Remove slab">×</button>`;
     wrap.appendChild(div);
   },
 

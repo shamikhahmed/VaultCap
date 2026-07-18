@@ -96,7 +96,7 @@ const Bills = {
     const upcoming = this._collectUpcoming(30).slice(0, 5);
     const userCur = S.user.currency || 'PKR';
     if (!upcoming.length) {
-      return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Bills<button type="button" class="btn btn-g btn-sm wh-act" onclick="Bills.openAdd()">+ Add</button></div>'
+      return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Bills<button type="button" class="btn btn-g btn-sm wh-act" data-act="Bills.openAdd()">+ Add</button></div>'
         + '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">No bills due in 30 days. Add one or set expense renewal dates.</div></div>';
     }
     const rows = upcoming.map(b => {
@@ -104,7 +104,7 @@ const Bills = {
       const amtStr = (typeof U !== 'undefined' ? U.fmt(b.amount) : b.amount) + ' ' + escHtml(b.currency || userCur);
       return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">' + escHtml(b.name) + '</div><div style="font-size:11px;color:var(--text3)">' + (daysLeft <= 0 ? 'Due today' : daysLeft + 'd') + '</div></div><div style="font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap" class="sens">' + amtStr + '</div></div>';
     }).join('');
-    return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills<button type="button" class="btn btn-g btn-sm wh-act" onclick="Bills.openAdd()">+ Add</button></div><div style="padding:4px 14px 10px">' + rows + '</div></div>';
+    return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills<button type="button" class="btn btn-g btn-sm wh-act" data-act="Bills.openAdd()">+ Add</button></div><div style="padding:4px 14px 10px">' + rows + '</div></div>';
   },
 
   render() {
@@ -127,7 +127,7 @@ const Bills = {
       el.innerHTML = '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 32) : '') + '</div>'
         + '<div class="ei-title">No bills in next 30 days</div>'
         + '<div class="ei-sub">Add recurring expenses with renewal dates, or create a bill manually.</div>'
-        + '<button type="button" class="btn btn-p" style="margin-top:14px" onclick="Bills.openAdd()">+ Add Bill</button></div>';
+        + '<button type="button" class="btn btn-p" style="margin-top:14px" data-act="Bills.openAdd()">+ Add Bill</button></div>';
       return;
     }
 
@@ -161,7 +161,7 @@ const Bills = {
       + '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
       + '<div><div style="font-size:10px;color:var(--text3)">Due this month</div>'
       + '<div style="font-size:20px;font-weight:900;color:var(--accent)">' + (typeof U !== 'undefined' ? U.fmt(Math.round(monthDisp)) : monthDisp) + ' <span style="font-size:12px;font-weight:400;color:var(--text3)">' + escHtml(userCur) + '</span></div></div>'
-      + '<button type="button" class="btn btn-p btn-sm" onclick="Bills.openAdd()">+ Add</button></div>'
+      + '<button type="button" class="btn btn-p btn-sm" data-act="Bills.openAdd()">+ Add</button></div>'
       + '<div style="padding:0 14px 14px">' + listHtml + '</div></div>';
   },
 
@@ -173,8 +173,8 @@ const Bills = {
       + '<div class="fg"><label class="fl">Currency</label><select class="inp" id="bill-cur">' + U.currencies() + '</select></div></div>'
       + '<div class="fr"><div class="fg"><label class="fl">Due day (1–31)</label><input class="inp" id="bill-day" type="number" min="1" max="31" value="1"></div>'
       + '<div class="fg"><label class="fl">Category</label><input class="inp" id="bill-cat" placeholder="Utilities, Rent…"></div></div>',
-      '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>'
-      + '<button type="button" class="btn btn-p" onclick="Bills.save()">Save</button>');
+      '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>'
+      + '<button type="button" class="btn btn-p" data-act="Bills.save()">Save</button>');
     setTimeout(() => {
       const c = document.getElementById('bill-cur');
       if (c) c.value = S.user.currency || 'PKR';
@@ -215,9 +215,9 @@ const Bills = {
       document.getElementById('bill-cat').value = b.category || '';
       const foot = document.getElementById('mFoot');
       if (foot) {
-        foot.innerHTML = '<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button>'
-          + '<button type="button" class="btn btn-d btn-sm" onclick="Bills.del(\'' + id + '\',true)">Delete</button>'
-          + '<button type="button" class="btn btn-p" onclick="Bills.save(\'' + id + '\')">Update</button>';
+        foot.innerHTML = '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>'
+          + '<button type="button" class="btn btn-d btn-sm" data-act="Bills.del(\'' + id + '\',true)">Delete</button>'
+          + '<button type="button" class="btn btn-p" data-act="Bills.save(\'' + id + '\')">Update</button>';
       }
     }, 80);
   },

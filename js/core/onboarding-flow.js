@@ -35,7 +35,7 @@ const OB = {
     const el = document.getElementById('ob-countries');
     if (!el) return;
     el.innerHTML = COUNTRIES.map(c =>
-      `<div onclick="OB.toggleCountry('${c.code}',this)"
+      `<div data-act="OB.toggleCountry('${c.code}',this)"
         style="padding:14px 12px;border-radius:14px;background:${obCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${obCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;transition:.15s">
         <span style="font-size:22px">${c.flag}</span>
         <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
@@ -59,7 +59,7 @@ const OB = {
     const el = document.getElementById('ob-cats');
     if (!el) return;
     el.innerHTML = cats.map(c =>
-      `<div onclick="OB.toggleCat('${c.key}',this)"
+      `<div data-act="OB.toggleCat('${c.key}',this)"
         role="checkbox" tabindex="0" aria-checked="${obCats[c.key]?'true':'false'}"
         style="padding:16px 12px;border-radius:16px;background:${obCats[c.key]?'var(--glass2)':'var(--glass)'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;transition:.15s">
         <span class="chip-ic" style="display:flex;justify-content:center" aria-hidden="true">${typeof VC !== 'undefined' ? VC.icon(c.icon, 30) : ''}</span>
@@ -242,17 +242,17 @@ const OB = {
         <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
-          <div onclick="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
+          <div data-act="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
             <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs &amp; login details</div></div><span style="color:var(--accent)">→</span>
           </div>
-          <div onclick="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
+          <div data-act="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
             <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('id-card', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
           </div>
-          <div onclick="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
+          <div data-act="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
             <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
           </div>
         </div>
-        <button type="button" onclick="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
+        <button type="button" data-act="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
       `;
       document.body.appendChild(ov);
       setTimeout(() => { const e = document.getElementById('quickStartOv'); if (e) e.remove(); }, 8000);

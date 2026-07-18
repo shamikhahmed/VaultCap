@@ -3,7 +3,7 @@ const Reminders = {
     const body = document.getElementById('reminderBody');
     if (!body) return;
     const notifBanner = ('Notification' in window && Notification.permission === 'default')
-      ? `<button type="button" onclick="Reminders.requestPermission().then(()=>Reminders.render())" class="btn btn-g" style="width:100%;margin-bottom:14px">Enable Notifications</button>`
+      ? `<button type="button" data-act="ActHelpers.remindersEnable()" class="btn btn-g" style="width:100%;margin-bottom:14px">Enable Notifications</button>`
       : '';
     const items = this._collect();
 
@@ -34,7 +34,7 @@ const Reminders = {
               '<div class="entry-sub">' + escHtml(r.sub || '') + '</div>' +
               '<div class="entry-meta"><span class="badge ' + badge + '">' + daysLabel + '</span><span class="badge b-muted">' + escHtml(r.category || '') + '</span></div>' +
             '</div>' +
-            (r.page ? '<button type="button" class="icb" aria-label="Go to" onclick="R.goto(\'' + r.page + '\')" title="Go to">›</button>' : '') +
+            (r.page ? '<button type="button" class="icb" aria-label="Go to" data-act="R.goto(\'' + r.page + '\')" title="Go to">›</button>' : '') +
           '</div>' +
         '</div>';
       }).join('');

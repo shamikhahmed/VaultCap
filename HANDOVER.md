@@ -1,17 +1,17 @@
 # VaultCap — Handover
 
 > Read this + `ROADMAP.md` + `~/Capricorn-Brain/01 Projects/VaultCap.md` before working here.
-> Last updated: 2026-07-11 · Fleet-wide standard: `capricorn-tooling/shared/CAP-STANDARD.md`
+> Last updated: 2026-07-18 · Fleet-wide standard: `capricorn-tooling/shared/CAP-STANDARD.md`
 
 ## What this is
-Private life OS — encrypted offline finance, identity, family vault. PK/UK/UAE expat finance.
+Private life OS — encrypted offline finance, identity, family vault. PK/UK/UAE expat finance. **100% free** consumer PWA.
 
 ## Facts
-**Version:** 5.0.0
+**Version:** 5.1.1
 **Live:** https://shamikhahmed.github.io/VaultCap
 **Repo:** https://github.com/shamikhahmed/VaultCap
-**Stack:** Vanilla JS bundled via scripts/build-bundle.mjs. Zero-knowledge: PIN + master key + .vos backup. Playwright e2e + XSS audit.
-**Data:** Encrypted local storage; .vos export/import backup. No cloud, no accounts (v1 decision).
+**Stack:** Vanilla JS → `dist/vaultcap.bundle.js`. PIN-first unlock + recovery/backup keys + `.vos`. CSP `script-src 'self'` via `Act`/`data-act*`. Playwright e2e + XSS audit.
+**Data:** Encrypted IndexedDB; no required cloud/accounts.
 
 ## Run & verify
 ```bash
@@ -22,22 +22,24 @@ npm run test:e2e
 ```
 
 ## Architecture
-- `js/core/` — crypto, store, router
-- `js/modules/` — feature modules (finance, identity, family, SIM contracts, ...)
+- `js/boot-*.js` — external boot (CSP)
+- `js/core/` — crypto, PIN, Act, store, router
+- `js/modules/` — feature modules
 - `dist/vaultcap.bundle.js` via `npm run build:js`
-- 89-screen gallery + docs (LAUNCH, GUIDE, pitch, presentation)
+- SW `sw-v51.js` cache `vaultcap-v63`
 - `.github/workflows/` — ci.yml + pages.yml
 
-## Cap Standard status (2026-07-11)
+## Cap Standard status (2026-07-18)
 | Cap Standard item | Status |
 |---|---|
 | Docs pack | ✅ |
 | Screen gallery | ✅ |
-| Version discipline | ✅ |
+| Version discipline | ✅ 5.1.1 |
 | QA / e2e | ✅ |
 | CI gate | ✅ |
 | PWA polish | ✅ |
 | Demo mode | ✅ |
+| CSP (no inline handlers) | ✅ |
 
 Gaps are tracked as tasks in `ROADMAP.md`.
 

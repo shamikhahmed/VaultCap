@@ -23,7 +23,7 @@ const Cash = {
       } else { sm.innerHTML = ''; }
     }
     if (!data.length) {
-      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${VC.icon('banknote',32)}</div><div class="ei-title">No cash tracked</div><div class="ei-sub">Track physical cash in your wallet, home safe, office and more — multi-currency</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button type="button" class="btn btn-p" onclick="Cash.openAdd()">+ Add Cash</button></div></div>`;
+      el.innerHTML = `<div class="empty-ios"><div class="ei-ic">${VC.icon('banknote',32)}</div><div class="ei-title">No cash tracked</div><div class="ei-sub">Track physical cash in your wallet, home safe, office and more — multi-currency</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button type="button" class="btn btn-p" data-act="Cash.openAdd()">+ Add Cash</button></div></div>`;
       return;
     }
     const locIc = { Wallet:'wallet', Home:'building', Office:'building-2', Car:'car', Other:'package' };
@@ -34,7 +34,7 @@ const Cash = {
   openAdd(prefill={}) {
     Cash._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `Add Cash — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Cash';
-    Modal.open(title, this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash.save()">Save</button>`);
+    Modal.open(title, this.form(), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cash.save()">Save</button>`);
     setTimeout(() => { const el = document.getElementById('cf-amt'); if (el) U.numInput(el, S.user.currency || 'PKR'); }, 60);
   },
   form(c = {}) {
@@ -62,7 +62,7 @@ const Cash = {
   },
   edit(id) {
     const c = (S.cash || []).find(x => x.id === id); if (!c) return;
-    Modal.open('Edit Cash', this.form(c), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cash.save('${id}')">Update</button>`);
+    Modal.open('Edit Cash', this.form(c), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cash.save('${id}')">Update</button>`);
     setTimeout(() => {
       const loc = document.getElementById('cf-loc'); if (loc) loc.value = c.location || 'Wallet';
       const cur = document.getElementById('cf-cur'); if (cur) cur.value = c.currency || 'PKR';
@@ -87,7 +87,7 @@ const Cash = {
         <div class="fg"><label class="fl">Currency</label><input class="inp" value="${escAttr(src.currency||'')}" readonly style="opacity:.6"></div>
       </div>
       <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
-    `, `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cash._doTransfer('${id}')">Transfer</button>`);
+    `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cash._doTransfer('${id}')">Transfer</button>`);
     setTimeout(() => { const a = document.getElementById('ct-amt'); if (a) U.numInput(a, src.currency || 'PKR'); }, 60);
   },
   _doTransfer(srcId) {

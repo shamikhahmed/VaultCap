@@ -117,8 +117,8 @@ const PIN = {
     Modal.open('Vault Protection',
       `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">10 failed PIN attempts. Recover with your <strong>master key</strong> or the vault will be permanently wiped.</p>
        <p style="font-size:12px;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
-      `<button type="button" class="btn btn-p" onclick="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>
-       <button type="button" class="btn btn-d btn-sm" onclick="PIN._executeWipe()">Wipe Now</button>`
+      `<button type="button" class="btn btn-p" data-act="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>
+       <button type="button" class="btn btn-d btn-sm" data-act="PIN._executeWipe()">Wipe Now</button>`
     );
     PIN._wipeTimer = setInterval(() => {
       left--;

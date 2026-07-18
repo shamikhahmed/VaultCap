@@ -317,7 +317,7 @@ function render() {
         </div>
         <div class="hdr-title">VaultCap</div>
       </div>
-      <button class="refresh-btn" onclick="render()" title="Refresh">↻</button>
+      <button class="refresh-btn" type="button" title="Refresh">↻</button>
     </div>
 
     <div class="hero">
@@ -373,6 +373,8 @@ function render() {
     </div>
 
     <div class="install-tip">${VC.icon('sparkles', 14)} Add to Home Screen — Safari → Share → Add to Home Screen</div>`;
+  const refreshBtn = el.querySelector('.refresh-btn');
+  if (refreshBtn) refreshBtn.onclick = () => render();
 }
 
 render();

@@ -41,6 +41,8 @@
   "js/core/workspace-security.js",
   "js/core/demo-profiles.js",
   "js/core/app-helpers.js",
+  "js/core/act-helpers.js",
+  "js/core/act-delegate.js",
   "js/core/virtual-list.js",
   "js/core/smart-help.js",
   "js/core/webauthn-unlock.js",

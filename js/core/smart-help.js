@@ -133,7 +133,7 @@ const SmartHelp = (() => {
 
   function _chipsHtml() {
     return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">'
-      + QUICK_CHIPS.map(c => '<button type="button" class="chip" style="cursor:pointer" onclick="SmartHelp.ask(' + JSON.stringify(c) + ')"><span class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('sparkles', 12) : '') + '</span>' + _esc(c) + '</button>').join('')
+      + QUICK_CHIPS.map(c => '<button type="button" class="chip" style="cursor:pointer" data-q="' + _esc(c).replace(/"/g, '&quot;') + '" data-act="SmartHelp.ask(this.getAttribute(\'data-q\'))"><span class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('sparkles', 12) : '') + '</span>' + _esc(c) + '</button>').join('')
       + '</div>';
   }
 
@@ -143,8 +143,8 @@ const SmartHelp = (() => {
     const msgs = _messages.map(m => _bubble(m.role, m.html, m.text)).join('');
     return _chipsHtml() + '<div id="shChatLog" style="max-height:min(52vh,420px);overflow-y:auto;padding-right:4px">' + intro + msgs + '</div>'
       + '<div style="display:flex;gap:8px;margin-top:12px">'
-      + '<input class="inp" id="shInput" type="text" placeholder="Ask about PIN, backup, privacy…" autocomplete="off" style="flex:1" onkeydown="if(event.key===\'Enter\'){event.preventDefault();SmartHelp._send()}">'
-      + '<button type="button" class="btn btn-p" onclick="SmartHelp._send()">Send</button></div>';
+      + '<input class="inp" id="shInput" type="text" placeholder="Ask about PIN, backup, privacy…" autocomplete="off" style="flex:1" data-act-keydown="if(event.key===\'Enter\'){event.preventDefault();SmartHelp._send()}">'
+      + '<button type="button" class="btn btn-p" data-act="SmartHelp._send()">Send</button></div>';
   }
 
   function _scrollChat() {
@@ -155,11 +155,11 @@ const SmartHelp = (() => {
   function render() {
     const html = _chatBodyHtml();
     if (_useModal && typeof Modal !== 'undefined') {
-      Modal.open('Smart Help', html, '<button type="button" class="btn btn-g btn-full" onclick="Modal.close()">Close</button>');
+      Modal.open('Smart Help', html, '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Close</button>');
     } else if (_panelEl) {
       _panelEl.innerHTML = '<div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
         + '<div style="font-weight:800;font-size:15px">Smart Help</div>'
-        + '<button type="button" class="btn btn-g btn-sm" onclick="SmartHelp.close()">×</button></div>'
+        + '<button type="button" class="btn btn-g btn-sm" data-act="SmartHelp.close()">×</button></div>'
         + '<div style="padding:14px">' + html + '</div>';
     }
     setTimeout(() => { document.getElementById('shInput')?.focus(); _scrollChat(); }, 80);

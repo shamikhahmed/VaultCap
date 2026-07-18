@@ -24,10 +24,10 @@ const Cards={
     const f=S.cF;
     const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','Crypto'],['bnpl','BNPL'],['expiring','Expiring'],['fav','Favourites']];
     const ci=document.getElementById('cChips');
-    if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" onclick="S.cF='${v}';Cards.render()">${l}</div>`).join('');
+    if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" data-act="S.cF='${v}';Cards.render()">${l}</div>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" onclick="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
       if(c.archived&&!Cards._showArchived)return false;
@@ -56,7 +56,7 @@ const Cards={
           const GRADS={Visa:'linear-gradient(135deg,#1a1f71,#2575fc)',Mastercard:'linear-gradient(135deg,#eb001b,#f79e1b)','American Express':'linear-gradient(135deg,#007b5e,#00b894)',UnionPay:'linear-gradient(135deg,#c0392b,#e74c3c)',PayPak:'linear-gradient(135deg,#007a3d,#00b463)'};
           const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6))';
           const last4=c.last4||'····';
-          return '<div onclick="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
+          return '<div data-act="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
             '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+
             '<div style="position:absolute;top:14px;left:14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
             '<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
@@ -67,8 +67,8 @@ const Cards={
         }).join('')+
         '</div>'
       :'';
-    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" onclick="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" onclick="Cards._showExample()">See example</button></div></div>`);return;}
-    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
+    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" data-act="Cards._showExample()">See example</button></div></div>`);return;}
+    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" data-act="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimitPKR = S.cards
       .filter(c => c.cardType === 'Credit' && _cardLimit(c))
       .reduce((a, c) => a + (typeof CurrencyEngine !== 'undefined'
@@ -141,7 +141,7 @@ const Cards={
 
     const carryBorder=carrying?'animation:cardGlow 2.5s ease-in-out infinite':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
 
-    return `<div class="wcard sens" data-id="${c.id}" onclick="Cards.openDetail('${c.id}')" style="background:${gradient};${carryBorder}">
+    return `<div class="wcard sens" data-id="${c.id}" data-act="Cards.openDetail('${c.id}')" style="background:${gradient};${carryBorder}">
   <div class="wcard-shine"></div>
   <div class="wcard-inner">
     <div class="wcard-top">
@@ -172,7 +172,7 @@ const Cards={
   </div>
 </div>`;
   },
-  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   _fmtCardNum(input){
     let v=input.value.replace(/\D/g,'').slice(0,16);
     input.value=v.replace(/(.{4})/g,'$1 ').trim();
@@ -193,8 +193,8 @@ const Cards={
     }
     Cards._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `Add Card — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Card';
-    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" onclick="Cards.scanCard()" style="gap:8px">Scan Card with Camera</button></div>`;
-    Modal.open(title, scanBtn + this.form(), `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
+    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" data-act="Cards.scanCard()" style="gap:8px">Scan Card with Camera</button></div>`;
+    Modal.open(title, scanBtn + this.form(), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);
   },
 
   // ── Camera scan (QR auto + manual capture for OCR) ────────────────────────
@@ -212,8 +212,8 @@ const Cards={
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
       '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button type="button" id="_scanCaptureBtn" onclick="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
-      '<button type="button" onclick="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
+      '<button type="button" id="_scanCaptureBtn" data-act="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
+      '<button type="button" data-act="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -259,16 +259,16 @@ const Cards={
       Tesseract.recognize(canvas,'eng',{logger:function(){}}).then(function(result){
         Cards._stopScan();
         const parsed=Cards._parseCardOCR(result.data.text);
-        Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
+        Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);
         setTimeout(function(){Cards._fillFromOCR(parsed);},200);
       }).catch(function(){
         Cards._stopScan();
         Toast.show('OCR failed — fill in details below','warning',3000);
-        Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);
+        Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);
       });
     } else {
       if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">Tap Capture again or fill below.</span>';
-      setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Cards.save()">Save</button>`);},1200);
+      setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);},1200);
     }
   },
   _parseCardOCR(text){
@@ -320,8 +320,8 @@ const Cards={
       '<canvas id="_photoCanvas" style="display:none"></canvas>',
       '<div id="_photoStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position card in frame then tap Capture</div>',
       '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button type="button" onclick="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Capture</button>',
-      '<button type="button" onclick="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
+      '<button type="button" data-act="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Capture</button>',
+      '<button type="button" data-act="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -350,7 +350,7 @@ const Cards={
     const base64=dataUrl.split(',')[1];
     const thumbEl=document.getElementById('cf-photo-'+targetId);
     if(thumbEl){
-      thumbEl.innerHTML='<img src="'+dataUrl+'" alt="Card photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
+      thumbEl.innerHTML='<img src="'+dataUrl+'" alt="Card photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
       thumbEl.dataset.photo=base64;
     }
     Toast.show('Photo saved — fill in the details below','info',2000);
@@ -380,16 +380,16 @@ const Cards={
     const cardNames=SMART_DB.cards.map(x=>'<option value="'+_v(x.name)+'">').join('');
     const myBanks=(window.S?.banks||[]);
     const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${escAttr(b.bankName)}"${(c.linkedBankId===b.id||c.linkedBank===b.bankName)?' selected':''}>${escHtml(b.bankName)}</option>`).join(''):'';
-    const bankPicker=myBanks.length?'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" onchange="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
+    const bankPicker=myBanks.length?'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
     return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
       +bankPicker
-      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" oninput="SMART_DB.fillCard(this.value)" value="'+_v(c.cardName||'')+'"></div>'
-      +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+_v(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" oninput="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
+      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" data-act-input="SMART_DB.fillCard(this.value)" value="'+_v(c.cardName||'')+'"></div>'
+      +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+_v(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" data-act-input="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+_v(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+_v(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'front\')" style="gap:6px">Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
-      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" onclick="Cards._capturePhoto(\'back\')" style="gap:6px">Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
+      +'<div><button type="button" class="btn btn-g btn-sm" data-act="Cards._capturePhoto(\'front\')" style="gap:6px">Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
+      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" data-act="Cards._capturePhoto(\'back\')" style="gap:6px">Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
       +'</div>'
       +'<details'+(isEdit?' open':'')+' style="margin-top:10px">'
       +'<summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>'
@@ -400,7 +400,7 @@ const Cards={
       +'<div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="'+_v(c.holderName||S.user.name||'')+'" placeholder="Name on card"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="'+_v(c.rewardsProgram||'')+'" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="'+_v(c.rewardsPoints||'')+'" type="number" placeholder="50000"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"'+(c.ownership!=='business'?' selected':'')+'>Personal</option><option value="business"'+(c.ownership==='business'?' selected':'')+'>Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="'+_v(c.annualFee||'')+'" type="number" placeholder="0"></div></div>'
-      +'<div class="fg"><label class="fl">Joint Card?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="cf-joint" onchange="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" style="width:20px;height:20px;cursor:pointer" '+(c.jointAccount?'checked':'')+' ><label for="cf-joint" style="font-size:14px;color:var(--text2)">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select id="cf-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
+      +'<div class="fg"><label class="fl">Joint Card?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="cf-joint" data-act-change="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" style="width:20px;height:20px;cursor:pointer" '+(c.jointAccount?'checked':'')+' ><label for="cf-joint" style="font-size:14px;color:var(--text2)">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select id="cf-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
       +'<div class="fg"><label class="fl">Credit Limit (optional)</label><input class="inp" id="cf-limit" value="'+_v(String(_cardLimit(c)||''))+'" type="number" min="0" placeholder="e.g. 500000"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="'+_v(c.username||'')+'" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="'+_v(c.pwdHint||'')+'" placeholder="\'Email+!\'"></div></div>'
       +'<div class="fg"><label class="fl">Notes / Benefits</label><textarea class="inp" id="cf-notes" rows="2">'+escHtml(c.notes||'')+'</textarea></div>'
@@ -462,7 +462,7 @@ const Cards={
   },
   edit(id){
     const c=S.cards.find(x=>x.id===id);if(!c)return;
-    Modal.open('Edit Card',this.form(c),`<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" onclick="Cards.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" onclick="Cards.save('${id}')">Update</button>`);
+    Modal.open('Edit Card',this.form(c),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cards.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cards.save('${id}')">Update</button>`);
     setTimeout(()=>{[['cf-net',c.network||'Visa'],['cf-type',c.cardType||'Credit'],['cf-cat',c.category||'Standard'],['cf-cc',c.country||'GB'],['cf-own',c.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});},60);
   },
   openDetail(id){
@@ -470,13 +470,13 @@ const Cards={
     let photoHtml='';
     if(c.frontPhoto||c.backPhoto){
       photoHtml='<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'
-        +(c.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
-        +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:120px;border-radius:8px;cursor:pointer" onclick="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
+        +(c.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:120px;border-radius:8px;cursor:pointer" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
+        +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:120px;border-radius:8px;cursor:pointer" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
         +'</div>';
     }
     const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span>${U.icb('eye',{onclick:`(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()`,ariaLabel:'Reveal card number',size:14})}${U.icb('copy',{onclick:`U.copy('${c.cardNumber}','Card number')`,ariaLabel:'Copy card number',size:14})}</div>`:U.drRow('Last 4','****'+(c.last4||'—'));
     const linkedBankName=c.linkedBank||(c.linkedBankId?(S.banks.find(b=>b.id===c.linkedBankId)||{}).bankName:'')||'—';
-    Modal.open(c.cardName,'<div>'+[['Card',c.cardName],['Linked Bank',linkedBankName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" onclick="Modal.close()">Close</button><button type="button" class="btn btn-p" onclick="Cards.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(c.cardName,'<div>'+[['Card',c.cardName],['Linked Bank',linkedBankName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Cards.edit('${id}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},
@@ -487,6 +487,6 @@ const Cards={
     S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});
     S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);
     Activity.log('Trashed card',c.cardName);Store.save();if(fm)Modal.close();this.render();
-    Toast.show('Moved to Trash — <button type="button" class="cpbtn" onclick="Trash.restore(\''+S.trash[S.trash.length-1].id+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
+    Toast.show('Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore(\''+S.trash[S.trash.length-1].id+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
   }
 };

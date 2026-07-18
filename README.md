@@ -50,6 +50,7 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - PIN brute-force lockout (30s → 5 min → vault wipe)
 - **Decoy PIN** — shows empty vault to protect under duress
 - Offline-first — core vault works with no internet; rates/logos use cache + privacy proxy when online
+- **CSP** — `script-src 'self'` (no `'unsafe-inline'` / `'unsafe-eval'`); UI actions via `data-act` + `Act` delegate
 
 ---
 
@@ -72,21 +73,22 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 
 ```
 VaultCap/
-├── index.html              # App shell (loads dist/vaultcap.bundle.js)
+├── index.html              # App shell + CSP; loads boot scripts + dist bundle
 ├── dist/                   # Generated bundle — run npm run build:js
 ├── js/
+│   ├── boot-*.js           # Cache-bust, VER, SW register (external for CSP)
 │   ├── bundle-order.json   # Module load order for bundler
-│   ├── core/               # Crypto, PIN, lockout, store, router
+│   ├── core/               # Crypto, PIN, Act/ActHelpers, store, router
 │   └── modules/            # Banks, cards, family, etc.
 ├── scripts/build-bundle.mjs
 ├── css/                    # base, layout, components, themes
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA)
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v63)
 ```
 
-**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · 100% free · no account
+**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.1** · no account
 
 ---
 
@@ -96,7 +98,7 @@ VaultCap/
 **Install (all devices):** https://shamikhahmed.github.io/VaultCap/install.html  
 **Launch plan:** [LAUNCH.md](./LAUNCH.md)
 
-**No account.** PIN = password. Master key = recovery. Data encrypted on-device (AES-256-GCM).
+**No account.** PIN unlocks this device. Recovery key + backup key protect restore. Data encrypted on-device (AES-256-GCM).
 
 | Device | Install |
 |--------|---------|
