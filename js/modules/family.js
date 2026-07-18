@@ -179,6 +179,11 @@ const Family = {
 
   _renderList(body) {
     const members = this.allMembers();
+    const hideBal = !!S.familyHideBalances;
+    const hideToggle = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
+      <div><div style="font-size:13px;font-weight:700;color:var(--text)">Hide balances</div><div style="font-size:11px;color:var(--text3)">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
+      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} onchange="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
+    </div>`;
 
     const _stat = (id) => {
       const banks = (S.banks || []).filter(b => b.ownerId === id).length;
@@ -237,6 +242,7 @@ const Family = {
 
     body.innerHTML =
       `<div class="fam-list-wrap">
+        ${hideToggle}
         ${headCard}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>

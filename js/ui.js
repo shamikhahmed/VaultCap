@@ -182,6 +182,9 @@ const Dash={
     ];
 
     const wCards = S.cards.filter(c => S.wallet.includes(c.id));
+    const billsHtml = (typeof Bills !== 'undefined') ? `<div id="billsWidget" style="padding:0 16px;margin-bottom:12px">${Bills.renderWidget ? Bills.renderWidget() : ''}</div>` : '';
+    const nwHistHtml = (typeof NetWorthHistory !== 'undefined') ? `<div style="padding:0 16px;margin-bottom:12px">${NetWorthHistory.renderWidget()}</div>` : '';
+
     const ctxFilt = arr => typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(arr||[]) : (arr||[]);
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
@@ -323,6 +326,10 @@ const Dash={
     ${moneySum}
 
     ${breakdownHtml}
+
+    ${nwHistHtml}
+
+    ${billsHtml}
 
     ${familyWidget}
 
@@ -621,63 +628,26 @@ const Settings={
     const o=document.getElementById('cp-cur').value,n=document.getElementById('cp-new').value,c=document.getElementById('cp-con').value;
     if(!/^\d{6}$/.test(n)){document.getElementById('cp-err').textContent='New PIN must be 6 digits';return;}
     if(n!==c){document.getElementById('cp-err').textContent='PINs do not match';return;}
-    // Passphrase-mode: PIN is metadata only (hash), encryption key unchanged
-    if(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase'){
-      if(!S.vaultMeta)S.vaultMeta={};
-      PinHash.digest(n).then(h=>{
-        S.vaultMeta.pinHash=h;Store.save();
-        Modal.close();Activity.log('PIN changed');Toast.show('PIN updated','success');
-      });
-      return;
-    }
     VaultDB.tryPin(o).then(result=>{
       if(!result){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
-      VaultDB.changePin(o,n).then(()=>{Store.save();}).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
+      VaultDB.changePin(o,n).then(()=>{
+        Store.save();
+        if (typeof WebAuthnUnlock !== 'undefined' && WebAuthnUnlock.onPinChanged) WebAuthnUnlock.onPinChanged();
+      }).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
       Modal.close();Activity.log('PIN changed');Toast.show('PIN updated successfully!','success');
     });
   },
-  upgradePassphrase(){
-    Modal.open('Strengthen Encryption',`
-      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Re-encrypt your vault with a <strong>passphrase</strong> (12+ chars). A 6-digit PIN is too weak against offline attack if someone copies your device storage.</p>
-      <div class="fg"><label class="fl">Current PIN</label><input class="inp" id="up-cur" type="password" maxlength="6" inputmode="numeric" placeholder="••••••"></div>
-      <div class="fg"><label class="fl">New passphrase</label><input class="inp" id="up-pp" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
-      <div class="fg"><label class="fl">Confirm passphrase</label><input class="inp" id="up-pp2" type="password" autocomplete="new-password" placeholder="Repeat"></div>
-      <div class="ferr" id="up-err"></div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings._doUpgradePassphrase()">Strengthen</button>`);
-  },
-  _doUpgradePassphrase(){
-    const err=document.getElementById('up-err');
-    const cur=document.getElementById('up-cur')?.value||'';
-    const a=document.getElementById('up-pp')?.value||'';
-    const b=document.getElementById('up-pp2')?.value||'';
-    if(a.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
-    if(a!==b){err.textContent='Passphrases do not match';return;}
-    if(/^\d{6}$/.test(a)){err.textContent='Do not use a 6-digit PIN as passphrase';return;}
-    err.textContent='Re-encrypting…';
-    VaultDB.upgradeToPassphrase(cur,a).then(()=>{
-      Modal.close();Settings.refresh();
-      Toast.show('Vault now passphrase-encrypted — unlock with passphrase next time','success',5000);
-      Activity.log('Upgraded to passphrase encryption');
-    }).catch(e=>{err.textContent=e.message||'Upgrade failed';});
-  },
-  changePassphrase(){
-    Modal.open('Change Passphrase',`
-      <div class="fg"><label class="fl">Current passphrase</label><input class="inp" id="chpp-cur" type="password" autocomplete="current-password"></div>
-      <div class="fg"><label class="fl">New passphrase</label><input class="inp" id="chpp-new" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
-      <div class="fg"><label class="fl">Confirm</label><input class="inp" id="chpp-con" type="password" autocomplete="new-password"></div>
-      <div class="ferr" id="chpp-err"></div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="Settings._doChangePassphrase()">Update</button>`);
-  },
-  _doChangePassphrase(){
-    const err=document.getElementById('chpp-err');
-    const o=document.getElementById('chpp-cur')?.value||'';
-    const n=document.getElementById('chpp-new')?.value||'';
-    const c=document.getElementById('chpp-con')?.value||'';
-    if(n.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
-    if(n!==c){err.textContent='Passphrases do not match';return;}
-    VaultDB.changePassphrase(o,n).then(()=>{
-      Modal.close();Toast.show('Passphrase updated','success');Activity.log('Passphrase changed');
-    }).catch(e=>{err.textContent=e.message||'Failed';});
+  showThreatModel(){
+    if (typeof ThreatModel !== 'undefined') ThreatModel.show();
+    else Modal.open('How VaultCap protects you',
+      `<div style="font-size:13px;color:var(--text2);line-height:1.65">
+        <p><strong>PIN</strong> unlocks this device daily.</p>
+        <p><strong>Recovery key</strong> (shown once at setup) restores if you forget PIN.</p>
+        <p><strong>Backup key</strong> (generated on export) unlocks portable <code>.vos</code> files — keep it with the file.</p>
+        <p>Data encrypted AES-256-GCM on your device. Free forever. No account. No required cloud or AI.</p>
+        <p style="font-size:11px;color:var(--text3)">If someone copies device storage, a short PIN can be guessed offline — keep device locked and make encrypted backups.</p>
+      </div>`,
+      `<button type="button" class="btn btn-p btn-full" onclick="Modal.close()">Got it</button>`);
   },
   showMasterKey(){
     const hasRecoveryKey=!!localStorage.getItem(typeof recoveryKeyStorageKey==='function'?recoveryKeyStorageKey():'vo_mkh');
@@ -820,31 +790,33 @@ const ExIm={
     this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
     Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
     return;},
-  _promptExportPassphrase(){
+  _promptExportPassphrase(){ this._promptBackupKey(); },
+  _promptBackupKey(){
+    const key = (typeof generateBackupKey==='function'?generateBackupKey():generateMasterKey()+generateMasterKey().slice(0,8));
+    window._vosExportKey = key;
+    const fmt = key.match(/.{1,4}/g).join('-');
     Modal.open('Encrypted Backup',`
       <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">
-        Create a <strong>portable</strong> AES-256-GCM <code>.vos</code> backup.
-        Use a strong passphrase (12+ chars) — <em>not</em> your 6-digit PIN.
-        Cloud storage (iCloud/Drive) is only safe with a strong passphrase.
+        Portable AES-256 <code>.vos</code> backup. App generated a backup key — <strong>copy it now</strong>. Need it to restore. Not your PIN.
       </p>
-      <div class="fg"><label class="fl">Export passphrase</label><input class="inp" id="exp-pass" type="password" autocomplete="new-password" placeholder="12+ characters"></div>
-      <div class="fg"><label class="fl">Confirm passphrase</label><input class="inp" id="exp-pass2" type="password" autocomplete="new-password" placeholder="Repeat passphrase"></div>
+      <div id="exp-key-box" style="background:var(--glass);border:2px solid var(--accent);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono,monospace);font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);word-break:break-all;margin-bottom:10px">${fmt}</div>
+      <button type="button" class="btn btn-g btn-full btn-sm" onclick="navigator.clipboard.writeText(window._vosExportKey||'').then(()=>Toast.show('Backup key copied','success')).catch(()=>Toast.show('Copy failed — select key manually','warn'))" style="margin-bottom:10px">Copy backup key</button>
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);margin-bottom:8px"><input type="checkbox" id="exp-key-saved"> I saved this key somewhere safe</label>
       <div class="ferr" id="exp-pass-err"></div>`,
-      `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doPassphraseExport()">Export</button>`);
+      `<button type="button" class="btn btn-g" onclick="Modal.close();window._vosExportKey=null">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doBackupKeyExport()">Download .vos</button>`);
   },
-  _doPassphraseExport(){
+  _doPassphraseExport(){ this._doBackupKeyExport(); },
+  _doBackupKeyExport(){
     const err=document.getElementById('exp-pass-err');
-    const a=document.getElementById('exp-pass')?.value||'';
-    const b=document.getElementById('exp-pass2')?.value||'';
-    if(a.length<12){err.textContent='Passphrase must be at least 12 characters';return;}
-    if(a!==b){err.textContent='Passphrases do not match';return;}
-    if(/^\d{6}$/.test(a)){err.textContent='Do not use your PIN — choose a strong passphrase';return;}
+    const a=window._vosExportKey||'';
+    if(!a||a.length<16){err.textContent='Backup key missing — close and try again';return;}
+    if(!document.getElementById('exp-key-saved')?.checked){err.textContent='Confirm you saved the backup key';return;}
     if(!Crypto.available()){err.textContent='Crypto unavailable in this browser';return;}
     const payload={
       ...this._exportMeta('vault'),
       _vaultVersion:typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:13,
       _exportedAt:new Date().toISOString(),
-      _appVersion:typeof VER!=='undefined'?VER:'5.0.0',
+      _appVersion:typeof VER!=='undefined'?VER:'5.0.2',
       _kdf:'pbkdf2-sha256-600k',
       user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,
       cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],
@@ -852,20 +824,22 @@ const ExIm={
       digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,
       family:S.family||{},familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{},
       emergency:S.emergency||{},vehicles:S.vehicles||[],
+      netWorthHistory:S.netWorthHistory||[],
     };
     err.textContent='Encrypting…';
     Crypto.encrypt(JSON.stringify(payload),a).then(enc=>{
       Modal.close();
+      window._vosExportKey=null;
       this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
       Activity.log('Exported','AES-256-GCM portable .vos');
-      Toast.show('Encrypted backup saved — store passphrase safely','success',5000);
+      Toast.show('Encrypted backup saved — keep backup key safe','success',5000);
     }).catch(e=>{
       err.textContent='Export failed — try again';
       console.warn('[ExIm] export',e);
     });
   },
-  _promptPinForExport(){ this._promptExportPassphrase(); },
-  _doPinExport(){ this._doPassphraseExport(); },
+  _promptPinForExport(){ this._promptBackupKey(); },
+  _doPinExport(){ this._doBackupKeyExport(); },
   _exportLegacyVault(){
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
@@ -880,17 +854,17 @@ const ExIm={
     ExIm._legacyImportCb=onSuccess;
     ExIm._legacyImportEnc=encRaw;
     Modal.open('Import Backup',`
-      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter the export passphrase used when this .vos was created.</p>
-      <div class="fg"><label class="fl">Export passphrase</label><input class="inp" id="imp-pin" type="password" autocomplete="current-password" placeholder="Passphrase"></div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px">Enter the backup key shown when this .vos was created.</p>
+      <div class="fg"><label class="fl">Backup key</label><input class="inp" id="imp-pin" type="password" autocomplete="current-password" placeholder="Backup key"></div>
       <div class="ferr" id="imp-pin-err"></div>`,
       `<button type="button" class="btn btn-g" onclick="Modal.close()">Cancel</button><button type="button" class="btn btn-p" onclick="ExIm._doLegacyImportDecrypt()">Decrypt</button>`);
   },
   _doLegacyImportDecrypt(){
     const pin=document.getElementById('imp-pin')?.value||'';
-    if(!pin||pin.length<4){document.getElementById('imp-pin-err').textContent='Enter export passphrase';return;}
+    if(!pin||pin.length<4){document.getElementById('imp-pin-err').textContent='Enter backup key';return;}
     const attempts=[pin, pin+'_vos4_'+(S.user?.name||'')];
     const tryNext=(i)=>{
-      if(i>=attempts.length){document.getElementById('imp-pin-err').textContent='Wrong passphrase or corrupted file';return;}
+      if(i>=attempts.length){document.getElementById('imp-pin-err').textContent='Wrong backup key or corrupted file';return;}
       Crypto.decrypt(ExIm._legacyImportEnc,attempts[i]).then(plain=>{
         Modal.close();
         if(ExIm._legacyImportCb) ExIm._legacyImportCb(JSON.parse(plain));
@@ -2091,7 +2065,7 @@ const SettingsNav = {
     const b = document.getElementById('settBody');
     if (!b) return;
     if (section === 'backup') { b.innerHTML = this._backup(); return; }
-    if (section === 'import') { b.innerHTML = this._import(); this._pollLlmHealth(); return; }
+    if (section === 'import') { b.innerHTML = this._import(); return; }
     b.innerHTML = this['_' + section]();
     if (section === 'security') this._pollLlmHealth('llm-health-security');
     if (typeof SelfCheck !== 'undefined') SelfCheck.run();
@@ -2141,8 +2115,9 @@ const SettingsNav = {
     const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
     const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
     return `<div class="set-sec"><div class="set-title">Security</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">${(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase')?'Passphrase (strong) — resists offline attack':'PIN only — upgrade recommended'}</div></div>${(typeof VaultDB!=='undefined'&&VaultDB.getAuthMode&&VaultDB.getAuthMode()==='passphrase')?'<button type="button" class="btn btn-g btn-sm" onclick="Settings.changePassphrase()" style="touch-action:manipulation">Change</button>':'<button type="button" class="btn btn-p btn-sm" onclick="Settings.upgradePassphrase()" style="touch-action:manipulation">Strengthen</button>'}</div>
+      <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">AES-256-GCM · PIN unlock · recovery key for restore · 100% free · on-device</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showThreatModel()" style="touch-action:manipulation">How it works</button></div>
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
+      ${(typeof WebAuthnUnlock!=='undefined'?WebAuthnUnlock.settingsRow():'')}
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" onclick="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
       <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} onchange="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
@@ -2225,6 +2200,7 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-p btn-full btn-sm" onclick="ExIm.export('vault')">Export Encrypted Vault (.vos)</button>
+        <button type="button" class="btn btn-s btn-full btn-sm" onclick="BackupVerify.open()">Verify Backup (dry-run)</button>
         <button type="button" class="btn btn-s btn-full btn-sm" onclick="ExIm.export('json')">Export as JSON (readable)</button>
         <button type="button" class="btn btn-s btn-full btn-sm" onclick="ExIm.export('csv')">Export as CSV (spreadsheet)</button>
         <button type="button" class="btn btn-g btn-full btn-sm" onclick="document.getElementById('importF-global').click()">Import / Restore Vault</button>
@@ -2242,19 +2218,15 @@ const SettingsNav = {
   },
 
   _import() {
-    const cfg = typeof LlmAssist !== 'undefined' ? LlmAssist.getConfig() : { enabled: false, bundled: false };
-    const llmOn = cfg.enabled;
-    const hasOverride = !!(S.user.llmApiKey || '').trim();
-    return `<div class="set-sec"><div class="set-title">VaultCap Smart Import (included)</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Smart Assistant (optional LLM)</div><div class="desc">${cfg.bundled && !hasOverride ? 'Optional assist — Smart Parser always works offline without it.' : 'Uses your override key when set; Smart Parser stays the offline default.'}</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} onchange="S.user.llmEnabled=this.checked;Store.save();SettingsNav.show('import')"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Proxy URL (optional)</div><div class="desc">Cloudflare worker for enhanced parsing — leave blank to use direct mode</div></div><input class="inp btn-sm" style="width:100%;margin-top:6px" placeholder="https://VaultCap-llm-proxy.workers.dev" value="${(S.user.llmProxyUrl||'').replace(/"/g,'&quot;')}" onchange="S.user.llmProxyUrl=this.value;Store.save();SettingsNav._pollLlmHealth()"></div>
-      <div class="si"><div class="sil"><div class="name">Proxy status</div><div class="desc" id="llm-health-import" style="font-size:12px;color:var(--text3)">Checking LLM proxy…</div></div></div>
-      <div style="padding:12px 14px;border-top:1px solid var(--border)"><label class="fl">Override API key (optional)</label><input class="inp" type="password" id="llm-key-inp" placeholder="${hasOverride?'••••••••':'Leave blank to use included VaultCap key'}" autocomplete="off" onchange="S.user.llmApiKey=this.value;Store.save()"><button type="button" class="btn btn-g btn-sm" style="margin-top:8px" onclick="LlmAssist.clearKey();document.getElementById('llm-key-inp').value='';Toast.show('Override cleared — using included key')">Clear Override</button></div>
+    return `<div class="set-sec"><div class="set-title">Smart Import (100% free · on-device)</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Smart Parser</div><div class="desc">Rules-based import — paste text or pick files. No cloud AI required. Free forever.</div></div></div>
+      <div style="padding:12px 14px;font-size:12px;color:var(--text3);line-height:1.55;border-top:1px solid var(--border)">Stuck? Open <button type="button" class="cpbtn" onclick="SmartHelp.open()">Smart Help</button> — answers PIN, backup, banks, and more without leaving your device.</div>
     </div></div>
     <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Import</div><div class="set-card">
-      <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('download',28)}</span><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — Smart Parser offline; LLM optional</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('chart',28)}</span><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls — opens Smart Import file picker</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('lock',28)}</span><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup file or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('download',28)}</span><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — offline Smart Parser</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('chart',28)}</span><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('lock',28)}</span><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+      <div class="si" onclick="BackupVerify.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('check',28)}</span><div class="sil"><div class="name">Verify Backup</div><div class="desc">Dry-run decrypt — check a .vos without overwriting your vault</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
     </div></div>`;
   },
 
@@ -2421,6 +2393,7 @@ const HelpCenter = {
     ];
     el.innerHTML = `
     <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <button type="button" class="btn btn-p btn-full" onclick="SmartHelp.open()" style="gap:8px">Ask Smart Help</button>
       <div style="display:flex;gap:8px;overflow-x:auto;padding:2px 4px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
         ${sections.map(s => `
           <div onclick="HelpCenter._section='${s.id}';HelpCenter._renderContent()"

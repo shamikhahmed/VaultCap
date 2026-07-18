@@ -6,7 +6,7 @@ let S = {
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
   modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true, family:true },
-  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
+  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], bills:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
   family: { head: null, members: [] },
   familyMembers: [],
   vaultMeta: { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
@@ -14,7 +14,7 @@ let S = {
   importedFiles:[], _pendingLinks:[],
   loanF:'all',
   wallet:[],
-  fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false, largeText:false, reduceMotion:false,
+  fails:0, lockedUntil:0, autoLock:true, lockMins:10, clipSecs:30, privacyMode:false, familyHideBalances:false, workspace:'default', panicEnabled:true, fontScale:'md', highContrast:false, largeText:false, reduceMotion:false,
   bF:'all', cF:'all', invF:'all', simF:'all', aF:'all', expF:'all', gF:'all',
   _timer:null, _clockTimer:null,
 };
@@ -28,7 +28,7 @@ const Store = {
       user: S.user, noPin: S.noPin, decoyPin: S.decoyPin || '',
       modules: S.modules,
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
-      assets: S.assets, expenses: S.expenses, emails: S.emails, gadgets: S.gadgets,
+      assets: S.assets, expenses: S.expenses, bills: S.bills || [], emails: S.emails, gadgets: S.gadgets,
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
       documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
       family: S.family || { head: null, members: [] },
@@ -37,7 +37,7 @@ const Store = {
       importedFiles: S.importedFiles || [], _pendingLinks: S._pendingLinks || [],
       fails: S.fails, lockedUntil: S.lockedUntil,
       autoLock: S.autoLock, lockMins: S.lockMins, clipSecs: S.clipSecs,
-      privacyMode: S.privacyMode, largeText: S.largeText, reduceMotion: S.reduceMotion
+      privacyMode: S.privacyMode, familyHideBalances: !!S.familyHideBalances, largeText: S.largeText, reduceMotion: S.reduceMotion
     };
   },
 
@@ -173,7 +173,7 @@ const Store = {
       ['vos3', 'vos_prefs'].forEach(k => localStorage.removeItem(k));
     } catch(e) {}
     S.banks=[]; S.cards=[]; S.investments=[]; S.cash=[]; S.loans=[]; S.friends=[]; S.sims=[]; S.assets=[];
-    S.expenses=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
+    S.expenses=[]; S.bills=[]; S.emails=[]; S.gadgets=[]; S.digital=[]; S.documents=[]; S.vehicles=[];
     S.activity=[]; S.tags=[]; S.wallet=[]; S.trash=[];
     S.family = { head: null, members: [] };
     S.familyMembers = [];

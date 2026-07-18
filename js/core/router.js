@@ -35,32 +35,69 @@ const R = {
     lk.style.display = 'flex';
     PIN.reset();
     this.startClock();
-    const usePp = !VaultProfiles.isDemo() && typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'passphrase';
+    const needsMigrate = !VaultProfiles.isDemo() && typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'passphrase';
     const dots = document.getElementById('pdots');
     const keypad = document.querySelector('.lk-bot .keypad');
-    const ppBox = document.getElementById('ppUnlock');
-    if (dots) dots.style.display = usePp ? 'none' : '';
-    if (keypad) keypad.style.display = usePp ? 'none' : '';
-    if (ppBox) {
-      ppBox.style.display = usePp ? 'block' : 'none';
-      if (usePp) {
-        const inp = document.getElementById('ppUnlockInp');
-        if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 200); }
+    const migBox = document.getElementById('ppMigrate');
+    if (dots) dots.style.display = needsMigrate ? 'none' : '';
+    if (keypad) keypad.style.display = needsMigrate ? 'none' : '';
+    if (migBox) {
+      migBox.style.display = needsMigrate ? 'block' : 'none';
+      if (needsMigrate) {
+        ['ppMigPass', 'ppMigPin', 'ppMigPin2'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        const err = document.getElementById('ppMigErr'); if (err) err.textContent = '';
       }
     }
     const sub = document.getElementById('lkSub');
     if (sub) {
       if (VaultProfiles.isDemo()) sub.textContent = 'Demo vault · PIN ' + VaultProfiles.DEMO_PIN;
-      else if (usePp) sub.textContent = 'Enter vault passphrase';
+      else if (needsMigrate) sub.textContent = 'Migrate to PIN unlock';
       else if (S.user.name) sub.textContent = 'Welcome back, ' + S.user.name;
       else sub.textContent = 'Enter your 6-digit PIN';
     }
     const sp = document.getElementById('switchProfileBtn');
     if (sp) sp.style.display = (VaultProfiles.isDemo() || VaultProfiles.isDevMode() || localStorage.getItem('vo_used_demo') === '1') ? '' : 'none';
     const fp = document.getElementById('forgotPinLink');
-    if (fp) fp.style.display = VaultProfiles.isDemo() ? 'none' : (S.fails >= 3 ? 'inline' : 'none');
+    if (fp) fp.style.display = VaultProfiles.isDemo() || needsMigrate ? 'none' : (S.fails >= 3 ? 'inline' : 'none');
     if (typeof getVaultId === 'function') getVaultId();
     ThemeEngine.renderDots();
+    // Biometric unlock button
+    let bio = document.getElementById('waUnlockBtn');
+    if (!bio) {
+      const bot = document.querySelector('.lk-bot');
+      if (bot) {
+        bio = document.createElement('button');
+        bio.type = 'button';
+        bio.id = 'waUnlockBtn';
+        bio.className = 'btn btn-g';
+        bio.style.cssText = 'width:100%;max-width:280px;margin:10px auto 0;display:none;padding:12px;font-weight:600';
+        bio.textContent = 'Unlock with biometrics';
+        bio.onclick = () => {
+          if (typeof WebAuthnUnlock === 'undefined') return;
+          WebAuthnUnlock.authenticate().then(r => {
+            if (r && r.prfUnlock) {
+              S.fails = 0; S.lockedUntil = 0;
+              try { LockoutStore.clear(); } catch (e) {}
+              VaultDB.load().then(data => {
+                if (data) Object.assign(S, data);
+                if (!Array.isArray(S.bills)) S.bills = [];
+                R.unlock();
+              }).catch(() => Toast.show('Biometric unlock failed — use PIN', 'error'));
+            } else if (r && r.success) {
+              Toast.show('Confirmed — enter PIN', 'info');
+              document.getElementById('pd0')?.focus?.();
+            } else if (r && r.error) {
+              Toast.show(r.error, 'warning');
+            }
+          }).catch(e => Toast.show(e.message || 'Biometric failed', 'error'));
+        };
+        bot.insertBefore(bio, bot.firstChild);
+      }
+    }
+    if (bio) {
+      const showBio = !needsMigrate && !VaultProfiles.isDemo() && typeof WebAuthnUnlock !== 'undefined' && WebAuthnUnlock.isEnabled();
+      bio.style.display = showBio ? 'block' : 'none';
+    }
   },
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
@@ -82,15 +119,6 @@ const R = {
       }
       S.unlocked = true; S.decoy = false;
       window._vosUnlocked = true;
-      // Prompt legacy PIN vaults to strengthen encryption (once per session)
-      if (!VaultProfiles.isDemo() && typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'pin' && !window._vosStrengthenPrompted) {
-        window._vosStrengthenPrompted = true;
-        setTimeout(() => {
-          if (typeof Toast !== 'undefined') {
-            Toast.show('Strengthen encryption: Settings → Security → Strengthen (passphrase)', 'warning', 7000);
-          }
-        }, 1200);
-      }
       // Backfill bank↔card links for any orphan cards (existing vaults)
       if (typeof VaultRelations !== 'undefined') {
         const linked = VaultRelations.linkOrphanCards({ createBank: false });
@@ -113,6 +141,9 @@ const R = {
         const dashPb = document.getElementById('dashBody');
         if (dashPb) pullToRefresh(dashPb, () => Dash.render());
       }, 500);
+      if (typeof NetWorthHistory !== 'undefined') {
+        try { NetWorthHistory.onUnlock(); } catch (e) {}
+      }
     };
     // Catalog used by nav + relations — load before UI (offline via SW precache)
     if (typeof VaultLazy !== 'undefined' && typeof SMART_DB === 'undefined') {
@@ -259,10 +290,9 @@ const R = {
       documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
       search:      () => GlobalSearch.render(),
       import:      () => {
-        VaultLazy.ensure('llm').then(() => {
-          if (typeof AIImport !== 'undefined') AIImport.render();
-          else if (typeof ImportEngine !== 'undefined') ImportEngine.render();
-        }).catch(() => Toast.show('Import tools failed to load', 'error'));
+        if (typeof AIImport !== 'undefined') AIImport.render();
+        else if (typeof ImportEngine !== 'undefined') ImportEngine.render();
+        else Toast.show('Import tools unavailable', 'error');
       },
       timeline:    () => Timeline.render(),
       security:    () => SecurityCenter.render(),

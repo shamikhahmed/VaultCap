@@ -347,38 +347,24 @@ const VaultDB = (() => {
     getAuthMode() { return _getAuthMode(); },
     setAuthMode(mode) { _setAuthMode(mode); },
 
-    /** Re-encrypt vault with passphrase KDF (offline-strong). */
-    async upgradeToPassphrase(currentSecret, passphrase) {
+    /** One-time: re-encrypt passphrase vault with 6-digit PIN unlock. */
+    async migrateToPin(passphrase, pin) {
       const pp = String(passphrase || '');
-      if (pp.length < 12) throw new Error('Passphrase must be at least 12 characters');
-      if (/^\d{6}$/.test(pp)) throw new Error('Passphrase cannot be a 6-digit PIN');
-      const result = await this.tryPin(currentSecret);
-      if (!result || result.slot !== 'main') throw new Error('Current PIN/passphrase incorrect');
+      const p = String(pin || '');
+      if (!/^\d{6}$/.test(p)) throw new Error('PIN must be 6 digits');
+      const result = await this.tryPin(pp);
+      if (!result || result.slot !== 'main') throw new Error('Old passphrase incorrect');
       _setKdfIters(KDF_TARGET);
-      _key = await _deriveKey(pp, KDF_TARGET);
+      _key = await _deriveKey(p, KDF_TARGET);
       await this.save(result.data);
-      _setAuthMode('passphrase');
-      return true;
+      _setAuthMode('pin');
+      return result.data;
     },
-
-    /** Change passphrase when already in passphrase mode. */
-    async changePassphrase(oldPp, newPp) {
-      const a = String(oldPp || ''), b = String(newPp || '');
-      if (b.length < 12) throw new Error('Passphrase must be at least 12 characters');
-      if (/^\d{6}$/.test(b)) throw new Error('Passphrase cannot be a 6-digit PIN');
-      const result = await this.tryPin(a);
-      if (!result || result.slot !== 'main') throw new Error('Current passphrase incorrect');
-      _setKdfIters(KDF_TARGET);
-      _key = await _deriveKey(b, KDF_TARGET);
-      await this.save(result.data);
-      _setAuthMode('passphrase');
-    },
-
 
     // Download current encrypted blob as a .vos file.
     // Deprecated device-bound export — use ExIm.export('vault') for portable .vos
     async exportEncrypted() {
-      throw new Error('Use ExIm portable export (passphrase-encrypted .vos)');
+      throw new Error('Use ExIm portable export (backup-key encrypted .vos)');
     },
 
     // Wipe all vault data and clear session key.

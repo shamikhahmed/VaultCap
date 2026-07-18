@@ -65,6 +65,13 @@ const Banks={
     const el=document.getElementById('bItems');if(!el)return;
     if(!data.length&&!archivedCount){el.innerHTML=this.emptyState();return;}
     const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" onclick="Banks._showArchived=!Banks._showArchived;Banks.render()">${Banks._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
+    if (data.length > 60 && typeof VirtualList !== 'undefined') {
+      el.innerHTML = archiveToggle + '<div id="bVirt" style="height:min(70vh,640px);overflow:auto;-webkit-overflow-scrolling:touch"></div>';
+      VirtualList.render(document.getElementById('bVirt'), data, 76, (b) => this.row(b));
+      if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
+      initSwipeDelete(el);
+      return;
+    }
     const byCC={};data.forEach(b=>{const k=b.country||'OTHER';(byCC[k]=byCC[k]||[]).push(b);});
     el.innerHTML=archiveToggle+Object.entries(byCC).map(([cc,items])=>`<div><div class="csec-h"><span style="font-size:18px">${U.flag(cc)}</span><span class="csec-name">${U.cname(cc)}</span><span class="csec-cnt">${items.length}</span></div>${items.map(b=>this.row(b)).join('')}</div>`).join('');
     if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);

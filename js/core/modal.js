@@ -113,6 +113,15 @@ function generateMasterKey() {
   return Array.from(arr).map(b => chars[b % chars.length]).join('');
 }
 
+/** Longer random key for portable .vos export (not user-invented). */
+function generateBackupKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const arr = new Uint8Array(32);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => chars[b % chars.length]).join('');
+}
+window.generateBackupKey = generateBackupKey;
+
 async function storeMasterKeyHash(key) {
   const h = await hashString(key);
   localStorage.setItem(recoveryKeyStorageKey(), h);

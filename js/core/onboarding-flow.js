@@ -151,24 +151,18 @@ const OB = {
   finish() {
     const p  = document.getElementById('ob-pin').value;
     const p2 = document.getElementById('ob-pin2').value;
-    const pp = document.getElementById('ob-pp')?.value || '';
-    const pp2 = document.getElementById('ob-pp2')?.value || '';
     const err = document.getElementById('ob-perr');
     if (!/^\d{6}$/.test(p)) { err.textContent = 'PIN must be 6 digits'; return; }
     if (p !== p2) { err.textContent = 'PINs do not match'; return; }
-    if (pp.length < 12) { err.textContent = 'Passphrase must be at least 12 characters'; return; }
-    if (pp !== pp2) { err.textContent = 'Passphrases do not match'; return; }
-    if (/^\d{6}$/.test(pp)) { err.textContent = 'Passphrase cannot be your PIN — choose a stronger phrase'; return; }
     S.pin = p; S.noPin = false;
-    // Move to recovery key screen immediately
     obStep = 6;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
     const rkEl = document.getElementById('ob-recovery-key');
     if (rkEl) rkEl.textContent = 'Generating…';
-    // Encrypt with passphrase (offline-strong). PIN kept for decoy/UX metadata only.
-    VaultDB.init(pp).then(async () => {
-      VaultDB.setAuthMode('passphrase');
+    // PIN unlocks daily. Recovery key (next) restores if PIN forgotten.
+    VaultDB.init(p).then(async () => {
+      VaultDB.setAuthMode('pin');
       if (!S.vaultMeta) S.vaultMeta = {};
       try { S.vaultMeta.pinHash = await PinHash.digest(p); } catch (e) {}
       Store.save();

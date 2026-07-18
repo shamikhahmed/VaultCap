@@ -150,7 +150,7 @@ const PIN = {
       return { kind: 'real' };
     }
 
-    // Passphrase-mode vaults must not unlock via 6-digit keypad
+    // Passphrase-mode vaults must migrate first (see PIN.migrateFromPassphrase)
     if (typeof VaultDB !== 'undefined' && VaultDB.getAuthMode && VaultDB.getAuthMode() === 'passphrase') {
       return null;
     }
@@ -192,51 +192,28 @@ const PIN = {
     return { kind: 'real' };
   },
 
-  submitPassphrase() {
-    if (Date.now() < S.lockedUntil) { this.showLo(); return; }
-    const inp = document.getElementById('ppUnlockInp');
-    const msg = document.getElementById('pmsg');
-    const pp = (inp && inp.value) || '';
-    if (pp.length < 12) {
-      if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Enter your vault passphrase'; }
-      return;
-    }
-    if (msg) { msg.className = 'pin-msg'; msg.textContent = 'Verifying…'; }
-    this._verifyPassphrase(pp).then(result => {
-      const kind = (result && typeof result === 'object') ? result.kind : result;
-      if (kind === 'real') {
-        S.fails = 0; S.lockedUntil = 0;
-        try { LockoutStore.clear(); } catch (e) {}
-        Store.save();
-        if (inp) inp.value = '';
-        setTimeout(() => R.unlock(), 180);
-      } else if (kind === 'decoy') {
-        applyDecoyUnlock(result && result.data);
-      } else {
-        S.fails++;
-        if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Wrong passphrase'; }
-        LockoutStore.save(S.fails, S.lockedUntil);
-        if (S.fails >= 5) {
-          S.lockedUntil = Date.now() + 300000;
-          this.countdown(300);
-        } else if (S.fails >= 3) {
-          S.lockedUntil = Date.now() + 30000;
-          this.countdown(30);
-        }
-        if (VaultDB.sessionKey) Store.save();
-        Activity.log('Failed passphrase #' + S.fails);
-      }
-    }).catch(() => {
-      if (msg) { msg.className = 'pin-msg err'; msg.textContent = 'Error — try again'; }
+  migrateFromPassphrase() {
+    const err = document.getElementById('ppMigErr');
+    const pp = document.getElementById('ppMigPass')?.value || '';
+    const pin = document.getElementById('ppMigPin')?.value || '';
+    const pin2 = document.getElementById('ppMigPin2')?.value || '';
+    if (pp.length < 8) { if (err) err.textContent = 'Enter old passphrase'; return; }
+    if (!/^\d{6}$/.test(pin)) { if (err) err.textContent = 'PIN must be 6 digits'; return; }
+    if (pin !== pin2) { if (err) err.textContent = 'PINs do not match'; return; }
+    if (err) err.textContent = 'Migrating…';
+    VaultDB.migrateToPin(pp, pin).then(async (data) => {
+      Object.assign(S, data);
+      if (!S.vaultMeta) S.vaultMeta = {};
+      try { S.vaultMeta.pinHash = await PinHash.digest(pin); } catch (e) {}
+      S.fails = 0; S.lockedUntil = 0;
+      try { LockoutStore.clear(); } catch (e) {}
+      Store.save();
+      if (err) err.textContent = '';
+      Toast.show('Switched to PIN unlock', 'success');
+      setTimeout(() => R.unlock(), 180);
+    }).catch(e => {
+      if (err) err.textContent = e.message || 'Migration failed';
     });
-  },
-
-  async _verifyPassphrase(pp) {
-    const result = await VaultDB.tryPin(pp);
-    if (!result) return null;
-    if (result.slot === 'decoy') return { kind: 'decoy', data: result.data };
-    Object.assign(S, result.data);
-    return { kind: 'real' };
   },
 
   countdown(s) {

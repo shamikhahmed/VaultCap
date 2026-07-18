@@ -1,3 +1,18 @@
+## [5.1.0] — 2026-07-18
+
+### UX
+- Removed invent-your-own vault passphrase — PIN unlock again; one-time migrate for passphrase vaults
+- Export generates backup key (copy once) instead of typing a phrase
+- Smart Help chatbot (rules-based) from Help Center
+- Optional WebAuthn biometric unlock (PRF when supported)
+- Bills widget + net worth history on dashboard
+- Backup verify dry-run; family hide-balances; virtualized bank lists (60+)
+- Settings: threat model, free forever / no required AI copy
+
+### Security
+- Honest threat model (`SECURITY.md` + in-app)
+- CSP drops unused LLM proxy connect target
+
 ## [5.0.2] — 2026-07-17
 
 ### Security

@@ -55,8 +55,9 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 
 ## Features
 
-- **Smart Add** — describe what to add, Smart Parser (optional LLM) detects and pre-fills the form
-- **Smart Import** — paste any text, Smart Parser / LLM extracts structured financial data
+- **Smart Add** — describe what to add; on-device Smart Parser pre-fills the form
+- **Smart Import** — paste text or files; rules-based Smart Parser extracts structured data
+- **Smart Help** — in-app assistant answers PIN, backup, banks, and more (no cloud AI required)
 - **Live rates** — real-time FX (PKR/GBP/AED/USD) and gold/silver prices
 - **PDF export** — full financial summary as print-ready PDF
 - **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
@@ -85,7 +86,7 @@ VaultCap/
 └── sw-v51.js               # Service worker (offline PWA)
 ```
 
-**Stack:** Vanilla JS · Web Crypto API · localStorage · Tesseract.js · optional LLM API key (optional)
+**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · 100% free · no account
 
 ---
 
