@@ -80,7 +80,8 @@ const Banks={
       const b = S.banks.find(x => x.id === id); if (!b) return [];
       return [
         {label:'Edit', ic:'pencil', action: () => Banks.edit(id)},
-        {label:'Copy IBAN', ic:'copy', action: () => b.iban && U.copy(b.iban)},
+        {label:'Copy IBAN', ic:'copy', action: () => b.iban && U.copy(b.iban,'IBAN')},
+        {label: b.archived ? 'Unarchive' : 'Archive', ic:'archive', action: () => Banks.archive(id)},
         {label:'View Details', ic:'eye', action: () => Banks.detail(id)},
         {label:'Delete', ic:'trash', destructive: true, action: () => Banks.del(id)},
       ];
@@ -90,8 +91,25 @@ const Banks={
     const logoHtml=getBankLogo(b.bankName,36);
     const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:10px;background:rgba(0,213,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
     const _bt=(b.bankType||'bank').toLowerCase();
-    const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('');
-    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${logoHtml}</div><div class="entry-body"><div class="entry-name">${b.bankName}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${b.accountType||''} · ${b.currency||''} ${b.last4?'· ****'+b.last4:''}</div><div class="entry-meta"><span class="badge b-muted">${b.bankType||'bank'}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':'')})}${U.icb('eye',{onclick:`Banks.detail('${b.id}')`,ariaLabel:'View details'})}${U.icb('pencil',{onclick:`Banks.edit('${b.id}')`,ariaLabel:'Edit'})}${U.icb('archive',{onclick:`Banks.archive('${b.id}')`,title:b.archived?'Unarchive':'Archive'})}${U.icb('trash',{onclick:`Banks.del('${b.id}')`,ariaLabel:'Delete',class:'del'})}</div></div></div>`;
+    const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('');
+    const name = escHtml(b.bankName||'Bank');
+    const acts =
+      U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':''),ariaLabel:'Favorite'}) +
+      U.icb('eye',{onclick:`Banks.detail('${b.id}')`,ariaLabel:'View details'}) +
+      U.icb('more',{onclick:`Banks.rowMenu('${b.id}',event)`,ariaLabel:'More actions',title:'More'});
+    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${logoHtml}</div><div class="entry-body"><div class="entry-name">${name}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+escHtml(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${escHtml(b.accountType||'')} · ${escHtml(b.currency||'')} ${b.last4?'· ****'+escHtml(b.last4):''}</div><div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType||'bank')}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${acts}</div></div></div>`;
+  },
+  rowMenu(id, ev){
+    const b = (S.banks||[]).find(x => x.id === id);
+    if (!b || typeof showContextMenu !== 'function') return;
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    const x = (ev && ev.clientX != null) ? ev.clientX : Math.max(8, window.innerWidth - 80);
+    const y = (ev && ev.clientY != null) ? ev.clientY : 120;
+    showContextMenu(x, y, [
+      { label: 'Edit', ic: 'pencil', action: () => Banks.edit(id) },
+      { label: b.archived ? 'Unarchive' : 'Archive', ic: 'archive', action: () => Banks.archive(id) },
+      { label: 'Delete', ic: 'trash', destructive: true, action: () => Banks.del(id) },
+    ]);
   },
   emptyState(){return `<div class="empty-ios"><div class="ei-ic">${VC.icon('bank',32)}</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="Banks.openAdd()">+ Add Bank</button><button type="button" class="btn btn-g" data-act="Settings.loadDemo()">Try Demo</button></div></div>`;},
   _showExample(){Modal.open('Example Bank Entry',`<div class="entry-main" style="padding:0 0 14px"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${VC.icon('bank',18)}</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},

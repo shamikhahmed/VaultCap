@@ -1,3 +1,13 @@
+## [5.1.8] — 2026-07-19
+
+### Banks UX + logo coverage
+- Bank list rows: star + view + ⋯ menu (edit/archive/delete) — names no longer truncate behind 5 icons
+- `.entry-acts` nowrap; action icons slightly tighter on narrow phones
+- `BANK_CATALOG` expanded to cover all **307** SMART_DB banks (315 unique domains)
+- Bundled `assets/banks/*.png` filled for every catalog domain; fetcher prefers Clearbit; Barclays mark protected
+- `bankDomain()` resolves via SMART_DB aliases + longer catalog matches
+- SW `vaultcap-v70`
+
 ## [5.1.7] — 2026-07-19
 
 ### Pitch / logos
