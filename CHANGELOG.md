@@ -1,3 +1,10 @@
+## [5.1.3] — 2026-07-19
+
+### UX
+- Entry row / wallet card / modal close actions → 44px touch targets
+- Kill leftover purple `rgba(123,95,255)` → cyan accent across family, profiles, badges
+- SW `vaultcap-v65`
+
 ## [5.1.2] — 2026-07-19
 
 ### UX

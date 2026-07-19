@@ -213,7 +213,7 @@ const Dash={
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
     const familyWidget = familyMC > 0
-      ? '<div style="padding:0 16px;margin-top:14px"><div data-act="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
+      ? '<div style="padding:0 16px;margin-top:14px"><div data-act="R.goto(\'family\')" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.06));border:1px solid rgba(0,213,255,.2);border-radius:18px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">' +
         '<div style="display:flex;align-items:center;flex-shrink:0">' + _uiIcon('users', 24) + '</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Family Vault</div>' +
         '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+familyMC+' member'+(familyMC!==1?'s':'')+' · '+fmt(familyNW)+' combined</div></div>' +
@@ -416,7 +416,7 @@ const Dash={
     ${(() => {
       const cols = [
         { label:'Expiring Soon', icon:'bell', count:allExpiring.length, action:"R.goto('alerts')", color:'rgba(255,152,0,.1)', border:'rgba(255,152,0,.3)' },
-        { label:'Archived', icon:'package', count:[...(S.banks||[]),...(S.cards||[])].filter(x=>x.archived).length, action:"R.goto('banks')", color:'rgba(123,95,255,.1)', border:'rgba(123,95,255,.3)' },
+        { label:'Archived', icon:'package', count:[...(S.banks||[]),...(S.cards||[])].filter(x=>x.archived).length, action:"R.goto('banks')", color:'rgba(0,213,255,.1)', border:'rgba(0,213,255,.3)' },
         { label:'Loans Active', icon:'handshake', count:(S.loans||[]).filter(l=>l.status!=='Settled').length, action:"R.goto('loans')", color:'rgba(255,69,58,.1)', border:'rgba(255,69,58,.3)' },
         { label:'Investments', icon:'trending-up', count:(S.investments||[]).length, action:"R.goto('investments')", color:'rgba(0,213,255,.1)', border:'rgba(0,213,255,.3)' },
       ].filter(c => c.count > 0);

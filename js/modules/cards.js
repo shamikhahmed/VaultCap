@@ -54,7 +54,7 @@ const Cards={
       ?'<div style="overflow-x:auto;display:flex;gap:12px;padding:4px 4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:4px">'+
         S.cards.filter(c=>!c.archived).map(c=>{
           const GRADS={Visa:'linear-gradient(135deg,#1a1f71,#2575fc)',Mastercard:'linear-gradient(135deg,#eb001b,#f79e1b)','American Express':'linear-gradient(135deg,#007b5e,#00b894)',UnionPay:'linear-gradient(135deg,#c0392b,#e74c3c)',PayPak:'linear-gradient(135deg,#007a3d,#00b463)'};
-          const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(123,95,255,.8),rgba(0,213,255,.6))';
+          const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(0,213,255,.8),rgba(0,213,255,.6))';
           const last4=c.last4||'····';
           return '<div data-act="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
             '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+

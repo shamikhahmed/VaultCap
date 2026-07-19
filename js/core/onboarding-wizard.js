@@ -140,7 +140,7 @@ const Onboarding = {
                 <div style="font-size:14px;font-weight:600;color:var(--text)">${p.label}</div>
                 <div style="font-size:12px;color:var(--text3)">${p.desc}</div>
               </div>
-              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(123,95,255,.15)':'transparent'}"></div>
+              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(0,213,255,.15)':'transparent'}"></div>
             </div>`).join('')}
         </div>
         <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Continue →</button>

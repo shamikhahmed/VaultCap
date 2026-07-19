@@ -373,11 +373,11 @@
 <div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="overflow:hidden;min-width:0"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
 <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;position:relative" class="dash-toolbar">
 <button class="btn btn-g btn-sm" id="currBtn" data-act="Dash.toggleCurrency()" title="Display currency" style="min-width:44px;padding:6px 8px;font-size:11px">GBP</button>
-<button type="button" class="icb dash-act-desktop" id="dashSettingsBtn" data-act="R.goto('settings')" title="Settings" aria-label="Settings" style="width:36px;height:36px" data-vc-icon="settings" data-vc-size="18"></button>
+<button type="button" class="icb dash-act-desktop" id="dashSettingsBtn" data-act="R.goto('settings')" title="Settings" aria-label="Settings" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="settings" data-vc-size="18"></button>
 <button type="button" class="btn btn-g btn-sm dash-act-desktop" data-act="CMD.open()" style="padding:6px 8px;font-size:11px;display:none" id="dashCmdBtn">⌘K</button>
-<button type="button" class="icb dash-act-desktop" id="dashPrivacyBtn" data-act="togglePrivacy()" title="Privacy" aria-label="Privacy" style="width:36px;height:36px" data-vc-icon="eye-off" data-vc-size="18"></button>
-<button type="button" class="icb dash-act-desktop" id="dashLockBtn" data-act="R.lock()" title="Lock vault" aria-label="Lock vault" style="width:36px;height:36px" data-vc-icon="lock" data-vc-size="18"></button>
-<button type="button" class="icb dash-act-more" id="dashMoreBtn" data-act="Dash.toggleMore(event)" title="More actions" aria-label="More actions" style="width:36px;height:36px;display:none" data-vc-icon="more" data-vc-size="18"></button>
+<button type="button" class="icb dash-act-desktop" id="dashPrivacyBtn" data-act="togglePrivacy()" title="Privacy" aria-label="Privacy" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="eye-off" data-vc-size="18"></button>
+<button type="button" class="icb dash-act-desktop" id="dashLockBtn" data-act="R.lock()" title="Lock vault" aria-label="Lock vault" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="lock" data-vc-size="18"></button>
+<button type="button" class="icb dash-act-more" id="dashMoreBtn" data-act="Dash.toggleMore(event)" title="More actions" aria-label="More actions" style="width:44px;height:44px;min-width:44px;min-height:44px;display:none" data-vc-icon="more" data-vc-size="18"></button>
 <div class="dash-more-menu" id="dashMoreMenu" role="menu" aria-hidden="true">
 <button type="button" class="dash-more-item" role="menuitem" data-act="R.goto('settings');Dash.closeMore()"><span data-vc-icon="settings" data-vc-size="16"></span>Settings</button>
 <button type="button" class="dash-more-item" role="menuitem" data-act="CMD.open();Dash.closeMore()"><span data-vc-icon="search" data-vc-size="16"></span>Search</button>
@@ -428,7 +428,7 @@
 <div class="page" id="pg-settings">
 <div class="settings-chrome">
 <div class="ph" style="border-bottom:none;padding-bottom:8px;display:flex;align-items:center;gap:10px">
-<button type="button" class="icb" data-act="R.goto('dashboard')" title="Back to dashboard" aria-label="Back to dashboard" style="width:36px;height:36px;flex-shrink:0" data-vc-icon="undo" data-vc-size="18"></button>
+<button type="button" class="icb" data-act="R.goto('dashboard')" title="Back to dashboard" aria-label="Back to dashboard" style="width:44px;height:44px;min-width:44px;min-height:44px;flex-shrink:0" data-vc-icon="undo" data-vc-size="18"></button>
 <h2 style="flex:1;margin:0">Settings</h2>
 </div>
 <div id="settTabs" class="sett-tabs cap-tab-bar" role="tablist" aria-label="Settings"></div>
@@ -457,9 +457,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=5.1.2"></script>
+<script src="js/storage.js?v=5.1.3"></script>
 <script src="js/boot-ver.js"></script>
-<script src="dist/vaultcap.bundle.js?v=5.1.2"></script>
+<script src="dist/vaultcap.bundle.js?v=5.1.3"></script>
 <script src="js/boot-shell.js"></script>
 
 
