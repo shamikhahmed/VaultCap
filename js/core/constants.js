@@ -2,7 +2,7 @@
 // Centralised constants — future migration target from app.js
 
 const VAULT_VERSION = 7;
-const VER = window.VER || '5.1.10';
+const VER = window.VER || '5.1.11';
 const APP_VERSION = VER;
 window.VER = VER;
 const MAX_STORAGE_MB = 5;

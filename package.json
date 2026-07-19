@@ -27,7 +27,7 @@
     "@playwright/test": "^1.52.0",
     "playwright": "^1.60.0"
   },
-  "version": "5.1.10",
+  "version": "5.1.11",
   "description": "VaultCap — encrypted offline life vault PWA by Capricorn Systems",
   "directories": {
     "doc": "docs",
