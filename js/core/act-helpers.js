@@ -240,6 +240,23 @@ const ActHelpers = {
     if (el && el.classList) el.classList.toggle(cls);
   },
 
+  toggleDisplay(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const open = el.style.display === 'none' || !el.style.display;
+    el.style.display = open ? 'block' : 'none';
+    if (btn) {
+      const caret = btn.querySelector('.tap-link-caret');
+      if (caret) caret.textContent = open ? 'Hide' : 'Show';
+    }
+  },
+
+  dismissCtxCta() {
+    try { sessionStorage.setItem('vos_ctx_cta_dismissed', '1'); } catch (e) {}
+    if (typeof Dash !== 'undefined' && Dash.render) Dash.render();
+    else if (typeof R !== 'undefined' && R.goto && typeof S !== 'undefined') R.goto(S.currentPage || 'dashboard');
+  },
+
   bindImportDrop(zone) {
     if (!zone || zone.__vosDropBound) return;
     zone.__vosDropBound = true;

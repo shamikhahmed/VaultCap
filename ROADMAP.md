@@ -2,8 +2,8 @@
 
 > Updated 2026-07-18. Fleet order & standard: `capricorn-tooling/shared/CAP-STANDARD.md`.
 
-## Now — v5.1.1
-PIN-first unlock, Smart Help, WebAuthn, bills widget, **CSP kill** (`script-src 'self'`, `Act`/`data-act*`). See `CHANGELOG.md`.
+## Now — v5.1.2
+UX polish (44px targets, tax accent, integrity toast once, Space Grotesk fleet). CSP kill in 5.1.1. See `CHANGELOG.md`.
 
 ## Cap Standard gaps
 | Cap Standard item | Status |

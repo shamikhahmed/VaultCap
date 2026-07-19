@@ -1,2 +1,2 @@
 'use strict';
-window.VER = '5.1.1';
+window.VER = '5.1.2';

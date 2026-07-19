@@ -1,3 +1,13 @@
+## [5.1.2] — 2026-07-19
+
+### UX
+- Touch targets ≥44px: demo Exit, ctx pills, sidebar toggle, tap-link CTAs
+- Bottom tab labels 11px; settings tab edge fade for overflow
+- Tax filing chips use `--accent` / info (no purple drift)
+- Integrity scan toast once per session
+- Dashboard NW breakdown collapsed (Details Show/Hide); country CTA dismissible
+- Marketing/widget fonts → Space Grotesk (match app)
+
 ## [5.1.1] — 2026-07-18
 
 ### Security

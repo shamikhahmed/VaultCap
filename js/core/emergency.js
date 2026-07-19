@@ -285,7 +285,14 @@ const ContextSwitcher = {
     let pills = pill('ALL', 'All', '');
     codes.forEach(code => pills += pill(code, U.cname(code), U.flag(code)));
     if (!primary) {
-      pills += `<button type="button" class="ctx-pill ctx-pill--cta" data-act="ContextSwitcher.openManager()">+ Set home country</button>`;
+      let ctaDismissed = false;
+      try { ctaDismissed = sessionStorage.getItem('vos_ctx_cta_dismissed') === '1'; } catch (e) {}
+      if (!ctaDismissed) {
+        pills += `<button type="button" class="ctx-pill ctx-pill--cta" data-act="ContextSwitcher.openManager()">+ Set home country</button>`;
+        pills += `<button type="button" class="ctx-pill ctx-pill--icon" data-act="ActHelpers.dismissCtxCta()" aria-label="Dismiss country setup" title="Dismiss">×</button>`;
+      } else {
+        pills += `<button type="button" class="ctx-pill ctx-pill--icon" data-act="ContextSwitcher.openManager()" title="Manage countries">${typeof VC !== 'undefined' ? VC.icon('pencil', 14) : 'Edit'}</button>`;
+      }
     } else {
       pills += `<button type="button" class="ctx-pill ctx-pill--icon" data-act="ContextSwitcher.openManager()" title="Manage countries">${typeof VC !== 'undefined' ? VC.icon('pencil', 14) : 'Edit'}</button>`;
     }

@@ -40,8 +40,8 @@
   --cap-info: #a3a3a3;
 
   /* ── Type scale (fluid, 320 → 2560) ── */
-  --cap-font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --cap-font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --cap-font-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --cap-font-display: 'Space Grotesk', system-ui, sans-serif;
   --cap-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --cap-text-xs: clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);
   --cap-text-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.875rem);

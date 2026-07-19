@@ -155,7 +155,14 @@ const R = {
       if (typeof DataIntegrity !== 'undefined') {
         const r = DataIntegrity.check();
         const issues = r.highCount + r.posCount;
-        if (issues > 0) Toast.show(`Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
+        if (issues > 0) {
+          let shown = false;
+          try { shown = sessionStorage.getItem('vos_integrity_toast') === '1'; } catch (e) {}
+          if (!shown) {
+            try { sessionStorage.setItem('vos_integrity_toast', '1'); } catch (e) {}
+            Toast.show(`Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
+          }
+        }
       }
     }, 2000);
     setTimeout(() => {

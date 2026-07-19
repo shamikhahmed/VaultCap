@@ -275,12 +275,12 @@ const Tax = {
         ${['GB','PK','AE'].map(c=>`<button type="button" data-act="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
-        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--purple)':'var(--border)'};background:${this._filing===k?'rgba(123,95,255,.2)':'transparent'};color:${this._filing===k?'var(--purple)':'var(--text3)'}">${f.name}</button>`).join('')}
+        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--accent)':'var(--border)'};background:${this._filing===k?'rgba(0,213,255,.2)':'transparent'};color:${this._filing===k?'var(--accent)':'var(--text3)'}">${f.name}</button>`).join('')}
       </div>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
         ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
+        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
         ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">Warning: ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
@@ -311,7 +311,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
+    <button type="button" data-act="Tax.calculate()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -321,7 +321,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
+    <button type="button" data-act="Tax.calculateVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT (5%)</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -339,7 +339,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
+    <button type="button" data-act="Tax.calculateGbVAT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate VAT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -356,8 +356,8 @@ const Tax = {
     <div style="margin-bottom:12px">
       <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Asset Type</label>
       <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','property','rgba(123,95,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Property</button>
-        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','other','rgba(123,95,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(123,95,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','property','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Property</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','other','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
       </div>
       <input type="hidden" id="cgt-type" value="${escAttr(t)}">
     </div>
@@ -366,7 +366,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter total gain"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
+    <button type="button" data-act="Tax.calculateCGT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate CGT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -384,7 +384,7 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter dividend income"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
+    <button type="button" data-act="Tax.calculateDividend()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Dividend Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -403,7 +403,7 @@ const Tax = {
       <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','no','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
     </div>
     <input type="hidden" id="iht-spouse" value="${escAttr(sp)}">
-    <button type="button" data-act="Tax.calculateIHT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate IHT</button>
+    <button type="button" data-act="Tax.calculateIHT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate IHT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -424,7 +424,7 @@ const Tax = {
     </div>
     <input type="hidden" id="sdlt-ftb" value="${escAttr(ft)}">
     <input type="hidden" id="sdlt-add" value="${escAttr(ad)}">
-    <button type="button" data-act="Tax.calculateSDLT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate SDLT</button>
+    <button type="button" data-act="Tax.calculateSDLT()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate SDLT</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
@@ -439,12 +439,12 @@ const Tax = {
       <input id="tax-income" type="text" inputmode="decimal" value="${escAttr(saved.income||'')}" placeholder="Enter amount"
         style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:16px">
     </div>
-    <button type="button" data-act="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--info));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
+    <button type="button" data-act="Tax.calculateExcise()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--info),var(--accent));border:none;color:#fff;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation">Calculate Excise Tax</button>
     <div id="tax-result" style="margin-top:14px"></div>`;
   },
 
   _freezoneForm() {
-    return `<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px;margin-bottom:16px">
+    return `<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px;margin-bottom:16px">
       <div style="font-size:15px;font-weight:800;color:var(--info);margin-bottom:12px">Free Zone Corporate Tax — Key Facts</div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
         ${[['Qualifying Income Rate','0% — Zero corporate tax'],['Non-Qualifying Income','9% — Standard CT rate applies'],['QFZP Requirements','Adequate UAE substance, qualifying activities, group revenue < AED 750m'],['Registration','Must register with FTA as Qualifying Free Zone Person'],['Qualifying Activities','Manufacturing, logistics, distribution, fund management, qualified IP income']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${k}</span><span style="font-weight:700;color:var(--text);text-align:right;max-width:55%">${v}</span></div>`).join('')}
@@ -472,7 +472,7 @@ const Tax = {
       VaultMeta.set('taxCalc', saved);
       const res = document.getElementById('tax-result');
       if(!res) return;
-      res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+      res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
         <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:16px">Tax Report — ${filing.name}</div>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
           <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">IT Export Proceeds</span><span style="font-weight:700">${fmt(income)}</span></div>
@@ -518,7 +518,7 @@ const Tax = {
 
     const res = document.getElementById('tax-result');
     if(!res) return;
-    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">Tax Report — ${filing.name}${yearLabel}</div>
         <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
@@ -602,7 +602,7 @@ const Tax = {
     VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
-    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">CGT Report</div>
         <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
@@ -636,7 +636,7 @@ const Tax = {
     VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
-    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">Dividend Tax Report</div>
         <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
@@ -672,7 +672,7 @@ const Tax = {
     VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
-    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">IHT Report</div>
         <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
@@ -718,7 +718,7 @@ const Tax = {
     VaultMeta.set('taxCalc', saved);
     const res = document.getElementById('tax-result');
     if(!res) return;
-    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(123,95,255,.08));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
+    res.innerHTML = `<div id="tax-report" style="background:linear-gradient(135deg,rgba(0,213,255,.08),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div style="font-size:14px;font-weight:800;color:var(--text)">SDLT Report</div>
         <button type="button" data-act="Tax.printReport()" style="font-size:12px;color:var(--info);background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.3);border-radius:8px;padding:6px 12px;cursor:pointer;touch-action:manipulation">Print</button>
