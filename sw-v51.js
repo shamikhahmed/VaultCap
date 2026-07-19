@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v65';
+const CACHE = 'vaultcap-v66';
 const ASSETS = [
   './',
   './index.html',
@@ -6,11 +6,22 @@ const ASSETS = [
   './widget-data.json',
   './icon.svg',
   './icon-mark.svg',
+  './mark.svg',
+  './favicon.svg',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-192.png',
   './icon-maskable-512.png',
   './icon-1024.png',
   './apple-touch-icon.png',
+  './icons/mark.svg',
+  './icons/favicon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-192.png',
+  './icons/icon-maskable-512.png',
+  './icons/icon-1024.png',
+  './icons/apple-touch-icon-180.png',
   './css/capricorn-core.css',
   './css/base.css',
   './css/layout.css',

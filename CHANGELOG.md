@@ -1,3 +1,9 @@
+## [5.1.4] — 2026-07-19
+
+### Brand
+- Capricorn OS brand lock — PWA icons/mark from `assets/marks/vaultcap.svg` (BRAND-LOCK)
+- Wire `manifest` / `index` / landing / install to `icons/`; SW `vaultcap-v66`
+
 ## [5.1.3] — 2026-07-19
 
 ### UX
