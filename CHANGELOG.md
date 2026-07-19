@@ -1,3 +1,10 @@
+## [5.1.9] — 2026-07-19
+
+### Brand marks
+- Hand-crafted HBL tile (Barclays-grade — protected from favicon overwrite)
+- Top demo bank logos refreshed where larger Clearbit/DDG hits found
+- SW `vaultcap-v71`
+
 ## [5.1.8] — 2026-07-19
 
 ### Banks UX + logo coverage

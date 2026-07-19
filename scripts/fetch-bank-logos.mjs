@@ -27,7 +27,7 @@ const minArg = [...args].find((a) => a.startsWith('--min='));
 const WEAK_MAX = minArg ? Number(minArg.split('=')[1]) : 800;
 
 /** Hand-crafted / high-quality assets — never overwrite unless --force-override */
-const PROTECTED = new Set(['barclays-co-uk.png']);
+const PROTECTED = new Set(['barclays-co-uk.png', 'hbl-com.png']);
 
 function slug(domain) {
   return String(domain).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
