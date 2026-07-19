@@ -1,3 +1,12 @@
+## [5.1.6] — 2026-07-19
+
+### Pitch / honesty
+- Net-worth slide uses current monochrome dark gallery (dashboard / banks / family) — old purple empty-state heroes killed
+- Identity fan CSS: nth-child bug (SVG stole slot) fixed; feature pills 3-col grid
+- How-it-works steps = stable 3-col grid
+- Hub `vaultcap-*.png` heroes refreshed from dark/mobile gallery
+- SW `vaultcap-v68`
+
 ## [5.1.5] — 2026-07-19
 
 ### Honesty / Pitch

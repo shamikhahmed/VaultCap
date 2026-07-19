@@ -385,31 +385,32 @@ body {
   margin-bottom: 3rem;
 }
 .steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 24px;
   justify-content: center;
   max-width: 900px;
+  width: 100%;
   position: relative;
 }
 .step {
-  flex: 1;
-  min-width: 220px;
-  max-width: 280px;
-  padding: 32px 24px;
+  min-width: 0;
+  padding: 28px 18px;
   position: relative;
   text-align: center;
 }
 .step::after {
   content: '→';
-  position: absolute; right: -12px; top: 50%;
+  position: absolute; right: -18px; top: 42%;
   transform: translateY(-50%);
   color: var(--dim);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   display: block;
+  pointer-events: none;
 }
 .step:last-child::after { display: none; }
 @media(max-width:700px){
+  .steps { grid-template-columns: 1fr; gap: 12px; }
   .step::after { display: none; }
 }
 .step-num {
@@ -429,8 +430,9 @@ body {
 /* SECTION 7 — FINANCE FEATURES */
 /* ─────────────────────────────────────────────────────────────── */
 #s7 {
-  background: radial-gradient(ellipse 100% 80% at 20% 80%, rgba(10,30,100,.6) 0%, transparent 60%),
-              radial-gradient(ellipse 60% 60% at 80% 20%, rgba(20,50,140,.4) 0%, transparent 60%),
+  background: radial-gradient(ellipse 100% 80% at 20% 80%, rgba(255,255,255,.05) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 60% at 80% 20%, rgba(255,255,255,.03) 0%, transparent 60%),
+              #050508;
               #030510;
   flex-direction: column;
   text-align: center;
@@ -465,56 +467,76 @@ body {
 /* SECTION 8 — IDENTITY FEATURES */
 /* ─────────────────────────────────────────────────────────────── */
 #s8 {
-  background: radial-gradient(ellipse 80% 70% at 50% 40%, rgba(80,20,140,.35) 0%, transparent 70%),
-              #050208;
+  background: radial-gradient(ellipse 80% 70% at 50% 40%, rgba(255,255,255,.06) 0%, transparent 70%),
+              #050508;
   flex-direction: column;
   text-align: center;
 }
 .id-cards-fan {
   position: relative;
-  height: 200px;
-  width: 300px;
-  margin: 0 auto 2.5rem;
+  height: 260px;
+  width: min(100%, 420px);
+  margin: 0.5rem auto 2rem;
 }
 .id-card {
   position: absolute;
-  width: 220px;
-  height: 130px;
+  width: min(200px, 46vw);
+  height: 120px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,.15);
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px;
-  left: 50%; top: 50%;
+  padding: 18px;
+  left: 50%; top: 55%;
   transform-origin: center bottom;
   backdrop-filter: blur(4px);
   transition: transform .6s cubic-bezier(.22,1,.36,1);
+  z-index: 1;
+  background: rgba(255,255,255,.08);
 }
-.id-card:nth-child(1) { background: rgba(255,255,255,.15); transform: translate(-50%,-50%) rotate(-10deg) translateY(-10px); }
-.id-card:nth-child(2) { background: rgba(233,30,140,.12); transform: translate(-50%,-50%) rotate(-4deg); }
-.id-card:nth-child(3) { background: rgba(201,168,76,.12); transform: translate(-50%,-50%) rotate(3deg); }
-.id-card:nth-child(4) { background: rgba(48,209,88,.12); transform: translate(-50%,-50%) rotate(9deg) translateY(-5px); }
-.id-cards-fan.visible .id-card:nth-child(1) { transform: translate(-130px,-80px) rotate(-22deg); }
-.id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-80px,-40px) rotate(-8deg); }
-.id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-20px,-40px) rotate(6deg); }
-.id-cards-fan.visible .id-card:nth-child(4) { transform: translate(30px,-80px) rotate(20deg); }
+/* SVG spacer is child 1 — cards are 2..5 */
+.id-card:nth-child(2) { background: rgba(255,255,255,.14); transform: translate(-50%,-50%) rotate(-10deg) translateY(-10px); z-index: 2; }
+.id-card:nth-child(3) { background: rgba(255,255,255,.1); transform: translate(-50%,-50%) rotate(-4deg); z-index: 3; }
+.id-card:nth-child(4) { background: rgba(255,255,255,.12); transform: translate(-50%,-50%) rotate(3deg); z-index: 4; }
+.id-card:nth-child(5) { background: rgba(255,255,255,.1); transform: translate(-50%,-50%) rotate(9deg) translateY(-5px); z-index: 5; }
+.id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-140px,-70px) rotate(-18deg); }
+.id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-70px,-35px) rotate(-7deg); }
+.id-cards-fan.visible .id-card:nth-child(4) { transform: translate(10px,-35px) rotate(7deg); }
+.id-cards-fan.visible .id-card:nth-child(5) { transform: translate(80px,-70px) rotate(18deg); }
 .id-card-icon { font-size: 1.8rem; flex-shrink: 0; }
-.id-card-label { font-size: .8rem; font-weight: 600; line-height: 1.4; }
+.id-card-label { font-size: .8rem; font-weight: 600; line-height: 1.4; text-align: left; }
 .id-features-list {
-  display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
-  max-width: 600px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  justify-content: center;
+  max-width: 760px;
+  width: 100%;
+  position: relative;
+  z-index: 6;
 }
 .id-feat {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 12px;
-  padding: 14px 20px;
-  font-size: .9rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: .85rem;
   font-weight: 600;
   display: flex; align-items: center; gap: 10px;
+  min-width: 0;
+  justify-content: center;
+  text-align: left;
 }
-.id-feat-icon { font-size: 1.3rem; }
+.id-feat-icon { font-size: 1.2rem; flex-shrink: 0; }
+@media(max-width:700px){
+  .id-features-list { grid-template-columns: 1fr; }
+  .id-cards-fan { height: 220px; }
+  .id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-90px,-50px) rotate(-14deg); }
+  .id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-40px,-25px) rotate(-5deg); }
+  .id-cards-fan.visible .id-card:nth-child(4) { transform: translate(10px,-25px) rotate(5deg); }
+  .id-cards-fan.visible .id-card:nth-child(5) { transform: translate(55px,-50px) rotate(14deg); }
+}
 
 /* ─────────────────────────────────────────────────────────────── */
 /* SECTION 9 — MULTI-COUNTRY */
@@ -1138,7 +1160,7 @@ body {
 <section class="slide" id="s7">
   <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
     <h2 class="section-title reveal">Your net worth. One private ledger.</h2>
-    <div class="deck-shot-row reveal delay-2"><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-2.png" alt="VaultCap unlocked app shell" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-3.png" alt="VaultCap finance dashboard" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="https://shamikhahmed.github.io/assets/screenshots/vaultcap-4.png" alt="VaultCap Family Vault overview" width="280" height="606" loading="lazy" decoding="async"></div></div>
+    <div class="deck-shot-row reveal delay-2"><div class="deck-shot-frame"><img class="deck-shot" src="assets/screenshots/dark/mobile/hubs/dashboard.png" alt="VaultCap dark dashboard — net worth" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="assets/screenshots/dark/mobile/finance/banks.png" alt="VaultCap banks — filled demo" width="280" height="606" loading="lazy" decoding="async"></div><div class="deck-shot-frame"><img class="deck-shot" src="assets/screenshots/dark/mobile/identity/family.png" alt="VaultCap Family Vault" width="280" height="606" loading="lazy" decoding="async"></div></div>
     <div class="feature-grid">
       <div class="feat-card reveal-left delay-1">
         <span class="feat-card-icon"><span data-vc-icon="bank" data-vc-size="32" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
