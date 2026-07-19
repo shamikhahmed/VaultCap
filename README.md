@@ -1,5 +1,7 @@
 # VaultCap — Private Life Operating System
 
+**Version:** 5.1.11
+
 [![Live App](https://img.shields.io/badge/Live%20App-VaultCap-ffffff?style=for-the-badge&labelColor=000000)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
 [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)
