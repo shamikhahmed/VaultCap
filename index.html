@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VaultCap">
-<meta name="theme-color" content="#000000" id="themeColorMeta">
+<meta name="theme-color" content="#060a12" id="themeColorMeta">
 <meta name="author" content="Capricorn Systems">
 <meta name="description" content="Encrypted life vault — finance, identity, and documents on your device. Offline-first, by Capricorn Systems.">
 <title>VaultCap — Everything you own. Encrypted. · Capricorn Systems</title>
@@ -35,7 +35,7 @@
 <meta name="application-name" content="VaultCap">
 <meta name="rating" content="general">
 <meta name="format-detection" content="telephone=no">
-<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileColor" content="#060a12">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
@@ -59,10 +59,6 @@
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/identity.css">
 <link rel="stylesheet" href="css/brand-mark.css">
-<style>
-@keyframes splashPop{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
-@keyframes splashFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-</style>
 </head>
 <body data-cap-app="1">
 <a href="#mainPages" class="cap-skip-link">Skip to content</a>
@@ -87,13 +83,38 @@
 <div id="cmdPal"><div class="cmd-bg" data-act="CMD.close()"></div>
 <div class="cmd-box"><input class="cmd-in" id="cmdIn" placeholder="Search everything..." data-act-input="CMD.search(this.value)" data-act-keydown="CMD.key(event)"><div class="cmd-list" id="cmdList"></div><div class="cmd-hint"><span>↑↓ navigate</span><span>⏎ select</span><span>Esc close</span><span style="margin-left:auto">⌘K open · ⌘N add · ⌘L lock</span></div></div></div>
 
-<!-- SPLASH SCREEN -->
-<div id="splashScreen" style="position:fixed;inset:0;z-index:9999;background:#000000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0">
-  <img src="icons/mark.svg" alt="" class="vc-mark vc-mark--xl" width="90" height="90" style="animation:splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both">
-  <div style="margin-top:24px;font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;animation:splashFade 0.6s 0.3s both">VaultCap</div>
-  <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:0.04em;animation:splashFade 0.6s 0.5s both">Your Personal Vault</div>
-  <div style="margin-top:48px;width:40px;height:3px;border-radius:2px;background:rgba(255,255,255,0.15);overflow:hidden;animation:splashFade 0.6s 0.6s both">
-    <div id="splashBar" style="width:0%;height:100%;background:#ffffff;border-radius:2px;transition:width 1.2s ease"></div>
+<!-- SPLASH SCREEN — sealed vault door opens on every cold load -->
+<div id="splashScreen" class="vault-splash" aria-hidden="true">
+  <div class="vault-splash__steel" aria-hidden="true"></div>
+  <div class="vault-splash__scene">
+    <div class="vault-door" aria-hidden="true">
+      <div class="vault-door__frame">
+        <div class="vault-door__ridges"></div>
+        <div class="vault-door__hinge vault-door__hinge--l"></div>
+        <div class="vault-door__hinge vault-door__hinge--r"></div>
+      </div>
+      <div class="vault-door__leaf">
+        <div class="vault-door__seal">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <circle cx="22" cy="22" r="20" stroke="url(#vaultSealGrad)" stroke-width="2.5" fill="none"/>
+            <path d="M16 22c0-3.3 2.7-6 6-6s6 2.7 6 6v2h1.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 14.5 30.5v-5A1.5 1.5 0 0 1 16 24v-2z" fill="url(#vaultSealGrad)"/>
+            <defs>
+              <linearGradient id="vaultSealGrad" x1="8" y1="8" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9a7a1a"/><stop offset="0.35" stop-color="#e8d078"/><stop offset="0.55" stop-color="#c9a227"/><stop offset="1" stop-color="#8a6a14"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="vault-splash__reveal">
+      <img src="icons/mark.svg" alt="" class="vc-mark vault-splash__mark" width="72" height="72">
+      <h1 class="vault-splash__title vault-display-title">VaultCap</h1>
+      <p class="vault-splash__tagline">Everything you own. Encrypted.</p>
+    </div>
+  </div>
+  <div class="vault-splash__progress" aria-hidden="true">
+    <div id="splashBar" class="vault-splash__bar"></div>
   </div>
 </div>
 
@@ -193,7 +214,7 @@
     <img src="icons/mark.svg" alt="" class="vc-mark vc-mark--hero" width="60" height="60">
   </div>
   <div style="margin-bottom:4px">
-    <h1 style="font-size:46px;font-weight:900;letter-spacing:-3px;background:linear-gradient(135deg,var(--text) 20%,var(--accent) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin:0">VaultCap</h1>
+    <h1 class="vault-display-title vault-home-title">VaultCap</h1>
   </div>
   <p style="font-size:14px;color:var(--text2);margin-bottom:2px;font-weight:500" id="hWelcome">Your Private Life Operating System</p>
   <p style="font-size:11px;color:var(--text3);margin-bottom:3px">Zero-knowledge · Encrypted · Offline-first · Global</p>
@@ -209,7 +230,7 @@
     <span class="home-pill"><span data-vc-icon="sparkles" data-vc-size="12" aria-hidden="true"></span>Instant access</span>
   </div>
   <!-- Module grid -->
-  <div style="width:100%;background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:20px">
+  <div class="vault-panel vault-panel--home" style="width:100%;padding:16px;margin-bottom:20px">
     <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
     <div id="homeModGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"></div>
   </div>
@@ -457,9 +478,9 @@
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=5.1.11"></script>
+<script src="js/storage.js?v=5.1.12"></script>
 <script src="js/boot-ver.js"></script>
-<script src="dist/vaultcap.bundle.js?v=5.1.11"></script>
+<script src="dist/vaultcap.bundle.js?v=5.1.12"></script>
 <script src="js/boot-shell.js"></script>
 
 

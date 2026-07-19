@@ -1,13 +1,22 @@
 /* ═══════════ BASE: variables, reset, fonts, scrollbar, body ═══════════ */
 
 :root {
-  --bg: #000000; --bg2: #0a0a0a; --bg3: #141414;
+  --bg: #060a12; --bg2: #0a1220; --bg3: #121c2e;
+  --steel: #1a2332; --steel-mid: #243044; --steel-light: #2e3d54;
+  --steel-ridge: rgba(255,255,255,0.05);
+  --navy: #0a1220; --navy-deep: #060a12;
+  --gold: #c9a227; --gold-light: #e8d078; --gold-dark: #8a6a14;
+  --gold-seal: linear-gradient(120deg, #9a7a1a 0%, #e8d078 35%, #c9a227 55%, #8a6a14 100%);
+  --vault-panel-bg: linear-gradient(165deg, rgba(26,35,50,0.92) 0%, rgba(10,18,32,0.96) 100%);
+  --vault-panel-border: rgba(201,162,39,0.22);
+  --vault-panel-inset: inset 0 1px 0 rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.35);
+  --vault-panel-shadow: 0 8px 32px rgba(2,6,19,0.55), 0 2px 8px rgba(0,0,0,0.28);
   --glass: rgba(255,255,255,0.05); --glass2: rgba(255,255,255,0.08); --glass3: rgba(255,255,255,0.12);
   --border: rgba(255,255,255,0.12); --border2: rgba(255,255,255,0.18); --border3: rgba(255,255,255,0.28);
-  --text: #ffffff; --text2: #c8c8c8; --text3: #8a8a8a;
-  --accent: #ffffff; --accent-fg: #000000; --glow: rgba(255,255,255,0.18);
-  --cap-accent: #ffffff; --cap-accent-contrast: #000000;
-  --purple: #cccccc; --indigo: #ffffff;
+  --text: #f4f6fa; --text2: #b8c0cc; --text3: #7a8494;
+  --accent: #e8d078; --accent-fg: #060a12; --glow: rgba(201,162,39,0.18);
+  --cap-accent: #e8d078; --cap-accent-contrast: #060a12;
+  --purple: #a8b4c8; --indigo: #e8d078;
   --ok: #30d158; --warn: #ff9f0a; --err: #ff453a; --info: #64d2ff;
   --on-accent: #ffffff;
   --r: 10px; --rsm: 6px; --rlg: 14px; --rxl: 18px; --rfull: 9999px;
@@ -15,6 +24,7 @@
   --t: all 0.25s var(--ease);
   --shadow: 0 8px 30px rgba(2,6,19,0.55); --shadowlg: 0 24px 80px rgba(1,3,12,0.78);
   --font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display-title: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
   --font-system: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
@@ -34,6 +44,7 @@
   --fs-xl: 20px; --fs-2xl: 24px; --fs-3xl: 32px;
   --lh-tight: 1.2; --lh-normal: 1.5; --lh-loose: 1.7; --lh-body: 1.5;
   --ls-tight: -0.3px; --ls-normal: 0.02em; --ls-wide: 0.06em; --ls-widest: 0.14em;
+  --ls-display: 0.12em;
   --fw-light: 300; --fw-normal: 400; --fw-medium: 500;
   --fw-semibold: 600; --fw-bold: 700; --fw-heavy: 800; --fw-black: 900;
   --fw-semi: 600; --fw-regular: 400;

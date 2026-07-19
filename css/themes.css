@@ -1,24 +1,38 @@
 /* ═══════════ THEMES: light / dark only — monochrome black & white ═══════════ */
 
-/* ─ Light mode ─ */
+/* ─ Light mode — steel folio on paper ─ */
 body.light {
-  --bg: #ffffff;
-  --bg2: #f5f5f5;
-  --bg3: #e8e8e8;
-  --glass: rgba(0,0,0,.04);
-  --glass2: rgba(0,0,0,.06);
-  --glass3: rgba(0,0,0,.09);
-  --border: rgba(0,0,0,.12);
-  --border2: rgba(0,0,0,.18);
-  --border3: rgba(0,0,0,.28);
-  --text: #000000;
-  --text2: #333333;
-  --text3: #666666;
-  --accent: #000000;
+  --bg: #f4f6f9;
+  --bg2: #e8ecf2;
+  --bg3: #d8dfe8;
+  --steel: #2a3548;
+  --steel-mid: #3d4f68;
+  --steel-light: #526480;
+  --steel-ridge: rgba(0,0,0,0.04);
+  --navy: #0a1220;
+  --navy-deep: #060a12;
+  --gold: #a88620;
+  --gold-light: #c9a227;
+  --gold-dark: #7a6010;
+  --gold-seal: linear-gradient(120deg, #a88620 0%, #e8c56a 40%, #c9a227 60%, #9a7a18 100%);
+  --vault-panel-bg: linear-gradient(165deg, #ffffff 0%, #f0f3f8 100%);
+  --vault-panel-border: rgba(10,18,32,0.12);
+  --vault-panel-inset: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(10,18,32,0.06);
+  --vault-panel-shadow: 0 8px 28px rgba(10,18,32,0.08), 0 2px 6px rgba(10,18,32,0.04);
+  --glass: rgba(10,18,32,.04);
+  --glass2: rgba(10,18,32,.06);
+  --glass3: rgba(10,18,32,.09);
+  --border: rgba(10,18,32,.12);
+  --border2: rgba(10,18,32,.18);
+  --border3: rgba(10,18,32,.28);
+  --text: #0a1220;
+  --text2: #2a3548;
+  --text3: #526480;
+  --accent: #0a1220;
   --accent-fg: #ffffff;
-  --cap-accent: #000000;
+  --cap-accent: #0a1220;
   --cap-accent-contrast: #ffffff;
-  --glow: rgba(0,0,0,0.12);
+  --glow: rgba(201,162,39,0.14);
   --purple: #333333;
   --chart-1: rgba(0,0,0,0.88);
   --chart-2: rgba(0,0,0,0.68);

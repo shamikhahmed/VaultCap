@@ -1,3 +1,6 @@
+## 5.1.12 — 2026-07-20
+- Visual DNA: sealed vault door splash, steel/navy + gold seal, vault-panel chrome, locker empty states. Light/dark only.
+
 ## [5.1.11] — 2026-07-19
 
 ### Honesty
