@@ -1353,8 +1353,8 @@ const WhatsNew={
         <div style="font-size:12px;color:var(--text2)">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">8 New Premium Themes</div>
-        <div style="font-size:12px;color:var(--text2)">Rose Gold, Lavender, Titanium, Midnight Sapphire, Pearl, Peach — Settings → Appearance</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Dark / Light / System</div>
+        <div style="font-size:12px;color:var(--text2)">Appearance follows your preference or OS — Settings → Appearance</div>
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start Using VaultCap →</button>`);

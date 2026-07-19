@@ -1,3 +1,13 @@
+## [5.1.5] — 2026-07-19
+
+### Honesty / Pitch
+- Pitch themes slide: Dark / Light / System (was fake 5 themes)
+- Real scannable QR (`assets/qr-vaultcap.svg`) — fake decorative grid gone
+- Family slide: grid layout — no absolute overlap of modules on nodes
+- CTA primary readable (black on white); docs GUIDE / PRESENTATION / CLAUDE sync
+- Whats-new card: remove "8 Premium Themes" lie
+- SW `vaultcap-v67`
+
 ## [5.1.4] — 2026-07-19
 
 ### Brand

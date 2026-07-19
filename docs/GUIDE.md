@@ -205,7 +205,7 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 
 ## Tips and Tricks
 
-**Command palette** — Press ⌘K (desktop) or tap the search icon to open the command palette. You can search all your data or run actions: `lock vault`, `export`, `theme midnight`, `add bank`.
+**Command palette** — Press ⌘K (desktop) or tap the search icon to open the command palette. You can search all your data or run actions: `lock vault`, `export`, `theme dark`, `add bank`.
 
 **Keyboard shortcuts** — ⌘L to lock, ⌘N to add new entry, ⌘F to search, ⌘1–⌘3 to switch nav tabs.
 
@@ -217,7 +217,7 @@ After 5 wrong PIN attempts, the vault locks for an increasing cooldown period. A
 
 **Privacy mode** — Tap the 👁️ icon in settings to enable privacy mode. All sensitive values (balances, card numbers, PINs) are blurred on screen. Useful when using the app in public.
 
-**Themes** — 5 themes available: Midnight (black), Graphite (dark grey gold), Cloud (white), Ivory (warm cream), Blossom (pink). Switch instantly via Settings → Appearance or ⌘K → "theme".
+**Themes** — Dark, Light, or System (follows OS). Switch via Settings → Appearance or ⌘K → "theme".
 
 **PWA install** — On iPhone: Safari → Share → Add to Home Screen. On Android: browser menu → Install app. VaultCap works fully offline after installation.
 
@@ -243,7 +243,7 @@ Your PIN cannot be recovered — it is never stored anywhere. If you have a `.vo
 Yes, completely free. No ads, no subscriptions, no premium tier.
 
 **Does it work offline?**
-Yes. After your first visit, install it as a PWA (Add to Home Screen in Safari/Chrome) and it works with zero internet connection. Exchange rates and AI import require an internet connection.
+Yes. After your first visit, install it as a PWA (Add to Home Screen in Safari/Chrome) and it works with zero internet connection. Exchange rates and optional LLM import need internet.
 
 **Who built this?**
 VaultCap is built by Shamikh Ahmed — independently, with no company or investor backing. It is a privacy-first tool built for people managing finances across multiple countries.
@@ -450,7 +450,7 @@ VaultCap tracks partial payments on loans.
 
 ---
 
-## Smart Add (AI)
+## Smart Add (Smart Parser)
 
 Smart Add uses Smart Parser (optional LLM) to detect what you're describing and pre-fill the right form.
 

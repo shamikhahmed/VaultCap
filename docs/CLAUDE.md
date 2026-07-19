@@ -72,7 +72,7 @@ Each data module follows this pattern:
 
 ### Theming
 
-5 themes defined in `THEMES` array (`app.js:1`). `ThemeEngine.apply(id)` sets `document.body.className` to the theme's `cls` value and updates CSS custom properties. All colour values are CSS variables (`--bg`, `--bg2`, `--bg3`, `--accent`, `--glow`, `--text`, `--text2`, `--text3`).
+3 appearance modes in `js/core/theme.js`: `dark`, `light`, `auto` (System). `ThemeEngine.apply(id)` sets `document.body.className` and updates CSS custom properties. All colour values are CSS variables (`--bg`, `--bg2`, `--bg3`, `--accent`, `--glow`, `--text`, `--text2`, `--text3`).
 
 ### CSS Conventions
 

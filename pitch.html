@@ -644,39 +644,83 @@ body {
   text-align: center;
 }
 .family-tree {
-  position: relative; margin: 2rem auto; max-width: 600px; min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 2rem auto 0;
+  max-width: 640px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.family-stem {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,.28);
+  margin: 4px 0 0;
+}
+.family-kids {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-top: 4px;
+  position: relative;
+}
+.family-kids::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 1px;
+  background: rgba(255,255,255,.22);
+  pointer-events: none;
 }
 .family-node {
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: 16px 14px;
   text-align: center;
-  position: absolute;
-  min-width: 120px;
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  z-index: 1;
 }
 .family-node.head {
   background: rgba(255,255,255,.12);
   border-color: rgba(255,255,255,.4);
-  left: 50%; transform: translateX(-50%);
-  top: 0;
+  max-width: 220px;
+  width: auto;
+  padding: 18px 28px;
 }
-.family-node.child1 { left: 0; top: 180px; }
-.family-node.child2 { left: 50%; transform: translateX(-50%); top: 180px; }
-.family-node.child3 { right: 0; top: 180px; }
 .family-node-icon { font-size: 1.6rem; display: block; margin-bottom: .4rem; }
 .family-node-name { font-size: .8rem; font-weight: 700; }
 .family-node-sub { font-size: .7rem; color: var(--muted); margin-top: 3px; }
-.family-tree svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: visible; }
-.family-tree-line { stroke: rgba(255,255,255,.25); stroke-width: 1; fill: none; stroke-dasharray: 4 4; }
-.family-modules { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 600px; margin-top: 2rem; }
+.family-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 640px;
+  width: 100%;
+  margin-top: 2.25rem;
+  position: relative;
+  z-index: 2;
+}
 .fmod {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
   border-radius: 100px;
-  padding: 8px 16px;
-  font-size: .8rem;
-  color: var(--muted);
+  padding: 10px 18px;
+  font-size: .85rem;
+  color: rgba(255,255,255,.75);
+}
+@media(max-width:560px){
+  .family-kids { grid-template-columns: 1fr; }
+  .family-kids::before { display: none; }
 }
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -857,36 +901,49 @@ body {
   font-weight: 300;
   margin-bottom: 2.5rem;
 }
-.cta-buttons { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 3rem; }
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+  justify-content: center;
+  align-items: center;
+  max-width: 920px;
+  width: 100%;
+  margin-bottom: 2.5rem;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), rgba(255,255,255,.7));
-  color: #fff;
+  background: #fff;
+  color: #0a0a0a;
   border: none;
-  padding: 18px 36px;
+  padding: 16px 28px;
   border-radius: 100px;
-  font-size: 1rem;
+  font-size: .95rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   letter-spacing: .02em;
   transition: transform .2s, box-shadow .2s;
   display: inline-flex; align-items: center; gap: 10px;
-  box-shadow: 0 8px 32px rgba(255,255,255,.3);
+  box-shadow: 0 8px 32px rgba(255,255,255,.35);
   font-family: inherit;
+  white-space: nowrap;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,255,255,.45); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,255,255,.5); }
 .btn-secondary {
   background: rgba(255,255,255,.06);
   color: #fff;
   border: 1px solid rgba(255,255,255,.18);
-  padding: 18px 36px;
+  padding: 16px 24px;
   border-radius: 100px;
-  font-size: 1rem;
+  font-size: .95rem;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   letter-spacing: .02em;
   transition: background .2s, transform .2s;
+  white-space: nowrap;
   display: inline-flex; align-items: center; gap: 10px;
   font-family: inherit;
   backdrop-filter: blur(8px);
@@ -896,20 +953,21 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
 .qr-box {
-  width: 90px; height: 90px;
+  width: 168px;
+  height: 168px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(6,1fr);
-  grid-template-rows: repeat(6,1fr);
-  gap: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
 }
-.qr-cell {
-  border-radius: 2px;
+.qr-box img {
+  width: 148px;
+  height: 148px;
+  display: block;
 }
-.qr-cell.b { background: #000; }
-.qr-cell.w { background: #fff; }
 .qr-label { font-size: .75rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
 .cta-copyright {
   margin-top: 3rem;
@@ -1295,30 +1353,28 @@ body {
   <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
     <h2 class="section-title reveal">One vault. Your entire family.</h2>
     <div class="family-tree reveal-scale delay-1">
-      <svg>
-        <line x1="50%" y1="80" x2="15%" y2="180" class="family-tree-line"/>
-        <line x1="50%" y1="80" x2="50%" y2="180" class="family-tree-line"/>
-        <line x1="50%" y1="80" x2="85%" y2="180" class="family-tree-line"/>
-      </svg>
       <div class="family-node head">
         <span class="family-node-icon"><span data-vc-icon="briefcase" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
         <div class="family-node-name">Head of Family</div>
         <div class="family-node-sub">Full access</div>
       </div>
-      <div class="family-node child1">
-        <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-        <div class="family-node-name">Spouse</div>
-        <div class="family-node-sub">Banks · Cards</div>
-      </div>
-      <div class="family-node child2">
-        <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-        <div class="family-node-name">Children</div>
-        <div class="family-node-sub">Docs · Notes</div>
-      </div>
-      <div class="family-node child3">
-        <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-        <div class="family-node-name">Parents</div>
-        <div class="family-node-sub">ID · Assets</div>
+      <div class="family-stem" aria-hidden="true"></div>
+      <div class="family-kids">
+        <div class="family-node">
+          <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
+          <div class="family-node-name">Spouse</div>
+          <div class="family-node-sub">Banks · Cards</div>
+        </div>
+        <div class="family-node">
+          <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
+          <div class="family-node-name">Children</div>
+          <div class="family-node-sub">Docs · Notes</div>
+        </div>
+        <div class="family-node">
+          <span class="family-node-icon"><span data-vc-icon="user" data-vc-size="36" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
+          <div class="family-node-name">Parents</div>
+          <div class="family-node-sub">ID · Assets</div>
+        </div>
       </div>
     </div>
     <div class="family-modules reveal delay-3">
@@ -1338,8 +1394,9 @@ body {
      ═══════════════════════════════════════════════════════════════ -->
 <section class="slide" id="s13">
   <div style="display:flex;flex-direction:column;align-items:center;max-width:900px;width:100%;">
-    <h2 class="section-title reveal">Five themes. One aesthetic.</h2>
-    <div class="themes-panels reveal-scale delay-1">
+    <h2 class="section-title reveal">Two themes. System follows you.</h2>
+    <p class="reveal delay-1" style="color:var(--muted);max-width:42ch;margin-top:.75rem;font-size:clamp(.95rem,2vw,1.1rem);line-height:1.5">Dark, Light, or System — matches your OS. Settings → Appearance.</p>
+    <div class="themes-panels reveal-scale delay-2">
       <div class="theme-panel midnight">
         <div class="mini-app">
           <div class="mini-bar" style="background:rgba(255,255,255,.3)"></div>
@@ -1348,52 +1405,27 @@ body {
           <div class="mini-item"></div>
         </div>
         <div class="theme-dot"></div>
-        <div class="theme-name">Midnight</div>
-      </div>
-      <div class="theme-panel graphite">
-        <div class="mini-app">
-          <div class="mini-bar" style="background:rgba(180,180,180,.3)"></div>
-          <div class="mini-item"></div>
-          <div class="mini-item" style="width:60%;background:rgba(160,160,160,.2)"></div>
-          <div class="mini-item"></div>
-        </div>
-        <div class="theme-dot"></div>
-        <div class="theme-name">Graphite</div>
+        <div class="theme-name">Dark</div>
       </div>
       <div class="theme-panel cloud">
         <div class="mini-app" style="background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.1)">
-          <div class="mini-bar" style="background:rgba(74,144,217,.3)"></div>
+          <div class="mini-bar" style="background:rgba(0,0,0,.25)"></div>
           <div class="mini-item" style="background:rgba(0,0,0,.08)"></div>
-          <div class="mini-item" style="width:60%;background:rgba(74,144,217,.2)"></div>
+          <div class="mini-item" style="width:60%;background:rgba(0,0,0,.12)"></div>
           <div class="mini-item" style="background:rgba(0,0,0,.08)"></div>
         </div>
-        <div class="theme-dot"></div>
-        <div class="theme-name" style="color:rgba(0,0,0,.5)">Cloud</div>
+        <div class="theme-dot" style="background:#111"></div>
+        <div class="theme-name" style="color:rgba(0,0,0,.55)">Light</div>
       </div>
-      <div class="theme-panel ivory">
-        <div class="mini-app" style="background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.1)">
-          <div class="mini-bar" style="background:rgba(139,115,85,.3)"></div>
-          <div class="mini-item" style="background:rgba(0,0,0,.07)"></div>
-          <div class="mini-item" style="width:60%;background:rgba(139,115,85,.2)"></div>
-          <div class="mini-item" style="background:rgba(0,0,0,.07)"></div>
-        </div>
-        <div class="theme-dot"></div>
-        <div class="theme-name" style="color:rgba(0,0,0,.5)">Ivory</div>
-      </div>
-      <div class="theme-panel blossom">
-        <div class="blossom-sparkle">
-          <span class="sparkle" style="left:20%;top:30%;animation-delay:0s"><span data-vc-icon="sparkles" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-          <span class="sparkle" style="left:60%;top:60%;animation-delay:.8s"><span data-vc-icon="sparkles" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-          <span class="sparkle" style="left:80%;top:25%;animation-delay:1.6s"><span data-vc-icon="sparkles" data-vc-size="24" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-        </div>
-        <div class="mini-app" style="border-color:rgba(233,30,140,.2)">
-          <div class="mini-bar" style="background:rgba(233,30,140,.3)"></div>
+      <div class="theme-panel graphite">
+        <div class="mini-app" style="background:linear-gradient(135deg,rgba(0,0,0,.55) 50%,rgba(255,255,255,.12) 50%);border-color:rgba(255,255,255,.2)">
+          <div class="mini-bar" style="background:rgba(255,255,255,.35)"></div>
           <div class="mini-item"></div>
-          <div class="mini-item" style="width:60%;background:rgba(233,30,140,.2)"></div>
+          <div class="mini-item" style="width:60%;background:rgba(255,255,255,.2)"></div>
           <div class="mini-item"></div>
         </div>
-        <div class="theme-dot"></div>
-        <div class="theme-name">Blossom</div>
+        <div class="theme-dot" style="background:linear-gradient(135deg,#000 50%,#fff 50%)"></div>
+        <div class="theme-name">System</div>
       </div>
     </div>
   </div>
@@ -1615,7 +1647,9 @@ body {
       <a class="btn-secondary reveal-right delay-2" href="https://shamikhahmed.github.io/VaultCap/landing.html" target="_blank"><span data-vc-icon="arrows" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Landing</a>
     </div>
     <div class="qr-section reveal delay-3">
-      <div class="qr-box" id="qr-pattern"></div>
+      <div class="qr-box">
+        <img src="assets/qr-vaultcap.svg" width="148" height="148" alt="QR code — open VaultCap on your phone" decoding="async">
+      </div>
       <span class="qr-label">Scan to open on your phone</span>
     </div>
     <p class="cta-copyright reveal delay-4">
@@ -1849,26 +1883,7 @@ function startConstellation() {
   });
 }
 
-// ─── QR Pattern (decorative) ──────────────────────────────────────────
-(function () {
-  const qr = document.getElementById('qr-pattern');
-  if (!qr) return;
-  const pattern = [
-    1,1,1,1,1,1,0,
-    1,0,0,0,0,1,0,
-    1,0,1,1,0,1,1,
-    1,0,0,0,0,1,0,
-    1,1,1,1,1,1,0,
-    0,1,0,1,0,0,1,
-    1,0,1,0,1,1,0,
-  ];
-  // Build a 6x6 grid from the 7x7 pattern
-  for (let i = 0; i < 36; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'qr-cell ' + (pattern[i] ? 'b' : 'w');
-    qr.appendChild(cell);
-  }
-})();
+// ─── QR uses static assets/qr-vaultcap.svg (real scannable code) ──
 
 // ─── S8: ID Cards fan on scroll ───────────────────────────────────────
 const fanObserver = new IntersectionObserver(entries => {

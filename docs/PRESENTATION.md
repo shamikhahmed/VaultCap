@@ -115,7 +115,7 @@ Built for Shamikh's life — designed for millions like it.
 ## Slide 10 — Design
 
 - Accent `#5b8dee` — trust blue on obsidian
-- 5 themes — Midnight to Blossom
+- Dark / Light / System appearance (Settings → Appearance)
 - Glass cards, command palette ⌘K
 - PWA — full offline after install
 
