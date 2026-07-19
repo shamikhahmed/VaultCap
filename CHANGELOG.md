@@ -1,3 +1,11 @@
+## [5.1.7] — 2026-07-19
+
+### Pitch / logos
+- Identity section: broken fan → clean 2×2 card grid
+- Barclays mark rebuilt (eagle on brand cyan) + LogoEngine `object-fit:contain` + shot waits for logos
+- Banks gallery shot recaptured with visible Barclays logo
+- SW `vaultcap-v69`
+
 ## [5.1.6] — 2026-07-19
 
 ### Pitch / honesty

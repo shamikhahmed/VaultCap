@@ -87,6 +87,26 @@ async function prepareGalleryShot(page, options = {}) {
     });
   });
   await page.locator('#overlay.on, .modal-overlay.on').waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+  // Bank logos: wait until local imgs paint (Barclays etc) before shot
+  await page.evaluate(async () => {
+    if (typeof LogoEngine !== 'undefined') {
+      const root = document.getElementById('bItems') || document.getElementById('app');
+      LogoEngine.hydrate(root);
+    }
+    const imgs = [...document.querySelectorAll('[data-logo-bank] img')];
+    await Promise.all(
+      imgs.map(
+        (img) =>
+          img.complete && img.naturalWidth > 0
+            ? Promise.resolve()
+            : new Promise((resolve) => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+                setTimeout(resolve, 2000);
+              }),
+      ),
+    );
+  });
   await page.waitForTimeout(120);
 }
 

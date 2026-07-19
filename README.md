@@ -85,10 +85,10 @@ VaultCap/
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA · vaultcap-v68)
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v69)
 ```
 
-**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.6** · no account
+**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.7** · no account
 
 ---
 

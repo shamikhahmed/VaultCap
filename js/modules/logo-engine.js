@@ -191,38 +191,43 @@ const LogoEngine = {
     if (!domain) return placeholder;
 
     const local = this.localUrl(domain);
-    // Optimistic local img; onerror keeps initials parent; LogoEngine.hydrate upgrades later
-    return `<div data-logo-bank="${safeName}" style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0;background:${color};display:flex;align-items:center;justify-content:center">` +
-      `<img src="${local}" alt="" width="${size}" height="${size}" style="border-radius:${r};object-fit:cover;display:block" ` +
-      `data-act-error="ActHelpers.hideImgShowNext(this)"` +
+    // contain (not cover) so bank marks (Barclays eagle etc) stay visible inside branded tile
+    return `<div data-logo-bank="${safeName}" style="width:${s};height:${s};border-radius:${r};overflow:hidden;flex-shrink:0;background:${color};display:flex;align-items:center;justify-content:center;position:relative">` +
+      `<img src="${local}" alt="" width="${size}" height="${size}" style="width:100%;height:100%;object-fit:contain;display:block"` +
+      ` data-act-error="ActHelpers.hideImgShowNext(this)"` +
       `>` +
       `<span style="display:none;font-size:${fs};font-weight:900;color:#fff;font-family:Arial">${initials}</span>` +
       `</div>`;
   },
 
-  /** After render: upgrade any data-logo-bank nodes via resolve (cache/proxy). */
+  /** After render: wait local imgs; upgrade cache/proxy misses. */
   hydrate(root) {
     const scope = root || document;
     const nodes = scope.querySelectorAll('[data-logo-bank]');
     nodes.forEach((el) => {
       const name = el.getAttribute('data-logo-bank');
       if (!name) return;
+      const img = el.querySelector('img');
+      if (img && img.complete && img.naturalWidth > 0) {
+        img.style.display = 'block';
+        const span = el.querySelector('span');
+        if (span) span.style.display = 'none';
+      }
       this.resolve(name).then((hit) => {
-        if (!hit || !hit.url || hit.kind === 'local') return; // local already in img
-        if (hit.kind === 'none') return;
-        const img = el.querySelector('img');
-        if (img) {
-          img.style.display = 'block';
-          img.src = hit.url;
+        if (!hit || hit.kind === 'none') return;
+        const i = el.querySelector('img');
+        if (i && hit.url && (hit.kind !== 'local' || i.style.display === 'none')) {
+          i.style.display = 'block';
+          i.src = hit.url;
           const span = el.querySelector('span');
           if (span) span.style.display = 'none';
-        } else {
+        } else if (!i && hit.url) {
           el.innerHTML = '';
-          const i = document.createElement('img');
-          i.src = hit.url;
-          i.alt = '';
-          i.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-          el.appendChild(i);
+          const ni = document.createElement('img');
+          ni.src = hit.url;
+          ni.alt = '';
+          ni.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;background:#000';
+          el.appendChild(ni);
         }
       }).catch(() => {});
     });

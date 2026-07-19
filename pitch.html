@@ -473,39 +473,38 @@ body {
   text-align: center;
 }
 .id-cards-fan {
-  position: relative;
-  height: 260px;
-  width: min(100%, 420px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: min(100%, 520px);
   margin: 0.5rem auto 2rem;
+  position: relative;
+  height: auto;
+  min-height: 0;
 }
+.id-cards-fan > svg { display: none; }
 .id-card {
-  position: absolute;
-  width: min(200px, 46vw);
-  height: 120px;
+  position: relative;
+  left: auto; top: auto;
+  width: auto;
+  height: auto;
+  min-height: 96px;
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.16);
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px;
-  left: 50%; top: 55%;
-  transform-origin: center bottom;
-  backdrop-filter: blur(4px);
-  transition: transform .6s cubic-bezier(.22,1,.36,1);
+  padding: 18px 16px;
+  transform: none !important;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,.07);
   z-index: 1;
-  background: rgba(255,255,255,.08);
+  text-align: left;
 }
-/* SVG spacer is child 1 — cards are 2..5 */
-.id-card:nth-child(2) { background: rgba(255,255,255,.14); transform: translate(-50%,-50%) rotate(-10deg) translateY(-10px); z-index: 2; }
-.id-card:nth-child(3) { background: rgba(255,255,255,.1); transform: translate(-50%,-50%) rotate(-4deg); z-index: 3; }
-.id-card:nth-child(4) { background: rgba(255,255,255,.12); transform: translate(-50%,-50%) rotate(3deg); z-index: 4; }
-.id-card:nth-child(5) { background: rgba(255,255,255,.1); transform: translate(-50%,-50%) rotate(9deg) translateY(-5px); z-index: 5; }
-.id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-140px,-70px) rotate(-18deg); }
-.id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-70px,-35px) rotate(-7deg); }
-.id-cards-fan.visible .id-card:nth-child(4) { transform: translate(10px,-35px) rotate(7deg); }
-.id-cards-fan.visible .id-card:nth-child(5) { transform: translate(80px,-70px) rotate(18deg); }
-.id-card-icon { font-size: 1.8rem; flex-shrink: 0; }
-.id-card-label { font-size: .8rem; font-weight: 600; line-height: 1.4; text-align: left; }
+.id-card:nth-child(n) { background: rgba(255,255,255,.07); transform: none !important; }
+.id-cards-fan.visible .id-card:nth-child(n) { transform: none !important; }
+.id-card-icon { font-size: 1.6rem; flex-shrink: 0; width: 36px; display: flex; align-items: center; justify-content: center; }
+.id-card-label { font-size: .85rem; font-weight: 600; line-height: 1.35; }
 .id-features-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -514,7 +513,7 @@ body {
   max-width: 760px;
   width: 100%;
   position: relative;
-  z-index: 6;
+  z-index: 2;
 }
 .id-feat {
   background: rgba(255,255,255,.06);
@@ -531,11 +530,7 @@ body {
 .id-feat-icon { font-size: 1.2rem; flex-shrink: 0; }
 @media(max-width:700px){
   .id-features-list { grid-template-columns: 1fr; }
-  .id-cards-fan { height: 220px; }
-  .id-cards-fan.visible .id-card:nth-child(2) { transform: translate(-90px,-50px) rotate(-14deg); }
-  .id-cards-fan.visible .id-card:nth-child(3) { transform: translate(-40px,-25px) rotate(-5deg); }
-  .id-cards-fan.visible .id-card:nth-child(4) { transform: translate(10px,-25px) rotate(5deg); }
-  .id-cards-fan.visible .id-card:nth-child(5) { transform: translate(55px,-50px) rotate(14deg); }
+  .id-cards-fan { grid-template-columns: 1fr; width: min(100%, 360px); }
 }
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -1203,10 +1198,9 @@ body {
   <div style="display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%;">
     <h2 class="section-title reveal">Your identity. Secured.</h2>
     <div class="id-cards-fan reveal-scale">
-      <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="id-card">
         <span class="id-card-icon"><span data-vc-icon="id-card" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-        <span class="id-card-label">Passport &<br>National ID</span>
+        <span class="id-card-label">Passport &amp;<br>National ID</span>
       </div>
       <div class="id-card">
         <span class="id-card-icon"><span data-vc-icon="car" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
