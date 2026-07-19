@@ -972,18 +972,20 @@ body {
 .qr-box {
   width: 168px;
   height: 168px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 10px;
+  background: #fffaf3;
+  border-radius: 18px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  border: 2px solid #c9a227;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(201,162,39,.28);
 }
 .qr-box img {
   width: 148px;
   height: 148px;
   display: block;
+  border-radius: 10px;
 }
 .qr-label { font-size: .75rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
 .cta-copyright {
@@ -1664,7 +1666,7 @@ body {
     </div>
     <div class="qr-section reveal delay-3">
       <div class="qr-box">
-        <img src="assets/qr-vaultcap.svg" width="148" height="148" alt="QR code — open VaultCap on your phone" decoding="async">
+        <img src="assets/qr-vaultcap.png" width="148" height="148" alt="QR code — open VaultCap on your phone" decoding="async">
       </div>
       <span class="qr-label">Scan to open on your phone</span>
     </div>
@@ -1899,7 +1901,7 @@ function startConstellation() {
   });
 }
 
-// ─── QR uses static assets/qr-vaultcap.svg (real scannable code) ──
+// ─── QR uses assets/qr-vaultcap.png (Capricorn center mark · H ECC) ──
 
 // ─── S8: ID Cards fan on scroll ───────────────────────────────────────
 const fanObserver = new IntersectionObserver(entries => {

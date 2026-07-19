@@ -1,3 +1,12 @@
+## [5.1.10] — 2026-07-19
+
+### Pitch
+- Premium Capricorn QR (`assets/qr-vaultcap.png`) — H ECC, cream plate, gold frame, Capricorn Systems center mark
+- Pitch CTA gold quiet frame CSS
+
+### Ops
+- SW `vaultcap-v72`
+
 ## [5.1.9] — 2026-07-19
 
 ### Brand marks
