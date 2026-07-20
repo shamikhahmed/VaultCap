@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T14:31:34.091Z",
+  "generatedAt": "2026-07-20T06:07:02.895Z",
   "themes": [
     "dark",
     "light"
@@ -402,7 +402,14 @@
               "desktop": "light/desktop/finance/bc.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/finance/bc-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/finance/bc-scroll.png"
+            }
+          }
         },
         {
           "id": "bonds",
@@ -722,8 +729,7 @@
               "desktop": "dark/desktop/tools/search-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/search-scroll.png",
-              "desktop": "light/desktop/tools/search-scroll.png"
+              "mobile": "light/mobile/tools/search-scroll.png"
             }
           }
         },
@@ -833,7 +839,8 @@
               "desktop": "dark/desktop/tools/recovery-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/recovery-scroll.png"
+              "mobile": "light/mobile/tools/recovery-scroll.png",
+              "desktop": "light/desktop/tools/recovery-scroll.png"
             }
           }
         },
@@ -1113,14 +1120,7 @@
               "desktop": "light/desktop/settings/import.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/import-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/import-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "accessibility",
@@ -1183,10 +1183,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/help/getting-started-scroll.png"
+              "mobile": "dark/mobile/help/getting-started-scroll.png",
+              "desktop": "dark/desktop/help/getting-started-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/help/getting-started-scroll.png"
+              "mobile": "light/mobile/help/getting-started-scroll.png",
+              "desktop": "light/desktop/help/getting-started-scroll.png"
             }
           }
         },
