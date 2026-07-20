@@ -253,7 +253,8 @@ const R = {
     if (el) {
       el.classList.add('on');
       const pb = el.querySelector('.pb');
-      if (isFastNavigation()) {
+      // force / reduce-motion: skip opacity:0 flash (Playwright treats opacity:0 as hidden)
+      if (isFastNavigation() || force) {
         el.style.opacity = '';
         el.style.transform = '';
         el.style.transition = '';
@@ -269,6 +270,12 @@ const R = {
         });
       }
     }
+    // Navigation dismisses modal chrome so destination page is not covered
+    try {
+      if (typeof Modal !== 'undefined' && Modal.close) Modal.close();
+      document.getElementById('overlay')?.classList.remove('on');
+      document.getElementById('cmdPal')?.classList.remove('on');
+    } catch (_) { /* ignore */ }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
     if (prev === pg && !force) return;
     const renders = {

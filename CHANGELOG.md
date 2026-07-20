@@ -1,3 +1,9 @@
+## [5.1.16] — 2026-07-20
+
+### Fix
+- Router: skip opacity:0 flash on forced nav; dismiss modal overlay on goto (gallery `#pg-dashboard.on` visible)
+- Regen screen gallery after chamber-floor remint
+
 ## 5.1.14 — 2026-07-20
 - Home remint: chamber floor (mobile) + vault status seal + desktop inspector pane (3-pane with sidebar). Ledger-strip activity. SW `vaultcap-v76`.
 

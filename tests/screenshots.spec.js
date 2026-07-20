@@ -574,6 +574,8 @@ test.describe('VaultCap screen gallery', () => {
         }
 
         const sheetsSection = getSection('sheets', 'Sheets & palettes');
+        await closeOverlays(page);
+        await dismissOverlays(page);
         await page.evaluate(() => R.goto('dashboard', true));
         await expect(page.locator('#pg-dashboard.on')).toBeVisible({ timeout: 10000 });
         for (const sheet of SHEET_SHOTS) {

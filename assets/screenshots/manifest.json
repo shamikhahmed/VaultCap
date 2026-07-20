@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T06:07:02.895Z",
+  "generatedAt": "2026-07-20T11:14:48.689Z",
   "themes": [
     "dark",
     "light"
@@ -729,7 +729,8 @@
               "desktop": "dark/desktop/tools/search-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/search-scroll.png"
+              "mobile": "light/mobile/tools/search-scroll.png",
+              "desktop": "light/desktop/tools/search-scroll.png"
             }
           }
         },
