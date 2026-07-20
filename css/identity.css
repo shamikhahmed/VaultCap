@@ -5,7 +5,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ─ Display titles (Space Grotesk — no Inter) ─ */
+/* ─ Display titles (Cinzel — body stays Space Grotesk) ─ */
 .vault-display-title,
 .vault-home-title {
   font-family: var(--font-display-title, var(--font));
@@ -143,16 +143,17 @@ body.light .dash-hero {
 /* Vault door assembly */
 .vault-door {
   position: relative;
-  width: 148px;
-  height: 148px;
+  width: 160px;
+  height: 160px;
   margin-bottom: 8px;
   transform-style: preserve-3d;
+  border-radius: 50%;
 }
 
 .vault-door__frame {
   position: absolute;
   inset: 0;
-  border-radius: 14px;
+  border-radius: 50%;
   background:
     repeating-linear-gradient(
       0deg,
@@ -173,7 +174,7 @@ body.light .dash-hero {
 .vault-door__ridges {
   position: absolute;
   inset: 8px;
-  border-radius: 8px;
+  border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.06);
   background:
     repeating-linear-gradient(
@@ -189,7 +190,7 @@ body.light .dash-hero {
 .vault-door__leaf {
   position: absolute;
   inset: 0;
-  border-radius: 14px;
+  border-radius: 50%;
   background:
     repeating-linear-gradient(
       0deg,
@@ -213,7 +214,7 @@ body.light .dash-hero {
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 2px 8px rgba(201,162,39,0.35));
+  filter: drop-shadow(0 2px 8px rgba(212,160,23,0.35));
   animation: vaultSealPulse 2.4s ease-in-out infinite;
 }
 
@@ -225,7 +226,7 @@ body.light .dash-hero {
   margin-top: -14px;
   border-radius: 2px;
   background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
-  box-shadow: 0 0 6px rgba(201,162,39,0.4);
+  box-shadow: 0 0 6px rgba(212,160,23,0.4);
   z-index: 3;
 }
 .vault-door__hinge--l { left: -3px; }
@@ -248,7 +249,7 @@ body.light .dash-hero {
   width: 72px;
   height: 72px;
   border-radius: 18px;
-  box-shadow: 0 12px 36px rgba(201,162,39,0.2), 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 36px rgba(212,160,23,0.2), 0 4px 12px rgba(0,0,0,0.4);
   margin-bottom: 18px;
 }
 
@@ -263,7 +264,7 @@ body.light .dash-hero {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: rgba(232,208,120,0.75);
+  color: rgba(232,194,74,0.75);
   text-transform: uppercase;
 }
 
@@ -309,12 +310,17 @@ body.light .dash-hero {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vault-door__leaf { animation: none; opacity: 0.2; }
-  .vault-splash__reveal { animation: vaultFadeIn 0.3s 0.2s both; opacity: 1; transform: none; }
+  .vault-door__leaf { animation: vaultDoorFade 0.5s 0.2s ease forwards; transform: none; }
+  .vault-splash__reveal { animation: vaultFadeIn 0.4s 0.35s both; transform: none; }
   .vault-door__seal { animation: none; }
+}
+
+@keyframes vaultDoorFade {
+  from { opacity: 1; }
+  to   { opacity: 0.15; }
 }
 
 /* Home screen ambient — gold seal glow */
 #pgHome::before {
-  background: radial-gradient(ellipse 80% 60% at 50% 25%, rgba(201,162,39,0.1), transparent 65%);
+  background: radial-gradient(ellipse 80% 60% at 50% 25%, rgba(212,160,23,0.1), transparent 65%);
 }
