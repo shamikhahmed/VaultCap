@@ -11,10 +11,10 @@ body.light {
   --steel-ridge: rgba(0,0,0,0.04);
   --navy: #0a1220;
   --navy-deep: #060a12;
-  --gold: #a88620;
-  --gold-light: #c9a227;
-  --gold-dark: #7a6010;
-  --gold-seal: linear-gradient(120deg, #a88620 0%, #e8c56a 40%, #c9a227 60%, #9a7a18 100%);
+  --gold: #D4A017;
+  --gold-light: #E8C84A;
+  --gold-dark: #9A7410;
+  --gold-seal: linear-gradient(120deg, #9A7410 0%, #E8C84A 40%, #D4A017 60%, #7A5A0E 100%);
   --vault-panel-bg: linear-gradient(165deg, #ffffff 0%, #f0f3f8 100%);
   --vault-panel-border: rgba(10,18,32,0.12);
   --vault-panel-inset: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(10,18,32,0.06);
@@ -32,7 +32,7 @@ body.light {
   --accent-fg: #ffffff;
   --cap-accent: #0a1220;
   --cap-accent-contrast: #ffffff;
-  --glow: rgba(201,162,39,0.14);
+  --glow: rgba(212,160,23,0.14);
   --purple: #333333;
   --chart-1: rgba(0,0,0,0.88);
   --chart-2: rgba(0,0,0,0.68);

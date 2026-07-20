@@ -317,10 +317,109 @@ const Dash={
       </div>
     </div>` : '';
 
+    const moneyCount = (S.banks||[]).length + (S.cards||[]).length + (S.cash||[]).length;
+    const wealthCount = (S.investments||[]).length + (S.assets||[]).length + (S.bonds||[]).length;
+    const identityCount = (S.documents||[]).length + (S.sims||[]).length + (S.emails||[]).length + (S.digital||[]).length;
+    const sealOk = health >= 70;
+    const vaultStatusSeal = `
+    <div class="vault-status-seal" role="status" aria-label="Vault security status">
+      <div class="vault-status-seal__lock" aria-hidden="true">${_uiIcon(sealOk ? 'lock' : 'shield', 18)}</div>
+      <div class="vault-status-seal__copy">
+        <div class="vault-status-seal__title">${sealOk ? 'All chambers sealed' : 'Vault needs attention'}</div>
+        <div class="vault-status-seal__sub">Security ${health}% · ${entityTotal} records · local AES</div>
+      </div>
+      <button type="button" class="vault-status-seal__score" data-act="R.goto('security')" style="color:${healthColor}" aria-label="Open security center">${health}%</button>
+    </div>`;
+
+    const chambers = [
+      { id:'money', label:'Money', page:'finance-home', icon:'banknote', count:moneyCount, show: typeof isPageModOn==='function' ? isPageModOn('finance-home') : true },
+      { id:'wealth', label:'Wealth', page:'assets-home', icon:'trending-up', count:wealthCount, show: typeof isPageModOn==='function' ? isPageModOn('assets-home') : true },
+      { id:'identity', label:'Identity', page:'vault-home', icon:'id-card', count:identityCount, show: typeof isPageModOn==='function' ? isPageModOn('vault-home') : true },
+      { id:'family', label:'Family', page:'family', icon:'users', count:familyMC, show: isModOn('family') },
+      { id:'zakat', label:'Zakat', page:'zakat', icon:'moon', count:null, show: isModOn('zakat') },
+      { id:'tools', label:'Tools', page:'alerts', icon:'bell', count:allExpiring.length || null, show: true },
+    ].filter(c => c.show);
+    const chamberFloor = `
+    <div class="chamber-floor" aria-label="Vault chambers">
+      <div class="chamber-floor__label">Chamber floor</div>
+      <div class="chamber-floor__grid">
+        ${chambers.map((c,i) => `
+          <button type="button" class="chamber-card" data-act="R.goto('${c.page}')" style="--chamber-i:${i}" aria-label="${c.label}${c.count!=null?' · '+c.count+' items':''}">
+            <span class="chamber-card__rim" aria-hidden="true"></span>
+            <span class="chamber-card__icon">${_uiIcon(c.icon, 20)}</span>
+            <span class="chamber-card__name">${c.label}</span>
+            ${c.count!=null?`<span class="chamber-card__count">${c.count}</span>`:''}
+          </button>`).join('')}
+      </div>
+    </div>`;
+
+    const activityRows = (S.activity||[]).slice(0,5).map((a,i) => `
+      <div class="ledger-strip" style="--strip-i:${i}">
+        <div class="ledger-strip__dot" aria-hidden="true"></div>
+        <div class="ledger-strip__body">
+          <div class="ledger-strip__title">${(a.a||'Activity').replace(/</g,'&lt;')}</div>
+          <div class="ledger-strip__time">${Activity.ago(a.t)}</div>
+        </div>
+      </div>`).join('');
+
+    const activityBlock = (S.activity||[]).length > 0 ? `
+    <div class="dash-activity" style="margin:0 16px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
+        <button type="button" class="tap-link" data-act="R.goto('timeline')">See all →</button>
+      </div>
+      <div class="ledger-stack">${activityRows}</div>
+    </div>` : '';
+
+    const healthBlock = `
+    <div class="dash-health-block" style="margin:0 16px 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
+      <div class="vault-panel" style="padding:14px 16px;border-radius:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Security Score</div>
+          <div style="font-size:20px;font-weight:900;color:${healthColor};font-family:var(--mono)">${health}%</div>
+        </div>
+        <div style="height:6px;background:var(--glass2);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+
+    const inspectorHtml = `
+    <aside class="dash-inspector" aria-label="Vault inspector">
+      <div class="dash-inspector__plaque vault-display-title">Inspector</div>
+      <div class="dash-inspector__seal vault-panel">
+        <div class="dash-inspector__seal-row">
+          <span class="chip-ic">${_uiIcon('lock', 16)}</span>
+          <span>${sealOk ? 'Sealed' : 'Review'}</span>
+          <strong style="color:${healthColor};margin-left:auto;font-family:var(--mono)">${health}%</strong>
+        </div>
+        <div class="dash-inspector__meta">${entityTotal} records · ${lastBackupLabel} backup</div>
+      </div>
+      <div class="dash-inspector__section">
+        <div class="dash-inspector__h">Chambers</div>
+        <div class="dash-inspector__chambers">
+          ${chambers.slice(0,5).map(c => `<button type="button" class="dash-inspector__chip" data-act="R.goto('${c.page}')">${c.label}${c.count!=null?' · '+c.count:''}</button>`).join('')}
+        </div>
+      </div>
+      ${(S.activity||[]).length ? `<div class="dash-inspector__section"><div class="dash-inspector__h">Ledger</div><div class="ledger-stack ledger-stack--compact">${activityRows}</div><button type="button" class="tap-link" style="margin-top:8px" data-act="R.goto('timeline')">Full timeline →</button></div>` : ''}
+      <div class="dash-inspector__section">
+        <button type="button" class="btn btn-p btn-sm btn-full" data-act="CMD.open()">⌘K Search</button>
+        <button type="button" class="btn btn-g btn-sm btn-full" style="margin-top:8px" data-act="R.lock()">Lock vault</button>
+      </div>
+    </aside>`;
+
     b.innerHTML = `
     ${ctxBar}
     ${setupBanner}
     ${firstStepsBanner}
+    <div class="dash-vault-layout">
+    <div class="dash-vault-main">
+    ${vaultStatusSeal}
+    ${chamberFloor}
     ${nwHero}
 
     ${moneySum}
@@ -368,22 +467,7 @@ const Dash={
         </div>`).join('')}
     </div>` : ''}
 
-    <!-- VAULT HEALTH -->
-    <div style="margin:0 16px 16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('shield', 14)}</span>Vault Health</div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Security Score</div>
-          <div style="font-size:20px;font-weight:900;color:${healthColor}">${health}%</div>
-        </div>
-        <div style="height:6px;background:var(--glass2);border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
-        </div>
-      </div>
-    </div>
+    ${healthBlock}
 
     <!-- BACKUP REMINDER -->
     ${backupNeeded ? `
@@ -423,24 +507,10 @@ const Dash={
       return cols.length ? `<div style="margin:0 16px 16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Smart Collections</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">${cols.map(c=>`<div data-act="${c.action}" style="background:${c.color};border:1px solid ${c.border};border-radius:12px;padding:12px 14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px"><span class="chip-ic">${_uiIcon(c.icon, 20)}</span><div><div style="font-size:18px;font-weight:900;color:var(--text)">${c.count}</div><div style="font-size:11px;color:var(--text3)">${c.label}</div></div></div>`).join('')}</div></div>` : '';
     })()}
 
-    <!-- RECENT ACTIVITY -->
-    ${S.activity.length > 0 ? `
-    <div style="margin:0 16px 16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Recent Activity</div>
-        <button type="button" class="tap-link" data-act="R.goto('timeline')">See all →</button>
-      </div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-        ${S.activity.slice(0,5).map((a,i) => `
-          <div style="padding:12px 16px;${i<Math.min(S.activity.length,5)-1?'border-bottom:1px solid var(--border)':''};display:flex;align-items:center;gap:12px">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent,var(--purple));flex-shrink:0"></div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.a||'Activity'}</div>
-              <div style="font-size:11px;color:var(--text3)">${Activity.ago(a.t)}</div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>` : ''}
+    ${activityBlock}
+    </div>
+    ${inspectorHtml}
+    </div>
   `;
     if (typeof VC !== 'undefined' && VC.refreshShellIcons) VC.refreshShellIcons();
   },

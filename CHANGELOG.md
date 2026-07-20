@@ -1,3 +1,6 @@
+## 5.1.14 — 2026-07-20
+- Home remint: chamber floor (mobile) + vault status seal + desktop inspector pane (3-pane with sidebar). Ledger-strip activity. SW `vaultcap-v76`.
+
 ## 5.1.12 — 2026-07-20
 - Visual DNA: sealed vault door splash, steel/navy + gold seal, vault-panel chrome, locker empty states. Light/dark only.
 

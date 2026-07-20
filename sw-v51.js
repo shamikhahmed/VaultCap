@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v75';
+const CACHE = 'vaultcap-v76';
 const ASSETS = [
   './',
   './index.html',
@@ -27,6 +27,7 @@ const ASSETS = [
   './css/layout.css',
   './css/components.css',
   './css/themes.css',
+  './css/identity.css',
   './js/boot-cache.js',
   './js/boot-ver.js',
   './js/boot-shell.js',
