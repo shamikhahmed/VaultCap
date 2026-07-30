@@ -1,3 +1,7 @@
+## [5.1.25] — 2026-07-30
+- Fix: `#demoBanner` / phone `.ph` honour `max(env(safe-area-inset-top), --cap-safe-t)` so notch/Island QA inject clears DEMO strip
+- QA: device-matrix harness remounts banner height after safe-top; SW `vaultcap-v87`
+
 ## [5.1.24] — 2026-07-30
 - Shell: chrome breakpoint **700px** — iPad mini (744) gets sidebar, not phone tabs
 - Fix: toast no longer double-counts safe-area; lock toast top; SE lock clock `@media (max-height:720px)`

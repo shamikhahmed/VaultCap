@@ -131,7 +131,8 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
   position: fixed; top: 0; left: 0; right: 0; z-index: 8888;
   background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   color: #fff; font-size: 12px; font-weight: 500; text-align: center;
-  padding: calc(8px + env(safe-area-inset-top, 0px)) 14px 8px;
+  /* Chromium QA injects --cap-safe-t; real iOS uses env() — take the larger */
+  padding: calc(8px + max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px))) 14px 8px;
   letter-spacing: 0.01em; line-height: 1.3;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
@@ -192,7 +193,7 @@ body.demo-banner-active #pgLock {
   gap: 10px; flex-shrink: 0; background: var(--bg2);
 }
 .ph h2 { font-size: 22px; font-weight: 700; flex: 1; letter-spacing: -0.4px; min-width: 0; line-height: 1.15; }
-@media (max-width: 699px) { .ph { padding-top: calc(env(safe-area-inset-top, 0px) + 10px); } }
+@media (max-width: 699px) { .ph { padding-top: calc(max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px)) + 10px); } }
 
 /* ─ Page body ─ */
 .pb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 32px; overscroll-behavior: contain; min-height: 0; }

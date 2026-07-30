@@ -74,14 +74,14 @@ async function applyDeviceChrome(page, device) {
     // Patch common VaultCap / Capricorn fixed chrome that hardcodes env()
     tag.textContent = `
       .ph { padding-top: calc(${safeTop}px + 10px) !important; }
+      #demoBanner {
+        padding-top: calc(8px + ${safeTop}px) !important;
+      }
       .btabs {
         padding-bottom: ${safeBottom}px !important;
         height: calc(var(--tab-content-h, 56px) + ${safeBottom}px) !important;
       }
       #app { padding-bottom: 0; }
-      .page.on, .pg.on, [id^="pg"].on {
-        /* content clearance handled by existing --tabh where wired */
-      }
       .fab, .fab-btn, #fabBtn, button.fab {
         bottom: calc(${safeBottom}px + 72px) !important;
       }
@@ -93,7 +93,15 @@ async function applyDeviceChrome(page, device) {
         padding-bottom: ${safeBottom}px !important;
         box-sizing: border-box;
       }
+      body.demo-banner-active #pgLock {
+        padding-top: calc(var(--demo-banner-h, 52px) + 8px) !important;
+      }
     `;
+    // Remeasure demo banner after safe-top padding so shell offset stays correct
+    const banner = document.getElementById('demoBanner');
+    if (banner && !banner.hidden) {
+      root.style.setProperty('--demo-banner-h', `${banner.offsetHeight}px`);
+    }
   }, { safeTop: device.safeTop, safeBottom: device.safeBottom, chrome: device.chrome });
   await page.waitForTimeout(80);
 }
