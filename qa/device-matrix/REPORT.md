@@ -1,7 +1,7 @@
 # VaultCap device-matrix QA report
 
-**Date:** 2026-07-30 (loop re-verify)  
-**App:** VaultCap **v5.1.25** · SW `vaultcap-v87`  
+**Date:** 2026-07-31 (loop 2)  
+**App:** VaultCap **v5.1.26** · SW `vaultcap-v88`  
 **Prompt:** [qa/DEVICE-MATRIX-QA-MASTER-PROMPT.md](../DEVICE-MATRIX-QA-MASTER-PROMPT.md)  
 **Harness:** `DEVICE_MATRIX=1 npx playwright test tests/device-matrix.spec.js`  
 **Shots:** 112 under `qa/device-matrix/{iphone|ipad|browser}/` · `meta.json` (gitignored PNGs)
@@ -17,32 +17,33 @@ Shell breakpoint: **tabs &lt;700px · sidebar ≥700px** (iPad mini 744 → side
 | iphone-se … iphone-16-pro-max | mobile-tabs | no | **OK** |
 | browser-phone-360 | mobile-tabs | no | **OK** |
 | ipad-mini … ipad-pro-13-land | sidebar | no | **OK** |
-| browser-sm-laptop … ultrawide | sidebar | no | **OK** · live VER `5.1.25` |
+| browser-sm-laptop … ultrawide | sidebar | no | **OK** · live VER `5.1.26` |
 
 \*Lock + Settings hide tabs/sidebar by design (`neither` in meta — excluded from layout fail).  
 `ALL_LAYOUT_OK` on dashboard/banks/family/documents/more-sheet. Viewport contract: **6 passed**.
 
 ---
 
-## 2. Fixed this loop (v5.1.25)
+## 2. Fixed this loop (v5.1.26)
 
 | Severity | Issue | Fix |
 |----------|-------|-----|
-| **High** | DEMO banner ignored Chromium `--cap-safe-t` inject → Island/notch QA looked flush-top | `#demoBanner` + phone `.ph` use `max(env(safe-area-inset-top), var(--cap-safe-t))`; harness remounts `--demo-banner-h` after inject |
-| — | SW stale CSS risk | CACHE → `vaultcap-v87` · VER **5.1.25** |
+| **High** | `#pgLock` used `max(env(safe-area-inset-bottom, 24px), 24px)` (+ short-height `28px` min) → invented home-indicator gap on home-button SE when inset is 0. Matrix harness had masked it with `!important` inject. | Dual-path `max(env(...), var(--cap-safe-b, 0px))` — zero when safe-bottom is 0; short-height media same |
+| — | SW stale CSS risk | CACHE → `vaultcap-v88` · VER **5.1.26** |
 
-Live measure (iPhone 14 Pro): `padding-top: 67px` (= 8+59), `--cap-safe-t: 59px`. Sidebar text: `Alex Khan · v5.1.25` matches `window.VER` / `VERSION.json`.
+Live measure (no harness pad override): SE `padB=0px` · Pro Island `padB=34px`. Sidebar text: `Alex Khan · v5.1.26` matches `window.VER` / `VERSION.json`.
 
 ---
 
 ## 3. What looks RIGHT (evidence)
 
-- SE lock: keypad full; clock below DEMO; home-button (no fake home-indicator gap)
-- Pro Island dash: tabs clear of safe-bottom; labels Home/Money/Wealth/Identity/More readable
+- SE lock: keypad full; clock below DEMO; **no fake home-indicator gap** (`padB=0`)
+- Pro Island dash: tabs clear of safe-bottom; labels Home/Money/Wealth/Identity/More readable (56×79, not truncated)
 - iPad mini: sidebar + VER synced
 - Laptop settings: sidebar + Account tabs
 - Ultrawide: intentional columns + inspector (no overflow)
 - Zero horizontal overflow across 112 meta rows
+- Light spot-check SE dashboard: no overflow
 
 ---
 
@@ -51,7 +52,7 @@ Live measure (iPhone 14 Pro): `padding-top: 67px` (= 8+59), `--cap-safe-t: 59px`
 | Item | Note |
 |------|------|
 | Ultrawide density | Optional polish — not blocking |
-| Vision OCR on PNGs | Misreads `v5.1.25` as `v5.1.20`/`v5.1.0` — trust DOM probe |
+| Vision OCR on PNGs | Misreads `v5.1.26` as older — trust DOM probe |
 
 **Critical / High open:** none.
 
@@ -63,10 +64,10 @@ Live measure (iPhone 14 Pro): `padding-top: 67px` (= 8+59), `--cap-safe-t: 59px`
 |-----------|--------|
 | Correct layout mode all devices | **Pass** |
 | Zero overflow majors | **Pass** |
-| Lock / DEMO / island chrome | **Pass** (pad measured) |
+| Lock / DEMO / island chrome | **Pass** (SE padB=0; Island pad measured) |
 | Tabs/sidebar targets + safe-area once | **Pass** |
-| Toast/FAB clear of tabs | **Pass** (prior + re-capture) |
-| Sidebar VER = VERSION.json | **Pass** (`5.1.25`) |
+| Toast/FAB clear of tabs | **Pass** (FAB hidden on dash; prior toast fix) |
+| Sidebar VER = VERSION.json | **Pass** (`5.1.26`) |
 | Viewport contract | **Pass** |
 | REPORT residual Low/empty | **Pass** |
 | No Critical/High | **Pass** |
@@ -75,8 +76,8 @@ Live measure (iPhone 14 Pro): `padding-top: 67px` (= 8+59), `--cap-safe-t: 59px`
 
 ## 6. Plans (this change)
 
-- **Architecture:** safe-area token dual-path (`env` + `--cap-safe-t`) for real device + Chromium matrix.
-- **Refactor:** none beyond banner/header CSS.
+- **Architecture:** lock safe-area tokens match DEMO banner dual-path (`env` + `--cap-safe-*`).
+- **Refactor:** none beyond `#pgLock` / short-height / switch-vault bottom.
 - **Migration:** none.
 - **Test:** viewport + DEVICE_MATRIX re-capture.
-- **Rollback:** revert `layout.css` / `device-matrix.js` / SW `v87` → `v86`.
+- **Rollback:** revert `layout.css` / SW `v88` → `v87` / VER `5.1.25`.

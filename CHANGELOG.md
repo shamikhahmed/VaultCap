@@ -1,3 +1,7 @@
+## [5.1.26] — 2026-07-31
+- Fix: `#pgLock` safe-bottom dual-path (`env` + `--cap-safe-b`) — no invented 24–28px home-indicator gap on home-button SE; short-height media same
+- QA: device-matrix loop re-verify; SW `vaultcap-v88`
+
 ## [5.1.25] — 2026-07-30
 - Fix: `#demoBanner` / phone `.ph` honour `max(env(safe-area-inset-top), --cap-safe-t)` so notch/Island QA inject clears DEMO strip
 - QA: device-matrix harness remounts banner height after safe-top; SW `vaultcap-v87`

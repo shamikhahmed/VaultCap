@@ -314,7 +314,12 @@ body.hide-btabs #fab { display: none !important; }
   background: var(--bg);
   display: none; flex-direction: column; align-items: center;
   justify-content: space-between;
-  padding: max(env(safe-area-inset-top, 44px), 44px) 0 max(env(safe-area-inset-bottom, 24px), 24px);
+  /* Dual-path safe-area: real iOS env() + Chromium QA --cap-safe-*; never invent
+     home-indicator gap when inset is 0 (home-button SE). */
+  padding:
+    max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px))
+    0
+    max(env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
   overflow: hidden;
 }
 /* lock section layout */
@@ -368,7 +373,7 @@ body.hide-btabs #fab { display: none !important; }
 .lk-emergency:hover { background: var(--err); color: #fff; }
 .lk-switch-vault {
   position: absolute;
-  bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+  bottom: max(12px, env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
   left: 20px;
   z-index: 20;
   min-height: 44px;
@@ -395,7 +400,7 @@ body.hide-btabs #fab { display: none !important; }
   #lkClock { font-size: 40px; letter-spacing: -2px; }
   #pgLock  {
     justify-content: center; gap: 8px;
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 28px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
   }
   .lk-brand { margin-bottom: 6px; }
   .lk-mark { width: 52px; height: 52px; }
