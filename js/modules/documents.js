@@ -16,6 +16,8 @@ const _fuzzD = (str, q) => {
 
 const DocsModule={
   filter:'all',
+  selectMode:false,
+  selected:{},
   // Doc types that need front+back capture (physical ID cards)
   _frontBackTypes:new Set(['nic','driving_license']),
   _needsFrontBack(docType,rawVal){
@@ -23,20 +25,53 @@ const DocsModule={
     const r=(rawVal||'').toLowerCase();
     return ['cnic','driving','emirates id','iqama','voter','resident permit','brp','biometric'].some(function(kw){return r.includes(kw);});
   },
+  _filteredDocs(){
+    const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
+    return (S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
+  },
+  toggleSelectMode(){
+    this.selectMode=!this.selectMode;
+    if(!this.selectMode)this.selected={};
+    this.render();
+  },
+  toggleSelect(id){
+    if(this.selected[id])delete this.selected[id];
+    else this.selected[id]=true;
+    this.render();
+  },
+  selectAllVisible(){
+    this._filteredDocs().forEach(d=>{this.selected[d.id]=true;});
+    this.render();
+  },
+  clearSelection(){
+    this.selected={};
+    this.render();
+  },
   render(){
     const ci=document.getElementById('docsChips');
     const el=document.getElementById('docsItems');
     if(!ci||!el)return;
     const cats=[['all','All','id-card'],['passport','Passport','id-card'],['nic','ID','id-card'],['driving_license','Driving','car'],['visa','Visa','arrows'],['property_doc','Property','building'],['insurance_doc','Insurance','shield'],['vehicle_reg','Vehicle Reg','car'],['tax','Tax','receipt'],['medical','Medical','cross'],['warranty','Warranty','receipt'],['contract','Contract','book'],['certificate','Certificate','star'],['other','Other','file']];
     ci.innerHTML=cats.map(([v,l,ic])=>`<div class="chip${this.filter===v?' on':''}" data-act="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');
-    const q=(document.getElementById('docsQ')?.value||'').toLowerCase();
-    const docs=(S.documents||[]).filter(d=>(this.filter==='all'||d.docType===this.filter)&&(!q||_fuzzD(d.title||d.docType||'',q)||_fuzzD(d.holderName,q)||_fuzzD(d.docNumber,q)||_fuzzD(d.issuingCountry,q)||_fuzzD(d.notes,q)||(d.tags||[]).some(t=>_fuzzD(t,q))));
+    const docs=this._filteredDocs();
+    const selCount=Object.keys(this.selected).length;
+    const toolbar=
+      '<div class="docs-toolbar" style="display:flex;gap:8px;flex-wrap:wrap;padding:4px 14px 8px;align-items:center">' +
+      (this.selectMode
+        ? '<button type="button" class="btn btn-g btn-sm" data-act="DocsModule.toggleSelectMode()">Cancel</button>' +
+          '<button type="button" class="btn btn-g btn-sm" data-act="DocsModule.selectAllVisible()">Select all</button>' +
+          '<button type="button" class="btn btn-g btn-sm" data-act="DocsModule.clearSelection()">Clear</button>' +
+          '<button type="button" class="btn btn-p btn-sm" data-act="DocsModule.exportSelectedPdf()" '+(selCount?'':'disabled')+'>Export PDF ('+selCount+')</button>'
+        : '<button type="button" class="btn btn-g btn-sm" data-act="DocsModule.toggleSelectMode()">Select</button>' +
+          '<button type="button" class="btn btn-g btn-sm" data-act="DocsModule.exportVisiblePdf()">Export visible PDF</button>' +
+          '<button type="button" class="btn btn-p btn-sm" data-act="DocsModule.openAdd()">+ Add</button>') +
+      '</div>';
     if(!docs.length){
-      el.innerHTML=`<div class="empty-ios"><div class="ei-ic">${VC.icon('id-card',32)}</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="DocsModule.openAdd()">+ Add Document</button></div></div>`;
+      el.innerHTML=toolbar+`<div class="empty-ios"><div class="ei-ic">${VC.icon('id-card',32)}</div><div class="ei-title">No documents yet</div><div class="ei-sub">Store passports, IDs, visas, licences — with expiry alerts and photo capture</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="DocsModule.openAdd()">+ Add Document</button></div></div>`;
       return;
     }
     const now=new Date();
-    el.innerHTML=docs.map(d=>{
+    el.innerHTML=toolbar+docs.map(d=>{
       const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
       const exp=d.expiryDate?new Date(d.expiryDate):null;
       const daysLeft=exp?Math.ceil((exp-now)/864e5):null;
@@ -44,7 +79,11 @@ const DocsModule={
       const expLabel=!exp?'':daysLeft<0?'Expired '+Math.abs(daysLeft)+'d ago':daysLeft<=0?'Expires today':'Exp '+exp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
       const subtitle=[d.holderName,d.issuingCountry,d.docNumber?'Ref: '+d.docNumber.slice(-4).padStart(d.docNumber.length,'•'):''].filter(Boolean).join(' · ');
       const hasPhotos=d.frontPhoto||d.backPhoto;
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.docIcon(schema,18)}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">Linked</span>':''}</div></div><div class="entry-acts">${U.icb('pin',{onclick:`DocsModule.pin('${d.id}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}</div></div></div>`;
+      const checked=!!this.selected[d.id];
+      const selectCtl=this.selectMode
+        ? `<button type="button" class="btn btn-g btn-sm" style="min-width:44px;min-height:44px" aria-pressed="${checked?'true':'false'}" aria-label="${checked?'Deselect':'Select'} document" data-act="DocsModule.toggleSelect('${d.id}')">${checked?'✓':'○'}</button>`
+        : `${U.icb('pin',{onclick:`DocsModule.pin('${d.id}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}`;
+      return `<div class="entry${checked?' on':''}"><div class="entry-main"><div class="entry-ic">${VC.docIcon(schema,18)}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">Linked</span>':''}</div></div><div class="entry-acts">${selectCtl}</div></div></div>`;
     }).join('');
   },
   buildForm(schema,d={}){
@@ -230,7 +269,10 @@ const DocsModule={
         +'</div>';
     }
     const rows=schema.fields.map(f=>{const v=d[f.id];return v?U.drRow(f.label,v):''}).filter(Boolean).join('');
-    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button>`+
+      `<button type="button" class="btn btn-g" data-act="DocsModule.exportPdf('${id}')">Export PDF</button>`+
+      `<button type="button" class="btn btn-p" data-act="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
   },
   _openPhotoFull(base64){
     const v=document.createElement('div');
@@ -246,5 +288,129 @@ const DocsModule={
     const d=S.documents.find(x=>x.id===id);
     S.documents=S.documents.filter(x=>x.id!==id);
     Activity.log('Deleted document',d?.docType);Store.save();if(fromModal)Modal.close();this.render();
+  },
+
+  // —— PDF export (print → Save as PDF; no network, no deps) ——
+  _esc(s){
+    if(typeof escHtml==='function')return escHtml(String(s==null?'':s));
+    return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  },
+  _fmtDate(v){
+    if(!v)return '—';
+    const d=new Date(v);
+    if(isNaN(d.getTime()))return this._esc(v);
+    return d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  },
+  _ownerLabel(ownerId){
+    if(!ownerId)return '';
+    try{
+      if(typeof Family!=='undefined'&&Family.members){
+        const m=(Family.members()||[]).find(x=>x.id===ownerId);
+        if(m&&m.name)return m.name;
+      }
+    }catch(e){}
+    return '';
+  },
+  buildPdfHtml(docs){
+    const list=(docs||[]).filter(Boolean);
+    const vaultName=(S.user&&S.user.name)||'My Vault';
+    const now=new Date();
+    const dateStr=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    const timeStr=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const title=list.length===1
+      ?('VaultCap — '+(DOC_SCHEMAS[list[0].docType]||DOC_SCHEMAS.other).label)
+      :('VaultCap — Documents ('+list.length+')');
+    const css=
+      '*{box-sizing:border-box;margin:0;padding:0}'+
+      'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#111;background:#fff}'+
+      '.page{max-width:800px;margin:0 auto;padding:28px 32px 40px}'+
+      '.no-print{display:flex;gap:10px;justify-content:center;margin:0 0 20px;flex-wrap:wrap}'+
+      '.btn-print{background:#0a1220;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}'+
+      '.btn-close{background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;min-height:44px}'+
+      '.header{background:#0a1220;color:#fff;padding:26px 28px;border-radius:12px;margin-bottom:22px}'+
+      '.header .brand{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:6px}'+
+      '.header h1{font-size:22px;font-weight:800;margin-bottom:6px}'+
+      '.header .sub{font-size:13px;opacity:.75;line-height:1.45}'+
+      '.doc{border:1px solid #e8eaed;border-radius:12px;padding:20px;margin-bottom:22px;page-break-inside:avoid}'+
+      '.doc h2{font-size:16px;font-weight:800;margin-bottom:4px}'+
+      '.doc .meta{font-size:12px;color:#666;margin-bottom:14px}'+
+      '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:14px}'+
+      '.field .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:2px}'+
+      '.field .val{font-size:13px;font-weight:600;color:#111;word-break:break-word}'+
+      '.photos{display:flex;flex-direction:column;gap:14px;margin-top:8px}'+
+      '.photo-block{page-break-inside:avoid}'+
+      '.photo-block .cap{font-size:11px;color:#666;margin-bottom:6px;font-weight:700}'+
+      '.photo-block img{width:100%;max-height:420px;object-fit:contain;border:1px solid #eee;border-radius:8px;background:#fafafa}'+
+      '.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:14px;border-top:1px solid #eee;line-height:1.5}'+
+      '@media print{.no-print{display:none!important}.page{padding:12px}.doc{break-inside:avoid}}'+
+      '@media (max-width:560px){.grid{grid-template-columns:1fr}}';
+    const sections=list.map((d,i)=>{
+      const schema=DOC_SCHEMAS[d.docType]||DOC_SCHEMAS.other;
+      const fields=(schema.fields||[]).map(f=>{
+        const v=d[f.id];
+        if(v==null||v==='')return '';
+        const display=f.type==='date'?this._fmtDate(v):this._esc(v);
+        return '<div class="field"><div class="lbl">'+this._esc(f.label)+'</div><div class="val">'+display+'</div></div>';
+      }).filter(Boolean).join('');
+      const owner=this._ownerLabel(d.ownerId);
+      const extra=[
+        owner?'<div class="field"><div class="lbl">Family member</div><div class="val">'+this._esc(owner)+'</div></div>':'',
+        d.notes?'<div class="field" style="grid-column:1/-1"><div class="lbl">Notes</div><div class="val">'+this._esc(d.notes)+'</div></div>':'',
+        (d.tags&&d.tags.length)?'<div class="field" style="grid-column:1/-1"><div class="lbl">Tags</div><div class="val">'+this._esc(d.tags.join(', '))+'</div></div>':''
+      ].join('');
+      let photos='';
+      if(d.frontPhoto||d.backPhoto){
+        photos='<div class="photos">'+
+          (d.frontPhoto?'<div class="photo-block"><div class="cap">Front</div><img src="data:image/jpeg;base64,'+d.frontPhoto+'" alt="Front of '+this._esc(schema.label)+'"></div>':'')+
+          (d.backPhoto?'<div class="photo-block"><div class="cap">Back</div><img src="data:image/jpeg;base64,'+d.backPhoto+'" alt="Back of '+this._esc(schema.label)+'"></div>':'')+
+          '</div>';
+      }else{
+        photos='<div class="meta" style="margin-top:8px">No photos attached — metadata only.</div>';
+      }
+      return '<section class="doc" id="doc-'+(i+1)+'">'+
+        '<h2>'+this._esc(schema.label)+(d.docSubType?' — '+this._esc(d.docSubType):'')+'</h2>'+
+        '<div class="meta">'+(d.holderName?this._esc(d.holderName)+' · ':'')+(d.issuingCountry?this._esc(d.issuingCountry)+' · ':'')+'Document '+(i+1)+' of '+list.length+'</div>'+
+        '<div class="grid">'+fields+extra+'</div>'+
+        photos+
+        '</section>';
+    }).join('');
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+this._esc(title)+'</title><style>'+css+'</style></head><body><div class="page">'+
+      '<div class="no-print"><button type="button" class="btn-print" onclick="window.print()">Print / Save PDF</button><button type="button" class="btn-close" onclick="window.close()">Close</button></div>'+
+      '<header class="header"><div class="brand">VaultCap</div><h1>'+(list.length===1?'Document pack':'Document pack · '+list.length+' items')+'</h1>'+
+      '<div class="sub">'+this._esc(vaultName)+' · Generated '+dateStr+' at '+timeStr+'<br>Private · Generated on this device · Not uploaded</div></header>'+
+      sections+
+      '<div class="footer">VaultCap · Capricorn Systems<br>Handle printed copies carefully — they may contain identity documents.</div>'+
+      '</div></body></html>';
+  },
+  _openPdfWindow(html){
+    const w=window.open('','_blank');
+    if(!w){
+      if(typeof Toast!=='undefined')Toast.show('Allow pop-ups to export PDF','warn');
+      return null;
+    }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    return w;
+  },
+  exportPdf(id){
+    const d=(S.documents||[]).find(x=>x.id===id);
+    if(!d){if(typeof Toast!=='undefined')Toast.show('Document not found','warn');return;}
+    this._openPdfWindow(this.buildPdfHtml([d]));
+    try{if(typeof Activity!=='undefined')Activity.log('Exported document PDF',d.docType);}catch(e){}
+  },
+  exportVisiblePdf(){
+    const docs=this._filteredDocs();
+    if(!docs.length){if(typeof Toast!=='undefined')Toast.show('No documents to export','warn');return;}
+    this._openPdfWindow(this.buildPdfHtml(docs));
+    try{if(typeof Activity!=='undefined')Activity.log('Exported documents PDF',String(docs.length));}catch(e){}
+  },
+  exportSelectedPdf(){
+    const ids=Object.keys(this.selected);
+    const docs=ids.map(id=>(S.documents||[]).find(x=>x.id===id)).filter(Boolean);
+    if(!docs.length){if(typeof Toast!=='undefined')Toast.show('Select at least one document','warn');return;}
+    this._openPdfWindow(this.buildPdfHtml(docs));
+    try{if(typeof Activity!=='undefined')Activity.log('Exported selected documents PDF',String(docs.length));}catch(e){}
   }
 };
+window.DocsModule = DocsModule;

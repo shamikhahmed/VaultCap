@@ -32,6 +32,8 @@ Go to **Finance → Banks → + Add Bank**. Add your bank name, country, account
 
 Go to **Identity → Documents → + Add Document**. Store passports, driving licences, and national IDs. You can photograph the front and back. Expiry dates trigger automatic alerts.
 
+**Export documents as PDF** (to send or print): open a document → **Export PDF**, or on the Documents list use **Select** for multiple / **Export visible PDF**. Choose Print → Save as PDF. Everything stays on your device.
+
 ### Step 5 — Export your first backup
 
 Go to **Settings → Privacy & Export → Export Vault**. Copy the generated **backup key**, then download the `.vos` file — save both somewhere safe (iCloud Drive, Google Drive, or printed). **Do this now.** You cannot restore without the file **and** the backup key.
@@ -422,6 +424,8 @@ These appear automatically in the **Reminders** module timeline.
 ## PDF Financial Summary
 
 Export a complete snapshot of your vault as a print-ready PDF.
+
+For **identity document photos + details** (one or many), use **Identity → Documents** → Export PDF / Select instead.
 
 **How to export:**
 1. Go to Settings → Privacy & Export
