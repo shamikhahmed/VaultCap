@@ -88,7 +88,7 @@ const Dash={
     const cur = S.user.currency || 'GBP';
     const btn = document.getElementById('currBtn'); if (btn) btn.textContent = cur;
     const cmdBtn = document.getElementById('dashCmdBtn');
-    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(max-width:480px)').matches ? 'none' : (window.matchMedia('(min-width:769px)').matches ? 'none' : '');
+    if (cmdBtn) cmdBtn.style.display = window.matchMedia('(max-width:480px)').matches ? 'none' : (window.matchMedia('(min-width:700px)').matches ? 'none' : '');
 
     const _COUNTRY_CUR_MAP = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const homeCur = (S.user.homeCurrency || _COUNTRY_CUR_MAP[S.user.country] || 'PKR').toUpperCase();
@@ -189,7 +189,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:11px">Details <span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:11px">Details<span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -336,8 +336,8 @@ const Dash={
       { id:'wealth', label:'Wealth', page:'assets-home', icon:'trending-up', count:wealthCount, show: typeof isPageModOn==='function' ? isPageModOn('assets-home') : true },
       { id:'identity', label:'Identity', page:'vault-home', icon:'id-card', count:identityCount, show: typeof isPageModOn==='function' ? isPageModOn('vault-home') : true },
       { id:'family', label:'Family', page:'family', icon:'users', count:familyMC, show: isModOn('family') },
-      { id:'zakat', label:'Zakat', page:'zakat', icon:'moon', count:null, show: isModOn('zakat') },
-      { id:'tools', label:'Tools', page:'alerts', icon:'bell', count:allExpiring.length || null, show: true },
+      { id:'zakat', label:'Zakat', page:'zakat', icon:'moon', count:0, show: isModOn('zakat') },
+      { id:'tools', label:'Tools', page:'alerts', icon:'bell', count:allExpiring.length, show: true },
     ].filter(c => c.show);
     const chamberFloor = `
     <div class="chamber-floor" aria-label="Vault chambers">
@@ -2204,8 +2204,12 @@ const SettingsNav = {
       <div class="si vc-ix-6" data-act="Dash.toggleCurrency()">
         <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span class="vc-ix-4">›</span>
       </div>
-      <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.editProfile()">Edit</button></div>
-      <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.editProfile()">Edit</button></div>
+      <div class="si vc-ix-6" data-act="Settings.editProfile()">
+        <div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><span class="vc-ix-4">›</span>
+      </div>
+      <div class="si vc-ix-6" data-act="Settings.editProfile()">
+        <div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><span class="vc-ix-4">›</span>
+      </div>
     </div></div>
     <div class="set-sec"><div class="set-title">Unlock &amp; encryption</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">AES-256-GCM · PIN unlock · recovery key for restore · on-device</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="Settings.showThreatModel()">How it works</button></div>

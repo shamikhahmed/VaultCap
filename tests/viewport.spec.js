@@ -2,16 +2,12 @@
 const { test, expect } = require('@playwright/test');
 const { unlockDemoVault } = require('./demo-unlock');
 
-const VIEWPORTS = {
-  mobile: { width: 375, height: 812 },
-  desktop: { width: 1280, height: 800 },
-};
+/** Shell chrome breakpoint: tabs &lt;700, sidebar ≥700 (iPad mini 744 → sidebar) */
+const SHELL_BP = 700;
 
 /** @param {import('@playwright/test').Page} page */
-async function resize(page, name) {
-  const vp = VIEWPORTS[name];
-  if (!vp) throw new Error(`Unknown viewport: ${name}`);
-  await page.setViewportSize(vp);
+async function resize(page, width, height) {
+  await page.setViewportSize({ width, height });
   await page.waitForTimeout(120);
 }
 
@@ -53,21 +49,27 @@ test.describe('VaultCap viewport contract', () => {
     await assertVaultCapMobile(page, expect);
   });
 
-  test('769px — sidebar visible, bottom tabs hidden', async ({ page }) => {
-    await page.setViewportSize({ width: 769, height: 1024 });
+  test('iPad mini 744 — sidebar visible, bottom tabs hidden', async ({ page }) => {
+    await page.setViewportSize({ width: 744, height: 1133 });
     await page.evaluate(() => R.goto('dashboard'));
     await expect(page.locator('#app')).toBeVisible();
-    await expect(page.locator('.sidebar')).toBeVisible();
-    await expect(page.locator('.btabs')).toBeHidden();
+    await assertVaultCapDesktop(page, expect);
+  });
+
+  test(`${SHELL_BP}px — sidebar visible, bottom tabs hidden`, async ({ page }) => {
+    await page.setViewportSize({ width: SHELL_BP, height: 1024 });
+    await page.evaluate(() => R.goto('dashboard'));
+    await expect(page.locator('#app')).toBeVisible();
+    await assertVaultCapDesktop(page, expect);
   });
 
   test('375px — bottom tabs, sidebar hidden', async ({ page }) => {
-    await resize(page, 'mobile');
+    await resize(page, 375, 812);
     await assertVaultCapMobile(page, expect);
   });
 
   test('1280px — sidebar visible, bottom tabs hidden', async ({ page }) => {
-    await resize(page, 'desktop');
+    await resize(page, 1280, 800);
     await assertVaultCapDesktop(page, expect);
   });
 });

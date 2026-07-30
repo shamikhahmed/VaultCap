@@ -31,6 +31,10 @@ const R = {
   },
   showLock() {
     ['pgHome', 'pgOnboard', 'app', 'pgProfilePicker'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    document.body.classList.add('on-lock');
+    document.body.classList.remove('hide-btabs');
+    const tw = document.getElementById('toastWrap');
+    if (tw) tw.innerHTML = '';
     const lk = document.getElementById('pgLock');
     lk.style.display = 'flex';
     PIN.reset();
@@ -102,6 +106,7 @@ const R = {
   },
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    document.body.classList.remove('on-lock');
     document.getElementById('pgHome').style.display = 'flex';
     const hw = document.getElementById('hWelcome');
     if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}!`;
@@ -126,6 +131,7 @@ const R = {
         if (linked > 0) Store.save();
       }
       ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+      document.body.classList.remove('on-lock');
       const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
       document.getElementById('app').style.display = 'flex';
       document.getElementById('fab').style.display = 'flex';
@@ -160,6 +166,10 @@ const R = {
           let shown = false;
           try { shown = sessionStorage.getItem('vos_integrity_toast') === '1'; } catch (e) {}
           if (!shown) {
+            const appOn = document.getElementById('app')?.style.display === 'flex';
+            const onLock = document.body.classList.contains('on-lock')
+              || document.getElementById('pgLock')?.style.display === 'flex';
+            if (!appOn || onLock) return;
             try { sessionStorage.setItem('vos_integrity_toast', '1'); } catch (e) {}
             Toast.show(`Vault scan: ${issues} issue(s) found — check Integrity in Settings`, 'warn', 5000);
           }

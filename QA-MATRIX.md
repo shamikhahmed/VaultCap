@@ -1,10 +1,11 @@
 # VaultCap QA Matrix (core journeys)
 
-**App:** 5.1.22 · **Scope:** core interactive paths (not every pixel) · **Runner:** Playwright chromium + live DOM
+**App:** 5.1.24 · **Scope:** core interactive paths + device-matrix majors · **Runner:** Playwright chromium + live DOM
 
 | Screen | Element | Expected | Actual | Pass |
 |--------|---------|----------|--------|------|
 | Lock | PIN keypad | Unlock demo with 123456 | smoke + demo-unlock | Pass |
+| Device matrix | 16 devices × 7 majors | Shell BP 700; iPad mini sidebar; no overflow | device-matrix REPORT | Pass |
 | Crypto | DEK wrap | After unlock `vos_kdf_mode=wrapped`; re-unlock keeps banks | vault-kdf-wrap | Pass |
 | Lock | Switch Vault | Always visible; opens profiles | vault-switch.spec | Pass |
 | Click-all | Pages+sheets+forms+settings | No fatal errors; docs PDF toolbar | click-all.spec | Pass |

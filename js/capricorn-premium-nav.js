@@ -54,7 +54,7 @@ const CapPremiumNav = (() => {
 
   function init(opts = {}) {
     const mobileOnly = opts.mobileOnly !== false;
-    if (mobileOnly && window.matchMedia('(min-width: 768px)').matches) return;
+    if (mobileOnly && window.matchMedia('(min-width: 700px)').matches) return;
     const navSel = opts.nav || '#nav, nav.nav';
     const itemSel = opts.item || '.nav-tab, .nav-btn, .ni';
     document.querySelectorAll(navSel).forEach((n) => upgrade(n, itemSel));

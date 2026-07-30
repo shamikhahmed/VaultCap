@@ -9,6 +9,9 @@ const Toast = {
    * @param {boolean|object} [opts] - true/{html:true} = trusted HTML (caller must escape user data)
    */
   show(msg, type = 'info', dur = 3200, opts) {
+    if (document.body.classList.contains('on-lock')) return;
+    const lk = document.getElementById('pgLock');
+    if (lk && lk.style.display === 'flex') return;
     const w = document.getElementById('toastWrap');
     if (!w) return;
     const t = document.createElement('div');

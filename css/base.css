@@ -29,8 +29,9 @@
   --font-system: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", "Fira Code", monospace;
   /* Tab bar: content height only; safe-area applied once in --tabh */
-  --tab-content-h: 52px;
+  --tab-content-h: 56px;
   --tabh: calc(var(--tab-content-h) + env(safe-area-inset-bottom, 0px));
+  --shell-bp: 700px; /* shell chrome: tabs below this width; sidebar at ≥700 */
   --sbw: 280px;
   --st: env(safe-area-inset-top); --sb: env(safe-area-inset-bottom);
 
@@ -298,7 +299,7 @@ body.app-blur #pgProfilePicker {
 @media (prefers-reduced-motion: reduce) {
   .vc-install-banner { animation: none; }
 }
-@media (min-width: 769px) {
+@media (min-width: 700px) {
   .vc-install-banner {
     bottom: 24px;
     left: auto;

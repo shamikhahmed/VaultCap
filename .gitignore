@@ -35,6 +35,10 @@ ios/
 test-results/
 playwright-report/
 
+# Device-matrix capture artifacts (keep REPORT.md)
+qa/device-matrix/**/*.png
+qa/device-matrix/meta.json
+
 # Agent notes (local only)
 memory/
 .cursor/

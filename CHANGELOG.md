@@ -1,3 +1,12 @@
+## [5.1.24] — 2026-07-30
+- Shell: chrome breakpoint **700px** — iPad mini (744) gets sidebar, not phone tabs
+- Fix: toast no longer double-counts safe-area; lock toast top; SE lock clock `@media (max-height:720px)`
+- Fix: demo banner `safe-area-inset-top`; lock padding under DEMO strip
+- Fix: tab bar touch targets + spacing; Details/Show `gap`; chamber Zakat/Tools always show count
+- Fix: Settings Home/Work Address use chevron row (same as Countries)
+- QA: device-matrix harness + LOOPING master prompt + REPORT; viewport contract for 744
+- Version sync: `boot-ver` / constants match `VERSION.json`; SW `vaultcap-v86`
+
 ## [5.1.23] — 2026-07-30
 - Security: PIN wraps random DEK (`key_wrap`) — silent migrate on unlock; changePin re-wraps; new vaults wrapped from init
 - Styles: extract high-frequency inline `style=` → `vc-ix-*` utilities (~57% cut in `js/`)

@@ -19,6 +19,8 @@ async function dismissOverlays(page) {
     const overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('on');
     document.querySelectorAll('.modal-overlay.on, .overlay.on').forEach(el => el.classList.remove('on'));
+    const tw = document.getElementById('toastWrap');
+    if (tw) tw.innerHTML = '';
     ['moneySheet', 'assetsSheet', 'identitySheet', 'moreOverlay', 'vaultInstallBanner'].forEach((id) => {
       document.getElementById(id)?.remove();
     });
@@ -155,7 +157,7 @@ async function fastGalleryUnlock(page) {
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
-    localStorage.setItem('vos_wn_ver', '5.1.23');
+    localStorage.setItem('vos_wn_ver', '5.1.24');
     localStorage.removeItem('vc_lockout_v1_demo');
     localStorage.removeItem('vc_lockout_v1_personal');
   });
@@ -203,7 +205,7 @@ async function unlockDemoVault(page) {
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
     // Match live VER so What's New modal does not block smoke/nav clicks
-    localStorage.setItem('vos_wn_ver', (typeof window !== 'undefined' && window.VER) ? window.VER : '5.1.23');
+    localStorage.setItem('vos_wn_ver', (typeof window !== 'undefined' && window.VER) ? window.VER : '5.1.24');
     localStorage.removeItem('vc_lockout_v1_demo');
     localStorage.removeItem('vc_lockout_v1_personal');
     localStorage.removeItem('vo_install_dismissed');

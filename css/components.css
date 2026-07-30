@@ -333,8 +333,20 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .toast.err { border-left: 3px solid var(--err); }
 .toast.wrn { border-left: 3px solid var(--warn); }
 .toast.inf { border-left: 3px solid var(--info); }
-@media (max-width: 768px) {
-  .tw { top: auto; bottom: calc(var(--tabh) + var(--sb) + 10px); right: 8px; left: 8px; }
+@media (max-width: 699px) {
+  /* --tabh already includes safe-area; do not add --sb again */
+  .tw { top: auto; bottom: calc(var(--tabh) + 12px); right: 8px; left: 8px; }
+  body.hide-btabs .tw { bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+  /* Lock / welcome: keep toast off keypad (tabs hidden anyway) */
+  body.on-lock .tw {
+    top: calc(max(env(safe-area-inset-top, 0px), var(--demo-banner-h, 0px)) + 12px);
+    bottom: auto;
+    left: 8px;
+    right: 8px;
+  }
+  body.demo-banner-active.on-lock .tw {
+    top: calc(var(--demo-banner-h, 52px) + 10px);
+  }
   .toast { min-width: unset; }
 }
 
@@ -609,7 +621,7 @@ body:not(.light) .u-highlight-card {
 }
 .fab:hover { transform: scale(1.08); }
 .fab.open  { transform: rotate(45deg); background: var(--err); box-shadow: 0 4px 18px rgba(255,64,96,.4); }
-@media (max-width: 768px) { .fab { display: flex; } }
+@media (max-width: 699px) { .fab { display: flex; } }
 .fab-scrim {
   position: fixed; inset: 0; z-index: 298;
   background: rgba(0,0,0,.44);
@@ -1252,6 +1264,7 @@ body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   min-height: 44px;
   padding: 10px 8px;
   margin: -10px -4px;
@@ -1266,6 +1279,7 @@ body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
   line-height: 1.2;
 }
 .tap-link:hover { opacity: 0.85; }
+.tap-link-caret { margin-left: 0; }
 
 /* Settings tabs: edge fade = more tabs exist */
 .sett-tabs,

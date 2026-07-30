@@ -11,7 +11,7 @@
 - Smart Import / Smart Help (rules) · bills / NW · decoy · .vos export
 - Document PDF pack (single / multi / visible) — print locally
 - Vault profile switch (flush-safe)
-- Screen gallery CAPTURE (dark/light × mobile/desktop) — regen v5.1.23
+- Screen gallery CAPTURE (dark/light × mobile/desktop) — regen v5.1.24
 - Click-all core surface suite
 
 ## W
