@@ -508,7 +508,7 @@ test.describe('VaultCap screen gallery', () => {
             const pageId = PAGE_ALIASES[item.id] || item.id;
             if (item.id === 'settings') {
               await expect(page.locator('#pg-settings.on')).toBeVisible({ timeout: 15000 });
-              await page.evaluate(() => { if (typeof SettingsNav !== 'undefined') SettingsNav.show('profile'); });
+              await page.evaluate(() => { if (typeof SettingsNav !== 'undefined') SettingsNav.show('account'); });
             } else {
               await waitForAppPage(page, pageId);
             }

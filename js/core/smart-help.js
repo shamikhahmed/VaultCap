@@ -25,7 +25,7 @@ const SmartHelp = (() => {
     {
       keys: ['backup', '.vos', 'vos', 'export', 'restore', 'backup key'],
       title: 'Backup (.vos + backup key)',
-      html: '<p>Export an encrypted <strong>.vos</strong> file from Settings → Backup. VaultCap generates a separate <strong>backup key</strong> — save it with the file.</p><p>The backup key is <em>not</em> your PIN. You need both the file and the key to restore on any device. Prefer .vos over plain JSON export.</p>',
+      html: '<p>Export an encrypted <strong>.vos</strong> file from Settings → Privacy. VaultCap generates a separate <strong>backup key</strong> — save it with the file.</p><p>The backup key is <em>not</em> your PIN. You need both the file and the key to restore on any device. Prefer .vos over plain JSON export.</p>',
     },
     {
       keys: ['decoy', 'duress', 'fake', 'coercion', 'plausible'],

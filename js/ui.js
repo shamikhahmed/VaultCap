@@ -635,7 +635,7 @@ const Dash={
 // ===================== SETTINGS =====================
 const Settings={
   refresh(){
-    if(typeof SettingsNav!=='undefined') SettingsNav.show(SettingsNav.current||'profile');
+    if(typeof SettingsNav!=='undefined') SettingsNav.show(SettingsNav.current||'account');
   },
   render(){ this.refresh(); },
   toggleMod(id,v){
@@ -1416,7 +1416,7 @@ const WhatsNew={
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">Tabbed Settings Center</div>
-        <div style="font-size:12px;color:var(--text2)">8-section Settings: Profile, Security, Appearance, Modules, Backup, Import, Accessibility, About</div>
+        <div style="font-size:12px;color:var(--text2)">Settings: Account, General, Appearance, Access, Alerts, Privacy, About</div>
       </div>
       <div style="padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">Self-Check Engine</div>
@@ -2138,36 +2138,55 @@ const ExcelImport = {
 window.ExcelImport = ExcelImport;
 
 const SettingsNav = {
-  current: 'profile',
+  current: 'account',
+
+  /** Legacy tab ids → current homes (one concept, one home). */
+  _alias(section) {
+    const map = {
+      profile: 'account',
+      security: 'account',
+      modules: 'general',
+      backup: 'privacy',
+      import: 'privacy',
+    };
+    return map[section] || section;
+  },
 
   show(section) {
     if (typeof buildSettTabs === 'function') setTimeout(buildSettTabs, 0);
+    section = this._alias(section || 'account');
     this.current = section;
-    const order = ['profile','security','appearance','modules','backup','import','accessibility','about'];
+    const order = ['account','general','appearance','accessibility','notifications','privacy','about'];
     document.querySelectorAll('#settTabs .tab-pill').forEach((p, i) => p.classList.toggle('on', order[i] === section));
     const b = document.getElementById('settBody');
     if (!b) return;
-    if (section === 'backup') { b.innerHTML = this._backup(); return; }
-    if (section === 'import') { b.innerHTML = this._import(); return; }
-    b.innerHTML = this['_' + section]();
-    if (section === 'security') this._pollLlmHealth('llm-health-security');
+    const fn = this['_' + section];
+    if (typeof fn !== 'function') {
+      b.innerHTML = this._account();
+      this.current = 'account';
+      return;
+    }
+    b.innerHTML = fn.call(this);
+    if (section === 'account' || section === 'privacy') this._pollLlmHealth(section === 'account' ? 'llm-health-security' : 'llm-health-privacy');
     if (typeof SelfCheck !== 'undefined') SelfCheck.run();
   },
 
   _pollLlmHealth(targetId) {
     if (typeof LlmAssist === 'undefined') return;
-    LlmAssist.renderHealthEl(targetId || 'llm-health-import');
+    LlmAssist.renderHealthEl(targetId || 'llm-health-privacy');
   },
 
-  _profile() {
+  _account() {
     const setupNudge = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
     <div class="set-card" style="margin-bottom:12px;border-color:var(--accent)">
       <div style="font-size:13px;font-weight:700;margin-bottom:6px">Complete your profile</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
       <button type="button" class="btn btn-p btn-sm" data-act="Settings.editCountries()">Set countries →</button>
     </div>` : '';
+    const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
+    const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
     return `${setupNudge}${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
-    <div class="set-sec"><div class="set-title">Profile</div><div class="set-card">
+    <div class="set-sec"><div class="set-title">Identity</div><div class="set-card">
       <div class="si" data-act="Settings.editProfile()" style="cursor:pointer">
         <div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span style="color:var(--text3)">›</span>
       </div>
@@ -2180,38 +2199,19 @@ const SettingsNav = {
       <div class="si"><div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.editProfile()">Edit</button></div>
       <div class="si"><div class="sil"><div class="name">Work Address</div><div class="desc">${S.user.workAddr||'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.editProfile()">Edit</button></div>
     </div></div>
-    <div class="set-sec"><div class="set-title">Data Summary</div><div class="set-card">
-      ${[...(typeof ALL_MODULES!=='undefined'?ALL_MODULES:[]).map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity',S.activity.length,'list']].map(([n,c,ic])=>`<div class="si"><div class="name" style="display:flex;align-items:center;gap:8px"><span class="chip-ic">${typeof VC!=='undefined'?VC.modIcon({ic},14):''}</span>${n}</div><div style="font-weight:700;color:var(--accent)">${c}</div></div>`).join('')}
-    </div></div>
-    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Data Management</div><div class="set-card">
-      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <button type="button" class="btn btn-s btn-full btn-sm" data-act="VaultProfiles.startDemo()">Open demo vault (safe sandbox)</button>
-        <div style="font-size:11px;color:var(--text3);line-height:1.5">Demo never touches My Vault. Share: <span style="color:var(--accent);word-break:break-all">${VaultProfiles.demoUrl()}</span></div>
-        <button type="button" class="btn btn-g btn-full btn-sm" data-act="VaultSafety.restore()">Restore previous save</button>
-        <button type="button" class="btn btn-g btn-full btn-sm" data-act="S.activity=[];Store.save();SettingsNav.show('profile');Toast.show('Activity cleared')">Clear Activity Log</button>
-        <button type="button" class="btn btn-d btn-full btn-sm" data-act="Settings.resetVault()">Reset Entire Vault</button>
-      </div>
-    </div></div>`;
-  },
-
-  _security() {
-    const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
-    const sessionCount = S.activity.filter(a => a.a && a.a.includes('unlocked')).length;
-    return `<div class="set-sec"><div class="set-title">Security</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">AES-256-GCM · PIN unlock · recovery key for restore · 100% free · on-device</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.showThreatModel()" style="touch-action:manipulation">How it works</button></div>
+    <div class="set-sec"><div class="set-title">Unlock &amp; encryption</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Vault encryption</div><div class="desc">AES-256-GCM · PIN unlock · recovery key for restore · on-device</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.showThreatModel()" style="touch-action:manipulation">How it works</button></div>
       <div class="si"><div class="sil"><div class="name">Change PIN</div><div class="desc">Update your 6-digit vault PIN</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.changePIN()" style="touch-action:manipulation">Change</button></div>
       ${(typeof WebAuthnUnlock!=='undefined'?WebAuthnUnlock.settingsRow():'')}
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.showMasterKey()" style="touch-action:manipulation">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm" data-act="Settings.setDecoyPIN()" style="touch-action:manipulation">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} data-act-change="S.noPin=this.checked;Store.save();Toast.show('No-PIN '+(S.noPin?'enabled':'disabled'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} data-act-change="ActHelpers.toggleNoPin(this)"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} data-act-change="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" data-act-change="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
       <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm" style="width:auto;padding:5px 9px" data-act-change="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
-      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm" data-act="VaultProfiles.showSwitcher()" style="touch-action:manipulation">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g" data-act="DataIntegrity.run()" style="width:100%">Run Vault Integrity Check</button></div></div></div>
-    <div class="set-sec"><div class="set-title">Enhanced Import Service</div><div class="set-card"><div class="si"><div class="sil"><div class="name">LLM Proxy</div><div class="desc" id="llm-health-security" style="font-size:12px;color:var(--text3)">Checking…</div></div></div></div></div>
     <div class="set-sec"><div class="set-title">Security Report</div><div class="set-card">
       ${[
         {label:'Encryption',val:'AES-256-GCM',ok:true},
@@ -2222,7 +2222,22 @@ const SettingsNav = {
         {label:'Last backup',val:lastBackup,ok:!!S.user.lastBackup},
         {label:'Unlock sessions',val:sessionCount+' recorded',ok:true},
       ].map(({label,val,ok})=>`<div class="si"><div class="name">${label}</div><div style="font-size:12px;color:${ok?'var(--ok)':'var(--warn)'};text-align:right;flex:1">${val}</div></div>`).join('')}
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Score dashboard</div><div class="set-card">
+      <div class="si" data-act="R.goto('security')" style="cursor:pointer"><div class="sil"><div class="name">Open Security Score</div><div class="desc">Cards, email 2FA, backup age — full checklist</div></div><span style="color:var(--text3)">›</span></div>
     </div></div>`;
+  },
+
+  _general() {
+    const order = ['Family','Banking','Wealth','Cashflow','Identity','Planning','Tools'];
+    const mods = typeof ALL_MODULES !== 'undefined' ? ALL_MODULES : [];
+    const byGroup = {};
+    mods.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
+    const row = m => `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`;
+    const sections = order.filter(g => byGroup[g]?.length).map(g =>
+      `<div class="set-sec"><div class="set-title">${g}</div><div class="set-card">${byGroup[g].map(row).join('')}</div></div>`
+    ).join('');
+    return sections + `<div class="set-sec" style="margin-bottom:40px"><div class="set-card"><div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div></div></div>`;
   },
 
   _appearance() {
@@ -2232,12 +2247,12 @@ const SettingsNav = {
       { id: 'auto', label: 'System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', dot: '#888888' },
     ];
     const active = S.user.theme || 'dark';
-    return `<div class="set-sec"><div class="set-title">Appearance</div><div class="set-card">
+    return `<div class="set-sec"><div class="set-title">Theme</div><div class="set-card">
       <div style="padding:14px 16px">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Dark, Light, or match your device setting.</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Dark, Light, or match your device. Accessibility controls live under Access.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" role="radiogroup" aria-label="Theme">
           ${options.map(o => `
-            <button type="button" data-act="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
+            <button type="button" role="radio" aria-checked="${active === o.id}" data-act="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
               <div style="height:48px;background:${o.preview};display:flex;align-items:center;justify-content:center">
                 <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
               </div>
@@ -2248,44 +2263,50 @@ const SettingsNav = {
         </div>
       </div>
     </div></div>
-    <div class="set-sec"><div class="set-title">Live preview</div><div class="set-card">
-      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
-        <div style="font-size:12px;color:var(--text3);line-height:1.5">Cards, text, and accents update instantly when you switch theme.</div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Live preview</div><div class="set-card">
+      <div style="padding:14px 16px">
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">
           <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Sample card</div>
           <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Net worth snapshot</div>
           <div style="font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-0.5px">£ 1,248,500</div>
           <div style="font-size:12px;color:var(--text2);margin-top:6px">Primary text · secondary labels · borders follow your theme</div>
         </div>
-        <div class="si"><div class="sil"><div class="name">Large text</div><div class="desc">Increase base font size app-wide</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} data-act-change="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
-        <div class="si"><div class="sil"><div class="name">Reduce motion</div><div class="desc">Minimize animations and transitions</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} data-act-change="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
       </div>
     </div></div>`;
   },
 
-  _modules() {
-    const order = ['Family','Banking','Wealth','Cashflow','Identity','Planning','Tools'];
-    const mods = typeof ALL_MODULES !== 'undefined' ? ALL_MODULES : [];
-    const byGroup = {};
-    mods.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
-    const row = m => `<div class="si"><div style="display:flex;align-items:center;gap:10px;flex:1"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`;
-    const sections = order.filter(g => byGroup[g]?.length).map(g =>
-      `<div class="set-sec"><div class="set-title">${g}</div><div class="set-card">${byGroup[g].map(row).join('')}</div></div>`
-    ).join('');
-    return sections + `<div class="set-sec"><div class="set-card"><div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Hidden modules stay in data but don't appear in navigation</div></div></div></div></div>`;
+  _accessibility() {
+    return `<div class="set-sec" style="margin-bottom:40px"><div class="set-title">Accessibility</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} data-act-change="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} data-act-change="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text3)">Privacy blur lives under Privacy. Theme lives under Appearance.</div></div></div>
+    </div></div>`;
   },
 
-  _backup() {
+  _notifications() {
+    return `<div class="set-sec"><div class="set-title">Reminders &amp; alerts</div><div class="set-card">
+      <div class="si" data-act="R.goto('reminders')" style="cursor:pointer"><div class="sil"><div class="name">Reminders</div><div class="desc">Expiries, MOT, loans, BC turns — unified timeline</div></div><span style="color:var(--text3)">›</span></div>
+      <div class="si" data-act="R.goto('alerts')" style="cursor:pointer"><div class="sil"><div class="name">Alerts</div><div class="desc">Cards, warranties, 2FA gaps needing action</div></div><span style="color:var(--text3)">›</span></div>
+      <div class="si" data-act="R.goto('timeline')" style="cursor:pointer"><div class="sil"><div class="name">Timeline</div><div class="desc">Chronological upcoming dates</div></div><span style="color:var(--text3)">›</span></div>
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">How alerts work</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text2);line-height:1.55;font-weight:400">VaultCap checks dates on-device when you unlock. No push servers. Keep expiry fields filled so reminders stay useful.</div></div></div>
+    </div></div>`;
+  },
+
+  _privacy() {
     const lastBackup = S.user.lastBackup;
     const backupAge  = lastBackup ? Math.floor((Date.now()-new Date(lastBackup))/864e5) : null;
     const backupStatus = !lastBackup ? 'Never backed up' : backupAge===0 ? 'Backed up today' : backupAge<=7 ? 'Backed up '+backupAge+' days ago' : 'Last backup '+backupAge+' days ago';
-    return `<div class="set-sec"><div class="set-title">Backup & Export</div><div class="set-card">
+    return `<div class="set-sec"><div class="set-title">Privacy</div><div class="set-card">
+      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Enhanced Import Service</div><div class="desc" id="llm-health-privacy" style="font-size:12px;color:var(--text3)">Checking…</div></div></div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">Backup &amp; export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-p btn-full btn-sm" data-act="ExIm.export('vault')">Export Encrypted Vault (.vos)</button>
         <button type="button" class="btn btn-s btn-full btn-sm" data-act="BackupVerify.open()">Verify Backup (dry-run)</button>
-        <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('json')">Export as JSON (readable)</button>
-        <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('csv')">Export as CSV (spreadsheet)</button>
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="document.getElementById('importF-global').click()">Import / Restore Vault</button>
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="ExIm.share()">Share via Files / AirDrop</button>
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="ExIm.exportPDF()">Export Financial Summary PDF</button>
@@ -2294,30 +2315,30 @@ const SettingsNav = {
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="QRSync.importQR()">Scan from Another Device</button>
       </div>
     </div></div>
-    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Backup Strategy</div><div class="set-card">
-      ${[{ic:'archive',t:'iCloud Drive',d:'Export .vos → save to Files → iCloud Drive'},{ic:'package',t:'Google Drive',d:'Export .vos → upload manually to Drive'},{ic:'share',t:'External Drive / USB',d:'Drag .vos file to external drive'}].map(({ic,t,d})=>`<div class="si"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon(ic,22)}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div></div>`).join('')}
-      <div style="padding:10px 14px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">All exports are AES-256-GCM encrypted before leaving your device. No cloud servers involved.</div>
-    </div></div>`;
-  },
-
-  _import() {
-    return `<div class="set-sec"><div class="set-title">Smart Import (100% free · on-device)</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Smart Parser</div><div class="desc">Rules-based import — paste text or pick files. No cloud AI required. Free forever.</div></div></div>
-      <div style="padding:12px 14px;font-size:12px;color:var(--text3);line-height:1.55;border-top:1px solid var(--border)">Stuck? Open <button type="button" class="cpbtn" data-act="SmartHelp.open()">Smart Help</button> — answers PIN, backup, banks, and more without leaving your device.</div>
-    </div></div>
-    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Import</div><div class="set-card">
-      <div class="si" data-act="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('download',28)}</span><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan images — offline Smart Parser</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
+    <div class="set-sec"><div class="set-title">Import</div><div class="set-card">
+      <div class="si" data-act="R.goto('import')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('download',28)}</span><div class="sil"><div class="name">Smart Import</div><div class="desc">Paste text, drop files, or scan — offline Smart Parser</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
       <div class="si" data-act="ExcelImport.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('chart',28)}</span><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" data-act="document.getElementById('importF-global').click()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('lock',28)}</span><div class="sil"><div class="name">Restore Vault Backup</div><div class="desc">Import a .vos encrypted backup or JSON export</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-      <div class="si" data-act="BackupVerify.open()" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px;flex:1"><span class="chip-ic">${_uiIcon('check',28)}</span><div class="sil"><div class="name">Verify Backup</div><div class="desc">Dry-run decrypt — check a .vos without overwriting your vault</div></div></div><span style="color:var(--accent);font-size:16px">→</span></div>
-    </div></div>`;
-  },
-
-  _accessibility() {
-    return `<div class="set-sec"><div class="set-title">Accessibility</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Reduce Motion</div><div class="desc">Minimize animations throughout the app</div></div><label class="tog"><input type="checkbox" ${S.reduceMotion?'checked':''} data-act-change="applyReduceMotion(this.checked);Toast.show('Reduce motion '+(S.reduceMotion?'on':'off'))"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Large Text</div><div class="desc">Slightly increase base font size</div></div><label class="tog"><input type="checkbox" ${S.largeText?'checked':''} data-act-change="applyLargeText(this.checked);Toast.show('Large text '+(S.largeText?'on':'off'))"><span class="ts"></span></label></div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">Plaintext export</div><div class="set-card">
+      <div style="padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:4px">Readable JSON/CSV leave your device <strong>unencrypted</strong>. Prefer .vos for backups. Confirm before sharing.</div>
+      <div style="padding:0 14px 12px;display:flex;flex-direction:column;gap:8px">
+        <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('json')">Export as JSON (readable)</button>
+        <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('csv')">Export as CSV (spreadsheet)</button>
+      </div>
+    </div></div>
+    <div class="set-sec"><div class="set-title">Data management</div><div class="set-card">
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <button type="button" class="btn btn-s btn-full btn-sm" data-act="VaultProfiles.startDemo()">Open demo vault (safe sandbox)</button>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">Demo never touches My Vault.</div>
+        <button type="button" class="btn btn-g btn-full btn-sm" data-act="VaultSafety.restore()">Restore previous save</button>
+        <button type="button" class="btn btn-g btn-full btn-sm" data-act="S.activity=[];Store.save();SettingsNav.show('privacy');Toast.show('Activity cleared')">Clear Activity Log</button>
+      </div>
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Delete</div><div class="set-card">
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;color:var(--err);line-height:1.5">Irreversible. Export a .vos backup first.</div>
+        <button type="button" class="btn btn-d btn-full btn-sm" data-act="Settings.resetVault()">Reset Entire Vault</button>
+      </div>
     </div></div>`;
   },
 
@@ -2338,7 +2359,7 @@ const SettingsNav = {
           • Your vault lives <strong>on this device only</strong> — never on any server<br>
           • Even if this URL stops working, your data is safe in your <strong>.vos backup</strong><br>
           • Any browser can open a .vos file — just visit the app from any device<br>
-          • Export a backup regularly: Settings → Backup &amp; Export
+          • Export a backup regularly: Settings → Privacy
         </div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
@@ -2347,8 +2368,19 @@ const SettingsNav = {
           VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
         </div>
       </div>
+    </div></div>
+    <div class="set-sec" style="margin-bottom:40px"><div class="set-title">Legal</div><div class="set-card">
+      <div class="si" data-act="window.open('privacy.html','_blank')" style="cursor:pointer"><div class="sil"><div class="name">Privacy Policy</div><div class="desc">What stays on-device · optional network</div></div><span style="color:var(--text3)">›</span></div>
+      <div class="si" data-act="window.open('LICENSE','_blank')" style="cursor:pointer"><div class="sil"><div class="name">License</div><div class="desc">Source-available terms</div></div><span style="color:var(--text3)">›</span></div>
     </div></div>`;
-  }
+  },
+
+  // Back-compat method names used by older deep-links / help copy
+  _profile() { return this._account(); },
+  _security() { return this._account(); },
+  _modules() { return this._general(); },
+  _backup() { return this._privacy(); },
+  _import() { return this._privacy(); },
 };
 
 const VaultHealthCenter = {
@@ -2501,7 +2533,7 @@ const HelpCenter = {
           ${this._card('', 'Step 2 — Add your first bank', 'Tap the Finance tab → Banks → + Add Bank. Choose your country, enter your bank name, account type, and currency. You can add as many banks as you have accounts.')}
           ${this._card('', 'Step 3 — Link cards to banks', 'In Finance → Cards → + Add Card, you can link a card to a bank. This creates a relationship — tap a bank, scroll down to see all linked cards instantly.')}
           ${this._card('', 'Step 4 — Add key documents', 'In Identity → Documents, add your passport, driving licence, or NIC. You can photograph the document inside the app. Expiry alerts will appear automatically.')}
-          ${this._card('', 'Step 5 — Export a backup', 'Go to Settings → Backup & Export → Export Vault. Save the .vos file somewhere safe — iCloud, Google Drive, or email it to yourself. Do this regularly.')}
+          ${this._card('', 'Step 5 — Export a backup', 'Go to Settings → Privacy → Export Encrypted Vault (.vos). Save the file and backup key somewhere safe — iCloud, Google Drive, or printed. Do this regularly.')}
           ${this._card('sparkles', 'Pro tip — use the Command Palette', 'Tap Cmd+K (desktop) or the search icon to instantly jump to anything in your vault. Search by name, type tags, or run actions like "lock vault" or "export".')}
         </div>`,
       'banks-cards': `
@@ -2531,7 +2563,7 @@ const HelpCenter = {
         </div>`,
       'backup': `
         <div style="display:flex;flex-direction:column;gap:12px">
-          ${this._card('share', 'How to export a backup', 'Settings → Backup & Export → Export Vault. Or tap the Recovery Center in the Tools sidebar. A .vos file will download — save it somewhere safe like iCloud, Google Drive, or email.')}
+          ${this._card('share', 'How to export a backup', 'Settings → Privacy → Export Encrypted Vault (.vos). A backup key is shown once — save it with the file (iCloud, Drive, or print). Prefer .vos over plain JSON.')}
           ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
           ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}

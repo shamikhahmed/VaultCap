@@ -1,3 +1,9 @@
+## [5.1.18] — 2026-07-30
+- Phase 3 IA: Settings → Account · General · Appearance · Access · Alerts · Privacy · About
+- Collapse More System Backup/Security dupes; legacy tab aliases; IA-RATIONALE.md
+- No-PIN confirm gate; help/onboarding copy → Privacy for .vos
+- SW `vaultcap-v80`
+
 ## [5.1.17] — 2026-07-30
 - Phase 2 health: CSP allowlist for LLM/logo proxy; drop unused frankfurter connect-src
 - PBKDF2 constant → 600k; version surfaces synced; home module tiles actionable

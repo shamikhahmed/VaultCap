@@ -118,7 +118,7 @@ async function refreshPageAfterTheme(page, pageId) {
       dashboard: () => typeof Dash !== 'undefined' && Dash.render(),
       family: () => typeof Family !== 'undefined' && Family.render(),
       'finance-home': () => typeof renderFinanceHome === 'function' && renderFinanceHome(),
-      settings: () => typeof SettingsNav !== 'undefined' && SettingsNav.show(SettingsNav.current || 'profile'),
+      settings: () => typeof SettingsNav !== 'undefined' && SettingsNav.show(SettingsNav.current || 'account'),
     };
     if (id && renders[id]) renders[id]();
   }, pageId || '');

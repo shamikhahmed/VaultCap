@@ -34,7 +34,7 @@ Go to **Identity → Documents → + Add Document**. Store passports, driving li
 
 ### Step 5 — Export your first backup
 
-Go to **Settings → Backup & Export → Export Vault**. Copy the generated **backup key**, then download the `.vos` file — save both somewhere safe (iCloud Drive, Google Drive, or printed). **Do this now.** You cannot restore without the file **and** the backup key.
+Go to **Settings → Privacy & Export → Export Vault**. Copy the generated **backup key**, then download the `.vos` file — save both somewhere safe (iCloud Drive, Google Drive, or printed). **Do this now.** You cannot restore without the file **and** the backup key.
 
 ---
 
@@ -133,7 +133,7 @@ Your data exists only on your device. If your phone is stolen, lost, or reset wi
 
 ### Exporting a backup
 
-1. Go to **Settings → Backup & Export → Export Vault**
+1. Go to **Settings → Privacy & Export → Export Vault**
 2. A `.vos` file downloads
 3. Save it to iCloud Drive, Google Drive, Dropbox, or email it to yourself
 4. Note the fingerprint code shown (e.g. `A3F9KX2M`) — useful for verifying the file later
@@ -424,7 +424,7 @@ These appear automatically in the **Reminders** module timeline.
 Export a complete snapshot of your vault as a print-ready PDF.
 
 **How to export:**
-1. Go to Settings → Backup & Export
+1. Go to Settings → Privacy & Export
 2. Tap **📄 Export Financial Summary PDF**
 3. A new tab opens with your full financial summary
 4. Tap **🖨️ Print / Save PDF** and choose "Save as PDF" from your printer options

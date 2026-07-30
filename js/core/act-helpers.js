@@ -54,10 +54,25 @@ const ActHelpers = {
     if (typeof R !== 'undefined') R.showLock();
   },
 
+  /** No-PIN requires explicit confirm — shared-device / coercion risk. */
+  toggleNoPin(el) {
+    const on = !!(el && el.checked);
+    if (on) {
+      const ok = confirm('No-PIN Mode lets anyone open this vault without a PIN. Only enable on a private device. Continue?');
+      if (!ok) {
+        if (el) el.checked = false;
+        return;
+      }
+    }
+    S.noPin = on;
+    if (typeof Store !== 'undefined') Store.save();
+    if (typeof Toast !== 'undefined') Toast.show('No-PIN ' + (on ? 'enabled' : 'disabled'), on ? 'warning' : 'info');
+  },
+
   closeSheetGotoModules(sheetId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
-    this.gotoSettingsTab('modules');
+    this.gotoSettingsTab('general');
   },
 
   closeSheetGoto(sheetId, pageId) {

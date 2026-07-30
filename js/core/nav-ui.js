@@ -136,7 +136,7 @@ function openMore() {
       {id:'timeline',n:'Timeline'},{id:'search',n:'Search'},{id:'trash',n:'Trash'},
     ].filter(m => vis(m.id))},
     { label:'System', items:[
-      {id:'backup',n:'Backup'},{id:'security',n:'Security'},{id:'settings',n:'Settings'},{id:'help',n:'Help'},
+      {id:'settings',n:'Settings'},{id:'help',n:'Help'},
     ]},
   ].filter(g => g.items.length > 0);
   const bodyHtml = navGroups.map(group =>
@@ -201,17 +201,17 @@ function hubTileIcon(id, size = 22) {
 function buildSettTabs() {
   const el = document.getElementById('settTabs');
   if (!el) return;
+  // Ordering law: identity top → rare middle → destructive/legal bottom (see IA-RATIONALE.md)
   const tabs = [
-    ['profile', 'Profile', 'users'],
-    ['security', 'Security', 'shield'],
+    ['account', 'Account', 'users'],
+    ['general', 'General', 'grid'],
     ['appearance', 'Appearance', 'settings'],
-    ['modules', 'Modules', 'grid'],
-    ['backup', 'Backup', 'share'],
-    ['import', 'Import', 'download'],
-    ['accessibility', 'Accessibility', 'eye'],
+    ['accessibility', 'Access', 'eye'],
+    ['notifications', 'Alerts', 'bell'],
+    ['privacy', 'Privacy', 'lock'],
     ['about', 'About', 'book'],
   ];
-  const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'profile';
+  const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'account';
   el.innerHTML = tabs.map(([id, label, ic]) =>
     `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
   ).join('');
