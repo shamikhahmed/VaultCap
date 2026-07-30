@@ -136,7 +136,7 @@ window.recoveryKeyStorageKey = recoveryKeyStorageKey;
 async function showMasterKeyModal(mk) {
   const fmt = mk.match(/.{1,6}/g).join('-');
   Modal.open('Save Your Master Key',
-    '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">This is your vault recovery key. <strong>Write it down and keep it safe.</strong> You cannot view it again here.</div>' +
+    '<div class="vc-ix-69">This is your vault recovery key. <strong>Write it down and keep it safe.</strong> You cannot view it again here.</div>' +
     '<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px;word-break:break-all">' + fmt + '</div>' +
     '<div style="font-size:11px;color:var(--text3);text-align:center">If you forget your PIN, this key lets you recover your vault data.</div>',
     '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">I\'ve saved it</button>'
@@ -155,15 +155,15 @@ window.Settings.forgotPIN = function() {
     return;
   }
   Modal.open('Forgot PIN',
-    '<div style="font-size:13px;color:var(--text2);line-height:1.6">Use Master Key or restore a .vos backup. Capricorn Systems cannot open your vault.</div>',
+    '<div class="vc-ix-91">Use Master Key or restore a .vos backup. Capricorn Systems cannot open your vault.</div>',
     '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Cancel</button>'
   );
 };
 
 window.Settings.useMasterKey = function() {
   Modal.open('Enter Master Key',
-    '<div style="display:flex;flex-direction:column;gap:12px">' +
-    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultCap.<br><span style="color:var(--text3)">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
+    '<div class="vc-ix-14">' +
+    '<div style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px;background:var(--glass);border-radius:10px">Enter the master key that was shown when you first set up VaultCap.<br><span class="vc-ix-4">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</span></div>' +
     '<input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX" style="font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;font-size:16px;text-align:center" data-act-input="ActHelpers.upperAlnumDash(this)">' +
     '<div id="mk-err" style="color:var(--err);font-size:12px;min-height:16px;text-align:center"></div>' +
     '</div>',

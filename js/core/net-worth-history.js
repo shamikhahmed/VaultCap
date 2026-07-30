@@ -122,12 +122,12 @@ const NetWorthHistory = (() => {
     return '<div class="widget" id="nwHistoryWidget">'
       + '<div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('chart', 16) : '') + '</span>Net Worth Trend</div>'
       + '<div style="padding:12px 14px 14px;display:flex;gap:14px;align-items:center">'
-      + '<div style="flex:1;min-width:0">'
+      + '<div class="vc-ix-20">'
       + '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Today</div>'
       + '<div style="font-size:22px;font-weight:900;color:var(--accent)" class="sens">' + fmt + '</div>'
       + deltaHtml
       + '</div>'
-      + '<div style="flex-shrink:0">' + chartHtml(140) + '</div>'
+      + '<div class="vc-ix-21">' + chartHtml(140) + '</div>'
       + '</div></div>';
   }
 

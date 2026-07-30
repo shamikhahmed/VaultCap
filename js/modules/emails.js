@@ -17,9 +17,9 @@ const Emails={
     <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:12px">
       <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:10px;letter-spacing:.5px">SECURITY STATUS</div>
       <div style="display:flex;flex-direction:column;gap:9px">
-        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px">MFA / 2FA Enabled<label class="tog"><input type="checkbox" id="emf-mfa" ${e.mfaEnabled?'checked':''}><span class="ts"></span></label></label>
-        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px">Passkey Enabled<label class="tog"><input type="checkbox" id="emf-pk" ${e.passkeyEnabled?'checked':''}><span class="ts"></span></label></label>
-        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px">Backup Codes Stored<label class="tog"><input type="checkbox" id="emf-bk" ${e.backupCodesStored?'checked':''}><span class="ts"></span></label></label>
+        <label class="vc-ix-113">MFA / 2FA Enabled<label class="tog"><input type="checkbox" id="emf-mfa" ${e.mfaEnabled?'checked':''}><span class="ts"></span></label></label>
+        <label class="vc-ix-113">Passkey Enabled<label class="tog"><input type="checkbox" id="emf-pk" ${e.passkeyEnabled?'checked':''}><span class="ts"></span></label></label>
+        <label class="vc-ix-113">Backup Codes Stored<label class="tog"><input type="checkbox" id="emf-bk" ${e.backupCodesStored?'checked':''}><span class="ts"></span></label></label>
       </div>
     </div>
     <div class="fg"><label class="fl">Linked Services (comma-separated)</label><input class="inp" id="emf-subs" value="${escAttr(e.linkedServices||'')}" placeholder="Netflix, LinkedIn, GitHub..."></div>

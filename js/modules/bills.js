@@ -102,7 +102,7 @@ const Bills = {
     const rows = upcoming.map(b => {
       const daysLeft = Math.round((b.due - new Date().setHours(0, 0, 0, 0)) / 86400000);
       const amtStr = (typeof U !== 'undefined' ? U.fmt(b.amount) : b.amount) + ' ' + escHtml(b.currency || userCur);
-      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">' + escHtml(b.name) + '</div><div style="font-size:11px;color:var(--text3)">' + (daysLeft <= 0 ? 'Due today' : daysLeft + 'd') + '</div></div><div style="font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap" class="sens">' + amtStr + '</div></div>';
+      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div class="vc-ix-12">' + escHtml(b.name) + '</div><div class="vc-ix-3">' + (daysLeft <= 0 ? 'Due today' : daysLeft + 'd') + '</div></div><div style="font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap" class="sens">' + amtStr + '</div></div>';
     }).join('');
     return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills<button type="button" class="btn btn-g btn-sm wh-act" data-act="Bills.openAdd()">+ Add</button></div><div style="padding:4px 14px 10px">' + rows + '</div></div>';
   },
@@ -127,7 +127,7 @@ const Bills = {
       el.innerHTML = '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 32) : '') + '</div>'
         + '<div class="ei-title">No bills in next 30 days</div>'
         + '<div class="ei-sub">Add recurring expenses with renewal dates, or create a bill manually.</div>'
-        + '<button type="button" class="btn btn-p" style="margin-top:14px" data-act="Bills.openAdd()">+ Add Bill</button></div>';
+        + '<button type="button" class="btn btn-p vc-ix-19" data-act="Bills.openAdd()">+ Add Bill</button></div>';
       return;
     }
 
@@ -157,10 +157,10 @@ const Bills = {
       });
     });
 
-    el.innerHTML = '<div class="widget" style="margin-bottom:12px"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills (30 days)</div>'
+    el.innerHTML = '<div class="widget vc-ix-9"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills (30 days)</div>'
       + '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
-      + '<div><div style="font-size:10px;color:var(--text3)">Due this month</div>'
-      + '<div style="font-size:20px;font-weight:900;color:var(--accent)">' + (typeof U !== 'undefined' ? U.fmt(Math.round(monthDisp)) : monthDisp) + ' <span style="font-size:12px;font-weight:400;color:var(--text3)">' + escHtml(userCur) + '</span></div></div>'
+      + '<div><div class="vc-ix-18">Due this month</div>'
+      + '<div style="font-size:20px;font-weight:900;color:var(--accent)">' + (typeof U !== 'undefined' ? U.fmt(Math.round(monthDisp)) : monthDisp) + ' <span class="vc-ix-125">' + escHtml(userCur) + '</span></div></div>'
       + '<button type="button" class="btn btn-p btn-sm" data-act="Bills.openAdd()">+ Add</button></div>'
       + '<div style="padding:0 14px 14px">' + listHtml + '</div></div>';
   },

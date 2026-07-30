@@ -52,34 +52,34 @@ const BondsModule = {
     });
 
     el.innerHTML =
-      '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+      '<div class="vc-ix-59">' +
 
       (bonds.length > 0 ? (
         '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:16px">' +
-          '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Total Holdings</div>' +
+          '<div class="vc-ix-180">Total Holdings</div>' +
           '<div style="font-size:32px;font-weight:900;color:#c9a84c">' + fmt(totalValue) + '</div>' +
-          '<div style="font-size:11px;color:var(--text3);margin-top:4px">' + bonds.length + ' holding' + (bonds.length > 1 ? 's' : '') + ' · Zakatable at face value</div>' +
+          '<div class="vc-ix-114">' + bonds.length + ' holding' + (bonds.length > 1 ? 's' : '') + ' · Zakatable at face value</div>' +
         '</div>'
       ) : '') +
 
       (upcoming.length > 0 ? (
-        '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Upcoming Draws</div>' +
+        '<div class="vc-ix-7">' +
+          '<div class="vc-ix-28">Upcoming Draws</div>' +
           upcoming.map(function(b) {
             const type = BondsModule._getType(b.typeId);
             const nextDraw = BondsModule._nextDraw(type);
             return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">' +
-              '<div><div style="font-size:13px;color:var(--text)">' + b.name + '</div>' +
-              '<div style="font-size:11px;color:var(--text3)">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
-              '<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
+              '<div><div class="vc-ix-57">' + b.name + '</div>' +
+              '<div class="vc-ix-3">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
+              '<div class="vc-ix-132"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
               '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
             '</div>';
           }).join('') +
         '</div>'
       ) : '') +
 
-      '<button type="button" class="btn btn-p" style="width:100%" data-act="BondsModule.openAdd()">+ Add Bond / Security</button>' +
-      '<button type="button" class="btn btn-g" style="width:100%" data-act="BondsModule.openBulkImport()">Bulk Import Bond Numbers</button>' +
+      '<button type="button" class="btn btn-p vc-ix-16" data-act="BondsModule.openAdd()">+ Add Bond / Security</button>' +
+      '<button type="button" class="btn btn-g vc-ix-16" data-act="BondsModule.openBulkImport()">Bulk Import Bond Numbers</button>' +
 
       (bonds.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">' + (typeof VC !== 'undefined' ? VC.icon('ticket', 32) : '') + '</div><div class="ei-title">No bonds yet</div><div class="ei-sub">Track prize bonds, premium bonds, NSS certificates, government securities across PK, UK and UAE</div></div>'
@@ -87,9 +87,9 @@ const BondsModule = {
         bonds.map(function(b, i) { return BondsModule._bondCard(b, i); }).join('')
       ) +
 
-      '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:12px;padding:12px">' +
-        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">Zakat on Bonds</div>' +
-        '<div style="font-size:11px;color:var(--text3);line-height:1.6">Prize bonds and government securities are zakatable at face value. Winnings received are zakatable as cash. This is auto-added to your Zakat calculator.</div>' +
+      '<div class="vc-ix-219">' +
+        '<div class="vc-ix-220">Zakat on Bonds</div>' +
+        '<div class="vc-ix-90">Prize bonds and government securities are zakatable at face value. Winnings received are zakatable as cash. This is auto-added to your Zakat calculator.</div>' +
       '</div>' +
 
       '</div>';

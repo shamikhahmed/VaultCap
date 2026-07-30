@@ -18,7 +18,7 @@ const Cash = {
         const totalUser = fromPKR(totalPKR, userCur);
         const byLocStr = Object.entries(byCur).map(([cur, v]) => `<div class="sens" style="font-size:15px;font-weight:700">${U.fmt(v)} ${cur}</div>`).join('');
         const convLine = Object.keys(byCur).length > 1 || Object.keys(byCur)[0] !== userCur
-          ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';
+          ? `<div class="vc-ix-115">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';
         sm.innerHTML = `<div class="widget" style="margin-bottom:12px;text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Total Cash on Hand</div>${byLocStr}${convLine}</div>`;
       } else { sm.innerHTML = ''; }
     }
@@ -80,11 +80,11 @@ const Cash = {
       ...(otherEntries.length ? ['<option disabled>── existing ──</option>', ...otherEntries.map(o => `<option value="${escAttr(o.id)}">${o.location} (${(o.amount||0).toLocaleString()} ${o.currency})</option>`)] : [])
     ].join('');
     Modal.open('→ Transfer Cash', `
-      <div class="fg"><label class="fl">From</label><input class="inp" value="${escAttr(src.location)} · ${escAttr(String((src.amount||0).toLocaleString()))} ${escAttr(src.currency||'')}" readonly style="opacity:.6"></div>
+      <div class="fg"><label class="fl">From</label><input class="inp vc-ix-212" value="${escAttr(src.location)} · ${escAttr(String((src.amount||0).toLocaleString()))} ${escAttr(src.currency||'')}" readonly></div>
       <div class="fg"><label class="fl">To *</label><select class="inp" id="ct-dest">${destOpts}</select></div>
       <div class="fr">
         <div class="fg"><label class="fl">Amount *</label><input class="inp num-inp" id="ct-amt" type="text" inputmode="decimal" value="${escAttr(src.amount||'')}" placeholder="0"></div>
-        <div class="fg"><label class="fl">Currency</label><input class="inp" value="${escAttr(src.currency||'')}" readonly style="opacity:.6"></div>
+        <div class="fg"><label class="fl">Currency</label><input class="inp vc-ix-212" value="${escAttr(src.currency||'')}" readonly></div>
       </div>
       <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
     `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cash._doTransfer('${id}')">Transfer</button>`);

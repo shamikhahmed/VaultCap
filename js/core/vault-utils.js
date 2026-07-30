@@ -116,7 +116,7 @@ const U = {
     all.forEach(t => { const safe = escHtml(t); html += `<span class="tag${sel.indexOf(t) >= 0 ? ' on' : ''}" data-act="ActHelpers.classToggle(this,'on')">${safe}</span>`; });
     html += '</div>';
     html += '<div style="display:flex;gap:7px;margin-top:7px">';
-    html += '<input class="inp" id="custTagIn" placeholder="Add tag..." style="flex:1" data-act-keydown="if(event.key===\'Enter\')U.addTag()">';
+    html += '<input class="inp vc-ix-5" id="custTagIn" placeholder="Add tag..." data-act-keydown="if(event.key===\'Enter\')U.addTag()">';
     html += '<button type="button" class="btn btn-g btn-sm" data-act="U.addTag()">+</button></div>';
     return html;
   },
@@ -285,7 +285,7 @@ function promptAddAnother(moduleLabel, openFn) {
     padding:10px 18px;display:flex;align-items:center;gap:12px;z-index:9999;
     box-shadow:var(--shadowlg);animation:slideIn .25s var(--spring);white-space:nowrap;
   `;
-  bar.innerHTML = `<span style="font-size:13px;color:var(--text2)">Add another ${moduleLabel}?</span>
+  bar.innerHTML = `<span class="vc-ix-10">Add another ${moduleLabel}?</span>
     <button type="button" class="btn btn-p btn-sm" data-open-fn="${String(openFn).replace(/"/g, '&quot;')}" data-act="ActHelpers.addAnotherFromBtn(this)">Yes</button>
     <button type="button" class="btn btn-g btn-sm" data-act="document.getElementById('add-another-bar').remove()">No</button>`;
   document.body.appendChild(bar);

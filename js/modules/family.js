@@ -181,7 +181,7 @@ const Family = {
     const members = this.allMembers();
     const hideBal = !!S.familyHideBalances;
     const hideToggle = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-      <div><div style="font-size:13px;font-weight:700;color:var(--text)">Hide balances</div><div style="font-size:11px;color:var(--text3)">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
+      <div><div class="vc-ix-56">Hide balances</div><div class="vc-ix-3">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
       <label class="tog"><input type="checkbox" ${hideBal?'checked':''} data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
     </div>`;
 
@@ -213,28 +213,28 @@ const Family = {
             ${this.avatarHtml(head.name, 60)}
             <div>
               <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)} ${this._roleBadge(head.role || 'admin')}</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">${_stat(head.id)}</div>
+              <div class="vc-ix-36">${_stat(head.id)}</div>
             </div>
           </div>
         </div>`
       : (S.user.name
-        ? `<div data-act="Family.confirmHeadFromProfile()" style="background:rgba(0,213,255,.08);border:2px dashed rgba(0,213,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
-          <div style="margin-bottom:8px;display:flex;justify-content:center">${S.user.name ? this.avatarHtml(S.user.name, 48) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text)">Use ${escHtml(S.user.name)} as Head of Family</div>
+        ? `<div class="vc-ix-244" data-act="Family.confirmHeadFromProfile()">
+          <div class="vc-ix-130">${S.user.name ? this.avatarHtml(S.user.name, 48) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
+          <div class="vc-ix-77">Use ${escHtml(S.user.name)} as Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
-        : `<div data-act="Family.openAddMember(true)" style="background:rgba(0,213,255,.08);border:2px dashed rgba(0,213,255,.3);border-radius:20px;padding:24px;text-align:center;cursor:pointer;touch-action:manipulation;margin-bottom:12px">
-          <div style="margin-bottom:8px;display:flex;justify-content:center">${VC.icon('star',32)}</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text)">Set Head of Family</div>
+        : `<div class="vc-ix-244" data-act="Family.openAddMember(true)">
+          <div class="vc-ix-130">${VC.icon('star',32)}</div>
+          <div class="vc-ix-77">Set Head of Family</div>
           <div style="font-size:13px;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
         </div>`);
 
     const memberCards = rest.map(m =>
       `<div data-act="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
         ${this.avatarHtml(m.name, 52)}
-        <div style="flex:1;min-width:0">
-          <div style="font-size:15px;font-weight:700;color:var(--text)">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
+        <div class="vc-ix-20">
+          <div class="vc-ix-77">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
+          <div class="vc-ix-36">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
         </div>
         <div style="color:var(--text3);font-size:20px">›</div>
       </div>`
@@ -245,7 +245,7 @@ const Family = {
         ${hideToggle}
         ${headCard}
         <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Family Members</div>
+          <div class="vc-ix-223">Family Members</div>
           <button type="button" class="btn btn-p btn-sm" data-act="Family.openAddMember(false)">+ Add</button>
         </div>
         ${rest.length ? memberCards : '<div class="empty"><div class="empty-ic">'+VC.icon('users',32)+'</div><h3>No members yet</h3><p>Add family members to manage their finances</p></div>'}
@@ -323,44 +323,44 @@ const Family = {
 
     if (this._tab === 'banks') {
       const items = (S.banks || []).filter(b => b.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('banks')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Bank</button>` +
-        (items.length ? items.map(b => this._bankRow(b)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No banks added yet</div>');
+      return `<button type="button" data-act="Family.addEntity('banks')" class="btn btn-p vc-ix-49">+ Add Bank</button>` +
+        (items.length ? items.map(b => this._bankRow(b)).join('') : '<div class="vc-ix-50">No banks added yet</div>');
     }
 
     if (this._tab === 'cards') {
       const items = (S.cards || []).filter(c => c.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('cards')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Card</button>` +
-        (items.length ? items.map(c => this._cardRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cards added yet</div>');
+      return `<button type="button" data-act="Family.addEntity('cards')" class="btn btn-p vc-ix-49">+ Add Card</button>` +
+        (items.length ? items.map(c => this._cardRow(c)).join('') : '<div class="vc-ix-50">No cards added yet</div>');
     }
 
     if (this._tab === 'cash') {
       const items = (S.cash || []).filter(c => c.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('cash')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Cash</button>` +
-        (items.length ? items.map(c => this._cashRow(c)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No cash entries yet</div>');
+      return `<button type="button" data-act="Family.addEntity('cash')" class="btn btn-p vc-ix-49">+ Add Cash</button>` +
+        (items.length ? items.map(c => this._cashRow(c)).join('') : '<div class="vc-ix-50">No cash entries yet</div>');
     }
 
     if (this._tab === 'investments') {
       const items = (S.investments || []).filter(i => i.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('investments')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Investment</button>` +
-        (items.length ? items.map(i => this._invRow(i)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No investments added yet</div>');
+      return `<button type="button" data-act="Family.addEntity('investments')" class="btn btn-p vc-ix-49">+ Add Investment</button>` +
+        (items.length ? items.map(i => this._invRow(i)).join('') : '<div class="vc-ix-50">No investments added yet</div>');
     }
 
     if (this._tab === 'assets') {
       const items = (S.assets || []).filter(a => a.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('assets')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Asset</button>` +
-        (items.length ? items.map(a => this._assetRow(a)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No assets added yet</div>');
+      return `<button type="button" data-act="Family.addEntity('assets')" class="btn btn-p vc-ix-49">+ Add Asset</button>` +
+        (items.length ? items.map(a => this._assetRow(a)).join('') : '<div class="vc-ix-50">No assets added yet</div>');
     }
 
     if (this._tab === 'documents') {
       const items = (S.documents || []).filter(d => d.ownerId === id);
-      return `<button type="button" data-act="Family.addEntity('documents')" class="btn btn-p" style="width:100%;margin-bottom:12px">+ Add Document</button>` +
-        (items.length ? items.map(d => this._docRow(d)).join('') : '<div style="text-align:center;padding:24px;color:var(--text3)">No documents added yet</div>');
+      return `<button type="button" data-act="Family.addEntity('documents')" class="btn btn-p vc-ix-49">+ Add Document</button>` +
+        (items.length ? items.map(d => this._docRow(d)).join('') : '<div class="vc-ix-50">No documents added yet</div>');
     }
 
     if (this._tab === 'notes') {
       return `<div class="fg"><label class="fl">Private notes for ${escHtml(m.name)}</label>
         <textarea class="inp" id="fam-member-notes" rows="6" placeholder="Medical info, emergency contacts, school details…">${escHtml(m.notes || '')}</textarea></div>
-        <button type="button" class="btn btn-p btn-full" style="margin-top:10px" data-act="Family._saveNotes('${id}')">Save Notes</button>`;
+        <button type="button" class="btn btn-p btn-full vc-ix-51" data-act="Family._saveNotes('${id}')">Save Notes</button>`;
     }
 
     return '';
@@ -395,7 +395,7 @@ const Family = {
   _bankRow(b) {
     const bal = b.balance ? (b.currency || '') + ' ' + U.fmt(b.balance) : '';
     return `<div class="entry"><div class="entry-main">
-      <div class="entry-ic" style="padding:0;overflow:hidden;border-radius:10px;flex-shrink:0">${typeof getBankLogo !== 'undefined' ? getBankLogo(b.bankName, 36) : VC.icon('bank', 18)}</div>
+      <div class="entry-ic vc-ix-238">${typeof getBankLogo !== 'undefined' ? getBankLogo(b.bankName, 36) : VC.icon('bank', 18)}</div>
       <div class="entry-body">
         <div class="entry-name">${escHtml(b.bankName || 'Bank')}</div>
         <div class="entry-sub">${escHtml(b.accountType || '')} · ${escHtml(b.currency || '')}${bal ? ' · ' + bal : ''}</div>
@@ -534,7 +534,7 @@ const Family = {
     const p = isHead ? this._profileSnapshot() : { name:'', dob:'', phone:'', email:'' };
     Modal.open(isHead ? 'Head of Family' : 'Add Family Member',
       `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
-      <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="vc-ix-31">
         <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name" data-act-input="Family._syncAvatarPreview(this.value)"></div>
         ${this._avatarFieldHtml(p.name || '')}
         ${!isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL3"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Grandparent</option></datalist><input class="inp" id="fam-rel" value="" list="fRelDL3" placeholder="Spouse, Son, Daughter..."></div>` : ''}
@@ -583,7 +583,7 @@ const Family = {
     const m = this.getMember(id);
     if (!m) return;
     Modal.open(m.isHead ? 'Edit Head of Family' : 'Edit Member',
-      `<div style="display:flex;flex-direction:column;gap:10px">
+      `<div class="vc-ix-31">
         <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(m.name)}" placeholder="Full name" data-act-input="Family._syncAvatarPreview(this.value)"></div>
         ${this._avatarFieldHtml(m.name)}
         ${!m.isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL4"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fam-rel" value="${escHtml(m.relation || '')}" list="fRelDL4" placeholder="Spouse, Son, Daughter..."></div>` : ''}

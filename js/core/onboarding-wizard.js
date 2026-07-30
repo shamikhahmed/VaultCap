@@ -55,42 +55,42 @@ const Onboarding = {
         <button type="button" data-act="Onboarding._skip()" style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip for now</button>`;
     } else if (this._step === 1) {
       content = `
-        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">Where do you primarily live?</div>
-        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Sets your currency, tax system, and banks</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+        <div class="vc-ix-79">Where do you primarily live?</div>
+        <div class="vc-ix-100">Sets your currency, tax system, and banks</div>
+        <div class="vc-ix-182">
           ${this._countries.map(c => `
             <div data-act="ActHelpers.selectPrimaryCountry('${c.code}',this)"
               class="ob-country"
               role="button" tabindex="0" aria-pressed="${this._primaryCountry===c.code?'true':'false'}"
               style="padding:14px 12px;border-radius:14px;background:var(--glass);border:2px solid ${this._primaryCountry===c.code?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px">
-              <span style="font-size:20px" aria-hidden="true">${c.flag}</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+              <span class="vc-ix-183" aria-hidden="true">${c.flag}</span>
+              <span class="vc-ix-12">${c.name}</span>
             </div>`).join('')}
         </div>
-        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:14px;font-weight:700">Continue →</button>
-        <button type="button" data-act="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+        <button type="button" data-act="Onboarding._next()" class="btn btn-p vc-ix-184">Continue →</button>
+        <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 2) {
       content = `
-        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">Any other countries?</div>
-        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Multi-country support — add relevant banks</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
+        <div class="vc-ix-79">Any other countries?</div>
+        <div class="vc-ix-100">Multi-country support — add relevant banks</div>
+        <div class="vc-ix-182">
           <div id="ob-none-card" data-act="ActHelpers.clearSecondaryAndStyle(this)"
             class="ob-sec"
             style="padding:14px 12px;border-radius:14px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;grid-column:1/-1">
             <span style="font-size:20px;display:flex">${typeof VC!=='undefined'?VC.icon('cross',20):''}</span>
-            <span style="font-size:13px;font-weight:600;color:var(--text)">None — I only manage money in one country</span>
+            <span class="vc-ix-12">None — I only manage money in one country</span>
           </div>
           ${this._countries.filter(c=>c.code!==this._primaryCountry).map(c => `
             <div data-act="ActHelpers.toggleSecondaryCountry('${c.code}')"
               class="ob-sec"
               style="padding:14px 12px;border-radius:14px;background:${this._secondaryCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${this._secondaryCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px">
-              <span style="font-size:20px">${c.flag}</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+              <span class="vc-ix-183">${c.flag}</span>
+              <span class="vc-ix-12">${c.name}</span>
             </div>`).join('')}
         </div>
-        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:14px;font-weight:700">Continue →</button>
+        <button type="button" data-act="Onboarding._next()" class="btn btn-p vc-ix-184">Continue →</button>
         <button type="button" data-act="Onboarding._secondaryCountries=[];Onboarding._next()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip this step →</button>
-        <button type="button" data-act="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+        <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 3) {
       const moduleOptions = [
         { key:'banking',     icon:'bank', label:'Banking & Cards',    desc:'Banks, cards, cash, credit' },
@@ -105,22 +105,22 @@ const Onboarding = {
         { key:'loans',       icon:'handshake', label:'Loans & Debts',       desc:'Money lent or borrowed' },
       ];
       content = `
-        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you want to manage?</div>
+        <div class="vc-ix-79">What do you want to manage?</div>
         <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px">You can change this anytime in Settings</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px;margin-bottom:20px;max-height:55vh;overflow-y:auto;padding:2px">
           ${moduleOptions.map(m => `
             <div data-act="ActHelpers.toggleObModule('${m.key}',this)"
               style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="display:flex;align-items:center">${VC.icon(m.icon,18)}</span>
+              <div class="vc-ix-185">
+                <span class="vc-ix-87">${VC.icon(m.icon,18)}</span>
                 <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
               </div>
               <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.3">${m.desc}</div>
+              <div class="vc-ix-176">${m.desc}</div>
             </div>`).join('')}
         </div>
         <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:440px;padding:14px;font-weight:700">Continue →</button>
-        <button type="button" data-act="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+        <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 4) {
       const prefs = [
         { key: 'zakat',       icon: 'moon', label: 'Zakat Calculator', desc: 'Islamic annual wealth obligation' },
@@ -129,22 +129,22 @@ const Onboarding = {
         { key: 'investments', icon: 'trending-up', label: 'Investments',       desc: 'Track stocks, funds, crypto' },
       ];
       content = `
-        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">What do you use?</div>
-        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Personalise your vault — hide what you don't need</div>
+        <div class="vc-ix-79">What do you use?</div>
+        <div class="vc-ix-100">Personalise your vault — hide what you don't need</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin-bottom:24px">
           ${prefs.map(p => `
             <div data-act="Onboarding._prefs['${p.key}']=!Onboarding._prefs['${p.key}'];this.style.borderColor=Onboarding._prefs['${p.key}']?'var(--accent)':'var(--border)'"
               style="padding:14px 16px;border-radius:14px;background:var(--glass);border:2px solid ${this._prefs[p.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
-              <span style="display:flex;align-items:center">${VC.icon(p.icon,20)}</span>
-              <div style="flex:1">
-                <div style="font-size:14px;font-weight:600;color:var(--text)">${p.label}</div>
-                <div style="font-size:12px;color:var(--text3)">${p.desc}</div>
+              <span class="vc-ix-87">${VC.icon(p.icon,20)}</span>
+              <div class="vc-ix-5">
+                <div class="vc-ix-179">${p.label}</div>
+                <div class="vc-ix-8">${p.desc}</div>
               </div>
               <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(0,213,255,.15)':'transparent'}"></div>
             </div>`).join('')}
         </div>
         <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Continue →</button>
-        <button type="button" data-act="Onboarding._back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>`;
+        <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 5) {
       const country = this._countries.find(c => c.code === this._primaryCountry);
       const flag = country ? country.flag : '';
@@ -153,25 +153,25 @@ const Onboarding = {
         <div style="font-size:26px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center;letter-spacing:-0.5px">Your vault is ready.</div>
         <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:300px;margin-bottom:28px">Everything's set up. Here's what you can do right now:</div>
         <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
-          <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('bank',18)}</span>
+          <div class="vc-ix-101">
+            <span class="vc-ix-65">${VC.icon('bank',18)}</span>
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Add your accounts</div>
-              <div style="font-size:12px;color:var(--text3);line-height:1.5">Track banks, cards, cash, and investments in one place</div>
+              <div class="vc-ix-102">Add your accounts</div>
+              <div class="vc-ix-76">Track banks, cards, cash, and investments in one place</div>
             </div>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('chart',18)}</span>
+          <div class="vc-ix-101">
+            <span class="vc-ix-65">${VC.icon('chart',18)}</span>
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">See your net worth</div>
-              <div style="font-size:12px;color:var(--text3);line-height:1.5">Your dashboard shows a live total across all assets</div>
+              <div class="vc-ix-102">See your net worth</div>
+              <div class="vc-ix-76">Your dashboard shows a live total across all assets</div>
             </div>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
-            <span style="display:flex;align-items:center;flex-shrink:0">${VC.icon('lock',18)}</span>
+          <div class="vc-ix-101">
+            <span class="vc-ix-65">${VC.icon('lock',18)}</span>
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Stay private &amp; secure</div>
-              <div style="font-size:12px;color:var(--text3);line-height:1.5">PIN lock, privacy blur, and offline-first — your data never leaves your device</div>
+              <div class="vc-ix-102">Stay private &amp; secure</div>
+              <div class="vc-ix-76">PIN lock, privacy blur, and offline-first — your data never leaves your device</div>
             </div>
           </div>
         </div>

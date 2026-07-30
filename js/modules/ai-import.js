@@ -278,10 +278,10 @@ const AIImport = {
     const body = document.getElementById('aiImportBody') || document.getElementById('importBody');
     if (!body) return;
     body.innerHTML =
-      '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+      '<div class="vc-ix-59">' +
 
       '<div class="u-highlight-card">' +
-        '<div style="font-size:12px;color:var(--text3);line-height:1.7">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
+        '<div class="vc-ix-207">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
         '<div style="font-size:11px;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
       '</div>' +
 
@@ -295,17 +295,17 @@ const AIImport = {
         'ondragleave="this.style.borderColor=\'var(--border)\'" ' +
         'ondrop="AIImport.handleDrop(event)" ' +
         'data-act="document.getElementById(\'ie-file\').click()">' +
-        '<div style="margin-bottom:8px;display:flex;justify-content:center">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
+        '<div class="vc-ix-130">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
         '<div style="font-size:13px;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
-        '<div style="font-size:11px;color:var(--text3);margin-top:4px">CSV, text, or image (OCR via Import page)</div>' +
-        '<input type="file" id="ie-file" style="display:none" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" data-act-change="AIImport.handleFile(this.files[0])">' +
+        '<div class="vc-ix-114">CSV, text, or image (OCR via Import page)</div>' +
+        '<input class="vc-ix-17" type="file" id="ie-file" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" data-act-change="AIImport.handleFile(this.files[0])">' +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" id="ie-detect-btn" data-act="AIImport.detect()">Detect &amp; Extract</button>' +
+      '<button type="button" class="btn btn-p vc-ix-16" id="ie-detect-btn" data-act="AIImport.detect()">Detect &amp; Extract</button>' +
 
-      '<div id="ie-status" style="display:none;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center">' +
-        '<div id="ie-status-text" style="font-size:13px;color:var(--text2)"></div>' +
-        '<div style="background:var(--border);border-radius:2px;height:4px;margin-top:10px;overflow:hidden"><div id="ie-progress" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s var(--ease)"></div></div>' +
+      '<div class="vc-ix-148" id="ie-status">' +
+        '<div class="vc-ix-10" id="ie-status-text"></div>' +
+        '<div class="vc-ix-149"><div class="vc-ix-150" id="ie-progress"></div></div>' +
       '</div>' +
 
       '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
@@ -364,7 +364,7 @@ const AIImport = {
             if (resultsEl) {
               resultsEl.innerHTML = '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.35);border-radius:12px;padding:14px;margin-bottom:10px;font-size:12px;line-height:1.55;color:var(--text2)">' +
                 '<strong style="color:var(--warn)">LLM proxy offline</strong><br>' +
-                escHtml(health.message) + '<br><span style="color:var(--text3)">Continuing with offline Smart Parser…</span></div>';
+                escHtml(health.message) + '<br><span class="vc-ix-4">Continuing with offline Smart Parser…</span></div>';
             }
             Toast.show('LLM proxy offline — using Smart Parser only', 'warning', 5000);
           }
@@ -403,8 +403,8 @@ const AIImport = {
     const typeIcons = { bank:'bank', card:'card', loan:'handshake', document:'id-card', cash:'banknote', investment:'chart', gold:'gem', bc:'handshake', bond:'ticket', expense:'repeat', sim:'smartphone', email:'mail' };
     const typeColors = { bank:'rgba(255,255,255,.15)', card:'rgba(52,199,89,.15)', loan:'rgba(255,159,10,.15)', document:'rgba(255,255,255,.15)', cash:'rgba(52,199,89,.15)', investment:'rgba(122,168,245,.15)', gold:'rgba(201,168,76,.15)', bc:'rgba(255,255,255,.15)', bond:'rgba(201,168,76,.15)', expense:'rgba(233,30,140,.12)', sim:'rgba(255,255,255,.12)' };
 
-    let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
-      '<div style="font-size:13px;font-weight:700;color:var(--text)">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
+    let html = '<div class="vc-ix-136">' +
+      '<div class="vc-ix-56">Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : '') + '</div>' +
       '<button type="button" class="btn btn-p btn-sm" data-act="AIImport.importSelected()">Import Selected</button>' +
     '</div>';
 
@@ -429,7 +429,7 @@ const AIImport = {
           fields.map(function(e) {
             const key = e[0], val = e[1];
             const displayVal = Array.isArray(val) ? val.join(', ') : String(val);
-            return '<div style="display:flex;align-items:center;gap:8px">' +
+            return '<div class="vc-ix-161">' +
               '<div style="font-size:11px;color:var(--text3);min-width:100px;text-transform:capitalize">' + key.replace(/([A-Z])/g, ' $1').trim() + '</div>' +
               '<input style="flex:1;background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px" ' +
                 'value="' + displayVal.replace(/"/g, '&quot;') + '" ' +

@@ -2,7 +2,7 @@
 /* skeletonCard, initSwipeDelete, pullToRefresh, showContextMenu, initLongPress, promptAddAnother, SmartSuggest */
 
 function skeletonCard() {
-  return `<div class="entry" style="pointer-events:none">
+  return `<div class="entry vc-ix-171">
     <div class="entry-main">
       <div class="entry-ic skel" style="width:40px;height:40px;border-radius:var(--rsm);flex-shrink:0"></div>
       <div class="entry-body" style="gap:6px;display:flex;flex-direction:column">

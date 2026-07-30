@@ -51,7 +51,7 @@ const VaultProfiles = {
   startDemo() {
     if (this.active() === 'personal' && S.unlocked && _vaultEntityCount(Store._data()) > 0) {
       Modal.open('Demo vault',
-        '<div style="font-size:13px;color:var(--text2);line-height:1.6">Opens a <strong>separate sandbox</strong> with fictional data. Your real vault is not changed.</div>',
+        '<div class="vc-ix-91">Opens a <strong>separate sandbox</strong> with fictional data. Your real vault is not changed.</div>',
         `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Modal.close();VaultProfiles._enterDemo()">Open demo vault →</button>`
       );
       return;
@@ -75,7 +75,7 @@ const VaultProfiles = {
       '<div>② Banks & Cards — tap any module in the nav</div>' +
       '<div>③ Settings → Exit Demo when you want your real vault</div>' +
       '</div>' +
-      '<div style="margin-top:14px;padding:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong style="color:var(--text)">123456</strong> · No real data is stored here</div>',
+      '<div style="margin-top:14px;padding:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong class="vc-ix-189">123456</strong> · No real data is stored here</div>',
       '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start exploring →</button>'
     );
   },
@@ -92,12 +92,12 @@ const VaultProfiles = {
       VaultProfiles.pickerProfiles().map(p =>
         '<div data-act="VaultProfiles.switch(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:14px;background:' + (p.id===active?'rgba(0,213,255,.12)':'var(--glass)') + ';border:1px solid ' + (p.id===active?'rgba(0,213,255,.4)':'var(--border)') + ';border-radius:14px;cursor:pointer;touch-action:manipulation;min-height:48px">' +
         '<div style="font-size:28px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon(p.ic || 'vault', 24) : '') + '</div>' +
-        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">' + p.label + (p.id===active?' <span style="font-size:11px;color:var(--accent)">● Active</span>':'') + '</div>' +
-        '<div style="font-size:12px;color:var(--text3)">' + p.desc + '</div></div>' +
+        '<div class="vc-ix-5"><div class="vc-ix-25">' + p.label + (p.id===active?' <span style="font-size:11px;color:var(--accent)">● Active</span>':'') + '</div>' +
+        '<div class="vc-ix-8">' + p.desc + '</div></div>' +
         '<div style="font-size:16px;color:var(--text3)">›</div>' +
         '</div>'
       ).join('') +
-      (active === 'demo' ? '<button type="button" class="btn btn-g btn-full btn-sm" style="margin-top:4px" data-act="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +
+      (active === 'demo' ? '<button type="button" class="btn btn-g btn-full btn-sm vc-ix-27" data-act="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +
       '</div>',
       '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Close</button>'
     );

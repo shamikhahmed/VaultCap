@@ -40,7 +40,7 @@ const CreditScore = {
     ];
 
     body.innerHTML =
-      '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">' +
+      '<div class="vc-ix-59">' +
 
       // Score hero
       '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:24px;text-align:center">' +
@@ -55,14 +55,14 @@ const CreditScore = {
             '<div style="font-size:13px;font-weight:700;color:' + scoreColor + ';margin-top:4px">' + scoreLabel + '</div>' +
           '</div>' +
         '</div>' +
-        (d.agency ? '<div style="font-size:12px;color:var(--text3);margin-bottom:4px">Reported by ' + escHtml(d.agency) + '</div>' : '') +
-        (d.lastChecked ? '<div style="font-size:11px;color:var(--text3)">Last checked: ' + new Date(d.lastChecked).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) + '</div>' : '') +
+        (d.agency ? '<div class="vc-ix-211">Reported by ' + escHtml(d.agency) + '</div>' : '') +
+        (d.lastChecked ? '<div class="vc-ix-3">Last checked: ' + new Date(d.lastChecked).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) + '</div>' : '') +
       '</div>' +
 
-      '<button type="button" class="btn btn-p" style="width:100%" data-act="CreditScore.openUpdate()">Update Score</button>' +
+      '<button type="button" class="btn btn-p vc-ix-16" data-act="CreditScore.openUpdate()">Update Score</button>' +
 
       // Score breakdown tips
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
+      '<div class="vc-ix-7">' +
         '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px">What affects your score</div>' +
         [
           ['card', 'Payment History', '35%', 'Always pay on time — biggest factor'],
@@ -73,13 +73,13 @@ const CreditScore = {
         ].map(function(f) {
           const ic = typeof VC !== 'undefined' ? VC.icon(f[0], 18) : '';
           return '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">' +
-            '<div class="chip-ic" style="flex-shrink:0">' + ic + '</div>' +
-            '<div style="flex:1">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between">' +
-                '<div style="font-size:13px;color:var(--text);font-weight:600">' + f[1] + '</div>' +
+            '<div class="chip-ic vc-ix-21">' + ic + '</div>' +
+            '<div class="vc-ix-5">' +
+              '<div class="vc-ix-185">' +
+                '<div class="vc-ix-245">' + f[1] + '</div>' +
                 '<div style="font-size:12px;font-weight:800;color:var(--accent)">' + f[2] + '</div>' +
               '</div>' +
-              '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + f[3] + '</div>' +
+              '<div class="vc-ix-115">' + f[3] + '</div>' +
             '</div>' +
           '</div>';
         }).join('') +
@@ -87,12 +87,12 @@ const CreditScore = {
 
       // Score history
       (history.length > 1 ? (
-        '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Score History</div>' +
+        '<div class="vc-ix-7">' +
+          '<div class="vc-ix-28">Score History</div>' +
           history.slice(-8).reverse().map(function(h) {
             const hColor = h.score >= 800 ? 'var(--ok)' : h.score >= 700 ? '#34c759' : h.score >= 600 ? 'var(--warn)' : 'var(--err)';
             return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">' +
-              '<div style="font-size:12px;color:var(--text2)">' + new Date(h.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' }) + '</div>' +
+              '<div class="vc-ix-13">' + new Date(h.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' }) + '</div>' +
               '<div style="font-size:14px;font-weight:800;color:' + hColor + '">' + h.score + '</div>' +
             '</div>';
           }).join('') +
@@ -100,13 +100,13 @@ const CreditScore = {
       ) : '') +
 
       // Agency ranges reference
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Score Ranges by Agency</div>' +
+      '<div class="vc-ix-7">' +
+        '<div class="vc-ix-28">Score Ranges by Agency</div>' +
         agencies.map(function(a) {
-          return '<div style="margin-bottom:10px">' +
+          return '<div class="vc-ix-26">' +
             '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
-              '<div style="font-size:12px;font-weight:700;color:var(--text)">' + a.name + '</div>' +
-              '<div style="font-size:11px;color:var(--text3)">' + a.min + ' – ' + a.max + '</div>' +
+              '<div class="vc-ix-97">' + a.name + '</div>' +
+              '<div class="vc-ix-3">' + a.min + ' – ' + a.max + '</div>' +
             '</div>' +
             '<div style="height:6px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;display:flex">' +
               '<div style="flex:' + a.fair + ';background:var(--err);border-radius:999px 0 0 999px"></div>' +
@@ -121,8 +121,8 @@ const CreditScore = {
       '</div>' +
 
       // Check credit links
-      '<div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px">' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Check Your Credit Report</div>' +
+      '<div class="vc-ix-7">' +
+        '<div class="vc-ix-28">Check Your Credit Report</div>' +
         [
           ['🇬🇧', 'Experian UK', 'https://www.experian.co.uk', 'Free monthly score'],
           ['🇬🇧', 'ClearScore (Equifax)', 'https://www.clearscore.com', 'Free, updated weekly'],
@@ -130,10 +130,10 @@ const CreditScore = {
           ['🇵🇰', 'ECIB Pakistan', 'https://www.sbp.org.pk/ecib', 'State Bank credit registry'],
           ['🇦🇪', 'AECB UAE', 'https://www.aecb.gov.ae', 'Al Etihad Credit Bureau'],
         ].map(function(l) {
-          return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">' +
+          return '<div class="vc-ix-208">' +
             '<div>' +
-              '<div style="font-size:13px;color:var(--text);font-weight:600">' + l[0] + ' ' + l[1] + '</div>' +
-              '<div style="font-size:11px;color:var(--text3)">' + l[3] + '</div>' +
+              '<div class="vc-ix-245">' + l[0] + ' ' + l[1] + '</div>' +
+              '<div class="vc-ix-3">' + l[3] + '</div>' +
             '</div>' +
             '<button type="button" data-act="window.open(\'' + l[2] + '\',\'_blank\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
           '</div>';

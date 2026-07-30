@@ -90,15 +90,15 @@ const DataIntegrity = {
     const hasDups = total > 0;
     Modal.open(
       'Data Integrity Check',
-      `<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      `<div class="vc-ix-168">
         Scanned ${(S.banks||[]).length} banks, ${(S.cards||[]).length} cards, ${(S.documents||[]).length} documents.
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
-        ${r.highCount > 0 ? `<div style="padding:10px;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.2);border-radius:10px;font-size:13px;color:var(--err)">${r.highCount} HIGH confidence duplicate${r.highCount>1?'s':''} — likely same record entered twice</div>` : '<div style="font-size:13px;color:var(--ok)">No high-confidence duplicates</div>'}
+        ${r.highCount > 0 ? `<div style="padding:10px;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.2);border-radius:10px;font-size:13px;color:var(--err)">${r.highCount} HIGH confidence duplicate${r.highCount>1?'s':''} — likely same record entered twice</div>` : '<div class="vc-ix-169">No high-confidence duplicates</div>'}
         ${r.posCount > 0 ? `<div style="padding:10px;background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:10px;font-size:13px;color:var(--warn)">${r.posCount} POSSIBLE duplicate${r.posCount>1?'s':''} — review recommended</div>` : ''}
-        ${!hasDups ? '<div style="font-size:13px;color:var(--ok)">No duplicates detected</div>' : ''}
+        ${!hasDups ? '<div class="vc-ix-169">No duplicates detected</div>' : ''}
       </div>
-      <div style="font-size:11px;color:var(--text3);line-height:1.5">Note: Duplicate detection uses unique identifiers (account numbers, last 4 digits, document numbers) — two accounts at the same bank are NOT flagged as duplicates unless they share the same identifier.</div>`,
+      <div class="vc-ix-160">Note: Duplicate detection uses unique identifiers (account numbers, last 4 digits, document numbers) — two accounts at the same bank are NOT flagged as duplicates unless they share the same identifier.</div>`,
       `${hasDups ? '<button type="button" class="btn btn-g" data-act="Modal.close();DataIntegrity.showDuplicates()">Review →</button>' : ''}<button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>`
     );
   },
@@ -118,19 +118,19 @@ const DataIntegrity = {
       return `<div style="background:${confBg};border:1px solid ${confColor}44;border-radius:12px;padding:12px;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <span style="font-size:11px;font-weight:700;color:${confColor}">${d.confidence} CONFIDENCE</span>
-          <span style="font-size:11px;color:var(--text3)">${d.reason}</span>
+          <span class="vc-ix-3">${d.reason}</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-          <div style="background:var(--glass);border-radius:8px;padding:8px">
-            <div style="font-size:12px;font-weight:700;color:var(--text)">${escHtml(nameA)}</div>
-            ${subA ? `<div style="font-size:11px;color:var(--text3)">${escHtml(subA)}</div>` : ''}
+          <div class="vc-ix-170">
+            <div class="vc-ix-97">${escHtml(nameA)}</div>
+            ${subA ? `<div class="vc-ix-3">${escHtml(subA)}</div>` : ''}
           </div>
-          <div style="background:var(--glass);border-radius:8px;padding:8px">
-            <div style="font-size:12px;font-weight:700;color:var(--text)">${escHtml(nameB)}</div>
-            ${subB ? `<div style="font-size:11px;color:var(--text3)">${escHtml(subB)}</div>` : ''}
+          <div class="vc-ix-170">
+            <div class="vc-ix-97">${escHtml(nameB)}</div>
+            ${subB ? `<div class="vc-ix-3">${escHtml(subB)}</div>` : ''}
           </div>
         </div>
-        ${d.confidence === 'HIGH' ? `<div style="font-size:11px;color:var(--text3)">These appear to be the same record. Review both before deleting.</div>` : `<div style="font-size:11px;color:var(--text3)">These may be different records at the same institution. No action required if they are distinct accounts.</div>`}
+        ${d.confidence === 'HIGH' ? `<div class="vc-ix-3">These appear to be the same record. Review both before deleting.</div>` : `<div class="vc-ix-3">These may be different records at the same institution. No action required if they are distinct accounts.</div>`}
       </div>`;
     };
 
@@ -155,13 +155,13 @@ const Audit = {
   render(item) {
     if (!item?._audit?.length) return '<div style="font-size:12px;color:var(--text3);padding:8px 0">No edit history yet</div>';
     return `<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Edit History</div>
+      <div class="vc-ix-134">Edit History</div>
       ${item._audit.map(a => `
         <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
           <div style="width:6px;height:6px;border-radius:50%;background:var(--accent,var(--purple,#7b5fff));flex-shrink:0;margin-top:5px"></div>
           <div>
             <div style="font-size:12px;font-weight:600;color:var(--text)">${a.action}</div>
-            <div style="font-size:10px;color:var(--text3)">${new Date(a.at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+            <div class="vc-ix-18">${new Date(a.at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
           </div>
         </div>`).join('')}
     </div>`;

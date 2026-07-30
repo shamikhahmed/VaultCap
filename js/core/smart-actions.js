@@ -4,7 +4,7 @@
 const SmartAdd = {
   open() {
     Modal.open('Smart Add', `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Describe what to add in plain English. VaultCap detects the type and pre-fills the form — works offline, no AI needed.</p>
+      <p class="vc-ix-68">Describe what to add in plain English. VaultCap detects the type and pre-fills the form — works offline, no AI needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
         <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:13px;line-height:1.6"></textarea>
@@ -230,7 +230,7 @@ const CMD = {
       } else {
         const badgeHtml = r.badge ? `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.2);margin-left:auto;flex-shrink:0">${r.badge}</span>` : '';
         const subHtml = r.subtitle ? `<div style="font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.subtitle}</div>` : '';
-        html += `<div class="ci" id="ci${i}" data-act="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${cmdIc(r)}</span><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
+        html += `<div class="ci" id="ci${i}" data-act="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${cmdIc(r)}</span><div class="vc-ix-20"><div class="vc-ix-173">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
       }
     });
     document.getElementById('cmdList').innerHTML = html;
@@ -248,7 +248,7 @@ const CMD = {
   /** Closes the palette and opens a modal listing all keyboard shortcuts. */
   showHelp() {
     this.close();
-    const row = (k, desc) => `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text2)">${desc}</span><span class="kbd">${k}</span></div>`;
+    const row = (k, desc) => `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)"><span class="vc-ix-10">${desc}</span><span class="kbd">${k}</span></div>`;
     Modal.open('Keyboard Shortcuts',
       `<div style="margin:-4px 0">
         ${row('⌘K','Open command palette')}

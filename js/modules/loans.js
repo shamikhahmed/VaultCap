@@ -38,17 +38,17 @@ const Loans = {
 
     const sm = document.getElementById('loanSummary');
     if (sm) {
-      sm.innerHTML = `<div class="widget" style="margin-bottom:12px"><div class="fr" style="gap:0">
-        <div style="flex:1;text-align:center;padding:6px 8px;border-right:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">I Owe</div>
+      sm.innerHTML = `<div class="widget vc-ix-9"><div class="fr vc-ix-230">
+        <div class="vc-ix-241">
+          <div class="vc-ix-129">I Owe</div>
           <div style="font-size:20px;font-weight:800;color:var(--err)" class="sens">${fmtSum(totalOwe)}</div>
         </div>
-        <div style="flex:1;text-align:center;padding:6px 8px;border-right:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Net</div>
+        <div class="vc-ix-241">
+          <div class="vc-ix-129">Net</div>
           <div style="font-size:20px;font-weight:800;color:${net >= 0 ? 'var(--ok)' : 'var(--err)'}" class="sens">${net >= 0 ? '+' : '−'}${fmtSum(Math.abs(net))}</div>
         </div>
         <div style="flex:1;text-align:center;padding:6px 8px">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">They Owe</div>
+          <div class="vc-ix-129">They Owe</div>
           <div style="font-size:20px;font-weight:800;color:var(--ok)" class="sens">${fmtSum(totalOwed)}</div>
         </div>
       </div></div>`;
@@ -102,7 +102,7 @@ const Loans = {
               ${duePart}
               ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}
             </div>
-            ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens" style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
+            ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
           <div class="entry-acts">${payBtn}${settle}${U.actsEditDel('Loans', l.id)}</div>
         </div>
@@ -120,23 +120,23 @@ const Loans = {
       const color    = kind === 'borrowed' ? 'var(--err)' : 'var(--ok)';
       const addType  = kind;
 
-      let html = `<div style="margin-bottom:16px">
+      let html = `<div class="vc-ix-43">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
           <div>
-            <div style="font-size:14px;font-weight:700">${title}</div>
+            <div class="vc-ix-140">${title}</div>
             ${totalAmt > 0
-              ? `<div style="font-size:12px;color:var(--text3)">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${fmtSum(totalAmt)}</span></div>`
-              : `<div style="font-size:12px;color:var(--text3)">Nothing here yet</div>`}
+              ? `<div class="vc-ix-8">${loans.filter(l => l.status !== 'Settled').length} active · <span class="sens" style="color:${color}">${fmtSum(totalAmt)}</span></div>`
+              : `<div class="vc-ix-8">Nothing here yet</div>`}
           </div>
           <button type="button" class="btn btn-p btn-sm" data-act="Loans.openAdd('${addType}')">+ Add</button>
         </div>`;
 
       if (liveAll.length === 0 && settled.length === 0) {
-        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track who you owe and who owes you — amounts, due dates, and partial payments</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="Loans.openAdd()">+ Add Loan</button></div></div>`;
+        html += `<div class="empty-ios"><div class="ei-ic">${VC.icon('handshake',32)}</div><div class="ei-title">No loans yet</div><div class="ei-sub">Track who you owe and who owes you — amounts, due dates, and partial payments</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Loans.openAdd()">+ Add Loan</button></div></div>`;
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
-          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">Settled (${settled.length})</span><span style="font-size:10px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
+          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span class="vc-ix-5">Settled (${settled.length})</span><span style="font-size:10px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
         }
       }
       html += `</div>`;
@@ -248,7 +248,7 @@ const Loans = {
       <div style="background:var(--glass);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text2);margin-top:4px">
         <div>Original: <strong>${cur} ${Math.round(l.amount||0).toLocaleString()}</strong></div>
         <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
-        <div>Remaining: <strong style="color:${remaining===0?'var(--ok)':'var(--warn)'}">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
+        <div>Remaining: <strong class="vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Loans.savePayment('${id}')">Record</button>`
     );

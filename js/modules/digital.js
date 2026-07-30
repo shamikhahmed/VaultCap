@@ -21,7 +21,7 @@ const Digital={
     <div class="fr"><div class="fg"><label class="fl">Account Tier / Plan</label><datalist id="dfPlanDL"><option>Free</option><option>Premium</option><option>Pro</option><option>Plus</option><option>Business</option><option>Enterprise</option></datalist><input class="inp" id="df-plan" value="${escAttr(d.plan||'')}" list="dfPlanDL" placeholder="Free, Premium, Pro..."></div><div class="fg"><label class="fl">Linked Phone</label><input class="inp" id="df-phone" value="${escAttr(d.phone||S.user.phone||'')}" placeholder="+44..."></div></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2">${escAttr(d.notes||'')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(d.tags||[])}</div>
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:4px"><input type="checkbox" id="df-2fab" ${d.twoFAEnabled?'checked':''}> 2FA / MFA Enabled</label>`;
+    <label class="vc-ix-126"><input type="checkbox" id="df-2fab" ${d.twoFAEnabled?'checked':''}> 2FA / MFA Enabled</label>`;
   },
   save(editId=null){
     const name=document.getElementById('df-name').value.trim();if(!name){Toast.show('Service name required','warning');return;}

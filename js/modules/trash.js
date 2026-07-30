@@ -16,12 +16,12 @@ const Trash = {
     const daysLeft = iso => {
       const d = Math.floor((Date.now() - new Date(iso)) / 86400000);
       const left = 30 - d;
-      if (left <= 0) return '<span style="color:var(--err);font-size:10px;font-weight:700">Expiring now</span>';
-      if (left <= 7) return `<span style="color:var(--err);font-size:10px;font-weight:700">${left}d left</span>`;
+      if (left <= 0) return '<span class="vc-ix-243">Expiring now</span>';
+      if (left <= 7) return `<span class="vc-ix-243">${left}d left</span>`;
       if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
       return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
     };
-    const emptyBtn = `<div style="padding:0 0 14px"><button type="button" class="btn btn-d btn-sm" data-act="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
+    const emptyBtn = `<div class="vc-ix-239"><button type="button" class="btn btn-d btn-sm" data-act="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
       <div class="sdiv"><span class="sdiv-ic">${typeIc(type, 14)}</span> ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
       ${arr.map(item => {

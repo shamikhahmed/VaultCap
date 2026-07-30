@@ -211,8 +211,8 @@ const GlobalSearch = {
         const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
         const rowIc = typeof VC !== 'undefined' ? VC.iconKey(item._icon, 22) : '';
         return `<div data-act="GlobalSearch.open('${item._key}','${item._id||''}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" class="vos-hover-glass">
-          <div class="chip-ic" style="flex-shrink:0">${rowIc}</div>
-          <div style="flex:1;min-width:0">
+          <div class="chip-ic vc-ix-21">${rowIc}</div>
+          <div class="vc-ix-20">
             <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
             ${secLine ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}
           </div>

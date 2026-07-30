@@ -7,19 +7,19 @@ const Emergency = {
     const b = document.getElementById('pg-emergency-body');
     if (!b) return;
     b.innerHTML = `
-      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+      <div class="vc-ix-163">
         <div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:16px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:4px">🆘 Emergency Access</div>
-          <div style="font-size:12px;color:var(--text3);line-height:1.6">This information can be shown on the lock screen for first responders. Keep it accurate and updated.</div>
+          <div class="vc-ix-178">This information can be shown on the lock screen for first responders. Keep it accurate and updated.</div>
         </div>
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between">
           <div>
-            <div style="font-size:14px;font-weight:600;color:var(--text)">Show on Lock Screen</div>
-            <div style="font-size:12px;color:var(--text3)">Accessible without PIN</div>
+            <div class="vc-ix-179">Show on Lock Screen</div>
+            <div class="vc-ix-8">Accessible without PIN</div>
           </div>
           <label class="tog"><input type="checkbox" ${e.showOnLockscreen?'checked':''} data-act-change="Emergency.toggleLockscreen(this.checked)"><span class="ts"></span></label>
         </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="vc-ix-31">
           ${[
             {id:'em-name',label:'Full Name',val:e.name||'',placeholder:'Your legal name'},
             {id:'em-phone',label:'Emergency Contact',val:e.phone||'',placeholder:'+44 7700 000000',type:'tel'},
@@ -27,20 +27,20 @@ const Emergency = {
             {id:'em-allergies',label:'Allergies / Medications',val:e.allergies||'',placeholder:'Penicillin allergy, Metformin 500mg...',area:true},
             {id:'em-note',label:'Emergency Note',val:e.emergencyNote||'',placeholder:'In case of emergency contact...',area:true},
           ].map(f=>`<div>
-            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">${f.label}</div>
+            <div class="vc-ix-180">${f.label}</div>
             ${f.area
               ?`<textarea id="${f.id}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none">${f.val}</textarea>`
               :`<input id="${f.id}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">`
             }
           </div>`).join('')}
         </div>
-        <button type="button" class="btn btn-p" data-act="Emergency.save()" style="width:100%">Save Emergency Info</button>
+        <button type="button" class="btn btn-p vc-ix-16" data-act="Emergency.save()">Save Emergency Info</button>
         ${e.showOnLockscreen?`
         <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
           <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Emergency: ${escHtml(e.name||'Name not set')}</div>
-          <div style="font-size:13px;color:var(--text2)">${e.phone?'Phone: '+escHtml(e.phone):''}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:4px">${e.bloodType?'Blood: '+escHtml(e.bloodType):''}${e.allergies?' · Allergies: '+escHtml(e.allergies.split('\n')[0]):''}</div>
+          <div class="vc-ix-10">${e.phone?'Phone: '+escHtml(e.phone):''}</div>
+          <div class="vc-ix-73">${e.bloodType?'Blood: '+escHtml(e.bloodType):''}${e.allergies?' · Allergies: '+escHtml(e.allergies.split('\n')[0]):''}</div>
         </div>`:''}
       </div>`;
   },
@@ -72,15 +72,15 @@ const Emergency = {
     const e = S.emergency || {};
     if (!e.name && !e.phone) { Toast.show('No emergency info set', 'warn'); return; }
     Modal.open('🆘 Emergency Information',
-      `<div style="display:flex;flex-direction:column;gap:12px">
-        <div style="text-align:center;padding:8px 0">
+      `<div class="vc-ix-14">
+        <div class="vc-ix-38">
           <div style="font-size:32px;margin-bottom:8px">🆘</div>
           <div style="font-size:20px;font-weight:800;color:var(--text)">${escHtml(e.name||'')}</div>
         </div>
-        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
-        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
-        ${e.allergies?`<div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">ALLERGIES / MEDICATIONS</div><div style="font-size:13px;color:var(--text)">${escHtml(e.allergies)}</div></div>`:''}
-        ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">NOTE</div><div style="font-size:13px;color:var(--text)">${escHtml(e.emergencyNote)}</div></div>`:''}
+        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
+        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
+        ${e.allergies?`<div class="vc-ix-181"><div class="vc-ix-78">ALLERGIES / MEDICATIONS</div><div class="vc-ix-57">${escHtml(e.allergies)}</div></div>`:''}
+        ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div class="vc-ix-78">NOTE</div><div class="vc-ix-57">${escHtml(e.emergencyNote)}</div></div>`:''}
       </div>`,
       `<button type="button" class="btn btn-p" data-act="Modal.close()">Close</button>`
     );
@@ -143,7 +143,7 @@ const DevDiag = {
   run() {
     const el = document.getElementById('dev-diag-results');
     if (!el) return;
-    el.innerHTML = '<div style="color:var(--text3)">Running...</div>';
+    el.innerHTML = '<div class="vc-ix-4">Running...</div>';
 
     setTimeout(() => {
       const storage = this.storageUsage();
@@ -156,7 +156,7 @@ const DevDiag = {
 
       const row = (label, value, ok = null) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <span style="font-size:12px;color:var(--text3)">${label}</span>
+          <span class="vc-ix-8">${label}</span>
           <span style="font-size:12px;font-weight:600;color:${ok === true ? 'var(--ok)' : ok === false ? 'var(--err)' : 'var(--text)'}">${value}</span>
         </div>`;
 
@@ -236,13 +236,13 @@ const VaultRecovery = {
     if (!issues.length) return false;
     const fixed = this.repair();
     Modal.open('Vault Recovery',
-      `<div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:12px;padding:14px">
+      `<div class="vc-ix-31">
+        <div class="vc-ix-181">
           <div style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">Issues Detected</div>
           ${issues.map(i => `<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${i}</div>`).join('')}
         </div>
         ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">Auto-repaired ${fixed} issue(s)</div>` : ''}
-        <div style="font-size:12px;color:var(--text3);line-height:1.6">If problems persist, export a backup and restore from a previous .vos file.</div>
+        <div class="vc-ix-178">If problems persist, export a backup and restore from a previous .vos file.</div>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Dismiss</button><button type="button" class="btn btn-p" data-act="ExIm.export('vos');Modal.close()">Export Backup</button>`
     );

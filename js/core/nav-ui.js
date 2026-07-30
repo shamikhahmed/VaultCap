@@ -32,7 +32,7 @@ function openMoneySheet() {
     '<div class="vc-sheet-grid">'+items.map(moneySheetTile).join('')+'</div>';
   const body = (banking.length || cashflow.length)
     ? section('Banking', banking) + section('Cashflow', cashflow)
-    : '<div style="text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'moneySheet\')">Enable in Settings →</button></div>';
+    : '<div style="text-align:center;padding:16px 8px"><div class="vc-ix-103">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'moneySheet\')">Enable in Settings →</button></div>';
   overlay.innerHTML = '<div class="vc-sheet-panel">' +
     '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
     '<div class="vc-sheet-kicker">Money' + ctxLabel + '</div>' +
@@ -65,7 +65,7 @@ function openAssetsSheet() {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
       return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
-    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
+    }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -96,7 +96,7 @@ function openIdentitySheet() {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
       const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
       return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
-    }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
+    }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -233,11 +233,11 @@ function saveTabPrefs(prefs) {
 }
 
 function financeHomeTile(m) {
-  return `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
-      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
+  return `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+      <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
+      <div class="vc-ix-25">${m.label}</div>
+      <div class="vc-ix-106">${m.desc}</div>
+      <div class="vc-ix-107">›</div>
     </div>`;
 }
 
@@ -258,7 +258,7 @@ function renderFinanceHome() {
     {id:'bc',ic:'refresh-cw',label:'Committee (BC)',desc:(S.bc||[]).length+' committees'},
   ].filter(vis);
   const section = (label, mods) => !mods.length ? '' :
-    `<div style="padding:16px 16px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">${label}</div>` +
+    `<div style="padding:16px 16px 0"><div class="vc-ix-187">${label}</div>` +
     `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${mods.map(financeHomeTile).join('')}</div></div>`;
   b.innerHTML = ctxBar + section('Banking', banking) + section('Cashflow', cashflow) + '<div style="height:16px"></div>';
 }
@@ -273,12 +273,12 @@ function renderVaultHome() {
     {id:'sims',ic:'smartphone',label:'SIM Cards',desc:(S.sims||[]).length+' SIMs'},
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
-  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
-      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
+  b.innerHTML = '<div class="vc-ix-188">' +
+    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+      <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
+      <div class="vc-ix-25">${m.label}</div>
+      <div class="vc-ix-106">${m.desc}</div>
+      <div class="vc-ix-107">›</div>
     </div>`).join('') + '</div>';
 }
 
@@ -293,12 +293,12 @@ function renderAssetsHome() {
     {id:'bonds',ic:'ticket',label:'Bonds & Savings',desc:(S.bonds||[]).length+' holdings'},
     {id:'assets',ic:'layers',label:'Property',desc:(S.assets||[]).length+' items'+(vehicleCount||metalCount?' · inc. vehicles & metals':'')},
   ].filter(m => isModOn(m.id));
-  b.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px">' +
-    modules.map(m => `<div data-act="R.goto('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:18px 16px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;min-height:100px;position:relative">
-      <div class="vc-icon-wrap" style="width:28px;height:28px;margin-bottom:4px">${VC.icon(m.ic, 22)}</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text)">${m.label}</div>
-      <div style="font-size:12px;color:var(--text3);padding-right:18px;line-height:1.35">${m.desc}</div>
-      <div style="position:absolute;top:14px;right:14px;color:var(--text3);font-size:16px;line-height:1">›</div>
+  b.innerHTML = '<div class="vc-ix-188">' +
+    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+      <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
+      <div class="vc-ix-25">${m.label}</div>
+      <div class="vc-ix-106">${m.desc}</div>
+      <div class="vc-ix-107">›</div>
     </div>`).join('') + '</div>';
 }
 

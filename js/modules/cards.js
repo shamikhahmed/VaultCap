@@ -67,8 +67,8 @@ const Cards={
         }).join('')+
         '</div>'
       :'';
-    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn btn-p" data-act="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" data-act="Cards._showExample()">See example</button></div></div>`);return;}
-    const archiveToggle=archivedCount?`<div style="text-align:center;margin-bottom:10px"><button type="button" class="btn btn-g btn-sm" data-act="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
+    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" data-act="Cards._showExample()">See example</button></div></div>`);return;}
+    const archiveToggle=archivedCount?`<div class="vc-ix-190"><button type="button" class="btn btn-g btn-sm" data-act="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimitPKR = S.cards
       .filter(c => c.cardType === 'Credit' && _cardLimit(c))
       .reduce((a, c) => a + (typeof CurrencyEngine !== 'undefined'
@@ -76,13 +76,13 @@ const Cards={
         : _cardLimit(c)), 0);
     const _cur = S.user.currency || 'GBP';
     const limitBanner = totalLimitPKR > 0
-      ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
+      ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span class="vc-ix-10">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
       : '';
     const carrying=data.filter(c=>S.wallet.includes(c.id));
     const rest=data.filter(c=>!S.wallet.includes(c.id));
     const byNet={};rest.forEach(c=>{(byNet[c.network||'Other']=byNet[c.network||'Other']||[]).push(c);});
-    const carrySection=carrying.length?`<div class="sdiv"><span class="chip-ic">${VC.icon('card',12)}</span> Carrying Today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
-    const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
+    const carrySection=carrying.length?`<div class="sdiv"><span class="chip-ic">${VC.icon('card',12)}</span> Carrying Today <span class="vc-ix-191">(${carrying.length})</span></div>${carrying.map(c=>this.row(c)).join('')}`:'';
+    const restSection=Object.entries(byNet).map(([net,items])=>`<div class="sdiv">${net} <span class="vc-ix-191">(${items.length})</span></div>${items.map(c=>this.row(c)).join('')}`).join('');
     el.innerHTML=walletHtml+archiveToggle+limitBanner+carrySection+restSection;
     if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
     requestAnimationFrame(() => {
@@ -158,7 +158,7 @@ const Cards={
         <div style="font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
         <div class="wcard-holder">${holderName}</div>
       </div>
-      <div style="text-align:center">
+      <div class="vc-ix-109">
         ${c.expiry?`<div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
       </div>
       <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:10px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
@@ -172,7 +172,7 @@ const Cards={
   </div>
 </div>`;
   },
-  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div style="padding:12px;background:var(--glass);border-radius:var(--r);font-size:12px;line-height:1.8;color:var(--text2)">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p style="font-size:11px;color:var(--text3);margin-top:10px">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div class="vc-ix-192">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   _fmtCardNum(input){
     let v=input.value.replace(/\D/g,'').slice(0,16);
     input.value=v.replace(/(.{4})/g,'$1 ').trim();
@@ -193,7 +193,7 @@ const Cards={
     }
     Cards._pendingOwnerId = prefill.ownerId || null;
     const title = (prefill.ownerName||prefill._ownerName) ? `Add Card — ${escHtml(prefill.ownerName||prefill._ownerName)}` : 'Add Card';
-    const scanBtn = prefill.ownerId ? '' : `<div style="margin-bottom:12px"><button type="button" class="btn btn-g btn-full" data-act="Cards.scanCard()" style="gap:8px">Scan Card with Camera</button></div>`;
+    const scanBtn = prefill.ownerId ? '' : `<div class="vc-ix-9"><button type="button" class="btn btn-g btn-full vc-ix-167" data-act="Cards.scanCard()">Scan Card with Camera</button></div>`;
     Modal.open(title, scanBtn + this.form(), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);
   },
 
@@ -318,10 +318,10 @@ const Cards={
     overlay.innerHTML=[
       '<video id="_photoVid" autoplay playsinline style="width:100%;max-width:400px;border-radius:12px;display:block"></video>',
       '<canvas id="_photoCanvas" style="display:none"></canvas>',
-      '<div id="_photoStatus" style="color:rgba(255,255,255,.8);font-size:13px;margin-top:14px;text-align:center">Position card in frame then tap Capture</div>',
-      '<div style="display:flex;gap:12px;margin-top:18px">',
-      '<button type="button" data-act="Cards._doPhotoCapture(\''+targetId+'\')" style="padding:14px 32px;background:var(--accent,#6c63ff);border:none;border-radius:99px;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Capture</button>',
-      '<button type="button" data-act="Cards._stopPhoto()" style="padding:14px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;cursor:pointer">Cancel</button>',
+      '<div class="vc-ix-194" id="_photoStatus">Position card in frame then tap Capture</div>',
+      '<div class="vc-ix-195">',
+      '<button class="vc-ix-196" type="button" data-act="Cards._doPhotoCapture(\''+targetId+'\')">Capture</button>',
+      '<button class="vc-ix-197" type="button" data-act="Cards._stopPhoto()">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -350,7 +350,7 @@ const Cards={
     const base64=dataUrl.split(',')[1];
     const thumbEl=document.getElementById('cf-photo-'+targetId);
     if(thumbEl){
-      thumbEl.innerHTML='<img src="'+dataUrl+'" alt="Card photo" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
+      thumbEl.innerHTML='<img class="vc-ix-41" src="'+dataUrl+'" alt="Card photo" data-act="Cards._viewPhotoData(\''+targetId+'\')" title="Tap to view full size">';
       thumbEl.dataset.photo=base64;
     }
     Toast.show('Photo saved — fill in the details below','info',2000);
@@ -362,14 +362,14 @@ const Cards={
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+b64+'" alt="Card photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img class="vc-ix-81" src="data:image/jpeg;base64,'+b64+'" alt="Card photo">';
     document.body.appendChild(v);
   },
   _viewPhotoB64(base64){
     const v=document.createElement('div');
     v.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer';
     v.onclick=function(){v.remove();};
-    v.innerHTML='<img src="data:image/jpeg;base64,'+base64+'" alt="Card photo" style="max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain">';
+    v.innerHTML='<img class="vc-ix-81" src="data:image/jpeg;base64,'+base64+'" alt="Card photo">';
     document.body.appendChild(v);
   },
 
@@ -380,32 +380,32 @@ const Cards={
     const cardNames=SMART_DB.cards.map(x=>'<option value="'+_v(x.name)+'">').join('');
     const myBanks=(window.S?.banks||[]);
     const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${escAttr(b.bankName)}"${(c.linkedBankId===b.id||c.linkedBank===b.bankName)?' selected':''}>${escHtml(b.bankName)}</option>`).join(''):'';
-    const bankPicker=myBanks.length?'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
+    const bankPicker=myBanks.length?'<div class="vc-ix-9"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
     return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
       +bankPicker
       +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" data-act-input="SMART_DB.fillCard(this.value)" value="'+_v(c.cardName||'')+'"></div>'
       +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+_v(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" data-act-input="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+_v(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+_v(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
-      +'<div style="margin:10px 0;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">'
-      +'<div><button type="button" class="btn btn-g btn-sm" data-act="Cards._capturePhoto(\'front\')" style="gap:6px">Front</button><div id="cf-photo-front" style="margin-top:4px">'+(c.frontPhoto?'<img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
-      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm" data-act="Cards._capturePhoto(\'back\')" style="gap:6px">Back</button><div id="cf-photo-back" style="margin-top:4px">'+(c.backPhoto?'<img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:100%;max-width:120px;border-radius:8px;border:2px solid var(--accent);cursor:pointer;margin-top:6px" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
+      +'<div class="vc-ix-110">'
+      +'<div><button type="button" class="btn btn-g btn-sm vc-ix-42" data-act="Cards._capturePhoto(\'front\')">Front</button><div class="vc-ix-27" id="cf-photo-front">'+(c.frontPhoto?'<img class="vc-ix-41" src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')" title="Tap to view">':'')+'</div></div>'
+      +(isVirtual?'':'<div><button type="button" class="btn btn-g btn-sm vc-ix-42" data-act="Cards._capturePhoto(\'back\')">Back</button><div class="vc-ix-27" id="cf-photo-back">'+(c.backPhoto?'<img class="vc-ix-41" src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')" title="Tap to view">':'')+'</div></div>')
       +'</div>'
       +'<details'+(isEdit?' open':'')+' style="margin-top:10px">'
-      +'<summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span style="flex:1">More details</span><span style="font-size:10px;color:var(--text3)">▾</span></summary>'
-      +'<div style="padding-top:10px">'
+      +'<summary class="vc-ix-111"><span class="vc-ix-5">More details</span><span class="vc-ix-18">▾</span></summary>'
+      +'<div class="vc-ix-112">'
       +'<div class="fr"><div class="fg"><label class="fl">Type</label><datalist id="cfTypeDL"><option>Credit</option><option>Debit</option><option>Prepaid</option><option>Corporate</option><option>Virtual</option></datalist><input class="inp" id="cf-type" value="'+_v(c.cardType||'')+'" list="cfTypeDL" placeholder="Credit, Debit…"></div><div class="fg"><label class="fl">Category</label><datalist id="cfCatDL"><option>Standard</option><option>Gold</option><option>Premium</option><option>Travel</option><option>Cashback</option><option>Rewards</option><option>Business</option><option>Crypto</option><option>BNPL</option><option>Islamic</option><option>Digital</option><option>Virtual</option></datalist><input class="inp" id="cf-cat" value="'+_v(c.category||'')+'" list="cfCatDL" placeholder="Standard, Premium…"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="cf-cc">'+U.countries()+'</select></div><div class="fg"><label class="fl">Expiry (MM/YY)</label><input class="inp" id="cf-exp" value="'+_v(c.expiry||'')+'" placeholder="12/28" maxlength="5"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">CVV</label><input class="inp" id="cf-cvv" value="'+_v(c.cvv||'')+'" maxlength="4" type="password" inputmode="numeric" placeholder="•••"></div><div class="fg"><label class="fl">Card PIN</label><input class="inp" id="cf-cpin" value="'+_v(c.cardPin||'')+'" maxlength="6" type="password" inputmode="numeric" placeholder="••••"></div></div>'
       +'<div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="'+_v(c.holderName||S.user.name||'')+'" placeholder="Name on card"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="'+_v(c.rewardsProgram||'')+'" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="'+_v(c.rewardsPoints||'')+'" type="number" placeholder="50000"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Ownership</label><select class="inp" id="cf-own"><option value="personal"'+(c.ownership!=='business'?' selected':'')+'>Personal</option><option value="business"'+(c.ownership==='business'?' selected':'')+'>Business</option></select></div><div class="fg"><label class="fl">Annual Fee</label><input class="inp" id="cf-fee" value="'+_v(c.annualFee||'')+'" type="number" placeholder="0"></div></div>'
-      +'<div class="fg"><label class="fl">Joint Card?</label><div style="display:flex;align-items:center;gap:12px;margin-top:6px"><input type="checkbox" id="cf-joint" data-act-change="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" style="width:20px;height:20px;cursor:pointer" '+(c.jointAccount?'checked':'')+' ><label for="cf-joint" style="font-size:14px;color:var(--text2)">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select id="cf-joint-person" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
+      +'<div class="fg"><label class="fl">Joint Card?</label><div class="vc-ix-198"><input class="vc-ix-199" type="checkbox" id="cf-joint" data-act-change="var s=document.getElementById(\'cf-joint-section\');if(s)s.style.display=this.checked?\'block\':\'none\'" '+(c.jointAccount?'checked':'')+' ><label class="vc-ix-200" for="cf-joint">This is a joint card</label></div><div id="cf-joint-section" style="display:'+(c.jointAccount?'block':'none')+';margin-top:10px"><select class="vc-ix-201" id="cf-joint-person"><option value="">Select person...</option>'+(typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(c.jointWith||''):'')+'</select></div></div>'
       +'<div class="fg"><label class="fl">Credit Limit (optional)</label><input class="inp" id="cf-limit" value="'+_v(String(_cardLimit(c)||''))+'" type="number" min="0" placeholder="e.g. 500000"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Online Username</label><input class="inp" id="cf-user" value="'+_v(c.username||'')+'" placeholder="Username"></div><div class="fg"><label class="fl">Password Hint</label><input class="inp" id="cf-pwd" value="'+_v(c.pwdHint||'')+'" placeholder="\'Email+!\'"></div></div>'
       +'<div class="fg"><label class="fl">Notes / Benefits</label><textarea class="inp" id="cf-notes" rows="2">'+escHtml(c.notes||'')+'</textarea></div>'
       +'<div class="fg"><label class="fl">Tags</label>'+U.tags(c.tags||[])+'</div>'
-      +'<div style="display:flex;gap:16px;margin-top:4px"><label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-fav" '+(c.favorite?'checked':'')+'>  Favourite</label><label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px"><input type="checkbox" id="cf-carry" '+(S.wallet.includes(c.id)?'checked':'')+'>  Carrying</label></div>'
+      +'<div style="display:flex;gap:16px;margin-top:4px"><label class="vc-ix-202"><input type="checkbox" id="cf-fav" '+(c.favorite?'checked':'')+'>  Favourite</label><label class="vc-ix-202"><input type="checkbox" id="cf-carry" '+(S.wallet.includes(c.id)?'checked':'')+'>  Carrying</label></div>'
       +'</div></details>';
   },
   _bankSelected(bankName){
@@ -469,9 +469,9 @@ const Cards={
     const c=S.cards.find(x=>x.id===id);if(!c)return;
     let photoHtml='';
     if(c.frontPhoto||c.backPhoto){
-      photoHtml='<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'
-        +(c.frontPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Front</div><img src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" style="width:120px;border-radius:8px;cursor:pointer" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
-        +(c.backPhoto?'<div><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Back</div><img src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" style="width:120px;border-radius:8px;cursor:pointer" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
+      photoHtml='<div class="vc-ix-203">'
+        +(c.frontPhoto?'<div><div class="vc-ix-82">Front</div><img class="vc-ix-204" src="data:image/jpeg;base64,'+c.frontPhoto+'" alt="Card front" data-act="Cards._viewPhotoB64(\''+c.frontPhoto+'\')"></div>':'')
+        +(c.backPhoto?'<div><div class="vc-ix-82">Back</div><img class="vc-ix-204" src="data:image/jpeg;base64,'+c.backPhoto+'" alt="Card back" data-act="Cards._viewPhotoB64(\''+c.backPhoto+'\')"></div>':'')
         +'</div>';
     }
     const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span>${U.icb('eye',{onclick:`(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()`,ariaLabel:'Reveal card number',size:14})}${U.icb('copy',{onclick:`U.copy('${c.cardNumber}','Card number')`,ariaLabel:'Copy card number',size:14})}</div>`:U.drRow('Last 4','****'+(c.last4||'—'));

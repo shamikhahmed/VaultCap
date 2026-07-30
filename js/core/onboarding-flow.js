@@ -38,7 +38,7 @@ const OB = {
       `<div data-act="OB.toggleCountry('${c.code}',this)"
         style="padding:14px 12px;border-radius:14px;background:${obCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${obCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;transition:.15s">
         <span style="font-size:22px">${c.flag}</span>
-        <span style="font-size:13px;font-weight:600;color:var(--text)">${c.name}</span>
+        <span class="vc-ix-12">${c.name}</span>
       </div>`
     ).join('');
   },
@@ -63,8 +63,8 @@ const OB = {
         role="checkbox" tabindex="0" aria-checked="${obCats[c.key]?'true':'false'}"
         style="padding:16px 12px;border-radius:16px;background:${obCats[c.key]?'var(--glass2)':'var(--glass)'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;transition:.15s">
         <span class="chip-ic" style="display:flex;justify-content:center" aria-hidden="true">${typeof VC !== 'undefined' ? VC.icon(c.icon, 30) : ''}</span>
-        <div style="font-size:13px;font-weight:700;color:var(--text)">${c.label}</div>
-        <div style="font-size:10px;color:var(--text3);line-height:1.3">${c.desc}</div>
+        <div class="vc-ix-56">${c.label}</div>
+        <div class="vc-ix-176">${c.desc}</div>
         <div aria-hidden="true" style="position:absolute;top:8px;right:10px;width:18px;height:18px;border-radius:50%;background:${obCats[c.key]?'var(--accent)':'transparent'};border:2px solid ${obCats[c.key]?'var(--accent)':'var(--border)'}"></div>
       </div>`
     ).join('');
@@ -97,7 +97,7 @@ const OB = {
     if (!m || !p2) return;
     if (p2.length === 0) { m.textContent = ''; return; }
     if (p1 === p2 && p1.length === 6) { m.innerHTML = '<span style="color:var(--ok)">PINs match</span>'; }
-    else if (p1.startsWith(p2) || p2.length < 6) { m.innerHTML = '<span style="color:var(--text3)">Typing...</span>'; }
+    else if (p1.startsWith(p2) || p2.length < 6) { m.innerHTML = '<span class="vc-ix-4">Typing...</span>'; }
     else { m.innerHTML = '<span style="color:var(--err)">PINs do not match</span>'; }
   },
   copyRecoveryKey() {
@@ -144,9 +144,9 @@ const OB = {
     const TYPE_LABELS = { personal:'Personal', family:'Family Manager', business:'Business Owner', expat:'Global Expat' };
     el.innerHTML = `
       <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Countries: ${countries}</div>
-      <div style="font-size:13px;color:var(--text2)">Tracking: ${cats}</div>`;
+      <div class="vc-ix-177">Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
+      <div class="vc-ix-177">Countries: ${countries}</div>
+      <div class="vc-ix-10">Tracking: ${cats}</div>`;
   },
   finish() {
     const p  = document.getElementById('ob-pin').value;
@@ -243,13 +243,13 @@ const OB = {
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
           <div data-act="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your first bank</div><div style="font-size:12px;color:var(--text2)">Accounts, IBANs &amp; login details</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div class="vc-ix-5"><div class="vc-ix-99">Add your first bank</div><div class="vc-ix-13">Accounts, IBANs &amp; login details</div></div><span class="vc-ix-22">→</span>
           </div>
           <div data-act="DocsModule.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .15s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('id-card', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your ID</div><div style="font-size:12px;color:var(--text2)">Passport, NIC, driving licence</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('id-card', 26) : ''}</span><div class="vc-ix-5"><div class="vc-ix-99">Add your ID</div><div class="vc-ix-13">Passport, NIC, driving licence</div></div><span class="vc-ix-22">→</span>
           </div>
           <div data-act="Sims.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .25s both">
-            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div style="flex:1"><div style="font-weight:700;font-size:14px">Add your SIM</div><div style="font-size:12px;color:var(--text2)">Mobile numbers &amp; networks</div></div><span style="color:var(--accent)">→</span>
+            <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div class="vc-ix-5"><div class="vc-ix-99">Add your SIM</div><div class="vc-ix-13">Mobile numbers &amp; networks</div></div><span class="vc-ix-22">→</span>
           </div>
         </div>
         <button type="button" data-act="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>

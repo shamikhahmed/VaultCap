@@ -41,16 +41,16 @@ const BCModule = {
 
       (bcs.length > 0 ? (
         '<div class="u-highlight-card">' +
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">BC Summary</div>' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
-            '<div style="text-align:center"><div style="font-size:11px;color:var(--text3)">Total Paid In</div><div style="font-size:20px;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
-            '<div style="text-align:center"><div style="font-size:11px;color:var(--text3)">Total Received</div><div style="font-size:20px;font-weight:900;color:var(--ok)">' + fmt(totalReceived) + '</div></div>' +
+          '<div class="vc-ix-187">BC Summary</div>' +
+          '<div class="vc-ix-89">' +
+            '<div class="vc-ix-109"><div class="vc-ix-3">Total Paid In</div><div style="font-size:20px;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
+            '<div class="vc-ix-109"><div class="vc-ix-3">Total Received</div><div style="font-size:20px;font-weight:900;color:var(--ok)">' + fmt(totalReceived) + '</div></div>' +
           '</div>' +
           '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">Net position: <strong style="color:' + (totalReceived - totalCommitted >= 0 ? 'var(--ok)' : 'var(--err)') + '">' + fmt(totalReceived - totalCommitted) + '</strong></div>' +
         '</div>'
       ) : '') +
 
-      '<button type="button" class="btn btn-p" style="width:100%" data-act="BCModule.openAdd()">+ Join / Create a BC</button>' +
+      '<button type="button" class="btn btn-p vc-ix-16" data-act="BCModule.openAdd()">+ Join / Create a BC</button>' +
 
       (bcs.length === 0 ?
         '<div class="empty-ios"><div class="ei-ic">' + VC.icon('handshake', 32) + '</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
@@ -58,9 +58,9 @@ const BCModule = {
         bcs.map((bc, i) => BCModule._bcCard(bc, i)).join('')
       ) +
 
-      '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:12px;padding:12px">' +
-        '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:4px">Zakat Note</div>' +
-        '<div style="font-size:11px;color:var(--text3);line-height:1.6">Money paid into a BC that you haven\'t received yet is zakatable as a receivable (you still own it). This is auto-added to your Zakat calculator.</div>' +
+      '<div class="vc-ix-219">' +
+        '<div class="vc-ix-220">Zakat Note</div>' +
+        '<div class="vc-ix-90">Money paid into a BC that you haven\'t received yet is zakatable as a receivable (you still own it). This is auto-added to your Zakat calculator.</div>' +
       '</div>' +
 
       '</div>';
@@ -107,7 +107,7 @@ const BCModule = {
           '<span>' + progress + '% complete</span>' +
         '</div>' +
         '<div style="height:4px;background:var(--border);border-radius:999px"><div style="height:100%;width:' + progress + '%;background:var(--accent);border-radius:999px;transition:width .5s"></div></div>' +
-        (daysToNext !== null ? '<div style="font-size:10px;color:var(--text3);margin-top:4px">Next payment: ' + (daysToNext === 0 ? 'Today' : daysToNext + ' days') + '</div>' : '') +
+        (daysToNext !== null ? '<div class="vc-ix-221">Next payment: ' + (daysToNext === 0 ? 'Today' : daysToNext + ' days') + '</div>' : '') +
       '</div>' +
     '</div>';
   },
@@ -188,7 +188,7 @@ const BCModule = {
       '<div class="fg"><label class="fl">Notes</label>' +
         '<textarea class="inp" id="bc-notes" rows="2">' + (bc.notes || '') + '</textarea></div>' +
 
-      '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
+      '<div class="vc-ix-222">Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
 
       '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
       '<button type="button" class="btn btn-p" data-act="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
@@ -277,15 +277,15 @@ const BCModule = {
     const net = received - paid;
 
     Modal.open(bc.name,
-      '<div style="display:flex;flex-direction:column;gap:12px">' +
+      '<div class="vc-ix-14">' +
 
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+      '<div class="vc-ix-133">' +
         ['Pot', fmt(pot), 'Members', bc.members || '?',
          'Contribution', fmt(bc.contribution || 0), 'Frequency', bc.frequency || 'monthly',
          'Paid so far', fmt(paid), 'Received', myTurnDone ? fmt(received) : 'Not yet',
          'Net', fmt(net), 'Round', (bc.currentRound || 1) + ' / ' + (bc.totalRounds || bc.members || '?')
         ].reduce(function(acc, val, idx, arr) {
-          if (idx % 2 === 0) acc.push('<div style="background:var(--glass);border-radius:10px;padding:10px"><div style="font-size:10px;color:var(--text3)">' + val + '</div><div style="font-size:14px;font-weight:700;color:var(--text)">' + arr[idx+1] + '</div></div>');
+          if (idx % 2 === 0) acc.push('<div style="background:var(--glass);border-radius:10px;padding:10px"><div class="vc-ix-18">' + val + '</div><div class="vc-ix-25">' + arr[idx+1] + '</div></div>');
           return acc;
         }, []).join('') +
       '</div>' +
@@ -293,20 +293,20 @@ const BCModule = {
       (bc.myTurnRound ? (
         '<div style="background:' + (myTurnDone ? 'rgba(76,175,80,.1)' : 'rgba(255,255,255,.1)') + ';border:1px solid ' + (myTurnDone ? 'rgba(76,175,80,.3)' : 'rgba(255,255,255,.3)') + ';border-radius:12px;padding:12px;text-align:center">' +
           '<div style="font-size:13px;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? 'You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
-          (myTurnDone ? '<div style="font-size:12px;color:var(--text3);margin-top:4px">You received ' + fmt(pot) + '</div>' : '') +
+          (myTurnDone ? '<div class="vc-ix-73">You received ' + fmt(pot) + '</div>' : '') +
         '</div>'
       ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
 
       (bc.type === 'ballot' && bc.role === 'organiser' ?
-        '<button type="button" data-act="BCModule.runBallot(' + i + ')" class="btn btn-p" style="width:100%">Run Ballot Draw</button>'
+        '<button type="button" data-act="BCModule.runBallot(' + i + ')" class="btn btn-p vc-ix-16">Run Ballot Draw</button>'
         : '') +
 
-      '<button type="button" data-act="BCModule.advanceRound(' + i + ')" class="btn btn-g" style="width:100%">→ Advance to Next Round</button>' +
+      '<button type="button" data-act="BCModule.advanceRound(' + i + ')" class="btn btn-g vc-ix-16">→ Advance to Next Round</button>' +
 
       (bc.notes ? '<div style="font-size:12px;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
 
       (!myTurnDone && paid > 0 ?
-        '<div style="background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px;font-size:11px;color:var(--text3)">Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
+        '<div class="vc-ix-222">Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
         : '') +
 
       '</div>',
@@ -337,12 +337,12 @@ const BCModule = {
       '<div style="text-align:center;padding:20px">' +
         '<div style="margin-bottom:16px;display:flex;justify-content:center" id="ballot-icon">' + VC.icon('target', 48) + '</div>' +
         '<div style="font-size:16px;color:var(--text3);margin-bottom:20px">Drawing for Round ' + currentRound + '...</div>' +
-        '<div id="ballot-result" style="display:none">' +
+        '<div class="vc-ix-17" id="ballot-result">' +
           '<div style="font-size:13px;color:var(--text3);margin-bottom:8px">This round goes to:</div>' +
           '<div style="font-size:48px;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
           '<div style="font-size:13px;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
         '</div>' +
-        '<button type="button" data-act="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p" style="width:100%" id="ballot-btn">Draw!</button>' +
+        '<button type="button" data-act="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p vc-ix-16" id="ballot-btn">Draw!</button>' +
       '</div>',
       '<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button>'
     );

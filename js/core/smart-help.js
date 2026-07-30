@@ -117,7 +117,7 @@ const SmartHelp = (() => {
       title: 'Not sure about that',
       html: '<p>I could not find a exact match for <strong>' + _esc(q) + '</strong>.</p>'
         + '<p>Try one of the quick topics below, or ask about: ' + _esc(suggestions) + '.</p>'
-        + '<p style="font-size:12px;color:var(--text3)">Smart Help uses offline keyword rules — not AI.</p>',
+        + '<p class="vc-ix-8">Smart Help uses offline keyword rules — not AI.</p>',
     };
   }
 
@@ -133,7 +133,7 @@ const SmartHelp = (() => {
 
   function _chipsHtml() {
     return '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">'
-      + QUICK_CHIPS.map(c => '<button type="button" class="chip" style="cursor:pointer" data-q="' + _esc(c).replace(/"/g, '&quot;') + '" data-act="SmartHelp.ask(this.getAttribute(\'data-q\'))"><span class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('sparkles', 12) : '') + '</span>' + _esc(c) + '</button>').join('')
+      + QUICK_CHIPS.map(c => '<button type="button" class="chip vc-ix-6" data-q="' + _esc(c).replace(/"/g, '&quot;') + '" data-act="SmartHelp.ask(this.getAttribute(\'data-q\'))"><span class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('sparkles', 12) : '') + '</span>' + _esc(c) + '</button>').join('')
       + '</div>';
   }
 
@@ -142,8 +142,8 @@ const SmartHelp = (() => {
       '<p><strong>Smart Help</strong> — offline rules assistant (not AI).</p><p>Pick a topic or type a question about PIN, backup, privacy, and more.</p>');
     const msgs = _messages.map(m => _bubble(m.role, m.html, m.text)).join('');
     return _chipsHtml() + '<div id="shChatLog" style="max-height:min(52vh,420px);overflow-y:auto;padding-right:4px">' + intro + msgs + '</div>'
-      + '<div style="display:flex;gap:8px;margin-top:12px">'
-      + '<input class="inp" id="shInput" type="text" placeholder="Ask about PIN, backup, privacy…" autocomplete="off" style="flex:1" data-act-keydown="if(event.key===\'Enter\'){event.preventDefault();SmartHelp._send()}">'
+      + '<div class="vc-ix-152">'
+      + '<input class="inp vc-ix-5" id="shInput" type="text" placeholder="Ask about PIN, backup, privacy…" autocomplete="off" data-act-keydown="if(event.key===\'Enter\'){event.preventDefault();SmartHelp._send()}">'
       + '<button type="button" class="btn btn-p" data-act="SmartHelp._send()">Send</button></div>';
   }
 
@@ -160,7 +160,7 @@ const SmartHelp = (() => {
       _panelEl.innerHTML = '<div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
         + '<div style="font-weight:800;font-size:15px">Smart Help</div>'
         + '<button type="button" class="btn btn-g btn-sm" data-act="SmartHelp.close()">×</button></div>'
-        + '<div style="padding:14px">' + html + '</div>';
+        + '<div class="vc-ix-94">' + html + '</div>';
     }
     setTimeout(() => { document.getElementById('shInput')?.focus(); _scrollChat(); }, 80);
   }

@@ -271,8 +271,8 @@ const WebAuthnUnlock = (() => {
 
       if (typeof Modal !== 'undefined') {
         Modal.open('Enable biometric unlock',
-          '<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">Register Face ID / Touch ID / Windows Hello for faster unlock. Your PIN is never stored.</p>'
-          + '<p style="font-size:12px;color:var(--text3);line-height:1.5">When PRF is supported, biometrics can restore your vault session key. Otherwise biometrics only confirm identity before PIN entry. Re-register after changing PIN.</p>'
+          '<p class="vc-ix-96">Register Face ID / Touch ID / Windows Hello for faster unlock. Your PIN is never stored.</p>'
+          + '<p class="vc-ix-76">When PRF is supported, biometrics can restore your vault session key. Otherwise biometrics only confirm identity before PIN entry. Re-register after changing PIN.</p>'
           + '<div class="fg"><label class="fl">Confirm current PIN</label><input class="inp" id="wa-pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="6-digit PIN"></div>'
           + '<div class="ferr" id="wa-err"></div>',
           '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>'
