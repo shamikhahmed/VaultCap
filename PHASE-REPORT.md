@@ -8,7 +8,7 @@
 |------|--------|
 | PIN-as-KDF | **Done** — PIN wraps random DEK (`key_wrap`); migrate on unlock; changePin re-wraps |
 | Inline styles | **Done wave** — ~57% cut (1884→806) via `vc-ix-*`; CSP unsafe-inline still (residual) |
-| Gallery CAPTURE | **Running / regen** — `CAPTURE_SCREENSHOTS=1` + embed |
+| Gallery CAPTURE | **Done** — 89 screens × themes/viewports; embed → `screen-gallery.html` |
 | Click-all | **Done** — `tests/click-all.spec.js` |
 
 ## Prior (5.1.21–22)
