@@ -297,25 +297,26 @@ function renderAssetsHome() {
 function renderHomeModules() {
   const grid = document.getElementById('homeModGrid');
   if (!grid || typeof VC === 'undefined') return;
+  // Locked welcome grid — each tile opens that module after unlock (or queues via data-act)
   const mods = [
-    { ic: 'bank', label: 'Banks' },
-    { ic: 'card', label: 'Cards' },
-    { ic: 'trending-up', label: 'Invest' },
-    { ic: 'layers', label: 'Assets' },
-    { ic: 'smartphone', label: 'SIMs' },
-    { ic: 'mail', label: 'Emails' },
-    { ic: 'laptop', label: 'Gadgets' },
-    { ic: 'id-card', label: 'Docs' },
-    { ic: 'repeat', label: 'Subs' },
-    { ic: 'key', label: 'Logins' },
-    { ic: 'shield', label: 'Security' },
-    { ic: 'receipt', label: 'Expenses' },
+    { ic: 'bank', label: 'Banks', page: 'banks' },
+    { ic: 'card', label: 'Cards', page: 'cards' },
+    { ic: 'trending-up', label: 'Invest', page: 'investments' },
+    { ic: 'layers', label: 'Assets', page: 'assets' },
+    { ic: 'smartphone', label: 'SIMs', page: 'sims' },
+    { ic: 'mail', label: 'Emails', page: 'emails' },
+    { ic: 'laptop', label: 'Gadgets', page: 'gadgets' },
+    { ic: 'id-card', label: 'Docs', page: 'documents' },
+    { ic: 'repeat', label: 'Subs', page: 'expenses' },
+    { ic: 'key', label: 'Logins', page: 'digital' },
+    { ic: 'shield', label: 'Security', page: 'security' },
+    { ic: 'receipt', label: 'Expenses', page: 'expenses' },
   ];
   grid.innerHTML = mods.map(m =>
-    `<div style="text-align:center;padding:10px 4px;border-radius:10px;transition:background .15s">
+    `<button type="button" class="home-mod-tile" data-act="ActHelpers.homeModGoto('${m.page}')" aria-label="${m.label}">
       <div class="home-mod-ic">${VC.icon(m.ic, 20)}</div>
-      <div style="font-size:9px;color:var(--text3);font-weight:600">${m.label}</div>
-    </div>`
+      <div class="home-mod-label">${m.label}</div>
+    </button>`
   ).join('');
 }
 

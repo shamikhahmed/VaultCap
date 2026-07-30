@@ -21,6 +21,7 @@ const Gadgets = {
       : 0;
   },
   detail(id) { if (typeof Assets !== 'undefined') Assets.edit(id); },
+  edit(id) { this.detail(id); },
   del(id) { if (typeof Assets !== 'undefined') Assets.del(id); }
 };
 window.Gadgets = Gadgets;

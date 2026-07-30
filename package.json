@@ -12,7 +12,7 @@
     "test:e2e:safari": "playwright test --project=webkit-iphone",
     "test:e2e:ui": "playwright test --ui",
     "capture:screenshots": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js",
-    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view \u2192 http://127.0.0.1:8765/screen-gallery.html'",
+    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view → http://127.0.0.1:8765/screen-gallery.html'",
     "gallery:embed": "node scripts/embed-gallery-manifest.mjs",
     "gallery:open": "open screen-gallery.html",
     "gallery:view": "python3 -m http.server 8765",
@@ -27,8 +27,8 @@
     "@playwright/test": "^1.52.0",
     "playwright": "^1.60.0"
   },
-  "version": "5.1.16",
-  "description": "VaultCap \u2014 encrypted offline life vault PWA by Capricorn Systems",
+  "version": "5.1.17",
+  "description": "VaultCap — encrypted offline life vault PWA by Capricorn Systems",
   "directories": {
     "doc": "docs",
     "test": "tests"

@@ -102,36 +102,41 @@ const Reminders = {
       }
     });
 
-    // Vehicle insurance / registration expiring within 30 days
-    (S.vehicles || []).forEach(v => {
-      const name = v.make ? (v.make + ' ' + (v.model || '')).trim() : (v.nickname || 'Vehicle');
+    // Vehicles — prefer S.assets (schema v10+); still scan legacy S.vehicles
+    const vehicleRows = [
+      ...(S.assets || []).filter(a => a.assetType === 'vehicle'),
+      ...(S.vehicles || []),
+    ];
+    vehicleRows.forEach(v => {
+      const name = v.name || (v.make ? (v.make + ' ' + (v.model || '')).trim() : (v.nickname || 'Vehicle'));
+      const page = 'assets';
       // Insurance — array format
       (v.insurance || []).forEach(ins => {
         if (!ins.expiryDate) return;
         const days = this._daysLeft(ins.expiryDate);
         if (days !== null && days < 30) {
-          items.push({ icon:'shield', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'shield', title:`${name} insurance expiring`, sub:`${ins.provider||'Insurer'} · Exp ${ins.expiryDate}`, daysLeft:days, category:'Vehicle', page });
         }
       });
       // Insurance — flat field
       if (v.insuranceExpiry) {
         const days = this._daysLeft(v.insuranceExpiry);
         if (days !== null && days <= 30) {
-          items.push({ icon:'shield', title:`${name} — Insurance`, sub:`Expires ${new Date(v.insuranceExpiry).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'shield', title:`${name} — Insurance`, sub:`Expires ${new Date(v.insuranceExpiry).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page });
         }
       }
       const d = v.documents || {};
       if (d.regExpiry) {
         const days = this._daysLeft(d.regExpiry);
         if (days !== null && days < 30) {
-          items.push({ icon:'car', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'car', title:`${name} registration expiring`, sub:`Reg expires ${d.regExpiry}`, daysLeft:days, category:'Vehicle', page });
         }
       }
       // MOT — explicit expiry (60-day window)
       if (v.motExpiry) {
         const days = this._daysLeft(v.motExpiry);
         if (days !== null && days <= 60) {
-          items.push({ icon:'settings', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber?' · '+v.regNumber:''}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'settings', title:`${name} MOT due`, sub:`MOT expires ${v.motExpiry}${v.regNumber||v.regPlate?' · '+(v.regNumber||v.regPlate):''}`, daysLeft:days, category:'Vehicle', page });
         }
       } else if (v.motDate) {
         // Fallback: MOT lasts 12 months from test date
@@ -139,7 +144,7 @@ const Reminders = {
         motExp.setFullYear(motExp.getFullYear() + 1);
         const days = this._daysLeft(motExp.toISOString());
         if (days !== null && days <= 60) {
-          items.push({ icon:'car', title:`${name} — MOT`, sub:`Due ${motExp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'car', title:`${name} — MOT`, sub:`Due ${motExp.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`, daysLeft:days, category:'Vehicle', page });
         }
       }
       // Road tax — taxExpiry or taxDue
@@ -147,7 +152,7 @@ const Reminders = {
       if (taxField) {
         const days = this._daysLeft(taxField);
         if (days !== null && days <= 30) {
-          items.push({ icon:'list', title:`${name} road tax due`, sub:`Road tax expires ${taxField}`, daysLeft:days, category:'Vehicle', page:'vehicles' });
+          items.push({ icon:'list', title:`${name} road tax due`, sub:`Road tax expires ${taxField}`, daysLeft:days, category:'Vehicle', page });
         }
       }
     });

@@ -2,7 +2,7 @@
 // Centralised constants — future migration target from app.js
 
 const VAULT_VERSION = 7;
-const VER = window.VER || '5.1.11';
+const VER = window.VER || '5.1.17';
 const APP_VERSION = VER;
 window.VER = VER;
 const MAX_STORAGE_MB = 5;
@@ -11,7 +11,9 @@ const MAX_AUDIT_ENTRIES = 10;
 const MAX_SEARCH_RESULTS = 50;
 const PIN_MIN_LENGTH = 6;
 const PIN_MAX_ATTEMPTS = 5;
-const PBKDF2_ITERATIONS = 310000;
+/** Live VaultDB target. Legacy 310k still accepted on unlock migrate. */
+const PBKDF2_ITERATIONS = 600000;
+const PBKDF2_LEGACY_ITERATIONS = 310000;
 
 const COUNTRY_CUR = { PK:'PKR', GB:'GBP', AE:'AED', US:'USD', CA:'CAD', AU:'AUD', SA:'SAR', QA:'QAR', IN:'INR', SG:'SGD', OTHER:'USD' };
 window.COUNTRY_CUR = COUNTRY_CUR;

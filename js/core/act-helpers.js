@@ -44,6 +44,16 @@ const ActHelpers = {
     }, 80);
   },
 
+  /** Locked welcome grid: unlock first, then open module. */
+  homeModGoto(page) {
+    if (window._vosUnlocked && typeof R !== 'undefined') {
+      R.goto(page);
+      return;
+    }
+    if (typeof Toast !== 'undefined') Toast.show('Unlock vault to open', 'info');
+    if (typeof R !== 'undefined') R.showLock();
+  },
+
   closeSheetGotoModules(sheetId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();

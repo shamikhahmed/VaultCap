@@ -1,3 +1,9 @@
+## [5.1.17] — 2026-07-30
+- Phase 2 health: CSP allowlist for LLM/logo proxy; drop unused frankfurter connect-src
+- PBKDF2 constant → 600k; version surfaces synced; home module tiles actionable
+- Demo + alerts/timeline/reminders read assets (electronics/vehicle) not legacy parallel arrays
+- Gadgets/Vehicles `.edit` aliases; SW `vaultcap-v79`
+
 ## [5.1.16] — 2026-07-20
 
 ### Fix

@@ -7,7 +7,7 @@
 Private life OS — encrypted offline finance, identity, family vault. PK/UK/UAE expat finance. **100% free** consumer PWA.
 
 ## Facts
-**Version:** 5.1.11
+**Version:** 5.1.17
 **Live:** https://shamikhahmed.github.io/VaultCap
 **Repo:** https://github.com/shamikhahmed/VaultCap
 **Stack:** Vanilla JS → `dist/vaultcap.bundle.js`. PIN-first unlock + recovery/backup keys + `.vos`. CSP `script-src 'self'` via `Act`/`data-act*`. Playwright e2e + XSS audit.
@@ -26,7 +26,7 @@ npm run test:e2e
 - `js/core/` — crypto, PIN, Act, store, router
 - `js/modules/` — feature modules
 - `dist/vaultcap.bundle.js` via `npm run build:js`
-- SW `sw-v51.js` cache `vaultcap-v73`
+- SW `sw-v51.js` cache `vaultcap-v79`
 - `.github/workflows/` — ci.yml + pages.yml
 
 ## Cap Standard status (2026-07-18)
@@ -34,7 +34,7 @@ npm run test:e2e
 |---|---|
 | Docs pack | ✅ |
 | Screen gallery | ✅ |
-| Version discipline | ✅ 5.1.11 |
+| Version discipline | ✅ 5.1.17 |
 | QA / e2e | ✅ |
 | CI gate | ✅ |
 | PWA polish | ✅ |

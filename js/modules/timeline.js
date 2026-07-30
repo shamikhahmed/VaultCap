@@ -28,7 +28,8 @@ const Timeline={
       addEv(exp,(d.holderName?d.holderName+' · ':'')+label+' expires','doc','id-card',()=>DocsModule.edit(d.id));
     });
     S.assets.filter(a=>a.assetType==='document'&&a.expiryDate).forEach(a=>{addEv(a.expiryDate,(a.docType||a.name)+' expires','doc','id-card',()=>Assets.edit(a.id));});
-    S.gadgets.filter(g=>g.warranty).forEach(g=>{addEv(g.warranty,g.name+' warranty ends','warranty','laptop',()=>Gadgets.edit(g.id));});
+    (S.assets||[]).filter(a=>(a.assetType==='electronics'||a.assetType==='gadget')&&a.warranty).forEach(g=>{addEv(g.warranty,g.name+' warranty ends','warranty','laptop',()=>Assets.edit(g.id));});
+    (S.gadgets||[]).filter(g=>g.warranty&&!(S.assets||[]).some(a=>a.id===g.id)).forEach(g=>{addEv(g.warranty,g.name+' warranty ends','warranty','laptop',()=>Gadgets.edit(g.id));});
     S.expenses.filter(e=>e.renewalDate&&e.active).forEach(e=>{addEv(e.renewalDate,e.name+' renewal','expense',e.icon||'repeat',()=>Exp.edit(e.id));});
     S.assets.filter(a=>a.assetType==='loan'&&a.dueDate).forEach(a=>{addEv(a.dueDate,a.name+' due','loan','banknote',()=>Assets.edit(a.id));});
     (S.loans||[]).filter(l=>l.dueDate&&l.status!=='Settled').forEach(l=>{addEv(l.dueDate,(l.person||'Loan')+' due','loan','banknote',()=>Loans.edit(l.id));});
