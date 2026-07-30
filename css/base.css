@@ -49,8 +49,9 @@
   --fw-semibold: 600; --fw-bold: 700; --fw-heavy: 800; --fw-black: 900;
   --fw-semi: 600; --fw-regular: 400;
 
-  /* Spacing — 8px base grid */
+  /* Spacing — 8px base grid (+ dashed aliases for older call sites) */
   --sp1: 8px; --sp2: 16px; --sp3: 24px; --sp4: 32px; --sp5: 40px; --sp6: 56px;
+  --sp-1: var(--sp1); --sp-2: var(--sp2); --sp-3: var(--sp3); --sp-4: var(--sp4);
   --card-br: 10px; --section-gap: 28px;
   /* Display font for numbers */
   --font-display: "IBM Plex Mono", "SF Mono", monospace;

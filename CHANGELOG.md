@@ -1,3 +1,8 @@
+## [5.1.19] — 2026-07-30
+- Phases 4–10: sheet design tokens (vc-sheet-*), plaintext EXPORT PLAINTEXT gate (no lastBackup stamp)
+- a11y sheet/settings tests; perf+offline suite; spacing alias --sp-N
+- SW `vaultcap-v81`
+
 ## [5.1.18] — 2026-07-30
 - Phase 3 IA: Settings → Account · General · Appearance · Access · Alerts · Privacy · About
 - Collapse More System Backup/Security dupes; legacy tab aliases; IA-RATIONALE.md

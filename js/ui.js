@@ -844,21 +844,26 @@ const ExIm={
       return;
     }
     if (!window.__vos_confirm('WARNING: This exports your vault UNENCRYPTED. Anyone with the file can read every bank, card, password hint, and document. Prefer encrypted .vos backup instead. Continue?')) return;
-    const data={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-    S.user.lastBackup=new Date().toISOString();Store.save();
+    const typed = window.prompt('Type EXPORT PLAINTEXT to confirm unencrypted export (or Cancel):', '');
+    if ((typed || '').trim().toUpperCase() !== 'EXPORT PLAINTEXT') {
+      if (typeof Toast !== 'undefined') Toast.show('Plaintext export cancelled', 'info');
+      return;
+    }
+    // Do NOT stamp lastBackup — only encrypted .vos counts as a real backup
     if(fmt==='csv'){
       let csv='Type,Name,Country,Currency,Value,Notes\n';
       S.banks.forEach(b=>csv+=`Bank,"${b.bankName}","${b.country}","${b.currency}","${b.balance||0}","${(b.notes||'').replace(/"/g,'""')}"\n`);
       S.cards.forEach(c=>csv+=`Card,"${c.cardName}","${c.country||''}","${c.currency||''}","${c.rewardsPoints||0} pts","${(c.notes||'').replace(/"/g,'""')}"\n`);
       S.investments.forEach(i=>csv+=`Investment,"${i.investmentName||i.broker}","${i.country||''}","${i.currency}","${i.currentValue||0}","P&L: ${i.currentValue&&i.amountInvested?i.currentValue-i.amountInvested:0}"\n`);
       S.expenses.forEach(e=>csv+=`Expense,"${e.name}","","${e.currency}","${e.amount}/mo","${e.from||''}"\n`);
-      S.gadgets.forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
-      this.dl('VaultCap-export.csv','text/csv',csv);Toast.show('CSV exported','success');return;
+      (S.assets||[]).filter(a=>a.assetType==='electronics'||a.assetType==='gadget').forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||g.currentValue||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
+      (S.gadgets||[]).forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
+      this.dl('VaultCap-plaintext.csv','text/csv',csv);Toast.show('CSV exported — not a backup','warning');return;
     }
-    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};S.user.lastBackup=new Date().toISOString();Store.save();
+    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
-    this.dl('VaultCap-backup-'+(new Date().toISOString().slice(0,10))+'.'+(fmt==='json'?'json':'json'),fmt==='json'?'application/json':'application/octet-stream',content);
-    Activity.log('Exported',fmt.toUpperCase());Toast.show('Exported as '+fmt,'success');
+    this.dl('VaultCap-plaintext-'+(new Date().toISOString().slice(0,10))+'.json','application/json',content);
+    Activity.log('Exported plaintext',fmt.toUpperCase());Toast.show('Exported plaintext '+fmt+' — not a backup','warning');
     return;},
   _promptExportPassphrase(){ this._promptBackupKey(); },
   _promptBackupKey(){

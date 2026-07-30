@@ -26,7 +26,8 @@ test.describe('VaultCap theme', () => {
     const light = await check('light');
     expect(light.theme).toBe('light');
     expect(light.isLight).toBe(true);
-    expect(light.accent.toLowerCase()).toMatch(/#000|#000000|rgb\(0,\s*0,\s*0\)/);
+    // Cap DNA light accent = ink navy (not pure #000, not blue)
+    expect(light.accent.toLowerCase()).toMatch(/#0a1220|#000|#000000|rgb\(\s*10,\s*18,\s*32\s*\)|rgb\(\s*0,\s*0,\s*0\s*\)/);
     expect(light.hasBlue).toBe(false);
 
     const auto = await check('auto');

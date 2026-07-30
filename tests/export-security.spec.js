@@ -58,4 +58,31 @@ test.describe('VaultCap security', () => {
     expect(result.ok).toBe(true);
     expect(result.high).toBe(0);
   });
+
+  test('plaintext export does not stamp lastBackup', async ({ page }) => {
+    await unlockDemoVault(page);
+    const result = await page.evaluate(async () => {
+      const before = S.user.lastBackup || null;
+      window.__vos_confirm = () => true;
+      window.prompt = () => 'EXPORT PLAINTEXT';
+      const origDl = ExIm.dl;
+      let name = '';
+      ExIm.dl = (n) => { name = n; };
+      ExIm.export('json');
+      ExIm.dl = origDl;
+      return {
+        lastBackupUnchanged: (S.user.lastBackup || null) === before,
+        filename: name,
+      };
+    });
+    expect(result.lastBackupUnchanged).toBe(true);
+    expect(result.filename).toMatch(/plaintext/i);
+  });
+
+  test('CSP connect-src allows LLM proxy', async ({ page }) => {
+    await page.goto('/');
+    const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+    expect(csp).toContain('vaultos-llm-proxy.shamikhahmed.workers.dev');
+    expect(csp).not.toContain('frankfurter');
+  });
 });

@@ -69,4 +69,31 @@ test.describe('VaultCap accessibility baseline', () => {
     await expect(page.locator('#fabMenu.on')).toHaveCount(0);
     await expect(fab).toHaveAttribute('aria-expanded', 'false');
   });
+
+  test('money sheet uses semantic tiles + 44px targets', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await unlockDemoVault(page);
+    await dismissOverlays(page);
+    await page.evaluate(() => openMoneySheet());
+    const sheet = page.locator('#moneySheet.vc-sheet-overlay');
+    await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute('role', 'dialog');
+    const tile = page.locator('#moneySheet .vc-sheet-tile').first();
+    await expect(tile).toBeVisible();
+    const box = await tile.boundingBox();
+    expect(box).toBeTruthy();
+    expect(Math.min(box.height, box.width)).toBeGreaterThanOrEqual(40);
+    await page.evaluate(() => document.getElementById('moneySheet')?.remove());
+  });
+
+  test('settings tabs are role=tab and switchable', async ({ page }) => {
+    await unlockDemoVault(page);
+    await dismissOverlays(page);
+    await page.evaluate(() => R.goto('settings'));
+    await expect(page.locator('#settTabs [role="tab"]').first()).toBeVisible();
+    const count = await page.locator('#settTabs [role="tab"]').count();
+    expect(count).toBe(7);
+    await page.evaluate(() => SettingsNav.show('privacy'));
+    await expect(page.locator('#settBody')).toContainText(/Export Encrypted Vault/i);
+  });
 });

@@ -3,15 +3,17 @@
 
 function moneySheetTile(m) {
   const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-  const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-  return '<div data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+  const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
+  return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
 }
 
 function openMoneySheet() {
   document.getElementById('moneySheet')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'moneySheet';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  overlay.className = 'vc-sheet-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', 'Money');
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   // Banking = liquid accounts & payment rails; Cashflow = obligations & money in/out
@@ -26,14 +28,14 @@ function openMoneySheet() {
     {id:'bc',ic:'refresh-cw',n:'Committees'},
   ].filter(m => isModOn(m.id));
   const section = (label, items) => !items.length ? '' :
-    '<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">'+label+'</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+items.map(moneySheetTile).join('')+'</div>';
+    '<div class="vc-sheet-section">'+label+'</div>' +
+    '<div class="vc-sheet-grid">'+items.map(moneySheetTile).join('')+'</div>';
   const body = (banking.length || cashflow.length)
     ? section('Banking', banking) + section('Cashflow', cashflow)
     : '<div style="text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No money modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'moneySheet\')">Enable in Settings →</button></div>';
-  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
-    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Money' + ctxLabel + '</div>' +
+  overlay.innerHTML = '<div class="vc-sheet-panel">' +
+    '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
+    '<div class="vc-sheet-kicker">Money' + ctxLabel + '</div>' +
     body + '</div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
@@ -44,7 +46,9 @@ function openAssetsSheet() {
   document.getElementById('assetsSheet')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'assetsSheet';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  overlay.className = 'vc-sheet-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', 'Wealth');
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   // Wealth = holdings (vehicles/metals/gadgets live under Property — no duplicate tiles)
@@ -53,14 +57,14 @@ function openAssetsSheet() {
     {id:'bonds',ic:'ticket',n:'Bonds'},
     {id:'assets',ic:'layers',n:'Property'},
   ].filter(m => isModOn(m.id));
-  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
-    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Wealth' + ctxLabel + '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+  overlay.innerHTML = '<div class="vc-sheet-panel">' +
+    '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
+    '<div class="vc-sheet-kicker">Wealth' + ctxLabel + '</div>' +
+    '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
     }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
@@ -72,7 +76,9 @@ function openIdentitySheet() {
   document.getElementById('identitySheet')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'identitySheet';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);display:flex;align-items:flex-end';
+  overlay.className = 'vc-sheet-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', 'Identity');
   const ctx = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.get() : 'ALL';
   const ctxLabel = (ctx && ctx !== 'ALL') ? (' · ' + ctx) : '';
   const items = [
@@ -82,14 +88,14 @@ function openIdentitySheet() {
     {id:'digital',ic:'key',n:'Digital'},
     {id:'friends',ic:'user',n:'Contacts'},
   ].filter(m => isModOn(m.id));
-  overlay.innerHTML = '<div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:12px 16px calc(env(safe-area-inset-bottom,0) + 16px)">' +
-    '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px"></div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Identity' + ctxLabel + '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+  overlay.innerHTML = '<div class="vc-sheet-panel">' +
+    '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
+    '<div class="vc-sheet-kicker">Identity' + ctxLabel + '</div>' +
+    '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+cnt+'</div>' : '';
-      return '<div data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">'+m.n+'</div>'+badge+'</div>';
+      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
     }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:16px 8px"><div style="font-size:13px;color:var(--text2);margin-bottom:12px">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
@@ -108,8 +114,10 @@ function openMore() {
   document.getElementById('moreOverlay')?.remove();
   const overlay = document.createElement('div');
   overlay.id = 'moreOverlay';
+  overlay.className = 'vc-more-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', 'Vault menu');
   // Header outside scroll — never slides under status bar / Dynamic Island
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;background:var(--bg);';
   const vis = id => id === 'dashboard' || id === 'search' || id === 'settings' || id === 'backup' || id === 'security' || id === 'help' || isModOn(id);
   const navGroups = [
     { label:'Home', items:[
@@ -140,22 +148,22 @@ function openMore() {
     ]},
   ].filter(g => g.items.length > 0);
   const bodyHtml = navGroups.map(group =>
-    '<div style="padding:14px 16px 4px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">' + group.label + '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
+    '<div style="padding:14px 16px 4px"><div class="vc-sheet-section" style="margin-top:0">' + group.label + '</div>' +
+    '<div class="vc-sheet-grid">' +
     group.items.map(m =>
-      '<div data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'' + m.id + '\')" style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">' +
+      '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'' + m.id + '\')">' +
       '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
-      '<div style="font-size:11px;font-weight:600;color:var(--text);line-height:1.2">' + m.n + '</div>' +
-      '</div>'
+      '<div class="vc-sheet-tile-label">' + m.n + '</div>' +
+      '</button>'
     ).join('') +
     '</div></div>'
   ).join('') + '<div style="height:24px"></div>';
   overlay.innerHTML =
-    '<div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);z-index:2">' +
+    '<div class="vc-more-header">' +
     '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
-    '<button type="button" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'\')" aria-label="Close" style="background:none;border:none;color:var(--text3);font-size:26px;cursor:pointer;touch-action:manipulation;line-height:1;min-width:44px;min-height:44px">×</button>' +
+    '<button type="button" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'\')" aria-label="Close" class="btn btn-g" style="background:none;border:none;color:var(--text3);font-size:26px;min-width:44px;min-height:44px;line-height:1">×</button>' +
     '</div>' +
-    '<div style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 88px)">' +
+    '<div class="vc-more-body">' +
     bodyHtml +
     '</div>';
   document.body.appendChild(overlay);
