@@ -6,18 +6,21 @@
 
 ## S
 - Capricorn OS brand lock (PWA icons / mark)
-- AES-256-GCM vault · PIN / WebAuthn
+- AES-256-GCM vault · PIN / WebAuthn · **PIN wraps DEK** (not PIN-as-KDF)
 - 120+ banks · family vault · Zakat/tax · documents
 - Smart Import / Smart Help (rules) · bills / NW · decoy · .vos export
 - Document PDF pack (single / multi / visible) — print locally
 - Vault profile switch (flush-safe)
+- Screen gallery CAPTURE (dark/light × mobile/desktop)
+- Click-all core surface suite
 
 ## W
-- (empty — doc PDF + vault switch shipped)
+- (empty)
 
 ## L
 - Soft-launch testers · App Store
-- Gallery CAPTURE regen · full inline-style purge · PIN-as-vault-KDF
+- Drop `style-src 'unsafe-inline'` (residual ~800 unique inlines)
+- Exhaustive every-hover micro-state matrix
 
 ## R
 - Required cloud accounts

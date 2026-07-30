@@ -1,3 +1,9 @@
+## [5.1.23] — 2026-07-30
+- Security: PIN wraps random DEK (`key_wrap`) — silent migrate on unlock; changePin re-wraps; new vaults wrapped from init
+- Styles: extract high-frequency inline `style=` → `vc-ix-*` utilities (~57% cut in `js/`)
+- QA: `tests/click-all.spec.js` + `tests/vault-kdf-wrap.spec.js`; gallery CAPTURE regen
+- Docs: PERF/QA-MATRIX/FEATURES/SECURITY honesty; SW `vaultcap-v85`
+
 ## [5.1.22] — 2026-07-30
 - Feat: Document PDF pack — single, selected multi, or visible list (photos + metadata); Print / Save PDF; local-only
 - Fix: Vault switch flushes pending save + clears session before profile flip; Switch Vault always visible; IDB name helper → `vaultos_*`
