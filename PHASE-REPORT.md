@@ -73,7 +73,7 @@
 2. `989c2a9` — Phase 2 health v5.1.17  
 3. `2b72990` — Phase 3 IA v5.1.18  
 4. `c9f5a2b` / `fae78db` — Phases 4–13 polish → v5.1.19–20  
-5. (pending) — Install banner + SW HTML-poison fix v5.1.21  
+5. `9cab3a7` — Install banner + SW HTML-poison fix v5.1.21  
 
 ## Final state
 World-class bar: **IA + security honesty + CSP/proxy + sheet tokens + clickable install banner + tests**. Not full visual redesign every screen — Cap DNA gold/ink preserved.
