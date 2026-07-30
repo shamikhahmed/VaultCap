@@ -118,6 +118,22 @@ const VaultDB = (() => {
     try { localStorage.setItem(_authModeKey(), mode === 'passphrase' ? 'passphrase' : 'pin'); } catch (e) {}
   }
 
+  function _wrapModeKey() {
+    const p = _profileId();
+    return p === 'personal' ? 'vos_kdf_mode' : 'vos_kdf_mode_' + p;
+  }
+
+  function _isWrapped() {
+    try { return localStorage.getItem(_wrapModeKey()) === 'wrapped'; } catch (e) { return false; }
+  }
+
+  function _setWrapped(on) {
+    try {
+      if (on) localStorage.setItem(_wrapModeKey(), 'wrapped');
+      else localStorage.removeItem(_wrapModeKey());
+    } catch (e) {}
+  }
+
   async function _deriveKey(pin, iterations) {
     const enc = new TextEncoder();
     const iters = iterations || _getKdfIters();
@@ -130,6 +146,54 @@ const VaultDB = (() => {
       { name: 'AES-GCM', length: 256 },
       false, ['encrypt', 'decrypt']
     );
+  }
+
+  /** Random vault DEK — extractable so PIN-KEK wrap + WebAuthn PRF wrap work. */
+  async function _generateDek() {
+    return crypto.subtle.generateKey(
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  async function _encryptRaw(key, rawBytes) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, rawBytes);
+    const buf = new Uint8Array(12 + ct.byteLength);
+    buf.set(iv, 0);
+    buf.set(new Uint8Array(ct), 12);
+    return buf;
+  }
+
+  async function _decryptRaw(key, buf) {
+    const dec = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: buf.slice(0, 12) },
+      key, buf.slice(12)
+    );
+    return new Uint8Array(dec);
+  }
+
+  async function _wrapDek(kek, dek) {
+    const raw = await crypto.subtle.exportKey('raw', dek);
+    return _encryptRaw(kek, new Uint8Array(raw));
+  }
+
+  async function _unwrapDek(kek, wrapBuf) {
+    const raw = await _decryptRaw(kek, wrapBuf);
+    return crypto.subtle.importKey('raw', raw, 'AES-GCM', true, ['encrypt', 'decrypt']);
+  }
+
+  /** After legacy PIN-KDF unlock: re-encrypt with random DEK, wrap DEK with PIN-KEK. */
+  async function _migrateToWrapped(pin, data) {
+    const dek = await _generateDek();
+    const kek = await _deriveKey(pin, KDF_TARGET);
+    const wrapBuf = await _wrapDek(kek, dek);
+    await _idbPut('key_wrap', wrapBuf);
+    _key = dek;
+    _setKdfIters(KDF_TARGET);
+    _setWrapped(true);
+    // Caller must save(data) with _key = dek
   }
 
   // ── Master-key derivation (PBKDF2 + vault salt — recovery slot) ────────────
@@ -182,14 +246,23 @@ const VaultDB = (() => {
     get sessionKey() { return _key; },
     set sessionKey(v) { _key = v; },
 
-    // Derive key from PIN and store in memory. Call before save/load.
+    // Derive session: new vaults get random DEK wrapped by PIN-KEK; existing unlocked via tryPin.
     async init(pin) {
       const has = await (async () => {
         try { return !!(await _idbGet('main')); } catch (e) { return false; }
       })();
-      if (!has) _setKdfIters(KDF_TARGET);
-      _key = await _deriveKey(pin, has ? _getKdfIters() : KDF_TARGET);
       await _getDB();
+      if (!has) {
+        _setKdfIters(KDF_TARGET);
+        const dek = await _generateDek();
+        const kek = await _deriveKey(pin, KDF_TARGET);
+        await _idbPut('key_wrap', await _wrapDek(kek, dek));
+        _key = dek;
+        _setWrapped(true);
+        return;
+      }
+      // Existing vault — tryPin sets session key; keep legacy derive as fallback for callers
+      _key = await _deriveKey(pin, _getKdfIters());
     },
 
     // Encrypt data and write to IndexedDB slot 'main'.
@@ -249,14 +322,38 @@ const VaultDB = (() => {
     async clear() {
       _key = null;
       try { await _idbClearAll(); } catch(e) {}
+      _setWrapped(false);
     },
 
-    // Re-encrypt existing data with a new PIN-derived key.
+    // Re-wrap DEK with new PIN (wrapped mode) or re-encrypt (legacy then migrate).
     async changePin(oldPin, newPin) {
       const data = await this.load();
       if (data === null) throw new Error('VaultDB: could not decrypt with current PIN');
-      _key = await _deriveKey(newPin);
+      const wrapBuf = await _idbGet('key_wrap');
+      if (wrapBuf || _isWrapped()) {
+        const oldKek = await _deriveKey(oldPin, KDF_TARGET);
+        let dek = _key;
+        try {
+          dek = await _unwrapDek(oldKek, wrapBuf || await _idbGet('key_wrap'));
+        } catch (e) {
+          throw new Error('VaultDB: could not verify current PIN');
+        }
+        const newKek = await _deriveKey(newPin, KDF_TARGET);
+        await _idbPut('key_wrap', await _wrapDek(newKek, dek));
+        _key = dek;
+        _setWrapped(true);
+        _setKdfIters(KDF_TARGET);
+        return;
+      }
+      // Legacy PIN-as-KDF → re-encrypt then wrap
+      _key = await _deriveKey(newPin, KDF_TARGET);
       await this.save(data);
+      try {
+        await _migrateToWrapped(newPin, data);
+        await this.save(data);
+      } catch (e) {
+        console.warn('[VaultDB] wrap after changePin deferred:', e);
+      }
     },
 
     // Returns true if encrypted data exists in IndexedDB.
@@ -276,6 +373,38 @@ const VaultDB = (() => {
       if (!itersToTry.includes(KDF_LEGACY)) itersToTry.push(KDF_LEGACY);
       if (!itersToTry.includes(KDF_TARGET)) itersToTry.push(KDF_TARGET);
 
+      const wrapBuf = await _idbGet('key_wrap');
+
+      // Wrapped DEK path (PIN → KEK → unwrap DEK → decrypt vault)
+      if (wrapBuf) {
+        for (const iters of itersToTry) {
+          try {
+            const kek = await _deriveKey(pin, iters);
+            const dek = await _unwrapDek(kek, wrapBuf);
+            for (const slot of ['main', 'decoy']) {
+              const buf = await _idbGet(slot);
+              if (!buf) continue;
+              try {
+                const data = await _decrypt(dek, buf);
+                _key = dek;
+                _setKdfIters(iters === KDF_TARGET ? KDF_TARGET : iters);
+                _setWrapped(true);
+                if (iters !== KDF_TARGET && slot === 'main') {
+                  try {
+                    const kekT = await _deriveKey(pin, KDF_TARGET);
+                    await _idbPut('key_wrap', await _wrapDek(kekT, dek));
+                    _setKdfIters(KDF_TARGET);
+                  } catch (e) { /* keep working iters */ }
+                }
+                return { slot, data };
+              } catch (e) { /* wrong slot */ }
+            }
+          } catch (e) { /* wrong PIN / iters */ }
+        }
+        return null;
+      }
+
+      // Legacy: PIN derives vault key directly; migrate to wrap on success
       for (const iters of itersToTry) {
         const key = await _deriveKey(pin, iters);
         for (const slot of ['main', 'decoy']) {
@@ -284,16 +413,21 @@ const VaultDB = (() => {
           try {
             const data = await _decrypt(key, buf);
             _key = key;
-            // Migrate vault to stronger KDF after successful unlock
-            if (iters !== KDF_TARGET && slot === 'main') {
+            if (slot === 'main') {
               try {
-                _key = await _deriveKey(pin, KDF_TARGET);
+                if (iters !== KDF_TARGET) {
+                  _key = await _deriveKey(pin, KDF_TARGET);
+                  await this.save(data);
+                  _setKdfIters(KDF_TARGET);
+                } else {
+                  _setKdfIters(KDF_TARGET);
+                }
+                await _migrateToWrapped(pin, data);
                 await this.save(data);
-                _setKdfIters(KDF_TARGET);
               } catch (migErr) {
                 _key = key;
-                _setKdfIters(iters);
-                console.warn('[VaultDB] KDF migrate deferred:', migErr);
+                _setKdfIters(iters === KDF_TARGET ? KDF_TARGET : iters);
+                console.warn('[VaultDB] wrap migrate deferred:', migErr);
               }
             } else {
               _setKdfIters(iters === KDF_TARGET ? KDF_TARGET : iters);
@@ -347,16 +481,26 @@ const VaultDB = (() => {
     getAuthMode() { return _getAuthMode(); },
     setAuthMode(mode) { _setAuthMode(mode); },
 
-    /** One-time: re-encrypt passphrase vault with 6-digit PIN unlock. */
+    /** One-time: re-encrypt passphrase vault with 6-digit PIN unlock + DEK wrap. */
     async migrateToPin(passphrase, pin) {
       const pp = String(passphrase || '');
       const p = String(pin || '');
       if (!/^\d{6}$/.test(p)) throw new Error('PIN must be 6 digits');
       const result = await this.tryPin(pp);
       if (!result || result.slot !== 'main') throw new Error('Old passphrase incorrect');
+      // tryPin may already have wrapped; ensure PIN wrap with new PIN
       _setKdfIters(KDF_TARGET);
-      _key = await _deriveKey(p, KDF_TARGET);
-      await this.save(result.data);
+      try {
+        await _migrateToWrapped(p, result.data);
+        await this.save(result.data);
+      } catch (e) {
+        const dek = await _generateDek();
+        const kek = await _deriveKey(p, KDF_TARGET);
+        await _idbPut('key_wrap', await _wrapDek(kek, dek));
+        _key = dek;
+        _setWrapped(true);
+        await this.save(result.data);
+      }
       _setAuthMode('pin');
       return result.data;
     },
@@ -371,6 +515,7 @@ const VaultDB = (() => {
     async wipe() {
       _key = null;
       try { await _idbClearAll(); } catch(e) {}
+      _setWrapped(false);
       if (_db) {
         try { _db.close(); } catch(e) {}
       }
@@ -380,6 +525,7 @@ const VaultDB = (() => {
 
     activeProfile() { return _profileId(); },
     databaseName() { return _dbName(); },
+    isWrappedMode() { return _isWrapped(); },
 
     // Save a recovery copy of current vault data encrypted with master key.
     async saveRecovery(masterKey) {
@@ -407,11 +553,16 @@ const VaultDB = (() => {
       }
     },
 
-    // Decrypt recovery slot with master key, re-encrypt with new PIN.
+    // Decrypt recovery slot with master key, re-encrypt with new PIN + DEK wrap.
     async recoverAccess(masterKey, newPin) {
       const data = await this.loadRecovery(masterKey);
       if (!data) throw new Error('Recovery slot not found or master key incorrect');
-      _key = await _deriveKey(newPin);
+      const dek = await _generateDek();
+      const kek = await _deriveKey(newPin, KDF_TARGET);
+      await _idbPut('key_wrap', await _wrapDek(kek, dek));
+      _key = dek;
+      _setKdfIters(KDF_TARGET);
+      _setWrapped(true);
       await this.save(data);
     },
 

@@ -6,7 +6,7 @@ VaultCap is a **100% free**, consumer, offline-first PWA. No account. No subscri
 
 | Layer | Role |
 |-------|------|
-| **PIN (6 digits)** | Daily unlock on this device. Derives AES-256-GCM key via PBKDF2 (~600k iterations). |
+| **PIN (6 digits)** | Daily unlock. Derives a KEK via PBKDF2 (~600k) that **unwraps a random vault DEK** (silent migrate on unlock). PIN alone is not the data key after wrap. |
 | **Recovery key** | Shown once at setup. Restores access if you forget PIN (this device / recovery flow). |
 | **Backup key** | Generated when you export a `.vos` file. Needed with the file to restore on another device. Not your PIN. |
 | **Decoy PIN** | Optional. Opens a convincing fake vault under duress. |
