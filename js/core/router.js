@@ -56,7 +56,8 @@ const R = {
       else sub.textContent = 'Enter your 6-digit PIN';
     }
     const sp = document.getElementById('switchProfileBtn');
-    if (sp) sp.style.display = (VaultProfiles.isDemo() || VaultProfiles.isDevMode() || localStorage.getItem('vo_used_demo') === '1') ? '' : 'none';
+    // Always show — Personal + Demo always available; unlock target with its own PIN
+    if (sp) sp.style.display = '';
     const fp = document.getElementById('forgotPinLink');
     if (fp) fp.style.display = VaultProfiles.isDemo() || needsMigrate ? 'none' : (S.fails >= 3 ? 'inline' : 'none');
     if (typeof getVaultId === 'function') getVaultId();

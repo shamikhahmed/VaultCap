@@ -12,12 +12,30 @@ const VaultProfiles = {
   },
   isDemo() { return this.active() === 'demo'; },
   isDevMode() { return localStorage.getItem('vo_dev_mode') === '1'; },
+  /** Matches VaultDB IDB names (vaultos / vaultos_<id>). */
   dbName() {
     const p = this.active();
-    return p === 'personal' ? 'VaultCap' : 'VaultCap_' + p;
+    return p === 'personal' ? 'vaultos' : 'vaultos_' + p;
   },
-  switch(profileId) {
+  /**
+   * Flush pending vault write, drop session key, then flip profile + reload.
+   * Without flush, in-flight VaultDB.save can land in the wrong IDB after LS flip.
+   */
+  async switch(profileId) {
+    if (!profileId || profileId === this.active()) return;
     if (typeof Modal !== 'undefined') Modal.close();
+    try {
+      if (typeof Store !== 'undefined' && Store.flush) {
+        await Promise.race([
+          Store.flush(),
+          new Promise(function (r) { setTimeout(r, 2000); })
+        ]);
+      }
+    } catch (e) {}
+    try {
+      if (typeof VaultDB !== 'undefined') VaultDB.sessionKey = null;
+      if (typeof S !== 'undefined') S.unlocked = false;
+    } catch (e) {}
     localStorage.setItem('vo_active_profile', profileId);
     location.reload();
   },
@@ -69,10 +87,10 @@ const VaultProfiles = {
   showSwitcher() {
     const active = this.active();
     Modal.open('Vault Profiles',
-      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Your real vault is <strong>My Vault</strong>. Demo is for tours only.</div>' +
+      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Your real vault is <strong>My Vault</strong>. Demo is for tours only. After switching, unlock with that vault’s PIN.</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px">' +
       VaultProfiles.pickerProfiles().map(p =>
-        '<div data-act="VaultProfiles.switch(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:14px;background:' + (p.id===active?'rgba(0,213,255,.12)':'var(--glass)') + ';border:1px solid ' + (p.id===active?'rgba(0,213,255,.4)':'var(--border)') + ';border-radius:14px;cursor:pointer;touch-action:manipulation">' +
+        '<div data-act="VaultProfiles.switch(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:14px;background:' + (p.id===active?'rgba(0,213,255,.12)':'var(--glass)') + ';border:1px solid ' + (p.id===active?'rgba(0,213,255,.4)':'var(--border)') + ';border-radius:14px;cursor:pointer;touch-action:manipulation;min-height:48px">' +
         '<div style="font-size:28px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon(p.ic || 'vault', 24) : '') + '</div>' +
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">' + p.label + (p.id===active?' <span style="font-size:11px;color:var(--accent)">● Active</span>':'') + '</div>' +
         '<div style="font-size:12px;color:var(--text3)">' + p.desc + '</div></div>' +
