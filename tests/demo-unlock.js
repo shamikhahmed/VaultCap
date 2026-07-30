@@ -19,7 +19,7 @@ async function dismissOverlays(page) {
     const overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('on');
     document.querySelectorAll('.modal-overlay.on, .overlay.on').forEach(el => el.classList.remove('on'));
-    ['moneySheet', 'assetsSheet', 'identitySheet', 'moreOverlay'].forEach((id) => {
+    ['moneySheet', 'assetsSheet', 'identitySheet', 'moreOverlay', 'vaultInstallBanner'].forEach((id) => {
       document.getElementById(id)?.remove();
     });
     const moreSheet = document.getElementById('moreSheet');
@@ -27,6 +27,7 @@ async function dismissOverlays(page) {
     if (typeof closeMore === 'function') closeMore();
     if (typeof CMD !== 'undefined') CMD.close();
     if (typeof FAB !== 'undefined') FAB.close();
+    if (window.VER) localStorage.setItem('vos_wn_ver', window.VER);
   });
   await page.locator('#overlay.on, .modal-overlay.on').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
 }
@@ -154,7 +155,7 @@ async function fastGalleryUnlock(page) {
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
-    localStorage.setItem('vos_wn_ver', '4.9.2');
+    localStorage.setItem('vos_wn_ver', '5.1.21');
     localStorage.removeItem('vc_lockout_v1_demo');
     localStorage.removeItem('vc_lockout_v1_personal');
   });
@@ -164,6 +165,7 @@ async function fastGalleryUnlock(page) {
     () => typeof loadDemoProfile === 'function' && typeof R !== 'undefined',
     { timeout: 30000 },
   );
+  await page.evaluate(() => { if (window.VER) localStorage.setItem('vos_wn_ver', window.VER); });
   await dismissOverlays(page);
   await page.evaluate(() => {
     loadDemoProfile('business');
@@ -200,14 +202,19 @@ async function unlockDemoVault(page) {
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
-    localStorage.setItem('vos_wn_ver', '4.9.2');
+    // Match live VER so What's New modal does not block smoke/nav clicks
+    localStorage.setItem('vos_wn_ver', (typeof window !== 'undefined' && window.VER) ? window.VER : '5.1.21');
     localStorage.removeItem('vc_lockout_v1_demo');
     localStorage.removeItem('vc_lockout_v1_personal');
+    localStorage.removeItem('vo_install_dismissed');
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
   await page.waitForFunction(() => typeof window.loadDemoProfile === 'function', { timeout: 15000 });
-  await page.evaluate(() => localStorage.removeItem('vo_demo_guide_pending'));
+  await page.evaluate(() => {
+    localStorage.removeItem('vo_demo_guide_pending');
+    if (window.VER) localStorage.setItem('vos_wn_ver', window.VER);
+  });
   await dismissOverlays(page);
 
   if (await page.locator('#pgOnboard').isVisible().catch(() => false)) {

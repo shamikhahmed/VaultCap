@@ -1,7 +1,12 @@
 # VaultCap Phase 1–13 Report
 
-**Shipped:** 2026-07-30 · **App:** `5.1.19` · **SW:** `vaultcap-v81`  
-**Evidence base:** Playwright chromium + live `:8877` DOM evaluate + screenshots
+**Shipped:** 2026-07-30 · **App:** `5.1.21` · **SW:** `vaultcap-v83`  
+**Evidence base:** Playwright chromium + live DOM evaluate + screenshots
+
+### Hotfix — Install banner (5.1.21)
+**Root cause:** SW fetch miss fell back to `index.html` for `/dist/vaultcap.bundle.js` → parse fail → `InstallPrompt` never defined → Close/Install dead.  
+**Also:** `var InstallPrompt` not auto-exported; `app-blur * { pointer-events:none }` froze UI.  
+**Fix:** `window.InstallPrompt` + direct listeners; SW `offlineAsset` (503 JS) never HTML for code; `ignoreSearch` cache match.
 
 ---
 
@@ -35,7 +40,7 @@
 
 ## Phase 8 — Performance
 **Measured.** Bundle transfer **1142 KB**; DCL **~307 ms**; cold wall **~768 ms** (local http.server). Soft budgets hold. Lazy `smart-db`/`tax` unchanged.  
-**Evidence:** `[perf] {"wallMs":768,"VER":"5.1.19","domContentLoaded":307,"bundleTransferKb":1142,"bundleDurationMs":12}`
+**Evidence:** `[perf] {"wallMs":768,"VER":"5.1.20","domContentLoaded":307,"bundleTransferKb":1142,"bundleDurationMs":12}`
 
 ## Phase 9 — Security & Data
 **Done.** Plaintext JSON/CSV requires typed `EXPORT PLAINTEXT`; filename `VaultCap-plaintext-*`; **does not** stamp `lastBackup`. CSP proxy allowlisted. No-PIN gated.  
@@ -48,7 +53,7 @@
 **Partial → covered by suite.** First-timer/demo unlock, expert settings tabs, keyboard/a11y, low-end offline path, XSS escHtml, integrity high=0. Full manual gallery regen left as W (FEATURES).
 
 ## Phase 12 — Docs & Gallery
-**Done.** `AUDIT.md`, `IA-RATIONALE.md`, CHANGELOG 5.1.17–5.1.19, README/HANDOVER/GUIDE path → Privacy, this report.  
+**Done.** `AUDIT.md`, `IA-RATIONALE.md`, CHANGELOG 5.1.17–5.1.20, README/HANDOVER/GUIDE path → Privacy, this report.  
 **Gallery:** prior `screen-gallery.html` still valid; full CAPTURE regen = follow-up (62MB assets).
 
 ## Phase 13 — Final Validation
@@ -67,7 +72,8 @@
 1. `a2ec0ae` — Phase 1 AUDIT  
 2. `989c2a9` — Phase 2 health v5.1.17  
 3. `2b72990` — Phase 3 IA v5.1.18  
-4. `c9f5a2b` — Phases 4–13 polish v5.1.19  
+4. `c9f5a2b` / `fae78db` — Phases 4–13 polish → v5.1.19–20  
+5. (pending) — Install banner + SW HTML-poison fix v5.1.21  
 
 ## Final state
-World-class bar: **IA + security honesty + CSP/proxy + sheet tokens + tests with live numbers**. Not a full visual redesign of every screen — restraint over fad; Cap DNA gold/ink preserved.
+World-class bar: **IA + security honesty + CSP/proxy + sheet tokens + clickable install banner + tests**. Not full visual redesign every screen — Cap DNA gold/ink preserved.

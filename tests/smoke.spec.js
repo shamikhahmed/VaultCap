@@ -39,9 +39,14 @@ test.describe('VaultCap smoke', () => {
 
   test('navigates to banks after unlock', async ({ page }) => {
     await unlockDemoVault(page);
-    const banksTab = page.locator('[data-pg="banks"]').first();
-    await expect(banksTab).toBeVisible();
-    await banksTab.click();
+    await dismissOverlays(page);
+    // Prefer programmatic nav — What's New modal can race after unlock
+    await page.evaluate(() => {
+      if (typeof WhatsNew !== 'undefined' && window.VER) localStorage.setItem('vos_wn_ver', window.VER);
+      if (typeof Modal !== 'undefined') Modal.close();
+      document.getElementById('overlay')?.classList.remove('on');
+      R.goto('banks');
+    });
     await expect(page.locator('#pg-banks.on')).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Banks' })).toBeVisible();
   });

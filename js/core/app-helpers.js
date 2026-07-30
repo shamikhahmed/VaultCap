@@ -97,53 +97,118 @@ function _scheduleClipClear() {
   }, secs * 1000);
 }
 
-// Anti-devtools: blur app when devtools likely open
-(function() {
-  let _dtOpen = false;
-  function _checkDevtools() {
-    const w = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
-    if (w && !_dtOpen) {
-      _dtOpen = true;
-      if (S.unlocked) document.body.classList.add('app-blur');
-    } else if (!w && _dtOpen) {
-      _dtOpen = false;
-      document.body.classList.remove('app-blur');
+// PWA install prompt — direct listeners (CSP Act needs window export; var alone never exported)
+const InstallPrompt = (function () {
+  let _evt = null;
+  let _shown = false;
+
+  function _canNativeInstall() {
+    return !!_evt;
+  }
+
+  function _showBanner() {
+    if (_shown || document.getElementById('vaultInstallBanner')) return;
+    if (localStorage.getItem('vo_install_dismissed') === '1') return;
+    // Standalone / already installed — no banner
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches) return;
+      if (navigator.standalone === true) return;
+    } catch (e) {}
+
+    _shown = true;
+    const b = document.createElement('div');
+    b.id = 'vaultInstallBanner';
+    b.className = 'vc-install-banner';
+    b.setAttribute('role', 'region');
+    b.setAttribute('aria-label', 'Install VaultCap');
+
+    const icon = typeof VC !== 'undefined' ? VC.icon('vault', 28) : '';
+    const native = _canNativeInstall();
+    b.innerHTML =
+      '<div class="vc-install-banner__ic chip-ic" aria-hidden="true">' + icon + '</div>' +
+      '<div class="vc-install-banner__copy">' +
+        '<div class="vc-install-banner__title">Install VaultCap</div>' +
+        '<div class="vc-install-banner__sub">Works offline. No tracking.</div>' +
+      '</div>' +
+      '<button type="button" class="vc-install-banner__btn" id="vaultInstallBtn">' +
+        (native ? 'Install' : 'How') +
+      '</button>' +
+      '<button type="button" class="vc-install-banner__close" id="vaultInstallClose" aria-label="Dismiss install prompt">×</button>';
+
+    document.body.appendChild(b);
+
+    const btn = document.getElementById('vaultInstallBtn');
+    const close = document.getElementById('vaultInstallClose');
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        InstallPrompt.install();
+      });
+    }
+    if (close) {
+      close.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        InstallPrompt.dismiss();
+      });
     }
   }
-  window.addEventListener('resize', _checkDevtools);
-})();
 
-// PWA install prompt
-var InstallPrompt = (function () {
-  var _evt = null;
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
     _evt = e;
-    if (!localStorage.getItem('vo_install_dismissed')) {
-      setTimeout(_showBanner, 8000);
+    if (localStorage.getItem('vo_install_dismissed') !== '1') {
+      setTimeout(_showBanner, 2500);
     }
   });
-  function _showBanner() {
-    if (!_evt || document.getElementById('vaultInstallBanner')) return;
-    var b = document.createElement('div');
-    b.id = 'vaultInstallBanner';
-    b.setAttribute('role', 'region');
-    b.setAttribute('aria-label', 'Install VaultCap');
-    b.style.cssText = 'position:fixed;bottom:calc(64px + env(safe-area-inset-bottom,0px));left:12px;right:12px;z-index:8500;background:var(--glass,rgba(15,20,40,0.97));border:1px solid var(--border,rgba(255,255,255,0.12));border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:pgIn 0.3s ease';
-    b.innerHTML = '<div class="chip-ic" style="flex-shrink:0" aria-hidden="true">' + (typeof VC !== 'undefined' ? VC.icon('vault', 28) : '') + '</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Install VaultCap</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Works offline. No tracking.</div></div><button type="button" style="padding:7px 14px;background:var(--accent,#ffffff);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap" aria-label="Install app" data-act="InstallPrompt.install()">Install</button><button type="button" style="padding:7px 10px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;line-height:1" aria-label="Dismiss install prompt" data-act="InstallPrompt.dismiss()">Close</button>';
-    document.body.appendChild(b);
-  }
+
+  // Safari / iOS never fires beforeinstallprompt — still offer install help
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      if (_evt) return;
+      if (localStorage.getItem('vo_install_dismissed') === '1') return;
+      try {
+        if (window.matchMedia('(display-mode: standalone)').matches) return;
+        if (navigator.standalone === true) return;
+      } catch (e) {}
+      _showBanner();
+    }, 6000);
+  });
+
   return {
     install: function () {
-      if (!_evt) return;
-      _evt.prompt();
-      _evt.userChoice.then(function () { _evt = null; InstallPrompt.dismiss(); });
+      if (_evt) {
+        try {
+          _evt.prompt();
+          _evt.userChoice.then(function () {
+            _evt = null;
+            InstallPrompt.dismiss();
+          }).catch(function () {
+            InstallPrompt.dismiss();
+          });
+        } catch (err) {
+          window.location.href = 'install.html';
+        }
+        return;
+      }
+      window.location.href = 'install.html';
     },
     dismiss: function () {
-      localStorage.setItem('vo_install_dismissed', '1');
-      var b = document.getElementById('vaultInstallBanner');
+      try { localStorage.setItem('vo_install_dismissed', '1'); } catch (e) {}
+      _shown = false;
+      const b = document.getElementById('vaultInstallBanner');
       if (b) b.remove();
+    },
+    /** Test / demo helper */
+    _forceShow: function () {
+      try { localStorage.removeItem('vo_install_dismissed'); } catch (e) {}
+      _shown = false;
+      const old = document.getElementById('vaultInstallBanner');
+      if (old) old.remove();
+      _showBanner();
     }
   };
 })();
+window.InstallPrompt = InstallPrompt;
 

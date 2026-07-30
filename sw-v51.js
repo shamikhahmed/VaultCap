@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v81';
+const CACHE = 'vaultcap-v83';
 const ASSETS = [
   './',
   './index.html',
@@ -37,10 +37,32 @@ const ASSETS = [
   './dist/vaultcap.bundle.js',
 ];
 
-const PRECACHE = new Set(ASSETS.map((p) => new URL(p, self.location).href));
+const PRECACHE_PATHS = new Set(
+  ASSETS.map((p) => new URL(p, self.location).pathname)
+);
 
 function isCodeAsset(url) {
-  return /\.(js|css|html)(\?|$)/i.test(url.pathname);
+  return /\.(js|css)(\?|$)/i.test(url.pathname);
+}
+
+function isPrecachePath(url) {
+  return PRECACHE_PATHS.has(url.pathname);
+}
+
+/** Never serve HTML for JS/CSS — that poisons the app (InstallPrompt undefined, etc.). */
+function offlineAsset(url) {
+  const type = /\.css(\?|$)/i.test(url.pathname)
+    ? 'text/css'
+    : 'application/javascript';
+  return new Response('/* VaultCap offline — asset unavailable */\n', {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: { 'Content-Type': type, 'Cache-Control': 'no-store' },
+  });
+}
+
+function matchIgnoreSearch(request) {
+  return caches.match(request, { ignoreSearch: true });
 }
 
 self.addEventListener('install', (e) => {
@@ -65,7 +87,7 @@ self.addEventListener('fetch', (e) => {
   // Bank logos — cache-first, never hit Google from client
   if (url.pathname.includes('/assets/banks/')) {
     e.respondWith(
-      caches.match(e.request).then((cached) => {
+      matchIgnoreSearch(e.request).then((cached) => {
         if (cached) return cached;
         return fetch(e.request).then((res) => {
           if (res && res.ok) {
@@ -79,42 +101,49 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  if (PRECACHE.has(url.href)) {
+  // Navigations only — SPA/offline shell fallback to index.html
+  if (e.request.mode === 'navigate') {
     e.respondWith(
-      caches.match(e.request).then((cached) => {
-        const net = fetch(e.request).then((res) => {
+      fetch(e.request)
+        .then((res) => {
           if (res && res.ok) {
             const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+            caches.open(CACHE).then((c) => c.put('./index.html', copy)).catch(() => {});
           }
           return res;
-        }).catch(() => cached || caches.match('./index.html'));
-        // Stale-while-revalidate: return cache immediately when present
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  if (isPrecachePath(url) || isCodeAsset(url)) {
+    e.respondWith(
+      matchIgnoreSearch(e.request).then((cached) => {
+        const net = fetch(e.request)
+          .then((res) => {
+            if (res && res.ok) {
+              const copy = res.clone();
+              // Store under path without query so ?v= bumps still hit ignoreSearch
+              const clean = new Request(url.origin + url.pathname);
+              caches.open(CACHE).then((c) => c.put(clean, copy)).catch(() => {});
+            }
+            return res;
+          })
+          .catch(() => cached || offlineAsset(url));
         return cached || net;
       })
     );
     return;
   }
 
-  if (isCodeAsset(url)) {
-    e.respondWith(
-      fetch(e.request)
-        .then((res) => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
-          }
-          return res;
-        })
-        .catch(() => caches.match(e.request).then((cached) => cached || caches.match('./index.html')))
-    );
-    return;
-  }
-
   e.respondWith(
-    caches.match(e.request).then((cached) => {
+    matchIgnoreSearch(e.request).then((cached) => {
       if (cached) return cached;
-      return fetch(e.request).catch(() => caches.match('./index.html'));
+      return fetch(e.request).catch(() => {
+        if (isCodeAsset(url)) return offlineAsset(url);
+        return caches.match('./index.html');
+      });
     })
   );
 });

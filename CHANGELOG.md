@@ -1,3 +1,12 @@
+## [5.1.21] — 2026-07-30
+- Fix: SW no longer serves `index.html` for failed JS/CSS fetches (poisoned bundle → `InstallPrompt` undefined → dead banner)
+- Cache match `ignoreSearch` for `?v=` assets; SW `vaultcap-v83`
+
+## [5.1.20] — 2026-07-30
+- Fix: install banner Install/Close dead — `var InstallPrompt` never exported to `window` (Act miss); bind direct click listeners
+- Kill anti-devtools `app-blur` pointer-events:none (desktop sidebar false-positive froze UI)
+- Banner CSS tokens + 44px targets; Safari fallback → install.html; SW `vaultcap-v82`
+
 ## [5.1.19] — 2026-07-30
 - Phases 4–10: sheet design tokens (vc-sheet-*), plaintext EXPORT PLAINTEXT gate (no lastBackup stamp)
 - a11y sheet/settings tests; perf+offline suite; spacing alias --sp-N

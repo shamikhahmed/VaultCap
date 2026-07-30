@@ -1402,10 +1402,13 @@ const QRSync = {
 
 const WhatsNew={
   check(){
-    const lastShown=localStorage.getItem('vos_wn_ver');
-    if(lastShown===VER) return; // Already shown this version
-    localStorage.setItem('vos_wn_ver',VER); // Mark as shown immediately
-    setTimeout(()=>this.show(), 1200);
+    if(localStorage.getItem('vos_wn_ver')===VER) return;
+    // Delay so tests / dismissOverlays can stamp vos_wn_ver and suppress
+    setTimeout(()=>{
+      if(localStorage.getItem('vos_wn_ver')===VER) return;
+      localStorage.setItem('vos_wn_ver',VER);
+      this.show();
+    }, 1200);
   },
   show(){
     localStorage.setItem('vos_wn_ver',VER);
