@@ -34,8 +34,8 @@
 **Done.** Extended `a11y.spec.js`: sheet semantics, 7 settings tabs, prior landmarks/FAB/reduced-motion. Hit targets on sheet tiles measured.
 
 ## Phase 8 — Performance
-**Measured.** Bundle ~**1142 KB** written; cold-load wall &lt;45s budget (soft); transfer budget &lt;2500 KB. Lazy `smart-db`/`tax` unchanged.  
-**Evidence:** `tests/perf-offline.spec.js` cold load log + build output `1141.6 KB`.
+**Measured.** Bundle transfer **1142 KB**; DCL **~307 ms**; cold wall **~768 ms** (local http.server). Soft budgets hold. Lazy `smart-db`/`tax` unchanged.  
+**Evidence:** `[perf] {"wallMs":768,"VER":"5.1.19","domContentLoaded":307,"bundleTransferKb":1142,"bundleDurationMs":12}`
 
 ## Phase 9 — Security & Data
 **Done.** Plaintext JSON/CSV requires typed `EXPORT PLAINTEXT`; filename `VaultCap-plaintext-*`; **does not** stamp `lastBackup`. CSP proxy allowlisted. No-PIN gated.  
@@ -67,7 +67,7 @@
 1. `a2ec0ae` — Phase 1 AUDIT  
 2. `989c2a9` — Phase 2 health v5.1.17  
 3. `2b72990` — Phase 3 IA v5.1.18  
-4. *(pending)* Phase 4–13 polish v5.1.19  
+4. `c9f5a2b` — Phases 4–13 polish v5.1.19  
 
 ## Final state
 World-class bar: **IA + security honesty + CSP/proxy + sheet tokens + tests with live numbers**. Not a full visual redesign of every screen — restraint over fad; Cap DNA gold/ink preserved.
