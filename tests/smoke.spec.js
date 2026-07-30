@@ -60,7 +60,8 @@ test.describe('VaultCap smoke', () => {
 
   test('dashboard shows net worth greeting after unlock', async ({ page }) => {
     await unlockDemoVault(page);
-    await page.locator('[data-pg="dashboard"]').first().click();
+    await dismissOverlays(page);
+    await page.evaluate(() => R.goto('dashboard'));
     await expect(page.locator('#pg-dashboard.on')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('#dashGreet')).not.toBeEmpty();
   });

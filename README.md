@@ -1,6 +1,6 @@
 # VaultCap — Private Life Operating System
 
-**Version:** 5.1.21
+**Version:** 5.1.22
 
 [![Live App](https://img.shields.io/badge/Live%20App-VaultCap-ffffff?style=for-the-badge&labelColor=000000)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
@@ -87,10 +87,10 @@ VaultCap/
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA · vaultcap-v83)
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v84)
 ```
 
-**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.21** · no account
+**Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.22** · no account
 
 ---
 

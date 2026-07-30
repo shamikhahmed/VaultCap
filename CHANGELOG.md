@@ -1,3 +1,8 @@
+## [5.1.22] — 2026-07-30
+- Feat: Document PDF pack — single, selected multi, or visible list (photos + metadata); Print / Save PDF; local-only
+- Fix: Vault switch flushes pending save + clears session before profile flip; Switch Vault always visible; IDB name helper → `vaultos_*`
+- Docs: `PERF.md`, `QA-MATRIX.md`; SW `vaultcap-v84`
+
 ## [5.1.21] — 2026-07-30
 - Fix: SW no longer serves `index.html` for failed JS/CSS fetches (poisoned bundle → `InstallPrompt` undefined → dead banner)
 - Cache match `ignoreSearch` for `?v=` assets; SW `vaultcap-v83`
