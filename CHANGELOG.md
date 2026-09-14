@@ -1,3 +1,8 @@
+## [5.1.27] — 2026-09-14
+- Fix (C-02): SW install no longer fails on missing gitignored `widget-data.json`; resilient precache; cache `vaultcap-v89`
+- Release (C-01): version + SW register query bump so installed PWAs receive Phase 0 security vendoring
+- CI: Pages deploy waits for green CI (`workflow_run`)
+
 ## [5.1.26] — 2026-07-31
 - Fix: `#pgLock` safe-bottom dual-path (`env` + `--cap-safe-b`) — no invented 24–28px home-indicator gap on home-button SE; short-height media same
 - QA: device-matrix loop re-verify; SW `vaultcap-v88`

@@ -1,9 +1,9 @@
-const CACHE = 'vaultcap-v88';
+const CACHE = 'vaultcap-v89';
+// widget-data.json is local/gitignored — never precache it (addAll would fail install).
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './widget-data.json',
   './icon.svg',
   './icon-mark.svg',
   './mark.svg',
@@ -67,7 +67,15 @@ function matchIgnoreSearch(request) {
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((c) =>
+      Promise.all(
+        ASSETS.map((url) =>
+          c.add(url).catch((err) => {
+            console.warn('[VaultCap SW] precache skip', url, err && err.message);
+          })
+        )
+      )
+    ).then(() => self.skipWaiting())
   );
 });
 
