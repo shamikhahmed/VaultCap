@@ -12,3 +12,9 @@ SECURITY.md documents 600k target + 310k re-wrap.
 
 ### VLT-P1-01 privacy.html marketing JS ✅
 ### VLT-P1-03 sub-11px (css pass) ✅ in progress
+
+### VLT-P1-05 store pack (partial) ✅
+docs/store/* + PrivacyInfo.xcprivacy scaffold.
+⛔ BLOCKED-EXTERNAL: Capacitor 8 Xcode 26 build needs full Xcode (CLT only here).
+### VLT-P1-07 VaultPro ✅
+No VaultPro / LAUNCH_PREVIEW gating found.
