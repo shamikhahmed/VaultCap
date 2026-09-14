@@ -1518,13 +1518,7 @@ const ImportEngine={
     if (typeof XLSX !== 'undefined') { run(); return; }
     const load = typeof VaultLazy !== 'undefined'
       ? VaultLazy.xlsx()
-      : new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
-        });
+      : Promise.reject(new Error('Excel parser unavailable'));
     load.then(run).catch(() => Toast.show('Could not load Excel parser — try CSV export', 'error'));
   },
   _readExcel(file){
@@ -1556,16 +1550,13 @@ const ImportEngine={
   },
   importWord(file){
     this.setStatus('Reading Word document...',20);
-    // Load mammoth.js for .docx
     if(typeof mammoth==='undefined'){
-      const s=document.createElement('script');
-      s.src='https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js';
-      s.onload=()=>this._readWord(file);
-      s.onerror=()=>{
-        // Fallback: read as text
+      const load = typeof VaultLazy !== 'undefined'
+        ? VaultLazy.mammoth()
+        : Promise.reject(new Error('Word parser unavailable'));
+      load.then(()=>this._readWord(file)).catch(()=>{
         this.readText(file,t=>this.parseText(t));
-      };
-      document.head.appendChild(s);
+      });
     } else {this._readWord(file);}
   },
   _readWord(file){
