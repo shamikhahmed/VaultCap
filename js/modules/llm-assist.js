@@ -12,14 +12,14 @@ const LlmAssist = {
     const b = this._bundled();
     const userKey = (u.llmApiKey || '').trim();
     const key = userKey || (b.apiKey || '').trim();
-    const userOff = u.llmEnabled === false;
+    // D-08: LLM is opt-in only (explicit userOn). Bundled default stays off.
     const userOn = u.llmEnabled === true;
-    const enabled = !userOff && (userOn || b.enabled !== false) && !!key;
+    const enabled = userOn && !!key;
     return {
       enabled,
       apiKey: key,
       provider: u.llmProvider || b.provider || 'proxy',
-      model: u.llmModel || b.model || 'claude-3-5-haiku-latest',
+      model: u.llmModel || b.model || 'claude-haiku-4-5',
       proxyUrl: (u.llmProxyUrl || b.proxyUrl || '').trim(),
       bundled: !userKey && !!b.apiKey,
     };
@@ -36,7 +36,7 @@ const LlmAssist = {
   },
 
   clearKey() {
-    this.saveConfig({ apiKey: '', enabled: true });
+    this.saveConfig({ apiKey: '', enabled: false });
   },
 
   async checkProxyHealth() {
@@ -65,6 +65,12 @@ const LlmAssist = {
     const el = document.getElementById(id);
     if (!el) return;
     const cfg = this.getConfig();
+    if (!cfg.enabled) {
+      el.style.display = '';
+      el.textContent = 'Assistant off — enable in Privacy if you want optional cloud parse';
+      el.style.color = 'var(--text3)';
+      return;
+    }
     if (!cfg.proxyUrl) {
       el.style.display = 'none';
       el.textContent = '';
@@ -85,9 +91,20 @@ const LlmAssist = {
     });
   },
 
+  async ensureConsent(purpose) {
+    if (!this.getConfig().enabled) return false;
+    if (sessionStorage.getItem('vo_llm_session_ok') === '1') return true;
+    const ok = typeof window.__vos_confirm === 'function'
+      ? window.__vos_confirm((purpose || 'Send this text to the optional Smart Import assistant?') + '\n\nNothing is sent unless you confirm. Prefer offline Smart Parser for sensitive documents.')
+      : confirm(purpose || 'Send text to optional assistant?');
+    if (ok) sessionStorage.setItem('vo_llm_session_ok', '1');
+    return !!ok;
+  },
+
   async parseText(text) {
     const cfg = this.getConfig();
     if (!cfg.enabled || !cfg.apiKey) return null;
+    if (!(await this.ensureConsent('Send pasted import text to the optional assistant (one confirmation per session)?'))) return null;
     if (cfg.proxyUrl) {
       const health = await this.checkProxyHealth();
       if (health.status === 'error') {

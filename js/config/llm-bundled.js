@@ -5,5 +5,5 @@ window.VaultOSBundledLlm = {
   apiKey: '',
   provider: 'proxy',
   proxyUrl: 'https://vaultos-llm-proxy.shamikhahmed.workers.dev',
-  model: 'claude-3-5-haiku-latest',
+  model: 'claude-haiku-4-5',
 };

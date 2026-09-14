@@ -140,7 +140,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 }
 #demoBanner[hidden] { display: none !important; }
 .demo-banner-chip {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9);
 }
 .demo-banner-text { color: rgba(255,255,255,0.78); font-size: 12px; }
@@ -284,7 +284,7 @@ body.hide-btabs #fab { display: none !important; }
 .ti {
   width: 100%; display: flex; flex-direction: column;
   align-items: center; justify-content: center; padding: 4px 1px 2px;
-  cursor: pointer; color: var(--text3); font-size: 9px; font-weight: 600;
+  cursor: pointer; color: var(--text3); font-size: 11px; font-weight: 600;
   gap: 2px; height: 100%; min-height: 44px; transition: var(--t); text-align: center; overflow: hidden;
   flex: 1; min-width: 0;
   letter-spacing: -0.02em;
@@ -508,7 +508,7 @@ body.hide-btabs #fab { display: none !important; }
 /* ─ Section divider ─ */
 .sdiv {
   display: flex; align-items: center; gap: 9px;
-  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase; color: var(--text3); padding: 14px 0 6px;
 }
 .sdiv::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -553,7 +553,7 @@ body.hide-btabs #fab { display: none !important; }
 
 /* ─ Cap module headers (text + accent, no emoji) ─ */
 .ph h2.cap-h2 { display: flex; flex-direction: column; gap: 2px; line-height: 1.2; }
-.ph h2.cap-h2 .cap-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.ph h2.cap-h2 .cap-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
 .ph h2.cap-h2 .cap-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
 
 /* ─ Offline bar ─ */

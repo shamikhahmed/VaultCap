@@ -57,7 +57,17 @@ const Migrate = {
     }
     if (sv < 7) {
       if (stored.modules && stored.modules.emergency === undefined) stored.modules.emergency = true;
-      if (!stored.emergency) stored.emergency = { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false };
+          // VLT-P0-02 / D-08 — network features default OFF (migrate unset → false)
+    if (stored.user) {
+      if (stored.user.logoProxyEnabled == null) stored.user.logoProxyEnabled = false;
+      if (stored.user.ratesNetworkEnabled == null) stored.user.ratesNetworkEnabled = false;
+      if (stored.user.llmEnabled == null) stored.user.llmEnabled = false;
+      try {
+        if (localStorage.getItem('vo_logo_proxy_enabled') == null) localStorage.setItem('vo_logo_proxy_enabled', '0');
+        if (localStorage.getItem('vo_rates_network') == null) localStorage.setItem('vo_rates_network', '0');
+      } catch (e) {}
+    }
+    if (!stored.emergency) stored.emergency = { enabled: false, name: '', phone: '', bloodType: '', allergies: '', emergencyNote: '', showOnLockscreen: false };
     }
     if (sv < 8) {
       if (!stored.bc) stored.bc = [];

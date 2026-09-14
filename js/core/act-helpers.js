@@ -233,6 +233,25 @@ const ActHelpers = {
     if (typeof Store !== 'undefined') Store.save();
   },
 
+  logoProxyEnabled(on) {
+    if (typeof LogoEngine !== 'undefined') LogoEngine.setNetworkAllowed(!!on);
+    else { try { localStorage.setItem('vo_logo_proxy_enabled', on ? '1' : '0'); } catch (e) {}
+      if (S.user) S.user.logoProxyEnabled = !!on; Store.save(); }
+    Toast.show(on ? 'Logo proxy on' : 'Logo proxy off — local logos only', 'info');
+  },
+  ratesNetworkEnabled(on) {
+    if (typeof RatesEngine !== 'undefined') RatesEngine.setNetworkAllowed(!!on);
+    else { try { localStorage.setItem('vo_rates_network', on ? '1' : '0'); } catch (e) {}
+      if (S.user) S.user.ratesNetworkEnabled = !!on; Store.save(); }
+    Toast.show(on ? 'Live rates on' : 'Live rates off — using estimates', 'info');
+  },
+  llmEnabled(on) {
+    if (typeof LlmAssist !== 'undefined') LlmAssist.saveConfig({ enabled: !!on });
+    else if (S.user) { S.user.llmEnabled = !!on; Store.save(); }
+    try { if (!on) sessionStorage.removeItem('vo_llm_session_ok'); } catch (e) {}
+    Toast.show(on ? 'Smart Import assistant on (confirm each session)' : 'Smart Import assistant off', 'info');
+  },
+
   toggleEditPanel(btn) {
     if (!btn) return;
     const panel = btn.closest('div') && btn.closest('div').nextElementSibling;

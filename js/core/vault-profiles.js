@@ -69,15 +69,22 @@ const VaultProfiles = {
   },
   showDemoGuide() {
     Modal.open('Guided Demo',
-      '<div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px">This is a <strong>sample vault</strong> with fictional data — safe to explore and show others.</div>' +
-      '<div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text2);line-height:1.55">' +
-      '<div>① Dashboard — net worth, health score, expiry alerts</div>' +
-      '<div>② Banks & Cards — tap any module in the nav</div>' +
-      '<div>③ Settings → Exit Demo when you want your real vault</div>' +
+      '<div role="document">' +
+      '<h2 tabindex="-1" id="demo-guide-title" class="vc-ix-8" style="margin:0 0 10px;font-size:18px;font-weight:700;color:var(--text)">Guided Demo</h2>' +
+      '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">' +
+      (typeof VC !== 'undefined' ? '<span aria-hidden="true">' + VC.icon('sparkles', 28) + '</span>' : '') +
+      '<p style="margin:0;font-size:13px;color:var(--text2);line-height:1.65">This is a <strong>sample vault</strong> with fictional data — safe to explore and show others.</p>' +
       '</div>' +
-      '<div style="margin-top:14px;padding:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong class="vc-ix-189">123456</strong> · No real data is stored here</div>',
-      '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start exploring →</button>'
+      '<ol style="margin:0;padding-left:1.25rem;font-size:13px;color:var(--text2);line-height:1.55;display:flex;flex-direction:column;gap:8px">' +
+      '<li>Dashboard — net worth, health score, expiry alerts</li>' +
+      '<li>Banks &amp; Cards — tap any module in the nav</li>' +
+      '<li>Settings → Exit Demo when you want your real vault</li>' +
+      '</ol>' +
+      '<div style="margin-top:14px;padding:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong class="vc-ix-189">123456</strong> · No real data is stored here</div>' +
+      '</div>',
+      '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start exploring</button>'
     );
+    setTimeout(() => document.getElementById('demo-guide-title')?.focus(), 50);
   },
   pickerProfiles() {
     const list = [...this.PROFILES, this.DEMO];

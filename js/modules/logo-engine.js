@@ -99,7 +99,25 @@ const LogoEngine = {
     } catch (e) {}
   },
 
+  networkAllowed() {
+    try {
+      if (typeof S !== 'undefined' && S.user && S.user.logoProxyEnabled === true) return true;
+      return localStorage.getItem('vo_logo_proxy_enabled') === '1';
+    } catch (e) { return false; }
+  },
+
+  setNetworkAllowed(on) {
+    try {
+      localStorage.setItem('vo_logo_proxy_enabled', on ? '1' : '0');
+      if (typeof S !== 'undefined' && S.user) {
+        S.user.logoProxyEnabled = !!on;
+        if (typeof Store !== 'undefined') Store.save();
+      }
+    } catch (e) {}
+  },
+
   async _fetchViaProxy(domain) {
+    if (!this.networkAllowed()) return null;
     const base = this.proxyUrl();
     if (!base) return null;
     try {
