@@ -2301,9 +2301,15 @@ const SettingsNav = {
     const lastBackup = S.user.lastBackup;
     const backupAge  = lastBackup ? Math.floor((Date.now()-new Date(lastBackup))/864e5) : null;
     const backupStatus = !lastBackup ? 'Never backed up' : backupAge===0 ? 'Backed up today' : backupAge<=7 ? 'Backed up '+backupAge+' days ago' : 'Last backup '+backupAge+' days ago';
+    const logoOn = !!(S.user && S.user.logoProxyEnabled);
+    const ratesOn = !!(S.user && S.user.ratesNetworkEnabled);
+    const llmOn = !!(S.user && S.user.llmEnabled);
     return `<div class="set-sec"><div class="set-title">Privacy</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Enhanced Import Service</div><div class="desc vc-ix-8" id="llm-health-privacy">Checking…</div></div></div>
+      <div class="si"><div class="sil"><div class="name">Fetch missing bank logos</div><div class="desc">Opt-in · uses privacy proxy (off by default)</div></div><label class="tog"><input type="checkbox" ${logoOn?'checked':''} data-act-change="ActHelpers.logoProxyEnabled(this.checked)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Fetch live FX / metals rates</div><div class="desc">Opt-in · uses public rate APIs (off by default; estimates still work)</div></div><label class="tog"><input type="checkbox" ${ratesOn?'checked':''} data-act-change="ActHelpers.ratesNetworkEnabled(this.checked)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Optional Smart Import assistant</div><div class="desc">Opt-in · per-use confirm · model claude-haiku-4-5</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} data-act-change="ActHelpers.llmEnabled(this.checked)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Assistant status</div><div class="desc vc-ix-8" id="llm-health-privacy">Off unless enabled above</div></div></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Backup &amp; export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
@@ -2364,6 +2370,10 @@ const SettingsNav = {
           • Any browser can open a .vos file — just visit the app from any device<br>
           • Export a backup regularly: Settings → Privacy
         </div>
+      </div>
+      <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
+        <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">PIN &amp; recovery</div>
+        <div class="vc-ix-162">Your vault is encrypted on this device with your PIN. If you forget it, your data can't be recovered — keep an export somewhere safe.</div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
         <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">Enterprise disclaimer</div>

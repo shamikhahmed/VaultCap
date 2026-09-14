@@ -119,7 +119,25 @@ const RatesEngine = {
     return converted.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals });
   },
 
+  networkAllowed() {
+    try {
+      if (typeof S !== 'undefined' && S.user && S.user.ratesNetworkEnabled === true) return true;
+      return localStorage.getItem('vo_rates_network') === '1';
+    } catch (e) { return false; }
+  },
+
+  setNetworkAllowed(on) {
+    try {
+      localStorage.setItem('vo_rates_network', on ? '1' : '0');
+      if (typeof S !== 'undefined' && S.user) {
+        S.user.ratesNetworkEnabled = !!on;
+        if (typeof Store !== 'undefined') Store.save();
+      }
+    } catch (e) {}
+  },
+
   async fetch() {
+    if (!this.networkAllowed()) return false;
     try {
       const fxRes = await Promise.race([
         fetch('https://open.er-api.com/v6/latest/USD'),

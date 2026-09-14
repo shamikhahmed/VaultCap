@@ -29,7 +29,7 @@
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw-v51.js?v=5.1.27').catch(function () {});
+    navigator.serviceWorker.register('sw-v51.js?v=5.2.0').catch(function () {});
   }
 
   document.addEventListener('DOMContentLoaded', function () {

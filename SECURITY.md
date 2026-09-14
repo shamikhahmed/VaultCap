@@ -30,3 +30,9 @@ VaultCap is a **100% free**, consumer, offline-first PWA. No account. No subscri
 ## Report issues
 
 Open a GitHub issue on the VaultCap repository. Do not attach live vault files or recovery keys.
+
+## KDF (P-VLT-2 / G-6)
+
+- Target: **PBKDF2-SHA-256, 600,000 iterations** wrapping a random vault DEK.
+- Legacy unwrap path still accepts **310,000** iterations once, then re-wraps to 600k on the next successful unlock of the main slot.
+- Documented in `js/storage.js` (`KDF_TARGET`, `KDF_LEGACY`).

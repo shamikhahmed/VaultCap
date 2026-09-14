@@ -336,7 +336,7 @@ body.session-clean input[type=password] { color: transparent; caret-color: var(-
 .secure-field::placeholder { font-family: var(--font); letter-spacing: normal; color: var(--text3); }
 
 /* ─ Swipe hint ─ */
-.swipe-hint { text-align: center; font-size: 10px; color: var(--text3); padding: 6px; animation: fadeOut 3s 2s forwards; }
+.swipe-hint { text-align: center; font-size: 11px; color: var(--text3); padding: 6px; animation: fadeOut 3s 2s forwards; }
 @keyframes fadeOut { to { opacity: 0; height: 0; padding: 0; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 

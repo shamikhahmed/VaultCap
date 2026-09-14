@@ -1,3 +1,11 @@
+## [5.2.0] — 2026-09-15
+
+- VLT-P0-02: logos / FX rates / LLM default **off**; Privacy toggles; per-session LLM confirm; model `claude-haiku-4-5`
+- VLT-P0-03: SECURITY.md KDF re-wrap notes (600k target; legacy 310k migrate)
+- VLT-P1-01: strip marketing JS from privacy.html
+- Test: `tests/network-default-off.spec.js`
+- SW `vaultcap-v90`
+
 ## [5.1.27] — 2026-09-14
 - Fix (C-02): SW install no longer fails on missing gitignored `widget-data.json`; resilient precache; cache `vaultcap-v89`
 - Release (C-01): version + SW register query bump so installed PWAs receive Phase 0 security vendoring
