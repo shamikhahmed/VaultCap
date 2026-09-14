@@ -13,14 +13,14 @@ function purgeTrashByName(name) {
  * Generic create → update → delete via real module save() + DOM fields.
  * @param {object} opts
  */
-function runCrudRoundTrip(opts) {
-  window.__vos_confirm = () => true;
+async function runCrudRoundTrip(opts) {
+  window.__vos_confirm = async () => true;
   const tag = opts.tagPrefix + ' ' + Date.now();
   const updated = tag + ' Updated';
 
   opts.openAdd();
   opts.fillCreate(tag);
-  opts.save();
+  await opts.save();
   if (typeof Modal !== 'undefined' && document.querySelector('.modal-overlay.on')) Modal.close();
 
   let item = opts.findByName(tag);
@@ -29,13 +29,13 @@ function runCrudRoundTrip(opts) {
   const id = item.id;
   opts.edit(id);
   opts.fillUpdate(updated);
-  opts.save(id);
+  await opts.save(id);
   if (typeof Modal !== 'undefined' && document.querySelector('.modal-overlay.on')) Modal.close();
 
   item = opts.findById(id);
   if (!item || opts.getName(item) !== updated) return { ok: false, step: 'update', tag };
 
-  opts.del(id, true);
+  await opts.del(id, true);
   if (opts.findById(id)) return { ok: false, step: 'delete', tag };
 
   purgeTrashByName(tag);

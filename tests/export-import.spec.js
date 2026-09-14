@@ -5,7 +5,7 @@ const { unlockDemoVault } = require('./demo-unlock');
 test.describe('VaultCap export/import round-trip', () => {
   test('JSON export payload matches live vault schema', async ({ page }) => {
     await unlockDemoVault(page);
-    const meta = await page.evaluate(() => {
+    const meta = await page.evaluate(async () => {
       const snap = ExIm._exportMeta('json');
       return {
         format: snap._meta.format,
@@ -22,8 +22,8 @@ test.describe('VaultCap export/import round-trip', () => {
 
   test('JSON import merges new bank without duplicate IDs', async ({ page }) => {
     await unlockDemoVault(page);
-    const result = await page.evaluate(() => {
-      window.__vos_confirm = () => true;
+    const result = await page.evaluate(async () => {
+      window.__vos_confirm = async () => true;
       const id = 'audit_bank_' + Date.now();
       const testBank = {
         id,
@@ -62,7 +62,7 @@ test.describe('VaultCap export/import round-trip', () => {
 
   test('duplicate import ID does not create second row', async ({ page }) => {
     await unlockDemoVault(page);
-    const dup = await page.evaluate(() => {
+    const dup = await page.evaluate(async () => {
       const existing = (S.banks || [])[0];
       if (!existing) return { ok: false };
       const before = S.banks.length;
@@ -107,7 +107,7 @@ test.describe('VaultCap legacy encrypted backup', () => {
   test('legacy VAULTOS_AES256 import path decrypts and merges', async ({ page }) => {
     await unlockDemoVault(page);
     const result = await page.evaluate(async () => {
-      window.__vos_confirm = () => true;
+      window.__vos_confirm = async () => true;
       const pw = S.pin + '_vos4_' + S.user.name;
       const id = 'legacy_imp_' + Date.now();
       const data = {
@@ -143,7 +143,7 @@ test.describe('VaultCap legacy encrypted backup', () => {
 test.describe('VaultCap form attr XSS', () => {
   test('escAttr neutralizes quotes in bank edit form', async ({ page }) => {
     await unlockDemoVault(page);
-    const safe = await page.evaluate(() => {
+    const safe = await page.evaluate(async () => {
       const id = U.id();
       S.banks.push({
         id,

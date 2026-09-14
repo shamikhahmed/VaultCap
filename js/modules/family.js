@@ -508,8 +508,8 @@ const Family = {
     else if (type === 'documents' && typeof DocsModule !== 'undefined') DocsModule.edit(id);
   },
 
-  _delEntity(type, id) {
-    if (!window.__vos_confirm('Move this item to Trash?')) return;
+  async _delEntity(type, id) {
+    if (!await window.__vos_confirm('Move this item to Trash?')) return;
     const arr = S[type === 'documents' ? 'documents' : type];
     if (!arr) return;
     const item = arr.find(x => x.id === id);
@@ -627,8 +627,8 @@ const Family = {
     Toast.show('Member updated', 'success');
   },
 
-  _deleteMember(id) {
-    if (!window.__vos_confirm('Remove this family member? Their financial records will remain in the vault with their owner tag.')) return;
+  async _deleteMember(id) {
+    if (!await window.__vos_confirm('Remove this family member? Their financial records will remain in the vault with their owner tag.')) return;
     S.familyMembers = (S.familyMembers || []).filter(m => m.id !== id);
     Store.save();
     this._activeId = null;

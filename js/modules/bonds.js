@@ -278,8 +278,8 @@ const BondsModule = {
 
   edit(i) { this.openAdd(i); },
 
-  del(i) {
-    if (!window.__vos_confirm('Delete this bond?')) return;
+  async del(i) {
+    if (!await window.__vos_confirm('Delete this bond?')) return;
     S.bonds.splice(i, 1);
     Store.save();
     this.render();

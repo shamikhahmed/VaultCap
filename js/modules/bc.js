@@ -257,8 +257,8 @@ const BCModule = {
 
   edit(i) { this.openAdd(i); },
 
-  del(i) {
-    if (!window.__vos_confirm('Delete this BC?')) return;
+  async del(i) {
+    if (!await window.__vos_confirm('Delete this BC?')) return;
     S.bc.splice(i, 1);
     Store.save();
     this.render();

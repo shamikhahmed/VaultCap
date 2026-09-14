@@ -1,8 +1,8 @@
 
 ## C-01/C-02 — 2026-09-14
 - Fixed SW install: removed gitignored `widget-data.json` from precache; resilient per-asset add.
-- Released **5.2.0** / `vaultcap-v90`. CI green run 34878722406. Pages after CI run 34879053431.
-- Live smoke: `https://shamikhahmed.github.io/VaultCap/sw-v51.js` serves `vaultcap-v90`; VERSION.json 5.2.0.
+- Released **5.2.0** / `vaultcap-v91`. CI green run 34878722406. Pages after CI run 34879053431.
+- Live smoke: `https://shamikhahmed.github.io/VaultCap/sw-v51.js` serves `vaultcap-v91`; VERSION.json 5.2.0.
 
 ### VLT-P0-02 network opt-in ✅
 Logos / rates / LLM default off; Privacy toggles; network-default-off e2e green.

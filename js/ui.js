@@ -796,12 +796,12 @@ const Settings={
   loadDemo(){
     VaultProfiles.startDemo();
   },
-  resetVault(){
-    if(!window.__vos_confirm('A backup download will start first. This permanently deletes ALL vault data on this device.'))return;
+  async resetVault(){
+    if(!await window.__vos_confirm('A backup download will start first. This permanently deletes ALL vault data on this device.'))return;
     if(_vaultEntityCount(Store._data()) > 0){
       try{ ExIm.export('vault'); }catch(e){}
     }
-    if(!window.__vos_confirmTyped('Final step: reset entire vault?', 'DELETE'))return;
+    if(!await window.__vos_confirmTyped('Final step: reset entire vault?', 'DELETE'))return;
     const wipe=async()=>{
       try{await VaultDB.wipe();}catch(e){}
       try{
@@ -833,7 +833,7 @@ const ExIm={
       exported:new Date().toISOString(),
     };
   },
-  export(fmt='vault'){if(fmt==='vos')fmt='vault';
+  async export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
       S.user.lastBackup=new Date().toISOString();
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
@@ -843,9 +843,8 @@ const ExIm={
       });
       return;
     }
-    if (!window.__vos_confirm('WARNING: This exports your vault UNENCRYPTED. Anyone with the file can read every bank, card, password hint, and document. Prefer encrypted .vos backup instead. Continue?')) return;
-    const typed = window.prompt('Type EXPORT PLAINTEXT to confirm unencrypted export (or Cancel):', '');
-    if ((typed || '').trim().toUpperCase() !== 'EXPORT PLAINTEXT') {
+    if (!await window.__vos_confirm('WARNING: This exports your vault UNENCRYPTED. Anyone with the file can read every bank, card, password hint, and document. Prefer encrypted .vos backup instead. Continue?')) return;
+    if (!await window.__vos_confirmTyped('Confirm unencrypted export', 'EXPORT PLAINTEXT')) {
       if (typeof Toast !== 'undefined') Toast.show('Plaintext export cancelled', 'info');
       return;
     }
@@ -959,20 +958,20 @@ const ExIm={
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'VaultCap Backup'}).catch(err=>{if(err.name!=='AbortError')this.export('vault');});}
     else{this.export('vault');Toast.show('Share not available — downloaded instead','info');}
   },
-  import(ev){
+  async import(ev){
     const file=ev.target.files[0];if(!file)return;
     const r=new FileReader();
     r.onload=e=>{
       try{
         let raw=e.target.result;
-        const doImport=(raw2)=>{
+        const doImport=async (raw2)=>{
           try{
             const data=JSON.parse(raw2);
             if(!data.banks&&!data.cards&&!data.emails&&!data.gadgets&&!data.expenses){Toast.show('Invalid vault file','error');return;}
             if(data._vaultVersion&&typeof SCHEMA_VERSION!=='undefined'&&data._vaultVersion>SCHEMA_VERSION){Toast.show('This backup was created with a newer version of VaultCap. Some data may not display correctly.','warn',6000);}
             const previewCounts={Banks:(data.banks||[]).length,Cards:(data.cards||[]).length,Documents:(data.documents||[]).length,Investments:(data.investments||[]).length,Emails:(data.emails||[]).length,Devices:(data.gadgets||[]).length,Expenses:(data.expenses||[]).length};
             const previewLines=Object.entries(previewCounts).filter(([,v])=>v>0).map(([k,v])=>`  ${k}: ${v}`).join('\n');
-            if(!window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
+            if(!await window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
               ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
@@ -2166,6 +2165,7 @@ const SettingsNav = {
       return;
     }
     b.innerHTML = fn.call(this);
+    if (typeof window.enhanceFoundationSwitches === 'function') window.enhanceFoundationSwitches(b);
     if (section === 'account' || section === 'privacy') this._pollLlmHealth(section === 'account' ? 'llm-health-security' : 'llm-health-privacy');
     if (typeof SelfCheck !== 'undefined') SelfCheck.run();
   },

@@ -1,2 +1,2 @@
-'use strict';
-window.VER = '5.2.0';
+window.VER = '5.2.1';
+window.APP_VERSION = '5.2.1';

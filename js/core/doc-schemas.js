@@ -199,23 +199,7 @@ function getUserContext() {
 }
 window.getUserContext = getUserContext;
 
-// ── VaultCap safe confirm — works in sandboxed iframe and native ──
-window.__vos_confirm = function(msg) {
-  try { return window.confirm(msg); }
-  catch(e) {
-    console.warn('[VaultCap] confirm blocked in sandbox — treating as cancelled:', msg.slice(0, 80));
-    return false;
-  }
-};
-
-window.__vos_confirmTyped = function(msg, word) {
-  try {
-    const typed = window.prompt(msg + '\n\nType ' + word + ' to continue:');
-    return typed === word;
-  } catch (e) {
-    return false;
-  }
-};
+/* __vos_confirm / __vos_confirmTyped live in js/core/confirm-dialog.js (CapConfirm). */
 
 function _vaultEntityCount(data) {
   if (!data || typeof data !== 'object') return 0;

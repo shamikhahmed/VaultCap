@@ -257,8 +257,8 @@ const Assets = {
 
   fav(id) { const a = (S.assets||[]).find(x => x.id===id); if (!a) return; a.favorite = !a.favorite; Store.save(); this.render(); },
 
-  del(id, fm = false) {
-    if (!window.__vos_confirm('Move to Trash?')) return;
+  async del(id, fm = false) {
+    if (!await window.__vos_confirm('Move to Trash?')) return;
     const a = (S.assets||[]).find(x => x.id===id); if (!a) return;
     if (a.assetType==='subscription') S.expenses = S.expenses.filter(e => e.name!==a.serviceName && e.name!==a.name);
     S.trash.push({ id:U.id(), type:'assets', data:a, deletedAt:new Date().toISOString() });

@@ -35,17 +35,17 @@ test.describe('VaultCap WebKit / iPhone Safari', () => {
 
   test('WebKit bank add form saves and deletes', async ({ page }) => {
     await unlockDemoVault(page);
-    const ok = await page.evaluate(() => {
-      window.__vos_confirm = () => true;
+    const ok = await page.evaluate(async () => {
+      window.__vos_confirm = async () => true;
       const tag = 'WebKit Bank ' + Date.now();
       Banks.openAdd();
       document.getElementById('bf-name').value = tag;
       document.getElementById('bf-cc').value = 'GB';
       document.getElementById('bf-cur').value = 'GBP';
-      Banks.save();
+      await Banks.save();
       const b = S.banks.find((x) => x.bankName === tag);
       if (!b) return false;
-      Banks.del(b.id, true);
+      await Banks.del(b.id, true);
       S.trash = S.trash.filter((t) => t.data?.bankName !== tag);
       return true;
     });
@@ -54,7 +54,7 @@ test.describe('VaultCap WebKit / iPhone Safari', () => {
 
   test('WebKit touch viewport has no horizontal overflow on dashboard', async ({ page }) => {
     await unlockDemoVault(page);
-    const overflow = await page.evaluate(() => {
+    const overflow = await page.evaluate(async () => {
       const doc = document.documentElement;
       return doc.scrollWidth > doc.clientWidth + 2;
     });

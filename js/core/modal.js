@@ -179,13 +179,12 @@ window.Settings.verifyMasterKey = function() {
   window._verifyMasterKey();
 };
 
-window.Settings.resetVault = function() {
-  if (typeof Settings !== 'undefined' && Settings.resetVault) {
-    Settings.resetVault();
-    return;
+window.Settings.resetVault = async function() {
+  if (typeof Settings !== 'undefined' && Settings.resetVault && Settings.resetVault !== window.Settings.resetVault) {
+    return Settings.resetVault();
   }
-  if (!confirm('This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
-  if (!confirm('FINAL CONFIRMATION: Reset entire vault and delete all data?')) return;
+  if (!await window.__vos_confirm('This will permanently delete ALL your vault data. This cannot be undone. Are you absolutely sure?')) return;
+  if (!await window.__vos_confirm('FINAL CONFIRMATION: Reset entire vault and delete all data?')) return;
   window._confirmReset();
 };
 

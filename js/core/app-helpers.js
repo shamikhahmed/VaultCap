@@ -212,3 +212,16 @@ const InstallPrompt = (function () {
 })();
 window.InstallPrompt = InstallPrompt;
 
+/** Foundation Switch — role=switch + aria-checked on .tog inputs (VLT-P1-02). */
+window.enhanceFoundationSwitches = function enhanceFoundationSwitches(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  scope.querySelectorAll('label.tog input[type="checkbox"]').forEach((input) => {
+    if (input.dataset.vcSwitch === '1') return;
+    input.dataset.vcSwitch = '1';
+    input.setAttribute('role', 'switch');
+    const sync = () => input.setAttribute('aria-checked', input.checked ? 'true' : 'false');
+    sync();
+    input.addEventListener('change', sync);
+  });
+};
+

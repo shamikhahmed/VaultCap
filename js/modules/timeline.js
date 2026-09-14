@@ -2,9 +2,16 @@ const Timeline={
   _renderIcon(key,size=18){
     return typeof VC!=='undefined'?VC.iconKey(key,size):'';
   },
+  async clearLog(){
+    if(!await window.__vos_confirm('Clear all activity log?')) return;
+    S.activity=[];
+    if(typeof Store!=='undefined') Store.save();
+    this.render();
+    Toast.show('Activity log cleared','success');
+  },
   render(){
     const b=document.getElementById('timelineBody');if(!b)return;
-    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div class="vc-ix-223">'+(S.activity||[]).length+' entries</div><button type="button" data-act="if(confirm(\'Clear all activity log?\')) { S.activity=[]; if(typeof Store!==\'undefined\') Store.save(); Timeline.render(); Toast.show(\'Activity log cleared\',\'success\'); }" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Clear Log</button></div>';
+    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div class="vc-ix-223">'+(S.activity||[]).length+' entries</div><button type="button" data-act="Timeline.clearLog()" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Clear Log</button></div>';
     const events=[];
     const now=new Date();
     const addEv=(date,label,type,icon,action)=>{

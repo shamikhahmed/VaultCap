@@ -422,11 +422,11 @@ const Cards={
     const bankField=document.getElementById('cf-bank');
     if(bankField)bankField.value=bankName;
   },
-  save(editId=null){
+  async save(editId=null){
     const name=document.getElementById('cf-name').value.trim();if(!name){Toast.show('Card name required','warning');return;}
     const fullNumRaw=(document.getElementById('cf-fullnum')?.value||'').replace(/\D/g,'');
     const _l4v=fullNumRaw.length>=4?fullNumRaw.slice(-4):(document.getElementById('cf-l4').value.trim());
-    if(!editId){const dup=checkDuplicate('card',{cardName:name,last4:_l4v});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
+    if(!editId){const dup=checkDuplicate('card',{cardName:name,last4:_l4v});if(dup.isDuplicate&&!await window.__vos_confirm(dup.message))return;}
     const id2=editId||U.id();
     const carry=document.getElementById('cf-carry').checked;
     if(carry&&!S.wallet.includes(id2))S.wallet.push(id2);else if(!carry)S.wallet=S.wallet.filter(x=>x!==id2);
@@ -480,8 +480,8 @@ const Cards={
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},
-  del(id,fm=false){
-    if(!window.__vos_confirm('Move to Trash?'))return;
+  async del(id,fm=false){
+    if(!await window.__vos_confirm('Move to Trash?'))return;
     const c=S.cards.find(x=>x.id===id);if(!c)return;
     if(typeof Haptic!=='undefined')Haptic.del();
     S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});

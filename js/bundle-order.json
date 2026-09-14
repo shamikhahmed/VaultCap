@@ -19,6 +19,7 @@
   "js/modules/rates.js",
   "js/modules/currency-engine.js",
   "js/core/lookup-data.js",
+  "js/core/confirm-dialog.js",
   "js/core/doc-schemas.js",
   "js/core/vault-safety.js",
   "js/core/module-registry.js",
@@ -83,6 +84,5 @@
   "js/config/llm-bundled.js",
   "js/modules/llm-assist.js",
   "js/capricorn-motion.js",
-  "js/cap-demo-mode.js",
-  "js/capricorn-premium-nav.js"
+  "js/cap-demo-mode.js"
 ]

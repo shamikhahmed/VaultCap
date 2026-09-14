@@ -55,10 +55,10 @@ const ActHelpers = {
   },
 
   /** No-PIN requires explicit confirm — shared-device / coercion risk. */
-  toggleNoPin(el) {
+  async toggleNoPin(el) {
     const on = !!(el && el.checked);
     if (on) {
-      const ok = confirm('No-PIN Mode lets anyone open this vault without a PIN. Only enable on a private device. Continue?');
+      const ok = await window.__vos_confirm('No-PIN Mode lets anyone open this vault without a PIN. Only enable on a private device. Continue?');
       if (!ok) {
         if (el) el.checked = false;
         return;

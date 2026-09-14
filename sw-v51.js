@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v90';
+const CACHE = 'vaultcap-v91';
 // widget-data.json is local/gitignored — never precache it (addAll would fail install).
 const ASSETS = [
   './',

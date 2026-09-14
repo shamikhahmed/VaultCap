@@ -55,14 +55,14 @@ const Trash = {
     this.render();
     Toast.show('Restored', 'success');
   },
-  purge(trashId) {
-    if (!window.__vos_confirm('Permanently delete this item?')) return;
+  async purge(trashId) {
+    if (!await window.__vos_confirm('Permanently delete this item?')) return;
     S.trash = (S.trash || []).filter(x => x.id !== trashId);
     Store.save(); this.render();
     Toast.show('Permanently deleted', 'info');
   },
-  emptyAll() {
-    if (!window.__vos_confirm('Permanently delete all items in Trash?')) return;
+  async emptyAll() {
+    if (!await window.__vos_confirm('Permanently delete all items in Trash?')) return;
     S.trash.length = 0;
     Store.save(); this.render();
     Toast.show('Trash emptied', 'info');

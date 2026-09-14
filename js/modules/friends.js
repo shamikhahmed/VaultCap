@@ -69,8 +69,8 @@ const Friends = {
     const f = (S.friends || []).find(x => x.id === id); if (!f) return;
     Modal.open('Edit Friend', this.form(f), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Friends.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Friends.save('${id}')">Update</button>`);
   },
-  del(id, fm = false) {
-    if (!window.__vos_confirm('Move to Trash?')) return;
+  async del(id, fm = false) {
+    if (!await window.__vos_confirm('Move to Trash?')) return;
     const f = (S.friends || []).find(x => x.id === id); if (!f) return;
     S.trash.push({id: U.id(), type: 'friends', data: f, deletedAt: new Date().toISOString()});
     S.friends = (S.friends || []).filter(x => x.id !== id);

@@ -1,3 +1,10 @@
+## [5.2.1] — 2026-09-15
+
+- VLT-P1-02: ConfirmDialog (`CapConfirm`) replaces native `confirm()` / `__vos_confirm`; typed confirm via `CapPrompt`; foundation Switch a11y on Settings toggles
+- VLT-P1-01: remove CapPremiumNav from app shell/bundle (keep file for marketing pages)
+- VLT-P1-05: Capacitor 8 iOS project scaffold + store pack (xcodebuild BLOCKED-EXTERNAL on CLT-only)
+- SW `vaultcap-v91`
+
 ## [5.2.0] — 2026-09-15
 
 - VLT-P0-02: logos / FX rates / LLM default **off**; Privacy toggles; per-session LLM confirm; model `claude-haiku-4-5`

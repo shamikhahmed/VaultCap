@@ -29,11 +29,11 @@
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw-v51.js?v=5.2.0').catch(function () {});
+    navigator.serviceWorker.register('sw-v51.js?v=5.2.1').catch(function () {});
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (window.CapPremiumNav) CapPremiumNav.init({ nav: '#btabs, #sbNav', item: '.ti, .ni' });
     if (window.CapricornMotion) CapricornMotion.init();
+    if (typeof window.enhanceFoundationSwitches === 'function') window.enhanceFoundationSwitches(document);
   });
 })();

@@ -44,7 +44,7 @@ test.describe('VaultCap install banner', () => {
     await page.evaluate(async () => {
       if (!('serviceWorker' in navigator)) return;
       try {
-        await navigator.serviceWorker.register('./sw-v51.js?v=5.2.0');
+        await navigator.serviceWorker.register('./sw-v51.js?v=5.2.1');
         await navigator.serviceWorker.ready;
       } catch (e) {}
     });

@@ -5,7 +5,7 @@ const { unlockDemoVault } = require('./demo-unlock');
 test.describe('VaultCap export', () => {
   test('JSON export payload includes core demo entities', async ({ page }) => {
     await unlockDemoVault(page);
-    const payload = await page.evaluate(() => {
+    const payload = await page.evaluate(async () => {
       const snap = JSON.parse(JSON.stringify(S));
       return {
         banks: (snap.banks || []).length,
@@ -26,7 +26,7 @@ test.describe('VaultCap export', () => {
 test.describe('VaultCap alerts', () => {
   test('demo shows expiring NIC document alert', async ({ page }) => {
     await unlockDemoVault(page);
-    await page.evaluate(() => R.goto('alerts'));
+    await page.evaluate(async () => R.goto('alerts'));
     await expect(page.locator('#pg-alerts.on')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('#alertBody')).toContainText(/Document Expiry|42301|Alex Khan/i);
   });
@@ -35,7 +35,7 @@ test.describe('VaultCap alerts', () => {
 test.describe('VaultCap security', () => {
   test('escHtml neutralizes script in cash list render', async ({ page }) => {
     await unlockDemoVault(page);
-    const injected = await page.evaluate(() => {
+    const injected = await page.evaluate(async () => {
       const id = U.id();
       S.cash.push({ id, location: '<img onerror=alert(1)>', amount: 1, currency: 'GBP', notes: '<script>x</script>', tags: ['<b>ok</b>'], createdAt: new Date().toISOString() });
       Cash.render();
@@ -50,7 +50,7 @@ test.describe('VaultCap security', () => {
 
   test('data integrity scan runs without error on demo', async ({ page }) => {
     await unlockDemoVault(page);
-    const result = await page.evaluate(() => {
+    const result = await page.evaluate(async () => {
       if (typeof DataIntegrity === 'undefined') return { ok: false };
       const r = DataIntegrity.check();
       return { ok: true, high: r.highCount, possible: r.posCount };
@@ -63,12 +63,12 @@ test.describe('VaultCap security', () => {
     await unlockDemoVault(page);
     const result = await page.evaluate(async () => {
       const before = S.user.lastBackup || null;
-      window.__vos_confirm = () => true;
-      window.prompt = () => 'EXPORT PLAINTEXT';
+      window.__vos_confirm = async () => true;
+      window.__vos_confirmTyped = async () => true;
       const origDl = ExIm.dl;
       let name = '';
       ExIm.dl = (n) => { name = n; };
-      ExIm.export('json');
+      await ExIm.export('json');
       ExIm.dl = origDl;
       return {
         lastBackupUnchanged: (S.user.lastBackup || null) === before,

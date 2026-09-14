@@ -282,8 +282,8 @@ const DocsModule={
     document.body.appendChild(v);
   },
   pin(id){if(!S.documents)return;const d=S.documents.find(x=>x.id===id);if(d){d.pinned=!d.pinned;Store.save();this.render();}},
-  del(id,fromModal=false){
-    if(!window.__vos_confirm('Delete this document?'))return;
+  async del(id,fromModal=false){
+    if(!await window.__vos_confirm('Delete this document?'))return;
     if(!S.documents)return;
     const d=S.documents.find(x=>x.id===id);
     S.documents=S.documents.filter(x=>x.id!==id);

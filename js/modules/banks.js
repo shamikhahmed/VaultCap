@@ -226,9 +226,9 @@ const Banks={
   },
   _toggleJoint(checked){const s=document.getElementById('b-joint-section');if(s)s.style.display=checked?'block':'none';},
   bindCC(){setTimeout(()=>{const cur=document.getElementById('bf-cur');if(cur)cur.value=S.user.currency||'GBP';const balEl=document.getElementById('bf-bal');if(balEl)U.numInput(balEl,S.user.currency||'GBP');},60);},
-  save(editId=null){
+  async save(editId=null){
     const name=document.getElementById('bf-name').value.trim();if(!name){Toast.show('Bank name required','warning');return;}
-    if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!window.__vos_confirm(dup.message))return;}
+    if(!editId){const dup=checkDuplicate('bank',{bankName:name});if(dup.isDuplicate&&!await window.__vos_confirm(dup.message))return;}
     const lf=U.getLF();
     const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
     const _oid = editId ? (S.banks.find(x=>x.id===editId)?.ownerId||'self') : (Banks._pendingOwnerId||'self');
@@ -257,8 +257,8 @@ const Banks={
   },
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
   archive(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.archived=!b.archived;b.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(b.archived?'Archived':'Unarchived','info');},
-  del(id,fm=false){
-    if(!window.__vos_confirm('Move to Trash?'))return;
+  async del(id,fm=false){
+    if(!await window.__vos_confirm('Move to Trash?'))return;
     const b=S.banks.find(x=>x.id===id);if(!b)return;
     S.trash.push({id:U.id(),type:'banks',data:b,deletedAt:new Date().toISOString()});
     S.banks=S.banks.filter(x=>x.id!==id);

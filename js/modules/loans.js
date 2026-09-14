@@ -282,17 +282,17 @@ const Loans = {
     Store.save(); Modal.close(); this.render();
   },
 
-  settle(id) {
+  async settle(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
-    if (!window.__vos_confirm(`Mark loan with ${l.person} as fully settled?`)) return;
+    if (!await window.__vos_confirm(`Mark loan with ${l.person} as fully settled?`)) return;
     l.status = 'Settled';
     Activity.log('Settled loan', l.person);
     Store.save(); this.render();
     Toast.show(`Settled with ${l.person}!`, 'success');
   },
 
-  del(id, fm = false) {
-    if (!window.__vos_confirm('Move to Trash?')) return;
+  async del(id, fm = false) {
+    if (!await window.__vos_confirm('Move to Trash?')) return;
     const l = (S.loans || []).find(x => x.id === id);
     if (l) {
       S.trash = S.trash || [];

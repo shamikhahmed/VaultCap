@@ -222,8 +222,8 @@ const Bills = {
     }, 80);
   },
 
-  del(id, fromModal) {
-    if (!window.__vos_confirm('Delete this bill?')) return;
+  async del(id, fromModal) {
+    if (!await window.__vos_confirm('Delete this bill?')) return;
     S.bills = (S.bills || []).filter(x => x.id !== id);
     Store.save();
     if (fromModal && typeof Modal !== 'undefined') Modal.close();

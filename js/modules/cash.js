@@ -114,8 +114,8 @@ const Cash = {
     Store.save(); Modal.close(); this.render();
     Toast.show(`Moved ${src.currency} ${amt.toLocaleString()} from ${src.location}`, 'success');
   },
-  del(id, fm = false) {
-    if (!window.__vos_confirm('Delete this cash entry?')) return;
+  async del(id, fm = false) {
+    if (!await window.__vos_confirm('Delete this cash entry?')) return;
     const c = (S.cash || []).find(x => x.id === id);
     S.cash = (S.cash || []).filter(x => x.id !== id);
     Activity.log('Deleted cash', c?.location);

@@ -94,9 +94,7 @@ const LlmAssist = {
   async ensureConsent(purpose) {
     if (!this.getConfig().enabled) return false;
     if (sessionStorage.getItem('vo_llm_session_ok') === '1') return true;
-    const ok = typeof window.__vos_confirm === 'function'
-      ? window.__vos_confirm((purpose || 'Send this text to the optional Smart Import assistant?') + '\n\nNothing is sent unless you confirm. Prefer offline Smart Parser for sensitive documents.')
-      : confirm(purpose || 'Send text to optional assistant?');
+    const ok = await window.__vos_confirm((purpose || 'Send this text to the optional Smart Import assistant?') + '\n\nNothing is sent unless you confirm. Prefer offline Smart Parser for sensitive documents.');
     if (ok) sessionStorage.setItem('vo_llm_session_ok', '1');
     return !!ok;
   },
