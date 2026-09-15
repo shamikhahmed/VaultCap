@@ -2,8 +2,8 @@
   "app": "VaultCap",
   "version": "5.2.2",
   "swCache": "vaultcap-v92",
-  "generatedAt": "2026-09-15T10:57:13.160Z",
-  "status": "PASS",
+  "generatedAt": "2026-09-15T11:04:09.872Z",
+  "status": "FAIL",
   "pass": [
     {
       "id": "version:field",
@@ -35,7 +35,7 @@
     },
     {
       "id": "records:APP-REPORT-size",
-      "detail": "1095 bytes (need ≥1024)"
+      "detail": "1351 bytes (need ≥1024)"
     },
     {
       "id": "suppressions",
@@ -44,10 +44,6 @@
     {
       "id": "app-ready",
       "detail": "window.__APP_READY__ referenced"
-    },
-    {
-      "id": "ci:main",
-      "detail": "Deploy Pages → success https://github.com/shamikhahmed/VaultCap/actions/runs/34959096574"
     },
     {
       "id": "tag",
@@ -98,7 +94,12 @@
       "detail": "178 sinks; SINKS.md ok"
     }
   ],
-  "fail": [],
+  "fail": [
+    {
+      "id": "ci:main",
+      "detail": "Deploy Pages →  https://github.com/shamikhahmed/VaultCap/actions/runs/34961246372"
+    }
+  ],
   "warn": [
     {
       "id": "matrix:shots",
