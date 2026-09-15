@@ -158,7 +158,7 @@ const Audit = {
       <div class="vc-ix-134">Edit History</div>
       ${item._audit.map(a => `
         <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--accent,var(--purple,#7b5fff));flex-shrink:0;margin-top:5px"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--accent,var(--purple,'+VCBrand.h_7b5fff+'));flex-shrink:0;margin-top:5px"></div>
           <div>
             <div style="font-size:12px;font-weight:600;color:var(--text)">${a.action}</div>
             <div class="vc-ix-18">${new Date(a.at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>

@@ -113,7 +113,7 @@ const Onboarding = {
               style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
               <div class="vc-ix-185">
                 <span class="vc-ix-87">${VC.icon(m.icon,18)}</span>
-                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
+                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+VCBrand.h_fff+';background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
               </div>
               <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
               <div class="vc-ix-176">${m.desc}</div>

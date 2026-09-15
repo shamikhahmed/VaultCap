@@ -123,7 +123,7 @@ const NetWorthHistory = (() => {
       + '<div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('chart', 16) : '') + '</span>Net Worth Trend</div>'
       + '<div style="padding:12px 14px 14px;display:flex;gap:14px;align-items:center">'
       + '<div class="vc-ix-20">'
-      + '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Today</div>'
+      + '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Today</div>'
       + '<div style="font-size:22px;font-weight:900;color:var(--accent)" class="sens">' + fmt + '</div>'
       + deltaHtml
       + '</div>'

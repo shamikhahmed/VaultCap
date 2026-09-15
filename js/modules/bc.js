@@ -102,7 +102,7 @@ const BCModule = {
         '</div>' +
       '</div>' +
       '<div style="padding:0 14px 12px">' +
-        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px">' +
+        '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px">' +
           '<span>Round ' + (bc.currentRound || 1) + ' of ' + (bc.totalRounds || bc.members || '?') + '</span>' +
           '<span>' + progress + '% complete</span>' +
         '</div>' +

@@ -20,7 +20,7 @@ const ActHelpers = {
   forgotPin() {
     if (typeof forgotPINFromLock === 'function') forgotPINFromLock();
     else if (window.Settings && typeof Settings.forgotPIN === 'function') Settings.forgotPIN();
-    else alert('To recover your vault: go to Settings → Security → Forgot PIN');
+    else if (typeof Toast !== 'undefined') Toast.show('To recover your vault: go to Settings → Security → Forgot PIN', 'info', 4000);
   },
 
   setAiResult(i, key, value) {

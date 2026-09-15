@@ -57,7 +57,7 @@ const BondsModule = {
       (bonds.length > 0 ? (
         '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:16px">' +
           '<div class="vc-ix-180">Total Holdings</div>' +
-          '<div style="font-size:32px;font-weight:900;color:#c9a84c">' + fmt(totalValue) + '</div>' +
+          '<div style="font-size:32px;font-weight:900;color:'+VCBrand.h_c9a84c+'">' + fmt(totalValue) + '</div>' +
           '<div class="vc-ix-114">' + bonds.length + ' holding' + (bonds.length > 1 ? 's' : '') + ' · Zakatable at face value</div>' +
         '</div>'
       ) : '') +
@@ -72,7 +72,7 @@ const BondsModule = {
               '<div><div class="vc-ix-57">' + b.name + '</div>' +
               '<div class="vc-ix-3">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
               '<div class="vc-ix-132"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
-              '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
+              '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
             '</div>';
           }).join('') +
         '</div>'
@@ -191,7 +191,7 @@ const BondsModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bnd-total" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;text-align:center;font-size:13px;color:#c9a84c;font-weight:700;margin-bottom:10px">Total: enter details above</div>' +
+      '<div id="bnd-total" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;text-align:center;font-size:13px;color:'+VCBrand.h_c9a84c+';font-weight:700;margin-bottom:10px">Total: enter details above</div>' +
 
       '<div class="fg"><label class="fl">Purchase Date</label>' +
         '<input class="inp" type="date" id="bnd-date" value="' + (b.purchaseDate || '') + '"></div>' +

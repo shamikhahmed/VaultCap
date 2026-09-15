@@ -228,7 +228,7 @@ const U = {
     if (!hint) {
       hint = document.createElement('div');
       hint.id = hintId;
-      hint.style.cssText = 'font-size:10px;color:var(--text3);margin-top:2px;min-height:14px;font-style:italic;transition:opacity .2s';
+      hint.style.cssText = 'font-size:11px;color:var(--text3);margin-top:2px;min-height:14px;font-style:italic;transition:opacity .2s';
       inputEl.parentNode && inputEl.parentNode.insertBefore(hint, inputEl.nextSibling);
     }
     const num = parseFloat((inputEl.value || '').replace(/,/g,''));

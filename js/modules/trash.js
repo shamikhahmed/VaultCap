@@ -18,8 +18,8 @@ const Trash = {
       const left = 30 - d;
       if (left <= 0) return '<span class="vc-ix-243">Expiring now</span>';
       if (left <= 7) return `<span class="vc-ix-243">${left}d left</span>`;
-      if (left <= 14) return `<span style="color:var(--warn);font-size:10px">${left}d left</span>`;
-      return `<span style="color:var(--text3);font-size:10px">${left}d left</span>`;
+      if (left <= 14) return `<span style="color:var(--warn);font-size:11px">${left}d left</span>`;
+      return `<span style="color:var(--text3);font-size:11px">${left}d left</span>`;
     };
     const emptyBtn = `<div class="vc-ix-239"><button type="button" class="btn btn-d btn-sm" data-act="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `

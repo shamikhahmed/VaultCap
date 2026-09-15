@@ -53,16 +53,16 @@ const Cards={
     const walletHtml=S.cards.length>0
       ?'<div style="overflow-x:auto;display:flex;gap:12px;padding:4px 4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:4px">'+
         S.cards.filter(c=>!c.archived).map(c=>{
-          const GRADS={Visa:'linear-gradient(135deg,#1a1f71,#2575fc)',Mastercard:'linear-gradient(135deg,#eb001b,#f79e1b)','American Express':'linear-gradient(135deg,#007b5e,#00b894)',UnionPay:'linear-gradient(135deg,#c0392b,#e74c3c)',PayPak:'linear-gradient(135deg,#007a3d,#00b463)'};
+          const GRADS={Visa:'linear-gradient(135deg,'+VCBrand.h_1a1f71+','+VCBrand.h_2575fc+')',Mastercard:'linear-gradient(135deg,'+VCBrand.h_eb001b+','+VCBrand.h_f79e1b+')','American Express':'linear-gradient(135deg,'+VCBrand.h_007b5e+','+VCBrand.h_00b894+')',UnionPay:'linear-gradient(135deg,'+VCBrand.h_c0392b+','+VCBrand.h_e74c3c+')',PayPak:'linear-gradient(135deg,'+VCBrand.h_007a3d+','+VCBrand.h_00b463+')'};
           const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(0,213,255,.8),rgba(0,213,255,.6))';
           const last4=c.last4||'····';
           return '<div data-act="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
             '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+
             '<div style="position:absolute;top:14px;left:14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
-            '<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
+            '<div style="position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
             '<div style="position:absolute;bottom:30px;left:14px;font-size:13px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.18em;font-family:var(--mono,monospace)">**** **** **** '+escHtml(last4)+'</div>'+
-            '<div style="position:absolute;bottom:11px;left:14px;font-size:10px;color:rgba(255,255,255,.65)">'+escHtml(c.holderName||'')+'</div>'+
-            (c.expiry?'<div style="position:absolute;bottom:11px;right:12px;font-size:10px;color:rgba(255,255,255,.65)">Exp '+escHtml(c.expiry)+'</div>':'')+
+            '<div style="position:absolute;bottom:11px;left:14px;font-size:11px;color:rgba(255,255,255,.65)">'+escHtml(c.holderName||'')+'</div>'+
+            (c.expiry?'<div style="position:absolute;bottom:11px;right:12px;font-size:11px;color:rgba(255,255,255,.65)">Exp '+escHtml(c.expiry)+'</div>':'')+
             '</div>';
         }).join('')+
         '</div>'
@@ -117,14 +117,14 @@ const Cards={
     const _initials = (bankName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
     const logoHtml = logoSrc
       ? `<div class="wcard-logo-pill" style="padding:0;overflow:hidden;background:transparent">${logoSrc}</div>`
-      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
+      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:${VCBrand.h_fff};background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
     const chip=`<svg width="38" height="30" viewBox="0 0 38 30" class="wcard-chip-svg">
-      <rect width="38" height="30" rx="4" fill="#c9a227"/>
+      <rect width="38" height="30" rx="4" fill=VCBrand.h_c9a227/>
       <rect x="14" y="0" width="10" height="30" fill="rgba(0,0,0,.18)"/>
       <rect x="0" y="10" width="38" height="10" fill="rgba(0,0,0,.18)"/>
-      <rect x="14" y="10" width="10" height="10" fill="#f0c040"/>
+      <rect x="14" y="10" width="10" height="10" fill=VCBrand.h_f0c040/>
       <rect x="5" y="0" width="2" height="30" fill="rgba(0,0,0,.09)"/>
       <rect x="31" y="0" width="2" height="30" fill="rgba(0,0,0,.09)"/>
     </svg>`;
@@ -136,7 +136,7 @@ const Cards={
       'American Express':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="800" font-size="11" fill="white" letter-spacing=".5">AMEX</text></svg>`,
       'UnionPay':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="700" font-size="10" fill="white">UnionPay</text></svg>`,
       'JCB':`<svg width="38" height="16" style="display:block"><text y="13" font-family="Arial,sans-serif" font-weight="800" font-size="12" fill="white">JCB</text></svg>`,
-      'PayPak':`<svg width="52" height="16" style="display:block"><rect width="52" height="16" rx="3" fill="#007a3d"/><text x="4" y="12" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="white" letter-spacing=".3">PayPak</text></svg>`,
+      'PayPak':`<svg width="52" height="16" style="display:block"><rect width="52" height="16" rx="3" fill=VCBrand.h_007a3d/><text x="4" y="12" font-family="Arial,sans-serif" font-weight="800" font-size="10" fill="white" letter-spacing=".3">PayPak</text></svg>`,
     };
 
     const carryBorder=carrying?'animation:cardGlow 2.5s ease-in-out infinite':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
@@ -155,13 +155,13 @@ const Cards={
     <div class="wcard-number">**** **** **** ${last4}</div>
     <div class="wcard-bottom">
       <div>
-        <div style="font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
+        <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
         <div class="wcard-holder">${holderName}</div>
       </div>
       <div class="vc-ix-109">
-        ${c.expiry?`<div style="font-size:7px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
+        ${c.expiry?`<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
       </div>
-      <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:10px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
+      <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:11px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
     </div>
   </div>
   <div class="wcard-actions">
@@ -172,7 +172,7 @@ const Cards={
   </div>
 </div>`;
   },
-  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,#1a3a6b,#2d5aa0);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div class="vc-ix-192">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,${VCBrand.h_1a3a6b},${VCBrand.h_2d5aa0});border-radius:16px;padding:16px;margin-bottom:14px;color:${VCBrand.h_fff}"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div class="vc-ix-192">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   _fmtCardNum(input){
     let v=input.value.replace(/\D/g,'').slice(0,16);
     input.value=v.replace(/(.{4})/g,'$1 ').trim();
@@ -200,20 +200,20 @@ const Cards={
   // ── Camera scan (QR auto + manual capture for OCR) ────────────────────────
   scanCard(){
     const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;z-index:2000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    overlay.style.cssText='position:fixed;inset:0;z-index:2000;background:'+VCBrand.h_000+';display:flex;flex-direction:column;align-items:center;justify-content:center;';
     overlay.innerHTML=[
       '<style>@keyframes scan{from{top:20%}to{top:80%}}</style>',
       '<div style="position:relative;width:100%;max-width:420px">',
-      '<video id="_scanVid" autoplay playsinline style="width:100%;max-width:420px;border-radius:12px;display:block;background:#000"></video>',
+      '<video id="_scanVid" autoplay playsinline style="width:100%;max-width:420px;border-radius:12px;display:block;background:'+VCBrand.h_000+'"></video>',
       '<div style="position:absolute;inset:0;border:2px solid rgba(255,255,255,.25);border-radius:12px;pointer-events:none"></div>',
       '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:2px solid rgba(100,200,255,.7);width:82%;height:56%;border-radius:8px;pointer-events:none"></div>',
-      '<div style="position:absolute;left:9%;width:82%;height:2px;background:linear-gradient(90deg,transparent,#0A84FF,transparent);animation:scan 2s ease-in-out infinite alternate;pointer-events:none"></div>',
+      '<div style="position:absolute;left:9%;width:82%;height:2px;background:linear-gradient(90deg,transparent,'+VCBrand.h_0a84ff+',transparent);animation:scan 2s ease-in-out infinite alternate;pointer-events:none"></div>',
       '</div>',
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
       '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button type="button" id="_scanCaptureBtn" data-act="Cards._doCapture()" style="padding:16px 36px;background:#0A84FF;border:none;border-radius:99px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
-      '<button type="button" data-act="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
+      '<button type="button" id="_scanCaptureBtn" data-act="Cards._doCapture()" style="padding:16px 36px;background:'+VCBrand.h_0a84ff+';border:none;border-radius:99px;color:'+VCBrand.h_fff+';font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
+      '<button type="button" data-act="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:'+VCBrand.h_fff+';font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -254,7 +254,7 @@ const Cards={
     if(qr){Cards._onScanResult(qr.data);return;}
     // Run Tesseract OCR
     if(typeof Tesseract!=='undefined'){
-      if(statusEl)statusEl.innerHTML='<span style="color:#60a5fa">Reading card…</span>';
+      if(statusEl)statusEl.innerHTML='<span style="color:'+VCBrand.h_60a5fa+'">Reading card…</span>';
       if(btn)btn.disabled=true;
       Tesseract.recognize(canvas,'eng',{logger:function(){}}).then(function(result){
         Cards._stopScan();
@@ -267,7 +267,7 @@ const Cards={
         Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);
       });
     } else {
-      if(statusEl)statusEl.innerHTML='<span style="color:#fbbf24">Tap Capture again or fill below.</span>';
+      if(statusEl)statusEl.innerHTML='<span style="color:'+VCBrand.h_fbbf24+'">Tap Capture again or fill below.</span>';
       setTimeout(function(){Cards._stopScan();Toast.show('Fill in the details below','info',2500);Modal.open('Add Card',Cards.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cards.save()">Save</button>`);},1200);
     }
   },
@@ -314,7 +314,7 @@ const Cards={
   // ── Photo capture (front + back) ──────────────────────────────────────────
   _capturePhoto(targetId){
     const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;z-index:2001;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    overlay.style.cssText='position:fixed;inset:0;z-index:2001;background:'+VCBrand.h_000+';display:flex;flex-direction:column;align-items:center;justify-content:center;';
     overlay.innerHTML=[
       '<video id="_photoVid" autoplay playsinline style="width:100%;max-width:400px;border-radius:12px;display:block"></video>',
       '<canvas id="_photoCanvas" style="display:none"></canvas>',

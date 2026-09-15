@@ -143,7 +143,7 @@ const OB = {
     const cats = Object.entries(obCats).filter(([, v]) => v).map(([k]) => CATLABELS[k]).join(', ') || 'None selected';
     const TYPE_LABELS = { personal:'Personal', family:'Family Manager', business:'Business Owner', expat:'Global Expat' };
     el.innerHTML = `
-      <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
       <div class="vc-ix-177">Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
       <div class="vc-ix-177">Countries: ${countries}</div>
       <div class="vc-ix-10">Tracking: ${cats}</div>`;

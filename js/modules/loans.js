@@ -136,7 +136,7 @@ const Loans = {
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
-          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span class="vc-ix-5">Settled (${settled.length})</span><span style="font-size:10px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
+          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span class="vc-ix-5">Settled (${settled.length})</span><span style="font-size:11px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
         }
       }
       html += `</div>`;
