@@ -217,7 +217,8 @@ async function applyTheme(page, theme) {
     document.body.className = [t === 'light' ? 'light' : '', extra].filter(Boolean).join(' ');
     if (typeof S !== 'undefined' && S.user) {
       S.user.theme = t;
-      if (typeof Store !== 'undefined') Store.save();
+      // Store.save() requires VaultDB; skip persist if storage not ready yet.
+      if (typeof Store !== 'undefined' && typeof VaultDB !== 'undefined') Store.save();
     }
     const meta = document.getElementById('themeColorMeta');
     if (meta) meta.content = t === 'light' ? '#ffffff' : '#000000';
@@ -443,6 +444,11 @@ test.describe('VaultCap screen gallery', () => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
     await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
+    // Store.save() → VaultDB; ThemeEngine.apply can race before storage is wired.
+    await page.waitForFunction(
+      () => typeof VaultDB !== 'undefined' && typeof Store !== 'undefined',
+      { timeout: 30000 },
+    );
 
     // ── Auth & onboarding per theme + viewport ──
     for (const theme of THEMES) {
