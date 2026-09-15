@@ -22,7 +22,8 @@
     "verify": "npm run build:js && npm run audit:xss && npm run test:e2e",
     "logos:fetch": "node scripts/fetch-bank-logos.mjs",
     "logos": "npm run logos:fetch --",
-    "test:matrix": "npm run build:js && FINISH_MATRIX=1 playwright test tests/finish-matrix.spec.mjs"
+    "test:matrix": "npm run build:js && FINISH_MATRIX=1 playwright test tests/finish-matrix.spec.mjs",
+    "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
