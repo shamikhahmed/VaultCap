@@ -1,3 +1,9 @@
+## [5.2.2] — 2026-09-15
+
+- C-16: Self-host Cinzel, Space Grotesk, IBM Plex Mono; remove Google Fonts + CSP font CDN entries (index/pitch/widget).
+- C-20: Set `window.__APP_READY__` after splash dismiss.
+- SW `vaultcap-v92`.
+
 ## [5.2.1] — 2026-09-15
 
 - VLT-P1-02: ConfirmDialog (`CapConfirm`) replaces native `confirm()` / `__vos_confirm`; typed confirm via `CapPrompt`; foundation Switch a11y on Settings toggles
