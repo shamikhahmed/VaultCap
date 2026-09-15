@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T13:58:01.744Z",
+  "generatedAt": "2026-09-15T13:14:50.692Z",
   "themes": [
     "dark",
     "light"
@@ -384,7 +384,6 @@
               "desktop": "dark/desktop/finance/expenses-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/expenses-scroll.png",
               "desktop": "light/desktop/finance/expenses-scroll.png"
             }
           }
@@ -515,7 +514,8 @@
               "desktop": "dark/desktop/finance/zakat-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/zakat-scroll.png"
+              "mobile": "light/mobile/finance/zakat-scroll.png",
+              "desktop": "light/desktop/finance/zakat-scroll.png"
             }
           }
         }
@@ -948,7 +948,16 @@
               "desktop": "light/desktop/tools/alerts.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/tools/alerts-scroll.png",
+              "desktop": "dark/desktop/tools/alerts-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/tools/alerts-scroll.png",
+              "desktop": "light/desktop/tools/alerts-scroll.png"
+            }
+          }
         },
         {
           "id": "help",
@@ -965,10 +974,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/tools/help-scroll.png"
+              "mobile": "dark/mobile/tools/help-scroll.png",
+              "desktop": "dark/desktop/tools/help-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/tools/help-scroll.png"
+              "mobile": "light/mobile/tools/help-scroll.png",
+              "desktop": "light/desktop/tools/help-scroll.png"
             }
           }
         },
@@ -1289,10 +1300,12 @@
           },
           "scroll": {
             "dark": {
-              "mobile": "dark/mobile/help/faq-scroll.png"
+              "mobile": "dark/mobile/help/faq-scroll.png",
+              "desktop": "dark/desktop/help/faq-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/help/faq-scroll.png"
+              "mobile": "light/mobile/help/faq-scroll.png",
+              "desktop": "light/desktop/help/faq-scroll.png"
             }
           }
         }

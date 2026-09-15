@@ -23,3 +23,8 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - CI green: https://github.com/shamikhahmed/VaultCap/actions/runs/34960909352
 - VO ⛔ not linked · Xcode ⛔ BLOCKED-EXTERNAL
 - Next: MasteryCap (order §14)
+
+### 2026-09-15 VaultCap gallery regen
+- First run SIGTERM (~13.6m) mid-capture; port conflict then VaultDB race on retry
+- Fixed tests/screenshots.spec.js: guard Store.save until VaultDB ready + wait for VaultDB/Store
+- `npm run gallery` PASS (1 test, ~9.3m) — 89 screens embedded into screen-gallery.html
