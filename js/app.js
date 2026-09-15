@@ -46,8 +46,19 @@ async function App() {
     setTimeout(() => {
       splash.style.transition = 'opacity 0.4s ease';
       splash.style.opacity = '0';
-      setTimeout(() => { splash.style.display = 'none'; }, 400);
+      setTimeout(() => {
+        splash.style.display = 'none';
+        try {
+          window.__APP_READY__ = true;
+          document.documentElement.dataset.appReady = 'true';
+        } catch (_) {}
+      }, 400);
     }, 1800);
+  } else {
+    try {
+      window.__APP_READY__ = true;
+      document.documentElement.dataset.appReady = 'true';
+    } catch (_) {}
   }
 
   document.addEventListener('click', function(e) {

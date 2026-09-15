@@ -40,3 +40,8 @@ The Cloudflare Worker uses Workers AI (`@cf/meta/llama-3.1-8b-instruct`). If the
 ## Contact
 
 Built by Shamikh Ahmed — issues via the [VaultCap GitHub repository](https://github.com/shamikhahmed/VaultCap).
+
+
+## Fonts
+
+Typography is self-hosted (woff2 in-repo). No Google Fonts requests.

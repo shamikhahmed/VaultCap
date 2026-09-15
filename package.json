@@ -21,13 +21,14 @@
     "test:sweep:portfolio": "bash scripts/run-playwright-sweep.sh",
     "verify": "npm run build:js && npm run audit:xss && npm run test:e2e",
     "logos:fetch": "node scripts/fetch-bank-logos.mjs",
-    "logos": "npm run logos:fetch --"
+    "logos": "npm run logos:fetch --",
+    "test:matrix": "npm run build:js && FINISH_MATRIX=1 playwright test tests/finish-matrix.spec.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "playwright": "^1.60.0"
   },
-  "version": "5.2.1",
+  "version": "5.2.2",
   "description": "VaultCap — encrypted offline life vault PWA by Capricorn Systems",
   "directories": {
     "doc": "docs",
