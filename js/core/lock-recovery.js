@@ -20,12 +20,26 @@ function copyVaultId() {
   const done = () => {
     if (typeof Toast !== 'undefined') Toast.show('Vault ID copied', 'success', 1500);
   };
+  const fallbackCopy = () => {
+    if (typeof CapPrompt === 'function') {
+      CapPrompt({ title: 'Vault ID', body: 'Select and copy your Vault ID.', value: id, confirmLabel: 'Done' });
+      return;
+    }
+    const ta = document.createElement('textarea');
+    ta.value = id;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (_) {
+      if (typeof Toast !== 'undefined') Toast.show('Vault ID: ' + id, 'info', 6000);
+    }
+    document.body.removeChild(ta);
+  };
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(id).then(done).catch(() => {
-      window.prompt('Copy Vault ID:', id);
-    });
+    navigator.clipboard.writeText(id).then(done).catch(fallbackCopy);
   } else {
-    window.prompt('Copy Vault ID:', id);
+    fallbackCopy();
   }
 }
 window.copyVaultId = copyVaultId;

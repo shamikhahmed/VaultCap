@@ -21,14 +21,14 @@ function _svgLogo(size, bg, content) {
 function _initialsLogo(initials, color, size) {
   const s = size + 'px', r = Math.round(size * 0.28) + 'px';
   const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.35)) + 'px';
-  return `<div style="width:${s};height:${s};border-radius:${r};background:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:${fs};font-weight:900;color:#fff;font-family:Arial;letter-spacing:-0.5px">${initials}</div>`;
+  return `<div style="width:${s};height:${s};border-radius:${r};background:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:${fs};font-weight:900;color:${VCBrand.h_fff};font-family:Arial;letter-spacing:-0.5px">${initials}</div>`;
 }
 function getBankLogo(bankName, size) {
   size = size || 36;
-  if (!bankName) return _initialsLogo('BK', '#888888', size);
+  if (!bankName) return _initialsLogo('BK', VCBrand.h_888888, size);
   if (typeof LogoEngine !== 'undefined') return LogoEngine.html(bankName, size);
   const initials = bankName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
-  const color = (typeof brandColor === 'function') ? brandColor(bankName) : '#888888';
+  const color = (typeof brandColor === 'function') ? brandColor(bankName) : VCBrand.h_888888;
   return _initialsLogo(initials || 'BK', color, size);
 }
 
@@ -89,7 +89,7 @@ const Banks={
   },
   row(b){
     const logoHtml=getBankLogo(b.bankName,36);
-    const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:10px;background:rgba(0,213,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
+    const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:11px;background:rgba(0,213,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
     const _bt=(b.bankType||'bank').toLowerCase();
     const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('');
     const name = escHtml(b.bankName||'Bank');
@@ -174,7 +174,7 @@ const Banks={
           ${tiles.map(b=>{
             const safeName=b.name.replace(/'/g,"\\'");
             const logoEl=getBankLogo(b.name,32);
-            return `<div data-act="ActHelpers.pickBankTile('${safeName}','${safeCC}',this)" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px">${logoEl}<div style="font-size:9px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
+            return `<div data-act="ActHelpers.pickBankTile('${safeName}','${safeCC}',this)" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px">${logoEl}<div style="font-size:11px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
           }).join('')}
         </div>
       </details>`;

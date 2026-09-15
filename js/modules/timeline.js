@@ -92,8 +92,8 @@ const Timeline={
         const evs=events[key]||[];
         return `<div class="cal-day${isToday?' today':''}${evs.length?' has-event':''}">
           <div style="font-size:12px;font-weight:${isToday?700:400};text-align:center;margin-bottom:2px;color:${isToday?'var(--accent)':'var(--text)'}">${day}</div>
-          ${evs.slice(0,3).map(e=>`<div style="display:flex;align-items:center;gap:2px;margin-bottom:1px"><span style="display:flex;flex-shrink:0">${Timeline._renderIcon(e.icon,8)}</span><span style="font-size:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtml(e.label).slice(0,8)}</span></div>`).join('')}
-          ${evs.length>3?`<div style="font-size:8px;color:var(--accent)">+${evs.length-3}</div>`:''}
+          ${evs.slice(0,3).map(e=>`<div style="display:flex;align-items:center;gap:2px;margin-bottom:1px"><span style="display:flex;flex-shrink:0">${Timeline._renderIcon(e.icon,8)}</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtml(e.label).slice(0,8)}</span></div>`).join('')}
+          ${evs.length>3?`<div style="font-size:11px;color:var(--accent)">+${evs.length-3}</div>`:''}
         </div>`;
       }).join('')}
     </div>

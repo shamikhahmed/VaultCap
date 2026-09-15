@@ -31,7 +31,7 @@ const Family = {
 
   _roleBadge(role) {
     const isAdmin = role !== 'viewer';
-    return `<span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(0,213,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
+    return `<span style="font-size:11px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(0,213,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
   },
 
   _initials(name) {
@@ -52,7 +52,7 @@ const Family = {
     const initials = this._initials(name);
     const hue = this._hueFromName(name);
     const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.36));
-    return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,hsl(${hue},68%,42%),hsl(${(hue + 36) % 360},70%,52%));display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;color:#fff;letter-spacing:-.02em;flex-shrink:0;font-family:var(--font)">${escHtml(initials)}</div>`;
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,hsl(${hue},68%,42%),hsl(${(hue + 36) % 360},70%,52%));display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;color:${VCBrand.h_fff};letter-spacing:-.02em;flex-shrink:0;font-family:var(--font)">${escHtml(initials)}</div>`;
   },
 
   _avatarFieldHtml(name) {
@@ -208,7 +208,7 @@ const Family = {
     const headCard = head
       ? `<div data-act="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(0,213,255,.25),rgba(0,213,255,.15));border:1px solid rgba(0,213,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
-          <div style="position:absolute;top:10px;right:12px;font-size:10px;background:rgba(0,213,255,.4);color:#fff;padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
+          <div style="position:absolute;top:10px;right:12px;font-size:11px;background:rgba(0,213,255,.4);color:${VCBrand.h_fff};padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
             ${this.avatarHtml(head.name, 60)}
             <div>

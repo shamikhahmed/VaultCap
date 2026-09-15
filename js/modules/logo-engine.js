@@ -200,11 +200,11 @@ const LogoEngine = {
     const r = Math.round(size * 0.28) + 'px';
     const domain = this.domainFor(bankName);
     const initials = String(bankName || 'BK').split(/\s+/).map((w) => w[0] || '').join('').toUpperCase().slice(0, 3) || 'BK';
-    const color = (typeof brandColor === 'function') ? brandColor(bankName) : '#1a1a2e';
+    const color = (typeof brandColor === 'function') ? brandColor(bankName) : VCBrand.h_1a1a2e;
     const fs = Math.round(size * (initials.length > 2 ? 0.28 : 0.35)) + 'px';
     const safeName = String(bankName || '').replace(/"/g, '&quot;');
     const placeholder =
-      `<div data-logo-bank="${safeName}" style="width:${s};height:${s};border-radius:${r};background:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:${fs};font-weight:900;color:#fff;font-family:Arial;letter-spacing:-0.5px;overflow:hidden">${initials}</div>`;
+      `<div data-logo-bank="${safeName}" style="width:${s};height:${s};border-radius:${r};background:${color};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:${fs};font-weight:900;color:${VCBrand.h_fff};font-family:Arial;letter-spacing:-0.5px;overflow:hidden">${initials}</div>`;
 
     if (!domain) return placeholder;
 
@@ -214,7 +214,7 @@ const LogoEngine = {
       `<img src="${local}" alt="" width="${size}" height="${size}" style="width:100%;height:100%;object-fit:contain;display:block"` +
       ` data-act-error="ActHelpers.hideImgShowNext(this)"` +
       `>` +
-      `<span style="display:none;font-size:${fs};font-weight:900;color:#fff;font-family:Arial">${initials}</span>` +
+      `<span style="display:none;font-size:${fs};font-weight:900;color:${VCBrand.h_fff};font-family:Arial">${initials}</span>` +
       `</div>`;
   },
 
@@ -244,7 +244,7 @@ const LogoEngine = {
           const ni = document.createElement('img');
           ni.src = hit.url;
           ni.alt = '';
-          ni.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;background:#000';
+          ni.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;background:'+VCBrand.h_000+'';
           el.appendChild(ni);
         }
       }).catch(() => {});

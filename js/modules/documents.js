@@ -153,7 +153,7 @@ const DocsModule={
   },
   _capturePhoto(targetId){
     const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;z-index:2001;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    overlay.style.cssText='position:fixed;inset:0;z-index:2001;background:'+VCBrand.h_000+';display:flex;flex-direction:column;align-items:center;justify-content:center;';
     overlay.innerHTML=[
       '<video id="_docVid" autoplay playsinline style="width:100%;max-width:400px;border-radius:12px;display:block"></video>',
       '<canvas id="_docCanvas" style="display:none"></canvas>',
@@ -322,26 +322,26 @@ const DocsModule={
       :('VaultCap — Documents ('+list.length+')');
     const css=
       '*{box-sizing:border-box;margin:0;padding:0}'+
-      'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#111;background:#fff}'+
+      'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+'}'+
       '.page{max-width:800px;margin:0 auto;padding:28px 32px 40px}'+
       '.no-print{display:flex;gap:10px;justify-content:center;margin:0 0 20px;flex-wrap:wrap}'+
-      '.btn-print{background:#0a1220;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}'+
-      '.btn-close{background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;min-height:44px}'+
-      '.header{background:#0a1220;color:#fff;padding:26px 28px;border-radius:12px;margin-bottom:22px}'+
+      '.btn-print{background:'+VCBrand.h_0a1220+';color:'+VCBrand.h_fff+';border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}'+
+      '.btn-close{background:'+VCBrand.h_f1f3f5+';border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px;min-height:44px}'+
+      '.header{background:'+VCBrand.h_0a1220+';color:'+VCBrand.h_fff+';padding:26px 28px;border-radius:12px;margin-bottom:22px}'+
       '.header .brand{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:6px}'+
       '.header h1{font-size:22px;font-weight:800;margin-bottom:6px}'+
       '.header .sub{font-size:13px;opacity:.75;line-height:1.45}'+
       '.doc{border:1px solid #e8eaed;border-radius:12px;padding:20px;margin-bottom:22px;page-break-inside:avoid}'+
       '.doc h2{font-size:16px;font-weight:800;margin-bottom:4px}'+
-      '.doc .meta{font-size:12px;color:#666;margin-bottom:14px}'+
+      '.doc .meta{font-size:12px;color:'+VCBrand.h_666+';margin-bottom:14px}'+
       '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:14px}'+
-      '.field .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:2px}'+
-      '.field .val{font-size:13px;font-weight:600;color:#111;word-break:break-word}'+
+      '.field .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:'+VCBrand.h_888+';margin-bottom:2px}'+
+      '.field .val{font-size:13px;font-weight:600;color:'+VCBrand.h_111+';word-break:break-word}'+
       '.photos{display:flex;flex-direction:column;gap:14px;margin-top:8px}'+
       '.photo-block{page-break-inside:avoid}'+
-      '.photo-block .cap{font-size:11px;color:#666;margin-bottom:6px;font-weight:700}'+
-      '.photo-block img{width:100%;max-height:420px;object-fit:contain;border:1px solid #eee;border-radius:8px;background:#fafafa}'+
-      '.footer{text-align:center;font-size:11px;color:#999;margin-top:28px;padding-top:14px;border-top:1px solid #eee;line-height:1.5}'+
+      '.photo-block .cap{font-size:11px;color:'+VCBrand.h_666+';margin-bottom:6px;font-weight:700}'+
+      '.photo-block img{width:100%;max-height:420px;object-fit:contain;border:1px solid #eee;border-radius:8px;background:'+VCBrand.h_fafafa+'}'+
+      '.footer{text-align:center;font-size:11px;color:'+VCBrand.h_999+';margin-top:28px;padding-top:14px;border-top:1px solid #eee;line-height:1.5}'+
       '@media print{.no-print{display:none!important}.page{padding:12px}.doc{break-inside:avoid}}'+
       '@media (max-width:560px){.grid{grid-template-columns:1fr}}';
     const sections=list.map((d,i)=>{

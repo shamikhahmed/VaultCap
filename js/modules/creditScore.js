@@ -20,9 +20,9 @@ const CreditScore = {
 
     const scoreColor = !score ? 'var(--text3)'
       : score >= 800 ? 'var(--ok)'
-      : score >= 700 ? '#34c759'
+      : score >= 700 ? VCBrand.h_34c759
       : score >= 600 ? 'var(--warn)'
-      : score >= 500 ? '#ff9f0a'
+      : score >= 500 ? VCBrand.h_ff9f0a
       : 'var(--err)';
 
     const scoreLabel = !score ? 'Not set'
@@ -90,7 +90,7 @@ const CreditScore = {
         '<div class="vc-ix-7">' +
           '<div class="vc-ix-28">Score History</div>' +
           history.slice(-8).reverse().map(function(h) {
-            const hColor = h.score >= 800 ? 'var(--ok)' : h.score >= 700 ? '#34c759' : h.score >= 600 ? 'var(--warn)' : 'var(--err)';
+            const hColor = h.score >= 800 ? 'var(--ok)' : h.score >= 700 ? VCBrand.h_34c759 : h.score >= 600 ? 'var(--warn)' : 'var(--err)';
             return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">' +
               '<div class="vc-ix-13">' + new Date(h.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' }) + '</div>' +
               '<div style="font-size:14px;font-weight:800;color:' + hColor + '">' + h.score + '</div>' +
@@ -113,7 +113,7 @@ const CreditScore = {
               '<div style="flex:' + (a.good - a.fair) + ';background:var(--warn)"></div>' +
               '<div style="flex:' + (a.max - a.good) + ';background:var(--ok);border-radius:0 999px 999px 0"></div>' +
             '</div>' +
-            '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:3px">' +
+            '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px">' +
               '<span>Poor</span><span>Fair</span><span>Good</span><span>Excellent</span>' +
             '</div>' +
           '</div>';
@@ -168,7 +168,7 @@ const CreditScore = {
     const score = parseInt(val) || 0;
     const el = document.getElementById('cs-preview');
     if (!el || !score) return;
-    const color = score >= 800 ? 'var(--ok)' : score >= 700 ? '#34c759' : score >= 600 ? 'var(--warn)' : score >= 500 ? '#ff9f0a' : 'var(--err)';
+    const color = score >= 800 ? 'var(--ok)' : score >= 700 ? VCBrand.h_34c759 : score >= 600 ? 'var(--warn)' : score >= 500 ? VCBrand.h_ff9f0a : 'var(--err)';
     const label = score >= 800 ? 'Excellent' : score >= 700 ? 'Good' : score >= 600 ? 'Fair' : score >= 500 ? 'Poor' : 'Very Poor';
     el.style.color = color;
     el.textContent = score + ' — ' + label;

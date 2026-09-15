@@ -48,7 +48,7 @@ const RatesEngine = {
     const stale = this.isStale();
     const color = stale ? 'var(--warn)' : 'var(--ok)';
     const icon = stale ? (typeof VC !== 'undefined' ? VC.icon('bell', 10) : '') : (typeof VC !== 'undefined' ? VC.icon('target', 10) : '');
-    return `<span style="font-size:10px;color:${color};display:inline-flex;align-items:center;gap:4px">${icon} Rates: ${this.lastUpdated()}</span>`;
+    return `<span style="font-size:11px;color:${color};display:inline-flex;align-items:center;gap:4px">${icon} Rates: ${this.lastUpdated()}</span>`;
   },
 
   getFX() {

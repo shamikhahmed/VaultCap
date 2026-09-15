@@ -362,7 +362,7 @@ function buildNav() {
   groupOrder.forEach((grp) => {
     const label = groups[grp];
     if (!grouped[grp] || !grouped[grp].length) return;
-    sbHTML += `<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
+    sbHTML += `<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
       `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
     ).join('');

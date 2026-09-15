@@ -68,10 +68,10 @@ const Currency = {
     const isManual = manualRate !== undefined;
     const inPkr = displayRate ? (usdToPkr / displayRate) : null;
     const border = i > 0 ? 'border-top:1px solid var(--border);' : '';
-    const manualBadge = isManual ? '<span style="font-size:9px;background:rgba(255,152,0,.15);color:var(--warn);border-radius:4px;padding:1px 5px;font-weight:700">MANUAL</span>' : '';
+    const manualBadge = isManual ? '<span style="font-size:11px;background:rgba(255,152,0,.15);color:var(--warn);border-radius:4px;padding:1px 5px;font-weight:700">MANUAL</span>' : '';
     const rateText = displayRate ? displayRate.toFixed(4) : '—';
     const pkrText = inPkr ? ' · 1 ' + c.code + ' = <strong class="vc-ix-22">' + inPkr.toFixed(2) + '</strong> PKR' : '';
-    const clearBtn = isManual ? '<button type="button" data-act="Currency._clearManual(\'' + c.code + '\')" style="font-size:9px;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
+    const clearBtn = isManual ? '<button type="button" data-act="Currency._clearManual(\'' + c.code + '\')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
     return '<div style="padding:14px 16px;' + border + 'display:flex;align-items:center;gap:12px">' +
       '<div style="font-size:22px;flex-shrink:0">' + c.flag + '</div>' +
       '<div class="vc-ix-20">' +

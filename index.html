@@ -97,7 +97,7 @@
             <path d="M16 22c0-3.3 2.7-6 6-6s6 2.7 6 6v2h1.5a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 14.5 30.5v-5A1.5 1.5 0 0 1 16 24v-2z" fill="url(#vaultSealGrad)"/>
             <defs>
               <linearGradient id="vaultSealGrad" x1="8" y1="8" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#9A7410"/><stop offset="0.35" stop-color="#E8C84A"/><stop offset="0.55" stop-color="#D4A017"/><stop offset="1" stop-color="#7A5A0E"/>
+                <stop stop-color="#9a7410"/><stop offset="0.35" stop-color="#e8c84a"/><stop offset="0.55" stop-color="#d4a017"/><stop offset="1" stop-color="#7a5a0e"/>
               </linearGradient>
             </defs>
           </svg>
@@ -134,12 +134,12 @@
   <div class="lk-mid">
     <div class="lk-brand">
       <div class="lk-mark">
-        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:translateZ(0);will-change:transform;display:block">
-          <rect width="72" height="72" rx="16" fill="#ffffff"/>
-          <rect x="20" y="28" width="32" height="26" rx="6" fill="#000000" opacity="0.95"/>
-          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="#000000" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <circle cx="36" cy="41" r="4" fill="#ffffff"/>
-          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="#ffffff"/>
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:translateZ(0);will-change:transform;display:block" aria-hidden="true">
+          <rect width="72" height="72" rx="16" fill="var(--lk-mark-bg, white)"/>
+          <rect x="20" y="28" width="32" height="26" rx="6" fill="currentColor" opacity="0.95"/>
+          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <circle cx="36" cy="41" r="4" fill="var(--lk-mark-bg, white)"/>
+          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="var(--lk-mark-bg, white)"/>
         </svg>
       </div>
       <div class="lk-brand-name">VaultCap</div>
@@ -215,7 +215,7 @@
   </div>
   <p style="font-size:14px;color:var(--text2);margin-bottom:2px;font-weight:500" id="hWelcome">Your Private Life Operating System</p>
   <p style="font-size:11px;color:var(--text3);margin-bottom:3px">Zero-knowledge · Encrypted · Offline-first · Global</p>
-  <p style="font-size:10px;color:var(--text3);margin-bottom:24px;opacity:.5;letter-spacing:.3px">by Capricorn Systems</p>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:24px;opacity:.5;letter-spacing:.3px">by Capricorn Systems</p>
   <!-- CTA -->
   <button data-act="R.showLock()" style="width:100%;padding:16px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:10px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s;touch-action:manipulation" class="vos-cta-lift">Open My Vault</button>
   <button data-act="VaultProfiles.startDemo()" style="width:100%;padding:13px;background:var(--glass);border:1px solid var(--border);color:var(--text2);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;font-family:var(--font);touch-action:manipulation">New? Take the guided demo</button>
@@ -228,12 +228,12 @@
   </div>
   <!-- Module grid -->
   <div class="vault-panel vault-panel--home" style="width:100%;padding:16px;margin-bottom:20px">
-    <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
     <div id="homeModGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"></div>
   </div>
   <!-- Appearance — Apple-style segmented selector -->
   <div style="width:100%;margin-bottom:24px">
-    <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;text-align:center">Appearance</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;text-align:center">Appearance</div>
     <div id="homeThemes" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
   </div>
 </div>
@@ -269,28 +269,28 @@
     style="padding:16px 12px;border-radius:16px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
     <span style="font-size:32px" aria-hidden="true">👤</span>
     <div style="font-size:13px;font-weight:700;color:var(--text)">Personal</div>
-    <div style="font-size:10px;color:var(--text3);line-height:1.3">Banks, cards, documents</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.3">Banks, cards, documents</div>
   </div>
   <div data-act="OB.selectUserType('family',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Family — Full family overview"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
     <span style="font-size:32px" aria-hidden="true">👨‍👩‍👧‍👦</span>
     <div style="font-size:13px;font-weight:700;color:var(--text)">Family</div>
-    <div style="font-size:10px;color:var(--text3);line-height:1.3">Full family overview</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.3">Full family overview</div>
   </div>
   <div data-act="OB.selectUserType('business',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Business — Business assets and accounts"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
     <span style="font-size:32px" aria-hidden="true">💼</span>
     <div style="font-size:13px;font-weight:700;color:var(--text)">Business</div>
-    <div style="font-size:10px;color:var(--text3);line-height:1.3">Business assets &amp; accounts</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.3">Business assets &amp; accounts</div>
   </div>
   <div data-act="OB.selectUserType('expat',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Global Expat — Multi-country, multi-currency"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
     <span style="font-size:32px" aria-hidden="true"><span data-vc-icon="arrows" data-vc-size="32" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
     <div style="font-size:13px;font-weight:700;color:var(--text)">Global Expat</div>
-    <div style="font-size:10px;color:var(--text3);line-height:1.3">Multi-country, multi-currency</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.3">Multi-country, multi-currency</div>
   </div>
 </div>
 <button class="btn btn-p" data-act="OB.next(2)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
@@ -326,11 +326,11 @@
 <p class="ob-sub" style="margin-bottom:16px">Choose a 6-digit PIN. Next screen shows a recovery key — save it once.</p>
 <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:0">
   <div style="margin-bottom:10px">
-    <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">PIN (6 digits)</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">PIN (6 digits)</div>
     <input class="inp" id="ob-pin" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
   </div>
   <div style="margin-bottom:10px">
-    <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
     <input class="inp" id="ob-pin2" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
   </div>
   <div id="ob-pinmatch" style="height:20px;text-align:center;font-size:12px;margin-bottom:6px"></div>
@@ -374,7 +374,7 @@
 <!-- MAIN APP -->
 <div class="app" id="app" style="display:none">
 <div class="sidebar" id="sidebar" role="navigation" aria-label="VaultCap sidebar">
-<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><img src="icons/mark.svg" alt="" class="vc-mark" width="32" height="32" aria-hidden="true"><h1 style="font-size:16px;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" data-act="toggleSidebar()" aria-label="Collapse sidebar" data-vc-icon="menu" data-vc-size="16"></button></div><p id="sbUser" style="font-size:10px;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
+<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><img src="icons/mark.svg" alt="" class="vc-mark" width="32" height="32" aria-hidden="true"><h1 style="font-size:16px;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" data-act="toggleSidebar()" aria-label="Collapse sidebar" data-vc-icon="menu" data-vc-size="16"></button></div><p id="sbUser" style="font-size:11px;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
 <nav class="sb-nav" id="sbNav" aria-label="Main navigation"></nav>
 <div class="sb-bot">
 <button class="btn btn-g btn-full btn-sm" data-act="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:11px">Search everything</span></button>

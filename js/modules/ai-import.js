@@ -423,7 +423,7 @@ const AIImport = {
             '<input type="checkbox" id="ie-chk-' + i + '" checked style="width:18px;height:18px;cursor:pointer">' +
             '<div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px"><span class="chip-ic">' + typeIc + '</span>' + typeLabel + '</div>' +
           '</label>' +
-          '<div style="font-size:10px;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
+          '<div style="font-size:11px;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
         '</div>' +
         '<div style="display:flex;flex-direction:column;gap:6px">' +
           fields.map(function(e) {

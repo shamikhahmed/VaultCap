@@ -221,11 +221,11 @@ const Zakat = {
       zakatReminder +
 
       '<div style="background:linear-gradient(135deg,rgba(76,175,80,.15),rgba(0,150,136,.1));border:1px solid rgba(76,175,80,.3);border-radius:16px;padding:16px">' +
-        '<div style="font-size:15px;font-weight:800;color:#4caf50;margin-bottom:4px">Zakat Calculator</div>' +
+        '<div style="font-size:15px;font-weight:800;color:'+VCBrand.h_4caf50+';margin-bottom:4px">Zakat Calculator</div>' +
         '<div class="vc-ix-207">' +
-          'Zakat is due on wealth above nisab held for one full lunar year (hawl). Rate: <strong style="color:#4caf50">2.5%</strong>' +
+          'Zakat is due on wealth above nisab held for one full lunar year (hawl). Rate: <strong style="color:'+VCBrand.h_4caf50+'">2.5%</strong>' +
         '</div>' +
-        '<div style="font-size:10px;color:' + (isStale ? 'var(--warn)' : 'var(--ok)') + ';margin-top:8px;display:flex;align-items:center;gap:4px"><span class="chip-ic">' + ratesIc + '</span> Rates: ' + lastUpdated +
+        '<div style="font-size:11px;color:' + (isStale ? 'var(--warn)' : 'var(--ok)') + ';margin-top:8px;display:flex;align-items:center;gap:4px"><span class="chip-ic">' + ratesIc + '</span> Rates: ' + lastUpdated +
         '</div>' +
         '<div style="display:flex;gap:8px;margin-top:10px">' +
           '<button type="button" data-act="Zakat._mode=\'fbr\';Zakat._saveState();Zakat.render()" style="background:var(--glass2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;touch-action:manipulation">FBR Tax Mode →</button>' +
@@ -236,8 +236,8 @@ const Zakat = {
         '<div class="vc-ix-28">Settings</div>' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">' +
           '<div style="font-size:12px;color:var(--text2);align-self:center">Nisab standard:</div>' +
-          '<button type="button" data-act="Zakat._nisabType=\'silver\';Zakat._saveState();Zakat.render()" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;background:' + (this._nisabType === 'silver' ? 'var(--accent)' : 'var(--glass2)') + ';color:' + (this._nisabType === 'silver' ? '#fff' : 'var(--text2)') + ';border:1px solid var(--border)">Silver (52.5 tola)</button>' +
-          '<button type="button" data-act="Zakat._nisabType=\'gold\';Zakat._saveState();Zakat.render()" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;background:' + (this._nisabType === 'gold' ? 'var(--accent)' : 'var(--glass2)') + ';color:' + (this._nisabType === 'gold' ? '#fff' : 'var(--text2)') + ';border:1px solid var(--border)">Gold (7.5 tola)</button>' +
+          '<button type="button" data-act="Zakat._nisabType=\'silver\';Zakat._saveState();Zakat.render()" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;background:' + (this._nisabType === 'silver' ? 'var(--accent)' : 'var(--glass2)') + ';color:' + (this._nisabType === 'silver' ? VCBrand.h_fff : 'var(--text2)') + ';border:1px solid var(--border)">Silver (52.5 tola)</button>' +
+          '<button type="button" data-act="Zakat._nisabType=\'gold\';Zakat._saveState();Zakat.render()" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation;background:' + (this._nisabType === 'gold' ? 'var(--accent)' : 'var(--glass2)') + ';color:' + (this._nisabType === 'gold' ? VCBrand.h_fff : 'var(--text2)') + ';border:1px solid var(--border)">Gold (7.5 tola)</button>' +
         '</div>' +
         '<div class="vc-ix-154">' +
           'Silver nisab: ' + fmt(nisabSilver) + ' · Gold nisab: ' + fmt(nisabGold) +
@@ -323,12 +323,12 @@ const Zakat = {
   },
 
   _zakatField(label, id, value, hint, isAuto) {
-    const badge = isAuto ? '<span style="font-size:9px;background:rgba(255,255,255,.15);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px">Auto</span>' : '';
+    const badge = isAuto ? '<span style="font-size:11px;background:rgba(255,255,255,.15);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px">Auto</span>' : '';
     return '<div class="vc-ix-26">' +
       '<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:4px">' + label + badge + '</label>' +
       '<input class="inp num-inp" type="text" inputmode="decimal" id="' + id + '" value="' + Math.round(value) + '" ' +
         'style="width:100%" data-act-input="Zakat._onFieldChange(\'' + id + '\')" placeholder="0">' +
-      '<div style="font-size:10px;color:var(--text3);margin-top:3px">' + hint + '</div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:3px">' + hint + '</div>' +
     '</div>';
   },
 
@@ -400,7 +400,7 @@ const Zakat = {
 
     innerEl.innerHTML =
       '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Zakat Due</div>' +
-      '<div style="font-size:40px;font-weight:900;color:#4caf50;letter-spacing:-1px;margin-bottom:4px" id="zakat-due-amount">' + fmt(zakatDue) + '</div>' +
+      '<div style="font-size:40px;font-weight:900;color:'+VCBrand.h_4caf50+';letter-spacing:-1px;margin-bottom:4px" id="zakat-due-amount">' + fmt(zakatDue) + '</div>' +
       (live ? (
         '<div style="font-size:13px;color:var(--text3);margin-bottom:12px">≈ £' + Math.round(inGBP).toLocaleString() + ' · د.إ' + Math.round(inAED).toLocaleString() + ' · ₨' + Math.round(inPKR).toLocaleString() + '</div>'
       ) : '') +
@@ -411,14 +411,14 @@ const Zakat = {
           '<div class="vc-ix-114">Zakat will be due in ' + hawl.remaining + ' days if wealth remains above nisab. Set your hawl date above.</div>' +
         '</div>'
       ) : '') +
-      '<button type="button" data-act="Zakat._printReport()" style="background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);color:#4caf50;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;width:100%">Print / Save Report</button>';
+      '<button type="button" data-act="Zakat._printReport()" style="background:rgba(76,175,80,.2);border:1px solid rgba(76,175,80,.4);color:'+VCBrand.h_4caf50+';border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;width:100%">Print / Save Report</button>';
   },
 
   _renderFBR(body) {
     body.innerHTML = '<div class="vc-ix-209">' +
       '<button type="button" data-act="Zakat._mode=\'personal\';Zakat._saveState();Zakat.render()" style="margin-bottom:16px;background:var(--glass2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;touch-action:manipulation">← Back to Zakat Calculator</button>' +
       '<div style="background:linear-gradient(135deg,rgba(2,132,199,.15),rgba(56,189,248,.08));border:1px solid rgba(2,132,199,.3);border-radius:16px;padding:16px;margin-bottom:16px">' +
-        '<div style="font-size:15px;font-weight:800;color:#38bdf8;margin-bottom:4px">🇵🇰 FBR Wealth Tax</div>' +
+        '<div style="font-size:15px;font-weight:800;color:'+VCBrand.h_38bdf8+';margin-bottom:4px">🇵🇰 FBR Wealth Tax</div>' +
         '<div class="vc-ix-8">Pakistan Federal Board of Revenue — Wealth Statement calculation. This is a tax, not Zakat.</div>' +
       '</div>' +
       '<div class="vc-ix-7">' +
@@ -442,7 +442,7 @@ const Zakat = {
       res.innerHTML = '<div class="vc-ix-210">No wealth tax due</div><div class="vc-ix-73">Wealth is below PKR 5 crore threshold</div>';
     } else {
       const tax = (wealth - threshold) * 0.01;
-      res.innerHTML = '<div class="vc-ix-211">FBR Wealth Tax Due</div><div style="font-size:28px;font-weight:900;color:#38bdf8">₨' + Math.round(tax).toLocaleString() + '</div><div class="vc-ix-8">1% of ₨' + Math.round(wealth - threshold).toLocaleString() + ' above threshold</div>';
+      res.innerHTML = '<div class="vc-ix-211">FBR Wealth Tax Due</div><div style="font-size:28px;font-weight:900;color:'+VCBrand.h_38bdf8+'">₨' + Math.round(tax).toLocaleString() + '</div><div class="vc-ix-8">1% of ₨' + Math.round(wealth - threshold).toLocaleString() + ' above threshold</div>';
     }
   },
 
@@ -475,7 +475,7 @@ const Zakat = {
     if (amountEl) lines.push('Zakat Due (2.5%): ' + amountEl.textContent);
     const w = window.open('', '_blank');
     if (w) {
-      w.document.write('<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:#111;background:#fff}h1{color:#4caf50}pre{font-size:14px;line-height:1.8}</style></head><body><h1>Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>');
+      w.document.write('<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+'}h1{color:'+VCBrand.h_4caf50+'}pre{font-size:14px;line-height:1.8}</style></head><body><h1>Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>');
       w.print();
     }
   },

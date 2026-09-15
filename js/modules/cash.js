@@ -19,7 +19,7 @@ const Cash = {
         const byLocStr = Object.entries(byCur).map(([cur, v]) => `<div class="sens" style="font-size:15px;font-weight:700">${U.fmt(v)} ${cur}</div>`).join('');
         const convLine = Object.keys(byCur).length > 1 || Object.keys(byCur)[0] !== userCur
           ? `<div class="vc-ix-115">≈ ${U.fmt(Math.round(totalUser))} ${userCur} total</div>` : '';
-        sm.innerHTML = `<div class="widget" style="margin-bottom:12px;text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Total Cash on Hand</div>${byLocStr}${convLine}</div>`;
+        sm.innerHTML = `<div class="widget" style="margin-bottom:12px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;font-weight:700">Total Cash on Hand</div>${byLocStr}${convLine}</div>`;
       } else { sm.innerHTML = ''; }
     }
     if (!data.length) {

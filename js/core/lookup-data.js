@@ -188,11 +188,11 @@ const SUBS_DB=[
 ];
 
 const EMAIL_PROVIDERS=[
-  {n:'Gmail',ic:'mail',color:'#ea4335'},{n:'Outlook/Hotmail',ic:'mail',color:'#0078d4'},
-  {n:'Apple iCloud Mail',ic:'mail',color:'#555'},{n:'ProtonMail',ic:'shield',color:'#6d4aff'},
-  {n:'Yahoo Mail',ic:'mail',color:'#720e9e'},{n:'Tutanota',ic:'shield',color:'#c63927'},
-  {n:'Zoho Mail',ic:'briefcase',color:'#cc4b00'},{n:'FastMail',ic:'mail',color:'#2272b2'},
-  {n:'Custom Domain',ic:'arrows',color:'#666'},{n:'Other',ic:'mail',color:'#888'},
+  {n:'Gmail',ic:'mail',color:VCBrand.h_ea4335},{n:'Outlook/Hotmail',ic:'mail',color:VCBrand.h_0078d4},
+  {n:'Apple iCloud Mail',ic:'mail',color:VCBrand.h_555},{n:'ProtonMail',ic:'shield',color:VCBrand.h_6d4aff},
+  {n:'Yahoo Mail',ic:'mail',color:VCBrand.h_720e9e},{n:'Tutanota',ic:'shield',color:VCBrand.h_c63927},
+  {n:'Zoho Mail',ic:'briefcase',color:VCBrand.h_cc4b00},{n:'FastMail',ic:'mail',color:VCBrand.h_2272b2},
+  {n:'Custom Domain',ic:'arrows',color:VCBrand.h_666},{n:'Other',ic:'mail',color:VCBrand.h_888},
 ];
 
 const GADGET_TYPES=[

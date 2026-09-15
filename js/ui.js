@@ -39,14 +39,14 @@ function _sparkLine(history) {
     return x.toFixed(1) + ',' + y.toFixed(1);
   }).join(' ');
   const trend = vals[vals.length - 1] >= vals[0];
-  const color = trend ? '#34c759' : '#ff453a';
+  const color = trend ? VCBrand.h_34c759 : VCBrand.h_ff453a;
   const firstDate = history[0].d ? new Date(history[0].d).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }) : '';
   const lastDate = history[history.length - 1].d ? new Date(history[history.length - 1].d).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }) : '';
   return '<div class="vc-ix-51">' +
     '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:40px;display:block">' +
       '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg>' +
-    (firstDate && lastDate ? '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:2px"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>' : '') +
+    (firstDate && lastDate ? '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>' : '') +
   '</div>';
 }
 
@@ -64,7 +64,7 @@ function _nwSparkline(hist) {
   const areaStr = pts.map(p=>p[0]+','+p[1]).join(' ')+' '+pts[pts.length-1][0]+',38 '+pts[0][0]+',38';
   const last = pts[pts.length-1];
   const trend = h[h.length-1].v >= h[0].v;
-  const col = trend ? '#34c759' : '#ff453a';
+  const col = trend ? VCBrand.h_34c759 : VCBrand.h_ff453a;
   const gid = 'nwg'+Math.random().toString(36).slice(2,7);
   return '<svg viewBox="0 0 260 42" style="width:100%;height:40px;margin-top:8px;overflow:hidden" preserveAspectRatio="none">' +
     '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity="0.22"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>' +
@@ -189,7 +189,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:11px">Details<span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:11px">Details<span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -228,11 +228,11 @@ const Dash={
     ctxFilter(S.cash||[]).forEach(c => { const cur = c.currency || 'PKR'; cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0); });
     const cashCurKeys = Object.keys(cashByCur);
     const cashBreakdown = cashCurKeys.length > 1
-      ? '<div style="font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
+      ? '<div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
         cashCurKeys.map(cur => '<span class="sens">' + U.fmt(cashByCur[cur]) + ' ' + cur + '</span>').join(' · ') + '</div>'
       : '';
     const moneyCell = (total, color, label, page) =>
-      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
+      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
       '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
       '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
@@ -284,7 +284,7 @@ const Dash={
     const quickStatCell = (value, label, onclick) =>
       '<div' + (onclick ? ' data-act="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
       '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
-      '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
+      '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
     const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
       quickStatCell(entityTotal, 'Records') +
       quickStatCell(activeCountryLabel, 'Country') +
@@ -607,7 +607,7 @@ const Dash={
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div class="vc-ix-140">Net Worth</div><div style="font-size:20px;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
     </div>
     <div style="margin-top:10px;padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:11px;color:var(--text2)">
         ${Object.entries(typeof RatesEngine!=='undefined'?RatesEngine.getFX():{}).filter(([c,r])=>r>0&&c!=='PKR').slice(0,9).map(([c,r])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${c}</span><span style="font-weight:600">${U.fmt(r)}</span></div>`).join('')}
       </div>
@@ -1016,8 +1016,8 @@ const ExIm={
     const investCurrent=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
     const investPL=investCurrent-investedTotal;
     const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:#111;background:#fff;padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:#111;color:#fff;padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:#f5f5f5;border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:#111}.nw-hero .label{font-size:13px;color:#666;margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:#666}.row .value{font-weight:600;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:#f8f8f8;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#333}tr:last-child td{border-bottom:none}.positive{color:#16a34a;font-weight:700}.negative{color:#dc2626;font-weight:700}.footer{text-align:center;font-size:11px;color:#999;margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:#111;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
-    '<div class="no-print"><button type="button" class="btn-print" data-act="window.print()">Print / Save PDF</button><button type="button" data-act="window.close()" style="background:#f1f3f5;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">Close</button></div>'+
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+';padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:'+VCBrand.h_f5f5f5+';border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:'+VCBrand.h_111+'}.nw-hero .label{font-size:13px;color:'+VCBrand.h_666+';margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+VCBrand.h_444+';margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:'+VCBrand.h_666+'}.row .value{font-weight:600;color:'+VCBrand.h_111+'}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:'+VCBrand.h_f8f8f8+';padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:'+VCBrand.h_666+';font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:'+VCBrand.h_333+'}tr:last-child td{border-bottom:none}.positive{color:'+VCBrand.h_16a34a+';font-weight:700}.negative{color:'+VCBrand.h_dc2626+';font-weight:700}.footer{text-align:center;font-size:11px;color:'+VCBrand.h_999+';margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
+    '<div class="no-print"><button type="button" class="btn-print" data-act="window.print()">Print / Save PDF</button><button type="button" data-act="window.close()" style="background:'+VCBrand.h_f1f3f5+';border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">Close</button></div>'+
     '<div class="header"><h1>VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmtDisplay(nwPKR)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
     section('Net Worth Breakdown',
@@ -1104,7 +1104,7 @@ const QRSync = {
         <p class="vc-ix-143">Scan QR on target device. Enter this one-time code there after scanning.</p>
         <div style="font-size:28px;font-weight:800;letter-spacing:10px;font-family:var(--mono);color:var(--accent);margin-bottom:14px">${syncCode}</div>
         <div id="qrChunkLabel" style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
-        <div id="qrContainer" style="display:inline-block;background:#fff;padding:10px;border-radius:12px;margin-bottom:12px"></div>
+        <div id="qrContainer" style="display:inline-block;background:${VCBrand.h_fff};padding:10px;border-radius:12px;margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
           ${total>1?'<button type="button" class="btn btn-s btn-sm vc-ix-17" id="qrPrevBtn" data-act="QRSync._showChunk(-1)">← Prev</button>':''}
           ${total>1?'<button type="button" class="btn btn-p btn-sm" id="qrNextBtn" data-act="QRSync._showChunk(1)">Next →</button>':''}
@@ -1155,7 +1155,7 @@ const QRSync = {
     Modal.open('Scan from Another Device', `
       <div class="vc-ix-38">
         <p class="vc-ix-143">Point your camera at the QR code shown on the other device.</p>
-        <video id="qrVideo" style="width:100%;max-width:320px;border-radius:var(--r);background:#000" autoplay playsinline></video>
+        <video id="qrVideo" style="width:100%;max-width:320px;border-radius:var(--r);background:${VCBrand.h_000}" autoplay playsinline></video>
         <canvas id="qrCanvas" style="display:none"></canvas>
         <div id="qrStatus" style="font-size:12px;color:var(--text3);margin-top:8px">Starting camera…</div>
       </div>
@@ -1855,7 +1855,7 @@ const ImportEngine={
         <button type="button" data-act="ActHelpers.toggleEditPanel(this)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">Edit</button>
       </div>
       <div style="display:none;padding:0 14px 12px;border-top:1px solid var(--border);background:var(--glass)">
-        ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" data-act-input="ActHelpers.setIeResult(${i},'${k}',this.value)" style="padding:7px 10px;font-size:12px"></div>`).join('')}
+        ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" data-act-input="ActHelpers.setIeResult(${i},'${k}',this.value)" style="padding:7px 10px;font-size:12px"></div>`).join('')}
       </div>
     </div>`).join('')}
     <button type="button" class="btn btn-p btn-full" data-act="ImportEngine.importSelected()">Import Selected Items</button>
@@ -1921,7 +1921,7 @@ const Links={
       return found?{label:found.name||found.bankName||found.cardName||found.network||found.email||found.serviceName||'Entry'}:null;
     }).filter(Boolean);
     if(!linked.length)return '';
-    return `<div class="vc-ix-52"><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Linked</div><div style="display:flex;flex-wrap:wrap;gap:5px">${linked.map(l=>`<span style="padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">${l.label}</span>`).join('')}</div></div>`;
+    return `<div class="vc-ix-52"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Linked</div><div style="display:flex;flex-wrap:wrap;gap:5px">${linked.map(l=>`<span style="padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">${l.label}</span>`).join('')}</div></div>`;
   }
 };
 
@@ -2245,9 +2245,9 @@ const SettingsNav = {
 
   _appearance() {
     const options = [
-      { id: 'dark', label: 'Dark', preview: '#000000', dot: '#ffffff' },
-      { id: 'light', label: 'Light', preview: '#ffffff', dot: '#000000' },
-      { id: 'auto', label: 'System', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', dot: '#888888' },
+      { id: 'dark', label: 'Dark', preview: VCBrand.h_000000, dot: VCBrand.h_ffffff },
+      { id: 'light', label: 'Light', preview: VCBrand.h_ffffff, dot: VCBrand.h_000000 },
+      { id: 'auto', label: 'System', preview: 'linear-gradient(135deg,'+VCBrand.h_000000+' 50%,'+VCBrand.h_ffffff+' 50%)', dot: VCBrand.h_888888 },
     ];
     const active = S.user.theme || 'dark';
     return `<div class="set-sec"><div class="set-title">Theme</div><div class="set-card">
@@ -2372,11 +2372,11 @@ const SettingsNav = {
         </div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
-        <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">PIN &amp; recovery</div>
+        <div style="font-size:13px;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">PIN &amp; recovery</div>
         <div class="vc-ix-162">Your vault is encrypted on this device with your PIN. If you forget it, your data can't be recovered — keep an export somewhere safe.</div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
-        <div style="font-size:13px;font-weight:700;color:var(--warn,#ffc107);margin-bottom:8px">Enterprise disclaimer</div>
+        <div style="font-size:13px;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">Enterprise disclaimer</div>
         <div class="vc-ix-162">
           VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
         </div>
@@ -2417,7 +2417,7 @@ const VaultHealthCenter = {
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
             <div style="font-size:24px;font-weight:900;color:var(--text)">${healthScore}</div>
-            <div style="font-size:9px;color:var(--text3)">/ 100</div>
+            <div style="font-size:11px;color:var(--text3)">/ 100</div>
           </div>
         </div>
         <div style="font-size:14px;font-weight:700;color:${ring.color}">${ring.label}</div>
@@ -2479,7 +2479,7 @@ const VaultHealthCenter = {
           [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
         ].map(([ok, label]) => `
           <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
-            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:${ok?'var(--ok)':'var(--err)'}">${ok?'OK':'!'}</div>
+            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:${ok?'var(--ok)':'var(--err)'}">${ok?'OK':'!'}</div>
             <div style="font-size:12px;color:${ok?'var(--text2)':'var(--warn)'};">${label}</div>
           </div>`).join('')}
       </div>
