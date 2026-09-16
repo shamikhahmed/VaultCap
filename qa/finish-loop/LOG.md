@@ -28,3 +28,9 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - First run SIGTERM (~13.6m) mid-capture; port conflict then VaultDB race on retry
 - Fixed tests/screenshots.spec.js: guard Store.save until VaultDB ready + wait for VaultDB/Store
 - `npm run gallery` PASS (1 test, ~9.3m) — 89 screens embedded into screen-gallery.html
+
+## 2026-09-16 — kill-list (C-29 hardened)
+- Branch: finish/vaultcap-killlist
+- Before: rawHex 382 / sub11 4 / important 91
+- After: rawHex 0 / sub11 0 / important 0 (outline-none still open)
+- Approach: bank/card gradients → js/brand/colors.js; theme vars → css/tokens.css; strip non-media !important; type floors

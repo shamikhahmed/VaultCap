@@ -255,7 +255,7 @@ body.light .dash-hero {
 
 .vault-splash__title {
   font-size: 26px;
-  color: #f4f6fa;
+  color: var(--vc-hex-f4f6fa);
   margin-bottom: 8px;
   text-shadow: 0 2px 16px rgba(0,0,0,0.5);
 }

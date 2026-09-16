@@ -23,6 +23,7 @@ const ASSETS = [
   './icons/icon-1024.png',
   './icons/apple-touch-icon-180.png',
   './css/capricorn-core.css',
+  './css/tokens.css',
   './css/base.css',
   './css/layout.css',
   './css/components.css',
