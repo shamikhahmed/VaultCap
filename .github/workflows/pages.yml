@@ -37,24 +37,20 @@ jobs:
       - name: Build JS bundle
         run: npm run build:js
 
-      - name: Stage site (no node_modules / tests)
-        run: |
-          mkdir -p _site
-          rsync -a \
-            --exclude '.git' \
-            --exclude '.github' \
-            --exclude '.claude' \
-            --exclude '.cursor' \
-            --exclude 'node_modules' \
-            --exclude 'test-results' \
-            --exclude 'playwright-report' \
-            --exclude 'tests' \
-            --exclude 'memory' \
-            --exclude 'ios' \
-            --exclude 'www' \
-            --exclude '_site' \
-            --exclude 'widget-data.json' \
-            ./ _site/
+      - name: Stage allowlisted site (C-57)
+        env:
+          SW_FILE: sw-v51.js
+          ALLOW_PATHS: >-
+            index.html landing.html pitch.html presentation.html privacy.html
+            changelog.html screen-gallery.html install.html widget.html
+            sw-v51.js manifest.json VERSION.json
+            css js assets icons dist vendor
+            apple-touch-icon.png favicon.svg mark.svg
+            icon.svg icon-mark.svg
+            icon-192.png icon-512.png icon-1024.png
+            icon-maskable-192.png icon-maskable-512.png
+          FORBIDDEN_EXTRA: resources scripts worker docs memory ios www
+        run: bash scripts/stage-pages-site.sh _site
 
       - uses: actions/upload-pages-artifact@v3
         with:
