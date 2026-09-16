@@ -34,3 +34,9 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - **Root cause:** deploy copied (nearly) the whole tree.
 - **Change:** allowlisted stage script + SW verify; workflow stages public paths only.
 - **Verification:** local stage dry-run; live curl after deploy.
+
+## 2026-09-16 — C-46 skip link, SVG icons, gallery, TIER1
+- **Problem:** Skip link visible over demo banner; emoji in hubs/tabs (incl. 🖥); gallery stale; TIER1 uncommitted.
+- **Root cause:** Skip link styled as always-on chip; emoji→icon map incomplete for desktop glyph; gallery not regenerated after icon/CSS fix.
+- **Change:** `.cap-skip-link` visually hidden until `:focus-visible`; map `🖥`/`🖥️` → laptop SVG; `npm run gallery` PASS (89 screens); real `npm run tier1` → TIER1.json FAIL (honest).
+- **Verification:** gallery 1 passed ~12.3m; tier1 wrote qa/finish-loop/TIER1.json status FAIL.

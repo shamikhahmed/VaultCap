@@ -157,19 +157,39 @@
 
 /* Skip link — first child of <body> */
 .cap-skip-link {
+  /* C-46: visually hidden until keyboard focus — never cover demo banner */
   position: absolute;
-  top: calc(8px + var(--cap-safe-t));
-  left: 8px;
-  z-index: 1000;
-  padding: 10px 18px;
-  background: var(--cap-accent);
-  color: var(--cap-accent-contrast);
-  font-weight: 700;
-  border-radius: var(--cap-radius-pill);
-  transform: translateY(-200%);
-  transition: transform var(--cap-dur-fast) var(--cap-ease);
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  z-index: 10001;
 }
-.cap-skip-link:focus-visible { transform: none; }
+.cap-skip-link:focus-visible {
+  position: fixed;
+  top: calc(8px + env(safe-area-inset-top, 0px));
+  left: 8px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 10px 18px;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  background: var(--cap-accent);
+  color: var(--cap-accent-contrast, #fff);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--cap-radius-pill, 999px);
+  text-decoration: none;
+  box-shadow: var(--cap-shadow, 0 4px 16px rgba(0,0,0,.25));
+}
 
 /* Screen-reader only */
 .cap-sr-only {

@@ -71,7 +71,7 @@ const VC_ICON_PATHS = {
 
 const VC_EMOJI_TO_ICON = {
   '🏦': 'bank', '💳': 'card', '📈': 'chart', '💵': 'banknote', '🤝': 'handshake', '📋': 'repeat', '🔄': 'repeat',
-  '🏠': 'building', '🚗': 'car', '💻': 'laptop', '📱': 'smartphone', '📧': 'mail', '💼': 'briefcase', '🪪': 'id-card',
+  '🏠': 'building', '🚗': 'car', '💻': 'laptop', '🖥': 'laptop', '🖥️': 'laptop', '📱': 'smartphone', '📧': 'mail', '💼': 'briefcase', '🪪': 'id-card',
   '👥': 'users', '👤': 'user', '📦': 'package', '🥇': 'gem', '🛡️': 'shield', '🔒': 'lock', '🔑': 'key',
   '📊': 'chart', '📝': 'pencil', '✏️': 'pencil', '➕': 'plus', '🗑️': 'trash', '🔔': 'bell', '📅': 'calendar',
   '✨': 'sparkles', '⚙️': 'settings', '📤': 'share', '📥': 'download', '🙈': 'eye-off', '💾': 'share',

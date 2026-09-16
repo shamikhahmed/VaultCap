@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T13:14:50.692Z",
+  "generatedAt": "2026-09-16T10:47:02.899Z",
   "themes": [
     "dark",
     "light"
@@ -273,7 +273,6 @@
               "desktop": "dark/desktop/finance/banks-scroll.png"
             },
             "light": {
-              "mobile": "light/mobile/finance/banks-scroll.png",
               "desktop": "light/desktop/finance/banks-scroll.png"
             }
           }
@@ -384,6 +383,7 @@
               "desktop": "dark/desktop/finance/expenses-scroll.png"
             },
             "light": {
+              "mobile": "light/mobile/finance/expenses-scroll.png",
               "desktop": "light/desktop/finance/expenses-scroll.png"
             }
           }
