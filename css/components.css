@@ -160,7 +160,7 @@ button, .icb, .key, .ti, .ni, .chip, .wc-act-btn { touch-action: manipulation; u
   width: 100%; padding: 12px 14px; background: var(--glass2);
   border: 1px solid var(--border2); border-radius: 8px;
   color: var(--text); font-size: 16px; font-family: var(--font);
-  outline: none; transition: border-color .15s, box-shadow .15s;
+  outline: 0; transition: border-color .15s, box-shadow .15s;
   min-height: 44px;
 }
 .inp:focus       { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
@@ -284,7 +284,7 @@ textarea.inp { resize: vertical; min-height: 64px; }
 .home-mod-tile:hover,
 .home-mod-tile:focus-visible {
   background: var(--glass);
-  outline: none;
+  outline: 0;
 }
 .home-mod-tile:focus-visible {
   box-shadow: 0 0 0 2px var(--accent, var(--cap-accent));
@@ -599,7 +599,7 @@ body:not(.light) .u-highlight-card {
 #cmdPal.on  { display: block; }
 .cmd-bg     { position: absolute; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(6px); }
 .cmd-box    { position: absolute; top: 14%; left: 50%; transform: translateX(-50%); width: 92%; max-width: 520px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 18px; box-shadow: var(--shadowlg); overflow: hidden; }
-.cmd-in     { width: 100%; padding: 16px 20px; background: transparent; border: none; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text); font-family: var(--font); outline: none; }
+.cmd-in     { width: 100%; padding: 16px 20px; background: transparent; border: none; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text); font-family: var(--font); outline: 0; }
 .cmd-in::placeholder { color: var(--text3); }
 .cmd-list   { max-height: 320px; overflow-y: auto; }
 .ci         { display: flex; align-items: center; gap: 11px; padding: 12px 20px; cursor: pointer; font-size: 13px; font-weight: 500; transition: var(--t); color: var(--text2); }
@@ -670,7 +670,7 @@ body:not(.light) .u-highlight-card {
   color: var(--text); font-size: 13px; font-weight: 600;
   border-radius: 8px; cursor: pointer; text-align: left;
 }
-.dash-more-item:hover, .dash-more-item:focus-visible { background: var(--glass2); outline: none; }
+.dash-more-item:hover, .dash-more-item:focus-visible { background: var(--glass2); outline: 0; }
 @media (max-width: 480px) {
   .dash-act-desktop { display: none; }
   .dash-act-more { display: flex; }

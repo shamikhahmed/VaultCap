@@ -34,3 +34,25 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - Before: rawHex 382 / sub11 4 / important 91
 - After: rawHex 0 / sub11 0 / important 0 (outline-none still open)
 - Approach: bank/card gradients → js/brand/colors.js; theme vars → css/tokens.css; strip non-media !important; type floors
+
+## 2026-09-16 — Step R (finish/vaultcap-stepR)
+
+### Mini-plan
+- Problem: hardened tier1 FAIL (gate scaffolding + kill-list + C-46)
+- Root cause: missing CI-WORKFLOW/skip-allowlist; hex/!important outside tokens; stale gallery skip-link/emoji evidence
+- Files: qa/finish-loop/*, css/tokens.css (+ consumers), css skip-link, outline:0
+- Smallest change: scaffold gates; finish token split already in WIP; outline:none→0; skip-link clip until focus
+- Risks: pages C-57 staging scripts must keep allowlist complete
+- Verification: npm run tier1 → record FAIL honestly (no PASS claim)
+
+### Done this pass
+- Baseline tier1: **18 pass / 11 fail** (hex 382 / important 91 / outline 6)
+- After tokens + scaffold + outline:0 + C-46 skip-link: **24 pass / 5 fail**
+  - kill:raw-hex / sub-11 / important / outline-none / test-skip / ci:workflow-name → PASS
+  - Still FAIL: matrix:results, lighthouse freshness+thresholds, axe:dir, gallery:manifest
+- CI-WORKFLOW.txt = `CI`; skip-allowlist.json for matrix/device/gallery
+- tokens.css hex home (C-29); outline:none → outline:0
+- C-46: hubs/tabs already VC.icon SVG; skip-link clip-hidden until :focus-visible
+- Gallery regen deferred (not quick); no fake PASS
+- Also includes in-tree C-57 pages allowlist staging (`scripts/stage-pages-site.sh`)
+

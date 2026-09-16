@@ -2,7 +2,7 @@
   "app": "VaultCap",
   "version": "5.2.2",
   "swCache": "vaultcap-v92",
-  "generatedAt": "2026-09-16T10:16:45.944Z",
+  "generatedAt": "2026-09-16T10:18:09.481Z",
   "status": "FAIL",
   "pass": [
     {
@@ -39,6 +39,10 @@
     },
     {
       "id": "suppressions",
+      "detail": "none"
+    },
+    {
+      "id": "test-skip",
       "detail": "none"
     },
     {
@@ -82,6 +86,10 @@
       "detail": "0"
     },
     {
+      "id": "kill:outline-none",
+      "detail": "0"
+    },
+    {
       "id": "kill:console.log",
       "detail": "0"
     },
@@ -96,16 +104,12 @@
   ],
   "fail": [
     {
-      "id": "test-skip",
-      "detail": "3 hits (allowlist: none)\ntests/device-matrix.spec.js:16: test.skip(!RUN, 'Set DEVICE_MATRIX=1 to capture');\ntests/finish-matrix.spec.mjs:14: test.skip(!RUN, 'Set FINISH_MATRIX=1');\ntests/screenshots.spec.js:428: test.skip(() => process.env.CAPTURE_SCREENSHOTS !== '1', 'set CAPTURE_SCREENSHOTS=1 to regenerate');"
-    },
-    {
       "id": "matrix:results",
       "detail": "missing qa/finish-loop/matrix-results.json (CI must set FINISH_MATRIX=1)"
     },
     {
       "id": "lighthouse:home-demo-mobile.json",
-      "detail": "fetchTime 2026-09-15T10:56:28.933Z before last UI commit 2026-09-15T18:24:15+05:00"
+      "detail": "fetchTime 2026-09-15T10:56:28.933Z before last UI commit 2026-09-16T15:17:10+05:00"
     },
     {
       "id": "lighthouse:passing",
@@ -118,10 +122,6 @@
     {
       "id": "gallery:manifest",
       "detail": "gallery-manifest.json not found"
-    },
-    {
-      "id": "kill:outline-none",
-      "detail": "6"
     }
   ],
   "warn": [],
@@ -130,7 +130,7 @@
     "sub11": 0,
     "important": 0,
     "nativeDialog": 0,
-    "outlineNone": 6,
+    "outlineNone": 0,
     "consoleLog": 0,
     "googleFonts": 0,
     "innerHTML": 178
