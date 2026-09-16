@@ -2,7 +2,7 @@
   "app": "VaultCap",
   "version": "5.2.2",
   "swCache": "vaultcap-v92",
-  "generatedAt": "2026-09-16T10:18:09.481Z",
+  "generatedAt": "2026-09-16T10:34:49.745Z",
   "status": "FAIL",
   "pass": [
     {
@@ -51,7 +51,7 @@
     },
     {
       "id": "ci:main",
-      "detail": "CI @ df3b921 → success https://github.com/shamikhahmed/VaultCap/actions/runs/35079777543"
+      "detail": "CI @ b6f1334 → success https://github.com/shamikhahmed/VaultCap/actions/runs/35084839445"
     },
     {
       "id": "tag",
@@ -109,7 +109,7 @@
     },
     {
       "id": "lighthouse:home-demo-mobile.json",
-      "detail": "fetchTime 2026-09-15T10:56:28.933Z before last UI commit 2026-09-16T15:17:10+05:00"
+      "detail": "fetchTime 2026-09-15T10:56:28.933Z before last UI commit 2026-09-16T15:19:56+05:00"
     },
     {
       "id": "lighthouse:passing",
