@@ -40,7 +40,10 @@ qa/device-matrix/meta.json
 
 # Agent notes (local only)
 memory/
-.cursor/
+.cursor/*
+!.cursor/rules/
+.cursor/rules/*
+!.cursor/rules/senior-engineering-mode.mdc
 .claude/
 
 # Local runtime / widget scratch
