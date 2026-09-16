@@ -62,3 +62,13 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - **Root cause:** deploy copied (nearly) the whole tree.
 - **Change:** `scripts/stage-pages-site.sh` + `verify-pages-artifact.cjs`; workflow stages allowlisted paths only.
 - **Verification:** local stage dry-run + SW precache check; live curl after deploy.
+
+## 2026-09-16 — Step R evidence (finish/vaultcap-stepR)
+
+### §15 mini-plan
+- Problem: missing matrix-results, axe/, stale LH (fetchTime before UI commit).
+- Root cause: finish-matrix never called writeMatrixResults; no axe capture script; LH from 2026-09-15.
+- Files: tests/helpers/finish-matrix.mjs, tests/finish-matrix.spec.mjs, scripts/capture-axe.mjs, qa/finish-loop/*, package-lock (axe).
+- Change: sync writeMatrixResults; FINISH_MATRIX run (6/6); axe home×themes; real LH mobile+desktop vs live Pages.
+- C-57: Pages allowlist ships root VERSION.json (docs/VERSION.json N/A — docs forbidden in artifact).
+- Verification: npm run tier1 — honest FAIL list (no Tier 1 claim).

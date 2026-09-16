@@ -26,6 +26,7 @@
     "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.52.0",
     "playwright": "^1.60.0"
   },
