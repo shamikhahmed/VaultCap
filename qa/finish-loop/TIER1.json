@@ -2,7 +2,7 @@
   "app": "VaultCap",
   "version": "5.2.2",
   "swCache": "vaultcap-v92",
-  "generatedAt": "2026-09-16T10:34:49.745Z",
+  "generatedAt": "2026-09-23T05:33:45.478Z",
   "status": "FAIL",
   "pass": [
     {
@@ -51,7 +51,7 @@
     },
     {
       "id": "ci:main",
-      "detail": "CI @ b6f1334 → success https://github.com/shamikhahmed/VaultCap/actions/runs/35084839445"
+      "detail": "CI @ 9d08672 → success https://github.com/shamikhahmed/VaultCap/actions/runs/35086938295"
     },
     {
       "id": "tag",
@@ -60,6 +60,30 @@
     {
       "id": "matrix:spec",
       "detail": "tests/finish-matrix.spec.mjs"
+    },
+    {
+      "id": "matrix:failures",
+      "detail": "0"
+    },
+    {
+      "id": "matrix:shot-count",
+      "detail": "6 shots (need routes×viewports×themes = 6)"
+    },
+    {
+      "id": "matrix:freshness",
+      "detail": "2026-09-23T05:30:41.763Z"
+    },
+    {
+      "id": "lighthouse:home-demo-desktop.json",
+      "detail": "perf 99 a11y 100 bp 100 LCP 621.989 TBT 0 CLS 0"
+    },
+    {
+      "id": "axe:serious-critical",
+      "detail": "2 JSON clean"
+    },
+    {
+      "id": "gallery:freshness",
+      "detail": "assets/screenshots/gallery-manifest.json @ 2026-09-23T10:30:10+05:00"
     },
     {
       "id": "live:VERSION.json",
@@ -104,24 +128,12 @@
   ],
   "fail": [
     {
-      "id": "matrix:results",
-      "detail": "missing qa/finish-loop/matrix-results.json (CI must set FINISH_MATRIX=1)"
-    },
-    {
       "id": "lighthouse:home-demo-mobile.json",
-      "detail": "fetchTime 2026-09-15T10:56:28.933Z before last UI commit 2026-09-16T15:19:56+05:00"
+      "detail": "perf 75 a11y 100 bp 100 LCP 3482.0209999999997 TBT 114 CLS 0"
     },
     {
       "id": "lighthouse:passing",
-      "detail": "0/1 files meet thresholds"
-    },
-    {
-      "id": "axe:dir",
-      "detail": "missing qa/finish-loop/axe/ (JSON per route×theme)"
-    },
-    {
-      "id": "gallery:manifest",
-      "detail": "gallery-manifest.json not found"
+      "detail": "1/2 files meet thresholds"
     }
   ],
   "warn": [],

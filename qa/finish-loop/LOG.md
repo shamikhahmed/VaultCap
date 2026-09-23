@@ -79,3 +79,11 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 ## 2026-09-23 — real Lighthouse (live Pages)
 - desktop: P99 A100 BP100 (fetch 05:31:48Z) — meets thresholds
 - mobile: P75 A100 BP100 LCP~3482 TBT~114 — **below** perf≥90 / LCP≤2500; not claiming lighthouse:passing
+
+## 2026-09-23 — Step R evidence refresh (finish/vaultcap-stepR)
+
+- Merged origin/main (matrix CI job).
+- Added `assets/screenshots/gallery-manifest.json` (from screenshots manifest) for Tier1 gallery:manifest.
+- Re-ran `FINISH_MATRIX=1` → 6/6 shots, 0 failures (`matrix-results.json` generatedAt fresh).
+- Re-ran real Lighthouse 13.4.1 vs live Pages `/?demo=1` (mobile+desktop) — no stubs.
+- Honest Tier1: not claiming lighthouse:passing (mobile thresholds unmet). No fleet Tier 1 claim.
