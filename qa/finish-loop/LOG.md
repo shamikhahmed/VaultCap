@@ -75,3 +75,7 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 
 ## 2026-09-23 — matrix re-run
 - FINISH_MATRIX: 6/6 shots, 0 failures (generatedAt 2026-09-23T05:30:41Z).
+
+## 2026-09-23 — real Lighthouse (live Pages)
+- desktop: P99 A100 BP100 (fetch 05:31:48Z) — meets thresholds
+- mobile: P75 A100 BP100 LCP~3482 TBT~114 — **below** perf≥90 / LCP≤2500; not claiming lighthouse:passing
