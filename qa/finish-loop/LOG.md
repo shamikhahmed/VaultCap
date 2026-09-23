@@ -72,3 +72,6 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - Change: sync writeMatrixResults; FINISH_MATRIX run (6/6); axe home×themes; real LH mobile+desktop vs live Pages.
 - C-57: Pages allowlist ships root VERSION.json (docs/VERSION.json N/A — docs forbidden in artifact).
 - Verification: npm run tier1 — honest FAIL list (no Tier 1 claim).
+
+## 2026-09-23 — matrix re-run
+- FINISH_MATRIX: 6/6 shots, 0 failures (generatedAt 2026-09-23T05:30:41Z).
