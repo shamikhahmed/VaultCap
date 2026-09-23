@@ -87,3 +87,6 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - Re-ran `FINISH_MATRIX=1` → 6/6 shots, 0 failures (`matrix-results.json` generatedAt fresh).
 - Re-ran real Lighthouse 13.4.1 vs live Pages `/?demo=1` (mobile+desktop) — no stubs.
 - Honest Tier1: not claiming lighthouse:passing (mobile thresholds unmet). No fleet Tier 1 claim.
+
+## 2026-09-23 — TIER1 refresh
+- After evidence wave: 30 pass / 2 fail (mobile LH P75 only).
