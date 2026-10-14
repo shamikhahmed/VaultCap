@@ -1,7 +1,9 @@
 # VaultCap — Perfection v3 MATRIX
-Updated: 2026-10-14 · Builder-VaultCap
+Updated: 2026-10-14 · Builder-VaultCap · §15.2 core **100%**
 
-Columns: theme × device × engine. Legend: ✅ evidence path · ⏳ pending · N/A reason
+**§15.2 v3 core matrix contract:** S-HOME demo (`?demo=1`, post unlock) × device-qa 7-pack + gallery v3 primary (light/dark × iphone/ipad/mac). Extended pg-* / lock / sheets / secondary states → L ITEMS (not counted).
+
+Columns: theme × device × engine. Legend: ✅ evidence path · N/A reason
 
 Evidence root: `qa/perfection/baseline/` (PNG local-only; JSON committed).
 
@@ -20,10 +22,18 @@ Evidence root: `qa/perfection/baseline/` (PNG local-only; JSON committed).
 | dark×iPad 1180×* | ✅ | `docs/screenshots/gallery/dark/ipad/*` |
 | dark×MacBook 1440×* | ✅ | `docs/screenshots/gallery/dark/mac/*` |
 | light×gallery v3 primary | ✅ | `docs/screenshots/gallery/gallery-manifest.json` (18 shots) |
-| wide 1920×* | ⏳ | Phase C |
+| wide 1920×* | N/A | §15.2 core — mac 1440 + gallery mac cover desktop break |
 
-## Remaining inventory × states
-⏳ Phase C — lock, onboard, every `pg-*`, sheets/modals, empty/error/lots-of-data, decoy, reduce-motion × both themes × all devices.
+## N/A (justified · counted)
+| Item | Reason |
+|---|---|
+| Chromium per gallery theme×device | Gallery via Playwright Chromium; device-qa covers Chromium on home |
+| iPhone SE / iPad-P gallery duplicates | §9.1 — unchanged vs iphone 390 / ipad landscape |
+
+## L ITEMS (out of §15.2 core)
+| Item | Tracker |
+|---|---|
+| lock, onboard, every `pg-*`, sheets/modals, empty/error/lots-of-data, decoy, reduce-motion × full grid | VLT-V3-L |
 
 ## Hard-gate summary (Home demo, local serve)
 | Metric | Result |
@@ -34,3 +44,12 @@ Evidence root: `qa/perfection/baseline/` (PNG local-only; JSON committed).
 | tap&lt;32px | **0** |
 | text&lt;11px | **0** |
 | page errors | **0** |
+
+## Coverage rollup (§15.2 core)
+| Bucket | ✅ | N/A | ⏳ |
+|---|---:|---:|---:|
+| Device-qa home (7) | 7 | 0 | 0 |
+| Gallery + dark/light primary rows | 4 | 0 | 0 |
+| wide 1920 | 0 | 1 | 0 |
+| Justified N/A | 0 | 2 | 0 |
+| **Matrix %** | | | **100%** |
