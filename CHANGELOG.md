@@ -1,3 +1,9 @@
+## [5.3.0] — 2026-10-14
+
+- Perfection Loop v3 Wave B: VLT-V3-1 44px skip-link (off-screen park); VLT-V3-2 wip LCP / P-VLT-1 canvas remove / demo splash skip / lazy LLM bundle
+- VLT-V3-5: critical CSS for demo Exit + panic 44×44 before layout.css
+- SW `vaultcap-v93` · register query `sw-v51.js?v=5.3.0`
+
 ## [5.2.2] — 2026-09-15
 
 - C-16: Self-host Cinzel, Space Grotesk, IBM Plex Mono; remove Google Fonts + CSP font CDN entries (index/pitch/widget).

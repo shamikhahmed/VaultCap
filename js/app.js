@@ -41,24 +41,31 @@ async function App() {
   initSidebar();
   const splash = document.getElementById('splashScreen');
   const bar = document.getElementById('splashBar');
-  if (splash) {
-    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 100);
-    setTimeout(() => {
-      splash.style.transition = 'opacity 0.4s ease';
-      splash.style.opacity = '0';
-      setTimeout(() => {
-        splash.style.display = 'none';
-        try {
-          window.__APP_READY__ = true;
-          document.documentElement.dataset.appReady = 'true';
-        } catch (_) {}
-      }, 400);
-    }, 1800);
-  } else {
+  const demoRequested = new URLSearchParams(location.search).get('demo') === '1';
+  let splashSeen = false;
+  try { splashSeen = sessionStorage.getItem('vc_splash_seen') === '1'; } catch (_) {}
+  // Fleet: splash first-launch only ≤600ms; demo cold path skips for LCP.
+  const skipSplash = !splash || splashSeen || demoRequested;
+  const markAppReady = () => {
     try {
       window.__APP_READY__ = true;
       document.documentElement.dataset.appReady = 'true';
     } catch (_) {}
+  };
+  if (skipSplash) {
+    if (splash) splash.style.display = 'none';
+    markAppReady();
+  } else {
+    try { sessionStorage.setItem('vc_splash_seen', '1'); } catch (_) {}
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 40);
+    setTimeout(() => {
+      splash.style.transition = 'opacity 0.2s ease';
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.style.display = 'none';
+        markAppReady();
+      }, 200);
+    }, 400);
   }
 
   document.addEventListener('click', function(e) {
@@ -161,20 +168,30 @@ async function App() {
     }
   }
 
-  await ensureDemoVaultReady();
+  const isDemoProfile = typeof VaultProfiles !== 'undefined' && VaultProfiles.active() === 'demo';
 
-  // Determine startup screen
+  // Demo KDF must not stall first paint — show shell, seed in parallel.
+  const demoPrep = isDemoProfile && typeof ensureDemoVaultReady === 'function'
+    ? ensureDemoVaultReady()
+    : Promise.resolve();
+
+  // Determine startup screen (do not await demo KDF first)
   const hasVaultDB = await VaultDB.isInitialized();
   const hasOldData = !!oldData;
-  const hasData    = hasVaultDB || hasOldData;
-  // Reload prefs after demo seed (first-visit: prefs loaded before seed ran)
+  const hasData    = hasVaultDB || hasOldData || isDemoProfile;
+  // Reload prefs after demo mark (first-visit: prefs loaded before seed ran)
   const freshPrefs = Store.loadPrefs();
 
-  if (!hasData || !(freshPrefs?.hasVault || prefs?.hasVault || oldData?.user?.name)) {
+  if (!hasData || !(freshPrefs?.hasVault || prefs?.hasVault || oldData?.user?.name || isDemoProfile)) {
     document.getElementById('pgOnboard').style.display = 'flex';
     OB.init();
   } else {
     R.showHome();
+  }
+
+  // Finish demo seed off the critical path (unlock path reseeds if needed)
+  if (isDemoProfile) {
+    demoPrep.catch(function () { /* unlockDemoVaultWithPin reseeds */ });
   }
 }
 

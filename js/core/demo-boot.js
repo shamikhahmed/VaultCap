@@ -32,7 +32,12 @@ async function ensureDemoVaultReady() {
   S.fails = 0;
   S.lockedUntil = 0;
   try { LockoutStore.clear(); } catch (e) {}
-  if (await demoVaultUnlockable()) return;
+  // Fast path: skip 600k PBKDF2 probe when this browser already seeded demo.
+  if (localStorage.getItem('vo_demo_seeded') === '1' && await VaultDB.isInitialized()) return;
+  if (await demoVaultUnlockable()) {
+    localStorage.setItem('vo_demo_seeded', '1');
+    return;
+  }
   await seedDemoVault();
 }
 
