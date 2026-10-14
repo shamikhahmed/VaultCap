@@ -6,7 +6,7 @@ Branch: `perfection/vaultcap-v3`
 App version: 5.2.2 (no release bump yet — Phase I)
 
 ## Last commits
-- Tip: see `git log -1 --oneline` on `perfection/vaultcap-v3` after push
+- Tip: `9f2761a` on `perfection/vaultcap-v3`
 - VLT-V3-1 skip-link 44px + wip LCP / P-VLT-1 canvas remove + demo splash skip
 - QA scaffold: STATE / INVENTORY / MATRIX / ITEMS + baseline device-qa
 
