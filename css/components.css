@@ -671,6 +671,8 @@ body:not(.light) .u-highlight-card {
   border-radius: 8px; cursor: pointer; text-align: left;
 }
 .dash-more-item:hover, .dash-more-item:focus-visible { background: var(--glass2); outline: 0; }
+/* Default hidden; mobile shows overflow "More" (inline display:none blocked the media query — CI a11y) */
+.dash-act-more { display: none; }
 @media (max-width: 480px) {
   .dash-act-desktop { display: none; }
   .dash-act-more { display: flex; }
