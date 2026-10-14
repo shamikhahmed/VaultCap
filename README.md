@@ -1,6 +1,6 @@
-# VaultCap — Private Life Operating System
+# VaultCap — everything you own, encrypted on your device
 
-**Version:** 5.1.24
+**Version:** 5.3.0
 
 [![Live App](https://img.shields.io/badge/Live%20App-VaultCap-ffffff?style=for-the-badge&labelColor=000000)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
@@ -8,7 +8,7 @@
 
 > **Your entire financial and personal life. Encrypted. Offline. Always with you.**
 
-VaultCap by Capricorn Systems is a zero-knowledge personal life operating system built as a PWA. No servers. No accounts. No subscriptions. All data stays on your device, encrypted with AES-256-GCM.
+VaultCap by Capricorn Systems is a zero-knowledge personal vault built as a PWA. No accounts. No subscriptions. Network features (imports) are opt-in and off by default. All data stays on your device, encrypted with AES-256-GCM.
 
 ---
 

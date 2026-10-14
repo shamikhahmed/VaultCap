@@ -23,12 +23,40 @@ const VIEWPORTS = {
 };
 
 const SCREENS = [
-  { nav: 'dashboard', group: 'Finance', screen: 'Dashboard', caption: 'Net worth command center (demo).' },
-  { nav: 'banks', group: 'Finance', screen: 'Banks', caption: 'Bank accounts on-device.' },
-  { nav: 'family', group: 'Identity', screen: 'Family', caption: 'Family vault profiles.' },
-  { nav: 'documents', group: 'Identity', screen: 'Documents', caption: 'Passports and secure papers.' },
-  { nav: 'assets', group: 'Assets', screen: 'Assets', caption: 'Property and valuables.' },
-  { nav: 'settings', group: 'System', screen: 'Settings', caption: 'Profile, security, appearance.' },
+  { nav: 'dashboard', group: 'Finance', screen: 'Dashboard', caption: 'Net worth at a glance — everything you own, encrypted on this device.' },
+  { nav: 'finance-home', group: 'Finance', screen: 'Money', caption: 'Every money module in one place.' },
+  { nav: 'banks', group: 'Finance', screen: 'Banks', caption: 'Bank accounts across 120+ banks, stored only on your device.' },
+  { nav: 'cards', group: 'Finance', screen: 'Cards', caption: 'Cards with masked numbers and expiry reminders.' },
+  { nav: 'cash', group: 'Finance', screen: 'Cash', caption: 'Cash in hand, tracked simply.' },
+  { nav: 'investments', group: 'Finance', screen: 'Investments', caption: 'Stocks, funds and holdings with running totals.' },
+  { nav: 'bonds', group: 'Finance', screen: 'Bonds', caption: 'Bonds and certificates with maturity dates.' },
+  { nav: 'digital', group: 'Finance', screen: 'Digital assets', caption: 'Wallets and digital assets — never connected online.' },
+  { nav: 'currency', group: 'Finance', screen: 'Currency', caption: 'Foreign currency holdings.' },
+  { nav: 'loans', group: 'Finance', screen: 'Loans', caption: 'Loans you owe and are owed, with schedules.' },
+  { nav: 'credit', group: 'Finance', screen: 'Credit', caption: 'Credit lines and utilisation.' },
+  { nav: 'bc', group: 'Finance', screen: 'Committees', caption: 'Committees (BC) — members, rounds and payouts.' },
+  { nav: 'expenses', group: 'Finance', screen: 'Expenses', caption: 'Spending by category, month by month.' },
+  { nav: 'tax', group: 'Finance', screen: 'Tax', caption: 'A tax summary built from your own records.' },
+  { nav: 'zakat', group: 'Finance', screen: 'Zakat', caption: 'Zakat calculated from your actual holdings.' },
+  { nav: 'vault-home', group: 'Vault', screen: 'Vault', caption: 'Documents, identities and family — the private side.' },
+  { nav: 'documents', group: 'Vault', screen: 'Documents', caption: 'Passports, IDs and papers, encrypted.' },
+  { nav: 'emails', group: 'Vault', screen: 'Email accounts', caption: 'Email accounts and recovery details.' },
+  { nav: 'sims', group: 'Vault', screen: 'SIM cards', caption: 'SIM cards and numbers.' },
+  { nav: 'family', group: 'Vault', screen: 'Family', caption: 'Family vault profiles, each encrypted.' },
+  { nav: 'friends', group: 'Vault', screen: 'Friends', caption: 'Trusted contacts.' },
+  { nav: 'assets-home', group: 'Assets', screen: 'Assets', caption: 'Property, vehicles and valuables.' },
+  { nav: 'assets', group: 'Assets', screen: 'All assets', caption: 'Every asset with its value and papers.' },
+  { nav: 'reminders', group: 'Life', screen: 'Reminders', caption: 'Renewals and due dates.' },
+  { nav: 'alerts', group: 'Life', screen: 'Alerts', caption: 'What needs your attention.' },
+  { nav: 'timeline', group: 'Life', screen: 'Timeline', caption: 'Your records on a timeline.' },
+  { nav: 'emergency', group: 'Life', screen: 'Emergency', caption: 'Emergency details, ready when it matters.' },
+  { nav: 'recovery-center', group: 'Life', screen: 'Recovery center', caption: 'What to do if a device is lost.' },
+  { nav: 'import', group: 'System', screen: 'Smart Import', caption: 'Smart Import from statements and files — on device.' },
+  { nav: 'backup', group: 'System', screen: 'Backup', caption: 'Encrypted .vos backups you keep.' },
+  { nav: 'security', group: 'System', screen: 'Security', caption: 'PIN, passkey and auto-lock.' },
+  { nav: 'trash', group: 'System', screen: 'Trash', caption: 'Deleted items, recoverable for a while.' },
+  { nav: 'help', group: 'System', screen: 'Help', caption: 'Guides and answers.' },
+  { nav: 'settings', group: 'System', screen: 'Settings', caption: 'Profile, appearance and modules.' },
 ];
 
 function slug(s) {
@@ -150,7 +178,12 @@ async function main() {
         await setTheme(page, theme);
 
         for (const scr of SCREENS) {
-          await goNav(page, scr.nav);
+          try {
+            await goNav(page, scr.nav);
+          } catch (err) {
+            process.stdout.write(`skip ${theme}/${device} ${scr.nav || scr.path}: unreachable — skipped\n`);
+            continue;
+          }
           await setTheme(page, theme);
           const rel = shotPath(theme, device, scr.group, scr.screen);
           const webpPath = join(GALLERY_DIR, rel);
