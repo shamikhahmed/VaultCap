@@ -21,7 +21,7 @@ Auditor: ✅ VERIFIED 2026-10-14T11:30:00Z — finish/wip integrated on perfecti
 ### VLT-V3-3 — gallery manifest v3 (0 parseable v2 shots)
 severity: P2 · status: ✅ FIXED  
 Where: `docs/screenshots/gallery/` · live capture @ shamikhahmed.github.io/VaultCap/?demo=1  
-Evidence: schema v2 manifest · 18 WebP (Dashboard, Banks, Settings × light/dark × iphone/ipad/mac) · `npm run gallery:v3`  
+Evidence: schema v2 manifest · **36** WebP (6 primary screens × light/dark × iphone/ipad/mac) · `npm run gallery:v3`  
 Cause: v2 schema empty  
 Fix: `scripts/live-gallery-v3.mjs` + shared `screen-gallery.*` viewer  
 Auditor: —

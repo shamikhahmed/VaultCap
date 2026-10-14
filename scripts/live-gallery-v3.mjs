@@ -25,6 +25,9 @@ const VIEWPORTS = {
 const SCREENS = [
   { nav: 'dashboard', group: 'Finance', screen: 'Dashboard', caption: 'Net worth command center (demo).' },
   { nav: 'banks', group: 'Finance', screen: 'Banks', caption: 'Bank accounts on-device.' },
+  { nav: 'family', group: 'Identity', screen: 'Family', caption: 'Family vault profiles.' },
+  { nav: 'documents', group: 'Identity', screen: 'Documents', caption: 'Passports and secure papers.' },
+  { nav: 'assets', group: 'Assets', screen: 'Assets', caption: 'Property and valuables.' },
   { nav: 'settings', group: 'System', screen: 'Settings', caption: 'Profile, security, appearance.' },
 ];
 
