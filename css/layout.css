@@ -148,7 +148,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 @media (max-width: 400px) {
   #demoBanner { gap: 6px; padding-left: 10px; padding-right: 10px; }
   .demo-banner-text { font-size: 11px; }
-  #demoBanner .demo-banner-exit { padding: 8px 12px; min-height: 40px; }
+  #demoBanner .demo-banner-exit { padding: 10px 14px; min-height: 44px; min-width: 44px; }
 }
 #demoBanner button.demo-banner-exit,
 #demoBanner .demo-banner-exit {
@@ -566,10 +566,12 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
 
 /* ─ Panic lock button ─ */
 .panic-btn {
-  position: fixed; bottom: calc(var(--sb) + 8px); left: 8px; width: 44px; height: 44px;
-  border-radius: 50%; background: rgba(255,64,64,.15); border: 1px solid rgba(255,64,64,.3);
+  position: fixed; bottom: calc(var(--sb) + 8px); left: 8px;
+  width: 44px; height: 44px; min-width: 44px; min-height: 44px; box-sizing: border-box;
+  padding: 0; border-radius: 50%; background: rgba(255,64,64,.15); border: 1px solid rgba(255,64,64,.3);
   color: var(--err); font-size: 18px; cursor: pointer; display: none;
   align-items: center; justify-content: center; z-index: 400;
+  touch-action: manipulation;
   transition: all var(--dur-fast) var(--ease-out);
 }
 .panic-btn:hover { background: var(--err); color: var(--on-accent); transform: scale(1.1); }

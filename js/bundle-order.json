@@ -82,8 +82,6 @@
   "js/modules/bonds.js",
   "js/modules/creditScore.js",
   "js/modules/ai-import.js",
-  "js/config/llm-bundled.js",
-  "js/modules/llm-assist.js",
   "js/capricorn-motion.js",
   "js/cap-demo-mode.js"
 ]
