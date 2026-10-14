@@ -13,6 +13,7 @@
     "test:e2e:ui": "playwright test --ui",
     "capture:screenshots": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js",
     "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view \u2192 http://127.0.0.1:8765/screen-gallery.html'",
+    "gallery:v3": "node scripts/live-gallery-v3.mjs",
     "gallery:embed": "node scripts/embed-gallery-manifest.mjs",
     "gallery:open": "open screen-gallery.html",
     "gallery:view": "python3 -m http.server 8765",
