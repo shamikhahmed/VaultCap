@@ -1,9 +1,9 @@
 'use strict';
 
 const THEMES = [
-  { id: 'dark',  n: 'Dark',   g: 'dark',  bg: '#000000', ac: '#000000', gl: 'rgba(255,255,255,.14)', cls: '' },
-  { id: 'light', n: 'Light',  g: 'light', bg: '#ffffff', ac: '#ffffff', gl: 'rgba(0,0,0,.10)', cls: 'light' },
-  { id: 'auto',  n: 'System', g: 'dark',  bg: '#000000', ac: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', gl: 'rgba(255,255,255,.14)', cls: '' },
+  { id: 'dark',  n: 'Dark',   g: 'dark',  bg: VCBrand.h_000000, ac: VCBrand.h_000000, gl: 'rgba(255,255,255,.14)', cls: '' },
+  { id: 'light', n: 'Light',  g: 'light', bg: VCBrand.h_ffffff, ac: VCBrand.h_ffffff, gl: 'rgba(0,0,0,.10)', cls: 'light' },
+  { id: 'auto',  n: 'System', g: 'dark',  bg: VCBrand.h_000000, ac: 'linear-gradient(135deg,'+VCBrand.h_000000+' 50%,'+VCBrand.h_ffffff+' 50%)', gl: 'rgba(255,255,255,.14)', cls: '' },
 ];
 
 function normalizeVaultTheme(id) {
@@ -54,9 +54,9 @@ const ThemeEngine = {
   },
   openPicker() {
     const options = [
-      { id: 'dark', label: 'Dark', icon: 'moon', preview: '#000000', accent: '#ffffff' },
-      { id: 'light', label: 'Light', icon: 'sun', preview: '#ffffff', accent: '#000000' },
-      { id: 'auto', label: 'System', icon: 'settings', preview: 'linear-gradient(135deg,#000000 50%,#ffffff 50%)', accent: '#ffffff' },
+      { id: 'dark', label: 'Dark', icon: 'moon', preview: VCBrand.h_000000, accent: VCBrand.h_ffffff },
+      { id: 'light', label: 'Light', icon: 'sun', preview: VCBrand.h_ffffff, accent: VCBrand.h_000000 },
+      { id: 'auto', label: 'System', icon: 'settings', preview: 'linear-gradient(135deg,'+VCBrand.h_000000+' 50%,'+VCBrand.h_ffffff+' 50%)', accent: VCBrand.h_ffffff },
     ];
     document.getElementById('themePicker').innerHTML = `
       <div style="display:grid;grid-template-columns:1fr;gap:10px">

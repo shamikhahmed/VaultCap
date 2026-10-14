@@ -1,12 +1,14 @@
-import fs from 'node:fs';
-import path from 'node:path';
-/** Vendored from capricorn-tooling/shared/testing/finish-matrix.js — keep in sync. */
 /**
- * Cap Fleet finish-matrix helpers (FLT-07 / §6.2).
+ * Cap Fleet finish-matrix helpers (FLT-07 / §6.2 / C-31).
  * Import from Playwright specs in each web repo.
  *
  * Smoke (default): 3 viewports × themes. Full: FINISH_MATRIX_FULL=1 → all 15.
+ *
+ * CI must set FINISH_MATRIX=1 (see shared/testing/FINISH-MATRIX-CI.md).
  */
+
+import fs from 'node:fs';
+import path from 'node:path';
 
 export const FINISH_VIEWPORTS = [
   { name: 'tiny-se1', width: 320, height: 568 },

@@ -4,7 +4,7 @@
 .app { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
 @media (min-width: 900px) {
   .app { max-width: 1200px; margin: 0 auto; box-shadow: 0 0 80px rgba(0,0,0,.5); border-radius: 0; }
-  html { background: #000000; }
+  html { background: var(--navy-deep); }
 }
 @media (min-width: 1400px) { .app { max-width: 1440px; } }
 
@@ -33,7 +33,7 @@
 .sb-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 
 /* Collapsed sidebar */
-body.sidebar-collapsed .sidebar { width: 60px; min-width: 60px !important; }
+body.sidebar-collapsed .sidebar { width: 60px; min-width: 60px; }
 body.sidebar-collapsed .sb-logo h1,
 body.sidebar-collapsed .sb-logo p,
 body.sidebar-collapsed .sb-bot .btn span,
@@ -87,7 +87,7 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
 .ni:hover { background: var(--glass2); color: var(--text); }
 .ni.on {
   background: var(--accent);
-  color: var(--accent-fg, #000);
+  color: var(--accent-fg);
   font-weight: 600;
   border: 1px solid var(--accent);
 }
@@ -97,7 +97,7 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
 }
 .ni-ic   { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; }
 .ni-badge {
-  margin-left: auto; font-size: 11px; background: var(--accent); color: var(--accent-fg, #000);
+  margin-left: auto; font-size: 11px; background: var(--accent); color: var(--accent-fg);
   padding: 2px 7px; border-radius: var(--rfull); font-weight: 700;
 }
 
@@ -119,7 +119,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
   .main { flex: 1; min-width: 0; max-width: none; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 }
 @media (max-width: 699px) { .main { padding-bottom: 0; } }
-@media (min-width: 700px) { .main { padding-bottom: 24px !important; } }
+@media (min-width: 700px) { .main { padding-bottom: 24px; } }
 @media (min-width: 1400px) { .main { padding: 24px; } }
 
 /* ─ Pages ─ */
@@ -130,7 +130,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 #demoBanner {
   position: fixed; top: 0; left: 0; right: 0; z-index: 8888;
   background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  color: #fff; font-size: 12px; font-weight: 500; text-align: center;
+  color: var(--on-accent); font-size: 12px; font-weight: 500; text-align: center;
   /* Chromium QA injects --cap-safe-t; real iOS uses env() — take the larger */
   padding: calc(8px + max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px))) 14px 8px;
   letter-spacing: 0.01em; line-height: 1.3;
@@ -138,13 +138,13 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
   display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
   box-sizing: border-box;
 }
-#demoBanner[hidden] { display: none !important; }
+#demoBanner[hidden] { display: none; }
 .demo-banner-chip {
   font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9);
 }
 .demo-banner-text { color: rgba(255,255,255,0.78); font-size: 12px; }
-.demo-banner-text strong { color: #fff; font-weight: 700; letter-spacing: 0.06em; }
+.demo-banner-text strong { color: var(--on-accent); font-weight: 700; letter-spacing: 0.06em; }
 @media (max-width: 400px) {
   #demoBanner { gap: 6px; padding-left: 10px; padding-right: 10px; }
   .demo-banner-text { font-size: 11px; }
@@ -153,7 +153,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 #demoBanner button.demo-banner-exit,
 #demoBanner .demo-banner-exit {
   background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #fff; font-size: 12px; font-weight: 600; padding: 10px 16px;
+  color: var(--on-accent); font-size: 12px; font-weight: 600; padding: 10px 16px;
   min-height: 44px; min-width: 44px; box-sizing: border-box;
   border-radius: 999px; cursor: pointer; margin-left: 0;
   display: inline-flex; align-items: center; justify-content: center;
@@ -161,7 +161,7 @@ body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 }
 body.light #demoBanner {
   background: rgba(255, 255, 255, 0.94);
-  color: #1a1a1a;
+  color: var(--vc-hex-1a1a1a);
   border-bottom: 1px solid var(--border);
 }
 body.light .demo-banner-chip {
@@ -216,7 +216,7 @@ body.demo-banner-active #pgLock {
 .ios-group > .csec-h:first-child { margin-top: 0; }
 
 /* Bottom tab clearance — --tabh already includes safe-area (no double pad) */
-body.cap-has-floating-nav { padding-bottom: 0 !important; }
+body.cap-has-floating-nav { padding-bottom: 0; }
 html, body {
   width: 100%;
   max-width: 100%;
@@ -230,7 +230,7 @@ body.hide-btabs .page.on > .pb {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
 }
 @media (min-width: 700px) {
-  body .page.on > .pb { padding-bottom: 24px !important; }
+  body .page.on > .pb { padding-bottom: 24px; }
 }
 
 /* Spacer not needed — page .pb already pads for fixed bottom tabs */
@@ -263,8 +263,8 @@ body.hide-btabs .page.on > .pb {
 .sett-tabs::-webkit-scrollbar { display: none; }
 
 /* Hide bottom nav on utility / full-screen modules */
-body.hide-btabs .btabs { display: none !important; }
-body.hide-btabs #fab { display: none !important; }
+body.hide-btabs .btabs { display: none; }
+body.hide-btabs var(--vc-hex-fab) { display: none; }
 
 /* ─ Bottom tabs — edge-to-edge, home-indicator only in padding-bottom ─ */
 .btabs {
@@ -304,9 +304,9 @@ body.hide-btabs #fab { display: none !important; }
   box-sizing: border-box;
 }
 .ti-ic .vc-icon { display: block; }
-.ti.on .ti-ic { background: var(--accent); color: var(--accent-fg, #000); border: 1px solid var(--accent); }
+.ti.on .ti-ic { background: var(--accent); color: var(--accent-fg); border: 1px solid var(--accent); }
 @media (max-width: 699px) { .btabs { display: block; } }
-@media (min-width: 700px) { .btabs { display: none !important; } }
+@media (min-width: 700px) { .btabs { display: none; } }
 
 /* ─ Lock screen ─ */
 #pgLock {
@@ -370,7 +370,7 @@ body.hide-btabs #fab { display: none !important; }
   display: flex; align-items: center; justify-content: center;
   transition: all .18s ease;
 }
-.lk-emergency:hover { background: var(--err); color: #fff; }
+.lk-emergency:hover { background: var(--err); color: var(--on-accent); }
 .lk-switch-vault {
   position: absolute;
   bottom: max(12px, env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
@@ -406,20 +406,20 @@ body.hide-btabs #fab { display: none !important; }
   .lk-mark { width: 52px; height: 52px; }
   .lk-mark svg { width: 52px; height: 52px; }
   .lk-hint { margin-top: 10px; }
-  .keypad { gap: 6px !important; }
+  .keypad { gap: 6px; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
   #pgLock  { flex-direction: row; padding: 8px 40px; gap: 20px; }
   .lk-top, .lk-mid, .lk-bot { flex: 1; padding: 0 12px; }
   #lkClock { font-size: 38px; }
 }
-@media (min-width: 700px) { #pgLock { padding-bottom: 0 !important; } }
+@media (min-width: 700px) { #pgLock { padding-bottom: 0; } }
 /* Prevent GPU compositing blur on lock screen interactive elements */
 #pgLock .lk-mark, #pgLock .lk-brand, #pgLock .lk-brand-name,
 #pgLock .pin-dots, #pgLock #lkClock, #pgLock #lkDate, #pgLock .lk-mid {
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  filter: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 /* Isolate lock mark from blur layers via GPU compositing layer */
 .lk-mark {
@@ -468,7 +468,7 @@ body.hide-btabs #fab { display: none !important; }
   border: 2px solid transparent; transition: all .2s var(--spring);
 }
 .tdot.on { border-color: var(--text); transform: scale(1.3); box-shadow: 0 0 8px var(--glow); }
-@media (min-width: 700px) { #pgHome { padding-bottom: 0 !important; } }
+@media (min-width: 700px) { #pgHome { padding-bottom: 0; } }
 
 /* ─ Onboarding ─ */
 #pgOnboard {
@@ -503,7 +503,7 @@ body.hide-btabs #fab { display: none !important; }
 }
 #dashBody > * { max-width: 100%; min-width: 0; box-sizing: border-box; }
 #ob5      { align-items: center; text-align: center; }
-@media (min-width: 700px) { #pgOnboard { padding-bottom: 0 !important; } }
+@media (min-width: 700px) { #pgOnboard { padding-bottom: 0; } }
 
 /* ─ Section divider ─ */
 .sdiv {
@@ -525,19 +525,19 @@ body.hide-btabs #fab { display: none !important; }
   .fr       { grid-template-columns: 1fr; }
 }
 @media (max-width: 375px) {
-  .stat-row { grid-template-columns: repeat(2,1fr) !important; }
-  .fr       { grid-template-columns: 1fr !important; }
+  .stat-row { grid-template-columns: repeat(2,1fr); }
+  .fr       { grid-template-columns: 1fr; }
 }
-@media (min-width: 769px) { .stat-row { grid-template-columns: repeat(4,1fr) !important; } }
+@media (min-width: 769px) { .stat-row { grid-template-columns: repeat(4,1fr); } }
 @media (min-width: 600px) and (max-width: 900px) {
-  .stat-row { grid-template-columns: repeat(4,1fr) !important; }
+  .stat-row { grid-template-columns: repeat(4,1fr); }
   .fr       { grid-template-columns: 1fr 1fr; }
 }
 @media (min-width: 900px) {
-  .stat-row { grid-template-columns: repeat(4,1fr) !important; }
+  .stat-row { grid-template-columns: repeat(4,1fr); }
   .fr       { grid-template-columns: 1fr 1fr; }
 }
-@media (min-width: 1400px) { .stat-row { grid-template-columns: repeat(5,1fr) !important; } }
+@media (min-width: 1400px) { .stat-row { grid-template-columns: repeat(5,1fr); } }
 
 /* ─ Dashboard card grid (wide desktop) ─ */
 #dashBody .module-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -559,7 +559,7 @@ body.hide-btabs #fab { display: none !important; }
 /* ─ Offline bar ─ */
 .offline-bar {
   display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 800;
-  background: rgba(255,170,0,.9); color: #000; font-size: 12px; font-weight: 600;
+  background: rgba(255,170,0,.9); color: var(--navy-deep); font-size: 12px; font-weight: 600;
   text-align: center; padding: 7px; backdrop-filter: blur(4px);
 }
 .offline-bar.on { display: block; }
@@ -572,7 +572,7 @@ body.hide-btabs #fab { display: none !important; }
   align-items: center; justify-content: center; z-index: 400;
   transition: all var(--dur-fast) var(--ease-out);
 }
-.panic-btn:hover { background: var(--err); color: #fff; transform: scale(1.1); }
+.panic-btn:hover { background: var(--err); color: var(--on-accent); transform: scale(1.1); }
 
 /* ─ PWA: macOS Safari desktop fix ─ */
 @supports (-webkit-touch-callout: none) {}
