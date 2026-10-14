@@ -1,17 +1,17 @@
 {
   "app": "VaultCap",
-  "version": "5.2.2",
-  "swCache": "vaultcap-v92",
-  "generatedAt": "2026-09-23T05:43:19.309Z",
+  "version": "5.3.0",
+  "swCache": "vaultcap-v93",
+  "generatedAt": "2026-10-14T12:24:35.505Z",
   "status": "FAIL",
   "pass": [
     {
       "id": "version:field",
-      "detail": "5.2.2"
+      "detail": "5.3.0"
     },
     {
       "id": "version:sw-cache-match",
-      "detail": "sw-v51.js contains vaultcap-v92"
+      "detail": "sw-v51.js contains vaultcap-v93"
     },
     {
       "id": "records:BASELINE.md",
@@ -42,20 +42,12 @@
       "detail": "none"
     },
     {
-      "id": "test-skip",
-      "detail": "none"
-    },
-    {
       "id": "app-ready",
       "detail": "window.__APP_READY__ assigned in product code"
     },
     {
-      "id": "ci:main",
-      "detail": "CI @ 9d08672 → success https://github.com/shamikhahmed/VaultCap/actions/runs/35086938295"
-    },
-    {
       "id": "tag",
-      "detail": "found v5.2.2"
+      "detail": "found v5.3.0"
     },
     {
       "id": "matrix:spec",
@@ -70,20 +62,8 @@
       "detail": "6 shots (need routes×viewports×themes = 6)"
     },
     {
-      "id": "matrix:freshness",
-      "detail": "2026-09-23T05:30:41.763Z"
-    },
-    {
-      "id": "lighthouse:home-demo-desktop.json",
-      "detail": "perf 99 a11y 100 bp 100 LCP 621.989 TBT 0 CLS 0"
-    },
-    {
       "id": "axe:serious-critical",
       "detail": "2 JSON clean"
-    },
-    {
-      "id": "gallery:freshness",
-      "detail": "assets/screenshots/gallery-manifest.json @ 2026-09-23T10:30:10+05:00"
     },
     {
       "id": "live:VERSION.json",
@@ -94,23 +74,11 @@
       "detail": "present"
     },
     {
-      "id": "kill:raw-hex",
-      "detail": "0"
-    },
-    {
-      "id": "kill:sub-11px",
-      "detail": "0"
-    },
-    {
       "id": "kill:important",
       "detail": "0"
     },
     {
       "id": "kill:native-dialogs",
-      "detail": "0"
-    },
-    {
-      "id": "kill:outline-none",
       "detail": "0"
     },
     {
@@ -123,28 +91,81 @@
     },
     {
       "id": "kill:innerHTML-classified",
-      "detail": "178 sinks; SINKS.md ok"
+      "detail": "180 sinks; SINKS.md ok"
     }
   ],
   "fail": [
     {
+      "id": "test-skip",
+      "detail": "1 hits (allowlist: qa/finish-loop/skip-allowlist.json)\ntests/gallery-v3.spec.mjs:122: test.skip(!isGalleryCapture(), 'Run via CAPTURE_GALLERY=1 (npm run gallery:v3)');"
+    },
+    {
+      "id": "matrix:freshness",
+      "detail": "matrix 2026-09-23T05:30:41.763Z before last UI commit 2026-10-14T17:16:07+05:00"
+    },
+    {
+      "id": "lighthouse:home-demo-desktop.json",
+      "detail": "fetchTime 2026-09-23T05:31:48.072Z before last UI commit 2026-10-14T17:16:07+05:00"
+    },
+    {
       "id": "lighthouse:home-demo-mobile.json",
-      "detail": "perf 75 a11y 100 bp 100 LCP 3482.0209999999997 TBT 114 CLS 0"
+      "detail": "fetchTime 2026-09-23T05:31:27.396Z before last UI commit 2026-10-14T17:16:07+05:00"
     },
     {
       "id": "lighthouse:passing",
-      "detail": "1/2 files meet thresholds"
+      "detail": "0/2 files meet thresholds"
+    },
+    {
+      "id": "gallery:freshness",
+      "detail": "gallery 2026-09-23T10:30:10+05:00 before last UI commit 2026-10-14T17:16:07+05:00"
+    },
+    {
+      "id": "g16:device-qa",
+      "detail": "qa/perfection/baseline/device-qa.json: hubOriginConsoleErrors=3 (7 runs)"
+    },
+    {
+      "id": "g17:gallery-v3",
+      "detail": "FAIL via check-completeness.mjs: Missing gallery-manifest.json at /Users/shamikhahmed/Projects/Cap/Cap-Apps/VaultCap/docs/screenshots/gallery/gallery-manifest.json"
+    },
+    {
+      "id": "g18:docs-truth",
+      "detail": "docs/APP_STORE.md: npm run cap:init not in package.json; docs/APP_STORE.md: npm run cap:ios not in package.json; docs/UI_AUDIT_250.md: npm run cap:init not in package.json"
+    },
+    {
+      "id": "kill:raw-hex",
+      "detail": "39"
+    },
+    {
+      "id": "kill:sub-11px",
+      "detail": "2"
+    },
+    {
+      "id": "kill:outline-none",
+      "detail": "1"
     }
   ],
-  "warn": [],
+  "warn": [
+    {
+      "id": "ci:main",
+      "detail": "latest still in_progress: docs(pitch): VaultCap naming in deck section comments (G-3)"
+    },
+    {
+      "id": "g15:architecture",
+      "detail": "map not present (docs/architecture or architecture/) — soft until per-app map lands; tooling pilots use npm run architecture:check"
+    },
+    {
+      "id": "g19:minisite-lh",
+      "detail": "N/A — mini-site not present (https://shamikhahmed.github.io/apps/VaultCap/ → 404)"
+    }
+  ],
   "killList": {
-    "rawHex": 0,
-    "sub11": 0,
+    "rawHex": 39,
+    "sub11": 2,
     "important": 0,
     "nativeDialog": 0,
-    "outlineNone": 0,
+    "outlineNone": 1,
     "consoleLog": 0,
     "googleFonts": 0,
-    "innerHTML": 178
+    "innerHTML": 180
   }
 }
