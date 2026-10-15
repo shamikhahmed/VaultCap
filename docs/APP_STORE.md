@@ -17,7 +17,7 @@
 - [ ] Review notes: offline PWA, no account required
 - [ ] Export compliance: no encryption beyond standard iOS APIs
 
-## Disclaimers (Encrypted life OS)
+## Disclaimers (Encrypted vault)
 - Not a regulated financial institution. You are responsible for tax and compliance.
 
 ## Version

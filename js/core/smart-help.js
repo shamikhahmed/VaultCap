@@ -60,7 +60,7 @@ const SmartHelp = (() => {
     {
       keys: ['free', 'cost', 'price', 'subscription', 'pay', 'premium'],
       title: 'Free forever',
-      html: '<p>VaultCap is a <strong>100% free</strong> consumer app — no paywall, no premium tier, no account required.</p><p>Built by Capricorn Systems as a private life OS for expats and families. Optional Smart Parser / LLM assist is off by default and never required.</p>',
+      html: '<p>VaultCap is a <strong>100% free</strong> consumer app — no paywall, no premium tier, no account required.</p><p>Built by Capricorn Systems as a private vault for expats and families. Optional Smart Parser / LLM assist is off by default and never required.</p>',
     },
     {
       keys: ['help', 'smart help', 'assistant', 'chat', 'support'],

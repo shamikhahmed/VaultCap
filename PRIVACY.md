@@ -35,7 +35,7 @@ The Cloudflare Worker uses Workers AI (`@cf/meta/llama-3.1-8b-instruct`). If the
 
 ## Children
 
-- VaultCap is a general-purpose adult life OS. Parents should supervise device sharing and exports on shared family devices.
+- VaultCap is a general-purpose adult finance and documents app. Parents should supervise device sharing and exports on shared family devices.
 
 ## Contact
 
