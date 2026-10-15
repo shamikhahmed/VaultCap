@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.3.0",
-  "capturedAt": "2026-10-14T09:41:00Z",
+  "capturedAt": "2026-10-15T10:22:00Z",
   "accent": "#c9a227",
   "schema": 2,
   "shots": [
@@ -14,7 +14,7 @@
       "device": "iphone",
       "file": "light/iphone/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 1170,
       "h": 2532
     },
@@ -105,7 +105,7 @@
       "device": "iphone",
       "file": "light/iphone/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 1170,
       "h": 2532
     },
@@ -157,7 +157,7 @@
       "device": "iphone",
       "file": "light/iphone/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 1170,
       "h": 2532
     },
@@ -209,7 +209,7 @@
       "device": "iphone",
       "file": "light/iphone/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 1170,
       "h": 2532
     },
@@ -378,7 +378,7 @@
       "device": "iphone",
       "file": "light/iphone/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 1170,
       "h": 2532
     },
@@ -456,7 +456,7 @@
       "device": "iphone",
       "file": "dark/iphone/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 1170,
       "h": 2532
     },
@@ -547,7 +547,7 @@
       "device": "iphone",
       "file": "dark/iphone/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 1170,
       "h": 2532
     },
@@ -599,7 +599,7 @@
       "device": "iphone",
       "file": "dark/iphone/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 1170,
       "h": 2532
     },
@@ -651,7 +651,7 @@
       "device": "iphone",
       "file": "dark/iphone/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 1170,
       "h": 2532
     },
@@ -820,7 +820,7 @@
       "device": "iphone",
       "file": "dark/iphone/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 1170,
       "h": 2532
     },
@@ -898,7 +898,7 @@
       "device": "ipad",
       "file": "light/ipad/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 2360,
       "h": 1640
     },
@@ -989,7 +989,7 @@
       "device": "ipad",
       "file": "light/ipad/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 2360,
       "h": 1640
     },
@@ -1041,7 +1041,7 @@
       "device": "ipad",
       "file": "light/ipad/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 2360,
       "h": 1640
     },
@@ -1093,7 +1093,7 @@
       "device": "ipad",
       "file": "light/ipad/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 2360,
       "h": 1640
     },
@@ -1262,7 +1262,7 @@
       "device": "ipad",
       "file": "light/ipad/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 2360,
       "h": 1640
     },
@@ -1340,7 +1340,7 @@
       "device": "ipad",
       "file": "dark/ipad/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 2360,
       "h": 1640
     },
@@ -1431,7 +1431,7 @@
       "device": "ipad",
       "file": "dark/ipad/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 2360,
       "h": 1640
     },
@@ -1483,7 +1483,7 @@
       "device": "ipad",
       "file": "dark/ipad/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 2360,
       "h": 1640
     },
@@ -1535,7 +1535,7 @@
       "device": "ipad",
       "file": "dark/ipad/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 2360,
       "h": 1640
     },
@@ -1704,7 +1704,7 @@
       "device": "ipad",
       "file": "dark/ipad/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 2360,
       "h": 1640
     },
@@ -1782,7 +1782,7 @@
       "device": "mac",
       "file": "light/mac/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 2880,
       "h": 1800
     },
@@ -1873,7 +1873,7 @@
       "device": "mac",
       "file": "light/mac/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 2880,
       "h": 1800
     },
@@ -1925,7 +1925,7 @@
       "device": "mac",
       "file": "light/mac/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 2880,
       "h": 1800
     },
@@ -1977,7 +1977,7 @@
       "device": "mac",
       "file": "light/mac/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 2880,
       "h": 1800
     },
@@ -2146,7 +2146,7 @@
       "device": "mac",
       "file": "light/mac/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 2880,
       "h": 1800
     },
@@ -2224,7 +2224,7 @@
       "device": "mac",
       "file": "dark/mac/finance--dashboard--demo.webp",
       "route": "#/dashboard",
-      "caption": "Net worth at a glance — everything you own, encrypted on this device.",
+      "caption": "Net worth at a glance \u2014 everything you own, encrypted on this device.",
       "w": 2880,
       "h": 1800
     },
@@ -2315,7 +2315,7 @@
       "device": "mac",
       "file": "dark/mac/finance--digital-assets--demo.webp",
       "route": "#/digital",
-      "caption": "Wallets and digital assets — never connected online.",
+      "caption": "Wallets and digital assets \u2014 never connected online.",
       "w": 2880,
       "h": 1800
     },
@@ -2367,7 +2367,7 @@
       "device": "mac",
       "file": "dark/mac/finance--committees--demo.webp",
       "route": "#/bc",
-      "caption": "Committees (BC) — members, rounds and payouts.",
+      "caption": "Committees (BC) \u2014 members, rounds and payouts.",
       "w": 2880,
       "h": 1800
     },
@@ -2419,7 +2419,7 @@
       "device": "mac",
       "file": "dark/mac/vault--vault--demo.webp",
       "route": "#/vault-home",
-      "caption": "Documents, identities and family — the private side.",
+      "caption": "Documents, identities and family \u2014 the private side.",
       "w": 2880,
       "h": 1800
     },
@@ -2588,7 +2588,7 @@
       "device": "mac",
       "file": "dark/mac/system--smart-import--demo.webp",
       "route": "#/import",
-      "caption": "Smart Import from statements and files — on device.",
+      "caption": "Smart Import from statements and files \u2014 on device.",
       "w": 2880,
       "h": 1800
     },
