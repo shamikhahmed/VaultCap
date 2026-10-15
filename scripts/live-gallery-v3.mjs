@@ -159,6 +159,9 @@ async function main() {
           localStorage.setItem('vo_active_profile', 'demo');
           localStorage.setItem('vo_used_demo', '1');
           localStorage.removeItem('vo_demo_guide_pending');
+          // Gallery frames show the app, not the install nudge or the one-off integrity toast
+          localStorage.setItem('vo_install_dismissed', '1');
+          sessionStorage.setItem('vos_integrity_toast', '1');
           const RealDate = Date;
           class FakeDate extends RealDate {
             constructor(...args) {
