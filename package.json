@@ -5,6 +5,10 @@
     "serve": "python3 -m http.server 8765",
     "build": "npm run build:js",
     "build:js": "node scripts/build-bundle.mjs",
+    "cap:stage": "bash scripts/cap-stage-www.sh",
+    "cap:sync": "npm run cap:stage && npx cap sync ios",
+    "cap:ios": "npm run cap:sync && npx cap open ios",
+    "cap:open": "npx cap open ios",
     "audit:xss": "node scripts/xss-audit.mjs",
     "pretest:e2e": "npm run build:js",
     "test:e2e": "playwright test",
@@ -12,7 +16,7 @@
     "test:e2e:safari": "playwright test --project=webkit-iphone",
     "test:e2e:ui": "playwright test --ui",
     "capture:screenshots": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js",
-    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view \u2192 http://127.0.0.1:8765/screen-gallery.html'",
+    "gallery": "CAPTURE_SCREENSHOTS=1 playwright test tests/screenshots.spec.js && node scripts/embed-gallery-manifest.mjs && echo '\nOffline: open screen-gallery.html (or npm run gallery:open)\nServer: npm run gallery:view → http://127.0.0.1:8765/screen-gallery.html'",
     "gallery:v3": "node scripts/live-gallery-v3.mjs",
     "gallery:embed": "node scripts/embed-gallery-manifest.mjs",
     "gallery:open": "open screen-gallery.html",
@@ -26,13 +30,19 @@
     "test:matrix": "npm run build:js && FINISH_MATRIX=1 playwright test tests/finish-matrix.spec.mjs --workers=1",
     "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs"
   },
+  "dependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.3"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.52.0",
     "playwright": "^1.60.0"
   },
   "version": "5.3.0",
-  "description": "VaultCap \u2014 encrypted offline life vault PWA by Capricorn Systems",
+  "description": "VaultCap — encrypted offline life vault PWA by Capricorn Systems",
   "directories": {
     "doc": "docs",
     "test": "tests"

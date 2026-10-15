@@ -1,13 +1,16 @@
 {
-  "appId": "com.capricorn.vaultcap",
-  "appName": "VaultCap",
-  "webDir": ".",
-  "server": {
-    "androidScheme": "https"
-  },
-  "ios": {
-    "contentInset": "automatic",
-    "scheme": "VaultCap",
-    "scrollEnabled": true
-  }
+	"appId": "com.capricorn.vaultcap",
+	"appName": "VaultCap",
+	"webDir": "www",
+	"server": {
+		"androidScheme": "https"
+	},
+	"ios": {
+		"contentInset": "automatic",
+		"scheme": "VaultCap",
+		"scrollEnabled": true
+	},
+	"packageClassList": [
+		"HapticsPlugin"
+	]
 }

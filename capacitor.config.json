@@ -1,7 +1,7 @@
 {
   "appId": "com.capricorn.vaultcap",
   "appName": "VaultCap",
-  "webDir": ".",
+  "webDir": "www",
   "server": {
     "androidScheme": "https"
   },

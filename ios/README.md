@@ -5,7 +5,7 @@ Store-readiness scaffold. **xcodebuild requires full Xcode** (not CLT-only) — 
 ## Setup (when Xcode is available)
 ```bash
 npm i
-npx cap sync ios
+npm run cap:sync    # stages www/ (webDir) + syncs iOS
 open ios/App/App.xcodeproj
 ```
 

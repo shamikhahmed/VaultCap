@@ -21,20 +21,20 @@ xcrun --sdk iphoneos --show-sdk-version
 
 ```bash
 npm ci
-npm run build:js
-npx cap sync ios
+npm run cap:sync    # stages www/ + cap sync ios
 npx cap open ios
 ```
 
 Scripts:
 
 ```bash
-npm run cap:sync    # build:js + cap sync ios
+npm run cap:stage   # build:js + stage allowlisted assets → www/
+npm run cap:sync    # cap:stage + cap sync ios
 npm run cap:ios     # cap:sync + open Xcode
 npm run cap:open    # open existing ios/ project
 ```
 
-`webDir` is `.` (static PWA root). Sync copies the site into the native shell; keep sensitive `.env` / secrets out of the tree.
+`webDir` is `www/` (Capacitor rejects `.`). Staging uses the same allowlist pattern as GitHub Pages (`scripts/cap-stage-www.sh`). `www/` is gitignored.
 
 ## Xcode 26 workflow
 

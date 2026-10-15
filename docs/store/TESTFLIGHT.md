@@ -64,9 +64,8 @@ xcrun --sdk iphoneos --show-sdk-version
 ```bash
 cd /path/to/VaultCap
 npm ci
-npm run build:js
 npm run icons:ios   # if icons need refresh
-npx cap sync ios
+npm run cap:sync    # stages www/ + syncs Capacitor iOS
 npx cap open ios
 ```
 
