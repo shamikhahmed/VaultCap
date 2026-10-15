@@ -159,7 +159,7 @@ const SmartHelp = (() => {
     } else if (_panelEl) {
       _panelEl.innerHTML = '<div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
         + '<div style="font-weight:800;font-size:15px">Smart Help</div>'
-        + '<button type="button" class="btn btn-g btn-sm" data-act="SmartHelp.close()">×</button></div>'
+        + '<button type="button" class="btn btn-g btn-sm" data-act="SmartHelp.close()" aria-label="Close Smart Help">×</button></div>'
         + '<div class="vc-ix-94">' + html + '</div>';
     }
     setTimeout(() => { document.getElementById('shInput')?.focus(); _scrollChat(); }, 80);
