@@ -72,4 +72,36 @@ test.describe('VaultCap viewport contract', () => {
     await resize(page, 1280, 800);
     await assertVaultCapDesktop(page, expect);
   });
+
+  test('375px — no content clipped behind bottom tabs on primary pages', async ({ page }) => {
+    await resize(page, 375, 812);
+    for (const pageId of ['dashboard', 'banks', 'cards', 'cash']) {
+      await page.evaluate((id) => R.goto(id), pageId);
+      await page.waitForTimeout(300);
+      const ok = await page.evaluate(() => {
+        const screen = document.querySelector('.page.on');
+        const nav = document.querySelector('.btabs');
+        const body = screen?.querySelector(':scope > .pb') || screen;
+        if (!screen || !nav || !body) return false;
+        const scroller = screen.scrollHeight > screen.clientHeight ? screen : document.documentElement;
+        scroller.scrollTop = scroller.scrollHeight;
+        // .pb padding-bottom is the anti-clip contract (layout.css — var(--tabh)+12).
+        const pad = parseFloat(getComputedStyle(body).paddingBottom) || 0;
+        const navH = nav.getBoundingClientRect().height;
+        if (pad + 1 < navH) return false;
+        let el = body;
+        while (el.lastElementChild) {
+          const kids = [...el.children].filter((c) => {
+            const s = getComputedStyle(c);
+            return s.display !== 'none' && s.visibility !== 'hidden';
+          });
+          if (!kids.length) break;
+          el = kids[kids.length - 1];
+        }
+        const contentBottom = body.getBoundingClientRect().bottom - pad;
+        return contentBottom <= nav.getBoundingClientRect().top + 2;
+      });
+      expect(ok, `page ${pageId}: content clear of bottom tabs`).toBe(true);
+    }
+  });
 });
