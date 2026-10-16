@@ -6,7 +6,7 @@
 | **Subtitle (≤30)** | Encrypted life vault |
 | **Bundle ID** | `com.capricorn.vaultcap` |
 | **SKU** | `vaultcap-ios` |
-| **Version** | 5.3.0 (build 530) |
+| **Version** | 5.3.1 (build 531) |
 | **Primary category** | Productivity |
 | **Age rating** | 4+ |
 | **Pricing** | Free — no IAP (G-2) |

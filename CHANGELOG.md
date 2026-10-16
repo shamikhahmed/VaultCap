@@ -1,3 +1,10 @@
+## [5.3.1] — 2026-10-16
+
+- Brand lock: midnight & gold family icon (hub/lab/PWA/iOS) — shield gold gradient, ivory keyhole; no blue tile
+- Catalog accents `#d4a017` / `#9a7410`; pitch/landing/presentation `--accent:#D4A017` (light ink `#0a1220` on primary CTAs)
+- README shields midnight/gold; removed vaultcap DECK_OVERRIDE in audit-design-tokens
+- SW `vaultcap-v94` · register query `sw-v51.js?v=5.3.1`
+
 ## [5.3.0] — 2026-10-14
 
 - Perfection Loop v3 Wave B: VLT-V3-1 44px skip-link (off-screen park); VLT-V3-2 wip LCP / P-VLT-1 canvas remove / demo splash skip / lazy LLM bundle

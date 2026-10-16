@@ -24,7 +24,7 @@ Readiness only. **Do not upload or submit** from this finish loop. Upload is an 
 | Subtitle | Encrypted life vault |
 | Bundle ID | `com.capricorn.vaultcap` |
 | SKU | `vaultcap-ios` |
-| Marketing version | 5.3.0 |
+| Marketing version | 5.3.1 |
 | Build | 530 |
 | Primary category | Productivity |
 | Age rating | 4+ |

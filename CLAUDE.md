@@ -1,5 +1,7 @@
 # VaultCap
 
+**Version:** 5.3.1
+
 ## Capricorn Brain
 
 Project memory: `~/Capricorn-Brain/01 Projects/VaultCap.md`

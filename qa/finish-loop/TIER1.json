@@ -1,17 +1,17 @@
 {
   "app": "VaultCap",
-  "version": "5.3.0",
-  "swCache": "vaultcap-v93",
+  "version": "5.3.1",
+  "swCache": "vaultcap-v94",
   "generatedAt": "2026-10-14T12:24:35.505Z",
   "status": "FAIL",
   "pass": [
     {
       "id": "version:field",
-      "detail": "5.3.0"
+      "detail": "5.3.1"
     },
     {
       "id": "version:sw-cache-match",
-      "detail": "sw-v51.js contains vaultcap-v93"
+      "detail": "sw-v51.js contains vaultcap-v94"
     },
     {
       "id": "records:BASELINE.md",
@@ -47,7 +47,7 @@
     },
     {
       "id": "tag",
-      "detail": "found v5.3.0"
+      "detail": "found v5.3.1"
     },
     {
       "id": "matrix:spec",

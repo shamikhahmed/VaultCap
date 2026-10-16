@@ -9,7 +9,7 @@
 /* ── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --accent:#ffffff;
+  --accent:#D4A017;
   --pink: #e91e8c;
   --gold: #c9a84c;
   --ok: #30d158;
@@ -774,6 +774,7 @@ body {
 .theme-panel.graphite { background: linear-gradient(160deg, #1c1c1e 0%, #2c2c2e 100%); }
 .theme-panel.cloud   { background: linear-gradient(160deg, #e8ecf0 0%, #d0d5dc 100%); }
 .theme-panel.ivory   { background: linear-gradient(160deg, #f5f0e8 0%, #ede5d5 100%); }
+.theme-panel.cloud, .theme-panel.ivory { --accent: #0a1220; }
 .theme-panel.blossom { background: linear-gradient(160deg, #1a0d15 0%, #2d1525 100%); }
 .theme-dot {
   width: 28px; height: 28px; border-radius: 50%;
@@ -781,7 +782,7 @@ body {
 }
 .midnight .theme-dot { background: #ffffff; }
 .graphite .theme-dot { background: #aaaaaa; }
-.cloud    .theme-dot { background: #4a90d9; border-color: rgba(0,0,0,.15); }
+.cloud    .theme-dot { background: #0a1220; border-color: rgba(0,0,0,.15); }
 .ivory    .theme-dot { background: #8b7355; border-color: rgba(0,0,0,.15); }
 .blossom  .theme-dot { background: #e91e8c; }
 .theme-name {

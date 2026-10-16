@@ -1,6 +1,6 @@
 # VaultCap — iOS Build Guide
 
-> Version 5.3.0 · Capacitor 8 · App Store / TestFlight readiness (no submission in finish program)
+> Version 5.3.1 · Capacitor 8 · App Store / TestFlight readiness (no submission in finish program)
 
 Matches ScentCap’s Capacitor 8 + CapApp-SPM setup (`capacitor-swift-pm` exact 8.4.0).
 
@@ -55,7 +55,7 @@ xcodebuild -project ios/App/App.xcodeproj -scheme App \
 ## Info.plist
 
 - `CFBundleDisplayName`: VaultCap
-- `MARKETING_VERSION`: 5.3.0 · `CURRENT_PROJECT_VERSION`: 530
+- `MARKETING_VERSION`: 5.3.1 · `CURRENT_PROJECT_VERSION`: 531
 - `NSCameraUsageDescription` — document/card photos
 - `NSPhotoLibraryUsageDescription` — attach photos
 - `NSFaceIDUsageDescription` — optional biometric unlock
