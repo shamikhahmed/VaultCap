@@ -473,9 +473,11 @@ const Zakat = {
     ];
     const amountEl = document.getElementById('zakat-due-amount');
     if (amountEl) lines.push('Zakat Due (2.5%): ' + amountEl.textContent);
+    const html = '<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+'}h1{color:'+VCBrand.h_4caf50+'}pre{font-size:14px;line-height:1.8}</style></head><body><h1>Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>';
+    if (printReport(html, 'Zakat Report')) return;
     const w = window.open('', '_blank');
     if (w) {
-      w.document.write('<html><head><title>Zakat Report</title><style>body{font-family:Arial,sans-serif;padding:40px;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+'}h1{color:'+VCBrand.h_4caf50+'}pre{font-size:14px;line-height:1.8}</style></head><body><h1>Zakat Report</h1><pre>' + lines.join('\n') + '</pre></body></html>');
+      w.document.write(html);
       w.print();
     }
   },

@@ -150,7 +150,7 @@ const BondsModule = {
     if (!type) return;
     let url = 'https://www.savings.gov.pk/prize-bonds/';
     if (typeId === 'premium') url = 'https://www.nsandi.com/products/premium-bonds';
-    window.open(url, '_blank');
+    ActHelpers.openExternal(url);
   },
 
   openAdd(editIdx) {

@@ -31,10 +31,14 @@
     "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs"
   },
   "dependencies": {
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/cli": "^8.5.3",
     "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.1.5",
     "@capacitor/haptics": "^8.0.2",
-    "@capacitor/ios": "^8.5.3"
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/status-bar": "^8.0.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -23,6 +23,7 @@ const ThemeEngine = {
       document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
       S.user.theme = 'auto';
       document.getElementById('themeColorMeta').content = t.ac;
+      this._syncStatusBar(t);
       Store.save();
       this.renderDots();
       if (!this._mqListener) {
@@ -36,8 +37,17 @@ const ThemeEngine = {
     document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
     S.user.theme = id;
     document.getElementById('themeColorMeta').content = t.ac;
+    this._syncStatusBar(t);
     Store.save();
     this.renderDots();
+  },
+  /** iOS app: status-bar text must contrast the app theme, not the system appearance. */
+  _syncStatusBar(t) {
+    try {
+      if (!window.VaultNative || !VaultNative.setStatusBarTheme) return;
+      const light = /\blight\b/.test((t && t.cls) || '') || document.body.classList.contains('light');
+      VaultNative.setStatusBarTheme(light ? 'light' : 'dark');
+    } catch (e) {}
   },
   renderDots() {
     const e = document.getElementById('homeThemes');

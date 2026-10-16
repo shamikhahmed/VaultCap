@@ -135,7 +135,7 @@ const CreditScore = {
               '<div class="vc-ix-245">' + l[0] + ' ' + l[1] + '</div>' +
               '<div class="vc-ix-3">' + l[3] + '</div>' +
             '</div>' +
-            '<button type="button" data-act="window.open(\'' + l[2] + '\',\'_blank\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
+            '<button type="button" data-act="ActHelpers.openExternal(\'' + l[2] + '\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
           '</div>';
         }).join('') +
       '</div>' +

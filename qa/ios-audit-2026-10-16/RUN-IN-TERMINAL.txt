@@ -1,0 +1,10 @@
+Cursor agent cannot reach CoreSimulator (sandbox).
+In the same Terminal where `npm run cap:ios` worked, run:
+
+  bash scripts/ios-sim-run-and-audit.sh
+
+That builds, boots Simulator, installs App, screenshots → qa/ios-audit-2026-10-16/
+Or in Xcode: select iPhone simulator → Product → Run (⌘R)
+
+Paste in your open Terminal now:
+  bash /Users/shamikhahmed/Projects/Cap/Cap-Apps/VaultCap/scripts/ios-sim-run-and-audit.sh

@@ -77,9 +77,9 @@ function _nwSparkline(hist) {
 const Dash={
   render(){
     const h=new Date().getHours();
-    const greet=h<5?'Good Night':h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+    const greet=h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':'Good evening';
     const el=document.getElementById('dashGreet');
-    if(el)el.innerHTML=`<div style="font-size:12px;color:var(--text3);font-weight:500;line-height:1.2">${greet}</div><div style="font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${S.user.name||'User'}</div>`;
+    if(el){const nm=(S.user.name||'').trim();el.innerHTML=nm?`<div class="dg-greet">${greet}</div><div class="dg-name">${typeof escHtml==='function'?escHtml(nm):nm}</div>`:`<div class="dg-name">${greet}</div>`;}
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const b = document.getElementById('dashBody');
@@ -407,7 +407,7 @@ const Dash={
       </div>
       ${(S.activity||[]).length ? `<div class="dash-inspector__section"><div class="dash-inspector__h">Ledger</div><div class="ledger-stack ledger-stack--compact">${activityRows}</div><button type="button" class="tap-link vc-ix-52" data-act="R.goto('timeline')">Full timeline →</button></div>` : ''}
       <div class="dash-inspector__section">
-        <button type="button" class="btn btn-p btn-sm btn-full" data-act="CMD.open()">⌘K Search</button>
+        <button type="button" class="btn btn-p btn-sm btn-full" data-act="CMD.open()">Search</button>
         <button type="button" class="btn btn-g btn-sm btn-full vc-ix-52" data-act="R.lock()">Lock vault</button>
       </div>
     </aside>`;
@@ -835,7 +835,7 @@ const ExIm={
   },
   async export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
-      S.user.lastBackup=new Date().toISOString();
+      // lastBackup is stamped only after the file is actually saved/shared (_markBackedUp)
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
         // Portable .vos: Crypto.encrypt embeds salt — works on any device.
         // Requires export passphrase (not just 6-digit PIN) so cloud backups stay strong.
@@ -873,9 +873,9 @@ const ExIm={
       <p class="vc-ix-67">
         Portable AES-256 <code>.vos</code> backup. App generated a backup key — <strong>copy it now</strong>. Need it to restore. Not your PIN.
       </p>
-      <div id="exp-key-box" style="background:var(--glass);border:2px solid var(--accent);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono,monospace);font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);word-break:break-all;margin-bottom:10px">${fmt}</div>
+      <div id="exp-key-box" class="vc-key-box">${fmt.split('-').map(g=>`<span class="vc-key-grp">${g}</span>`).join('<span class="vc-key-sep">-</span>')}</div>
       <button type="button" class="btn btn-g btn-full btn-sm vc-ix-26" data-act="ActHelpers.copyExportKey()">Copy backup key</button>
-      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);margin-bottom:8px"><input type="checkbox" id="exp-key-saved"> I saved this key somewhere safe</label>
+      <label class="vc-check-row"><input type="checkbox" id="exp-key-saved"><span>I saved this key somewhere safe</span></label>
       <div class="ferr" id="exp-pass-err"></div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close();ActHelpers.clearExportKey()">Cancel</button><button type="button" class="btn btn-p" data-act="ExIm._doBackupKeyExport()">Download .vos</button>`);
   },
@@ -901,12 +901,19 @@ const ExIm={
       netWorthHistory:S.netWorthHistory||[],
     };
     err.textContent='Encrypting…';
-    Crypto.encrypt(JSON.stringify(payload),a).then(enc=>{
+    Crypto.encrypt(JSON.stringify(payload),a).then(async enc=>{
       Modal.close();
       window._vosExportKey=null;
-      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
-      Activity.log('Exported','AES-256-GCM portable .vos');
-      Toast.show('Encrypted backup saved — keep backup key safe','success',5000);
+      const res=await this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      if(res&&res.ok){
+        this._markBackedUp();
+        Activity.log('Exported','AES-256-GCM portable .vos');
+        Toast.show(res.shared?'Encrypted backup shared — keep backup key safe':'Encrypted backup saved — keep backup key safe','success',5000);
+      }else if(res&&res.cancelled){
+        Toast.show('Backup not saved — export cancelled','warn',5000);
+      }else{
+        Toast.show('Backup could not be saved — try again','error',6000);
+      }
     }).catch(e=>{
       err.textContent='Export failed — try again';
       console.warn('[ExIm] export',e);
@@ -918,10 +925,10 @@ const ExIm={
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
     const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-    Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
-      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
-      Activity.log('Exported','Legacy AES-256-GCM .vos');
-      Toast.show('Legacy backup saved','success',4000);
+    Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
+      const res=await this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      if(res&&res.ok){ this._markBackedUp(); Activity.log('Exported','Legacy AES-256-GCM .vos'); Toast.show('Legacy backup saved','success',4000); }
+      else Toast.show(res&&res.cancelled?'Backup not saved — export cancelled':'Backup could not be saved — try again','warn',5000);
     }).catch(()=>this._exportPlain(data));
   },
   _promptPinForLegacyImport(encRaw,onSuccess){
@@ -950,7 +957,17 @@ const ExIm={
     this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
     Toast.show('Exported unencrypted JSON (crypto unavailable)','warn');
   },
-  dl(name,mime,content){const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);},
+  _markBackedUp(){ S.user.lastBackup=new Date().toISOString(); try{ Store.save(); }catch(e){} },
+  /** Saves a file. iOS app: native share sheet (Save to Files / AirDrop) — WKWebView ignores <a download>.
+   *  Resolves { ok, shared, cancelled, error }. */
+  async dl(name,mime,content){
+    if(window.VaultNative&&VaultNative.isNative&&VaultNative.isNative()){
+      try{ return await VaultNative.saveAndShare({filename:name,mime,data:content}); }
+      catch(e){ return {ok:false,error:String(e&&e.message||e)}; }
+    }
+    const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    return {ok:true,shared:false};
+  },
   share(){
     const data={ver:'3.0',exported:new Date().toISOString(),banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital};
     const blob=new Blob([JSON.stringify(data)],{type:'application/octet-stream'});
@@ -1047,6 +1064,7 @@ const ExIm={
     (expiringDocs.length?section('Documents Expiring (next 90 days)',table(['Document','Holder','Expires'],expiringDocs.map(d=>[d.docType||'Document',d.holderName||'—',d.expiryDate?new Date(d.expiryDate).toLocaleDateString('en-GB'):'—']))):'')+
     '<div class="footer">Generated by VaultCap · Private & Encrypted · All data is stored locally on your device<br>'+dateStr+'</div>'+
     '</div></body></html>';
+    if(printReport(html,'VaultCap Summary'))return;
     const w=window.open('','_blank');
     if(w){w.document.write(html);w.document.close();}
     else Toast.show('Allow pop-ups to export PDF','warn');
@@ -1427,7 +1445,7 @@ const WhatsNew={
       </div>
       <div class="vc-ix-53">
         <div class="vc-ix-54">Self-Check Engine</div>
-        <div class="vc-ix-13">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
+        <div class="vc-ix-13">Auto-detects and repairs data integrity issues. Runs every 5 min. Search → Run Self-Check.</div>
       </div>
       <div class="vc-ix-53">
         <div class="vc-ix-54">Dark / Light / System</div>
@@ -2177,7 +2195,7 @@ const SettingsNav = {
 
   _account() {
     const setupNudge = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
-    <div class="set-card" style="margin-bottom:12px;border-color:var(--accent)">
+    <div class="set-card" style="margin-bottom:12px;padding:16px;border-color:var(--accent)">
       <div style="font-size:13px;font-weight:700;margin-bottom:6px">Complete your profile</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
       <button type="button" class="btn btn-p btn-sm" data-act="Settings.editCountries()">Set countries →</button>
@@ -2306,10 +2324,10 @@ const SettingsNav = {
     const llmOn = !!(S.user && S.user.llmEnabled);
     return `<div class="set-sec"><div class="set-title">Privacy</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Fetch missing bank logos</div><div class="desc">Opt-in · uses privacy proxy (off by default)</div></div><label class="tog"><input type="checkbox" ${logoOn?'checked':''} data-act-change="ActHelpers.logoProxyEnabled(this.checked)"><span class="ts"></span></label></div>
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Fetch missing bank logos</div><div class="desc">Opt-in · uses privacy proxy (off by default)</div></div><label class="tog"><input type="checkbox" ${logoOn?'checked':''} data-act-change="ActHelpers.logoProxyEnabled(this.checked)"><span class="ts"></span></label></div>`}
       <div class="si"><div class="sil"><div class="name">Fetch live FX / metals rates</div><div class="desc">Opt-in · uses public rate APIs (off by default; estimates still work)</div></div><label class="tog"><input type="checkbox" ${ratesOn?'checked':''} data-act-change="ActHelpers.ratesNetworkEnabled(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Optional Smart Import assistant</div><div class="desc">Opt-in · per-use confirm · model claude-haiku-4-5</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} data-act-change="ActHelpers.llmEnabled(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Assistant status</div><div class="desc vc-ix-8" id="llm-health-privacy">Off unless enabled above</div></div></div>
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Optional Smart Import assistant</div><div class="desc">Off by default · sends only text you choose to Cloudflare Workers AI after you confirm</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} data-act-change="ActHelpers.llmEnabled(this.checked)"><span class="ts"></span></label></div>`}
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Assistant status</div><div class="desc vc-ix-8" id="llm-health-privacy">Off unless enabled above</div></div></div>`}
     </div></div>
     <div class="set-sec"><div class="set-title">Backup &amp; export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
@@ -2354,10 +2372,10 @@ const SettingsNav = {
   _about() {
     const vaultId = typeof getVaultId === 'function' ? getVaultId() : '—';
     return `<div class="set-sec"><div class="set-title">About VaultCap</div><div class="set-card">
-      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'}`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'}`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','On this device, encrypted — optional online features stay off unless you turn them on'],['Encryption','AES-256-GCM · PBKDF2-SHA256 600k'],['Created by','Capricorn Systems']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil" style="flex:1;min-width:140px"><div class="name">Vault ID</div><div class="desc">Public ticket ID only — not a password. Capricorn Systems cannot open your vault with it.</div></div><div class="vc-ix-161"><code style="font-family:var(--mono);font-weight:700;letter-spacing:.06em">${vaultId}</code><button type="button" class="btn btn-g btn-sm" data-act="copyVaultId()">Copy</button></div></div>
       <div class="si"><div class="name vc-ix-8">Support: support@capricornsystems.com — include Vault ID. We guide recovery on your device; we never hold your PIN or master key.</div></div>
-      <div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>
+      ${isNativeApp()?'':`<div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>`}
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="SelfCheck.renderReport()">Run Diagnostics</button>
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="WhatsNew.show()">What's New</button>
@@ -2366,8 +2384,8 @@ const SettingsNav = {
         <div style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:8px">Your Data Guarantee</div>
         <div class="vc-ix-162">
           • Your vault lives <strong>on this device only</strong> — never on any server<br>
-          • Even if this URL stops working, your data is safe in your <strong>.vos backup</strong><br>
-          • Any browser can open a .vos file — just visit the app from any device<br>
+          • Your encrypted <strong>.vos backup</strong> restores everything on a new device<br>
+          • ${isNativeApp()?'Restore it in VaultCap on any iPhone or iPad':'Any browser can open a .vos file — just visit the app from any device'}<br>
           • Export a backup regularly: Settings → Privacy
         </div>
       </div>
@@ -2378,13 +2396,13 @@ const SettingsNav = {
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
         <div style="font-size:13px;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">Enterprise disclaimer</div>
         <div class="vc-ix-162">
-          VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
+          VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional AI import (web app, off by default) sends only the text you choose to an AI model run by Cloudflare Workers AI through the Capricorn proxy, after you confirm — prefer the offline Smart Parser for sensitive documents.
         </div>
       </div>
     </div></div>
     <div class="set-sec vc-ix-23"><div class="set-title">Legal</div><div class="set-card">
-      <div class="si vc-ix-6" data-act="window.open('privacy.html','_blank')"><div class="sil"><div class="name">Privacy Policy</div><div class="desc">What stays on-device · optional network</div></div><span class="vc-ix-4">›</span></div>
-      <div class="si vc-ix-6" data-act="window.open('LICENSE','_blank')"><div class="sil"><div class="name">License</div><div class="desc">Source-available terms</div></div><span class="vc-ix-4">›</span></div>
+      <div class="si vc-ix-6" data-act="ActHelpers.openPrivacy()"><div class="sil"><div class="name">Privacy Policy</div><div class="desc">What stays on-device · optional network</div></div><span class="vc-ix-4">›</span></div>
+      <div class="si vc-ix-6" data-act="ActHelpers.openLicense()"><div class="sil"><div class="name">License</div><div class="desc">Source-available terms</div></div><span class="vc-ix-4">›</span></div>
     </div></div>`;
   },
 
@@ -2450,10 +2468,10 @@ const VaultHealthCenter = {
       <details class="vc-ix-7">
         <summary class="vc-ix-74">What if I lose my phone? <span class="vc-ix-4">▾</span></summary>
         <div class="vc-ix-75">
-          <strong>Step 1:</strong> Get a new phone or open any browser<br>
-          <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultCap</strong><br>
-          <strong>Step 3:</strong> Tap Settings → Import → select your .vos backup file<br>
-          <strong>Step 4:</strong> Enter your PIN to decrypt<br>
+          <strong>Step 1:</strong> ${isNativeApp()?'Install VaultCap on your new iPhone or iPad':'Get a new phone or open any browser'}<br>
+          <strong>Step 2:</strong> ${isNativeApp()?'Create a PIN, then open Settings → Privacy':'Visit <strong>shamikhahmed.github.io/VaultCap</strong>'}<br>
+          <strong>Step 3:</strong> Tap Import → select your .vos backup file<br>
+          <strong>Step 4:</strong> Enter the backup key shown when you exported<br>
           <strong>Step 5:</strong> Your entire vault is restored.<br><br>
           <em class="vc-ix-4">This is why regular backups are essential — without a backup file, your data cannot be recovered from a lost device.</em>
         </div>
@@ -2579,7 +2597,7 @@ const HelpCenter = {
           ${this._card('share', 'How to export a backup', 'Settings → Privacy → Export Encrypted Vault (.vos). A backup key is shown once — save it with the file (iCloud, Drive, or print). Prefer .vos over plain JSON.')}
           ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('smartphone', 'If you lose your phone', (isNativeApp()?'1. Install VaultCap on your new iPhone or iPad. 2. Settings → Privacy → Import your .vos backup. 3. Enter the backup key shown when you exported. Your vault is fully restored.':'1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter the backup key shown when you exported. Your vault is fully restored.'))}
           ${this._card('clock', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
           ${this._card('archive', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,
@@ -2614,7 +2632,7 @@ const HelpCenter = {
           ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
           ${this._card('book', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
           ${this._card('book', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
-          ${this._card('book', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+          ${this._card('book', 'Does it work offline?', (isNativeApp()?'Yes. VaultCap works fully offline — your vault never needs an internet connection.':'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.'))}
           ${this._card('book', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };

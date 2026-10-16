@@ -16,7 +16,7 @@ const Toast = {
     if (!w) return;
     const t = document.createElement('div');
     if (type === 'warn') type = 'warning';
-    const icons = { success:'target', error:'cross', warning:'bell', info:'search' };
+    const icons = { success:'target', error:'xmark', warning:'alert', info:'info' };
     const cls   = { success:'ok', error:'err', warning:'wrn', info:'inf' };
     t.className = `toast ${cls[type] || 'inf'}`;
     const ic = (typeof VC !== 'undefined' ? VC.icon(icons[type] || 'search', 16) : '');

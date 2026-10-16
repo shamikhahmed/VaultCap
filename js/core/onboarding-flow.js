@@ -94,6 +94,9 @@ const OB = {
     const p1 = document.getElementById('ob-pin')?.value;
     const p2 = document.getElementById('ob-pin2')?.value;
     const m  = document.getElementById('ob-pinmatch');
+    // Any edit invalidates a stale submit error ("PINs do not match" under a green "PINs match")
+    const err = document.getElementById('ob-perr');
+    if (err) err.textContent = '';
     if (!m || !p2) return;
     if (p2.length === 0) { m.textContent = ''; return; }
     if (p1 === p2 && p1.length === 6) { m.innerHTML = '<span style="color:var(--ok)">PINs match</span>'; }
@@ -109,6 +112,7 @@ const OB = {
       return;
     }
     const fmt = mk ? mk.match(/.{1,6}/g).join('-') : text;
+    if (typeof U !== 'undefined' && U.copy) { U.copy(fmt, 'Recovery key'); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(fmt).then(() => Toast.show('Recovery key copied — store it safely', 'success', 4000));
     } else {
@@ -132,7 +136,7 @@ const OB = {
     obStep = 5;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
-    Toast.show('Profile setup saved for later — finish anytime in Settings', 'info', 4000);
+    // No toast here: it covered the "Create vault" button; dashboard + Settings show the profile nudge.
   },
   _renderReadyStats() {
     const CNAMES = { PK:'🇵🇰 Pakistan', GB:'🇬🇧 UK', AE:'🇦🇪 UAE', US:'🇺🇸 USA' };

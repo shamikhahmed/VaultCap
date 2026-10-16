@@ -42,7 +42,7 @@ const VaultProfiles = {
   demoUrl() {
     const host = location.hostname;
     if (host === 'localhost' || host === '127.0.0.1' || host === '') {
-      return 'https://vaultcap.app/?demo=1';
+      return 'https://shamikhahmed.github.io/VaultCap/?demo=1';
     }
     const u = new URL(location.href);
     u.searchParams.set('demo', '1');

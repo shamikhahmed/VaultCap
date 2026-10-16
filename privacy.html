@@ -2,65 +2,97 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060a12">
 <title>Privacy Policy — VaultCap</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#080808;color:#f0f0f0;line-height:1.65;padding:24px;max-width:720px;margin:0 auto}
-a{color:#ffffff}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#060a12;color:#f4f6fa;line-height:1.65;padding:calc(env(safe-area-inset-top,0px) + 24px) 20px calc(env(safe-area-inset-bottom,0px) + 32px);max-width:720px;margin:0 auto;-webkit-text-size-adjust:100%}
+a{color:#D4A017}
 nav{margin-bottom:28px;font-size:14px}
-nav a{margin-right:12px;color:#adadad}
-h1{font-size:1.75rem;margin:24px 0 12px;letter-spacing:-.02em}
-h2{font-size:1.15rem;margin:20px 0 8px;color:#ffffff}
-h3{font-size:1rem;margin:16px 0 6px}
-p,li{font-size:15px;color:#adadad;margin-bottom:10px}
-ul{margin:8px 0 16px 20px}
-code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-size:.9em}
-footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:#adadad}
+nav a{margin-right:14px;color:#b8c0cc;text-decoration:none}
+h1{font-size:28px;line-height:1.2;margin:8px 0 6px;letter-spacing:-.02em}
+.updated{font-size:13px;color:#7a8494;margin-bottom:20px}
+.lead{font-size:16px;color:#f4f6fa;margin-bottom:20px}
+h2{font-size:17px;margin:26px 0 8px;color:#f4f6fa}
+p,li{font-size:15px;color:#b8c0cc;margin-bottom:10px}
+ul{margin:6px 0 14px 20px}
+strong{color:#f4f6fa}
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;font-size:.9em}
+.tbl{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:14px}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.08);color:#b8c0cc}
+.tbl th{color:#f4f6fa;font-weight:600}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;color:#7a8494}
 </style>
-
-  <link rel="stylesheet" href="css/capricorn-core.css">
 </head>
 <body>
-<div class="cap-scroll-progress" aria-hidden="true"></div>
-<nav>
-  <a href="landing.html">← VaultCap</a>
-  <a href="index.html">App</a>
-  <a href="presentation.html">Presentation</a>
-  <a href="pitch.html">Pitch</a>
+<nav data-web-only>
+  <a href="index.html">← VaultCap</a>
 </nav>
-<article><h1>VaultCap — Privacy Policy</h1>
-<p><strong>Last updated:</strong> September 15, 2026</p>
-<p>VaultCap is an offline-first Progressive Web App. <strong>Your vault data stays on your device</strong> unless you explicitly export it. There are no accounts — you unlock with a PIN you choose locally.</p>
+<article>
+<h1>Privacy Policy</h1>
+<p class="updated">VaultCap by Capricorn Systems · Last updated 17 October 2026 · Applies to the VaultCap iPhone and iPad app and the VaultCap web app.</p>
+<p class="lead"><strong>Your vault stays on your device, encrypted.</strong> VaultCap has no accounts, no servers that store your vault, no analytics, no advertising and no tracking. We cannot see, recover or sell your data.</p>
+
 <h2>What we collect</h2>
-<ul><li><strong>Nothing by default.</strong> No accounts, analytics SDKs, or third-party trackers ship in this app.</li>
-<li><strong>Smart Import (optional):</strong> Only when you enable LLM parsing in Settings, text you paste for parsing may be sent to your configured endpoint. See Smart Import below.</li></ul>
-<h2>Storage &amp; deleting your data</h2>
-<ul><li>App state is stored in <strong>localStorage</strong> and/or <strong>IndexedDB</strong> in your browser.</li>
-<li><strong>Delete vault:</strong> Settings → Security → Delete Vault removes all local data and resets the app.</li>
-<li><strong>Clear site data:</strong> In your browser, clear storage for this site to remove all copies without opening the app.</li>
-<li>Uninstalling the PWA or clearing site data removes local copies permanently.</li>
-<li>Encrypted <code>.vos</code> backups are files you control — we never receive them.</li></ul>
-<h2>Network</h2>
-<ul><li><strong>Fonts:</strong> Self-hosted woff2 in this app — no Google Fonts or other font CDNs.</li>
-<li><strong>Live FX / gold rates:</strong> Public rate APIs with 6-hour cache; no personal data sent.</li>
-<li><strong>Smart Import / LLM:</strong> Off by default. See below.</li>
-<li>GitHub Pages serves static files only — no server-side access to your vault.</li></ul>
-<h2>Smart Import (Smart Assistant)</h2>
-<p>VaultCap offers three parsing paths for Smart Add:</p>
-<p>1. <strong>Smart Parser (default, offline)</strong> — Rule-based parsing on-device. No network. No data leaves your browser.</p>
-<p>2. <strong>Bundled LLM (opt-in)</strong> — Disabled by default in <code>js/config/llm-bundled.js</code>. If you enable it in Settings → Import, requests may go to the configured Cloudflare Worker proxy (<code>POST /parse</code>). Only the text you submit for parsing is transmitted — never your full vault, PIN, or encryption keys.</p>
-<p>3. <strong>Custom key (optional)</strong> — Paste your own API key or proxy URL in Settings → Import. Stored in localStorage on your device only.</p>
-<p>If the proxy is unavailable or disabled, Smart Parser is used automatically.</p>
-<p><strong>Important:</strong> Do not paste full account numbers or passwords into Smart Add. Treat pasted text as non-secret.</p>
+<ul>
+<li><strong>Nothing.</strong> Capricorn Systems does not collect, receive or store any personal data or vault contents. There is no sign-up, no analytics SDK and no third-party tracker in the app.</li>
+<li>The only data that ever leaves your device is described under <em>Optional online features</em> below — every one of them is <strong>off by default</strong> and only runs after you switch it on.</li>
+</ul>
+
+<h2>Where your data lives</h2>
+<ul>
+<li><strong>iPhone / iPad app:</strong> your vault is stored in the app's private storage on your device and is encrypted before it is written. Other apps cannot read it.</li>
+<li><strong>Web app:</strong> your vault is stored, encrypted, in your browser's storage for this site.</li>
+<li><strong>Encryption:</strong> AES-256-GCM with a random data key, unlocked by a key derived from your PIN or passphrase (PBKDF2-SHA256, 600,000 iterations). Your PIN, passphrase and keys are never sent anywhere.</li>
+<li><strong>Device backups:</strong> if you use iCloud or computer backups for your iPhone, they include the app's storage — only in its encrypted form.</li>
+</ul>
+
+<h2>Optional online features (off by default)</h2>
+<table class="tbl">
+<tr><th>Feature</th><th>What is sent</th><th>To whom</th></tr>
+<tr><td>Live exchange / metal rates</td><td>A request for public rates. No vault data.</td><td>open.er-api.com, api.metals.live, goldprice.org</td></tr>
+<tr><td>Fetch missing bank logos (web app)</td><td>The bank's web domain only.</td><td>Capricorn logo proxy (Cloudflare)</td></tr>
+<tr><td>AI Smart Import assistant (web app)</td><td>Only the text you choose to import, after you confirm (once per session). Never your vault, PIN or keys.</td><td>An AI model run by Cloudflare Workers AI, via the Capricorn proxy (<code>vaultos-llm-proxy.shamikhahmed.workers.dev</code>)</td></tr>
+</table>
+<ul>
+<li>These services may see your device's IP address as part of any internet request. The Capricorn proxy does not store AI import text; Cloudflare processes requests under its own terms. The iPhone and iPad app currently offers only the rates feature — AI import and logo fetching are web-app only.</li>
+<li>The offline <strong>Smart Parser</strong> is the default and works without any network connection. Prefer it for sensitive documents, and never paste full card numbers or passwords into AI import.</li>
+</ul>
+
+<h2>Backups, sharing and copying</h2>
+<ul>
+<li><strong>Encrypted backups (<code>.vos</code>)</strong> are created on your device with a backup key only you hold. In the iPhone app you choose where the file goes through the iOS share sheet (for example Files or AirDrop). We never receive your backups.</li>
+<li><strong>Copying secrets:</strong> in the iPhone app, copied keys and numbers stay on this device (not synced via Universal Clipboard) and are cleared automatically after the time you set in Settings (30 seconds by default).</li>
+<li><strong>Unencrypted exports</strong> (CSV / JSON) are only created after explicit warnings and typed confirmation.</li>
+</ul>
+
+<h2>Camera and photos</h2>
+<ul>
+<li>VaultCap asks for camera or photo access only when you choose to attach a photo of a document or card. Images are stored inside your encrypted vault and are not uploaded anywhere.</li>
+</ul>
+
+<h2>Deleting your data</h2>
+<ul>
+<li><strong>In the app:</strong> Settings → Privacy → Reset Entire Vault permanently deletes everything on this device (also under More → Recovery Center, or from the lock screen via Forgot PIN).</li>
+<li><strong>Deleting the iPhone or iPad app</strong> removes all of its data from that device.</li>
+<li><strong>Web app:</strong> clear this site's data in your browser settings.</li>
+<li>Deletion cannot be undone — keep an encrypted <code>.vos</code> backup if you may need your data later.</li>
+</ul>
+
 <h2>Children</h2>
-<ul><li>VaultCap is a general-purpose personal vault for adults. Parents should supervise device sharing and exports on shared family devices.</li></ul>
+<ul>
+<li>VaultCap is a personal-finance and documents vault intended for adults. It is not directed at children under 13.</li>
+</ul>
+
+<h2>Changes to this policy</h2>
+<ul>
+<li>If we change how data is handled, we will update this page and the date above before the change ships. Optional online features will always stay opt-in.</li>
+</ul>
+
 <h2>Contact</h2>
-<p>Built by Capricorn Systems — issues via the <a href="https://github.com/shamikhahmed/VaultCap">VaultCap GitHub repository</a>.</p>
+<p>Capricorn Systems — <a href="mailto:support@capricornsystems.com">support@capricornsystems.com</a>. Include your Vault ID (Settings → About); it is not a password and cannot open your vault.</p>
 </article>
-<footer>© 2026 Shamikh Ahmed · <a href="https://github.com/shamikhahmed/VaultCap">GitHub</a></footer>
-<script src="js/vendor/gsap.min.js"></script>
-  <script src="js/vendor/ScrollTrigger.min.js"></script>
+<footer>© 2026 Capricorn Systems · <a href="https://github.com/shamikhahmed/VaultCap">Source-available on GitHub</a></footer>
 </body>
 </html>

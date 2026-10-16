@@ -97,6 +97,34 @@ function _scheduleClipClear() {
   }, secs * 1000);
 }
 
+// True inside the Capacitor iOS app (WKWebView) — drives app-vs-website wording and native paths
+function isNativeApp() {
+  try {
+    if (window.VaultNative && VaultNative.isNative) return !!VaultNative.isNative();
+    return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+  } catch (e) { return false; }
+}
+window.isNativeApp = isNativeApp;
+
+/** iOS app: native print sheet (Print / Save to PDF) — popups + window.print() do nothing in WKWebView.
+ *  Returns true when handled natively; callers fall back to their popup window on the web. */
+function printReport(html, jobName) {
+  if (!isNativeApp() || !window.VaultNative || !VaultNative.printHTML) return false;
+  // Drop on-screen toolbars (.no-print) — the native print formatter ignores @media print
+  const clean = String(html).replace(/<div class="no-print">[\s\S]*?<\/div>/g, '');
+  VaultNative.printHTML({ html: clean, jobName: jobName || 'VaultCap' })
+    .catch(function () { if (typeof Toast !== 'undefined') Toast.show('Printing unavailable', 'warn'); });
+  return true;
+}
+window.printReport = printReport;
+
+(function nativeViewport() {
+  if (!isNativeApp()) return;
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp) vp.setAttribute('content', 'width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover');
+  document.documentElement.classList.add('is-native');
+})();
+
 // PWA install prompt — direct listeners (CSP Act needs window export; var alone never exported)
 const InstallPrompt = (function () {
   let _evt = null;
@@ -106,14 +134,20 @@ const InstallPrompt = (function () {
     return !!_evt;
   }
 
+  // Standalone PWA, iOS home-screen app, or Capacitor native shell — nothing to install
+  function _isInstalled() {
+    try {
+      if (isNativeApp()) return true;
+      if (window.matchMedia('(display-mode: standalone)').matches) return true;
+      if (navigator.standalone === true) return true;
+    } catch (e) {}
+    return false;
+  }
+
   function _showBanner() {
     if (_shown || document.getElementById('vaultInstallBanner')) return;
     if (localStorage.getItem('vo_install_dismissed') === '1') return;
-    // Standalone / already installed — no banner
-    try {
-      if (window.matchMedia('(display-mode: standalone)').matches) return;
-      if (navigator.standalone === true) return;
-    } catch (e) {}
+    if (_isInstalled()) return;
 
     _shown = true;
     const b = document.createElement('div');
@@ -168,10 +202,7 @@ const InstallPrompt = (function () {
     setTimeout(function () {
       if (_evt) return;
       if (localStorage.getItem('vo_install_dismissed') === '1') return;
-      try {
-        if (window.matchMedia('(display-mode: standalone)').matches) return;
-        if (navigator.standalone === true) return;
-      } catch (e) {}
+      if (_isInstalled()) return;
       _showBanner();
     }, 6000);
   });

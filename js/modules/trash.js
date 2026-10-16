@@ -35,7 +35,7 @@ const Trash = {
             </div>
             <div class="entry-acts">
               ${U.icb('undo',{onclick:`Trash.restore('${item.id}')`,ariaLabel:'Restore',title:'Restore'})}
-              ${U.icb('cross',{onclick:`Trash.purge('${item.id}')`,ariaLabel:'Delete permanently',title:'Delete permanently',class:'del'})}
+              ${U.icb('trash',{onclick:`Trash.purge('${item.id}')`,ariaLabel:'Delete permanently',title:'Delete permanently',class:'del'})}
             </div>
           </div>
         </div>`;

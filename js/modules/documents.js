@@ -383,6 +383,7 @@ const DocsModule={
       '</div></body></html>';
   },
   _openPdfWindow(html){
+    if(printReport(html,'VaultCap Documents'))return null;
     const w=window.open('','_blank');
     if(!w){
       if(typeof Toast!=='undefined')Toast.show('Allow pop-ups to export PDF','warn');

@@ -82,6 +82,13 @@ const U = {
   netOpts:     cc => (cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB).map(n => `<option value="${n.n}">`).join(''),
   /** Copies text to clipboard (Clipboard API with execCommand fallback) and shows a toast. */
   copy(text, label = '') {
+    const secs = (typeof S !== 'undefined' && S.clipSecs) || 30;
+    // iOS app: native pasteboard item with expiry + localOnly (no Universal Clipboard sync)
+    if (window.VaultNative && VaultNative.isNative && VaultNative.isNative()) {
+      VaultNative.copySecure({ text: String(text || ''), seconds: secs });
+      Toast.show((label || 'Value') + ' copied — clears in ' + secs + 's', 'success');
+      return;
+    }
     // Try modern Clipboard API first, fall back to execCommand
     const doCopy = () => {
       if (navigator.clipboard?.writeText) {
@@ -98,7 +105,7 @@ const U = {
       document.body.removeChild(ta);
     }
     doCopy();
-    Toast.show((label || 'Value') + ' copied!', 'success');
+    Toast.show((label || 'Value') + ' copied — clears in ' + secs + 's', 'success');
     // Auto-clear clipboard after configured delay
     _scheduleClipClear();
   },

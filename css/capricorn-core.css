@@ -177,7 +177,8 @@
   text-decoration: none;
   border: 0;
   border-radius: var(--cap-radius-pill);
-  transform: translateY(-200%);
+  /* Park past top offset too — -200% alone leaves it on-screen under a notch/Island (safe-t ≈ 59px) */
+  transform: translateY(calc(-100% - 16px - var(--cap-safe-t)));
   transition: transform 0.2s ease;
 }
 .cap-skip-link:focus-visible {

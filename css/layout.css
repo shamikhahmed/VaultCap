@@ -181,6 +181,8 @@ body.demo-banner-active #app {
   max-height: calc(100dvh - var(--demo-banner-h, 52px));
 }
 /* Lock under demo banner — avoid clock clip into DEMO strip / island */
+body.demo-banner-active .lk-emergency { top: calc(var(--demo-banner-h, 52px) + 12px); }
+body.demo-banner-active .vc-more-header { padding-top: calc(var(--demo-banner-h, 52px) + 12px); }
 body.demo-banner-active #pgLock {
   padding-top: calc(var(--demo-banner-h, 52px) + 8px);
   box-sizing: border-box;
@@ -223,14 +225,15 @@ html, body {
   overflow-x: hidden;
   overscroll-behavior: none;
 }
+/* + room for the floating + button (56pt + gap) so it never covers the last row's actions */
 body:not(.hide-btabs) .page.on > .pb {
-  padding-bottom: calc(var(--tabh) + 12px);
+  padding-bottom: calc(var(--tabh) + 84px);
 }
 body.hide-btabs .page.on > .pb {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
 }
 @media (min-width: 700px) {
-  body .page.on > .pb { padding-bottom: 24px; }
+  body .page.on > .pb { padding-bottom: 96px; }
 }
 
 /* Spacer not needed — page .pb already pads for fixed bottom tabs */
@@ -320,7 +323,9 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
     max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px))
     0
     max(env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
-  overflow: hidden;
+  /* Scroll instead of clipping when keypad + Switch Vault row exceed short viewports (Duo open, iPad landscape) */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 /* lock section layout */
 .lk-top, .lk-mid, .lk-bot {
@@ -347,12 +352,15 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
   margin-bottom: 14px; animation: lockIn .5s .1s var(--ease-out) both;
 }
 .lk-mark {
-  width: 72px; height: 72px; border-radius: 16px;
+  width: 72px; height: 72px;
   background: transparent; border: none;
   display: flex; align-items: center; justify-content: center;
   animation: breathe 5s ease-in-out infinite;
-  box-shadow: 0 4px 20px rgba(0,0,0,.2);
-  overflow: hidden;
+}
+/* Same gold shield mark as splash / welcome / sidebar (icons/mark.svg) */
+.lk-mark .vc-mark {
+  width: 64px; height: 64px;
+  filter: drop-shadow(0 8px 24px var(--glow));
 }
 .lk-brand-name {
   font-size: 14px; font-weight: 800; letter-spacing: 0.06em;
@@ -364,7 +372,7 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
   position: absolute;
   top: max(env(safe-area-inset-top,16px), 16px); right: 16px;
   z-index: 10;
-  width: 34px; height: 34px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: rgba(255,64,96,.1); border: 1px solid rgba(255,64,96,.2);
   color: var(--err); font-size: 13px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -372,10 +380,6 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
 }
 .lk-emergency:hover { background: var(--err); color: var(--on-accent); }
 .lk-switch-vault {
-  position: absolute;
-  bottom: max(12px, env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
-  left: 20px;
-  z-index: 20;
   min-height: 44px;
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.06);
@@ -389,22 +393,28 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
 }
 .lk-switch-vault:hover { color: var(--text); background: rgba(255, 255, 255, 0.1); }
 /* hint */
-.lk-hint { font-size: 12px; color: var(--text3); margin-top: 18px; text-align: center; }
-.lk-hint a, .lk-hint span { cursor: pointer; color: var(--accent); }
+.lk-hint {
+  font-size: 12px; color: var(--text3); margin-top: 18px; text-align: center;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
+}
+.lk-hint > a, .lk-hint > span { cursor: pointer; color: var(--accent); }
 /* progress bar — kept for JS compatibility, visually hidden */
 .lk-bar  { width: 0; height: 0; overflow: hidden; }
 .lk-fill { height: 100%; }
 /* responsive */
 /* SE / short phones (667) — clock must shrink before DEMO banner clips it */
-@media (max-height: 720px) {
+@media (max-height: 800px) {
   #lkClock { font-size: 40px; letter-spacing: -2px; }
+  /* "Safe" centring: auto margins centre when there is room, collapse to top-aligned + scroll when there is not */
   #pgLock  {
-    justify-content: center; gap: 8px;
+    justify-content: flex-start; gap: 8px;
     padding-bottom: max(env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
   }
+  #pgLock > .lk-top { margin-top: auto; }
+  #pgLock > .lk-bot { margin-bottom: auto; }
   .lk-brand { margin-bottom: 6px; }
   .lk-mark { width: 52px; height: 52px; }
-  .lk-mark svg { width: 52px; height: 52px; }
+  .lk-mark .vc-mark { width: 48px; height: 48px; }
   .lk-hint { margin-top: 10px; }
   .keypad { gap: 6px; }
 }
@@ -413,7 +423,6 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
   .lk-top, .lk-mid, .lk-bot { flex: 1; padding: 0 12px; }
   #lkClock { font-size: 38px; }
 }
-@media (min-width: 700px) { #pgLock { padding-bottom: 0; } }
 /* Prevent GPU compositing blur on lock screen interactive elements */
 #pgLock .lk-mark, #pgLock .lk-brand, #pgLock .lk-brand-name,
 #pgLock .pin-dots, #pgLock #lkClock, #pgLock #lkDate, #pgLock .lk-mid {
@@ -474,8 +483,10 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
 #pgOnboard {
   position: fixed; inset: 0; z-index: 991; background: var(--bg);
   display: none; flex-direction: column; align-items: center;
-  justify-content: center;
-  padding: calc(var(--st) + 24px) 20px calc(var(--sb) + 24px);
+  /* flex-start + .ob-wrap { margin:auto } = centred when it fits, top-aligned + scrollable when it
+     doesn't (justify-content:center pushed step dots under the 20pt status bar on home-button phones) */
+  justify-content: flex-start;
+  padding: calc(max(var(--st), env(safe-area-inset-top, 0px)) + 24px) 20px calc(max(var(--sb), env(safe-area-inset-bottom, 0px)) + 24px);
   overflow-y: auto; overflow-x: hidden;
 }
 #pgOnboard::before {

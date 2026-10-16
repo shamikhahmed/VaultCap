@@ -3,6 +3,7 @@
   "js/core/lockout-store.js",
   "js/core/pin-hash.js",
   "js/core/constants.js",
+  "js/core/native-bridge.js",
   "js/core/validators.js",
   "js/core/vault-meta.js",
   "js/core/theme.js",
