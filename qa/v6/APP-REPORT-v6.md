@@ -26,7 +26,7 @@ Date: 2026-10-19
 | iPhone set (prior + e2e) | both | ✅ | FIXED + Playwright |
 | iPad Pro 12.9 4th gen iOS 27 | light+dark | ✅ | `qa/v6/evidence/IPAD-RETRY-2026-10-19.md` — alive, painted |
 | iPad Pro 12.9 6th gen iOS 27 | light+dark | ✅ | same — first successful run |
-| MacBook viewports | — | harness ✅ / full matrix pending | `qa/v6/matrix/devices.js` |
+| MacBook viewports | both | ✅ 8 sizes ×2 · 0 overflow | `qa/v6/evidence/MACBOOK-MATRIX-2026-10-19.md` |
 | WebKit 38 prior | both | ◐ residual WARN/FAIL cells in REPORT | `build/qa/webkit-matrix/` |
 
 ## Fixed (this session + baseline)
@@ -64,4 +64,6 @@ Date: 2026-10-19
 - ASC submit / TestFlight device  
 - Face ID + Keychain-wrapped key  
 - Push `main` / tag  
-- Full MacBook WebKit matrix pass + LH mobile ≥90 (needs deeper split, not fake scores)  
+- LH mobile ≥90 (needs JS code-split; minify alone left perf ~71 / LCP ~7.5s — do not claim)  
+- Chrome/Firefox + browser zoom 150/200% matrix (WebKit MacBook done)  
+- Owner: tag + push approval 
