@@ -47,6 +47,10 @@ Gaps are tracked as tasks in `ROADMAP.md`.
 - Zero-knowledge locked: no email/password login, no cloud vault, no Clerk/Neon (2026-07-09 decision).
 - Development also happens from mobile workflow — ALWAYS git pull before local work (local was behind remote on 2026-07-11).
 - XSS audit is part of the pipeline — run audit:xss before any release.
+- `npm run build:js` minifies via esbuild; keep the `/*! VaultCap bundle */` banner (install-banner SW probe). Set `VC_NO_MINIFY=1` only for debugging.
+- QA evidence lives in `build/qa/` (gitignored). Curated v6 docs: `qa/v6/`. Never put screenshots in `test-results/` for safekeeping.
+- App Store / native iOS work: branch `perfection/v6-appstore`; pack in `qa/v6/APP-STORE.md`. Face ID + Keychain wrap = owner design decision only.
+- Privacy AI provider is Cloudflare Workers AI (proxy), not the old UI “claude-haiku” label.
 
 ## Where decisions live
 - Dated decisions: Capricorn-Brain project note (path above)

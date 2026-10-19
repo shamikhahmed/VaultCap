@@ -16,7 +16,7 @@ Date: 2026-10-19
 | G Luxury / alignment | ✅ | luxe.css; gallery regen 2026-10-19 |
 | H Structure / sample | ✅ | FIXED #31–37 |
 | I App Store pack | ✅ | `qa/v6/APP-STORE.md` Finance + claim↔code |
-| J Verification | ◐ | e2e ×3 green **165/165**; axe 0 serious; LH desktop ≥90; **LH mobile perf 71** (honest — LCP/bundle); MacBook matrix harness ready not full-run |
+| J Verification | ◐ | e2e ×3 **165/165**; axe 0 serious; LH desktop **94**; **LH mobile perf ~71** (LCP/bundle — not faked); MacBook WebKit **8 sizes ×2 themes, 256 rows, 0 overflow** |
 | K Docs / release | ◐ | docs updated; tag/push owner-only |
 
 ## Device matrix
