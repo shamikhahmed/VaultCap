@@ -8,7 +8,8 @@ const orderPath = path.join(root, 'js/bundle-order.json');
 const outPath = path.join(root, 'dist/vaultcap.bundle.js');
 const files = JSON.parse(fs.readFileSync(orderPath, 'utf8'));
 
-const parts = [`/* VaultCap bundle — ${files.length} modules — do not edit; run npm run build:js */`];
+// /*! keeps the banner through esbuild minify (legal comment)
+const parts = [`/*! VaultCap bundle — ${files.length} modules — do not edit; run npm run build:js */`];
 for (const rel of files) {
   const abs = path.join(root, rel);
   if (!fs.existsSync(abs)) {
@@ -31,5 +32,21 @@ for (const rel of files) {
 }
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, parts.join(''));
+const raw = parts.join('');
+fs.writeFileSync(outPath, raw);
 console.log('Wrote', outPath, '(' + (fs.statSync(outPath).size / 1024).toFixed(1) + ' KB)');
+
+// Production minify (esbuild via npx) — keeps source maps off; skip when VC_NO_MINIFY=1
+if (process.env.VC_NO_MINIFY !== '1') {
+  const { spawnSync } = await import('node:child_process');
+  const r = spawnSync(
+    'npx',
+    ['--yes', 'esbuild', outPath, '--minify', `--outfile=${outPath}`, '--allow-overwrite'],
+    { cwd: root, encoding: 'utf8' },
+  );
+  if (r.status !== 0) {
+    console.warn('minify skipped:', (r.stderr || r.stdout || '').slice(0, 400));
+  } else {
+    console.log('Minified', outPath, '(' + (fs.statSync(outPath).size / 1024).toFixed(1) + ' KB)');
+  }
+}
