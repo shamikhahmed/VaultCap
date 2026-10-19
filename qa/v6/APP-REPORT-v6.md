@@ -1,6 +1,6 @@
 # VaultCap — Perfection Loop v6 report
 
-Version: **5.3.1** (build 531) · Branch: `perfection/v6-appstore` · Base commits: `1bba4fe` (+ pending v6 commits)  
+Version: **5.3.1** (build 531) · Branch: `perfection/v6-appstore`  
 Date: 2026-10-19
 
 ## Gates
@@ -8,57 +8,60 @@ Date: 2026-10-19
 | Gate | Result | Evidence |
 |---|---|---|
 | A Inventory | ✅ | `qa/v6/INVENTORY.md` |
-| B Baseline | ✅ | prior WebKit + e2e 2026-10-17 |
-| C Native shell | ✅ | FIXED-LIST #1–12, ios/ |
+| B Baseline | ✅ | prior WebKit + e2e |
+| C Native shell | ✅ | FIXED-LIST #1–12; ios/ |
 | D Platform behaviour | ✅ | FIXED #1–4, #9–10 |
 | E Inputs / pickers | ✅ | ComboPicker FIXED #13–14 |
 | F Dynamic Type | ✅ | FIXED #26, #40–45 |
-| G Luxury / alignment | ✅ | luxe.css; WebKit run-2 notes residual WARNs |
+| G Luxury / alignment | ✅ | luxe.css; gallery regen 2026-10-19 |
 | H Structure / sample | ✅ | FIXED #31–37 |
-| I App Store pack | ✅ | `qa/v6/APP-STORE.md`; privacy ⊆ CSP; Finance category |
-| J Verification | ◐ | e2e ×2: **165 passed** / 3 skipped each (2026-10-19); LH/axe/MacBook matrix pending |
-| K Docs / release | ◐ | not tagged; owner approves push |
+| I App Store pack | ✅ | `qa/v6/APP-STORE.md` Finance + claim↔code |
+| J Verification | ◐ | e2e ×3 green **165/165**; axe 0 serious; LH desktop ≥90; **LH mobile perf 71** (honest — LCP/bundle); MacBook matrix harness ready not full-run |
+| K Docs / release | ◐ | docs updated; tag/push owner-only |
 
 ## Device matrix
 
-| Class | Light/Dark | Text size | Result | Evidence |
-|---|---|---|---|---|
-| iPhone set (prior) | both | default + a11y | ✅ prior | build/qa/ios-sweep, FIXED |
-| iPad Pro 12.9 4th gen | — | — | ❌/retest | WebKit Network Process crash 2026-10-18 |
-| iPad Pro 12.9 6th gen | — | — | not run | sim shut down mid-sweep |
-| MacBook viewports | — | — | pending | devices.js MacBook add |
-| WebKit 38 + themes | both | — | ◐ | build/qa/webkit-matrix/REPORT.md (residual ❌ cells documented) |
+| Class | Light/Dark | Result | Evidence |
+|---|---|---|---|
+| iPhone set (prior + e2e) | both | ✅ | FIXED + Playwright |
+| iPad Pro 12.9 4th gen iOS 27 | light+dark | ✅ | `qa/v6/evidence/IPAD-RETRY-2026-10-19.md` — alive, painted |
+| iPad Pro 12.9 6th gen iOS 27 | light+dark | ✅ | same — first successful run |
+| MacBook viewports | — | harness ✅ / full matrix pending | `qa/v6/matrix/devices.js` |
+| WebKit 38 prior | both | ◐ residual WARN/FAIL cells in REPORT | `build/qa/webkit-matrix/` |
 
-## Fixed
+## Fixed (this session + baseline)
 
-See `qa/ios-appstore-audit-2026-10-16/FIXED-LIST.md` (#1–45). New this session: privacy metals host exact match (`data-asg.goldprice.org`); App Store category Finance; Experience Lab scaffolding.
+- Baseline: FIXED-LIST #1–45  
+- Privacy metals host exact CSP match  
+- Bundle minify via esbuild (`/*!` banner preserved) — 1162→887 KB; install-banner still green  
+- Gallery v3 regenerated (welcome/sample/luxe/banks)  
+- iPad Pro 12.9 4th/6th retests green on quiet host  
 
-## Experience Lab (addendum)
+## Experience Lab
 
 | Area | Status |
 |---|---|
-| Feature matrix | `qa/v6/FEATURE-MATRIX.md` — pending live fill from verify |
-| Personas | `qa/v6/PERSONAS.md` — 6 scenarios defined |
-| Motion | `qa/v6/MOTION-AUDIT.md` — audit; soft refinements pending |
-| Presentations | ⏳ after gallery (pandoc available; python-pptx not installed yet) |
-| Videos | ⏳ after simulator recordings |
-| Functional coverage counts | e2e ×2: 165 pass / 3 skip / 0 fail · matrix rows updated |
+| Feature matrix | `qa/v6/FEATURE-MATRIX.md` — suite rows pass |
+| Personas S1–S6 | automated pass / partial / sim where noted |
+| Motion | `MOTION-AUDIT.md` — discreet spring + reduced-motion already in luxe |
+| Presentations | `build/qa/v6/presentations/VaultCap-product-v6.pptx` + `VaultCap-qa-v6.pptx` (real gallery shots) |
+| Demo video | `build/qa/v6/videos/per-app/VaultCap-sample-unlock-demo.webm` (391 KB, checked) |
+| axe | 0 serious/critical both themes (`build/qa/v6/axe/`) |
+| Lighthouse | desktop perf **94** / a11y 100; mobile perf **71** / a11y 96 (contrast moderate) — not claiming mobile ≥90 |
 
-## App Store pack status
+## App Store pack
 
 | Item | Status |
 |---|---|
-| Privacy URL | https://shamikhahmed.github.io/VaultCap/privacy.html |
-| Support URL | https://shamikhahmed.github.io/support.html |
-| Screenshots ASC sizes | regenerate gallery + sim |
-| Review notes | in `qa/v6/APP-STORE.md` |
-| Blockers | Apple signing, ASC submit, TestFlight device |
+| Privacy / Support URLs | live hub pages |
+| Review notes | sample vault path documented |
+| Screenshots | gallery refreshed; ASC crops still owner upload |
+| Blockers | Apple signing, ASC, TestFlight |
 
 ## Not done / owner-only
 
 - Apple Developer sign-in + signing team  
-- App Store Connect record / privacy labels / upload  
-- TestFlight on physical iPhone  
-- Face ID + Keychain-wrapped key (design only)  
-- Push to `main` / tag (Cursor prepares; owner approves)  
-- Spotlight exclusion for CoreSimulator  
+- ASC submit / TestFlight device  
+- Face ID + Keychain-wrapped key  
+- Push `main` / tag  
+- Full MacBook WebKit matrix pass + LH mobile ≥90 (needs deeper split, not fake scores)  
