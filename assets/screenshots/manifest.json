@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T13:14:50.692Z",
+  "generatedAt": "2026-10-19T07:08:39.583Z",
   "themes": [
     "dark",
     "light"
@@ -384,6 +384,7 @@
               "desktop": "dark/desktop/finance/expenses-scroll.png"
             },
             "light": {
+              "mobile": "light/mobile/finance/expenses-scroll.png",
               "desktop": "light/desktop/finance/expenses-scroll.png"
             }
           }
@@ -423,7 +424,14 @@
               "desktop": "light/desktop/finance/bonds.png"
             }
           },
-          "scroll": {}
+          "scroll": {
+            "dark": {
+              "mobile": "dark/mobile/finance/bonds-scroll.png"
+            },
+            "light": {
+              "mobile": "light/mobile/finance/bonds-scroll.png"
+            }
+          }
         },
         {
           "id": "currency",
