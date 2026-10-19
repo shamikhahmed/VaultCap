@@ -1,23 +1,25 @@
 # VaultCap — App Store pack (readiness only; no submission)
 
+Canonical v6 sheet: [`qa/v6/APP-STORE.md`](../../qa/v6/APP-STORE.md).
+
 | Field | Value |
 |---|---|
 | **Name (≤30)** | VaultCap |
-| **Subtitle (≤30)** | Encrypted life vault |
+| **Subtitle (≤30)** | Private encrypted life vault |
 | **Bundle ID** | `com.capricorn.vaultcap` |
 | **SKU** | `vaultcap-ios` |
 | **Version** | 5.3.1 (build 531) |
-| **Primary category** | Productivity |
+| **Primary category** | Finance |
 | **Age rating** | 4+ |
 | **Pricing** | Free — no IAP (G-2) |
 
 ## Description
 
-Everything you own, encrypted on your device. Banks, cards, documents, and more — offline-first with an optional opt-in network layer for logos and rates.
+Everything you own, encrypted on your device. Banks, cards, documents, and more — offline-first with an optional opt-in network layer for public FX/metal rates. Not financial advice.
 
 ## Keywords
 
-vault, encrypted, documents, banks, cards, offline, password
+vault,encrypted,finance,banks,cards,documents,offline,zakat,networth,backup
 
 ## URLs
 
@@ -26,7 +28,7 @@ vault, encrypted, documents, banks, cards, offline, password
 
 ## Review notes
 
-No account. Demo vault PIN `123456`. Network features default off. Your vault is encrypted on this device with your PIN. If you forget it, your data can't be recovered — keep an export somewhere safe.
+No account. Welcome → **Explore a sample vault** → lock → **Use sample PIN** → **Start exploring**. Network features default off. Vault encrypted on device with your PIN — if you forget it, data cannot be recovered; keep a `.vos` export.
 
 ## Encryption
 
