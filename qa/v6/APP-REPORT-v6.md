@@ -16,7 +16,7 @@ Date: 2026-10-19
 | G Luxury / alignment | ✅ | luxe.css; WebKit run-2 notes residual WARNs |
 | H Structure / sample | ✅ | FIXED #31–37 |
 | I App Store pack | ✅ | `qa/v6/APP-STORE.md`; privacy ⊆ CSP; Finance category |
-| J Verification | ◐ | verify #1: **165 passed** / 3 skipped (2026-10-19); run #2 pending |
+| J Verification | ◐ | e2e ×2: **165 passed** / 3 skipped each (2026-10-19); LH/axe/MacBook matrix pending |
 | K Docs / release | ◐ | not tagged; owner approves push |
 
 ## Device matrix
@@ -42,7 +42,7 @@ See `qa/ios-appstore-audit-2026-10-16/FIXED-LIST.md` (#1–45). New this session
 | Motion | `qa/v6/MOTION-AUDIT.md` — audit; soft refinements pending |
 | Presentations | ⏳ after gallery (pandoc available; python-pptx not installed yet) |
 | Videos | ⏳ after simulator recordings |
-| Functional coverage counts | verify #1: 165 pass / 3 skip / 0 fail · matrix rows updated |
+| Functional coverage counts | e2e ×2: 165 pass / 3 skip / 0 fail · matrix rows updated |
 
 ## App Store pack status
 
