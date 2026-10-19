@@ -2,10 +2,15 @@
 /* VaultHealth — single source of truth for vault health score */
 
 const VaultHealth = {
+  /** Stable "custom PIN" signal — S.pin is only in memory during unlock, so comparing it made the score jump by 20. */
+  customPin() {
+    try { if (typeof VaultProfiles !== 'undefined' && VaultProfiles.isDemo && VaultProfiles.isDemo()) return false; } catch (e) {}
+    return !(S.vaultMeta && S.vaultMeta.pinWeak === true);
+  },
   score() {
     let s = 0;
     if (Crypto.available())                                    s += 20; // AES-256-GCM ready
-    if (S.pin !== '123456')                                    s += 20; // Custom PIN (undefined = VaultDB mode = custom)
+    if (this.customPin())                                      s += 20; // Custom (non-demo, non-trivial) PIN
     const daysSince = S.user?.lastBackup
       ? Math.floor((Date.now() - new Date(S.user.lastBackup)) / 86400000) : 999;
     if (daysSince <= 7)       s += 20;
@@ -29,7 +34,7 @@ const VaultHealth = {
       ? Math.floor((Date.now() - new Date(S.user.lastBackup)) / 86400000) : 999;
     return [
       { ok: Crypto.available(),                  label: 'AES-256 encryption' },
-      { ok: S.pin !== '123456',                  label: 'Custom PIN' },
+      { ok: this.customPin(),                    label: 'Custom PIN' },
       { ok: !!localStorage.getItem(recoveryKeyStorageKey()),    label: 'Recovery key saved' },
       { ok: daysSince <= 30,                     label: daysSince >= 999 ? 'No backup yet' : daysSince === 0 ? 'Backed up today' : `Backup ${daysSince}d ago` },
       { ok: S.autoLock,                          label: 'Auto-lock on' },

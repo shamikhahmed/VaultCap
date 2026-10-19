@@ -57,7 +57,7 @@ const BondsModule = {
       (bonds.length > 0 ? (
         '<div style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:16px">' +
           '<div class="vc-ix-180">Total Holdings</div>' +
-          '<div style="font-size:32px;font-weight:900;color:'+VCBrand.h_c9a84c+'">' + fmt(totalValue) + '</div>' +
+          '<div style="font-size:2rem;font-weight:900;color:'+VCBrand.h_c9a84c+'">' + fmt(totalValue) + '</div>' +
           '<div class="vc-ix-114">' + bonds.length + ' holding' + (bonds.length > 1 ? 's' : '') + ' · Zakatable at face value</div>' +
         '</div>'
       ) : '') +
@@ -71,8 +71,8 @@ const BondsModule = {
             return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">' +
               '<div><div class="vc-ix-57">' + b.name + '</div>' +
               '<div class="vc-ix-3">' + (b.quantity || 1) + ' bond' + ((b.quantity || 1) > 1 ? 's' : '') + '</div></div>' +
-              '<div class="vc-ix-132"><div style="font-size:12px;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
-              '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
+              '<div class="vc-ix-132"><div style="font-size:0.75rem;font-weight:700;color:var(--warn)">' + (nextDraw || 'Quarterly') + '</div>' +
+              '<button type="button" data-act="BondsModule._checkResults(\'' + b.typeId + '\')" style="font-size:0.6875rem;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation">Check Results →</button></div>' +
             '</div>';
           }).join('') +
         '</div>'
@@ -191,7 +191,7 @@ const BondsModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bnd-total" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;text-align:center;font-size:13px;color:'+VCBrand.h_c9a84c+';font-weight:700;margin-bottom:10px">Total: enter details above</div>' +
+      '<div id="bnd-total" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:10px;text-align:center;font-size:0.8125rem;color:'+VCBrand.h_c9a84c+';font-weight:700;margin-bottom:10px">Total: enter details above</div>' +
 
       '<div class="fg"><label class="fl">Purchase Date</label>' +
         '<input class="inp" type="date" id="bnd-date" value="' + (b.purchaseDate || '') + '"></div>' +
@@ -288,7 +288,7 @@ const BondsModule = {
 
   openBulkImport() {
     Modal.open('Bulk Import Bond Numbers',
-      '<div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">Paste your prize bond numbers below — one per line. Select the bond type and they\'ll be imported as a single holding.</div>' +
+      '<div style="font-size:0.75rem;color:var(--text3);margin-bottom:12px;line-height:1.6">Paste your prize bond numbers below — one per line. Select the bond type and they\'ll be imported as a single holding.</div>' +
       '<div class="fg"><label class="fl">Bond Type</label>' +
         '<select class="inp" id="bulk-type">' +
           this.BOND_TYPES.PK.filter(function(t) { return !t.isFixed; }).map(function(t) {

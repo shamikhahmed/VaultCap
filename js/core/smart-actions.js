@@ -7,9 +7,9 @@ const SmartAdd = {
       <p class="vc-ix-68">Describe what to add in plain English. VaultCap detects the type and pre-fills the form — works offline, no AI needed.</p>
       <div class="fg">
         <label class="fl">What do you want to add?</label>
-        <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:13px;line-height:1.6"></textarea>
+        <textarea class="inp" id="sa-text" rows="4" placeholder="Chase account USD 12,500 balance&#10;Lent $500 to Ahmed, due June 2026&#10;Netflix $17.99 monthly&#10;Vodafone SIM +44 7700 900123" style="font-size:0.8125rem;line-height:1.6"></textarea>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Examples: bank + balance · card + last 4 · loan to someone · subscription · SIM number</div>
+      <div style="font-size:0.6875rem;color:var(--text3);margin-top:8px;line-height:1.5">Examples: bank + balance · card + last 4 · loan to someone · subscription · SIM number</div>
     `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" id="sa-run-btn" data-act="SmartAdd.run()">Detect &amp; Pre-fill</button>`);
     setTimeout(() => document.getElementById('sa-text')?.focus(), 120);
   },
@@ -228,8 +228,8 @@ const CMD = {
       if (!r.action) {
         html += `<div class="ci ci-info" id="ci${i}"><span class="ci-ic">${cmdIc(r)}</span><span>${labelHtml}</span></div>`;
       } else {
-        const badgeHtml = r.badge ? `<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.2);margin-left:auto;flex-shrink:0">${r.badge}</span>` : '';
-        const subHtml = r.subtitle ? `<div style="font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.subtitle}</div>` : '';
+        const badgeHtml = r.badge ? `<span style="font-size:0.6875rem;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,213,255,.15);color:var(--info);border:1px solid rgba(0,213,255,.2);margin-left:auto;flex-shrink:0">${r.badge}</span>` : '';
+        const subHtml = r.subtitle ? `<div style="font-size:0.6875rem;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.subtitle}</div>` : '';
         html += `<div class="ci" id="ci${i}" data-act="CMD.select(${i})" style="align-items:flex-start"><span class="ci-ic" style="margin-top:2px">${cmdIc(r)}</span><div class="vc-ix-20"><div class="vc-ix-173">${labelHtml}${badgeHtml}</div>${subHtml}</div></div>`;
       }
     });

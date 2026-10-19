@@ -9,7 +9,7 @@ const Emergency = {
     b.innerHTML = `
       <div class="vc-ix-163">
         <div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:16px;padding:16px">
-          <div style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:4px">🆘 Emergency Access</div>
+          <div style="font-size:0.8125rem;font-weight:700;color:var(--err);margin-bottom:4px">🆘 Emergency Access</div>
           <div class="vc-ix-178">This information can be shown on the lock screen for first responders. Keep it accurate and updated.</div>
         </div>
         <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between">
@@ -29,16 +29,16 @@ const Emergency = {
           ].map(f=>`<div>
             <div class="vc-ix-180">${f.label}</div>
             ${f.area
-              ?`<textarea id="${f.id}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;resize:none">${f.val}</textarea>`
-              :`<input id="${f.id}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px">`
+              ?`<textarea id="${f.id}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:0.875rem;resize:none">${f.val}</textarea>`
+              :`<input id="${f.id}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:1rem">`
             }
           </div>`).join('')}
         </div>
         <button type="button" class="btn btn-p vc-ix-16" data-act="Emergency.save()">Save Emergency Info</button>
         ${e.showOnLockscreen?`
         <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:14px;padding:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Emergency: ${escHtml(e.name||'Name not set')}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:var(--ok);margin-bottom:8px">Preview — Lock Screen</div>
+          <div style="font-size:0.875rem;font-weight:700;color:var(--text);margin-bottom:4px">Emergency: ${escHtml(e.name||'Name not set')}</div>
           <div class="vc-ix-10">${e.phone?'Phone: '+escHtml(e.phone):''}</div>
           <div class="vc-ix-73">${e.bloodType?'Blood: '+escHtml(e.bloodType):''}${e.allergies?' · Allergies: '+escHtml(e.allergies.split('\n')[0]):''}</div>
         </div>`:''}
@@ -74,11 +74,11 @@ const Emergency = {
     Modal.open('🆘 Emergency Information',
       `<div class="vc-ix-14">
         <div class="vc-ix-38">
-          <div style="font-size:32px;margin-bottom:8px">🆘</div>
-          <div style="font-size:20px;font-weight:800;color:var(--text)">${escHtml(e.name||'')}</div>
+          <div style="font-size:2rem;margin-bottom:8px">🆘</div>
+          <div style="font-size:1.25rem;font-weight:800;color:var(--text)">${escHtml(e.name||'')}</div>
         </div>
-        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">EMERGENCY CONTACT</div><div style="font-size:18px;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
-        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">BLOOD TYPE</div><div style="font-size:24px;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
+        ${e.phone?`<div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">EMERGENCY CONTACT</div><div style="font-size:1.125rem;font-weight:700;color:var(--ok)">${escHtml(e.phone)}</div></div>`:''}
+        ${e.bloodType?`<div style="background:rgba(255,59,48,.1);border:1px solid rgba(255,59,48,.3);border-radius:12px;padding:14px;text-align:center"><div class="vc-ix-78">BLOOD TYPE</div><div style="font-size:1.5rem;font-weight:900;color:var(--err)">${escHtml(e.bloodType)}</div></div>`:''}
         ${e.allergies?`<div class="vc-ix-181"><div class="vc-ix-78">ALLERGIES / MEDICATIONS</div><div class="vc-ix-57">${escHtml(e.allergies)}</div></div>`:''}
         ${e.emergencyNote?`<div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px"><div class="vc-ix-78">NOTE</div><div class="vc-ix-57">${escHtml(e.emergencyNote)}</div></div>`:''}
       </div>`,
@@ -157,7 +157,7 @@ const DevDiag = {
       const row = (label, value, ok = null) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
           <span class="vc-ix-8">${label}</span>
-          <span style="font-size:12px;font-weight:600;color:${ok === true ? 'var(--ok)' : ok === false ? 'var(--err)' : 'var(--text)'}">${value}</span>
+          <span style="font-size:0.75rem;font-weight:600;color:${ok === true ? 'var(--ok)' : ok === false ? 'var(--err)' : 'var(--text)'}">${value}</span>
         </div>`;
 
       el.innerHTML = `
@@ -177,7 +177,7 @@ const DevDiag = {
           ${failedOps.length ? row('Failed Operations', failedOps.length, false) : row('Failed Operations', 'None', true)}
           ${Object.entries(this._renderTimings).slice(0,5).map(([k,v]) => row(`Render: ${k}`, `${v}ms`)).join('')}
         </div>
-        <button type="button" class="btn btn-g" data-act="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:11px">Copy Report</button>
+        <button type="button" class="btn btn-g" data-act="DevDiag.copyReport()" style="width:100%;margin-top:10px;font-size:0.6875rem">Copy Report</button>
       `;
     }, 50);
   },
@@ -238,10 +238,10 @@ const VaultRecovery = {
     Modal.open('Vault Recovery',
       `<div class="vc-ix-31">
         <div class="vc-ix-181">
-          <div style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">Issues Detected</div>
-          ${issues.map(i => `<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${i}</div>`).join('')}
+          <div style="font-size:0.8125rem;font-weight:700;color:var(--warn);margin-bottom:8px">Issues Detected</div>
+          ${issues.map(i => `<div style="font-size:0.75rem;color:var(--text2);padding:3px 0">• ${i}</div>`).join('')}
         </div>
-        ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:12px;color:var(--ok)">Auto-repaired ${fixed} issue(s)</div>` : ''}
+        ${fixed > 0 ? `<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px;font-size:0.75rem;color:var(--ok)">Auto-repaired ${fixed} issue(s)</div>` : ''}
         <div class="vc-ix-178">If problems persist, export a backup and restore from a previous .vos file.</div>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Dismiss</button><button type="button" class="btn btn-p" data-act="ExIm.export('vos');Modal.close()">Export Backup</button>`

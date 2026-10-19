@@ -36,6 +36,7 @@
   "js/core/modal.js",
   "js/core/activity.js",
   "js/core/vault-utils.js",
+  "js/core/combo-picker.js",
   "js/core/emergency.js",
   "js/core/onboarding-wizard.js",
   "js/core/ios-interactions.js",

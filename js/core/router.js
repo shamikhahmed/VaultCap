@@ -14,9 +14,9 @@ const R = {
     if (ppCards) {
       ppCards.innerHTML =
         '<div data-act="R._pickProfile(\'personal\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (active === 'personal' ? 'rgba(0,213,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (active === 'personal' ? 'rgba(0,213,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation">' +
-        '<div class="chip-ic" style="font-size:34px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon('vault', 34) : '') + '</div><div class="vc-ix-5"><div class="vc-ix-77">My Vault</div><div class="vc-ix-8">Your private encrypted vault</div></div><div style="font-size:20px;color:var(--text3)">›</div></div>' +
-        '<button type="button" data-act="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">New here? Take the guided demo →</button>' +
-        (VaultProfiles.isDevMode() ? '<div data-act="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('settings', 24) : '') + '</div><div class="vc-ix-5"><div style="font-size:13px;font-weight:700">Test Sandbox</div><div class="vc-ix-3">Developer only</div></div></div>' : '');
+        '<div class="chip-ic" style="font-size:2.125rem;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon('vault', 34) : '') + '</div><div class="vc-ix-5"><div class="vc-ix-77">My Vault</div><div class="vc-ix-8">Your private encrypted vault</div></div><div style="font-size:1.25rem;color:var(--text3)">›</div></div>' +
+        '<button type="button" data-act="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:0.8125rem;font-weight:600;cursor:pointer;touch-action:manipulation">New here? Take the guided demo →</button>' +
+        (VaultProfiles.isDevMode() ? '<div data-act="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('settings', 24) : '') + '</div><div class="vc-ix-5"><div style="font-size:0.8125rem;font-weight:700">Test Sandbox</div><div class="vc-ix-3">Developer only</div></div></div>' : '');
     }
     pp.style.display = 'flex';
   },
@@ -54,11 +54,22 @@ const R = {
     }
     const sub = document.getElementById('lkSub');
     if (sub) {
-      if (VaultProfiles.isDemo()) sub.textContent = 'Demo vault · PIN ' + VaultProfiles.DEMO_PIN;
+      if (VaultProfiles.isDemo()) sub.textContent = 'Sample vault — fictional data';
       else if (needsMigrate) sub.textContent = 'Migrate to PIN unlock';
       else if (S.user.name) sub.textContent = 'Welcome back, ' + S.user.name;
       else sub.textContent = 'Enter your 6-digit PIN';
     }
+    // Demo: offer the sample PIN as a button instead of printing it on screen
+    const hint = document.querySelector('#pgLock .lk-hint');
+    let dpb = document.getElementById('demoPinBtn');
+    if (VaultProfiles.isDemo() && hint && !dpb) {
+      dpb = document.createElement('button');
+      dpb.type = 'button'; dpb.id = 'demoPinBtn'; dpb.className = 'lk-switch-vault lk-demo-pin';
+      dpb.textContent = 'Use sample PIN';
+      dpb.setAttribute('data-act', 'PIN.fillDemo()');
+      hint.insertBefore(dpb, hint.firstChild);
+    }
+    if (dpb) dpb.style.display = VaultProfiles.isDemo() ? '' : 'none';
     const sp = document.getElementById('switchProfileBtn');
     // Always show — Personal + Demo always available; unlock target with its own PIN
     if (sp) sp.style.display = '';
@@ -109,7 +120,13 @@ const R = {
     document.body.classList.remove('on-lock');
     document.getElementById('pgHome').style.display = 'flex';
     const hw = document.getElementById('hWelcome');
-    if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}!`;
+    const demo = typeof VaultProfiles !== 'undefined' && VaultProfiles.isDemo && VaultProfiles.isDemo();
+    if (hw) hw.textContent = demo ? 'A sample household — explore freely'
+      : (S.user.name ? `Welcome back, ${S.user.name}` : 'Everything you own, encrypted on your device');
+    const ob = document.getElementById('homeOpenBtn');
+    if (ob) ob.textContent = demo ? 'Open sample vault' : 'Open My Vault';
+    const dl = document.getElementById('homeDemoLink');
+    if (dl) dl.style.display = demo ? 'none' : '';
     ThemeEngine.renderDots();
     if (typeof renderHomeModules === 'function') renderHomeModules();
     if (typeof VC !== 'undefined') VC.refreshShellIcons();

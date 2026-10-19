@@ -41,15 +41,15 @@ const BackupVerify = (() => {
       : '<div class="empty-ios"><div class="ei-title">Empty vault file</div><div class="ei-sub">Decrypted successfully but no module arrays found.</div></div>';
 
     const body = '<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:12px;padding:12px;margin-bottom:14px">'
-      + '<div style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:4px">Backup verified — dry run only</div>'
+      + '<div style="font-size:0.8125rem;font-weight:700;color:var(--ok);margin-bottom:4px">Backup verified — dry run only</div>'
       + '<div class="vc-ix-172">Nothing was imported. Your live vault is unchanged.</div></div>'
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:12px">'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:0.75rem">'
       + '<div><span class="vc-ix-4">Owner</span><br><strong>' + owner + '</strong></div>'
       + '<div><span class="vc-ix-4">Exported</span><br><strong>' + _esc(String(exported).slice(0, 19)) + '</strong></div>'
       + '<div><span class="vc-ix-4">App version</span><br><strong>' + _esc(String(ver)) + '</strong></div>'
       + '<div><span class="vc-ix-4">Schema</span><br><strong>' + _esc(String(schema)) + '</strong></div>'
       + '</div>'
-      + '<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Contents</div>'
+      + '<div style="font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Contents</div>'
       + rows;
 
     if (typeof Modal !== 'undefined') {

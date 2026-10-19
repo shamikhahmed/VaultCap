@@ -18,7 +18,7 @@ const Sims={
     const hasExtra=!!(s.simPin||s.pukCode||s.dataPlan||s.balance||s.nextRecharge||s.contractEnd||s.wallet||s.regName||s.notes);
     return `<datalist id="simDL">${simNames}</datalist><datalist id="netDL">${U.netOpts(s.country||'')}</datalist>
     <div class="fr"><div class="fg"><label class="fl">Country *</label><select class="inp" id="sf-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Network *</label><input class="inp" id="sf-net" value="${escAttr(s.network||'')}" list="simDL" placeholder="Jazz, O2, EE…" data-act-input="SMART_DB.fillSim(this.value)"></div></div>
-    <div class="fg"><label class="fl">Phone Number</label><div style="display:flex;gap:8px"><span id="sf-pfx" style="display:flex;align-items:center;padding:0 11px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--rsm);font-size:13px;flex-shrink:0;white-space:nowrap">${U.phone(s.country||'')}</span><input class="inp vc-ix-5" id="sf-phone" value="${escAttr(s.phone?s.phone.replace(/^\+\d+\s?/,''):'')}" placeholder="300 1234567"></div></div>
+    <div class="fg"><label class="fl">Phone Number</label><div style="display:flex;gap:8px"><span id="sf-pfx" style="display:flex;align-items:center;padding:0 11px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--rsm);font-size:0.8125rem;flex-shrink:0;white-space:nowrap">${U.phone(s.country||'')}</span><input class="inp vc-ix-5" id="sf-phone" value="${escAttr(s.phone?s.phone.replace(/^\+\d+\s?/,''):'')}" placeholder="300 1234567"></div></div>
     <details${hasExtra?' open':''} style="margin-top:10px">
       <summary class="vc-ix-111"><span class="vc-ix-5">More details</span><span class="vc-ix-18">▾</span></summary>
       <div class="vc-ix-112">

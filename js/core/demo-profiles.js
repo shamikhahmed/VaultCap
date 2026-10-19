@@ -21,8 +21,9 @@ function loadDemoProfile(type) {
   S.user.dob = '1988-04-15';
   // History in PKR base (live NW is computed; sparkline must use same base)
   S.user.nwHistory = [
-    {v:148000000,d:'2025-12-01',base:'PKR'},{v:152000000,d:'2026-01-01',base:'PKR'},{v:150500000,d:'2026-02-01',base:'PKR'},
-    {v:155000000,d:'2026-03-01',base:'PKR'},{v:158000000,d:'2026-04-01',base:'PKR'},{v:162000000,d:'2026-05-01',base:'PKR'}
+    // Calibrated to the sample accounts (~PKR 92M live) so the sample shows steady growth, not a fake crash
+    {v:76000000,d:'2025-12-01',base:'PKR'},{v:78500000,d:'2026-01-01',base:'PKR'},{v:77800000,d:'2026-02-01',base:'PKR'},
+    {v:81500000,d:'2026-03-01',base:'PKR'},{v:85000000,d:'2026-04-01',base:'PKR'},{v:89500000,d:'2026-05-01',base:'PKR'}
   ];
 
   // Banks (6) — stable IDs so cards link by linkedBankId

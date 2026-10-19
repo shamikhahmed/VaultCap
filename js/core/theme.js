@@ -19,8 +19,7 @@ const ThemeEngine = {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const resolved = prefersDark ? 'dark' : 'light';
       const t = THEMES.find(x => x.id === resolved) || THEMES[0];
-      const extra = (document.body.className.match(/\b(fs-\w+|hc)\b/g) || []).join(' ');
-      document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
+      this._setThemeClass(t);
       S.user.theme = 'auto';
       document.getElementById('themeColorMeta').content = t.ac;
       this._syncStatusBar(t);
@@ -33,13 +32,17 @@ const ThemeEngine = {
       return;
     }
     const t = THEMES.find(x => x.id === id) || THEMES[0];
-    const extra = (document.body.className.match(/\b(fs-\w+|hc)\b/g) || []).join(' ');
-    document.body.className = [t.cls || '', extra].filter(Boolean).join(' ');
+    this._setThemeClass(t);
     S.user.theme = id;
     document.getElementById('themeColorMeta').content = t.ac;
     this._syncStatusBar(t);
     Store.save();
     this.renderDots();
+  },
+  /** Swap only theme classes — wiping body.className dropped demo-banner-active, hide-btabs, on-lock… */
+  _setThemeClass(t) {
+    THEMES.forEach(x => { if (x.cls) document.body.classList.remove(...String(x.cls).split(/\s+/).filter(Boolean)); });
+    if (t && t.cls) document.body.classList.add(...String(t.cls).split(/\s+/).filter(Boolean));
   },
   /** iOS app: status-bar text must contrast the app theme, not the system appearance. */
   _syncStatusBar(t) {
@@ -58,7 +61,7 @@ const ThemeEngine = {
       const ic = (typeof VC !== 'undefined' && VC.icon) ? VC.icon(icons[t.id], 16) : '';
       return `<button type="button" data-act="ThemeEngine.apply('${t.id}')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:14px;border:1.5px solid ${active ? 'var(--accent)' : 'var(--border)'};background:${active ? 'var(--glass2)' : 'var(--glass)'};cursor:pointer;touch-action:manipulation;transition:all .2s;font-family:var(--font)">
         <div style="width:36px;height:36px;border-radius:10px;background:${t.bg};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2)">${ic}</div>
-        <span style="font-size:11px;font-weight:${active ? '700' : '500'};color:${active ? 'var(--accent)' : 'var(--text3)'}">${t.n}</span>
+        <span style="font-size:0.6875rem;font-weight:${active ? '700' : '500'};color:${active ? 'var(--accent)' : 'var(--text3)'}">${t.n}</span>
       </button>`;
     }).join('');
   },
@@ -75,7 +78,7 @@ const ThemeEngine = {
             <div style="width:40px;height:40px;border-radius:12px;background:${o.preview};border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center">
               <div style="width:12px;height:12px;border-radius:50%;background:${o.accent}"></div>
             </div>
-            <div style="font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px">${typeof VC!=='undefined'?VC.icon(o.icon,16):''}${o.label}</div>
+            <div style="font-size:0.875rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px">${typeof VC!=='undefined'?VC.icon(o.icon,16):''}${o.label}</div>
           </div>`).join('')}
       </div>`;
     document.getElementById('themeOv').classList.add('on');

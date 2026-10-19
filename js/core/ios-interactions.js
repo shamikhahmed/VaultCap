@@ -27,7 +27,7 @@ function initSwipeDelete(containerEl, deleteCallback) {
       const favBg = document.createElement('div');
       favBg.className = 'entry-fav-bg';
       favBg.textContent = '⭐';
-      favBg.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:80px;background:var(--ok);display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:var(--r) 0 0 var(--r);transform:translateX(-100%);transition:transform .25s var(--spring)';
+      favBg.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:80px;background:var(--ok);display:flex;align-items:center;justify-content:center;font-size:1.375rem;border-radius:var(--r) 0 0 var(--r);transform:translateX(-100%);transition:transform .25s var(--spring)';
       entry.appendChild(favBg);
     }
     const main = entry.querySelector('.entry-main');

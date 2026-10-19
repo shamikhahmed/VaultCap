@@ -160,8 +160,8 @@ function openMore() {
   ).join('') + '<div style="height:24px"></div>';
   overlay.innerHTML =
     '<div class="vc-more-header">' +
-    '<div style="font-size:16px;font-weight:800;color:var(--text)">Vault</div>' +
-    '<button type="button" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'\')" aria-label="Close" class="btn btn-g" style="background:none;border:none;color:var(--text3);font-size:26px;min-width:44px;min-height:44px;line-height:1">×</button>' +
+    '<div style="font-size:1rem;font-weight:800;color:var(--text)">Vault</div>' +
+    '<button type="button" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'\')" aria-label="Close" class="btn btn-g" style="background:none;border:none;color:var(--text3);font-size:1.625rem;min-width:44px;min-height:44px;line-height:1">×</button>' +
     '</div>' +
     '<div class="vc-more-body">' +
     bodyHtml +
@@ -362,7 +362,7 @@ function buildNav() {
   groupOrder.forEach((grp) => {
     const label = groups[grp];
     if (!grouped[grp] || !grouped[grp].length) return;
-    sbHTML += `<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
+    sbHTML += `<div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
       `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
     ).join('');

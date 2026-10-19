@@ -188,7 +188,7 @@ const VC = {
     });
     const cmdBtn = document.querySelector('.sb-bot .btn-full');
     if (cmdBtn && !cmdBtn.querySelector('.vc-icon')) {
-      cmdBtn.innerHTML = `${this.icon('search', 16)}<span style="color:var(--text3);font-size:11px">Search everything</span><span class="kbd" style="margin-left:auto">⌘K</span>`;
+      cmdBtn.innerHTML = `${this.icon('search', 16)}<span style="color:var(--text3);font-size:0.6875rem">Search everything</span><span class="kbd" style="margin-left:auto">⌘K</span>`;
     }
   },
 };

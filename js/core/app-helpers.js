@@ -70,12 +70,29 @@ function initAmountFormatting(container) {
 }
 
 // ===================== HAPTIC FEEDBACK =====================
+// iOS has no navigator.vibrate — use the Capacitor Haptics plugin (Taptic Engine) in the app.
+const _nativeHaptics = (function () {
+  try {
+    if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.registerPlugin) {
+      return Capacitor.registerPlugin('Haptics');
+    }
+  } catch (e) {}
+  return null;
+})();
+function _hImpact(style, fallback) {
+  if (_nativeHaptics) { try { _nativeHaptics.impact({ style: style }); } catch (e) {} return; }
+  if (navigator.vibrate) navigator.vibrate(fallback);
+}
+function _hNotify(type, fallback) {
+  if (_nativeHaptics) { try { _nativeHaptics.notification({ type: type }); } catch (e) {} return; }
+  if (navigator.vibrate) navigator.vibrate(fallback);
+}
 const Haptic = {
-  save()   { if (navigator.vibrate) navigator.vibrate(30); },
-  del()    { if (navigator.vibrate) navigator.vibrate([50,30,50]); },
-  error()  { if (navigator.vibrate) navigator.vibrate([100,50,100]); },
-  lock()   { if (navigator.vibrate) navigator.vibrate(50); },
-  tap()    { if (navigator.vibrate) navigator.vibrate(6); },
+  save()   { _hNotify('SUCCESS', 30); },
+  del()    { _hImpact('MEDIUM', [50,30,50]); },
+  error()  { _hNotify('ERROR', [100,50,100]); },
+  lock()   { _hImpact('HEAVY', 50); },
+  tap()    { _hImpact('LIGHT', 6); },
 };
 
 // ===================== SECURITY HARDENING =====================
@@ -117,6 +134,31 @@ function printReport(html, jobName) {
   return true;
 }
 window.printReport = printReport;
+
+/** Dynamic Type (iOS app): WKWebView resolves `-apple-system-body` to the user's preferred body size
+ *  (17pt at the default "Large" setting). Scale the rem root by size/17, capped so layouts stay usable. */
+function applyDynamicType() {
+  if (!isNativeApp()) return;
+  try {
+    const probe = document.createElement('span');
+    probe.style.cssText = 'font:-apple-system-body;position:absolute;visibility:hidden;pointer-events:none';
+    probe.textContent = 'A';
+    document.body.appendChild(probe);
+    const px = parseFloat(getComputedStyle(probe).fontSize) || 17;
+    probe.remove();
+    const scale = Math.min(1.6, Math.max(0.85, px / 17));
+    document.documentElement.style.setProperty('--dt-scale', scale.toFixed(3));
+    if (document.documentElement.dataset.dtScale !== scale.toFixed(2)) {
+      document.documentElement.dataset.dtScale = scale.toFixed(2);
+      document.dispatchEvent(new Event('vc-text-size'));
+    }
+  } catch (e) {}
+}
+window.applyDynamicType = applyDynamicType;
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyDynamicType);
+else applyDynamicType();
+// Text size is changed in the Settings app → re-read when VaultCap comes back to the foreground
+document.addEventListener('visibilitychange', function () { if (!document.hidden) applyDynamicType(); });
 
 (function nativeViewport() {
   if (!isNativeApp()) return;

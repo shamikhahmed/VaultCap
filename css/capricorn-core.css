@@ -172,7 +172,7 @@
   background: var(--cap-accent);
   color: var(--cap-accent-contrast);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.2;
   text-decoration: none;
   border: 0;
@@ -1014,7 +1014,7 @@ body.cap-has-scene > #root {
   flex-shrink: 0;
   padding: 8px 14px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: inherit;
   line-height: 1.2;
@@ -1095,7 +1095,7 @@ body.cap-has-scene > #root {
   background: none;
   border: none;
   color: var(--cap-accent, var(--accent));
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
@@ -1119,20 +1119,20 @@ body.cap-has-scene > #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 1.875rem;
   flex-shrink: 0;
   background: linear-gradient(135deg, color-mix(in srgb, var(--cap-accent, var(--accent)) 80%, var(--navy-deep)), color-mix(in srgb, var(--cap-accent, var(--accent)) 40%, var(--vc-hex-0af)));
 }
 .cap-member-meta { flex: 1; min-width: 0; }
 .cap-member-name {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--cap-text, var(--text));
   line-height: 1.2;
   word-break: break-word;
 }
 .cap-member-sub {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--cap-text-muted, var(--text3));
   margin-top: 2px;
 }
@@ -1163,13 +1163,13 @@ body.cap-has-scene > #root {
   font-family: inherit;
 }
 .cap-stat-tile-val {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: 800;
   color: var(--cap-text, var(--text));
   font-variant-numeric: tabular-nums;
 }
 .cap-stat-tile-lbl {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--cap-text-muted, var(--text3));
   margin-top: 2px;
 }

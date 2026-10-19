@@ -4,9 +4,9 @@
 const ThreatModel = {
   show() {
     const body = `
-      <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.6;color:var(--text2)">
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:0.8125rem;line-height:1.6;color:var(--text2)">
         <div style="background:rgba(0,122,255,.08);border:1px solid rgba(0,122,255,.22);border-radius:14px;padding:14px">
-          <div style="font-weight:800;font-size:14px;color:var(--text);margin-bottom:6px">Your threat model</div>
+          <div style="font-weight:800;font-size:0.875rem;color:var(--text);margin-bottom:6px">Your threat model</div>
           <div>VaultCap assumes your device may be lost, inspected, or used offline. Secrets stay on-device unless <strong>you</strong> export them.</div>
         </div>
 
@@ -64,7 +64,7 @@ const ThreatModel = {
           </ul>
         </div>
 
-        <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12px;color:var(--text3)">
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:0.75rem;color:var(--text3)">
           Vault ID (Settings → About) helps support tickets — it is <strong>not</strong> a password and cannot decrypt data.
         </div>
       </div>`;

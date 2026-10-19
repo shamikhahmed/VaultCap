@@ -7,6 +7,15 @@ const PinHash = {
     return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
   },
 
+  /** Weak = demo PIN, all-same digits, or a straight run (123456, 654321). Stored as a flag only — never the PIN. */
+  isWeak(pin) {
+    const p = String(pin || '');
+    if (!/^\d{4,}$/.test(p)) return false;
+    if (/^(\d)\1+$/.test(p)) return true;
+    const up = '01234567890123456789', down = '98765432109876543210';
+    return up.includes(p) || down.includes(p);
+  },
+
   timingSafeEqual(a, b) {
     const x = String(a);
     const y = String(b);

@@ -68,12 +68,12 @@ const Currency = {
     const isManual = manualRate !== undefined;
     const inPkr = displayRate ? (usdToPkr / displayRate) : null;
     const border = i > 0 ? 'border-top:1px solid var(--border);' : '';
-    const manualBadge = isManual ? '<span style="font-size:11px;background:rgba(255,152,0,.15);color:var(--warn);border-radius:4px;padding:1px 5px;font-weight:700">MANUAL</span>' : '';
+    const manualBadge = isManual ? '<span style="font-size:0.6875rem;background:rgba(255,152,0,.15);color:var(--warn);border-radius:4px;padding:1px 5px;font-weight:700">MANUAL</span>' : '';
     const rateText = displayRate ? displayRate.toFixed(4) : '—';
     const pkrText = inPkr ? ' · 1 ' + c.code + ' = <strong class="vc-ix-22">' + inPkr.toFixed(2) + '</strong> PKR' : '';
-    const clearBtn = isManual ? '<button type="button" data-act="Currency._clearManual(\'' + c.code + '\')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
+    const clearBtn = isManual ? '<button type="button" data-act="Currency._clearManual(\'' + c.code + '\')" style="font-size:0.6875rem;color:var(--text3);background:none;border:none;cursor:pointer;touch-action:manipulation">Use live ↺</button>' : '';
     return '<div style="padding:14px 16px;' + border + 'display:flex;align-items:center;gap:12px">' +
-      '<div style="font-size:22px;flex-shrink:0">' + c.flag + '</div>' +
+      '<div style="font-size:1.375rem;flex-shrink:0">' + c.flag + '</div>' +
       '<div class="vc-ix-20">' +
         '<div class="vc-ix-173">' +
           '<div class="vc-ix-25">' + c.code + '</div>' +
@@ -86,7 +86,7 @@ const Currency = {
       '</div>' +
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
         '<input type="number" value="' + (manualRate !== undefined ? manualRate : '') + '" placeholder="' + (liveRate ? liveRate.toFixed(4) : 'Live') + '" ' +
-          'style="width:90px;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-size:13px;text-align:right" ' +
+          'style="width:90px;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-size:0.8125rem;text-align:right" ' +
           'data-act-input="Currency._setManual(\'' + c.code + '\',this.value)" title="Override rate manually">' +
         clearBtn +
       '</div>' +
@@ -122,9 +122,9 @@ const Currency = {
         '<div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px">' +
           '<div class="vc-ix-88">' +
             '<div class="vc-ix-56">Exchange Rates</div>' +
-            '<button type="button" data-act="Currency._refreshRates()" style="background:var(--glass2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;touch-action:manipulation">↻ Refresh</button>' +
+            '<button type="button" data-act="Currency._refreshRates()" style="background:var(--glass2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:0.6875rem;font-weight:700;cursor:pointer;touch-action:manipulation">↻ Refresh</button>' +
           '</div>' +
-          '<div style="font-size:11px;color:' + staleColor + '">' + staleIcon + ' Last updated: ' + lastUpdated + '</div>' +
+          '<div style="font-size:0.6875rem;color:' + staleColor + '">' + staleIcon + ' Last updated: ' + lastUpdated + '</div>' +
           '<div class="vc-ix-221">Base: 1 USD · Tap any rate to override manually</div>' +
         '</div>' +
 
@@ -133,22 +133,22 @@ const Currency = {
         '</div>' +
 
         '<div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px">' +
-          '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Quick Convert</div>' +
+          '<div style="font-size:0.8125rem;font-weight:700;color:var(--text);margin-bottom:12px">Quick Convert</div>' +
           '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
             '<input type="number" id="conv-amount" placeholder="Amount" value="100" ' +
-              'style="flex:1;min-width:80px;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:16px" ' +
+              'style="flex:1;min-width:80px;background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:1rem" ' +
               'data-act-input="Currency._updateConvert()">' +
             '<select id="conv-from" data-act-change="Currency._updateConvert()" ' +
-              'style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px">' +
+              'style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:0.875rem">' +
               fromOpts +
             '</select>' +
-            '<span style="color:var(--text3);font-size:18px;font-weight:300">→</span>' +
+            '<span style="color:var(--text3);font-size:1.125rem;font-weight:300">→</span>' +
             '<select id="conv-to" data-act-change="Currency._updateConvert()" ' +
-              'style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px">' +
+              'style="background:var(--input,var(--glass2));border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:0.875rem">' +
               toOpts +
             '</select>' +
           '</div>' +
-          '<div id="conv-result" style="margin-top:12px;font-size:22px;font-weight:800;color:var(--accent);text-align:center"></div>' +
+          '<div id="conv-result" style="margin-top:12px;font-size:1.375rem;font-weight:800;color:var(--accent);text-align:center"></div>' +
         '</div>' +
 
       '</div>';

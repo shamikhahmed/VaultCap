@@ -68,19 +68,23 @@ const VaultProfiles = {
     this.switch('personal');
   },
   showDemoGuide() {
-    Modal.open('Guided Demo',
-      '<div role="document">' +
-      '<h2 tabindex="-1" id="demo-guide-title" class="vc-ix-8" style="margin:0 0 10px;font-size:18px;font-weight:700;color:var(--text)">Guided Demo</h2>' +
-      '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">' +
-      (typeof VC !== 'undefined' ? '<span aria-hidden="true">' + VC.icon('sparkles', 28) + '</span>' : '') +
-      '<p style="margin:0;font-size:13px;color:var(--text2);line-height:1.65">This is a <strong>sample vault</strong> with fictional data — safe to explore and show others.</p>' +
+    const n = (k) => (Array.isArray(S[k]) ? S[k].length : 0);
+    const members = (typeof Family !== 'undefined' && Family.memberCount) ? Family.memberCount() : n('familyMembers');
+    const ic = (name) => (typeof VC !== 'undefined' ? VC.icon(name, 20) : '');
+    const row = (icon, title, sub) =>
+      '<div class="dg-row"><span class="dg-row__ic" aria-hidden="true">' + ic(icon) + '</span>' +
+      '<span class="dg-row__txt"><span class="dg-row__t">' + title + '</span><span class="dg-row__s">' + sub + '</span></span></div>';
+    Modal.open('Sample vault',
+      '<div class="demo-guide" role="document">' +
+      '<img src="icons/mark.svg" alt="" class="demo-guide__mark" width="56" height="56">' +
+      '<h2 tabindex="-1" id="demo-guide-title" class="demo-guide__title">Welcome to the sample vault</h2>' +
+      '<p class="demo-guide__lead">A fictional household across the UK, Pakistan and the UAE — explore freely. It is completely separate from your own vault.</p>' +
+      '<div class="demo-guide__rows">' +
+      row('trending-up', 'Net worth in every currency', n('banks') + ' accounts · ' + n('cards') + ' cards · ' + n('investments') + ' investments') +
+      row('file', 'Documents with expiry alerts', n('documents') + ' documents — passports, IDs, visas') +
+      row('users', 'Family vault', (members || 0) + ' family members with their own records') +
       '</div>' +
-      '<ol style="margin:0;padding-left:1.25rem;font-size:13px;color:var(--text2);line-height:1.55;display:flex;flex-direction:column;gap:8px">' +
-      '<li>Dashboard — net worth, health score, expiry alerts</li>' +
-      '<li>Banks &amp; Cards — tap any module in the nav</li>' +
-      '<li>Settings → Exit Demo when you want your real vault</li>' +
-      '</ol>' +
-      '<div style="margin-top:14px;padding:12px;background:rgba(0,213,255,.1);border:1px solid rgba(0,213,255,.25);border-radius:12px;font-size:12px;color:var(--text3)">Demo PIN: <strong class="vc-ix-189">123456</strong> · No real data is stored here</div>' +
+      '<p class="demo-guide__foot">Leave anytime with <strong>Exit</strong> in the sample banner.</p>' +
       '</div>',
       '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start exploring</button>'
     );
@@ -94,14 +98,14 @@ const VaultProfiles = {
   showSwitcher() {
     const active = this.active();
     Modal.open('Vault Profiles',
-      '<div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Your real vault is <strong>My Vault</strong>. Demo is for tours only. After switching, unlock with that vault’s PIN.</div>' +
+      '<div style="font-size:0.8125rem;color:var(--text2);margin-bottom:12px;line-height:1.5">Each profile is completely isolated. Your real vault is <strong>My Vault</strong>. Demo is for tours only. After switching, unlock with that vault’s PIN.</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px">' +
       VaultProfiles.pickerProfiles().map(p =>
         '<div data-act="VaultProfiles.switch(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:14px;background:' + (p.id===active?'rgba(0,213,255,.12)':'var(--glass)') + ';border:1px solid ' + (p.id===active?'rgba(0,213,255,.4)':'var(--border)') + ';border-radius:14px;cursor:pointer;touch-action:manipulation;min-height:48px">' +
-        '<div style="font-size:28px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon(p.ic || 'vault', 24) : '') + '</div>' +
-        '<div class="vc-ix-5"><div class="vc-ix-25">' + p.label + (p.id===active?' <span style="font-size:11px;color:var(--accent)">● Active</span>':'') + '</div>' +
+        '<div style="font-size:1.75rem;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon(p.ic || 'vault', 24) : '') + '</div>' +
+        '<div class="vc-ix-5"><div class="vc-ix-25">' + p.label + (p.id===active?' <span style="font-size:0.6875rem;color:var(--accent)">● Active</span>':'') + '</div>' +
         '<div class="vc-ix-8">' + p.desc + '</div></div>' +
-        '<div style="font-size:16px;color:var(--text3)">›</div>' +
+        '<div style="font-size:1rem;color:var(--text3)">›</div>' +
         '</div>'
       ).join('') +
       (active === 'demo' ? '<button type="button" class="btn btn-g btn-full btn-sm vc-ix-27" data-act="VaultProfiles.exitDemo()">← Back to My Vault</button>' : '') +

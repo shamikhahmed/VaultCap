@@ -14,7 +14,7 @@ const Friends = {
     const cur = S.user?.currency || 'PKR';
     const sm = document.getElementById('friendSummary');
     if (sm && allFriends.length > 0) {
-      sm.innerHTML = `<div class="widget vc-ix-9"><div class="vc-ix-224"><div class="vc-ix-225"><div class="vc-ix-24">Friends</div><div style="font-size:22px;font-weight:800">${allFriends.length}</div></div><div class="vc-ix-225"><div class="vc-ix-24">They owe me</div><div class="sens vc-ix-210">${U.fmtCur(owedToYou, cur)}</div></div><div style="flex:1;text-align:center;padding:10px 0"><div class="vc-ix-24">I owe them</div><div style="font-size:16px;font-weight:700;color:var(--err)" class="sens">${U.fmtCur(youOwe, cur)}</div></div></div></div>`;
+      sm.innerHTML = `<div class="widget vc-ix-9"><div class="vc-ix-224"><div class="vc-ix-225"><div class="vc-ix-24">Friends</div><div style="font-size:1.375rem;font-weight:800">${allFriends.length}</div></div><div class="vc-ix-225"><div class="vc-ix-24">They owe me</div><div class="sens vc-ix-210">${U.fmtCur(owedToYou, cur)}</div></div><div style="flex:1;text-align:center;padding:10px 0"><div class="vc-ix-24">I owe them</div><div style="font-size:1rem;font-weight:700;color:var(--err)" class="sens">${U.fmtCur(youOwe, cur)}</div></div></div></div>`;
     } else if (sm) { sm.innerHTML = ''; }
     const q = (document.getElementById('friendQ')?.value || '').toLowerCase();
     const data = allFriends.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q))
