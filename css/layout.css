@@ -322,7 +322,11 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
   padding:
     max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px))
     0
-    max(env(safe-area-inset-bottom, 0px), var(--cap-safe-b, 0px));
+    /* +8px clears Switch Vault on Duo-open (matrix N7: row ended 3pt inside home zone) */
+    max(
+      calc(env(safe-area-inset-bottom, 0px) + 8px),
+      calc(var(--cap-safe-b, 0px) + 8px)
+    );
   /* Scroll instead of clipping when keypad + Switch Vault row exceed short viewports (Duo open, iPad landscape) */
   overflow-x: hidden;
   overflow-y: auto;
@@ -334,6 +338,8 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
   padding: 0 20px; position: relative; z-index: 1;
 }
 .lk-top { padding-top: 4px; }
+/* Duo-open 466×678: Switch Vault row must clear home-indicator (matrix N7) */
+.lk-bot { padding-bottom: 16px; }
 /* clock */
 #lkClock {
   font-size: clamp(64px,17vw,88px); font-weight: 200;

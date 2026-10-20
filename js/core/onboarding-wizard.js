@@ -250,14 +250,14 @@ const Onboarding = {
     if (!this._modules.family) S.modules.family = false;
     if (!this._modules.vehicles) { if(!mtp.hiddenAssets.includes('vehicles')) mtp.hiddenAssets.push('vehicles'); }
     if (!this._modules.documents) { if(!mtp.hiddenVault.includes('documents')) mtp.hiddenVault.push('documents'); }
-    saveTabPrefs(mtp);
+    if (typeof saveTabPrefs === 'function') saveTabPrefs(mtp);
     S.user.modulePrefs = this._modules;
 
     S.user.onboardingComplete = true;
     S.user.showZakat = this._prefs.zakat || this._modules.zakat;
     S.user.hasBusiness = this._prefs.business;
     Store.save();
-    buildNav();
+    if (typeof buildNav === 'function') buildNav();
   },
 
   _finish() {

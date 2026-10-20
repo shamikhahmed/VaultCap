@@ -20,7 +20,8 @@
   --lx-gold-hi: #ecc55a;
   --lx-gold-lo: #a97c0d;
   --lx-gold-grad: linear-gradient(180deg, #e8bd45 0%, #d4a017 52%, #b8890f 100%);
-  --lx-gold-ink: #1b1405;
+  /* Darker ink: was #1b1405 → ~4.4:1 on gold; #0a0800 clears WCAG 4.5 on #d4a017 (LH a11y) */
+  --lx-gold-ink: #0a0800;
   --lx-gold-soft: rgba(212, 160, 23, 0.12);
   --lx-gold-line: rgba(212, 160, 23, 0.38);
   --lx-shadow-1: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
@@ -330,8 +331,8 @@ body.light #settTabs .tab-pill.on { background: rgba(10, 18, 32, 0.06); border-c
 /* Chips: compact visual pill, full 44pt hit area */
 .chip { position: relative; }
 .chip::after { content: ''; position: absolute; left: 0; right: 0; top: -5px; bottom: -5px; }
-/* N7: lock row clears the home indicator on every device */
-.lk-hint { margin-bottom: 8px; }
+/* N7: lock row clears the home indicator on every device (Duo-open needs >8 with banner) */
+.lk-hint { margin-bottom: 12px; }
 /* N9: tall screens — centre the lock content instead of a dead band between PIN and keypad */
 @media (min-height: 801px) {
   #pgLock { justify-content: center; gap: clamp(28px, 6vh, 64px); }

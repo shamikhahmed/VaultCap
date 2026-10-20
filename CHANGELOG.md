@@ -12,6 +12,13 @@
 - Gallery regenerated; App Store pack `qa/v6/APP-STORE.md` (Finance); Experience Lab matrices + pptx/webm under `build/qa/v6/`
 - iPad Pro 12.9" 4th + 6th gen simulator retests alive on quiet host
 
+### Order 2 — J/K close (2026-10-20)
+
+- Code-split: first-load `dist/vaultcap.boot.js` (~198 KB) + deferred `dist/vaultcap.app.js`; VaultLazy loads tax/zakat/smart-db/family/documents/import; CSP `script-src 'self'` unchanged
+- Install banner CTA opaque navy/white (LH a11y contrast 100)
+- SW `vaultcap-v95` precaches boot/app + lazy modules
+- LH mobile 3× honest median perf **82** (not ≥90) — LCP causes in `qa/v6/APP-REPORT-v6.md`
+
 
 ## [5.3.0] — 2026-10-14
 
