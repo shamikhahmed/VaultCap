@@ -212,7 +212,14 @@ async function unlockDemoVault(page) {
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
-  await page.waitForFunction(() => typeof window.loadDemoProfile === 'function', { timeout: 15000 });
+  await page.waitForFunction(
+    () =>
+      typeof loadDemoProfile === 'function' &&
+      typeof VaultDB !== 'undefined' &&
+      typeof Store !== 'undefined' &&
+      typeof R !== 'undefined',
+    { timeout: 20000 }
+  );
   await page.evaluate(() => {
     localStorage.removeItem('vo_demo_guide_pending');
     if (window.VER) localStorage.setItem('vos_wn_ver', window.VER);
