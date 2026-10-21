@@ -24,6 +24,16 @@
   background-clip: text;
 }
 
+/* Demo / early home: keep title opaque so deferred identity does not re-stamp LCP */
+html[data-vc-demo] .vault-home-title,
+html[data-vc-demo] .vault-display-title.vault-home-title {
+  color: #f4f6fa;
+  -webkit-text-fill-color: #f4f6fa;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
 /* ─ Vault panel chrome (inset steel border, soft shadow) ─ */
 .vault-panel,
 .dash-card,

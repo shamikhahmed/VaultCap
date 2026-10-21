@@ -1,5 +1,6 @@
 [
   "js/core/branding.js",
+  "js/core/webauthn-unlock.js",
   "js/core/onboarding-wizard.js",
   "js/core/family-pickers.js",
   "js/modules/rates.js",

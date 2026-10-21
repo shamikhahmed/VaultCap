@@ -55,29 +55,35 @@ html[data-vc-demo] #pgHome{display:flex!important}
 .vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
 .vault-splash__bar{width:0;height:100%;background:#D4A017}
 .vault-door{display:none}
-.vault-home-title,.vault-display-title{margin:0;font:700 1.625rem/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.18em;color:#f4f6fa;font-family:system-ui,-apple-system,sans-serif!important}
+.vault-home-title,.vault-display-title{margin:0;font:700 clamp(36px,10vw,46px)/1.05 system-ui,-apple-system,sans-serif;letter-spacing:.18em;color:#f4f6fa!important;-webkit-text-fill-color:#f4f6fa!important;background:none!important;-webkit-background-clip:unset!important;background-clip:unset!important;text-transform:uppercase;font-family:system-ui,-apple-system,sans-serif!important}
+#pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:#060a12}
 #pgHome .vc-mark--hero{width:60px;height:60px;border-radius:16px;display:block;margin:0 auto}
 #homeThemes{min-height:48px}
 .home-modules{min-height:140px}
+.home-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:0.6875rem;color:rgba(244,246,250,.72);font-weight:500}
 #demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 0.75rem/1.2 system-ui,sans-serif}
 .panic-btn{display:none;width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;padding:0}
 .cap-demo-banner{position:fixed;top:0;left:0;right:0;z-index:10000;min-height:44px;box-sizing:border-box}
 </style>
 <script src="js/boot-cache.js"></script>
 <link rel="preload" href="css/tokens.css" as="style">
-<link rel="stylesheet" href="css/fonts-local.css">
 <link rel="stylesheet" href="css/tokens.css">
 <style>:root{--cap-accent:var(--accent);--cap-accent-fg:var(--accent-fg)}</style>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/brand-mark.css">
 <link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/identity.css">
-<link rel="stylesheet" href="css/luxe.css">
+<link rel="stylesheet" href="css/fonts-local.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/brand-mark.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/identity.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/luxe.css" media="print" data-vc-defer-css>
 <link rel="stylesheet" href="css/capricorn-core.css" media="print" data-vc-defer-css>
 <link rel="stylesheet" href="css/themes.css" media="print" data-vc-defer-css>
 <link rel="stylesheet" href="css/ios-tokens.css" media="print" data-vc-defer-css>
 <noscript>
+<link rel="stylesheet" href="css/fonts-local.css">
+<link rel="stylesheet" href="css/brand-mark.css">
+<link rel="stylesheet" href="css/identity.css">
+<link rel="stylesheet" href="css/luxe.css">
 <link rel="stylesheet" href="css/capricorn-core.css">
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/ios-tokens.css">
@@ -493,8 +499,7 @@ html[data-vc-demo] #pgHome{display:flex!important}
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=5.4.1"></script>
-<script src="js/boot-ver.js"></script>
+<script src="js/storage.js?v=5.4.2"></script>
 <script src="js/boot-load.js"></script>
 
 

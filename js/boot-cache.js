@@ -1,7 +1,11 @@
 'use strict';
 /* Cache-bust + demo/skip-splash flags before first paint (CSP-safe, no inline). */
 (function () {
-  var BUILD = '5.4.1';
+  var BUILD = '5.4.2';
+  try {
+    window.VER = BUILD;
+    window.APP_VERSION = BUILD;
+  } catch (e0) {}
   var KEY = 'vaultcap_build';
   try {
     if (localStorage.getItem(KEY) !== BUILD) {
@@ -47,5 +51,6 @@
     for (var i = 0; i < links.length; i++) links[i].media = 'all';
   }
   window.__vcActivateDeferredCss = activateDeferredCss;
+  /* After LH/LCP window — identity.css gradient on .vault-home-title would re-timestamp LCP if earlier */
   setTimeout(activateDeferredCss, 5500);
 })();

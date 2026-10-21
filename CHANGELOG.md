@@ -1,3 +1,9 @@
+## [5.4.2] — 2026-10-22
+
+- LH mobile: defer non-critical CSS (`identity`, `luxe`, `brand-mark`, `fonts-local`) off first paint; critical `#pgHome` + solid system-ui LCP title (no gradient clip before paint)
+- Boot trim: `webauthn-unlock.js` → app chunk; version stamp colocated in `boot-cache.js` (drops blocking `boot-ver.js`)
+- SW `vaultcap-v98` · query `?v=5.4.2`
+
 ## [5.4.1] — 2026-10-21
 
 - v7-fix LH mobile: early `data-vc-demo` home paint; `boot-load.js` defers boot parse after rAF; boot trim (branding/onboarding-wizard → app); delayed demo banner (CLS); `font-display: optional`; hero mark polish deferred

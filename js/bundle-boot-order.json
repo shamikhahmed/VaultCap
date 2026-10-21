@@ -26,7 +26,6 @@
   "js/core/app-helpers.js",
   "js/core/act-helpers.js",
   "js/core/act-delegate.js",
-  "js/core/webauthn-unlock.js",
   "js/core/demo-profiles.js",
   "js/app.js",
   "js/cap-demo-mode.js"
