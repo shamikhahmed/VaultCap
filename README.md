@@ -12,7 +12,7 @@ VaultCap by Capricorn Systems is a zero-knowledge personal vault built as a PWA.
 ---
 
 
-## Real stories
+## Example stories
 
 Illustrative day-in-the-life stories (fictional personas) with screenshots and captions:
 

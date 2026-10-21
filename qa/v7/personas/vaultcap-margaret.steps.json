@@ -1,15 +1,18 @@
 {
   "personaId": "vaultcap-margaret",
+  "personaName": "Margaret Ellis",
+  "largeText": true,
   "baseUrl": "/",
   "viewport": { "width": 375, "height": 667, "deviceScaleFactor": 2 },
   "prep": [
-    { "action": "goto", "path": "/?sample=1&dt=1.6" },
+    { "action": "goto", "path": "/?demo=1&dt=1.6" },
     { "action": "wait", "ms": 800 }
   ],
   "steps": [
-    { "id": "01-home-large", "title": "Home large text", "action": "nav", "page": "dashboard", "screenshot": true, "alt": "Margaret's vault home at larger text size on iPhone SE" },
+    { "id": "01-home-large", "title": "Home large text", "action": "nav", "page": "dashboard", "screenshot": true, "alt": "Margaret's vault home at larger text size on iPhone" },
     { "id": "02-documents", "title": "Documents", "action": "nav", "page": "documents", "screenshot": true, "alt": "Pension and insurance documents with large readable text" },
-    { "id": "03-reminders", "title": "Reminders", "action": "nav", "page": "reminders", "screenshot": true, "alt": "Policy renewal reminders" },
-    { "id": "04-settings", "title": "Settings", "action": "nav", "page": "settings", "screenshot": true, "alt": "Settings list with large text and clear labels" }
+    { "id": "03-documents-ipad", "title": "Documents iPad", "action": "nav", "page": "documents", "screenshot": true, "alt": "Documents on iPad while son helps label files" },
+    { "id": "04-reminders", "title": "Reminders", "action": "nav", "page": "reminders", "screenshot": true, "alt": "Policy renewal reminders on laptop" },
+    { "id": "05-settings", "title": "Settings", "action": "nav", "page": "settings", "screenshot": true, "alt": "Settings list with large text and clear labels" }
   ]
 }

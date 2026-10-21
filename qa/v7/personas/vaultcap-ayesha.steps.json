@@ -1,18 +1,18 @@
 {
   "personaId": "vaultcap-ayesha",
+  "personaName": "Ayesha Siddiqui",
   "baseUrl": "/",
   "viewport": { "width": 402, "height": 874, "deviceScaleFactor": 3 },
   "prep": [
-    { "action": "goto", "path": "/?sample=1" },
-    { "action": "wait", "ms": 800 },
-    { "action": "click", "selector": "[data-act*='sample'], .demo-enter, #btnExploreSample, button:has-text('sample')", "optional": true },
-    { "action": "wait", "ms": 500 }
+    { "action": "goto", "path": "/?demo=1" },
+    { "action": "wait", "ms": 800 }
   ],
   "steps": [
     { "id": "01-home", "title": "Vault home", "action": "screenshot", "route": "dashboard", "alt": "Ayesha's vault home showing sample net worth and upcoming reminders" },
     { "id": "02-documents", "title": "Documents", "action": "nav", "page": "documents", "screenshot": true, "alt": "Documents list with passport and school papers" },
     { "id": "03-family", "title": "Family", "action": "nav", "page": "family", "screenshot": true, "alt": "Family profiles section for shared household vault" },
-    { "id": "04-reminders", "title": "Reminders", "action": "nav", "page": "reminders", "screenshot": true, "alt": "Reminders showing a passport renewal coming up" },
-    { "id": "05-zakat", "title": "Zakat", "action": "nav", "page": "zakat", "screenshot": true, "alt": "Zakat summary from holdings in the sample vault" }
+    { "id": "04-banks", "title": "Banks", "action": "nav", "page": "banks", "screenshot": true, "alt": "Sample bank accounts on laptop before Ramadan planning" },
+    { "id": "05-zakat", "title": "Zakat", "action": "nav", "page": "zakat", "screenshot": true, "alt": "Zakat summary from holdings in the sample vault" },
+    { "id": "06-reminders", "title": "Reminders", "action": "nav", "page": "reminders", "screenshot": true, "alt": "Reminders showing a passport renewal coming up" }
   ]
 }
