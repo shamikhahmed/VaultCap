@@ -10,6 +10,9 @@ test.describe('VaultCap document PDF', () => {
   test('buildPdfHtml includes vault name, holder, photo for single doc', async ({ page }) => {
     await unlockDemoVault(page);
     await dismissOverlays(page);
+    await page.evaluate(async () => {
+      if (typeof VaultLazy !== 'undefined') await VaultLazy.ensure('documents');
+    });
 
     const html = await page.evaluate((jpeg) => {
       const doc = {
@@ -37,6 +40,9 @@ test.describe('VaultCap document PDF', () => {
   test('exportSelectedPdf opens popup with N sections', async ({ page }) => {
     await unlockDemoVault(page);
     await dismissOverlays(page);
+    await page.evaluate(async () => {
+      if (typeof VaultLazy !== 'undefined') await VaultLazy.ensure('documents');
+    });
 
     const popupPromise = page.waitForEvent('popup', { timeout: 10000 });
 
