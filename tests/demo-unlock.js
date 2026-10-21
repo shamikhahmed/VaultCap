@@ -212,13 +212,15 @@ async function unlockDemoVault(page) {
   });
   await page.goto('/?demo=1');
   await page.waitForLoadState('load');
+  // Under full-suite load, deferred scripts can lag — wait for boot + VaultDB.
   await page.waitForFunction(
     () =>
+      window.__APP_READY__ === true &&
       typeof loadDemoProfile === 'function' &&
       typeof VaultDB !== 'undefined' &&
       typeof Store !== 'undefined' &&
       typeof R !== 'undefined',
-    { timeout: 20000 }
+    { timeout: 45000 }
   );
   await page.evaluate(() => {
     localStorage.removeItem('vo_demo_guide_pending');
