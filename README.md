@@ -1,7 +1,6 @@
 # VaultCap — everything you own, encrypted on your device
 
 **Version:** 5.4.0
-
 [![Live App](https://img.shields.io/badge/Live%20App-VaultCap-d4a017?style=for-the-badge&labelColor=121a2a)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
 [![License](https://img.shields.io/badge/License-Source%20Available-green?style=for-the-badge)](./LICENSE)
@@ -11,6 +10,15 @@
 VaultCap by Capricorn Systems is a zero-knowledge personal vault built as a PWA. No accounts. No subscriptions. Network features (imports) are opt-in and off by default. All data stays on your device, encrypted with AES-256-GCM.
 
 ---
+
+
+## Real stories
+
+Illustrative day-in-the-life stories (fictional personas) with screenshots and captions:
+
+- App stories: https://shamikhahmed.github.io/apps/vaultcap/
+- All Cap stories: https://shamikhahmed.github.io/stories/
+
 
 ## What It Does
 

@@ -85,7 +85,7 @@ Your PIN never leaves your device.
 
 ## Version
 
-**v5.1.1** — PIN-first · 100% free · CSP hardened
+**v5.4.0** — PIN-first · 100% free · CSP hardened
 
 ---
 
@@ -114,7 +114,7 @@ Built for Shamikh's life — designed for millions like it.
 
 ## Slide 10 — Design
 
-- Accent `#5b8dee` — trust blue on obsidian
+- Accent `#D4A017` — midnight + gold
 - Dark / Light / System appearance (Settings → Appearance)
 - Glass cards, command palette ⌘K
 - PWA — full offline after install
@@ -137,6 +137,18 @@ Try Smart Add, expense category charts, asset P&L summary, multi-currency cash o
 - **SIMs** — recharge + contract expiry in alerts & timeline
 
 ---
+
+
+---
+
+## Slide — Real people (illustrative)
+
+Three fictional personas show how people use VaultCap day to day — before/after numbers, timeline screenshots, and a short silent video with captions.
+
+**Stories:** https://shamikhahmed.github.io/apps/vaultcap/  
+**Index:** https://shamikhahmed.github.io/stories/
+
+*Illustrative story. People and data are fictional.*
 
 ## Slide 13 — Close
 
