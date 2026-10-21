@@ -14,8 +14,14 @@
 .sb-logo .vc-mark { width: 32px; height: 32px; border-radius: 8px; }
 #pgHome .vc-mark--hero {
   width: 60px; height: 60px; border-radius: 16px;
+  filter: none;
+}
+#pgHome.vc-mark-ready .vc-mark--hero {
   animation: float 4s ease-in-out infinite;
   filter: drop-shadow(0 8px 24px var(--glow));
+}
+@media (prefers-reduced-motion: reduce) {
+  #pgHome.vc-mark-ready .vc-mark--hero { animation: none; }
 }
 .ob-mark .vc-mark { width: 56px; height: 56px; border-radius: 14px; }
 .ob-mark--ready .vc-mark { width: 64px; height: 64px; border-radius: 16px; }

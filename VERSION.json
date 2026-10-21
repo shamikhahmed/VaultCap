@@ -1,6 +1,7 @@
 {
   "app": "VaultCap",
-  "version": "5.4.0",
-  "swCache": "vaultcap-v96",
-  "updated": "2026-10-21"
+  "version": "5.4.1",
+  "swCache": "vaultcap-v97",
+  "updated": "2026-10-21",
+  "notes": "v7-fix LH: demo early paint, deferred fleet CSS, boot-load after paint"
 }

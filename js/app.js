@@ -45,8 +45,10 @@ async function App() {
   const demoRequested = new URLSearchParams(location.search).get('demo') === '1';
   let splashSeen = false;
   try { splashSeen = sessionStorage.getItem('vc_splash_seen') === '1'; } catch (_) {}
-  // Fleet: splash first-launch only ≤600ms; demo cold path skips for LCP.
-  const skipSplash = !splash || splashSeen || demoRequested;
+  // Fleet: splash first-launch ≤200ms; demo / seen / reduced-motion skip for LCP.
+  let reduceMotion = false;
+  try { reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (_) {}
+  const skipSplash = !splash || splashSeen || demoRequested || reduceMotion || document.documentElement.hasAttribute('data-vc-demo');
   const markAppReady = () => {
     try {
       window.__APP_READY__ = true;
@@ -58,15 +60,15 @@ async function App() {
     markAppReady();
   } else {
     try { sessionStorage.setItem('vc_splash_seen', '1'); } catch (_) {}
-    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 40);
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 20);
     setTimeout(() => {
-      splash.style.transition = 'opacity 0.2s ease';
+      splash.style.transition = 'opacity 0.12s ease';
       splash.style.opacity = '0';
       setTimeout(() => {
         splash.style.display = 'none';
         markAppReady();
-      }, 200);
-    }, 400);
+      }, 120);
+    }, 80);
   }
 
   document.addEventListener('click', function(e) {
@@ -159,38 +161,49 @@ async function App() {
   const oldData = Store.loadRaw();
   if (oldData) { Migrate.run(); }
 
-  if (new URLSearchParams(location.search).get('demo') === '1') {
+  if (demoRequested) {
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.setItem('vo_demo_guide_pending', '1');
     if (typeof CapDemo !== 'undefined') {
       CapDemo.markActive();
-      CapDemo.showBanner('vaultcap', '<strong>Demo mode</strong> — guided vault. Lock PIN: <strong>123456</strong> (6 digits).');
+      // Banner after LCP/CLS window — early banner caused ~0.5 CLS
+      setTimeout(function () {
+        CapDemo.showBanner('vaultcap', '<strong>Demo mode</strong> — guided vault. Lock PIN: <strong>123456</strong> (6 digits).');
+      }, 5000);
     }
   }
 
   const isDemoProfile = typeof VaultProfiles !== 'undefined' && VaultProfiles.active() === 'demo';
 
-  // Demo KDF must not stall first paint — show shell, seed in parallel.
+  // Paint shell from sync hints before IndexedDB (cuts LCP render-delay).
+  const prefsHasVault = !!(prefs && prefs.hasVault);
+  const paintHome = isDemoProfile || prefsHasVault || !!(oldData && oldData.user && oldData.user.name);
+  if (paintHome) {
+    R.showHome();
+  } else {
+    document.getElementById('pgOnboard').style.display = 'flex';
+    OB.init();
+  }
+
   const demoPrep = isDemoProfile && typeof ensureDemoVaultReady === 'function'
     ? ensureDemoVaultReady()
     : Promise.resolve();
 
-  // Determine startup screen (do not await demo KDF first)
   const hasVaultDB = await VaultDB.isInitialized();
   const hasOldData = !!oldData;
-  const hasData    = hasVaultDB || hasOldData || isDemoProfile;
-  // Reload prefs after demo mark (first-visit: prefs loaded before seed ran)
+  const hasData = hasVaultDB || hasOldData || isDemoProfile;
   const freshPrefs = Store.loadPrefs();
-
-  if (!hasData || !(freshPrefs?.hasVault || prefs?.hasVault || oldData?.user?.name || isDemoProfile)) {
+  const shouldHome = hasData && !!(freshPrefs?.hasVault || prefs?.hasVault || oldData?.user?.name || isDemoProfile);
+  if (shouldHome && !paintHome) {
+    document.getElementById('pgOnboard').style.display = 'none';
+    R.showHome();
+  } else if (!shouldHome && paintHome) {
+    document.getElementById('pgHome').style.display = 'none';
     document.getElementById('pgOnboard').style.display = 'flex';
     OB.init();
-  } else {
-    R.showHome();
   }
 
-  // Finish demo seed off the critical path (unlock path reseeds if needed)
   if (isDemoProfile) {
     demoPrep.catch(function () { /* unlockDemoVaultWithPin reseeds */ });
   }

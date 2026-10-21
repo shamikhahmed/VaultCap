@@ -1,3 +1,9 @@
+## [5.4.1] — 2026-10-21
+
+- v7-fix LH mobile: early `data-vc-demo` home paint; `boot-load.js` defers boot parse after rAF; boot trim (branding/onboarding-wizard → app); delayed demo banner (CLS); `font-display: optional`; hero mark polish deferred
+- Honest LH mobile median still below 90 — see `qa/v7/LH-MOBILE.md`
+- SW `vaultcap-v97` · query `?v=5.4.1`
+
 ## [5.4.0] — 2026-10-21
 
 - HIG v7: `css/ios-tokens.css` (17 pt body ramp, semantic colours, hit44, inset list, sheet/tab tokens)

@@ -118,7 +118,8 @@ const R = {
   showHome() {
     ['pgLock', 'pgOnboard', 'app'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     document.body.classList.remove('on-lock');
-    document.getElementById('pgHome').style.display = 'flex';
+    const home = document.getElementById('pgHome');
+    if (home) home.style.display = 'flex';
     const hw = document.getElementById('hWelcome');
     const demo = typeof VaultProfiles !== 'undefined' && VaultProfiles.isDemo && VaultProfiles.isDemo();
     if (hw) hw.textContent = demo ? 'A sample household — explore freely'
@@ -127,9 +128,17 @@ const R = {
     if (ob) ob.textContent = demo ? 'Open sample vault' : 'Open My Vault';
     const dl = document.getElementById('homeDemoLink');
     if (dl) dl.style.display = demo ? 'none' : '';
-    ThemeEngine.renderDots();
-    if (typeof renderHomeModules === 'function') renderHomeModules();
-    if (typeof VC !== 'undefined') VC.refreshShellIcons();
+    const polish = function () {
+      ThemeEngine.renderDots();
+      if (typeof renderHomeModules === 'function') renderHomeModules();
+      if (typeof VC !== 'undefined') VC.refreshShellIcons();
+      if (home) home.classList.add('vc-mark-ready');
+    };
+    if (demo || document.documentElement.getAttribute('data-vc-demo') === '1') {
+      setTimeout(polish, 3200);
+    } else {
+      polish();
+    }
   },
   unlock() {
     const finish = () => {

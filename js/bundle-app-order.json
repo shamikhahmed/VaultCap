@@ -1,4 +1,6 @@
 [
+  "js/core/branding.js",
+  "js/core/onboarding-wizard.js",
   "js/core/family-pickers.js",
   "js/modules/rates.js",
   "js/modules/currency-engine.js",

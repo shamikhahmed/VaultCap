@@ -27,7 +27,7 @@ const VaultLazy = (() => {
     app() {
       if (typeof Dash !== 'undefined') return Promise.resolve();
       if (_appPromise) return _appPromise;
-      _appPromise = loadLocal('dist/vaultcap.app.js?v=5.4.0').catch((err) => {
+      _appPromise = loadLocal('dist/vaultcap.app.js?v=5.4.1').catch((err) => {
         _appPromise = null;
         throw err;
       });

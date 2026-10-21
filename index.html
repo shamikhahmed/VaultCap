@@ -6,7 +6,6 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script src="js/boot-cache.js" defer></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://open.er-api.com https://api.metals.live https://data-asg.goldprice.org https://vaultos-llm-proxy.shamikhahmed.workers.dev; frame-src 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
@@ -43,10 +42,13 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png" sizes="180x180">
 <link rel="apple-touch-icon" href="icons/icon-512.png" sizes="512x512">
 <meta name="color-scheme" content="dark light">
-<!-- Critical LCP path: paint splash/home mark+title before render-blocking CSS -->
+<!-- Critical LCP: stable #pgHome + demo flag; defer fleet-only CSS -->
 <style>
 html,body{margin:0;background:#060a12;color:#f4f6fa}
 #splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060a12;overflow:hidden}
+html[data-vc-demo] #splashScreen,html[data-vc-skip-splash] #splashScreen{display:none!important}
+#pgHome{position:fixed;inset:0;z-index:990;background:#060a12;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;box-sizing:border-box}
+html[data-vc-demo] #pgHome{display:flex!important}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
 .vault-splash__mark{width:72px;height:72px;border-radius:18px;margin-bottom:18px;display:block}
 .vault-splash__title{margin:0 0 8px;font:700 1.625rem/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f6fa}
@@ -54,25 +56,33 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 .vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
 .vault-splash__bar{width:0;height:100%;background:#D4A017}
 .vault-door{display:none}
-/* Critical a11y targets before layout.css (VLT-V3-5) */
+.vault-home-title,.vault-display-title{margin:0;font:700 1.625rem/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.18em;color:#f4f6fa;font-family:system-ui,-apple-system,sans-serif!important}
+#pgHome .vc-mark--hero{width:60px;height:60px;border-radius:16px;display:block;margin:0 auto}
+#homeThemes{min-height:48px}
+.home-modules{min-height:140px}
 #demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 0.75rem/1.2 system-ui,sans-serif}
 .panic-btn{display:none;width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;padding:0}
+.cap-demo-banner{position:fixed;top:0;left:0;right:0;z-index:10000;min-height:44px;box-sizing:border-box}
 </style>
-<link rel="preload" href="icons/mark.svg" as="image">
+<script src="js/boot-cache.js"></script>
 <link rel="preload" href="css/tokens.css" as="style">
-<link rel="preload" href="css/base.css" as="style">
 <link rel="stylesheet" href="css/fonts-local.css">
 <link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/capricorn-core.css">
 <style>:root{--cap-accent:var(--accent);--cap-accent-fg:var(--accent-fg)}</style>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/themes.css">
-<link rel="stylesheet" href="css/identity.css">
 <link rel="stylesheet" href="css/brand-mark.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/identity.css">
 <link rel="stylesheet" href="css/luxe.css">
+<link rel="stylesheet" href="css/capricorn-core.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/themes.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/ios-tokens.css" media="print" data-vc-defer-css>
+<noscript>
+<link rel="stylesheet" href="css/capricorn-core.css">
+<link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/ios-tokens.css">
+</noscript>
 </head>
 <body data-cap-app="1">
 <a href="#mainPages" class="cap-skip-link">Skip to content</a>
@@ -219,7 +229,7 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:400px;margin:0 auto">
   <!-- Logo section -->
   <div style="margin-bottom:14px">
-    <img src="icons/mark.svg" alt="" class="vc-mark vc-mark--hero" width="60" height="60">
+    <svg class="vc-mark vc-mark--hero" width="60" height="60" viewBox="0 0 48 48" fill="none" aria-hidden="true" focusable="false"><path d="M24 6 L40 13 V24 C40 33 33.5 40 24 43 C14.5 40 8 33 8 24 V13 Z" stroke="#D4A017" stroke-width="2.8" stroke-linejoin="round"/><circle cx="24" cy="22" r="5" stroke="#D4A017" stroke-width="2.6"/><path d="M24 27 V33" stroke="#D4A017" stroke-width="2.6" stroke-linecap="round"/><circle cx="24" cy="22" r="1.7" fill="#F4F0E8"/></svg>
   </div>
   <div style="margin-bottom:4px">
     <h1 class="vault-display-title vault-home-title">VaultCap</h1>
@@ -484,10 +494,9 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
-<script src="js/storage.js?v=5.4.0" defer></script>
-<script src="js/boot-ver.js" defer></script>
-<script src="dist/vaultcap.boot.js?v=5.4.0" defer></script>
-<script src="js/boot-shell.js" defer></script>
+<script src="js/storage.js?v=5.4.1"></script>
+<script src="js/boot-ver.js"></script>
+<script src="js/boot-load.js"></script>
 
 
 </body>
