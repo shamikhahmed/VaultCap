@@ -74,5 +74,6 @@ Legend: PASS / FAIL / N/A · Evidence = path or test name.
 | LH mobile perf ≥90 | Owner-known gap (honest 82) — not claimed PASS for perf |
 | Full VoiceOver every control | Spot-check 10 controls in sim — see APP-REPORT |
 | Every feature page screenshot in audit | Covered by shell chrome + sample capture steps |
+| Max 2 typefaces (local Cinzel/Space Grotesk) | Accepted debt for brand lock; system stack primary in ios-tokens |
 
 **Gate:** 0 FAIL rows remaining for §2.2 acceptance on shipped UI chrome.
