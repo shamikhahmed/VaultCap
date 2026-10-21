@@ -30,10 +30,12 @@ test.describe('VaultCap smoke', () => {
     await expect(page.locator('#dashGreet')).not.toBeEmpty();
   });
 
-  test('settings hides bottom tabs on utility pages', async ({ page }) => {
+  test('settings keeps bottom tabs visible (HIG: tabs never hidden)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await unlockDemoVault(page);
     await openSettings(page);
-    await expect(page.locator('body')).toHaveClass(/hide-btabs/);
+    await expect(page.locator('body')).not.toHaveClass(/hide-btabs/);
+    await expect(page.locator('.btabs')).toBeVisible();
     await expect(page.locator('#settBody')).toBeVisible();
   });
 
