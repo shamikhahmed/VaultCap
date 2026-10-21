@@ -1,3 +1,11 @@
+## [5.4.0] — 2026-10-21
+
+- HIG v7: `css/ios-tokens.css` (17 pt body ramp, semantic colours, hit44, inset list, sheet/tab tokens)
+- Dynamic Type web+native up to 200% (`?dt=` / `--dt-scale` cap 2.0)
+- Tab/chip hit targets ≥44 pt; `--fs-xs` floor 11 pt
+- Personas + capture steps under `qa/v7/`; HIG-AUDIT.md
+- SW `vaultcap-v96` · register query `?v=5.4.0`
+
 ## [5.3.1] — 2026-10-16
 
 - Brand lock: midnight & gold family icon (hub/lab/PWA/iOS) — shield gold gradient, ivory keyhole; no blue tile

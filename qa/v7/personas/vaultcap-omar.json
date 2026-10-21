@@ -1,0 +1,28 @@
+{
+  "id": "vaultcap-omar",
+  "name": "Omar Farooq",
+  "age": 29,
+  "city": "Dubai, UAE",
+  "role": "Freelance developer",
+  "tech": "high",
+  "accessibility": "standard",
+  "device": "iPhone 16 Pro",
+  "goal": "Track multi-currency accounts and take an encrypted backup before changing phones",
+  "pain_before": [
+    "Balances spread across AED, GBP and PKR apps",
+    "Lost a note with IBAN fragments when migrating phones"
+  ],
+  "how_he_uses_it": [
+    "Multi-currency bank list",
+    "Encrypted .vos backup to Files",
+    "Sample vault to practise restore"
+  ],
+  "numbers": {
+    "before": { "accounts_checked_min": 15 },
+    "after": { "accounts_checked_min": 2 }
+  },
+  "quote": "Backup first. New phone second.",
+  "seed": "qa/v7/personas/vaultcap-omar.seed.json",
+  "features_used": ["bank-import", "encrypted-backup", "aes-gcm-vault"],
+  "fictional": true
+}

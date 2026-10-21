@@ -38,7 +38,7 @@ Demo PIN: **123456**
 | `js/core/migrate.js` | Schema migrations |
 | `js/modules/*` | Feature modules (banks, cards, family, zakat, …) |
 | `js/ui.js` | Dashboard, settings, export/import, QR sync |
-| `sw-v51.js` | Service worker (`vaultcap-v95`) |
+| `sw-v51.js` | Service worker (`vaultcap-v96`) |
 
 **Storage:** Primary persistence is encrypted **IndexedDB** via `VaultDB`. **100% free** — no paywall / no required cloud AI.
 

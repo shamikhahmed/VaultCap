@@ -1,0 +1,28 @@
+{
+  "id": "vaultcap-margaret",
+  "name": "Margaret Ellis",
+  "age": 68,
+  "city": "Manchester, UK",
+  "role": "Retired teacher",
+  "tech": "low",
+  "accessibility": "Larger Text AX3; prefers one-handed reach; VoiceOver labels matter",
+  "device": "iPhone SE (3rd gen)",
+  "goal": "One place for pension and insurance documents her son can help with",
+  "pain_before": [
+    "Paper folders in two rooms",
+    "Could not read small policy numbers"
+  ],
+  "how_she_uses_it": [
+    "Documents list with large text",
+    "Family profile shared with son (local)",
+    "Reminders for policy renewals"
+  ],
+  "numbers": {
+    "before": { "time_to_find_policy_min": 25 },
+    "after": { "time_to_find_policy_min": 2 }
+  },
+  "quote": "The writing is big enough. My son can find it too.",
+  "seed": "qa/v7/personas/vaultcap-margaret.seed.json",
+  "features_used": ["documents", "family-profiles", "expiry-reminders", "dynamic-type"],
+  "fictional": true
+}

@@ -1,6 +1,6 @@
 # VaultCap — everything you own, encrypted on your device
 
-**Version:** 5.3.1
+**Version:** 5.4.0
 
 [![Live App](https://img.shields.io/badge/Live%20App-VaultCap-d4a017?style=for-the-badge&labelColor=121a2a)](https://shamikhahmed.github.io/VaultCap)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-orange?style=for-the-badge)](https://shamikhahmed.github.io/VaultCap)
@@ -87,7 +87,7 @@ VaultCap/
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA · vaultcap-v95)
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v96)
 ```
 
 **Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.24** · no account

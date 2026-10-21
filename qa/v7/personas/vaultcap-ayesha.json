@@ -1,0 +1,28 @@
+{
+  "id": "vaultcap-ayesha",
+  "name": "Ayesha Siddiqui",
+  "age": 41,
+  "city": "Lahore, Pakistan",
+  "role": "Pharmacist, mother of two",
+  "tech": "medium",
+  "accessibility": "uses Larger Text (AX2)",
+  "device": "iPhone 15",
+  "goal": "Keep the family's passports, bank accounts and school documents in one safe place",
+  "pain_before": [
+    "Documents in 3 drawers and WhatsApp chats",
+    "Missed a passport renewal by 2 months"
+  ],
+  "how_she_uses_it": [
+    "Family vault with husband",
+    "Expiry reminders",
+    "Zakat summary every Ramadan"
+  ],
+  "numbers": {
+    "before": { "time_to_find_doc_min": 20 },
+    "after": { "time_to_find_doc_min": 1 }
+  },
+  "quote": "I stopped digging through drawers.",
+  "seed": "qa/v7/personas/vaultcap-ayesha.seed.json",
+  "features_used": ["family-profiles", "expiry-reminders", "zakat", "documents"],
+  "fictional": true
+}

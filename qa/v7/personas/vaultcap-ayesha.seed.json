@@ -1,0 +1,20 @@
+{
+  "personaId": "vaultcap-ayesha",
+  "mode": "sample-overlay",
+  "note": "Uses in-app sample vault (fictional). Overlay labels for story capture only — no real CNIC/IBAN.",
+  "profile": {
+    "displayName": "Ayesha Siddiqui",
+    "city": "Lahore",
+    "currency": "PKR"
+  },
+  "documents": [
+    { "title": "Family passport — Ayesha", "expires": "+40d", "tag": "identity" },
+    { "title": "School fee receipt 2026", "expires": null, "tag": "school" },
+    { "title": "HBL joint account note", "expires": null, "tag": "bank", "last4": "0000" }
+  ],
+  "banks": [
+    { "bankName": "HBL", "country": "PK", "currency": "PKR", "last4": "0000", "balance": 425000 }
+  ],
+  "reminders": [{ "title": "Passport renewal", "due": "+40d" }],
+  "fictional": true
+}
