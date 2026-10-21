@@ -453,10 +453,11 @@ function isFastNavigation() {
 }
 
 function updatePageChrome(pg) {
-  const hideTabs = UTILITY_PAGES.has(pg);
-  document.body.classList.toggle('hide-btabs', hideTabs);
+  // HIG: tab bar is navigation — never hide or disable tabs (v7). Utility pages keep the bar;
+  // only suppress the FAB on utility + dashboard (actions live in-page / sheets).
+  document.body.classList.remove('hide-btabs');
   const fab = document.getElementById('fab');
-  if (fab && S.unlocked) fab.style.display = (hideTabs || pg === 'dashboard') ? 'none' : '';
+  if (fab && S.unlocked) fab.style.display = (UTILITY_PAGES.has(pg) || pg === 'dashboard') ? 'none' : '';
 }
 
 window.resetScroll = function(pageId) {

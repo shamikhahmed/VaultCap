@@ -5,6 +5,12 @@ const { unlockDemoVault, dismissOverlays } = require('./demo-unlock');
 /** @param {import('@playwright/test').Page} page */
 async function openFormAndAssert(page, label, fn) {
   await dismissOverlays(page);
+  // Lazy modules (documents/tax/…) must be loaded before eval openAdd
+  if (fn.includes('DocsModule')) {
+    await page.evaluate(async () => {
+      if (typeof VaultLazy !== 'undefined') await VaultLazy.ensure('documents');
+    });
+  }
   await page.evaluate((call) => {
     // eslint-disable-next-line no-eval
     eval(call);

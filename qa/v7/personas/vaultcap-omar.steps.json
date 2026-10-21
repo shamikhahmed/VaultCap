@@ -1,0 +1,15 @@
+{
+  "personaId": "vaultcap-omar",
+  "baseUrl": "/",
+  "viewport": { "width": 402, "height": 874, "deviceScaleFactor": 3 },
+  "prep": [
+    { "action": "goto", "path": "/?sample=1" },
+    { "action": "wait", "ms": 800 }
+  ],
+  "steps": [
+    { "id": "01-banks", "title": "Banks", "action": "nav", "page": "banks", "screenshot": true, "alt": "Omar's multi-currency bank list in the sample vault" },
+    { "id": "02-dashboard", "title": "Dashboard", "action": "nav", "page": "dashboard", "screenshot": true, "alt": "Dashboard with AED GBP and PKR balances summarised" },
+    { "id": "03-backup", "title": "Backup", "action": "nav", "page": "backup", "screenshot": true, "alt": "Encrypted backup screen before a phone change" },
+    { "id": "04-security", "title": "Security", "action": "nav", "page": "security", "screenshot": true, "alt": "Security settings for PIN-protected vault" }
+  ]
+}

@@ -135,18 +135,29 @@ function printReport(html, jobName) {
 }
 window.printReport = printReport;
 
-/** Dynamic Type (iOS app): WKWebView resolves `-apple-system-body` to the user's preferred body size
- *  (17pt at the default "Large" setting). Scale the rem root by size/17, capped so layouts stay usable. */
+/** Dynamic Type: native uses `-apple-system-body`; web honours `--dt-scale` / URL / stored pref.
+ *  Default body 17pt. Cap at 2.0 (≥200% / near AX5) so primary content reflows instead of truncating. */
 function applyDynamicType() {
-  if (!isNativeApp()) return;
   try {
-    const probe = document.createElement('span');
-    probe.style.cssText = 'font:-apple-system-body;position:absolute;visibility:hidden;pointer-events:none';
-    probe.textContent = 'A';
-    document.body.appendChild(probe);
-    const px = parseFloat(getComputedStyle(probe).fontSize) || 17;
-    probe.remove();
-    const scale = Math.min(1.6, Math.max(0.85, px / 17));
+    let scale = parseFloat(document.documentElement.style.getPropertyValue('--dt-scale')) ||
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dt-scale')) || 1;
+    if (typeof isNativeApp === 'function' && isNativeApp()) {
+      const probe = document.createElement('span');
+      probe.style.cssText = 'font:-apple-system-body;position:absolute;visibility:hidden;pointer-events:none';
+      probe.textContent = 'A';
+      document.body.appendChild(probe);
+      const px = parseFloat(getComputedStyle(probe).fontSize) || 17;
+      probe.remove();
+      scale = px / 17;
+    } else {
+      const q = new URLSearchParams(location.search).get('dt');
+      if (q) scale = parseFloat(q) || scale;
+      try {
+        const stored = localStorage.getItem('vc-dt-scale');
+        if (stored && !q) scale = parseFloat(stored) || scale;
+      } catch (_) {}
+    }
+    scale = Math.min(2.0, Math.max(0.85, scale));
     document.documentElement.style.setProperty('--dt-scale', scale.toFixed(3));
     if (document.documentElement.dataset.dtScale !== scale.toFixed(2)) {
       document.documentElement.dataset.dtScale = scale.toFixed(2);

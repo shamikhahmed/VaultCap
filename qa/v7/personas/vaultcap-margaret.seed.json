@@ -1,0 +1,16 @@
+{
+  "personaId": "vaultcap-margaret",
+  "mode": "sample-overlay",
+  "note": "Capture with ?dt=1.6 (AX3-ish) on iPhone SE viewport.",
+  "profile": {
+    "displayName": "Margaret Ellis",
+    "city": "Manchester",
+    "currency": "GBP"
+  },
+  "documents": [
+    { "title": "State pension letter (sample)", "expires": null, "tag": "pension" },
+    { "title": "Home insurance schedule", "expires": "+120d", "tag": "insurance" }
+  ],
+  "dtScale": 1.6,
+  "fictional": true
+}

@@ -1,0 +1,16 @@
+{
+  "personaId": "vaultcap-omar",
+  "mode": "sample-overlay",
+  "note": "Sample vault multi-currency banks + backup settings path for capture.",
+  "profile": {
+    "displayName": "Omar Farooq",
+    "city": "Dubai",
+    "currency": "AED"
+  },
+  "banks": [
+    { "bankName": "Emirates NBD", "country": "AE", "currency": "AED", "last4": "0001", "balance": 18500 },
+    { "bankName": "Monzo", "country": "GB", "currency": "GBP", "last4": "0002", "balance": 3120 },
+    { "bankName": "HBL", "country": "PK", "currency": "PKR", "last4": "0003", "balance": 680000 }
+  ],
+  "fictional": true
+}

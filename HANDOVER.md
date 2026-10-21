@@ -7,7 +7,7 @@
 Personal vault — encrypted offline finance, identity, family vault. PK/UK/UAE expat finance. **100% free** consumer PWA.
 
 ## Facts
-**Version:** 5.3.1
+**Version:** 5.4.0
 **Live:** https://shamikhahmed.github.io/VaultCap
 **Repo:** https://github.com/shamikhahmed/VaultCap
 **Stack:** Vanilla JS → `dist/vaultcap.boot.js` (lock/onboard) + lazy `dist/vaultcap.app.js` / VaultLazy modules. PIN-first unlock + recovery/backup keys + `.vos`. CSP `script-src 'self'` via `Act`/`data-act*`. Playwright e2e + XSS audit.
@@ -26,7 +26,7 @@ npm run test:e2e
 - `js/core/` — crypto, PIN, Act, store, router
 - `js/modules/` — feature modules
 - `dist/vaultcap.boot.js` + `dist/vaultcap.app.js` via `npm run build:js` (`js/bundle-boot-order.json` / `js/bundle-app-order.json`); `vaultcap.bundle.js` aliases boot for probes
-- SW `sw-v51.js` cache `vaultcap-v95`
+- SW `sw-v51.js` cache `vaultcap-v96`
 - `.github/workflows/` — ci.yml + pages.yml
 
 ## Cap Standard status (2026-07-18)
@@ -34,7 +34,7 @@ npm run test:e2e
 |---|---|
 | Docs pack | ✅ |
 | Screen gallery | ✅ |
-| Version discipline | ✅ 5.3.1 |
+| Version discipline | ✅ 5.4.0 |
 | QA / e2e | ✅ |
 | CI gate | ✅ |
 | PWA polish | ✅ |

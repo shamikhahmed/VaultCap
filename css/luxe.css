@@ -163,7 +163,7 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--lx-gold); }
 .sil .name { font-size: 1rem; font-weight: 500; letter-spacing: -0.01em; }
 .sil .desc { font-size: 0.8125rem; color: var(--lx-text-3); }
 
-.chip { min-height: 34px; padding: 7px 15px; font-size: 0.8125rem; font-weight: 500; border-color: var(--lx-hair-2); background: var(--lx-surface); color: var(--lx-text-2); }
+.chip { min-height: 44px; padding: 7px 15px; font-size: 0.8125rem; font-weight: 500; border-color: var(--lx-hair-2); background: var(--lx-surface); color: var(--lx-text-2); display: inline-flex; align-items: center; }
 .chip.on { background: var(--lx-gold-soft); border-color: var(--lx-gold-line); color: var(--lx-gold-hi); }
 body.light .chip.on { background: var(--lx-gold-soft); border-color: var(--lx-gold-line); color: #7a5a08; }
 .chip.on .chip-ic { color: inherit; opacity: 1; }
