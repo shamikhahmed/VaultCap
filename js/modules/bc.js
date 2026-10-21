@@ -43,10 +43,10 @@ const BCModule = {
         '<div class="u-highlight-card">' +
           '<div class="vc-ix-187">BC Summary</div>' +
           '<div class="vc-ix-89">' +
-            '<div class="vc-ix-109"><div class="vc-ix-3">Total Paid In</div><div style="font-size:20px;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
-            '<div class="vc-ix-109"><div class="vc-ix-3">Total Received</div><div style="font-size:20px;font-weight:900;color:var(--ok)">' + fmt(totalReceived) + '</div></div>' +
+            '<div class="vc-ix-109"><div class="vc-ix-3">Total Paid In</div><div style="font-size:1.25rem;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
+            '<div class="vc-ix-109"><div class="vc-ix-3">Total Received</div><div style="font-size:1.25rem;font-weight:900;color:var(--ok)">' + fmt(totalReceived) + '</div></div>' +
           '</div>' +
-          '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">Net position: <strong style="color:' + (totalReceived - totalCommitted >= 0 ? 'var(--ok)' : 'var(--err)') + '">' + fmt(totalReceived - totalCommitted) + '</strong></div>' +
+          '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text3)">Net position: <strong style="color:' + (totalReceived - totalCommitted >= 0 ? 'var(--ok)' : 'var(--err)') + '">' + fmt(totalReceived - totalCommitted) + '</strong></div>' +
         '</div>'
       ) : '') +
 
@@ -102,7 +102,7 @@ const BCModule = {
         '</div>' +
       '</div>' +
       '<div style="padding:0 14px 12px">' +
-        '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px">' +
+        '<div style="display:flex;justify-content:space-between;font-size:0.6875rem;color:var(--text3);margin-bottom:4px">' +
           '<span>Round ' + (bc.currentRound || 1) + ' of ' + (bc.totalRounds || bc.members || '?') + '</span>' +
           '<span>' + progress + '% complete</span>' +
         '</div>' +
@@ -141,7 +141,7 @@ const BCModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:11px;color:var(--warn)">Bid-based BCs are considered impermissible by many scholars (resembles riba). Consider using a fixed-order BC instead.</div>' +
+      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:0.6875rem;color:var(--warn)">Bid-based BCs are considered impermissible by many scholars (resembles riba). Consider using a fixed-order BC instead.</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Total Members</label>' +
@@ -165,7 +165,7 @@ const BCModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bc-pot-display" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px;text-align:center;margin-bottom:10px;font-size:13px;color:var(--accent);font-weight:700">Pot: Enter members and contribution</div>' +
+      '<div id="bc-pot-display" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px;text-align:center;margin-bottom:10px;font-size:0.8125rem;color:var(--accent);font-weight:700">Pot: Enter members and contribution</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">My Turn (Round #)</label>' +
@@ -292,10 +292,10 @@ const BCModule = {
 
       (bc.myTurnRound ? (
         '<div style="background:' + (myTurnDone ? 'rgba(76,175,80,.1)' : 'rgba(255,255,255,.1)') + ';border:1px solid ' + (myTurnDone ? 'rgba(76,175,80,.3)' : 'rgba(255,255,255,.3)') + ';border-radius:12px;padding:12px;text-align:center">' +
-          '<div style="font-size:13px;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? 'You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
+          '<div style="font-size:0.8125rem;font-weight:700;color:' + (myTurnDone ? 'var(--ok)' : 'var(--accent)') + '">' + (myTurnDone ? 'You received your turn' : 'Your turn: Round ' + bc.myTurnRound) + '</div>' +
           (myTurnDone ? '<div class="vc-ix-73">You received ' + fmt(pot) + '</div>' : '') +
         '</div>'
-      ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:13px;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
+      ) : '<div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:12px;padding:12px;text-align:center;font-size:0.8125rem;color:var(--warn)">Turn not yet assigned — ballot pending</div>') +
 
       (bc.type === 'ballot' && bc.role === 'organiser' ?
         '<button type="button" data-act="BCModule.runBallot(' + i + ')" class="btn btn-p vc-ix-16">Run Ballot Draw</button>'
@@ -303,7 +303,7 @@ const BCModule = {
 
       '<button type="button" data-act="BCModule.advanceRound(' + i + ')" class="btn btn-g vc-ix-16">→ Advance to Next Round</button>' +
 
-      (bc.notes ? '<div style="font-size:12px;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
+      (bc.notes ? '<div style="font-size:0.75rem;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
 
       (!myTurnDone && paid > 0 ?
         '<div class="vc-ix-222">Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
@@ -336,11 +336,11 @@ const BCModule = {
     Modal.open('Ballot Draw — Round ' + currentRound,
       '<div style="text-align:center;padding:20px">' +
         '<div style="margin-bottom:16px;display:flex;justify-content:center" id="ballot-icon">' + VC.icon('target', 48) + '</div>' +
-        '<div style="font-size:16px;color:var(--text3);margin-bottom:20px">Drawing for Round ' + currentRound + '...</div>' +
+        '<div style="font-size:1rem;color:var(--text3);margin-bottom:20px">Drawing for Round ' + currentRound + '...</div>' +
         '<div class="vc-ix-17" id="ballot-result">' +
-          '<div style="font-size:13px;color:var(--text3);margin-bottom:8px">This round goes to:</div>' +
-          '<div style="font-size:48px;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
-          '<div style="font-size:13px;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
+          '<div style="font-size:0.8125rem;color:var(--text3);margin-bottom:8px">This round goes to:</div>' +
+          '<div style="font-size:3rem;font-weight:900;color:var(--accent);letter-spacing:-2px">Member ' + winnerNum + '</div>' +
+          '<div style="font-size:0.8125rem;color:var(--text2);margin-top:8px">Pot: ' + (bc.currency || 'PKR') + ' ' + ((bc.members || 1) * (bc.contribution || 0)).toLocaleString() + '</div>' +
         '</div>' +
         '<button type="button" data-act="BCModule._animateBallot(' + winnerNum + ')" class="btn btn-p vc-ix-16" id="ballot-btn">Draw!</button>' +
       '</div>',

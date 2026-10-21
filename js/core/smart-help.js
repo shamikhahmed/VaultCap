@@ -128,7 +128,7 @@ const SmartHelp = (() => {
     const border = isUser ? 'rgba(0,122,255,.25)' : 'var(--border)';
     const body = isUser ? _esc(plain || html) : html;
     return '<div style="display:flex;justify-content:' + align + ';margin-bottom:10px">'
-      + '<div style="max-width:88%;padding:10px 12px;border-radius:14px;background:' + bg + ';border:1px solid ' + border + ';font-size:13px;line-height:1.55;color:var(--text)">' + body + '</div></div>';
+      + '<div style="max-width:88%;padding:10px 12px;border-radius:14px;background:' + bg + ';border:1px solid ' + border + ';font-size:0.8125rem;line-height:1.55;color:var(--text)">' + body + '</div></div>';
   }
 
   function _chipsHtml() {
@@ -158,7 +158,7 @@ const SmartHelp = (() => {
       Modal.open('Smart Help', html, '<button type="button" class="btn btn-g btn-full" data-act="Modal.close()">Close</button>');
     } else if (_panelEl) {
       _panelEl.innerHTML = '<div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
-        + '<div style="font-weight:800;font-size:15px">Smart Help</div>'
+        + '<div style="font-weight:800;font-size:0.9375rem">Smart Help</div>'
         + '<button type="button" class="btn btn-g btn-sm" data-act="SmartHelp.close()" aria-label="Close Smart Help">×</button></div>'
         + '<div class="vc-ix-94">' + html + '</div>';
     }

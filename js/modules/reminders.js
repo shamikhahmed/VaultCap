@@ -21,7 +21,7 @@ const Reminders = {
       const groupItems = items.filter(group.filter);
       if (!groupItems.length) return;
       totalCount += groupItems.length;
-      html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:14px 0 6px">' + group.label + '</div>';
+      html += '<div style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:14px 0 6px">' + group.label + '</div>';
       html += groupItems.map(function(r) {
         const badge = r.daysLeft < 0 ? 'b-err' : r.daysLeft <= 7 ? 'b-err' : r.daysLeft <= 30 ? 'b-warn' : 'b-ok';
         const col = r.daysLeft < 0 ? 'var(--err)' : r.daysLeft <= 7 ? 'var(--err)' : r.daysLeft <= 30 ? 'var(--warn)' : 'var(--ok)';

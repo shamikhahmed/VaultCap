@@ -272,21 +272,21 @@ const Tax = {
 
     body.innerHTML = `<div class="vc-ix-209">
       <div style="display:flex;gap:6px;margin-bottom:16px">
-        ${['GB','PK','AE'].map(c=>`<button type="button" data-act="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
+        ${['GB','PK','AE'].map(c=>`<button type="button" data-act="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:0.8125rem;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
-        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--accent)':'var(--border)'};background:${this._filing===k?'rgba(0,213,255,.2)':'transparent'};color:${this._filing===k?'var(--accent)':'var(--text3)'}">${f.name}</button>`).join('')}
+        ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--accent)':'var(--border)'};background:${this._filing===k?'rgba(0,213,255,.2)':'transparent'};color:${this._filing===k?'var(--accent)':'var(--text3)'}">${f.name}</button>`).join('')}
       </div>
-      <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--text3);line-height:1.7">
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:0.75rem;color:var(--text3);line-height:1.7">
         ${filing.note}<br>
         <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
-        ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:11px">Warning: ${surcharge}</div>` : ''}
+        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:0.6875rem;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
+        ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:0.6875rem">Warning: ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
       ${showBrackets ? `<div style="margin-top:20px">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Tax Brackets</div>
-        ${slabs.map(s=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="vc-ix-1">${s.label}</span><span style="font-weight:700;color:${s.rate===0?'var(--success)':s.rate<=0.2?'var(--info)':s.rate<=0.3?'var(--warning)':'var(--danger)'}">${(s.rate*100).toFixed(2).replace(/\.?0+$/,'')}%</span></div>`).join('')}
+        <div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Tax Brackets</div>
+        ${slabs.map(s=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.8125rem"><span class="vc-ix-1">${s.label}</span><span style="font-weight:700;color:${s.rate===0?'var(--success)':s.rate<=0.2?'var(--info)':s.rate<=0.3?'var(--warning)':'var(--danger)'}">${(s.rate*100).toFixed(2).replace(/\.?0+$/,'')}%</span></div>`).join('')}
       </div>` : ''}
     </div>`;
     setTimeout(function() {
@@ -302,8 +302,8 @@ const Tax = {
     const isSalariedPK = this._country === 'PK' && this._filing === 'salaried';
     const ty = this._taxYear;
     const yearToggle = isSalariedPK ? `<div class="vc-ix-60">
-      <button type="button" data-act="Tax._setTaxYear('2024-25')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2024-25'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2024-25'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2024-25'?'var(--info)':'var(--text3)'}">2024-25</button>
-      <button type="button" data-act="Tax._setTaxYear('2025-26')" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2025-26'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2025-26'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2025-26'?'var(--info)':'var(--text3)'}">2025-26</button>
+      <button type="button" data-act="Tax._setTaxYear('2024-25')" style="flex:1;padding:8px;border-radius:8px;font-size:0.8125rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2024-25'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2024-25'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2024-25'?'var(--info)':'var(--text3)'}">2024-25</button>
+      <button type="button" data-act="Tax._setTaxYear('2025-26')" style="flex:1;padding:8px;border-radius:8px;font-size:0.8125rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid ${ty==='2025-26'?'rgba(0,213,255,.6)':'var(--border)'};background:${ty==='2025-26'?'rgba(0,213,255,.2)':'transparent'};color:${ty==='2025-26'?'var(--info)':'var(--text3)'}">2025-26</button>
     </div>` : '';
     const isFlat = filing && filing.isFlat;
     return `${yearToggle}<div class="vc-ix-43">
@@ -330,7 +330,7 @@ const Tax = {
     return `<div class="vc-ix-9">
       <label class="vc-ix-11">VAT Rate</label>
       <div class="vc-ix-60">
-        ${[['standard','Standard (20%)'],['reduced','Reduced (5%)'],['zero','Zero (0%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxVat('${v}',this)" class="gbvat-btn" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${rate===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
+        ${[['standard','Standard (20%)'],['reduced','Reduced (5%)'],['zero','Zero (0%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxVat('${v}',this)" class="gbvat-btn" style="flex:1;padding:8px;border-radius:8px;font-size:0.6875rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${rate===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
       <input type="hidden" id="gbvat-rate" value="${escAttr(rate)}">
     </div>
@@ -348,16 +348,16 @@ const Tax = {
     return `<div class="vc-ix-9">
       <label class="vc-ix-11">Income Tax Band</label>
       <div class="vc-ix-60">
-        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','basic','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='basic'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Basic Rate</button>
-        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','higher','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='higher'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Higher / Additional</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','basic','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='basic'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Basic Rate</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-band','cgt-band','higher','rgba(0,213,255,.2)',this)" class="cgt-band" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${b==='higher'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Higher / Additional</button>
       </div>
       <input type="hidden" id="cgt-band" value="${escAttr(b)}">
     </div>
     <div class="vc-ix-9">
       <label class="vc-ix-11">Asset Type</label>
       <div class="vc-ix-60">
-        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','property','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Property</button>
-        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','other','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','property','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='property'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Property</button>
+        <button type="button" data-act="ActHelpers.taxChip('cgt-type','cgt-type','other','rgba(0,213,255,.2)',this)" class="cgt-type" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${t==='other'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Other Assets</button>
       </div>
       <input type="hidden" id="cgt-type" value="${escAttr(t)}">
     </div>
@@ -375,7 +375,7 @@ const Tax = {
     return `<div class="vc-ix-9">
       <label class="vc-ix-11">Income Tax Band</label>
       <div class="vc-ix-60">
-        ${[['basic','Basic (8.75%)'],['higher','Higher (33.75%)'],['additional','Additional (39.35%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxChip('div-band','div-band','${v}','rgba(0,213,255,.2)',this)" class="div-band" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${dv===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
+        ${[['basic','Basic (8.75%)'],['higher','Higher (33.75%)'],['additional','Additional (39.35%)']].map(([v,l])=>`<button type="button" data-act="ActHelpers.taxChip('div-band','div-band','${v}','rgba(0,213,255,.2)',this)" class="div-band" style="flex:1;padding:8px;border-radius:8px;font-size:0.6875rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${dv===v?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">${l}</button>`).join('')}
       </div>
       <input type="hidden" id="div-band" value="${escAttr(dv)}">
     </div>
@@ -399,8 +399,8 @@ const Tax = {
        >
     </div>
     <div class="vc-ix-213">
-      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','yes','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Transferring spouse NRB</button>
-      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','no','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
+      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','yes','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Transferring spouse NRB</button>
+      <button type="button" data-act="ActHelpers.taxChip('iht-sp','iht-spouse','no','rgba(0,213,255,.2)',this)" class="iht-sp" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${sp==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Single / No transfer</button>
     </div>
     <input type="hidden" id="iht-spouse" value="${escAttr(sp)}">
     <button class="vc-ix-29" type="button" data-act="Tax.calculateIHT()">Calculate IHT</button>
@@ -415,12 +415,12 @@ const Tax = {
        >
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','yes','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">First-Time Buyer</button>
-      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','no','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Standard</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','yes','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='yes'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">First-Time Buyer</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-ftb','sdlt-ftb','no','rgba(0,213,255,.2)',this)" class="sdlt-ftb" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ft==='no'?'rgba(0,213,255,.2)':'transparent'};color:var(--text3)">Standard</button>
     </div>
     <div class="vc-ix-213">
-      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','yes','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='yes'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Additional Property (+3%)</button>
-      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','no','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='no'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Main Residence</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','yes','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='yes'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Additional Property (+3%)</button>
+      <button type="button" data-act="ActHelpers.taxChip('sdlt-add','sdlt-add','no','rgba(255,152,0,.2)',this)" class="sdlt-add" style="flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;border:1px solid var(--border);background:${ad==='no'?'rgba(255,152,0,.2)':'transparent'};color:var(--text3)">Main Residence</button>
     </div>
     <input type="hidden" id="sdlt-ftb" value="${escAttr(ft)}">
     <input type="hidden" id="sdlt-add" value="${escAttr(ad)}">
@@ -432,7 +432,7 @@ const Tax = {
     const ex = this.config.AE.filings.excise;
     return `<div class="vc-ix-9">
       <label class="vc-ix-11">Product Category</label>
-      <select id="excise-cat" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;margin-bottom:12px">
+      <select id="excise-cat" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:0.875rem;margin-bottom:12px">
         ${ex.rates.map(r=>`<option value="${escAttr(r.rate)}">${r.label} (${(r.rate*100).toFixed(0)}%)</option>`).join('')}
       </select>
       <label class="vc-ix-11">Amount (AED) — exclusive of excise</label>
@@ -445,11 +445,11 @@ const Tax = {
 
   _freezoneForm() {
     return `<div style="background:linear-gradient(135deg,rgba(0,213,255,.1),rgba(0,213,255,.2));border:1px solid rgba(0,213,255,.3);border-radius:16px;padding:20px;margin-bottom:16px">
-      <div style="font-size:15px;font-weight:800;color:var(--info);margin-bottom:12px">Free Zone Corporate Tax — Key Facts</div>
-      <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+      <div style="font-size:0.9375rem;font-weight:800;color:var(--info);margin-bottom:12px">Free Zone Corporate Tax — Key Facts</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:0.8125rem">
         ${[['Qualifying Income Rate','0% — Zero corporate tax'],['Non-Qualifying Income','9% — Standard CT rate applies'],['QFZP Requirements','Adequate UAE substance, qualifying activities, group revenue < AED 750m'],['Registration','Must register with FTA as Qualifying Free Zone Person'],['Qualifying Activities','Manufacturing, logistics, distribution, fund management, qualified IP income']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span class="vc-ix-1">${k}</span><span style="font-weight:700;color:var(--text);text-align:right;max-width:55%">${v}</span></div>`).join('')}
       </div>
-      <div style="margin-top:14px;padding:10px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;font-size:12px;color:var(--warning)">
+      <div style="margin-top:14px;padding:10px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;font-size:0.75rem;color:var(--warning)">
         Warning: Seek a qualified UAE tax advisor to confirm QFZP eligibility — self-assessment is complex.
       </div>
     </div>
@@ -473,7 +473,7 @@ const Tax = {
       const res = document.getElementById('tax-result');
       if(!res) return;
       res.innerHTML = `<div class="vc-ix-45" id="tax-report">
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:16px">Tax Report — ${filing.name}</div>
+        <div style="font-size:0.875rem;font-weight:800;color:var(--text);margin-bottom:16px">Tax Report — ${filing.name}</div>
         <div class="vc-ix-46">
           <div class="vc-ix-2"><span class="vc-ix-1">IT Export Proceeds</span><span class="vc-ix-15">${fmt(income)}</span></div>
           <div class="vc-ix-2"><span class="vc-ix-1">Final Tax (${(filing.flatRate*100).toFixed(2)}%)</span><span class="vc-ix-214">− ${fmt(tax)}</span></div>
@@ -538,8 +538,8 @@ const Tax = {
         <div class="vc-ix-2"><span class="vc-ix-1">Weekly Take-Home</span><span class="vc-ix-15">${fmt(takeHome/52)}</span></div>
       </div>
       ${breakdown.length?`<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Band Breakdown</div>
-        ${breakdown.map(b=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;color:var(--text3)"><span>${b.label} (${(b.rate*100).toFixed(0)}%)</span><span>${fmt(b.tax)}</span></div>`).join('')}
+        <div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Band Breakdown</div>
+        ${breakdown.map(b=>`<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;color:var(--text3)"><span>${b.label} (${(b.rate*100).toFixed(0)}%)</span><span>${fmt(b.tax)}</span></div>`).join('')}
       </div>`:''}
     </div>`;
   },
@@ -686,9 +686,9 @@ const Tax = {
         <div class="vc-ix-63"></div>
         <div style="display:flex;justify-content:space-between;padding:12px;background:${tax>0?'rgba(255,69,58,.1)':'rgba(0,255,136,.1)'};border-radius:10px">
           <span class="vc-ix-47">IHT Due (40%)</span>
-          <span style="font-size:22px;font-weight:900;color:${tax>0?'var(--danger)':'var(--success)'}">${fmt(tax)}</span>
+          <span style="font-size:1.375rem;font-weight:900;color:${tax>0?'var(--danger)':'var(--success)'}">${fmt(tax)}</span>
         </div>
-        ${tax===0?'<div style="font-size:12px;color:var(--success);text-align:center">Below nil-rate band — no IHT due</div>':''}
+        ${tax===0?'<div style="font-size:0.75rem;color:var(--success);text-align:center">Below nil-rate band — no IHT due</div>':''}
       </div>
     </div>`;
   },
@@ -726,7 +726,7 @@ const Tax = {
       <div class="vc-ix-46">
         <div class="vc-ix-2"><span class="vc-ix-1">Property Price</span><span class="vc-ix-15">${fmt(price)}</span></div>
         <div class="vc-ix-2"><span class="vc-ix-1">Buyer Type</span><span class="vc-ix-15">${ftb?'First-Time Buyer':'Standard'}</span></div>
-        ${breakdown.map(b=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3)"><span>${b.label} @ ${(b.rate*100).toFixed(0)}%</span><span>${fmt(b.tax)}</span></div>`).join('')}
+        ${breakdown.map(b=>`<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text3)"><span>${b.label} @ ${(b.rate*100).toFixed(0)}%</span><span>${fmt(b.tax)}</span></div>`).join('')}
         <div class="vc-ix-2"><span class="vc-ix-1">Standard SDLT</span><span class="vc-ix-15">${fmt(tax)}</span></div>
         ${additional?`<div class="vc-ix-2"><span class="vc-ix-1">Additional Property Surcharge (3%)</span><span class="vc-ix-62">${fmt(surcharge)}</span></div>`:''}
         <div class="vc-ix-63"></div>
@@ -750,7 +750,7 @@ const Tax = {
     const res = document.getElementById('tax-result');
     if(!res) return;
     res.innerHTML = `<div class="vc-ix-117" id="tax-report">
-      <div style="font-size:14px;font-weight:800;margin-bottom:12px">Excise Tax Report</div>
+      <div style="font-size:0.875rem;font-weight:800;margin-bottom:12px">Excise Tax Report</div>
       <div class="vc-ix-118">
         <div class="vc-ix-2"><span class="vc-ix-1">Product</span><span style="font-weight:700;text-align:right;max-width:60%">${catLabel}</span></div>
         <div class="vc-ix-2"><span class="vc-ix-1">Net Amount</span><span>AED ${amount.toLocaleString()}</span></div>
@@ -766,9 +766,11 @@ const Tax = {
     const cc = this._country;
     const cfg = this.config[cc];
     const filing = cfg?.filings[this._filing];
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:${VCBrand.h_fff};color:${VCBrand.h_1a1a2e}}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,${VCBrand.h_1a237e},${VCBrand.h_283593});color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:1.5rem;font-weight:900;margin-bottom:4px}.header .sub{font-size:0.8125rem;opacity:.8}.meta{background:${VCBrand.h_f1f3f5};border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:0.8125rem;color:${VCBrand.h_555};line-height:1.7}.section{background:${VCBrand.h_f8f9fa};border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${VCBrand.h_666};margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:0.875rem}.row:last-child{border-bottom:none}.row .label{color:${VCBrand.h_555}}.row .value{font-weight:600}.footer{text-align:center;font-size:0.6875rem;color:${VCBrand.h_999};margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:0.875rem;font-weight:700;cursor:pointer}.btn-print{background:${VCBrand.h_1a237e};color:white}.btn-close{background:${VCBrand.h_f1f3f5};color:${VCBrand.h_333}}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" data-act="window.print()">Print</button><button type="button" class="btn btn-close" data-act="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" data-act="window.close()">Close Window</button></div></div></body></html>`;
+    if (printReport(html, 'Tax Report')) return;
     const w = window.open('', '_blank');
     if (!w) { if(window.Toast) Toast.show('Allow pop-ups to print', 'warning'); return; }
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:${VCBrand.h_fff};color:${VCBrand.h_1a1a2e}}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,${VCBrand.h_1a237e},${VCBrand.h_283593});color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:24px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.8}.meta{background:${VCBrand.h_f1f3f5};border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:${VCBrand.h_555};line-height:1.7}.section{background:${VCBrand.h_f8f9fa};border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${VCBrand.h_666};margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:14px}.row:last-child{border-bottom:none}.row .label{color:${VCBrand.h_555}}.row .value{font-weight:600}.footer{text-align:center;font-size:11px;color:${VCBrand.h_999};margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer}.btn-print{background:${VCBrand.h_1a237e};color:white}.btn-close{background:${VCBrand.h_f1f3f5};color:${VCBrand.h_333}}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" data-act="window.print()">Print</button><button type="button" class="btn btn-close" data-act="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" data-act="window.close()">Close Window</button></div></div></body></html>`);
+    w.document.write(html);;
     w.document.close();
   },
 
@@ -786,7 +788,7 @@ const Tax = {
     </div>`;
   Modal.open('Edit Tax Slabs',
       `<div class="vc-ix-158">Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
-      <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">
+      <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">
         <span>Label</span><span>From</span><span>To</span><span>Rate</span><span></span>
       </div>
       <div id="tax-slab-rows">${slabs.map(rowHtml).join('')}</div>

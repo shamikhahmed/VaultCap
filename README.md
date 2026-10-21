@@ -87,7 +87,7 @@ VaultCap/
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA · vaultcap-v94)
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v95)
 ```
 
 **Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.1.24** · no account
@@ -142,7 +142,7 @@ npm run serve       # http://127.0.0.1:8765
 
 **Tests:** `npm run test:e2e` (builds bundle first). **XSS audit:** `npm run audit:xss`.
 
-**GitHub Pages / deploy:** push to `main` runs `.github/workflows/pages.yml` (`npm run build:js` then publish). Local: always `npm run build:js` before serve — `index.html` loads `dist/vaultcap.bundle.js`.
+**GitHub Pages / deploy:** push to `main` runs `.github/workflows/pages.yml` (`npm run build:js` then publish). Local: always `npm run build:js` before serve — `index.html` loads `dist/vaultcap.boot.js` (app chunk lazy).
 
 **Screenshots:** `npm run gallery` (or `npm run capture:screenshots`) then commit `assets/screenshots/` + `screen-gallery.html` embed. Viewer: [screen-gallery.html](screen-gallery.html) or `npm run gallery:view`.
 

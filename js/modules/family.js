@@ -31,7 +31,7 @@ const Family = {
 
   _roleBadge(role) {
     const isAdmin = role !== 'viewer';
-    return `<span style="font-size:11px;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(0,213,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
+    return `<span style="font-size:0.6875rem;padding:2px 8px;border-radius:8px;font-weight:700;background:${isAdmin ? 'rgba(0,213,255,.25)' : 'var(--glass2)'};color:${isAdmin ? 'var(--accent)' : 'var(--text3)'}">${this._roleLabel(role)}</span>`;
   },
 
   _initials(name) {
@@ -57,7 +57,7 @@ const Family = {
 
   _avatarFieldHtml(name) {
     const preview = this.avatarHtml(name || 'Member', 48).replace(/^<div /, '<div id="fam-av-preview" ');
-    return `<div class="fg"><label class="fl">Avatar</label><div style="display:flex;align-items:center;gap:12px">${preview}<div style="font-size:12px;color:var(--text3);line-height:1.45">Initials from name.</div></div></div>`;
+    return `<div class="fg"><label class="fl">Avatar</label><div style="display:flex;align-items:center;gap:12px">${preview}<div style="font-size:0.75rem;color:var(--text3);line-height:1.45">Initials from name.</div></div></div>`;
   },
 
   _syncAvatarPreview(name) {
@@ -208,11 +208,11 @@ const Family = {
     const headCard = head
       ? `<div data-act="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(0,213,255,.25),rgba(0,213,255,.15));border:1px solid rgba(0,213,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
-          <div style="position:absolute;top:10px;right:12px;font-size:11px;background:rgba(0,213,255,.4);color:${VCBrand.h_fff};padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
+          <div style="position:absolute;top:10px;right:12px;font-size:0.6875rem;background:rgba(0,213,255,.4);color:${VCBrand.h_fff};padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
             ${this.avatarHtml(head.name, 60)}
             <div>
-              <div style="font-size:17px;font-weight:800;color:var(--text)">${escHtml(head.name)} ${this._roleBadge(head.role || 'admin')}</div>
+              <div style="font-size:1.0625rem;font-weight:800;color:var(--text)">${escHtml(head.name)} ${this._roleBadge(head.role || 'admin')}</div>
               <div class="vc-ix-36">${_stat(head.id)}</div>
             </div>
           </div>
@@ -221,12 +221,12 @@ const Family = {
         ? `<div class="vc-ix-244" data-act="Family.confirmHeadFromProfile()">
           <div class="vc-ix-130">${S.user.name ? this.avatarHtml(S.user.name, 48) : (typeof VC !== 'undefined' ? VC.icon('star', 32) : '')}</div>
           <div class="vc-ix-77">Use ${escHtml(S.user.name)} as Head of Family</div>
-          <div style="font-size:13px;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
+          <div style="font-size:0.8125rem;color:var(--text3);margin-top:4px;line-height:1.45">Links your existing profile — no need to re-enter details</div>
         </div>`
         : `<div class="vc-ix-244" data-act="Family.openAddMember(true)">
           <div class="vc-ix-130">${VC.icon('star',32)}</div>
           <div class="vc-ix-77">Set Head of Family</div>
-          <div style="font-size:13px;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
+          <div style="font-size:0.8125rem;color:var(--text3);margin-top:4px">Add your name in Settings first, or tap to enter manually</div>
         </div>`);
 
     const memberCards = rest.map(m =>
@@ -236,7 +236,7 @@ const Family = {
           <div class="vc-ix-77">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
           <div class="vc-ix-36">${escHtml(m.relation || '')} · ${_stat(m.id)}</div>
         </div>
-        <div style="color:var(--text3);font-size:20px">›</div>
+        <div style="color:var(--text3);font-size:1.25rem">›</div>
       </div>`
     ).join('');
 
@@ -318,7 +318,7 @@ const Family = {
           <div class="cap-stat-tile-lbl"><span class="chip-ic">${VC.icon(s.ic,12)}</span>${s.l}</div>
         </button>`).join('')}
       </div>
-      ${fields.map(([k, v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:13px;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
+      ${fields.map(([k, v]) => `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:0.8125rem;color:var(--text3);flex-shrink:0;min-width:80px">${k}</span><span style="font-size:0.8125rem;color:var(--text);flex:1">${v}</span></div>`).join('')}`;
     }
 
     if (this._tab === 'banks') {
@@ -533,7 +533,7 @@ const Family = {
   openAddMember(isHead) {
     const p = isHead ? this._profileSnapshot() : { name:'', dob:'', phone:'', email:'' };
     Modal.open(isHead ? 'Head of Family' : 'Add Family Member',
-      `${isHead && p.name ? `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
+      `${isHead && p.name ? `<p style="font-size:0.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px">Prefilled from your profile — edit anything before saving.</p>` : ''}
       <div class="vc-ix-31">
         <div class="fg"><label class="fl">Name *</label><input class="inp" id="fam-name" value="${escHtml(p.name || '')}" placeholder="Full name" data-act-input="Family._syncAvatarPreview(this.value)"></div>
         ${this._avatarFieldHtml(p.name || '')}

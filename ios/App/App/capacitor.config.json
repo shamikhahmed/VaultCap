@@ -6,11 +6,22 @@
 		"androidScheme": "https"
 	},
 	"ios": {
-		"contentInset": "automatic",
+		"contentInset": "never",
+		"backgroundColor": "#060a12",
 		"scheme": "VaultCap",
 		"scrollEnabled": true
 	},
+	"plugins": {
+		"StatusBar": {
+			"overlaysWebView": true,
+			"style": "DARK"
+		}
+	},
 	"packageClassList": [
-		"HapticsPlugin"
+		"CAPBrowserPlugin",
+		"FilesystemPlugin",
+		"HapticsPlugin",
+		"SharePlugin",
+		"StatusBarPlugin"
 	]
 }

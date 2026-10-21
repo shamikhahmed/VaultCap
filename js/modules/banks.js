@@ -89,7 +89,7 @@ const Banks={
   },
   row(b){
     const logoHtml=getBankLogo(b.bankName,36);
-    const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:11px;background:rgba(0,213,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
+    const _sharedBadge=(b.owners||[]).filter(o=>o!=='self').length>0?' <span style="font-size:0.6875rem;background:rgba(0,213,255,.2);color:var(--accent);padding:2px 6px;border-radius:6px;font-weight:700">Shared</span>':'';
     const _bt=(b.bankType||'bank').toLowerCase();
     const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('');
     const name = escHtml(b.bankName||'Bank');
@@ -165,16 +165,16 @@ const Banks={
             <option value="">— Choose a bank —</option>
             ${optgroups}
           </select>
-          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);font-size:11px">▾</span>
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);font-size:0.6875rem">▾</span>
         </div>
       </div>
       <details class="vc-ix-26">
-        <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);padding:4px 0;list-style:none;display:flex;align-items:center;gap:5px"><span class="vc-ix-5">▸ Show all banks as tiles</span></summary>
+        <summary style="cursor:pointer;font-size:0.6875rem;font-weight:700;color:var(--text3);padding:4px 0;list-style:none;display:flex;align-items:center;gap:5px"><span class="vc-ix-5">▸ Show all banks as tiles</span></summary>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:8px" id="bf-tiles-grid">
           ${tiles.map(b=>{
             const safeName=b.name.replace(/'/g,"\\'");
             const logoEl=getBankLogo(b.name,32);
-            return `<div data-act="ActHelpers.pickBankTile('${safeName}','${safeCC}',this)" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px">${logoEl}<div style="font-size:11px;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
+            return `<div data-act="ActHelpers.pickBankTile('${safeName}','${safeCC}',this)" style="cursor:pointer;background:var(--glass2);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 8px;text-align:center;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:4px">${logoEl}<div style="font-size:0.6875rem;font-weight:600;line-height:1.3;color:var(--text)">${b.name}</div></div>`;
           }).join('')}
         </div>
       </details>`;
@@ -210,18 +210,18 @@ const Banks={
     <datalist id="bfAtypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Joint</option><option>Islamic</option><option>Fixed Deposit</option></datalist>
     <div class="fr"><div class="fg"><label class="fl">Account Type</label><input class="inp" id="bf-atype" value="${escAttr(b.accountType||'')}" list="bfAtypeDL" placeholder="Current, Savings…"></div><div class="fg"><label class="fl">Balance</label><input class="inp num-inp" id="bf-bal" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(b.balance||'')}" placeholder="0"></div></div>
     <!-- MORE DETAILS TOGGLE -->
-    <div data-act="ActHelpers.toggleAdv('bf-adv','bf-adv-btn','flex','More Details ▾','Less Details ▲')" id="bf-adv-btn" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:center;margin:4px 0">${isEdit?'Less Details ▲':'More Details ▾'}</div>
+    <div data-act="ActHelpers.toggleAdv('bf-adv','bf-adv-btn','flex','More Details ▾','Less Details ▲')" id="bf-adv-btn" style="width:100%;padding:10px;background:var(--glass);border:1px solid var(--border);border-radius:10px;color:var(--text3);font-size:0.8125rem;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:center;margin:4px 0">${isEdit?'Less Details ▲':'More Details ▾'}</div>
     <!-- ADVANCED SECTION -->
     <div id="bf-adv" style="display:${isEdit?'flex':'none'};flex-direction:column;gap:10px">
       <div class="fr"><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="bf-l4" value="${escAttr(b.last4||'')}" maxlength="4" inputmode="numeric" placeholder="1234"></div><div class="fg"><label class="fl">Bank Type</label><input class="inp" id="bf-type" value="${escAttr(b.bankType||'')}" list="bfTypeDL" placeholder="commercial, digital…"></div></div>
       <div class="fr"><div class="fg"><label class="fl">IBAN</label><input class="inp" id="bf-iban" value="${escAttr(b.iban||'')}" placeholder="GB29…"></div><div class="fg"><label class="fl">SWIFT / Sort Code</label><input class="inp" id="bf-swift" value="${escAttr(b.sortCode||'')}" placeholder="12-34-56 or SWIFT"></div></div>
       <div class="fr"><div class="fg"><label class="fl">Account Holder</label><input class="inp" id="bf-holder" value="${escAttr(b.holderName||S.user.name||'')}" placeholder="Full name"></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="bf-own"><option value="personal"${b.ownership!=='business'?' selected':''}>Personal</option><option value="business"${b.ownership==='business'?' selected':''}>Business</option><option value="joint"${b.ownership==='joint'?' selected':''}>Joint</option></select></div></div>
-      <div class="fg"><label class="fl">Joint Account?</label><div class="vc-ix-198"><input class="vc-ix-199" type="checkbox" id="bf-joint" data-act-change="Banks._toggleJoint(this.checked)" ${b.jointAccount?'checked':''}><label class="vc-ix-200" for="bf-joint">This is a joint account</label></div><div id="b-joint-section" style="display:${b.jointAccount?'block':'none'};margin-top:10px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">Joint with (select from Family or Contacts):</div><select class="vc-ix-201" id="b-joint-person"><option value="">Select person...</option>${typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(b.jointWith||''):''}</select><div style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:rgba(0,213,255,.06);border-radius:8px;border:1px solid rgba(0,213,255,.2)">Joint accounts count 100% toward your net worth — avoiding double-counting.</div></div></div>
+      <div class="fg"><label class="fl">Joint Account?</label><div class="vc-ix-198"><input class="vc-ix-199" type="checkbox" id="bf-joint" data-act-change="Banks._toggleJoint(this.checked)" ${b.jointAccount?'checked':''}><label class="vc-ix-200" for="bf-joint">This is a joint account</label></div><div id="b-joint-section" style="display:${b.jointAccount?'block':'none'};margin-top:10px"><div style="font-size:0.75rem;color:var(--text3);margin-bottom:8px">Joint with (select from Family or Contacts):</div><select class="vc-ix-201" id="b-joint-person"><option value="">Select person...</option>${typeof familyJointOptionsHtml==='function'?familyJointOptionsHtml(b.jointWith||''):''}</select><div style="font-size:0.6875rem;color:var(--text3);margin-top:6px;padding:8px;background:rgba(0,213,255,.06);border-radius:8px;border:1px solid rgba(0,213,255,.2)">Joint accounts count 100% toward your net worth — avoiding double-counting.</div></div></div>
       <div class="fr"><div class="fg"><label class="fl">Registered Email</label><input class="inp" id="bf-email" value="${escAttr(b.email||'')}" type="email" placeholder="email@…"></div><div class="fg"><label class="fl">Registered Phone</label><input class="inp" id="bf-phone" value="${escAttr(b.phone||'')}" placeholder="+44…"></div></div>
       ${U.loginFields(b)}
       <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="bf-notes" rows="2">${escAttr(b.notes||'')}</textarea></div>
       <div class="fg"><label class="fl">Tags</label>${U.tags(b.tags||[])}</div>
-      <label style="display:flex;align-items:center;gap:9px;cursor:pointer;margin-top:4px"><input type="checkbox" id="bf-fav" ${b.favorite?'checked':''}><span style="font-size:13px">Favourite</span></label>
+      <label style="display:flex;align-items:center;gap:9px;cursor:pointer;margin-top:4px"><input type="checkbox" id="bf-fav" ${b.favorite?'checked':''}><span style="font-size:0.8125rem">Favourite</span></label>
     </div>`;
   },
   _toggleJoint(checked){const s=document.getElementById('b-joint-section');if(s)s.style.display=checked?'block':'none';},

@@ -14,12 +14,19 @@ const PIN = {
     if (Date.now() < S.lockedUntil) { this.showLo(); return; }
     if (S.noPin) { R.unlock(); return; }
     pe += n; this.dots();
-    if (navigator.vibrate) navigator.vibrate(6);
+    if (typeof Haptic !== 'undefined') Haptic.tap();
     if (pe.length === 6) {
       const fpl = document.getElementById('forgotPinLink');
       if (fpl) fpl.style.display = 'none';
       setTimeout(() => this.verify(), 130);
     }
+  },
+  /** Demo vault only: type the sample PIN with the same per-digit feedback as real taps. */
+  fillDemo() {
+    if (!(typeof VaultProfiles !== 'undefined' && VaultProfiles.isDemo())) return;
+    const digits = String(VaultProfiles.DEMO_PIN || '').split('');
+    pe = '';
+    digits.forEach((d, i) => setTimeout(() => this.in(d), 70 * i));
   },
   del() {
     pe = pe.slice(0, -1);
@@ -59,12 +66,14 @@ const PIN = {
         S.fails = 0; S.lockedUntil = 0;
         try { LockoutStore.clear(); localStorage.removeItem('vo_pin'); } catch(e) {}
         Store.save();
+        if (typeof Haptic !== 'undefined') Haptic.save();
         setTimeout(() => R.unlock(), 180);
       } else if (kind === 'decoy') {
         applyDecoyUnlock(result && result.data);
       } else {
         // Wrong PIN — brute force protection
         S.fails++;
+        if (typeof Haptic !== 'undefined') Haptic.error();
 
         [0,1,2,3,4,5].forEach(i => { const d = document.getElementById('pd' + i); if (d) d.className = 'pd err'; });
         if (msg) msg.className = 'pin-msg err';
@@ -116,7 +125,7 @@ const PIN = {
     let left = 60;
     Modal.open('Vault Protection',
       `<p class="vc-ix-96">10 failed PIN attempts. Recover with your <strong>master key</strong> or the vault will be permanently wiped.</p>
-       <p style="font-size:12px;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
+       <p style="font-size:0.75rem;color:var(--warn);text-align:center">Auto-wipe in <strong id="wipe-cd">${left}</strong>s</p>`,
       `<button type="button" class="btn btn-p" data-act="PIN.cancelWipe();Modal.close();Settings.useMasterKey()">Use Master Key</button>
        <button type="button" class="btn btn-d btn-sm" data-act="PIN._executeWipe()">Wipe Now</button>`
     );
@@ -168,6 +177,7 @@ const PIN = {
           if (pin && !oldData.noPin) {
             if (!S.vaultMeta) S.vaultMeta = {};
             S.vaultMeta.pinHash = await PinHash.digest(pin);
+            S.vaultMeta.pinWeak = PinHash.isWeak(pin);
           }
           await VaultDB.save(Store._data());
           localStorage.removeItem('vos3');
@@ -204,7 +214,7 @@ const PIN = {
     VaultDB.migrateToPin(pp, pin).then(async (data) => {
       Object.assign(S, data);
       if (!S.vaultMeta) S.vaultMeta = {};
-      try { S.vaultMeta.pinHash = await PinHash.digest(pin); } catch (e) {}
+      try { S.vaultMeta.pinHash = await PinHash.digest(pin); S.vaultMeta.pinWeak = PinHash.isWeak(pin); } catch (e) {}
       S.fails = 0; S.lockedUntil = 0;
       try { LockoutStore.clear(); } catch (e) {}
       Store.save();

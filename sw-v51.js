@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v94';
+const CACHE = 'vaultcap-v95';
 // widget-data.json is local/gitignored — never precache it (addAll would fail install).
 const ASSETS = [
   './',
@@ -36,6 +36,12 @@ const ASSETS = [
   './js/storage.js',
   './js/core/smart-db.js',
   './js/modules/tax.js',
+  './js/modules/zakat.js',
+  './js/modules/family.js',
+  './js/modules/documents.js',
+  './js/modules/ai-import.js',
+  './dist/vaultcap.boot.js',
+  './dist/vaultcap.app.js',
   './dist/vaultcap.bundle.js',
 ];
 

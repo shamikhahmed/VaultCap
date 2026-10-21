@@ -49,13 +49,13 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 #splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060a12;overflow:hidden}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
 .vault-splash__mark{width:72px;height:72px;border-radius:18px;margin-bottom:18px;display:block}
-.vault-splash__title{margin:0 0 8px;font:700 26px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f6fa}
-.vault-splash__tagline{margin:0;font:500 13px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(232,194,74,.75)}
+.vault-splash__title{margin:0 0 8px;font:700 1.625rem/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f6fa}
+.vault-splash__tagline{margin:0;font:500 0.8125rem/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(232,194,74,.75)}
 .vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
 .vault-splash__bar{width:0;height:100%;background:#D4A017}
 .vault-door{display:none}
 /* Critical a11y targets before layout.css (VLT-V3-5) */
-#demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 12px/1.2 system-ui,sans-serif}
+#demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 0.75rem/1.2 system-ui,sans-serif}
 .panic-btn{display:none;width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;padding:0}
 </style>
 <link rel="preload" href="icons/mark.svg" as="image">
@@ -71,6 +71,7 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/identity.css">
 <link rel="stylesheet" href="css/brand-mark.css">
+<link rel="stylesheet" href="css/luxe.css">
 </head>
 <body data-cap-app="1">
 <a href="#mainPages" class="cap-skip-link">Skip to content</a>
@@ -85,8 +86,8 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 
 <!-- DEMO BANNER — shown when active profile = demo -->
 <div id="demoBanner" hidden>
-  <span class="demo-banner-chip">Demo</span>
-  <span class="demo-banner-text">Sample data only · PIN <strong>123456</strong></span>
+  <span class="demo-banner-chip">Sample</span>
+  <span class="demo-banner-text">Fictional data only</span>
   <button type="button" class="demo-banner-exit" data-act="typeof VaultProfiles!=='undefined'&&VaultProfiles.exitDemo()">Exit</button>
 </div>
 
@@ -148,13 +149,7 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
   <div class="lk-mid">
     <div class="lk-brand">
       <div class="lk-mark">
-        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:translateZ(0);will-change:transform;display:block" aria-hidden="true">
-          <rect width="72" height="72" rx="16" fill="var(--lk-mark-bg, white)"/>
-          <rect x="20" y="28" width="32" height="26" rx="6" fill="currentColor" opacity="0.95"/>
-          <path d="M26 28v-6a10 10 0 0 1 20 0v6" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <circle cx="36" cy="41" r="4" fill="var(--lk-mark-bg, white)"/>
-          <rect x="34.5" y="41" width="3" height="6" rx="1.5" fill="var(--lk-mark-bg, white)"/>
-        </svg>
+        <img src="icons/mark.svg" alt="" class="vc-mark" width="64" height="64" aria-hidden="true">
       </div>
       <div class="lk-brand-name">VaultCap</div>
     </div>
@@ -168,7 +163,7 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
       <div class="pd" id="pd5" aria-hidden="true"></div>
     </div>
     <div id="ppMigrate" style="display:none;width:100%;max-width:300px;margin:0 auto;text-align:left">
-      <p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">One-time migrate: enter old vault passphrase, then set a 6-digit PIN for daily unlock.</p>
+      <p style="font-size:0.75rem;color:var(--text2);line-height:1.5;margin-bottom:10px">One-time migrate: enter old vault passphrase, then set a 6-digit PIN for daily unlock.</p>
       <label class="fl" for="ppMigPass">Old passphrase</label>
       <input class="inp" id="ppMigPass" type="password" autocomplete="current-password" placeholder="Old passphrase" style="width:100%;padding:12px;border-radius:12px;margin-bottom:8px">
       <label class="fl" for="ppMigPin">New PIN</label>
@@ -199,21 +194,22 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
       <button class="key" data-act="PIN.in('0')" aria-label="0">0</button>
       <button class="key act" data-act="PIN.del()" aria-label="Delete">⌫</button>
     </div>
+    <!-- In-flow row under the keypad (was absolutely positioned and overlapped the bottom keys) -->
     <div class="lk-hint">
-      <button type="button" id="forgotPinLink" data-act="ActHelpers.forgotPin()" style="font-size:13px;color:var(--text3);margin-top:20px;background:none;border:none;cursor:pointer">Forgot PIN?</button>
+      <button type="button" id="forgotPinLink" data-act="ActHelpers.forgotPin()" style="font-size:0.8125rem;color:var(--text3);background:none;border:none;cursor:pointer">Forgot PIN?</button>
+      <button type="button" id="switchProfileBtn" class="lk-switch-vault" data-act="VaultProfiles.showSwitcher()" style="display:none">⇄ Switch Vault</button>
+      <button id="emergencyLockBtn" data-act="Emergency.showLockscreen()" style="display:none;background:rgba(255,59,48,.15);border:1px solid rgba(255,59,48,.4);color:var(--err);min-height:44px;padding:8px 14px;border-radius:999px;font-size:0.75rem;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:nowrap"><span data-vc-icon="cross" data-vc-size="13" style="display:inline-flex;align-items:center;justify-content:center"></span> Emergency Info</button>
     </div>
   </div>
-  <button id="emergencyLockBtn" data-act="Emergency.showLockscreen()" style="display:none;position:absolute;bottom:calc(env(safe-area-inset-bottom, 0px) + 24px);left:50%;transform:translateX(-50%);background:rgba(255,59,48,.15);border:1px solid rgba(255,59,48,.4);color:var(--err);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:nowrap"><span data-vc-icon="cross" data-vc-size="13" style="display:inline-flex;align-items:center;justify-content:center"></span> Emergency Info</button>
-  <button type="button" id="switchProfileBtn" class="lk-switch-vault" data-act="VaultProfiles.showSwitcher()" style="display:none">⇄ Switch Vault</button>
 </div>
 
 <!-- PROFILE PICKER -->
 <div id="pgProfilePicker" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;padding:24px">
   <div style="width:100%;max-width:340px">
-    <div style="font-size:28px;font-weight:900;text-align:center;margin-bottom:6px;letter-spacing:-1px;color:var(--text)">Choose Vault</div>
-    <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px">Each profile is completely isolated</div>
+    <div style="font-size:1.75rem;font-weight:900;text-align:center;margin-bottom:6px;letter-spacing:-1px;color:var(--text)">Choose Vault</div>
+    <div style="font-size:0.8125rem;color:var(--text3);text-align:center;margin-bottom:24px">Each profile is completely isolated</div>
     <div id="ppCards" style="display:flex;flex-direction:column;gap:10px"></div>
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:20px;opacity:.6">Your data is isolated per profile</div>
+    <div style="font-size:0.6875rem;color:var(--text3);text-align:center;margin-top:20px;opacity:.6">Your data is isolated per profile</div>
   </div>
 </div>
 
@@ -227,13 +223,11 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
   <div style="margin-bottom:4px">
     <h1 class="vault-display-title vault-home-title">VaultCap</h1>
   </div>
-  <p style="font-size:14px;color:var(--text2);margin-bottom:2px;font-weight:500" id="hWelcome">Everything you own, encrypted on your device</p>
-  <p style="font-size:11px;color:var(--text3);margin-bottom:3px">Zero-knowledge · Encrypted · Offline-first · Global</p>
-  <p style="font-size:11px;color:var(--text3);margin-bottom:24px;opacity:.5;letter-spacing:.3px">by Capricorn Systems</p>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:2px;font-weight:500" id="hWelcome">Everything you own, encrypted on your device</p>
+  <p style="font-size:0.6875rem;color:var(--text3);margin-bottom:24px;opacity:.5;letter-spacing:.3px">by Capricorn Systems</p>
   <!-- CTA -->
-  <button data-act="R.showLock()" style="width:100%;padding:16px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:10px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s;touch-action:manipulation" class="vos-cta-lift">Open My Vault</button>
-  <button data-act="VaultProfiles.startDemo()" style="width:100%;padding:13px;background:var(--glass);border:1px solid var(--border);color:var(--text2);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;font-family:var(--font);touch-action:manipulation">New? Take the guided demo</button>
-  <p style="font-size:11px;color:var(--text3);margin-bottom:18px;line-height:1.5">Demo PIN: <strong style="color:var(--accent);letter-spacing:.08em">123456</strong> (6 digits) · sample data only</p>
+  <button id="homeOpenBtn" data-act="R.showLock()" style="width:100%;padding:16px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:16px;font-size:1.0625rem;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:10px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s;touch-action:manipulation" class="vos-cta-lift">Open My Vault</button>
+  <button type="button" id="homeDemoLink" class="home-demo-link" data-act="VaultProfiles.startDemo()">Explore a sample vault</button>
   <!-- Feature pills -->
   <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:20px">
     <span class="home-pill"><span data-vc-icon="lock" data-vc-size="12" aria-hidden="true"></span>Encrypted locally</span>
@@ -241,13 +235,13 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
     <span class="home-pill"><span data-vc-icon="sparkles" data-vc-size="12" aria-hidden="true"></span>Instant access</span>
   </div>
   <!-- Module grid -->
-  <div class="vault-panel vault-panel--home" style="width:100%;padding:16px;margin-bottom:20px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
+  <div class="vault-panel vault-panel--home home-modules" style="width:100%;padding:16px;margin-bottom:20px">
+    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
     <div id="homeModGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"></div>
   </div>
   <!-- Appearance — Apple-style segmented selector -->
-  <div style="width:100%;margin-bottom:24px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;text-align:center">Appearance</div>
+  <div class="home-appearance" style="width:100%;margin-bottom:24px">
+    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;text-align:center">Appearance</div>
     <div id="homeThemes" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
   </div>
 </div>
@@ -261,125 +255,125 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <!-- Screen 1: Welcome -->
 <div class="ob-step on" id="ob1">
 <div class="ob-mark" style="margin-bottom:14px"><img src="icons/mark.svg" alt="" class="vc-mark" width="56" height="56"></div>
-<h2 class="ob-title" style="font-size:36px;font-weight:900;letter-spacing:-1.5px;margin-bottom:8px">VaultCap</h2>
-<p class="ob-sub" style="font-size:16px;margin-bottom:8px;font-weight:600;color:var(--text)">Everything private. Everything yours.</p>
-<p class="ob-sub" style="font-size:14px;margin-bottom:28px;max-width:280px;line-height:1.6">Banks, documents, cards, investments — all encrypted on your device. No account. No cloud. No subscription.</p>
+<h2 class="ob-title" style="font-size:2.25rem;font-weight:900;letter-spacing:-1.5px;margin-bottom:8px">VaultCap</h2>
+<p class="ob-sub" style="font-size:1rem;margin-bottom:8px;font-weight:600;color:var(--text)">Everything private. Everything yours.</p>
+<p class="ob-sub" style="font-size:0.875rem;margin-bottom:28px;max-width:280px;line-height:1.6">Banks, documents, cards, investments — all encrypted on your device. No account. No cloud. No subscription.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:36px">
-  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)"><span data-vc-icon="lock" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> AES-256 encrypted</span>
-  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)"><span data-vc-icon="smartphone" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> 100% offline</span>
-  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)"><span data-vc-icon="arrows" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> PK · UK · UAE</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="lock" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> AES-256 encrypted</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="smartphone" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> Works offline</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="arrows" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> PK · UK · UAE</span>
 </div>
-<button class="btn btn-p" data-act="OB.next(1)" style="width:100%;max-width:300px;padding:16px;font-size:16px;font-weight:700;border-radius:16px">Set up my vault →</button>
-<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Quick setup (PIN only) →</button>
+<button class="btn btn-p" data-act="OB.skipToPin()" style="width:100%;max-width:300px;padding:16px;font-size:1rem;font-weight:700;border-radius:16px">Create my vault</button>
+<button data-act="OB.next(1)" style="margin-top:12px;min-height:44px;background:none;border:none;color:var(--text2);font-size:0.875rem;cursor:pointer;touch-action:manipulation">Personalise first — countries &amp; modules →</button>
 </div>
 
 <!-- Screen 2: User Type -->
 <div class="ob-step" id="ob-type">
-<h2 class="ob-title" style="font-size:22px;margin-bottom:6px">What best describes you?</h2>
+<h2 class="ob-title" style="font-size:1.375rem;margin-bottom:6px">What best describes you?</h2>
 <p class="ob-sub" style="margin-bottom:18px">We'll set up the right modules for you</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px;margin-bottom:24px">
   <div data-act="OB.selectUserType('personal',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="true" aria-label="Personal — Banks, cards, documents"
     style="padding:16px 12px;border-radius:16px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
-    <span style="font-size:32px" aria-hidden="true">👤</span>
-    <div style="font-size:13px;font-weight:700;color:var(--text)">Personal</div>
-    <div style="font-size:11px;color:var(--text3);line-height:1.3">Banks, cards, documents</div>
+    <span style="font-size:2rem" aria-hidden="true">👤</span>
+    <div style="font-size:0.8125rem;font-weight:700;color:var(--text)">Personal</div>
+    <div style="font-size:0.6875rem;color:var(--text3);line-height:1.3">Banks, cards, documents</div>
   </div>
   <div data-act="OB.selectUserType('family',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Family — Full family overview"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
-    <span style="font-size:32px" aria-hidden="true">👨‍👩‍👧‍👦</span>
-    <div style="font-size:13px;font-weight:700;color:var(--text)">Family</div>
-    <div style="font-size:11px;color:var(--text3);line-height:1.3">Full family overview</div>
+    <span style="font-size:2rem" aria-hidden="true">👨‍👩‍👧‍👦</span>
+    <div style="font-size:0.8125rem;font-weight:700;color:var(--text)">Family</div>
+    <div style="font-size:0.6875rem;color:var(--text3);line-height:1.3">Full family overview</div>
   </div>
   <div data-act="OB.selectUserType('business',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Business — Business assets and accounts"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
-    <span style="font-size:32px" aria-hidden="true">💼</span>
-    <div style="font-size:13px;font-weight:700;color:var(--text)">Business</div>
-    <div style="font-size:11px;color:var(--text3);line-height:1.3">Business assets &amp; accounts</div>
+    <span style="font-size:2rem" aria-hidden="true">💼</span>
+    <div style="font-size:0.8125rem;font-weight:700;color:var(--text)">Business</div>
+    <div style="font-size:0.6875rem;color:var(--text3);line-height:1.3">Business assets &amp; accounts</div>
   </div>
   <div data-act="OB.selectUserType('expat',this)" class="ob-type-card"
     role="radio" tabindex="0" aria-checked="false" aria-label="Global Expat — Multi-country, multi-currency"
     style="padding:16px 12px;border-radius:16px;background:var(--glass);border:2px solid var(--border);cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:.15s">
-    <span style="font-size:32px" aria-hidden="true"><span data-vc-icon="arrows" data-vc-size="32" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
-    <div style="font-size:13px;font-weight:700;color:var(--text)">Global Expat</div>
-    <div style="font-size:11px;color:var(--text3);line-height:1.3">Multi-country, multi-currency</div>
+    <span style="font-size:2rem" aria-hidden="true"><span data-vc-icon="arrows" data-vc-size="32" style="display:inline-flex;align-items:center;justify-content:center"></span></span>
+    <div style="font-size:0.8125rem;font-weight:700;color:var(--text)">Global Expat</div>
+    <div style="font-size:0.6875rem;color:var(--text3);line-height:1.3">Multi-country, multi-currency</div>
   </div>
 </div>
 <button class="btn btn-p" data-act="OB.next(2)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
-<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Set up later →</button>
-<button data-act="OB.back()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
+<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Set up later →</button>
+<button data-act="OB.back()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
 
 <!-- Screen 3: Country -->
 <div class="ob-step" id="ob2">
-<h2 class="ob-title" style="font-size:22px;margin-bottom:6px">Where do you manage finances?</h2>
+<h2 class="ob-title" style="font-size:1.375rem;margin-bottom:6px">Where do you manage finances?</h2>
 <p class="ob-sub" style="margin-bottom:20px">Select all that apply</p>
 <div id="ob-countries" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:340px;margin-bottom:10px"></div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:24px">You can change this later in Settings</p>
+<p style="font-size:0.6875rem;color:var(--text3);margin-bottom:24px">You can change this later in Settings</p>
 <button class="btn btn-p" data-act="OB.next(3)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
-<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Set up later →</button>
-<button data-act="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
+<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Set up later →</button>
+<button data-act="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
 
 <!-- Screen 4: What to track -->
 <div class="ob-step" id="ob3">
-<h2 class="ob-title" style="font-size:22px;margin-bottom:6px">What do you want to track?</h2>
+<h2 class="ob-title" style="font-size:1.375rem;margin-bottom:6px">What do you want to track?</h2>
 <p class="ob-sub" style="margin-bottom:18px">Select all that apply</p>
 <div id="ob-cats" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px;margin-bottom:24px"></div>
 <button class="btn btn-p" data-act="OB.next(4)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
-<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Set up later →</button>
-<button data-act="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
+<button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Set up later →</button>
+<button data-act="OB.back()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
 
 <!-- Screen 5: PIN setup -->
 <div class="ob-step" id="ob4">
-<div style="font-size:48px;animation:float 3s ease-in-out infinite;line-height:1;margin-bottom:10px"><span data-vc-icon="key" data-vc-size="48" style="display:inline-flex;align-items:center;justify-content:center"></span></div>
-<h2 class="ob-title" style="font-size:24px;margin-bottom:6px">Secure Your Vault</h2>
+<div style="font-size:3rem;animation:float 3s ease-in-out infinite;line-height:1;margin-bottom:10px"><span data-vc-icon="key" data-vc-size="48" style="display:inline-flex;align-items:center;justify-content:center"></span></div>
+<h2 class="ob-title" style="font-size:1.5rem;margin-bottom:6px">Secure Your Vault</h2>
 <p class="ob-sub" style="margin-bottom:16px">Choose a 6-digit PIN. Next screen shows a recovery key — save it once.</p>
 <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:0">
   <div style="margin-bottom:10px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">PIN (6 digits)</div>
-    <input class="inp" id="ob-pin" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
+    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">PIN (6 digits)</div>
+    <input class="inp" id="ob-pin" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:1.75rem;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
   </div>
   <div style="margin-bottom:10px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
-    <input class="inp" id="ob-pin2" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:28px;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
+    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:7px;text-align:left">Confirm PIN</div>
+    <input class="inp" id="ob-pin2" type="password" maxlength="6" inputmode="numeric" placeholder="• • • • • •" style="font-size:1.75rem;text-align:center;letter-spacing:14px;padding:14px;border-radius:14px" data-act-input="OB.checkPIN()">
   </div>
-  <div id="ob-pinmatch" style="height:20px;text-align:center;font-size:12px;margin-bottom:6px"></div>
+  <div id="ob-pinmatch" style="height:20px;text-align:center;font-size:0.75rem;margin-bottom:6px"></div>
   <div class="ferr" id="ob-perr" style="text-align:center;min-height:16px;margin-bottom:4px"></div>
 </div>
-<button class="btn btn-p" data-act="OB.finish()" style="width:100%;max-width:300px;padding:16px;font-size:16px;border-radius:16px;margin-top:4px">Create vault →</button>
-<div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;line-height:1.5;max-width:280px">PIN unlocks this device. Recovery key restores vault if you forget PIN or change phones. Free forever — data stays on your device.</div>
-<button data-act="OB.back()" style="margin-top:10px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">← Back</button>
+<button class="btn btn-p" data-act="OB.finish()" style="width:100%;max-width:300px;padding:16px;font-size:1rem;border-radius:16px;margin-top:4px">Create vault →</button>
+<div style="font-size:0.6875rem;color:var(--text3);margin-top:10px;text-align:center;line-height:1.5;max-width:280px">PIN unlocks this device. Recovery key restores vault if you forget PIN or change phones. Free forever — data stays on your device.</div>
+<button data-act="OB.back()" style="margin-top:10px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">← Back</button>
 </div>
 
 <!-- Screen 5: Recovery Key -->
 <div class="ob-step" id="ob5">
-<div style="font-size:48px;line-height:1;margin-bottom:12px"><span data-vc-icon="key" data-vc-size="48" style="display:inline-flex;align-items:center;justify-content:center"></span></div>
-<h2 class="ob-title" style="font-size:24px;margin-bottom:6px">Your Recovery Key</h2>
-<p class="ob-sub" style="font-size:13px;margin-bottom:16px;max-width:300px">This is your vault's master key. Store it somewhere safe — a password manager, printed paper, or a secure note.</p>
+<div style="font-size:3rem;line-height:1;margin-bottom:12px"><span data-vc-icon="key" data-vc-size="48" style="display:inline-flex;align-items:center;justify-content:center"></span></div>
+<h2 class="ob-title" style="font-size:1.5rem;margin-bottom:6px">Your Recovery Key</h2>
+<p class="ob-sub" style="font-size:0.8125rem;margin-bottom:16px;max-width:300px">This is your vault's master key. Store it somewhere safe — a password manager, printed paper, or a secure note.</p>
 <div id="ob-recovery-key" style="background:var(--glass);border:2px solid var(--accent);border-radius:12px;padding:18px;text-align:center;font-family:var(--mono,monospace);font-size:1.05rem;font-weight:700;letter-spacing:.08em;color:var(--accent);margin-bottom:12px;word-break:break-all;max-width:320px;width:100%;min-height:54px;display:flex;align-items:center;justify-content:center">Generating…</div>
 <div id="ob-recovery-copy" style="display:none;gap:8px;margin-bottom:16px;width:100%;max-width:320px">
   <button type="button" class="btn btn-s btn-sm" style="flex:1" data-act="OB.copyRecoveryKey()"><span data-vc-icon="list" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Copy Key</button>
 </div>
 <div style="background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.3);border-radius:12px;padding:12px 16px;margin-bottom:20px;max-width:320px;width:100%;text-align:left">
-  <div style="font-size:12px;color:rgba(201,162,39,0.9);font-weight:600;margin-bottom:4px">Save before continuing</div>
-  <div style="font-size:12px;color:var(--text3);line-height:1.5">If you ever forget your PIN, this key is the only way to restore your vault. We don't store it anywhere — only you have it.</div>
+  <div style="font-size:0.75rem;color:rgba(201,162,39,0.9);font-weight:600;margin-bottom:4px">Save before continuing</div>
+  <div style="font-size:0.75rem;color:var(--text3);line-height:1.5">If you ever forget your PIN, this key is the only way to restore your vault. We don't store it anywhere — only you have it.</div>
 </div>
-<button class="btn btn-p" data-act="OB.next(6)" style="width:100%;max-width:300px;padding:16px;font-size:15px;font-weight:700;border-radius:16px">I've saved my key <span data-vc-icon="target" data-vc-size="15" class="vc-ic-inline" style="display:inline-flex;vertical-align:middle;margin-right:.35em"></span></button>
+<button class="btn btn-p" data-act="OB.next(6)" style="width:100%;max-width:300px;padding:16px;font-size:0.9375rem;font-weight:700;border-radius:16px">I've saved my key <span data-vc-icon="target" data-vc-size="15" class="vc-ic-inline" style="display:inline-flex;vertical-align:middle;margin-right:.35em"></span></button>
 </div>
 
 <!-- Screen 6: Ready -->
 <div class="ob-step" id="ob6">
 <div class="ob-mark ob-mark--ready" style="margin-bottom:16px"><img src="icons/mark.svg" alt="" class="vc-mark" width="64" height="64"></div>
-<h2 class="ob-title" style="font-size:30px;font-weight:900;letter-spacing:-0.03em;margin-bottom:8px">Your vault is live.</h2>
-<p class="ob-sub" style="font-size:14px;margin-bottom:20px;max-width:280px;line-height:1.6">AES-256-GCM encrypted. On your device only. No account, no subscription.</p>
-<input class="inp" id="ob-name" placeholder="What should we call you? (optional)" maxlength="28" style="font-size:15px;text-align:center;max-width:300px;margin-bottom:16px">
+<h2 class="ob-title" style="font-size:1.875rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:8px">Your vault is live.</h2>
+<p class="ob-sub" style="font-size:0.875rem;margin-bottom:20px;max-width:280px;line-height:1.6">AES-256-GCM encrypted. On your device only. No account, no subscription.</p>
+<input class="inp" id="ob-name" placeholder="What should we call you? (optional)" maxlength="28" style="font-size:0.9375rem;text-align:center;max-width:300px;margin-bottom:16px">
 <div id="ob-ready-stats" style="background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;width:100%;max-width:300px;text-align:left;margin-bottom:20px"></div>
-<button class="btn btn-p" data-act="OB.complete()" style="width:100%;max-width:300px;padding:16px;font-size:16px;font-weight:700;border-radius:16px;letter-spacing:-0.01em">Enter my vault →</button>
-<p style="font-size:11px;color:var(--text3);margin-top:14px;max-width:260px;line-height:1.5;text-align:center">You can add banks, documents, cards, and investments at any time. Start with whatever matters most.</p>
+<button class="btn btn-p" data-act="OB.complete()" style="width:100%;max-width:300px;padding:16px;font-size:1rem;font-weight:700;border-radius:16px;letter-spacing:-0.01em">Enter my vault →</button>
+<p style="font-size:0.6875rem;color:var(--text3);margin-top:14px;max-width:260px;line-height:1.5;text-align:center">You can add banks, documents, cards, and investments at any time. Start with whatever matters most.</p>
 </div>
 
 </div>
@@ -388,10 +382,10 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <!-- MAIN APP -->
 <div class="app" id="app" style="display:none">
 <div class="sidebar" id="sidebar" role="navigation" aria-label="VaultCap sidebar">
-<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><img src="icons/mark.svg" alt="" class="vc-mark" width="32" height="32" aria-hidden="true"><h1 style="font-size:16px;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" data-act="toggleSidebar()" aria-label="Collapse sidebar" data-vc-icon="menu" data-vc-size="16"></button></div><p id="sbUser" style="font-size:11px;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
+<div class="sb-logo"><div class="sb-logo-row"><div style="display:flex;align-items:center;gap:8px;min-width:0"><img src="icons/mark.svg" alt="" class="vc-mark" width="32" height="32" aria-hidden="true"><h1 style="font-size:1rem;letter-spacing:-0.3px;white-space:nowrap">VaultCap</h1></div><button class="sb-tog" data-act="toggleSidebar()" aria-label="Collapse sidebar" data-vc-icon="menu" data-vc-size="16"></button></div><p id="sbUser" style="font-size:0.6875rem;color:var(--text3);margin-top:3px">Capricorn Systems</p></div>
 <nav class="sb-nav" id="sbNav" aria-label="Main navigation"></nav>
 <div class="sb-bot">
-<button class="btn btn-g btn-full btn-sm" data-act="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:11px">Search everything</span></button>
+<button class="btn btn-g btn-full btn-sm" data-act="CMD.open()" style="margin-bottom:4px;justify-content:flex-start;gap:10px">⌘K <span style="color:var(--text3);font-size:0.6875rem">Search everything</span></button>
 <div style="display:flex;gap:6px">
 <button class="btn btn-g btn-sm" data-act="togglePrivacy()" id="privBtn" style="flex:1" title="Privacy" data-vc-icon="eye-off" data-vc-size="18"></button>
 <button class="btn btn-g btn-sm" data-act="ExIm.export('vos')" style="flex:1" title="Backup" data-vc-icon="share" data-vc-size="18"></button>
@@ -402,11 +396,11 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 <main class="main" id="mainPages" aria-label="Vault content">
 <!-- Pages rendered dynamically -->
 <div class="page on" id="pg-dashboard">
-<div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="overflow:hidden;min-width:0"></div><div id="dashDate" style="font-size:11px;color:var(--text3);margin-top:1px"></div></div>
+<div class="ph" style="flex-direction:column;align-items:flex-start;gap:2px;padding-bottom:10px"><div style="display:flex;align-items:center;width:100%;gap:8px;min-width:0"><div style="flex:1;min-width:0;overflow:hidden"><div id="dashGreet" style="overflow:hidden;min-width:0"></div><div id="dashDate" style="font-size:0.6875rem;color:var(--text3);margin-top:1px"></div></div>
 <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;position:relative" class="dash-toolbar">
-<button class="btn btn-g btn-sm" id="currBtn" data-act="Dash.toggleCurrency()" title="Display currency" style="min-width:44px;padding:6px 8px;font-size:11px">GBP</button>
+<button class="btn btn-g btn-sm" id="currBtn" data-act="Dash.toggleCurrency()" title="Display currency" style="min-width:44px;padding:6px 8px;font-size:0.6875rem">GBP</button>
 <button type="button" class="icb dash-act-desktop" id="dashSettingsBtn" data-act="R.goto('settings')" title="Settings" aria-label="Settings" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="settings" data-vc-size="18"></button>
-<button type="button" class="btn btn-g btn-sm dash-act-desktop" data-act="CMD.open()" style="padding:6px 8px;font-size:11px;display:none" id="dashCmdBtn">⌘K</button>
+<button type="button" class="btn btn-g btn-sm dash-act-desktop" data-act="CMD.open()" style="padding:6px 8px;font-size:0.6875rem;display:none" id="dashCmdBtn">⌘K</button>
 <button type="button" class="icb dash-act-desktop" id="dashPrivacyBtn" data-act="togglePrivacy()" title="Privacy" aria-label="Privacy" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="eye-off" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-desktop" id="dashLockBtn" data-act="R.lock()" title="Lock vault" aria-label="Lock vault" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="lock" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-more" id="dashMoreBtn" data-act="Dash.toggleMore(event)" title="More actions" aria-label="More actions" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="more" data-vc-size="18"></button>
@@ -418,17 +412,17 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 </div></div></div></div>
 <div class="pb" id="dashBody"></div>
 </div>
-<div class="page" id="pg-banks"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Banking</span><span class="cap-title">Banks</span></h2><div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" data-act="Banks.openAdd()">+ Add</button></div></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="bQ" placeholder="Search banks..." data-act-input="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" data-act-change="Banks.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
-<div class="page" id="pg-cards"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Banking</span><span class="cap-title">Cards</span></h2><div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" data-act="Cards.openAdd()">+ Add</button></div></div><div class="pb"><div id="cWallet" style="margin-bottom:12px"></div><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="cQ" placeholder="Search cards..." data-act-input="Cards.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="cSort" data-act-change="Cards.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="expiry">Expiry</option><option value="network">Network</option><option value="recent">Recent</option></select></div></div><div class="chips" id="cChips"></div><div id="cItems"></div></div></div>
-<div class="page" id="pg-investments"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Wealth</span><span class="cap-title">Investments</span></h2><button class="btn btn-p btn-sm" data-act="Inv.openAdd()">+ Add</button></div><div class="pb"><div id="invSummary"></div><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="invQ" placeholder="Search..." data-act-input="Inv.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="invSort" data-act-change="Inv.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="name">A-Z</option><option value="value">Value ↓</option><option value="pnl">P&L</option></select></div></div><div class="chips" id="invChips"></div><div id="invItems"></div></div></div>
+<div class="page" id="pg-banks"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Banking</span><span class="cap-title">Banks</span></h2><div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" data-act="Banks.openAdd()">+ Add</button></div></div><div class="pb" id="bList"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="bQ" placeholder="Search banks..." data-act-input="Banks.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="bSort" data-act-change="Banks.render()" style="padding:5px 7px;width:auto;font-size:0.6875rem"><option value="name">A-Z</option><option value="country">Country</option><option value="fav">Fav</option><option value="recent">Recent</option></select></div></div><div class="chips" id="bChips"></div><div id="bItems"></div></div></div>
+<div class="page" id="pg-cards"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Banking</span><span class="cap-title">Cards</span></h2><div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" data-act="Cards.openAdd()">+ Add</button></div></div><div class="pb"><div id="cWallet" style="margin-bottom:12px"></div><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="cQ" placeholder="Search cards..." data-act-input="Cards.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="cSort" data-act-change="Cards.render()" style="padding:5px 7px;width:auto;font-size:0.6875rem"><option value="name">A-Z</option><option value="expiry">Expiry</option><option value="network">Network</option><option value="recent">Recent</option></select></div></div><div class="chips" id="cChips"></div><div id="cItems"></div></div></div>
+<div class="page" id="pg-investments"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Wealth</span><span class="cap-title">Investments</span></h2><button class="btn btn-p btn-sm" data-act="Inv.openAdd()">+ Add</button></div><div class="pb"><div id="invSummary"></div><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="invQ" placeholder="Search..." data-act-input="Inv.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="invSort" data-act-change="Inv.render()" style="padding:5px 7px;width:auto;font-size:0.6875rem"><option value="name">A-Z</option><option value="value">Value ↓</option><option value="pnl">P&L</option></select></div></div><div class="chips" id="invChips"></div><div id="invItems"></div></div></div>
 <div class="page" id="pg-cash"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Banking</span><span class="cap-title">Cash</span></h2><button class="btn btn-p btn-sm" data-act="Cash.openAdd()">+ Add</button></div><div class="pb"><div id="cashSummary"></div><div id="cashItems"></div></div></div>
-<div class="page" id="pg-loans"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Cashflow</span><span class="cap-title">Loans</span></h2></div><div class="pb"><div id="loanSummary"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"><button style="padding:14px;font-size:14px;font-weight:700;background:rgba(239,68,68,.12);border:1.5px solid var(--err);color:var(--err);border-radius:var(--r);cursor:pointer;transition:background .15s" data-act="Loans.openAdd('borrowed')"><span data-vc-icon="arrow-right" data-vc-size="14" style="display:inline-flex;align-items:center;justify-content:center"></span> I Owe</button><button style="padding:14px;font-size:14px;font-weight:700;background:rgba(34,197,94,.12);border:1.5px solid var(--ok);color:var(--ok);border-radius:var(--r);cursor:pointer;transition:background .15s" data-act="Loans.openAdd('lent')"><span data-vc-icon="undo" data-vc-size="14" aria-hidden="true"></span> They Owe Me</button></div><div id="loanItems"></div></div></div>
+<div class="page" id="pg-loans"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Cashflow</span><span class="cap-title">Loans</span></h2></div><div class="pb"><div id="loanSummary"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"><button style="padding:14px;font-size:0.875rem;font-weight:700;background:rgba(239,68,68,.12);border:1.5px solid var(--err);color:var(--err);border-radius:var(--r);cursor:pointer;transition:background .15s" data-act="Loans.openAdd('borrowed')"><span data-vc-icon="arrow-right" data-vc-size="14" style="display:inline-flex;align-items:center;justify-content:center"></span> I Owe</button><button style="padding:14px;font-size:0.875rem;font-weight:700;background:rgba(34,197,94,.12);border:1.5px solid var(--ok);color:var(--ok);border-radius:var(--r);cursor:pointer;transition:background .15s" data-act="Loans.openAdd('lent')"><span data-vc-icon="undo" data-vc-size="14" aria-hidden="true"></span> They Owe Me</button></div><div id="loanItems"></div></div></div>
 <div class="page" id="pg-friends"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Identity</span><span class="cap-title">Contacts</span></h2><button class="btn btn-p btn-sm" data-act="Friends.openAdd()">+ Add</button></div><div class="pb"><div id="friendSummary"></div><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="friendQ" placeholder="Search contacts..." data-act-input="Friends.render()" style="padding-left:36px"></div><div id="friendItems"></div></div></div>
 <div class="page" id="pg-family"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Home</span><span class="cap-title">Family</span></h2><button class="btn btn-p btn-sm" data-act="Family.openAddMember(false)">+ Add</button></div><div class="pb" id="pg-family-body"></div></div>
 <div class="page" id="pg-finance-home"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Money</span><span class="cap-title">Banking & Cashflow</span></h2></div><div class="pb" id="finance-home-body"></div></div>
 <div class="page" id="pg-vault-home"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Identity</span><span class="cap-title">Identity</span></h2></div><div class="pb" id="vault-home-body"></div></div>
 <div class="page" id="pg-assets-home"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Wealth</span><span class="cap-title">Holdings</span></h2></div><div class="pb" id="assets-home-body"></div></div>
-<div class="page" id="pg-sims"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Identity</span><span class="cap-title">SIM Cards</span></h2><button class="btn btn-p btn-sm" data-act="Sims.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="simQ" placeholder="Search SIMs..." data-act-input="Sims.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="simSort" data-act-change="Sims.render()" style="padding:5px 7px;width:auto;font-size:11px"><option value="network">Network</option><option value="country">Country</option><option value="status">Status</option></select></div></div><div class="chips" id="simChips"></div><div id="simItems"></div></div></div>
+<div class="page" id="pg-sims"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Identity</span><span class="cap-title">SIM Cards</span></h2><button class="btn btn-p btn-sm" data-act="Sims.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="simQ" placeholder="Search SIMs..." data-act-input="Sims.render()" style="padding-left:36px;padding-right:100px"><div class="sq-sort"><select class="inp btn-sm" id="simSort" data-act-change="Sims.render()" style="padding:5px 7px;width:auto;font-size:0.6875rem"><option value="network">Network</option><option value="country">Country</option><option value="status">Status</option></select></div></div><div class="chips" id="simChips"></div><div id="simItems"></div></div></div>
 <div class="page" id="pg-assets"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Wealth</span><span class="cap-title">Property</span></h2><button class="btn btn-p btn-sm" data-act="Assets.openAdd()">+ Add</button></div><div class="pb"><div class="chips" id="aChips"></div><div id="aItems"></div></div></div>
 <div class="page" id="pg-expenses"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Cashflow</span><span class="cap-title">Expenses</span></h2><button class="btn btn-p btn-sm" data-act="Exp.openAdd()">+ Add</button></div><div class="pb"><div id="expSummary"></div><div class="chips" id="expChips"></div><div id="expItems"></div></div></div>
 <div class="page" id="pg-emails"><div class="ph"><h2 class="cap-h2"><span class="cap-kicker">Identity</span><span class="cap-title">Email Identities</span></h2><button class="btn btn-p btn-sm" data-act="Emails.openAdd()">+ Add</button></div><div class="pb"><div class="sq"><span class="sq-ic" data-vc-icon="search" data-vc-size="14" aria-hidden="true"></span><input class="inp" id="emailQ" placeholder="Search emails..." data-act-input="Emails.render()" style="padding-left:36px"></div><div id="emailItems"></div></div></div>
@@ -481,17 +475,17 @@ html,body{margin:0;background:#060a12;color:#f4f6fa}
 
 <!-- MODAL -->
 <div class="overlay" id="overlay" data-act="if(event.target===this)Modal.close()">
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mBody"><div class="mhandle"></div><div class="mh"><h3 id="mTitle">–</h3><button class="icb" data-act="Modal.close()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mBody"><div class="mhandle"></div><div class="mh"><h3 id="mTitle">–</h3><button class="icb" data-act="Modal.close()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div>
 </div>
 
 <!-- THEME PICKER -->
 <div class="overlay" id="themeOv" data-act="if(event.target===this)ThemeEngine.closePicker()">
-<div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="cross" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
+<div class="modal" style="max-width:460px"><div class="mhandle"></div><div class="mh"><h3><span data-vc-icon="grid" data-vc-size="28" style="display:inline-flex;align-items:center;justify-content:center"></span> Appearance</h3><button class="icb" data-act="ThemeEngine.closePicker()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="themePicker"></div></div>
 </div>
 
 <script src="js/storage.js?v=5.3.1" defer></script>
 <script src="js/boot-ver.js" defer></script>
-<script src="dist/vaultcap.bundle.js?v=5.3.1" defer></script>
+<script src="dist/vaultcap.boot.js?v=5.3.1" defer></script>
 <script src="js/boot-shell.js" defer></script>
 
 

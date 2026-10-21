@@ -97,7 +97,7 @@ body.light .dash-hero {
 .vault-empty__title {
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 700;
 }
 
@@ -256,7 +256,7 @@ body.light .dash-hero {
 }
 
 .vault-splash__title {
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: 700;
   /* System stack first so LCP text paints before Cinzel/Space Grotesk */
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -266,7 +266,7 @@ body.light .dash-hero {
 }
 
 .vault-splash__tagline {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -364,20 +364,20 @@ body.light .dash-hero {
 .vault-status-seal__copy { flex: 1; min-width: 0; }
 .vault-status-seal__title {
   font-family: var(--font-display-title, var(--font));
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text);
 }
 .vault-status-seal__sub {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text3);
   margin-top: 2px;
 }
 .vault-status-seal__score {
   font-family: var(--mono);
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 800;
   background: none;
   border: none;
@@ -391,7 +391,7 @@ body.light .dash-hero {
   margin: 0 16px 16px;
 }
 .chamber-floor__label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -439,14 +439,14 @@ body.light .dash-hero {
   color: var(--gold);
 }
 .chamber-card__name {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .chamber-card__count {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text3);
 }
@@ -486,7 +486,7 @@ body.light .dash-hero {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent);
 }
 .ledger-strip__title {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
@@ -494,7 +494,7 @@ body.light .dash-hero {
   text-overflow: ellipsis;
 }
 .ledger-strip__time {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text3);
 }
 
@@ -517,7 +517,7 @@ body.light .dash-hero {
     padding: 4px 4px 24px 0;
   }
   .dash-inspector__plaque {
-    font-size: 14px;
+    font-size: 0.875rem;
     margin-bottom: 12px;
     color: var(--gold);
     -webkit-text-fill-color: var(--gold);
@@ -532,17 +532,17 @@ body.light .dash-hero {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
   }
   .dash-inspector__meta {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: var(--text3);
     margin-top: 8px;
   }
   .dash-inspector__section { margin-bottom: 16px; }
   .dash-inspector__h {
-    font-size: 11px;
+    font-size: 0.6875rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -561,7 +561,7 @@ body.light .dash-hero {
     border: 1px solid var(--border);
     background: var(--glass);
     color: var(--text);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
   }

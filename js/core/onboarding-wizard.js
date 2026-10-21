@@ -48,11 +48,11 @@ const Onboarding = {
 
     if (this._step === 0) {
       content = `
-        <div style="font-size:40px;margin-bottom:16px">${typeof VC!=='undefined'?VC.icon('vault',40):''}</div>
-        <div style="font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultCap</div>
-        <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;margin-bottom:32px">Your private financial vault. Takes 30 seconds to personalise.</div>
-        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:320px;padding:16px;font-size:15px;font-weight:700">Get Started →</button>
-        <button type="button" data-act="Onboarding._skip()" style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip for now</button>`;
+        <div style="font-size:2.5rem;margin-bottom:16px">${typeof VC!=='undefined'?VC.icon('vault',40):''}</div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center">Welcome to VaultCap</div>
+        <div style="font-size:0.875rem;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;margin-bottom:32px">Your private financial vault. Takes 30 seconds to personalise.</div>
+        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:320px;padding:16px;font-size:0.9375rem;font-weight:700">Get Started →</button>
+        <button type="button" data-act="Onboarding._skip()" style="margin-top:14px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Skip for now</button>`;
     } else if (this._step === 1) {
       content = `
         <div class="vc-ix-79">Where do you primarily live?</div>
@@ -77,7 +77,7 @@ const Onboarding = {
           <div id="ob-none-card" data-act="ActHelpers.clearSecondaryAndStyle(this)"
             class="ob-sec"
             style="padding:14px 12px;border-radius:14px;background:var(--glass2);border:2px solid var(--accent);cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;grid-column:1/-1">
-            <span style="font-size:20px;display:flex">${typeof VC!=='undefined'?VC.icon('cross',20):''}</span>
+            <span style="font-size:1.25rem;display:flex">${typeof VC!=='undefined'?VC.icon('cross',20):''}</span>
             <span class="vc-ix-12">None — I only manage money in one country</span>
           </div>
           ${this._countries.filter(c=>c.code!==this._primaryCountry).map(c => `
@@ -89,7 +89,7 @@ const Onboarding = {
             </div>`).join('')}
         </div>
         <button type="button" data-act="Onboarding._next()" class="btn btn-p vc-ix-184">Continue →</button>
-        <button type="button" data-act="Onboarding._secondaryCountries=[];Onboarding._next()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;touch-action:manipulation">Skip this step →</button>
+        <button type="button" data-act="Onboarding._secondaryCountries=[];Onboarding._next()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Skip this step →</button>
         <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 3) {
       const moduleOptions = [
@@ -106,16 +106,16 @@ const Onboarding = {
       ];
       content = `
         <div class="vc-ix-79">What do you want to manage?</div>
-        <div style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px">You can change this anytime in Settings</div>
+        <div style="font-size:0.8125rem;color:var(--text3);text-align:center;margin-bottom:20px">You can change this anytime in Settings</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px;margin-bottom:20px;max-height:55vh;overflow-y:auto;padding:2px">
           ${moduleOptions.map(m => `
             <div data-act="ActHelpers.toggleObModule('${m.key}',this)"
               style="padding:12px;border-radius:14px;background:var(--glass);border:2px solid ${this._modules[m.key]?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;gap:4px;position:relative">
               <div class="vc-ix-185">
                 <span class="vc-ix-87">${VC.icon(m.icon,18)}</span>
-                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+VCBrand.h_fff+';background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
+                <div class="mod-check" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6875rem;font-weight:700;color:'+VCBrand.h_fff+';background:${this._modules[m.key]?'var(--accent)':'transparent'}"></div>
               </div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
+              <div style="font-size:0.75rem;font-weight:700;color:var(--text);line-height:1.2">${m.label}</div>
               <div class="vc-ix-176">${m.desc}</div>
             </div>`).join('')}
         </div>
@@ -140,18 +140,18 @@ const Onboarding = {
                 <div class="vc-ix-179">${p.label}</div>
                 <div class="vc-ix-8">${p.desc}</div>
               </div>
-              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(0,213,255,.15)':'transparent'}"></div>
+              <div class="pref-check" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:700;color:var(--accent);background:${this._prefs[p.key]?'rgba(0,213,255,.15)':'transparent'}"></div>
             </div>`).join('')}
         </div>
-        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:15px;font-weight:700">Continue →</button>
+        <button type="button" data-act="Onboarding._next()" class="btn btn-p" style="width:100%;max-width:400px;padding:16px;font-size:0.9375rem;font-weight:700">Continue →</button>
         <button class="vc-ix-80" type="button" data-act="Onboarding._back()">← Back</button>`;
     } else if (this._step === 5) {
       const country = this._countries.find(c => c.code === this._primaryCountry);
       const flag = country ? country.flag : '';
       content = `
-        <div style="font-size:56px;margin-bottom:16px;animation:pgIn .4s ease both;display:flex;justify-content:center">${country ? flag : (typeof VC !== 'undefined' ? VC.icon('vault', 48) : '')}</div>
-        <div style="font-size:26px;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center;letter-spacing:-0.5px">Your vault is ready.</div>
-        <div style="font-size:14px;color:var(--text3);text-align:center;line-height:1.7;max-width:300px;margin-bottom:28px">Everything's set up. Here's what you can do right now:</div>
+        <div style="font-size:3.5rem;margin-bottom:16px;animation:pgIn .4s ease both;display:flex;justify-content:center">${country ? flag : (typeof VC !== 'undefined' ? VC.icon('vault', 48) : '')}</div>
+        <div style="font-size:1.625rem;font-weight:800;color:var(--text);margin-bottom:8px;text-align:center;letter-spacing:-0.5px">Your vault is ready.</div>
+        <div style="font-size:0.875rem;color:var(--text3);text-align:center;line-height:1.7;max-width:300px;margin-bottom:28px">Everything's set up. Here's what you can do right now:</div>
         <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
           <div class="vc-ix-101">
             <span class="vc-ix-65">${VC.icon('bank',18)}</span>
@@ -175,7 +175,7 @@ const Onboarding = {
             </div>
           </div>
         </div>
-        <button type="button" data-act="Onboarding._finish()" class="btn btn-p" style="width:100%;max-width:360px;padding:16px;font-size:16px;font-weight:700;border-radius:16px">Go to My Vault →</button>`;
+        <button type="button" data-act="Onboarding._finish()" class="btn btn-p" style="width:100%;max-width:360px;padding:16px;font-size:1rem;font-weight:700;border-radius:16px">Go to My Vault →</button>`;
     }
 
     overlay.innerHTML = `
@@ -250,14 +250,14 @@ const Onboarding = {
     if (!this._modules.family) S.modules.family = false;
     if (!this._modules.vehicles) { if(!mtp.hiddenAssets.includes('vehicles')) mtp.hiddenAssets.push('vehicles'); }
     if (!this._modules.documents) { if(!mtp.hiddenVault.includes('documents')) mtp.hiddenVault.push('documents'); }
-    saveTabPrefs(mtp);
+    if (typeof saveTabPrefs === 'function') saveTabPrefs(mtp);
     S.user.modulePrefs = this._modules;
 
     S.user.onboardingComplete = true;
     S.user.showZakat = this._prefs.zakat || this._modules.zakat;
     S.user.hasBusiness = this._prefs.business;
     Store.save();
-    buildNav();
+    if (typeof buildNav === 'function') buildNav();
   },
 
   _finish() {
@@ -272,8 +272,8 @@ const Onboarding = {
   showSettingsCard() {
     return `
       <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:16px;margin:0 0 16px">
-        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">Personalise Your Vault</div>
-        <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:12px">Set your country, currency, and preferences for a tailored experience.</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--accent);margin-bottom:6px">Personalise Your Vault</div>
+        <div style="font-size:0.75rem;color:var(--text3);line-height:1.6;margin-bottom:12px">Set your country, currency, and preferences for a tailored experience.</div>
         <button type="button" data-act="Onboarding._primaryCountry=S.user.country||'';Onboarding._secondaryCountries=S.user.secondaryCountries||[];Onboarding.show()" class="btn btn-p btn-sm">Run Setup →</button>
       </div>`;
   },

@@ -94,7 +94,7 @@ const LlmAssist = {
   async ensureConsent(purpose) {
     if (!this.getConfig().enabled) return false;
     if (sessionStorage.getItem('vo_llm_session_ok') === '1') return true;
-    const ok = await window.__vos_confirm((purpose || 'Send this text to the optional Smart Import assistant?') + '\n\nNothing is sent unless you confirm. Prefer offline Smart Parser for sensitive documents.');
+    const ok = await window.__vos_confirm((purpose || 'Send this text to the optional Smart Import assistant?') + '\n\nIf you confirm, only this text is sent to an AI model run by Cloudflare Workers AI, through the Capricorn proxy, to suggest fields. Your vault, PIN and keys are never sent. Nothing is sent unless you confirm. Prefer the offline Smart Parser for sensitive documents.');
     if (ok) sessionStorage.setItem('vo_llm_session_ok', '1');
     return !!ok;
   },

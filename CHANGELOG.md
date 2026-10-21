@@ -5,6 +5,21 @@
 - README shields midnight/gold; removed vaultcap DECK_OVERRIDE in audit-design-tokens
 - SW `vaultcap-v94` · register query `sw-v51.js?v=5.3.1`
 
+### App Store / v6 (2026-10-19, branch `perfection/v6-appstore`)
+
+- iOS native shell polish (share/print/clipboard, ComboPicker, Dynamic Type, sample vault UX) — see `qa/ios-appstore-audit-2026-10-16/FIXED-LIST.md`
+- Production bundle minify (esbuild) 1162→887 KB; `/*! VaultCap bundle */` banner retained
+- Gallery regenerated; App Store pack `qa/v6/APP-STORE.md` (Finance); Experience Lab matrices + pptx/webm under `build/qa/v6/`
+- iPad Pro 12.9" 4th + 6th gen simulator retests alive on quiet host
+
+### Order 2 — J/K close (2026-10-20)
+
+- Code-split: first-load `dist/vaultcap.boot.js` (~198 KB) + deferred `dist/vaultcap.app.js`; VaultLazy loads tax/zakat/smart-db/family/documents/import; CSP `script-src 'self'` unchanged
+- Install banner CTA opaque navy/white (LH a11y contrast 100)
+- SW `vaultcap-v95` precaches boot/app + lazy modules
+- LH mobile 3× honest median perf **82** (not ≥90) — LCP causes in `qa/v6/APP-REPORT-v6.md`
+
+
 ## [5.3.0] — 2026-10-14
 
 - Perfection Loop v3 Wave B: VLT-V3-1 44px skip-link (off-screen park); VLT-V3-2 wip LCP / P-VLT-1 canvas remove / demo splash skip / lazy LLM bundle

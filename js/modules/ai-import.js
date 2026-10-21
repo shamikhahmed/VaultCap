@@ -282,7 +282,7 @@ const AIImport = {
 
       '<div class="u-highlight-card">' +
         '<div class="vc-ix-207">Paste text from statements, messages, or notes. Smart Parser works offline; optional LLM in Settings improves accuracy when you add your own API key.</div>' +
-        '<div style="font-size:11px;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
+        '<div style="font-size:0.6875rem;color:var(--text3);margin-top:6px">Works globally · Banks · Cards · Loans · Cash · Investments · Documents · SIMs · Expenses</div>' +
       '</div>' +
 
       '<div class="fg">' +
@@ -296,7 +296,7 @@ const AIImport = {
         'ondrop="AIImport.handleDrop(event)" ' +
         'data-act="document.getElementById(\'ie-file\').click()">' +
         '<div class="vc-ix-130">' + (typeof VC !== 'undefined' ? VC.icon('download', 28) : '') + '</div>' +
-        '<div style="font-size:13px;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
+        '<div style="font-size:0.8125rem;color:var(--text2);font-weight:600">Drop a file or tap to upload</div>' +
         '<div class="vc-ix-114">CSV, text, or image (OCR via Import page)</div>' +
         '<input class="vc-ix-17" type="file" id="ie-file" accept="image/*,.csv,.json,.txt,.pdf,.xlsx,.docx" data-act-change="AIImport.handleFile(this.files[0])">' +
       '</div>' +
@@ -308,7 +308,7 @@ const AIImport = {
         '<div class="vc-ix-149"><div class="vc-ix-150" id="ie-progress"></div></div>' +
       '</div>' +
 
-      '<div id="llm-health-import" style="font-size:11px;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
+      '<div id="llm-health-import" style="font-size:0.6875rem;color:var(--text3);line-height:1.5;padding:0 2px"></div>' +
 
       '<div id="ie-results"></div>' +
 
@@ -362,7 +362,7 @@ const AIImport = {
           if (health.status === 'error') {
             llmProxyDown = true;
             if (resultsEl) {
-              resultsEl.innerHTML = '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.35);border-radius:12px;padding:14px;margin-bottom:10px;font-size:12px;line-height:1.55;color:var(--text2)">' +
+              resultsEl.innerHTML = '<div style="background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.35);border-radius:12px;padding:14px;margin-bottom:10px;font-size:0.75rem;line-height:1.55;color:var(--text2)">' +
                 '<strong style="color:var(--warn)">LLM proxy offline</strong><br>' +
                 escHtml(health.message) + '<br><span class="vc-ix-4">Continuing with offline Smart Parser…</span></div>';
             }
@@ -391,7 +391,7 @@ const AIImport = {
         Toast.show('Found ' + detected.length + ' item' + (detected.length > 1 ? 's' : ''), 'success');
       }
     } catch (e) {
-      if (resultsEl) resultsEl.innerHTML = '<div style="color:var(--err);font-size:13px;padding:14px">Detection failed — ' + (e.message || 'unknown error') + '</div>';
+      if (resultsEl) resultsEl.innerHTML = '<div style="color:var(--err);font-size:0.8125rem;padding:14px">Detection failed — ' + (e.message || 'unknown error') + '</div>';
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Detect & Extract'; }
     }
@@ -421,17 +421,17 @@ const AIImport = {
         '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
           '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1">' +
             '<input type="checkbox" id="ie-chk-' + i + '" checked style="width:18px;height:18px;cursor:pointer">' +
-            '<div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px"><span class="chip-ic">' + typeIc + '</span>' + typeLabel + '</div>' +
+            '<div style="font-size:0.875rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px"><span class="chip-ic">' + typeIc + '</span>' + typeLabel + '</div>' +
           '</label>' +
-          '<div style="font-size:11px;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
+          '<div style="font-size:0.6875rem;color:' + confColor + ';font-weight:600">' + confLabel + '</div>' +
         '</div>' +
         '<div style="display:flex;flex-direction:column;gap:6px">' +
           fields.map(function(e) {
             const key = e[0], val = e[1];
             const displayVal = Array.isArray(val) ? val.join(', ') : String(val);
             return '<div class="vc-ix-161">' +
-              '<div style="font-size:11px;color:var(--text3);min-width:100px;text-transform:capitalize">' + key.replace(/([A-Z])/g, ' $1').trim() + '</div>' +
-              '<input style="flex:1;background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:12px" ' +
+              '<div style="font-size:0.6875rem;color:var(--text3);min-width:100px;text-transform:capitalize">' + key.replace(/([A-Z])/g, ' $1').trim() + '</div>' +
+              '<input style="flex:1;background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:0.75rem" ' +
                 'value="' + displayVal.replace(/"/g, '&quot;') + '" ' +
                 'data-act-input="ActHelpers.setAiResult(' + i + ',\'' + key + '\',this.value)">' +
             '</div>';
@@ -525,7 +525,7 @@ const AIImport = {
       Toast.show('Imported ' + count + ' item' + (count > 1 ? 's' : ''), 'success');
       this._results = [];
       const resultsEl = document.getElementById('ie-results');
-      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.3);border-radius:12px;padding:14px;text-align:center;color:var(--ok);font-size:14px;font-weight:700">' + count + ' item' + (count > 1 ? 's' : '') + ' imported successfully</div>';
+      if (resultsEl) resultsEl.innerHTML = '<div style="background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.3);border-radius:12px;padding:14px;text-align:center;color:var(--ok);font-size:0.875rem;font-weight:700">' + count + ' item' + (count > 1 ? 's' : '') + ' imported successfully</div>';
     } else {
       Toast.show('No items selected', 'warn');
     }

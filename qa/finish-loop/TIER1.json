@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.3.1",
-  "swCache": "vaultcap-v94",
+  "swCache": "vaultcap-v95",
   "generatedAt": "2026-10-14T12:24:35.505Z",
   "status": "FAIL",
   "pass": [
@@ -11,7 +11,7 @@
     },
     {
       "id": "version:sw-cache-match",
-      "detail": "sw-v51.js contains vaultcap-v94"
+      "detail": "sw-v51.js contains vaultcap-v95"
     },
     {
       "id": "records:BASELINE.md",

@@ -1,0 +1,370 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   VaultCap — Luxe layer (loaded last). One calm, premium system on top of
+   the existing tokens/components: deeper midnight surfaces, warm ivory text,
+   gold reserved for the primary action, the brand mark and positive totals.
+   Spec: qa/ios-appstore-audit-2026-10-16/DESIGN-PROPOSALS.md
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --lx-bg: #05080f;
+  --lx-surface: #0b1220;
+  --lx-surface-2: #101a2b;
+  --lx-surface-3: #172238;
+  --lx-hair: rgba(255, 255, 255, 0.07);
+  --lx-hair-2: rgba(255, 255, 255, 0.12);
+  --lx-text: #f5f2ea;
+  --lx-text-2: #aab2c0;
+  --lx-text-3: #7f899c;
+  --lx-gold: #d4a017;
+  --lx-gold-hi: #ecc55a;
+  --lx-gold-lo: #a97c0d;
+  --lx-gold-grad: linear-gradient(180deg, #e8bd45 0%, #d4a017 52%, #b8890f 100%);
+  /* Darker ink: was #1b1405 → ~4.4:1 on gold; #0a0800 clears WCAG 4.5 on #d4a017 (LH a11y) */
+  --lx-gold-ink: #0a0800;
+  --lx-gold-soft: rgba(212, 160, 23, 0.12);
+  --lx-gold-line: rgba(212, 160, 23, 0.38);
+  --lx-shadow-1: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
+  --lx-shadow-2: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 18px 48px rgba(0, 0, 0, 0.45);
+  --lx-r-ctl: 14px;
+  --lx-r-card: 20px;
+  --lx-r-sheet: 28px;
+  --lx-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Remap the app's base tokens so every existing screen inherits the system */
+  --bg: var(--lx-bg);
+  --bg2: var(--lx-surface);
+  --bg3: var(--lx-surface-2);
+  --glass: var(--lx-surface);
+  --glass2: var(--lx-surface-2);
+  --glass3: var(--lx-surface-3);
+  --border: var(--lx-hair);
+  --border2: var(--lx-hair-2);
+  --text: var(--lx-text);
+  --text2: var(--lx-text-2);
+  --text3: var(--lx-text-3);
+  --accent: var(--lx-gold);
+  --accent-fg: var(--lx-gold-ink);
+  --glow: rgba(212, 160, 23, 0.16);
+  --card-br: var(--lx-r-card);
+  --vault-panel-bg: linear-gradient(160deg, var(--lx-surface-2) 0%, var(--lx-surface) 100%);
+  --vault-panel-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+body.light {
+  --lx-bg: #f6f3ec;
+  --lx-surface: #ffffff;
+  --lx-surface-2: #fbf9f4;
+  --lx-surface-3: #f1ece1;
+  --lx-hair: rgba(20, 23, 31, 0.08);
+  --lx-hair-2: rgba(20, 23, 31, 0.14);
+  --lx-text: #14171f;
+  --lx-text-2: #4d5565;
+  --lx-text-3: #5c6373;
+  --lx-gold: #b8860b;
+  --lx-gold-ink: #fffaf0;
+  --lx-gold-grad: linear-gradient(180deg, #d4a017 0%, #b8860b 100%);
+  --lx-gold-soft: rgba(184, 134, 11, 0.10);
+  --lx-gold-line: rgba(184, 134, 11, 0.35);
+  --lx-shadow-1: 0 1px 2px rgba(20, 23, 31, 0.04), 0 8px 24px rgba(20, 23, 31, 0.06);
+  --lx-shadow-2: 0 2px 6px rgba(20, 23, 31, 0.06), 0 18px 48px rgba(20, 23, 31, 0.10);
+  --bg: var(--lx-bg); --bg2: var(--lx-surface); --bg3: var(--lx-surface-2);
+  --glass: var(--lx-surface); --glass2: var(--lx-surface-2); --glass3: var(--lx-surface-3);
+  --border: var(--lx-hair); --border2: var(--lx-hair-2);
+  --text: var(--lx-text); --text2: var(--lx-text-2); --text3: var(--lx-text-3);
+  /* Cap DNA: light-theme accent stays ink navy (tests/theme-audit); gold is for the mark + primary CTA */
+  --accent: #0a1220; --accent-fg: #ffffff;
+  --vault-panel-bg: linear-gradient(160deg, #ffffff 0%, #faf7f0 100%);
+}
+
+/* ── 2. Base type ──────────────────────────────────────────────────────── */
+html, body { background: var(--lx-bg); color: var(--lx-text); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+h1, h2, h3, .ph h2, .ob-title, .mh h3 { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif; }
+.num, .amt, .bal, [class*="amount"], [class*="-total"], .nw-hero { font-variant-numeric: tabular-nums; }
+::selection { background: var(--lx-gold-soft); color: var(--lx-text); }
+
+/* ── 3. Page chrome ────────────────────────────────────────────────────── */
+.ph {
+  background: color-mix(in srgb, var(--lx-bg) 82%, transparent);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid var(--lx-hair);
+}
+.ph h2 { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.025em; }
+.settings-chrome, .sett-tabs { background: color-mix(in srgb, var(--lx-bg) 86%, transparent); }
+.pb { scrollbar-width: none; }
+.pb::-webkit-scrollbar { display: none; }
+
+/* Bottom tab bar — frosted, hairline, gold icon + label when selected (no pill) */
+.btabs {
+  background: color-mix(in srgb, var(--lx-bg) 78%, transparent);
+  backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border-top: 1px solid var(--lx-hair);
+}
+.ti { color: var(--lx-text-3); }
+.ti .ti-lb, .ti span:last-child { font-size: 0.6562rem; font-weight: 600; letter-spacing: 0.01em; }
+.ti.on { color: var(--lx-gold); background: transparent; }
+.ti.on .ti-ic, .ti.on .vc-icon-wrap { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.ti.on .vc-icon-wrap, .ti.on .vc-icon { color: var(--lx-gold); }
+
+/* ── 4. Buttons ────────────────────────────────────────────────────────── */
+.btn {
+  min-height: 48px; border-radius: var(--lx-r-ctl);
+  font-size: 1rem; font-weight: 600; letter-spacing: -0.01em;
+  transition: transform 0.18s var(--lx-spring), filter 0.18s, background 0.18s, border-color 0.18s;
+}
+.btn.btn-sm { min-height: 44px; border-radius: 12px; font-size: 0.8125rem; padding: 8px 14px; }
+.btn.btn-p {
+  background: var(--lx-gold-grad); color: var(--lx-gold-ink); border: 0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 8px 22px rgba(212, 160, 23, 0.22);
+}
+.btn.btn-p:hover { filter: brightness(1.06); transform: none; }
+.btn.btn-p:active { transform: scale(0.98); filter: brightness(0.96); }
+.btn.btn-g, .btn.btn-s {
+  background: var(--lx-surface-2); color: var(--lx-text); border: 1px solid var(--lx-hair-2);
+}
+.btn.btn-g:hover, .btn.btn-s:hover { background: var(--lx-surface-3); }
+.btn.btn-d { background: rgba(255, 69, 58, 0.10); color: #ff6b61; border: 1px solid rgba(255, 69, 58, 0.25); }
+.icb { border-radius: 12px; }
+
+/* Floating action button — gold coin */
+.fab, .fab.cap-premium-fab {
+  width: 56px; height: 56px; background: var(--lx-gold-grad); color: var(--lx-gold-ink);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 12px 28px rgba(212, 160, 23, 0.30), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* ── 5. Inputs ─────────────────────────────────────────────────────────── */
+.inp {
+  min-height: 48px; border-radius: 12px; background: var(--lx-surface-2);
+  border: 1px solid var(--lx-hair-2); color: var(--lx-text); font-size: 1rem;
+}
+.inp:focus { border-color: var(--lx-gold); box-shadow: 0 0 0 4px var(--lx-gold-soft); }
+.fl, label.fl { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--lx-text-3); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--lx-gold); }
+
+/* ── 6. Cards, rows, lists ─────────────────────────────────────────────── */
+.entry {
+  background: var(--lx-surface); border: 1px solid var(--lx-hair);
+  border-radius: var(--lx-r-card); box-shadow: var(--lx-shadow-1); margin-bottom: 10px;
+}
+.entry:hover { border-color: var(--lx-hair-2); box-shadow: var(--lx-shadow-1); }
+.entry-main { padding: 14px 16px 12px; gap: 14px; }
+.entry-ic { width: 44px; height: 44px; border-radius: 13px; background: var(--lx-surface-3); color: var(--lx-text-2); }
+.entry-name { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
+.entry-sub { color: var(--lx-text-3); }
+
+.set-sec { margin-bottom: 28px; }
+.set-title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; color: var(--lx-text-3); margin: 0 4px 10px; }
+.set-card { background: var(--lx-surface); border: 1px solid var(--lx-hair); border-radius: var(--lx-r-card); box-shadow: var(--lx-shadow-1); }
+.si { padding: 15px 18px; border-bottom: 1px solid var(--lx-hair); min-height: 56px; }
+.sil .name { font-size: 1rem; font-weight: 500; letter-spacing: -0.01em; }
+.sil .desc { font-size: 0.8125rem; color: var(--lx-text-3); }
+
+.chip { min-height: 34px; padding: 7px 15px; font-size: 0.8125rem; font-weight: 500; border-color: var(--lx-hair-2); background: var(--lx-surface); color: var(--lx-text-2); }
+.chip.on { background: var(--lx-gold-soft); border-color: var(--lx-gold-line); color: var(--lx-gold-hi); }
+body.light .chip.on { background: var(--lx-gold-soft); border-color: var(--lx-gold-line); color: #7a5a08; }
+.chip.on .chip-ic { color: inherit; opacity: 1; }
+.badge { border-radius: 8px; }
+
+/* ── 7. Sheets, overlays, toasts ───────────────────────────────────────── */
+.overlay { background: rgba(2, 4, 9, 0.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+body.light .overlay { background: rgba(20, 23, 31, 0.28); }
+.modal {
+  background: var(--lx-surface); border: 1px solid var(--lx-hair);
+  border-radius: var(--lx-r-sheet) var(--lx-r-sheet) 0 0; box-shadow: var(--lx-shadow-2);
+  animation-timing-function: var(--lx-spring);
+}
+@media (min-width: 769px) { .modal { border-radius: 24px; } }
+.mhandle { width: 40px; height: 5px; border-radius: 3px; background: var(--lx-hair-2); margin-top: 8px; }
+.mh { border-bottom: 1px solid var(--lx-hair); padding: 16px 20px 14px; }
+.mh h3 { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.015em; }
+.mh .icb { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: var(--lx-surface-3); border: 0; color: var(--lx-text-2); }
+.mb { padding: 20px; }
+.mf { background: var(--lx-surface); border-top: 1px solid var(--lx-hair); }
+.toast {
+  border-radius: 16px; background: color-mix(in srgb, var(--lx-surface-2) 88%, transparent);
+  border: 1px solid var(--lx-hair-2); border-left-width: 1px; box-shadow: var(--lx-shadow-2);
+  font-size: 0.875rem; color: var(--lx-text);
+}
+.toast.ok .vc-icon { color: var(--ok); } .toast.err .vc-icon { color: var(--err); }
+.toast.wrn .vc-icon { color: var(--warn); } .toast.inf .vc-icon { color: var(--lx-gold-hi); }
+
+/* ── 8. Lock screen ────────────────────────────────────────────────────── */
+#pgLock { background: radial-gradient(120% 70% at 50% 0%, #0f1a2e 0%, var(--lx-bg) 60%); }
+body.light #pgLock { background: radial-gradient(120% 70% at 50% 0%, #fffaf0 0%, var(--lx-bg) 60%); }
+#lkClock { font-weight: 200; letter-spacing: -0.04em; color: var(--lx-text); opacity: 0.92; }
+#lkDate { color: var(--lx-text-3); letter-spacing: 0.02em; }
+.lk-brand-name { font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--lx-text-2); }
+.lk-sub { font-size: 0.875rem; color: var(--lx-text-3); }
+.pd { width: 12px; height: 12px; border: 1.5px solid var(--lx-hair-2); }
+.pd.filled, .pd.on { background: var(--lx-gold); border-color: var(--lx-gold); box-shadow: 0 0 10px rgba(212, 160, 23, 0.45); }
+.key {
+  background: color-mix(in srgb, var(--lx-surface-3) 70%, transparent);
+  border: 1px solid var(--lx-hair); font-weight: 300; color: var(--lx-text);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.key:active, .key.pressed { background: var(--lx-gold-soft); border-color: var(--lx-gold-line); transform: scale(0.92); }
+.key.act { background: transparent; border-color: transparent; color: var(--lx-text-2); }
+.key-sub { color: var(--lx-text-3); letter-spacing: 0.14em; font-size: 0.5938rem; }
+.lk-switch-vault { background: transparent; border: 1px solid var(--lx-hair-2); color: var(--lx-text-2); font-weight: 500; }
+
+/* ── 9. Onboarding / welcome ───────────────────────────────────────────── */
+#pgOnboard { background: radial-gradient(130% 80% at 50% -10%, #132038 0%, var(--lx-bg) 58%); }
+body.light #pgOnboard { background: radial-gradient(130% 80% at 50% -10%, #fff6df 0%, var(--lx-bg) 58%); }
+.ob-title { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; }
+.ob-sub { font-size: 1rem; line-height: 1.55; color: var(--lx-text-2); max-width: 340px; }
+.ob-pd { height: 6px; width: 6px; background: var(--lx-hair-2); }
+.ob-pd.on { width: 22px; background: var(--lx-gold); box-shadow: none; }
+.home-pill { background: var(--lx-surface); border: 1px solid var(--lx-hair-2); color: var(--lx-text-2); }
+
+/* ── 10. Dashboard ─────────────────────────────────────────────────────── */
+.vault-status-seal {
+  border-radius: var(--lx-r-card); border: 1px solid var(--lx-gold-line);
+  background: linear-gradient(150deg, rgba(212, 160, 23, 0.10) 0%, var(--lx-surface) 55%);
+  box-shadow: var(--lx-shadow-1); padding: 14px 16px;
+}
+.chamber-card { border-radius: var(--lx-r-card); background: var(--lx-surface); box-shadow: var(--lx-shadow-1); }
+.chamber-card__rim { border-radius: var(--lx-r-card); border: 1px solid var(--lx-hair-2); }
+.nw-hero { letter-spacing: -0.03em; }
+
+/* ── 11. Motion & accessibility ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .key, .modal, .entry, .chamber-card { transition: none !important; animation: none !important; }
+}
+body.reduce-motion .btn, body.reduce-motion .key, body.reduce-motion .modal { transition: none !important; animation: none !important; }
+:focus-visible { outline: 2px solid var(--lx-gold); outline-offset: 2px; }
+
+/* ── 12. Screen-specific polish ────────────────────────────────────────── */
+/* Dashboard greeting */
+#dashGreet .dg-greet { font-size: 0.8125rem; font-weight: 500; color: var(--lx-text-3); line-height: 1.25; }
+#dashGreet .dg-name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; color: var(--lx-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#dashDate { color: var(--lx-text-3); }
+/* Pre-unlock home inside the iOS app: calm hero only (no feature catalogue / theme picker) */
+html.is-native #pgHome .home-modules,
+html.is-native #pgHome .home-appearance { display: none; }
+#pgHome { background: radial-gradient(130% 80% at 50% -10%, #132038 0%, var(--lx-bg) 58%); }
+body.light #pgHome { background: radial-gradient(130% 80% at 50% -10%, #fff6df 0%, var(--lx-bg) 58%); }
+.vault-display-title { letter-spacing: 0.18em; font-weight: 700; }
+
+/* Lock: no oversized clock (iOS already shows the time) — calmer, and frees room on short screens */
+#pgLock #lkClock, #pgLock #lkDate { display: none; }
+#pgLock .lk-top { min-height: 8px; }
+
+/* ── 13. ComboPicker (searchable drop-down for every input[list]) ─────── */
+.vc-combo { position: relative; display: block; width: 100%; }
+.vc-combo .vc-combo-input { padding-right: 46px; }
+.vc-combo-btn {
+  position: absolute; top: 0; right: 0; width: 44px; height: 100%; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 0; color: var(--lx-text-3); cursor: pointer;
+}
+.vc-combo-open .vc-combo-btn svg { transform: rotate(180deg); }
+.vc-combo-btn svg { transition: transform .18s var(--lx-spring); }
+.vc-combo-panel {
+  margin-top: 6px; max-height: min(300px, 42vh); overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: var(--lx-surface-2); border: 1px solid var(--lx-hair-2); border-radius: 14px;
+  box-shadow: var(--lx-shadow-2); padding: 4px; overscroll-behavior: contain;
+}
+.vc-combo-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 44px; padding: 10px 12px; border-radius: 10px;
+  font-size: 1rem; color: var(--lx-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.vc-combo-opt + .vc-combo-opt { margin-top: 1px; }
+.vc-combo-opt:hover, .vc-combo-opt.is-active { background: var(--lx-surface-3); }
+.vc-combo-opt:active { background: var(--lx-gold-soft); }
+.vc-combo-opt.is-sel { color: var(--lx-gold-hi); font-weight: 600; }
+body.light .vc-combo-opt.is-sel { color: var(--accent); }
+.vc-combo-l { font-size: 0.8125rem; color: var(--lx-text-3); white-space: nowrap; }
+.vc-combo-empty { padding: 12px; font-size: 0.875rem; color: var(--lx-text-3); }
+
+/* ── 14. Dynamic Type caps for system-style chrome (iOS caps its own bars too) ── */
+#demoBanner { font-size: min(0.8125rem, 14px); }
+#demoBanner * { font-size: min(1em, 14px) !important; white-space: nowrap; }
+.btabs .ti span:last-child, .ti .ti-lb { font-size: min(0.6563rem, 12.5px); }
+.btabs .ti-ic .vc-icon, .btabs .ti .vc-icon { width: 24px; height: 24px; }
+
+/* ── 15. Dashboard structure: net-worth hero leads ─────────────────────── */
+.nw-hero-card {
+  background: radial-gradient(120% 140% at 0% 0%, rgba(212, 160, 23, 0.14) 0%, transparent 55%), var(--lx-surface) !important;
+  border: 1px solid var(--lx-gold-line) !important; box-shadow: var(--lx-shadow-2);
+}
+body.light .nw-hero-card { background: radial-gradient(120% 140% at 0% 0%, rgba(184, 134, 11, 0.10) 0%, transparent 55%), #fff !important; }
+.nw-hero-amount { font-variant-numeric: tabular-nums; }
+.chamber-floor__label { letter-spacing: 0.08em; }
+
+/* ── 16. Settings sections: all 7 visible on phones (4-col grid, icon over label) ── */
+@media (max-width: 699px) {
+  #settTabs.sett-tabs {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;
+    overflow: visible; padding: 8px 12px 10px;
+  }
+  #settTabs .tab-pill {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    min-height: 56px; padding: 8px 4px; border-radius: 14px;
+    font-size: min(0.6875rem, 12px); font-weight: 600; white-space: nowrap;
+    background: var(--lx-surface); border: 1px solid var(--lx-hair);
+  }
+  #settTabs .tab-pill span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  #settTabs .tab-pill .vc-icon { width: 18px; height: 18px; }
+}
+#settTabs .tab-pill.on {
+  background: var(--lx-gold-soft); border-color: var(--lx-gold-line); color: var(--lx-gold-hi); box-shadow: none;
+}
+body.light #settTabs .tab-pill.on { background: rgba(10, 18, 32, 0.06); border-color: rgba(10, 18, 32, 0.25); color: var(--accent); }
+
+/* ── 17. Large-text resilience (found at Accessibility Medium on device) ── */
+#dashGreet .dg-name { white-space: normal; overflow: visible; text-overflow: clip; font-size: min(1.5rem, 30px); line-height: 1.15; }
+.first-steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 8px; }
+.first-steps-grid .btn { min-width: 0; white-space: normal; text-align: left; line-height: 1.25; }
+
+/* ── 18. WebKit-matrix run-2 fixes ──────────────────────────────────────── */
+/* N3: narrow phones / Split View — row actions move under the name so titles never collapse */
+@media (max-width: 420px) {
+  .entry-main { flex-wrap: wrap; row-gap: 6px; }
+  .entry-main > .entry-body { flex: 1 1 calc(100% - 60px); min-width: 0; }
+  .entry-main > .entry-acts { flex: 1 0 100%; justify-content: flex-end; padding-left: 0; margin-top: -2px; }
+}
+/* Chips: compact visual pill, full 44pt hit area */
+.chip { position: relative; }
+.chip::after { content: ''; position: absolute; left: 0; right: 0; top: -5px; bottom: -5px; }
+/* N7: lock row clears the home indicator on every device (Duo-open needs >8 with banner) */
+.lk-hint { margin-bottom: 12px; }
+/* N9: tall screens — centre the lock content instead of a dead band between PIN and keypad */
+@media (min-height: 801px) {
+  #pgLock { justify-content: center; gap: clamp(28px, 6vh, 64px); }
+}
+
+/* ── 19. Welcome, sample-vault intro, demo lock ─────────────────────────── */
+.home-demo-link {
+  min-height: 44px; margin: 4px 0 18px; padding: 8px 14px; background: transparent; border: 0;
+  color: var(--lx-text-2); font: inherit; font-size: 0.9375rem; font-weight: 500; cursor: pointer;
+  text-decoration: underline; text-decoration-color: var(--lx-hair-2); text-underline-offset: 4px;
+}
+.home-demo-link:active { color: var(--lx-text); }
+.demo-guide { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 4px 2px 0; }
+.demo-guide__mark { width: 56px; height: 56px; margin-bottom: 14px; filter: drop-shadow(0 8px 24px var(--glow)); }
+.demo-guide__title { margin: 0 0 8px; font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; color: var(--lx-text); outline: none; }
+.demo-guide__lead { margin: 0 0 18px; font-size: 0.9375rem; line-height: 1.5; color: var(--lx-text-2); max-width: 22rem; }
+.demo-guide__rows { width: 100%; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.dg-row { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 16px; background: var(--lx-surface-2); border: 1px solid var(--lx-hair); }
+.dg-row__ic { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--lx-gold-soft); color: var(--lx-gold-hi); }
+body.light .dg-row__ic { color: var(--lx-gold); }
+.dg-row__txt { display: flex; flex-direction: column; min-width: 0; }
+.dg-row__t { font-size: 0.9375rem; font-weight: 600; color: var(--lx-text); }
+.dg-row__s { font-size: 0.8125rem; color: var(--lx-text-3); margin-top: 2px; }
+.demo-guide__foot { margin: 16px 0 0; font-size: 0.8125rem; color: var(--lx-text-3); }
+.lk-demo-pin { border-color: var(--lx-gold-line) !important; color: var(--lx-gold-hi) !important; }
+body.light .lk-demo-pin { color: var(--lx-gold) !important; }
+.first-steps-profile { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; padding: 0; background: none; border: 0; color: var(--lx-gold-hi); font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+body.light .first-steps-profile { color: var(--accent); }
+/* Sample mode: keep the welcome hero clear of the banner */
+body.demo-banner-active #pgHome { padding-top: calc(var(--demo-banner-h, 52px) + 16px) !important; }
+/* Sample banner already clears the status bar — headers under it must not add the inset again */
+body.demo-banner-active .page .ph { padding-top: 12px !important; }
+body.demo-banner-active .settings-chrome { padding-top: 0 !important; }
+#homeOpenBtn { margin-bottom: 14px !important; }
+.home-demo-link { margin-top: 0; }

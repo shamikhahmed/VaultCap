@@ -81,8 +81,10 @@ const ActHelpers = {
     if (pageId && typeof R !== 'undefined') R.goto(pageId);
   },
 
-  copyText(text) {
+  copyText(text, label) {
     const t = String(text || '');
+    // Single secure path: native expiring pasteboard on iOS, timed clear on web
+    if (typeof U !== 'undefined' && U.copy) { U.copy(t, label || 'Copied text'); return; }
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
       if (typeof Toast !== 'undefined') Toast.show('Copy failed', 'warn');
       return;
@@ -95,7 +97,7 @@ const ActHelpers = {
   },
 
   copyExportKey() {
-    this.copyText(window._vosExportKey || '');
+    this.copyText(window._vosExportKey || '', 'Backup key');
   },
 
   clearExportKey() {
@@ -316,6 +318,48 @@ const ActHelpers = {
     zone.addEventListener('drop', function (e) {
       if (typeof ImportEngine !== 'undefined' && ImportEngine.handleDrop) ImportEngine.handleDrop(e);
     });
+  },
+
+  /** Privacy policy in a sheet (window.open is dead in the iOS WKWebView; navigating away would relock the vault). */
+  async openPrivacy() {
+    try {
+      const res = await fetch('privacy.html', { cache: 'no-store' });
+      if (!res.ok) throw new Error(String(res.status));
+      const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      const main = doc.querySelector('main, article, .policy, .wrap') || doc.body;
+      main.querySelectorAll('script, style, nav, header .nav, [data-web-only]').forEach(function (n) { n.remove(); });
+      main.querySelectorAll('[onclick], [onload], [onerror]').forEach(function (n) {
+        ['onclick', 'onload', 'onerror'].forEach(function (a) { n.removeAttribute(a); });
+      });
+      main.querySelectorAll('a[href]').forEach(function (a) {
+        const href = a.getAttribute('href') || '';
+        if (/^https?:/i.test(href)) { a.setAttribute('data-act', 'ActHelpers.openExternal(this.getAttribute(\'href\'))'); a.addEventListener('click', function (e) { e.preventDefault(); }); }
+        else a.removeAttribute('href');
+      });
+      const box = document.createElement('div');
+      box.className = 'vc-legal';
+      box.append(...Array.from(main.childNodes).map(function (n) { return document.importNode(n, true); }));
+      Modal.open('Privacy Policy', '<div id="vcLegalHost"></div>', '<button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>');
+      const host = document.getElementById('vcLegalHost');
+      if (host) host.replaceWith(box);
+    } catch (e) {
+      Toast.show('Privacy policy unavailable offline — see Settings → About', 'warn');
+    }
+  },
+
+  async openLicense() {
+    let text = '';
+    try { const res = await fetch('LICENSE', { cache: 'no-store' }); if (res.ok) text = await res.text(); } catch (e) {}
+    if (!text) text = 'VaultCap © 2026 Capricorn Systems. Source-available — full terms: github.com/shamikhahmed/VaultCap/blob/main/LICENSE';
+    Modal.open('License', '<pre class="vc-legal vc-legal--pre"></pre>', '<button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>');
+    const pre = document.querySelector('.vc-legal--pre');
+    if (pre) pre.textContent = text;
+  },
+
+  openExternal(url) {
+    if (!/^https:\/\//i.test(String(url || ''))) return;
+    if (window.VaultNative && VaultNative.openExternal) VaultNative.openExternal(url);
+    else window.open(url, '_blank', 'noopener');
   },
 };
 

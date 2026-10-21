@@ -41,15 +41,15 @@ const Loans = {
       sm.innerHTML = `<div class="widget vc-ix-9"><div class="fr vc-ix-230">
         <div class="vc-ix-241">
           <div class="vc-ix-129">I Owe</div>
-          <div style="font-size:20px;font-weight:800;color:var(--err)" class="sens">${fmtSum(totalOwe)}</div>
+          <div style="font-size:1.25rem;font-weight:800;color:var(--err)" class="sens">${fmtSum(totalOwe)}</div>
         </div>
         <div class="vc-ix-241">
           <div class="vc-ix-129">Net</div>
-          <div style="font-size:20px;font-weight:800;color:${net >= 0 ? 'var(--ok)' : 'var(--err)'}" class="sens">${net >= 0 ? '+' : '−'}${fmtSum(Math.abs(net))}</div>
+          <div style="font-size:1.25rem;font-weight:800;color:${net >= 0 ? 'var(--ok)' : 'var(--err)'}" class="sens">${net >= 0 ? '+' : '−'}${fmtSum(Math.abs(net))}</div>
         </div>
         <div style="flex:1;text-align:center;padding:6px 8px">
           <div class="vc-ix-129">They Owe</div>
-          <div style="font-size:20px;font-weight:800;color:var(--ok)" class="sens">${fmtSum(totalOwed)}</div>
+          <div style="font-size:1.25rem;font-weight:800;color:var(--ok)" class="sens">${fmtSum(totalOwed)}</div>
         </div>
       </div></div>`;
     }
@@ -102,11 +102,11 @@ const Loans = {
               ${duePart}
               ${(l.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}
             </div>
-            ${hasPaid ? `<div style="font-size:11px;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
+            ${hasPaid ? `<div style="font-size:0.6875rem;color:var(--text3);padding-top:3px">Paid: <span class="sens">${cur} ${Math.round(paid).toLocaleString()}</span> · Remaining: <span class="sens vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</span></div>` : ''}
           </div>
           <div class="entry-acts">${payBtn}${settle}${U.actsEditDel('Loans', l.id)}</div>
         </div>
-        ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:11px;color:var(--text3)">${escHtml(l.notes)}</div>` : ''}
+        ${l.notes ? `<div style="padding:4px 12px 8px 52px;font-size:0.6875rem;color:var(--text3)">${escHtml(l.notes)}</div>` : ''}
       </div>`;
     };
 
@@ -136,7 +136,7 @@ const Loans = {
       } else {
         html += liveAll.map(renderCard).join('');
         if (settled.length > 0) {
-          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span class="vc-ix-5">Settled (${settled.length})</span><span style="font-size:11px">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
+          html += `<details style="margin-top:6px"><summary style="cursor:pointer;font-size:0.75rem;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px"><span class="vc-ix-5">Settled (${settled.length})</span><span style="font-size:0.6875rem">▾</span></summary>${settled.map(renderCard).join('')}</details>`;
         }
       }
       html += `</div>`;
@@ -245,7 +245,7 @@ const Loans = {
       `<div class="fg"><label class="fl">Amount Paid *</label><input class="inp num-inp" id="lp-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" placeholder="0"></div>
       <div class="fg"><label class="fl">Date</label><input class="inp" id="lp-date" type="date" value="${escAttr(new Date().toISOString().split('T')[0])}"></div>
       <div class="fg"><label class="fl">Notes (optional)</label><input class="inp" id="lp-notes" placeholder="Transfer, cash…"></div>
-      <div style="background:var(--glass);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text2);margin-top:4px">
+      <div style="background:var(--glass);border-radius:var(--r);padding:10px 12px;font-size:0.75rem;color:var(--text2);margin-top:4px">
         <div>Original: <strong>${cur} ${Math.round(l.amount||0).toLocaleString()}</strong></div>
         <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
         <div>Remaining: <strong class="vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>

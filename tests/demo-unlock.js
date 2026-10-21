@@ -143,7 +143,7 @@ async function seedDemoAndUnlock(page) {
 
 /** @param {import('@playwright/test').Page} page */
 async function openVaultFromHome(page) {
-  const openVault = page.getByRole('button', { name: /Open My Vault/i });
+  const openVault = page.getByRole('button', { name: /Open My Vault|Open sample vault/i });
   if (await openVault.isVisible().catch(() => false)) {
     await openVault.click();
     await expect(page.locator('#pgLock')).toBeVisible({ timeout: 10000 });
@@ -222,7 +222,7 @@ async function unlockDemoVault(page) {
   if (await page.locator('#pgOnboard').isVisible().catch(() => false)) {
     await seedDemoAndUnlock(page);
   } else if (await page.locator('#pgHome').isVisible().catch(() => false)) {
-    const guided = page.getByRole('button', { name: /Take the guided demo|Open demo vault/i });
+    const guided = page.getByRole('button', { name: /Explore a sample vault|Take the guided demo|Open demo vault/i });
     if (await guided.isVisible().catch(() => false)) {
       await guided.click();
       await page.waitForLoadState('load');

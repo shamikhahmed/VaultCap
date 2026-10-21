@@ -35,8 +35,8 @@ const GlobalSearch = {
     <div style="padding:14px 14px 0;position:sticky;top:0;z-index:10;background:var(--bg2);padding-bottom:10px">
       <div style="position:relative;margin-bottom:10px">
         <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center">${searchIc}</span>
-        <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:15px;border-radius:14px" data-act-input="GlobalSearch.search(this.value)" autocomplete="off">
-        <button type="button" data-act="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--text3)">Clear</button>
+        <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:0.9375rem;border-radius:14px" data-act-input="GlobalSearch.search(this.value)" autocomplete="off">
+        <button type="button" data-act="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.875rem;color:var(--text3)">Clear</button>
       </div>
       <div class="cap-tab-bar cap-tab-bar--flush" role="tablist" aria-label="Search filters" style="padding:0 0 2px">
         ${filters.map(f => `<button type="button" class="cap-tab search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" role="tab" aria-selected="${GlobalSearch.activeFilter === f}" data-act="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</button>`).join('')}
@@ -201,11 +201,11 @@ const GlobalSearch = {
 
     const _gotoMap = { bank:'banks', card:'cards', investment:'investments', cash:'cash', loan:'loans', document:'documents', asset:'assets', contact:'friends', sim:'sims', email:'emails', subscription:'expenses', device:'gadgets', login:'digital', committee:'bc', bond:'bonds', 'Family Member':'family' };
 
-    let html = `<div style="font-size:12px;color:var(--text3);padding:4px 14px 8px">${results.length} result${results.length !== 1 ? 's' : ''}${ql ? ' for "' + escHtml(q) + '"' : ''}</div>`;
+    let html = `<div style="font-size:0.75rem;color:var(--text3);padding:4px 14px 8px">${results.length} result${results.length !== 1 ? 's' : ''}${ql ? ' for "' + escHtml(q) + '"' : ''}</div>`;
 
     Object.entries(groups).forEach(([groupLabel, items]) => {
       const gotoKey = _gotoMap[groupLabel] || items[0]._key;
-      html += `<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 14px 4px">${escHtml(groupLabel)}s <span style="font-weight:400;opacity:.6">${items.length}</span></div>`;
+      html += `<div style="font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 14px 4px">${escHtml(groupLabel)}s <span style="font-weight:400;opacity:.6">${items.length}</span></div>`;
       html += items.map(item => {
         const ownerBadge = item._owner ? ` · ${escHtml(item._owner)}` : '';
         const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
@@ -213,10 +213,10 @@ const GlobalSearch = {
         return `<div data-act="GlobalSearch.open('${item._key}','${item._id||''}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" class="vos-hover-glass">
           <div class="chip-ic vc-ix-21">${rowIc}</div>
           <div class="vc-ix-20">
-            <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
-            ${secLine ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}
+            <div style="font-size:0.875rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>
+            ${secLine ? `<div style="font-size:0.75rem;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${secLine}</div>` : ''}
           </div>
-          ${item._valueStr ? `<div style="font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;text-align:right;max-width:100px;overflow:hidden;text-overflow:ellipsis" class="sens">${escHtml(item._valueStr)}</div>` : `<div style="font-size:16px;color:var(--text3);flex-shrink:0">›</div>`}
+          ${item._valueStr ? `<div style="font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;text-align:right;max-width:100px;overflow:hidden;text-overflow:ellipsis" class="sens">${escHtml(item._valueStr)}</div>` : `<div style="font-size:1rem;color:var(--text3);flex-shrink:0">›</div>`}
         </div>`;
       }).join('');
     });

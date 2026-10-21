@@ -58,16 +58,16 @@ const Cards={
           const last4=c.last4||'····';
           return '<div data-act="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
             '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+
-            '<div style="position:absolute;top:14px;left:14px;font-size:12px;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
-            '<div style="position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
-            '<div style="position:absolute;bottom:30px;left:14px;font-size:13px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.18em;font-family:var(--mono,monospace)">**** **** **** '+escHtml(last4)+'</div>'+
-            '<div style="position:absolute;bottom:11px;left:14px;font-size:11px;color:rgba(255,255,255,.65)">'+escHtml(c.holderName||'')+'</div>'+
-            (c.expiry?'<div style="position:absolute;bottom:11px;right:12px;font-size:11px;color:rgba(255,255,255,.65)">Exp '+escHtml(c.expiry)+'</div>':'')+
+            '<div style="position:absolute;top:14px;left:14px;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
+            '<div style="position:absolute;top:12px;right:12px;font-size:0.6875rem;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
+            '<div style="position:absolute;bottom:30px;left:14px;font-size:0.8125rem;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.18em;font-family:var(--mono,monospace)">**** **** **** '+escHtml(last4)+'</div>'+
+            '<div style="position:absolute;bottom:11px;left:14px;font-size:0.6875rem;color:rgba(255,255,255,.65)">'+escHtml(c.holderName||'')+'</div>'+
+            (c.expiry?'<div style="position:absolute;bottom:11px;right:12px;font-size:0.6875rem;color:rgba(255,255,255,.65)">Exp '+escHtml(c.expiry)+'</div>':'')+
             '</div>';
         }).join('')+
         '</div>'
       :'';
-    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:13px;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" data-act="Cards._showExample()">See example</button></div></div>`);return;}
+    if(!data.length&&!archivedCount){el.innerHTML=walletHtml+(S.cards.length?'<div style="font-size:0.8125rem;color:var(--text3);text-align:center;padding:16px 0">No cards match the filter</div>':`<div class="empty-ios"><div class="ei-ic">${VC.icon('card',32)}</div><div class="ei-title">No cards yet</div><div class="ei-sub">Track debit, credit, prepaid & crypto cards — expiry alerts, network detection, photo storage</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Cards.openAdd()">+ Add Card</button><button type="button" class="btn btn-g" data-act="Cards._showExample()">See example</button></div></div>`);return;}
     const archiveToggle=archivedCount?`<div class="vc-ix-190"><button type="button" class="btn btn-g btn-sm" data-act="Cards._showArchived=!Cards._showArchived;Cards.render()">${Cards._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     const totalLimitPKR = S.cards
       .filter(c => c.cardType === 'Credit' && _cardLimit(c))
@@ -76,7 +76,7 @@ const Cards={
         : _cardLimit(c)), 0);
     const _cur = S.user.currency || 'GBP';
     const limitBanner = totalLimitPKR > 0
-      ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span class="vc-ix-10">Total Credit Limit</span><span style="font-size:16px;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
+      ? `<div style="background:var(--glass);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span class="vc-ix-10">Total Credit Limit</span><span style="font-size:1rem;font-weight:800;color:var(--info)" class="sens">${U.fmtCur(totalLimitPKR, _cur)}</span></div>`
       : '';
     const carrying=data.filter(c=>S.wallet.includes(c.id));
     const rest=data.filter(c=>!S.wallet.includes(c.id));
@@ -117,7 +117,7 @@ const Cards={
     const _initials = (bankName || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
     const logoHtml = logoSrc
       ? `<div class="wcard-logo-pill" style="padding:0;overflow:hidden;background:transparent">${logoSrc}</div>`
-      : `<div class="wcard-logo-pill" style="font-size:11px;font-weight:700;color:${VCBrand.h_fff};background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
+      : `<div class="wcard-logo-pill" style="font-size:0.6875rem;font-weight:700;color:${VCBrand.h_fff};background:rgba(0,0,0,.3);min-width:28px;text-align:center;padding:0 6px">${_initials}</div>`;
 
     // EMV chip SVG
     const chip=`<svg width="38" height="30" viewBox="0 0 38 30" class="wcard-chip-svg">
@@ -147,7 +147,7 @@ const Cards={
     <div class="wcard-top">
       <div style="display:flex;align-items:center;gap:7px">
         ${logoHtml}
-        <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${bankName}</span>
+        <span style="font-size:0.8125rem;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${bankName}</span>
       </div>
       <div class="wcard-type-badge">${typeLabel}${carrying?' · Wallet':''}${(c.owners||[]).filter(o=>o!=='self').length?' · Shared':''}</div>
     </div>
@@ -155,13 +155,13 @@ const Cards={
     <div class="wcard-number">**** **** **** ${last4}</div>
     <div class="wcard-bottom">
       <div>
-        <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
+        <div style="font-size:0.6875rem;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Card Holder</div>
         <div class="wcard-holder">${holderName}</div>
       </div>
       <div class="vc-ix-109">
-        ${c.expiry?`<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
+        ${c.expiry?`<div style="font-size:0.6875rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px">Valid Thru</div><div style="font-size:0.6875rem;font-weight:600;color:rgba(255,255,255,.85);font-family:monospace">${c.expiry}</div>`:''}
       </div>
-      <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:11px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
+      <div class="wcard-net">${netSvg[c.network]||`<span style="font-size:0.6875rem;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px">${c.network||''}</span>`}</div>
     </div>
   </div>
   <div class="wcard-actions">
@@ -172,7 +172,7 @@ const Cards={
   </div>
 </div>`;
   },
-  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,${VCBrand.h_1a3a6b},${VCBrand.h_2d5aa0});border-radius:16px;padding:16px;margin-bottom:14px;color:${VCBrand.h_fff}"><div style="font-size:13px;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:18px;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:11px"><span>AHMED KARIMI</span><span>09/27</span></div></div><div class="vc-ix-192">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
+  _showExample(){Modal.open('Example Card Entry',`<div style="background:linear-gradient(135deg,${VCBrand.h_1a3a6b},${VCBrand.h_2d5aa0});border-radius:16px;padding:16px;margin-bottom:14px;color:${VCBrand.h_fff}"><div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px">HBL Premier World Elite</div><div style="font-size:1.125rem;font-weight:600;letter-spacing:4px;font-family:monospace;margin-bottom:8px">**** **** **** 4821</div><div style="display:flex;justify-content:space-between;font-size:0.6875rem"><span>AHMED KARIMI</span><span>09/27</span></div></div><div class="vc-ix-192">Card name: HBL Premier World Elite<br>Network: Mastercard<br>Type: Credit · Premium<br>Last 4: 4821<br>Expiry: 09/27</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Cards.openAdd()">+ Add My Card</button>`);},
   _fmtCardNum(input){
     let v=input.value.replace(/\D/g,'').slice(0,16);
     input.value=v.replace(/(.{4})/g,'$1 ').trim();
@@ -210,10 +210,10 @@ const Cards={
       '<div style="position:absolute;left:9%;width:82%;height:2px;background:linear-gradient(90deg,transparent,'+VCBrand.h_0a84ff+',transparent);animation:scan 2s ease-in-out infinite alternate;pointer-events:none"></div>',
       '</div>',
       '<canvas id="_scanCanvas" style="display:none"></canvas>',
-      '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:13px;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
+      '<div id="_scanStatus" style="color:rgba(255,255,255,.85);font-size:0.8125rem;margin-top:16px;text-align:center;padding:0 24px;line-height:1.5">Point at card for QR scan (auto) · Tap Capture for manual entry</div>',
       '<div style="display:flex;gap:12px;margin-top:20px">',
-      '<button type="button" id="_scanCaptureBtn" data-act="Cards._doCapture()" style="padding:16px 36px;background:'+VCBrand.h_0a84ff+';border:none;border-radius:99px;color:'+VCBrand.h_fff+';font-size:16px;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
-      '<button type="button" data-act="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:'+VCBrand.h_fff+';font-size:14px;font-weight:600;cursor:pointer">Cancel</button>',
+      '<button type="button" id="_scanCaptureBtn" data-act="Cards._doCapture()" style="padding:16px 36px;background:'+VCBrand.h_0a84ff+';border:none;border-radius:99px;color:'+VCBrand.h_fff+';font-size:1rem;font-weight:700;cursor:pointer;min-width:160px;box-shadow:0 4px 20px rgba(10,132,255,.5)">Capture</button>',
+      '<button type="button" data-act="Cards._stopScan()" style="padding:16px 24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;color:'+VCBrand.h_fff+';font-size:0.875rem;font-weight:600;cursor:pointer">Cancel</button>',
       '</div>'
     ].join('');
     document.body.appendChild(overlay);
@@ -380,7 +380,7 @@ const Cards={
     const cardNames=SMART_DB.cards.map(x=>'<option value="'+_v(x.name)+'">').join('');
     const myBanks=(window.S?.banks||[]);
     const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${escAttr(b.bankName)}"${(c.linkedBankId===b.id||c.linkedBank===b.bankName)?' selected':''}>${escHtml(b.bankName)}</option>`).join(''):'';
-    const bankPicker=myBanks.length?'<div class="vc-ix-9"><label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
+    const bankPicker=myBanks.length?'<div class="vc-ix-9"><label style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
     return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
       +bankPicker

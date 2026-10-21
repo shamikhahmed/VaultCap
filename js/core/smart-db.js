@@ -2374,16 +2374,23 @@ const SMART_DB = {
   ],
   // Auto-fill helpers
   fillBank(val, country) {
-    const lv = val.toLowerCase();
-    const _find = list => list.find(b => {
-      if (b.name.toLowerCase().includes(lv)) return true;
-      if (b.aliases && b.aliases.some(a => a.toLowerCase().includes(lv))) return true;
-      return false;
-    });
-    const match = (country ? _find(this.banks.filter(b => b.country === country)) : null) || _find(this.banks);
+    const lv = String(val || '').trim().toLowerCase();
+    if (lv.length < 2) return;
+    const names = b => [b.name].concat(b.aliases || []).map(n => n.toLowerCase());
+    // Exact name/alias anywhere may switch country; partial typing only autofills within the chosen
+    // country and never re-homes the account ("Tes" used to match "Emirates NBD" → UAE/AED).
+    const exact = this.banks.find(b => names(b).includes(lv));
+    const partial = !exact && country && lv.length >= 3
+      ? this.banks.find(b => b.country === country && names(b).some(n => n.startsWith(lv)))
+      : null;
+    const match = exact || partial;
     if (!match) return;
     setTimeout(() => {
-      const cc = document.getElementById('bf-cc'); if (cc) cc.value = match.country;
+      const cc = document.getElementById('bf-cc');
+      if (cc && cc.value !== match.country) {
+        cc.value = match.country;
+        if (typeof Banks !== 'undefined' && Banks._onCountryChange) Banks._onCountryChange(match.country);
+      }
       const cur = document.getElementById('bf-cur'); if (cur) cur.value = match.currency;
       const type = document.getElementById('bf-type'); if (type && match.type) type.value = match.type.charAt(0).toUpperCase() + match.type.slice(1);
       const swift = document.getElementById('bf-swift'); if (swift && match.swift) swift.value = match.swift;

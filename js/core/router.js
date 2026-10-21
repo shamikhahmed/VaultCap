@@ -14,9 +14,9 @@ const R = {
     if (ppCards) {
       ppCards.innerHTML =
         '<div data-act="R._pickProfile(\'personal\')" style="display:flex;align-items:center;gap:14px;padding:18px;background:' + (active === 'personal' ? 'rgba(0,213,255,.12)' : 'var(--glass)') + ';border:1.5px solid ' + (active === 'personal' ? 'rgba(0,213,255,.5)' : 'var(--border)') + ';border-radius:16px;cursor:pointer;touch-action:manipulation">' +
-        '<div class="chip-ic" style="font-size:34px;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon('vault', 34) : '') + '</div><div class="vc-ix-5"><div class="vc-ix-77">My Vault</div><div class="vc-ix-8">Your private encrypted vault</div></div><div style="font-size:20px;color:var(--text3)">›</div></div>' +
-        '<button type="button" data-act="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">New here? Take the guided demo →</button>' +
-        (VaultProfiles.isDevMode() ? '<div data-act="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('settings', 24) : '') + '</div><div class="vc-ix-5"><div style="font-size:13px;font-weight:700">Test Sandbox</div><div class="vc-ix-3">Developer only</div></div></div>' : '');
+        '<div class="chip-ic" style="font-size:2.125rem;display:flex;align-items:center">' + (typeof VC !== 'undefined' ? VC.icon('vault', 34) : '') + '</div><div class="vc-ix-5"><div class="vc-ix-77">My Vault</div><div class="vc-ix-8">Your private encrypted vault</div></div><div style="font-size:1.25rem;color:var(--text3)">›</div></div>' +
+        '<button type="button" data-act="VaultProfiles.startDemo()" style="width:100%;margin-top:10px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-size:0.8125rem;font-weight:600;cursor:pointer;touch-action:manipulation">New here? Take the guided demo →</button>' +
+        (VaultProfiles.isDevMode() ? '<div data-act="R._pickProfile(\'test\')" style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-top:8px"><div class="chip-ic">' + (typeof VC !== 'undefined' ? VC.icon('settings', 24) : '') + '</div><div class="vc-ix-5"><div style="font-size:0.8125rem;font-weight:700">Test Sandbox</div><div class="vc-ix-3">Developer only</div></div></div>' : '');
     }
     pp.style.display = 'flex';
   },
@@ -54,11 +54,22 @@ const R = {
     }
     const sub = document.getElementById('lkSub');
     if (sub) {
-      if (VaultProfiles.isDemo()) sub.textContent = 'Demo vault · PIN ' + VaultProfiles.DEMO_PIN;
+      if (VaultProfiles.isDemo()) sub.textContent = 'Sample vault — fictional data';
       else if (needsMigrate) sub.textContent = 'Migrate to PIN unlock';
       else if (S.user.name) sub.textContent = 'Welcome back, ' + S.user.name;
       else sub.textContent = 'Enter your 6-digit PIN';
     }
+    // Demo: offer the sample PIN as a button instead of printing it on screen
+    const hint = document.querySelector('#pgLock .lk-hint');
+    let dpb = document.getElementById('demoPinBtn');
+    if (VaultProfiles.isDemo() && hint && !dpb) {
+      dpb = document.createElement('button');
+      dpb.type = 'button'; dpb.id = 'demoPinBtn'; dpb.className = 'lk-switch-vault lk-demo-pin';
+      dpb.textContent = 'Use sample PIN';
+      dpb.setAttribute('data-act', 'PIN.fillDemo()');
+      hint.insertBefore(dpb, hint.firstChild);
+    }
+    if (dpb) dpb.style.display = VaultProfiles.isDemo() ? '' : 'none';
     const sp = document.getElementById('switchProfileBtn');
     // Always show — Personal + Demo always available; unlock target with its own PIN
     if (sp) sp.style.display = '';
@@ -109,7 +120,13 @@ const R = {
     document.body.classList.remove('on-lock');
     document.getElementById('pgHome').style.display = 'flex';
     const hw = document.getElementById('hWelcome');
-    if (hw && S.user.name) hw.textContent = `Welcome back, ${S.user.name}!`;
+    const demo = typeof VaultProfiles !== 'undefined' && VaultProfiles.isDemo && VaultProfiles.isDemo();
+    if (hw) hw.textContent = demo ? 'A sample household — explore freely'
+      : (S.user.name ? `Welcome back, ${S.user.name}` : 'Everything you own, encrypted on your device');
+    const ob = document.getElementById('homeOpenBtn');
+    if (ob) ob.textContent = demo ? 'Open sample vault' : 'Open My Vault';
+    const dl = document.getElementById('homeDemoLink');
+    if (dl) dl.style.display = demo ? 'none' : '';
     ThemeEngine.renderDots();
     if (typeof renderHomeModules === 'function') renderHomeModules();
     if (typeof VC !== 'undefined') VC.refreshShellIcons();
@@ -135,6 +152,7 @@ const R = {
       const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
       document.getElementById('app').style.display = 'flex';
       document.getElementById('fab').style.display = 'flex';
+      if (typeof initSidebar === 'function') initSidebar();
       buildNav();
       this.goto('dashboard');
       setTimeout(() => Dash.render(), 50);
@@ -152,11 +170,21 @@ const R = {
         try { NetWorthHistory.onUnlock(); } catch (e) {}
       }
     };
-    // Catalog used by nav + relations — load before UI (offline via SW precache)
-    if (typeof VaultLazy !== 'undefined' && typeof SMART_DB === 'undefined') {
-      VaultLazy.ensure('smartDb').then(finish).catch(finish);
+    // App shell (Dash/nav/modules) then catalog — not on first-load boot chunk
+    const afterApp = () => {
+      if (typeof VaultLazy !== 'undefined' && typeof SMART_DB === 'undefined') {
+        VaultLazy.ensure('smartDb').then(finish).catch(finish);
+      } else {
+        finish();
+      }
+    };
+    if (typeof VaultLazy !== 'undefined' && typeof Dash === 'undefined') {
+      VaultLazy.ensure('app').then(afterApp).catch(() => {
+        Toast.show('App modules failed to load', 'error');
+        afterApp();
+      });
     } else {
-      finish();
+      afterApp();
     }
     setTimeout(() => {
       if (typeof DataIntegrity !== 'undefined') {
@@ -312,12 +340,20 @@ const R = {
       gadgets:     () => Assets.render(),
       digital:     () => Digital.render(),
       alerts:      () => renderAlerts(),
-      documents:   () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); },
+      documents:   () => {
+        const run = () => { const t=Date.now(); DocsModule.render(); if(typeof DevDiag!=='undefined')DevDiag.trackRender('documents',Date.now()-t); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('documents').then(run).catch(() => Toast.show('Documents module failed to load', 'error'));
+        else run();
+      },
       search:      () => GlobalSearch.render(),
       import:      () => {
-        if (typeof AIImport !== 'undefined') AIImport.render();
-        else if (typeof ImportEngine !== 'undefined') ImportEngine.render();
-        else Toast.show('Import tools unavailable', 'error');
+        const run = () => {
+          if (typeof AIImport !== 'undefined') AIImport.render();
+          else if (typeof ImportEngine !== 'undefined') ImportEngine.render();
+          else Toast.show('Import tools unavailable', 'error');
+        };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('import').then(run).catch(() => Toast.show('Import module failed to load', 'error'));
+        else run();
       },
       timeline:    () => Timeline.render(),
       security:    () => SecurityCenter.render(),
@@ -335,14 +371,22 @@ const R = {
       gold:        () => Assets.render(),
       bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
-      zakat:       () => { if (typeof Zakat !== 'undefined') Zakat.render(); },
+      zakat:       () => {
+        const run = () => { if (typeof Zakat !== 'undefined') Zakat.render(); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('zakat').then(run).catch(() => Toast.show('Zakat module failed to load', 'error'));
+        else run();
+      },
       credit:      () => { if (typeof CreditScore !== 'undefined') CreditScore.render(); },
       tax:         () => {
         const run = () => { if (typeof Tax !== 'undefined') Tax.render(); };
         if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('tax').then(run).catch(() => Toast.show('Tax module failed to load', 'error'));
         else run();
       },
-      family:      () => { if (typeof Family !== 'undefined') Family.render(); },
+      family:      () => {
+        const run = () => { if (typeof Family !== 'undefined') Family.render(); };
+        if (typeof VaultLazy !== 'undefined') VaultLazy.ensure('family').then(run).catch(() => Toast.show('Family module failed to load', 'error'));
+        else run();
+      },
       sync:        () => { if (typeof QRSync !== 'undefined') QRSync.renderPage(); else { const el = document.getElementById('syncBody'); if (el) el.innerHTML = '<div class="empty"><div class="empty-ic">'+(typeof VC!=='undefined'?VC.icon('sync',32):'')+'</div><h3>Sync</h3><p>Loading…</p></div>'; } },
       settings:    () => {
         buildNav();

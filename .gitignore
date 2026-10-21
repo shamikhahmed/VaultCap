@@ -25,7 +25,12 @@ npm-debug.log*
 # Build artifacts
 dist/
 build/
+# v6 QA evidence (screens, harnesses, logs, staged builds) — also covered by build/
+build/qa/
 www/
+
+# Xcode DerivedData dropped in-repo by mistake
+.derivedData/
 
 # Logs
 *.log

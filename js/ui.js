@@ -46,7 +46,7 @@ function _sparkLine(history) {
     '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:40px;display:block">' +
       '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg>' +
-    (firstDate && lastDate ? '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>' : '') +
+    (firstDate && lastDate ? '<div style="display:flex;justify-content:space-between;font-size:0.6875rem;color:var(--text3);margin-top:2px"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>' : '') +
   '</div>';
 }
 
@@ -77,9 +77,9 @@ function _nwSparkline(hist) {
 const Dash={
   render(){
     const h=new Date().getHours();
-    const greet=h<5?'Good Night':h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+    const greet=h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':'Good evening';
     const el=document.getElementById('dashGreet');
-    if(el)el.innerHTML=`<div style="font-size:12px;color:var(--text3);font-weight:500;line-height:1.2">${greet}</div><div style="font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${S.user.name||'User'}</div>`;
+    if(el){const nm=(S.user.name||'').trim();el.innerHTML=nm?`<div class="dg-greet">${greet}</div><div class="dg-name">${typeof escHtml==='function'?escHtml(nm):nm}</div>`:`<div class="dg-name">${greet}</div>`;}
     const dl=document.getElementById('dashDate');
     if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     const b = document.getElementById('dashBody');
@@ -123,7 +123,7 @@ const Dash={
     const nwDisplay = Math.round(toCur(nwPKR, cur));
     const prevDisplay = prevPKR !== null ? Math.round(toCur(prevPKR, cur)) : null;
     const trendDir = prevDisplay !== null ? (nwDisplay > prevDisplay ? 1 : nwDisplay < prevDisplay ? -1 : 0) : 0;
-    const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:20px">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:20px">↓</span>` : '';
+    const trendArrow = trendDir > 0 ? `<span style="color:var(--ok);font-size:1.25rem">↑</span>` : trendDir < 0 ? `<span style="color:var(--err);font-size:1.25rem">↓</span>` : '';
     const monthAgo = [...histPKR].reverse().find(h => (new Date() - new Date(h.d)) >= 25*24*60*60*1000);
     const monthAgoDisplay = monthAgo ? Math.round(toCur(monthAgo.v, cur)) : null;
     const pctChange = monthAgoDisplay && monthAgoDisplay > 0 ? ((nwDisplay - monthAgoDisplay) / Math.abs(monthAgoDisplay) * 100) : null;
@@ -189,7 +189,7 @@ const Dash={
 
     const breakdown=[{label:'Banks',value:bankPKR,color:'var(--chart-1)',icon:'bank'},{label:'Cash',value:cashPKR,color:'var(--chart-2)',icon:'banknote'},{label:'Investments',value:invPKR,color:'var(--chart-3)',icon:'trending-up'},{label:'Assets',value:asPKR,color:'var(--chart-4)',icon:'building'},{label:'BC/Bonds',value:bcPKR+bondsPKR,color:'var(--chart-5)',icon:'handshake'}].filter(x=>x.value>0);
     const brTotal = breakdown.reduce((s,x)=>s+x.value,0) || 1;
-    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:11px">Details<span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
+    const breakdownHtml=breakdown.length>1?`<div style="padding:0 16px;margin-top:14px;margin-bottom:14px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Net Worth Breakdown</div><button type="button" class="tap-link" data-act="ActHelpers.toggleDisplay('dash-nw-br-body',this)" style="margin:0;min-height:36px;padding:6px 4px;font-size:0.6875rem">Details<span class="tap-link-caret">Show</span></button></div><div style="height:8px;border-radius:999px;overflow:hidden;display:flex;gap:1px;margin-bottom:12px">${breakdown.map(x=>`<div style="flex:${(x.value/brTotal*100).toFixed(2)};background:${x.color};height:100%;min-width:2px" title="${x.label}: ${fmt(x.value)}"></div>`).join('')}</div><div class="vc-ix-17" id="dash-nw-br-body"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center">${breakdown.map(x=>`<div style="display:flex;align-items:center;gap:6px;min-width:0"><div style="width:8px;height:8px;border-radius:2px;background:${x.color};flex-shrink:0"></div><div style="font-size:0.6875rem;color:var(--text3);display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="chip-ic">${_uiIcon(x.icon,12)}</span>${x.label}</div></div><div style="font-size:0.6875rem;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;text-align:right" class="sens">${fmt(x.value)}</div>`).join('')}</div>${debtPKR>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.6875rem;gap:8px"><span style="color:var(--text3);flex:1">Liabilities</span><span style="color:var(--err);font-weight:700;white-space:nowrap">− ${fmt(debtPKR)}</span></div>`:''}</div></div></div>`:'';
 
     const prevNW = histDisplay.length >= 2 ? histDisplay[histDisplay.length-2].v : nwDisplay;
     const nwChange = nwDisplay - prevNW;
@@ -198,14 +198,14 @@ const Dash={
     const _COUNTRY_CUR = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
     const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
     const multiCurHtml = secondaryCurs.length > 0
-      ? '<div style="font-size:12px;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
+      ? '<div style="font-size:0.75rem;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div style="padding:0 16px;margin-top:12px"><div style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
+    const nwHero = '<div class="nw-hero-wrap" style="padding:0 16px;margin-top:12px"><div class="nw-hero-card" style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:clamp(24px,9vw,36px);font-weight:900;color:var(--text);letter-spacing:-.02em;word-break:break-word" class="sens">'+fmt(nwPKR)+'</div>' +
-      ((nwChange !== 0 || pctStr) ? '<div style="font-size:12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:11px;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
+      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
+      '<div style="font-size:clamp(1.75rem,9vw,2.5rem);font-weight:800;color:var(--text);letter-spacing:-.03em;word-break:break-word" class="sens nw-hero-amount">'+fmt(nwPKR)+'</div>' +
+      ((nwChange !== 0 || pctStr) ? '<div style="font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:0.6875rem;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
       sparkline +
       multiCurHtml +
       '</div></div>';
@@ -228,14 +228,14 @@ const Dash={
     ctxFilter(S.cash||[]).forEach(c => { const cur = c.currency || 'PKR'; cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0); });
     const cashCurKeys = Object.keys(cashByCur);
     const cashBreakdown = cashCurKeys.length > 1
-      ? '<div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
+      ? '<div style="font-size:0.6875rem;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
         cashCurKeys.map(cur => '<span class="sens">' + U.fmt(cashByCur[cur]) + ' ' + cur + '</span>').join(' · ') + '</div>'
       : '';
     const moneyCell = (total, color, label, page) =>
-      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
+      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:0.6875rem;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
     const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
       '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
+      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
       (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
       (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
@@ -256,9 +256,9 @@ const Dash={
     const assetCount = ctxFilter(S.assets||[]).length;
     const assetSum = isModOn('assets') && assetCount > 0 ?
       '<div data-act="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
-      '<div style="font-size:22px;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
-      '<div class="vc-ix-132"><div style="font-size:28px;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
+      '<div><div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
+      '<div style="font-size:1.375rem;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
+      '<div class="vc-ix-132"><div style="font-size:1.75rem;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
       '<div class="vc-ix-18">items</div></div></div>' : '';
 
     const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
@@ -266,14 +266,14 @@ const Dash={
     const _allActions = [..._alerts.map(a => ({...a, _type:'alert'})), ..._reminders.map(r => ({...r, _type:'reminder'}))].slice(0, 4);
     const upcomingActions = _allActions.length ?
       '<div class="vc-ix-30">' +
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
+      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('clock', 14) + '</span>Upcoming</div>' +
       _allActions.map((a,i) => {
         const daysLeft = a.dueDate ? Math.ceil((new Date(a.dueDate) - new Date()) / 86400000) : null;
         const urgency = daysLeft !== null && daysLeft <= 7 ? 'var(--err)' : daysLeft !== null && daysLeft <= 30 ? 'var(--warn)' : 'var(--text3)';
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;' + (i < _allActions.length-1 ? 'border-bottom:1px solid var(--border)' : '') + '">' +
           '<div class="vc-ix-87">' + _uiIcon(a._type === 'alert' ? 'bell' : 'pin', 18) + '</div>' +
           '<div class="vc-ix-5"><div class="vc-ix-12">' + (a.title||a.name||'Reminder').replace(/</g,'&lt;') + '</div>' +
-          (daysLeft !== null ? '<div style="font-size:11px;color:' + urgency + '">' + (daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Today' : daysLeft + ' days left') + '</div>' : '') +
+          (daysLeft !== null ? '<div style="font-size:0.6875rem;color:' + urgency + '">' + (daysLeft < 0 ? 'Overdue' : daysLeft === 0 ? 'Today' : daysLeft + ' days left') + '</div>' : '') +
           '</div></div>';
       }).join('') +
       '</div>' : '';
@@ -283,8 +283,8 @@ const Dash={
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
     const quickStatCell = (value, label, onclick) =>
       '<div' + (onclick ? ' data-act="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
-      '<div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
-      '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
+      '<div style="font-size:0.8125rem;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
+      '<div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
     const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
       quickStatCell(entityTotal, 'Records') +
       quickStatCell(activeCountryLabel, 'Country') +
@@ -294,8 +294,8 @@ const Dash={
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
     <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div class="vc-ix-20">
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Finish profile setup</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
+        <div style="font-size:0.875rem;font-weight:700;margin-bottom:4px">Finish profile setup</div>
+        <div style="font-size:0.75rem;color:var(--text2);line-height:1.45">Add countries and set your default currency.</div>
       </div>
       <button type="button" class="btn btn-p btn-sm vc-ix-21" data-act="ActHelpers.gotoSettingsTab('profile')">Continue →</button>
     </div>` : '';
@@ -309,12 +309,13 @@ const Dash={
     ].filter(i => isModOn(i.module));
     const firstStepsBanner = totalItems === 0 && firstStepItems.length ? `
     <div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border2);border-radius:20px;padding:18px 16px">
-      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
-      <div class="vc-ix-133">
-        ${firstStepItems.map(i => `<button type="button" data-act="${i.action}" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px"><span class="chip-ic">${_uiIcon(i.icon, 14)}</span>${i.label}</button>`).join('')}
+      <div style="font-size:0.8125rem;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Start here</div>
+      <div style="font-size:0.9375rem;font-weight:700;margin-bottom:6px">Your vault is ready — add your first item</div>
+      <div style="font-size:0.8125rem;color:var(--text2);margin-bottom:16px;line-height:1.5">Everything stays on this device, encrypted with your PIN.</div>
+      <div class="vc-ix-133 first-steps-grid">
+        ${firstStepItems.map(i => `<button type="button" data-act="${i.action}" class="btn btn-g btn-sm" style="justify-content:flex-start;gap:8px;padding:10px 12px;min-width:0"><span class="chip-ic">${_uiIcon(i.icon, 14)}</span>${i.label}</button>`).join('')}
       </div>
+      ${(S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `<button type="button" class="tap-link first-steps-profile" data-act="ActHelpers.gotoSettingsTab('profile')">Set your countries &amp; currency →</button>` : ''}
     </div>` : '';
 
     const moneyCount = (S.banks||[]).length + (S.cards||[]).length + (S.cash||[]).length;
@@ -325,7 +326,7 @@ const Dash={
     <div class="vault-status-seal" role="status" aria-label="Vault security status">
       <div class="vault-status-seal__lock" aria-hidden="true">${_uiIcon(sealOk ? 'lock' : 'shield', 18)}</div>
       <div class="vault-status-seal__copy">
-        <div class="vault-status-seal__title">${sealOk ? 'All chambers sealed' : 'Vault needs attention'}</div>
+        <div class="vault-status-seal__title">${sealOk ? 'Vault secure' : 'Improve your security'}</div>
         <div class="vault-status-seal__sub">Security ${health}% · ${entityTotal} records · local AES</div>
       </div>
       <button type="button" class="vault-status-seal__score" data-act="R.goto('security')" style="color:${healthColor}" aria-label="Open security center">${health}%</button>
@@ -341,7 +342,7 @@ const Dash={
     ].filter(c => c.show);
     const chamberFloor = `
     <div class="chamber-floor" aria-label="Vault chambers">
-      <div class="chamber-floor__label">Chamber floor</div>
+      <div class="chamber-floor__label">Your vault</div>
       <div class="chamber-floor__grid">
         ${chambers.map((c,i) => `
           <button type="button" class="chamber-card" data-act="R.goto('${c.page}')" style="--chamber-i:${i}" aria-label="${c.label}${c.count!=null?' · '+c.count+' items':''}">
@@ -377,13 +378,13 @@ const Dash={
       <div class="vault-panel" style="padding:14px 16px;border-radius:14px">
         <div class="vc-ix-136">
           <div class="vc-ix-12">Security Score</div>
-          <div style="font-size:20px;font-weight:900;color:${healthColor};font-family:var(--mono)">${health}%</div>
+          <div style="font-size:1.25rem;font-weight:900;color:${healthColor};font-family:var(--mono)">${health}%</div>
         </div>
         <div style="height:6px;background:var(--glass2);border-radius:3px;overflow:hidden">
           <div style="height:100%;width:${health}%;background:${healthColor};border-radius:3px;transition:width .5s"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
+          ${(typeof VaultHealth !== 'undefined' ? VaultHealth.checks() : []).map(({ok,label}) => `<div style="font-size:0.6875rem;padding:4px 9px;border-radius:20px;border:1px solid ${ok?'rgba(48,209,88,.25)':'rgba(255,69,58,.2)'};background:${ok?'rgba(48,209,88,.1)':'rgba(255,69,58,.08)'};color:${ok?'var(--ok)':'var(--err)'};font-weight:500;white-space:nowrap">${ok?'OK':'Fix'} ${label}</div>`).join('')}
         </div>
       </div>
     </div>`;
@@ -407,20 +408,20 @@ const Dash={
       </div>
       ${(S.activity||[]).length ? `<div class="dash-inspector__section"><div class="dash-inspector__h">Ledger</div><div class="ledger-stack ledger-stack--compact">${activityRows}</div><button type="button" class="tap-link vc-ix-52" data-act="R.goto('timeline')">Full timeline →</button></div>` : ''}
       <div class="dash-inspector__section">
-        <button type="button" class="btn btn-p btn-sm btn-full" data-act="CMD.open()">⌘K Search</button>
+        <button type="button" class="btn btn-p btn-sm btn-full" data-act="CMD.open()">Search</button>
         <button type="button" class="btn btn-g btn-sm btn-full vc-ix-52" data-act="R.lock()">Lock vault</button>
       </div>
     </aside>`;
 
     b.innerHTML = `
     ${ctxBar}
-    ${setupBanner}
-    ${firstStepsBanner}
+    ${totalItems === 0 ? firstStepsBanner : ''}
     <div class="dash-vault-layout">
     <div class="dash-vault-main">
+    ${totalItems === 0 ? '' : nwHero}
+    ${totalItems === 0 ? '' : setupBanner}
     ${vaultStatusSeal}
-    ${chamberFloor}
-    ${nwHero}
+    ${totalItems === 0 ? '' : chamberFloor}
 
     ${moneySum}
 
@@ -442,7 +443,7 @@ const Dash={
     ${isModOn('cards') && (S.cards||[]).length ? `
     <div class="vc-ix-30">
       <div class="vc-ix-88">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
+        <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);display:flex;align-items:center;gap:6px"><span class="chip-ic">${_uiIcon('wallet', 14)}</span>Today's Wallet</div>
         <button type="button" class="tap-link" data-act="Dash.editWallet()">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
       ${wCards.length
@@ -460,7 +461,7 @@ const Dash={
             <span class="chip-ic vc-ix-21">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
               <div class="vc-ix-12">${x.name||'Document'}</div>
-              <div style="font-size:11px;color:${x.days<=30?'var(--err)':'var(--warn)'}">Expires in ${x.days} days</div>
+              <div style="font-size:0.6875rem;color:${x.days<=30?'var(--err)':'var(--warn)'}">Expires in ${x.days} days</div>
             </div>
           </div>
           <div class="vc-ix-86">›</div>
@@ -474,7 +475,7 @@ const Dash={
     <div data-act="ExIm.export('vos')" style="margin:0 16px 16px;background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:14px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px">
       <span class="chip-ic vc-ix-21">${_uiIcon('share', 24)}</span>
       <div class="vc-ix-5">
-        <div style="font-size:13px;font-weight:700;color:var(--warn)">${daysSinceBackup >= 999 ? 'Never backed up' : `Last backup: ${daysSinceBackup} days ago`}</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--warn)">${daysSinceBackup >= 999 ? 'Never backed up' : `Last backup: ${daysSinceBackup} days ago`}</div>
         <div class="vc-ix-3">Tap to export encrypted backup — protect your data</div>
       </div>
       <div class="vc-ix-86">›</div>
@@ -490,7 +491,7 @@ const Dash={
           {icon:'file',label:'Add Document',action:"R.goto('documents')"},
           {icon:'banknote',label:'Add Cash',action:"Cash.openAdd()"},
         ].map(a => `
-          <button type="button" data-act="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text);overflow:hidden">
+          <button type="button" data-act="${a.action}" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;font-size:0.875rem;font-weight:600;color:var(--text);overflow:hidden">
             <span class="chip-ic vc-ix-21">${_uiIcon(a.icon, 22)}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.label}</span>
           </button>`).join('')}
       </div>
@@ -553,7 +554,7 @@ const Dash={
 </div>`;
   },
   editWallet(){
-    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${c.id}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
+    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${c.id}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
   },
   editNW(){
     // Net worth is live-computed from banks/cash/investments/assets — open breakdown instead of a dead manual field
@@ -594,7 +595,7 @@ const Dash={
     const fmtN=n=>cur==='PKR'?U.fmtPKR(n):U.fmt(n);
     const fmt=v=>`${cur} ${fmtN(Math.round(toCur(v,cur)))}`;
     const { bankPKR, invPKR, asPKR, cashPKR, bcPKR, bondsPKR, debtPKR, nwPKR } = CurrencyEngine.computeNetWorthPKR();
-    const row=(icKey,label,val,col,prefix='')=>`<div class="vc-ix-138"><div class="vc-ix-139"><span class="chip-ic">${_uiIcon(icKey,16)}</span>${label}</div><div style="font-size:14px;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
+    const row=(icKey,label,val,col,prefix='')=>`<div class="vc-ix-138"><div class="vc-ix-139"><span class="chip-ic">${_uiIcon(icKey,16)}</span>${label}</div><div style="font-size:0.875rem;font-weight:700;color:${col}">${prefix}${fmt(val)}</div></div>`;
     Modal.open('Net Worth Breakdown',`
     <div style="padding:0 2px">
       ${bankPKR>0?row('bank','Banks',bankPKR,'var(--accent)'):''}
@@ -603,12 +604,12 @@ const Dash={
       ${row('banknote','Cash',cashPKR,'var(--accent)')}
       ${bcPKR>0?row('handshake','BC Receivables',bcPKR,'var(--accent)'):''}
       ${bondsPKR>0?row('ticket','Bonds / Securities',bondsPKR,'var(--accent)'):''}
-      <div class="vc-ix-138"><div class="vc-ix-139"><span class="chip-ic">${_uiIcon('arrow-right',16)}</span>Loans (owed)</div><div style="font-size:14px;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div class="vc-ix-140">Net Worth</div><div style="font-size:20px;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
+      <div class="vc-ix-138"><div class="vc-ix-139"><span class="chip-ic">${_uiIcon('arrow-right',16)}</span>Loans (owed)</div><div style="font-size:0.875rem;font-weight:700;color:var(--err)">− ${fmt(debtPKR)}</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div class="vc-ix-140">Net Worth</div><div style="font-size:1.25rem;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
     </div>
     <div style="margin-top:10px;padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:11px;color:var(--text2)">
+      <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:0.6875rem;color:var(--text2)">
         ${Object.entries(typeof RatesEngine!=='undefined'?RatesEngine.getFX():{}).filter(([c,r])=>r>0&&c!=='PKR').slice(0,9).map(([c,r])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${c}</span><span style="font-weight:600">${U.fmt(r)}</span></div>`).join('')}
       </div>
     </div>`,
@@ -662,7 +663,7 @@ const Settings={
   editCountries(){ ContextSwitcher.openManager(); },
   editProfile(){
     Modal.open('Edit Profile',`
-    <div class="fr"><div class="fg"><label class="fl">Your Name</label><input class="inp" id="pp-name" value="${S.user.name||''}"></div><div class="fg"><label class="fl">Avatar Emoji</label><input class="inp" id="pp-avatar" value="${S.user.avatar||'💼'}" style="font-size:22px;text-align:center"></div></div>
+    <div class="fr"><div class="fg"><label class="fl">Your Name</label><input class="inp" id="pp-name" value="${S.user.name||''}"></div><div class="fg"><label class="fl">Avatar Emoji</label><input class="inp" id="pp-avatar" value="${S.user.avatar||'💼'}" style="font-size:1.375rem;text-align:center"></div></div>
     <div class="fr"><div class="fg"><label class="fl">Email</label><input class="inp" id="pp-email" type="email" value="${S.user.email||''}" placeholder="your@email.com"></div><div class="fg"><label class="fl">Phone</label><input class="inp" id="pp-phone" value="${S.user.phone||''}" placeholder="+44 7700..."></div></div>
     <div class="fr"><div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="pp-dob" type="date" value="${S.user.dob||''}"></div><div class="fg"><label class="fl">Home Country</label><select class="inp" id="pp-country">${U.countries()}</select></div></div>
     <div class="fr"><div class="fg"><label class="fl">Default Currency</label><select class="inp" id="pp-cur">${U.currencies()}</select></div><div class="fg"><label class="fl">&nbsp;</label><button type="button" class="btn btn-g btn-full" data-act="Settings.editCountries()">Manage all countries →</button></div></div>
@@ -700,7 +701,9 @@ const Settings={
     if(n!==c){document.getElementById('cp-err').textContent='PINs do not match';return;}
     VaultDB.tryPin(o).then(result=>{
       if(!result){document.getElementById('cp-err').textContent='Current PIN incorrect';return;}
-      VaultDB.changePin(o,n).then(()=>{
+      VaultDB.changePin(o,n).then(async()=>{
+        if(!S.vaultMeta)S.vaultMeta={};
+        try{S.vaultMeta.pinHash=await PinHash.digest(n);S.vaultMeta.pinWeak=PinHash.isWeak(n);}catch(e){}
         Store.save();
         if (typeof WebAuthnUnlock !== 'undefined' && WebAuthnUnlock.onPinChanged) WebAuthnUnlock.onPinChanged();
       }).catch(e=>{Store.save();console.warn('[VaultDB] changePin error:',e);});
@@ -710,7 +713,7 @@ const Settings={
   showThreatModel(){
     if (typeof ThreatModel !== 'undefined') ThreatModel.show();
     else Modal.open('How VaultCap protects you',
-      `<div style="font-size:13px;color:var(--text2);line-height:1.65">
+      `<div style="font-size:0.8125rem;color:var(--text2);line-height:1.65">
         <p><strong>PIN</strong> unlocks this device daily.</p>
         <p><strong>Recovery key</strong> (shown once at setup) restores if you forget PIN.</p>
         <p><strong>Backup key</strong> (generated on export) unlocks portable <code>.vos</code> files — keep it with the file.</p>
@@ -724,7 +727,7 @@ const Settings={
     Modal.open('Recovery Master Key',`
     <div class="vc-ix-38">
       <p class="vc-ix-68">Your recovery master key was shown once when you created your vault. It is never stored in readable form on this device.</p>
-      <div style="font-size:15px;font-weight:700;padding:18px;border-radius:var(--r);background:var(--glass2);color:${hasRecoveryKey?'var(--ok)':'var(--warn)'};margin-bottom:14px">
+      <div style="font-size:0.9375rem;font-weight:700;padding:18px;border-radius:var(--r);background:var(--glass2);color:${hasRecoveryKey?'var(--ok)':'var(--warn)'};margin-bottom:14px">
         ${hasRecoveryKey?'Recovery key configured on this device':'No recovery key found — use a .vos backup if you forget your PIN'}
       </div>
       <p class="vc-ix-90">If you saved your key on paper or in a password manager, use <strong>Forgot PIN → Use Master Key</strong> on the lock screen.</p>
@@ -782,9 +785,9 @@ const Settings={
       `<div class="vc-ix-14">
         <div class="vc-ix-91">Enter the master key that was shown when you first set up your vault. Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
         <input class="inp" id="mk-in" placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX"
-          style="font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;font-size:16px;text-align:center"
+          style="font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;font-size:1rem;text-align:center"
           data-act-input="ActHelpers.upperAlnumDash(this)">
-        <div class="ferr" id="mk-err" style="color:var(--err);font-size:12px;min-height:16px"></div>
+        <div class="ferr" id="mk-err" style="color:var(--err);font-size:0.75rem;min-height:16px"></div>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>
        <button type="button" class="btn btn-p" data-act="Settings.verifyMasterKey()">Verify & Reset PIN</button>`
@@ -835,7 +838,7 @@ const ExIm={
   },
   async export(fmt='vault'){if(fmt==='vos')fmt='vault';
     if(fmt==='vault'){
-      S.user.lastBackup=new Date().toISOString();
+      // lastBackup is stamped only after the file is actually saved/shared (_markBackedUp)
       Store.flush().then(()=>{ Store.save(); return Store.flush(); }).then(()=>{
         // Portable .vos: Crypto.encrypt embeds salt — works on any device.
         // Requires export passphrase (not just 6-digit PIN) so cloud backups stay strong.
@@ -873,9 +876,9 @@ const ExIm={
       <p class="vc-ix-67">
         Portable AES-256 <code>.vos</code> backup. App generated a backup key — <strong>copy it now</strong>. Need it to restore. Not your PIN.
       </p>
-      <div id="exp-key-box" style="background:var(--glass);border:2px solid var(--accent);border-radius:12px;padding:14px;text-align:center;font-family:var(--mono,monospace);font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);word-break:break-all;margin-bottom:10px">${fmt}</div>
+      <div id="exp-key-box" class="vc-key-box">${fmt.split('-').map(g=>`<span class="vc-key-grp">${g}</span>`).join('<span class="vc-key-sep">-</span>')}</div>
       <button type="button" class="btn btn-g btn-full btn-sm vc-ix-26" data-act="ActHelpers.copyExportKey()">Copy backup key</button>
-      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);margin-bottom:8px"><input type="checkbox" id="exp-key-saved"> I saved this key somewhere safe</label>
+      <label class="vc-check-row"><input type="checkbox" id="exp-key-saved"><span>I saved this key somewhere safe</span></label>
       <div class="ferr" id="exp-pass-err"></div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close();ActHelpers.clearExportKey()">Cancel</button><button type="button" class="btn btn-p" data-act="ExIm._doBackupKeyExport()">Download .vos</button>`);
   },
@@ -901,12 +904,19 @@ const ExIm={
       netWorthHistory:S.netWorthHistory||[],
     };
     err.textContent='Encrypting…';
-    Crypto.encrypt(JSON.stringify(payload),a).then(enc=>{
+    Crypto.encrypt(JSON.stringify(payload),a).then(async enc=>{
       Modal.close();
       window._vosExportKey=null;
-      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
-      Activity.log('Exported','AES-256-GCM portable .vos');
-      Toast.show('Encrypted backup saved — keep backup key safe','success',5000);
+      const res=await this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      if(res&&res.ok){
+        this._markBackedUp();
+        Activity.log('Exported','AES-256-GCM portable .vos');
+        Toast.show(res.shared?'Encrypted backup shared — keep backup key safe':'Encrypted backup saved — keep backup key safe','success',5000);
+      }else if(res&&res.cancelled){
+        Toast.show('Backup not saved — export cancelled','warn',5000);
+      }else{
+        Toast.show('Backup could not be saved — try again','error',6000);
+      }
     }).catch(e=>{
       err.textContent='Export failed — try again';
       console.warn('[ExIm] export',e);
@@ -918,10 +928,10 @@ const ExIm={
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
     const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
-    Crypto.encrypt(JSON.stringify(data),pw).then(enc=>{
-      this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
-      Activity.log('Exported','Legacy AES-256-GCM .vos');
-      Toast.show('Legacy backup saved','success',4000);
+    Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
+      const res=await this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
+      if(res&&res.ok){ this._markBackedUp(); Activity.log('Exported','Legacy AES-256-GCM .vos'); Toast.show('Legacy backup saved','success',4000); }
+      else Toast.show(res&&res.cancelled?'Backup not saved — export cancelled':'Backup could not be saved — try again','warn',5000);
     }).catch(()=>this._exportPlain(data));
   },
   _promptPinForLegacyImport(encRaw,onSuccess){
@@ -950,7 +960,17 @@ const ExIm={
     this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.json','application/json',JSON.stringify(data,null,2));
     Toast.show('Exported unencrypted JSON (crypto unavailable)','warn');
   },
-  dl(name,mime,content){const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);},
+  _markBackedUp(){ S.user.lastBackup=new Date().toISOString(); try{ Store.save(); }catch(e){} },
+  /** Saves a file. iOS app: native share sheet (Save to Files / AirDrop) — WKWebView ignores <a download>.
+   *  Resolves { ok, shared, cancelled, error }. */
+  async dl(name,mime,content){
+    if(window.VaultNative&&VaultNative.isNative&&VaultNative.isNative()){
+      try{ return await VaultNative.saveAndShare({filename:name,mime,data:content}); }
+      catch(e){ return {ok:false,error:String(e&&e.message||e)}; }
+    }
+    const b=new Blob([content],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    return {ok:true,shared:false};
+  },
   share(){
     const data={ver:'3.0',exported:new Date().toISOString(),banks:S.banks,cards:S.cards,investments:S.investments,sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital};
     const blob=new Blob([JSON.stringify(data)],{type:'application/octet-stream'});
@@ -1016,8 +1036,8 @@ const ExIm={
     const investCurrent=(S.investments||[]).reduce((a,i)=>a+toB(i.currentValue||0,i.currency),0);
     const investPL=investCurrent-investedTotal;
     const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VaultCap Financial Summary</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+';padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:22px;font-weight:900;margin-bottom:4px}.header .sub{font-size:13px;opacity:.7}.nw-hero{background:'+VCBrand.h_f5f5f5+';border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:36px;font-weight:900;color:'+VCBrand.h_111+'}.nw-hero .label{font-size:13px;color:'+VCBrand.h_666+';margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+VCBrand.h_444+';margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}.row .label{color:'+VCBrand.h_666+'}.row .value{font-weight:600;color:'+VCBrand.h_111+'}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}th{background:'+VCBrand.h_f8f8f8+';padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:'+VCBrand.h_666+';font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:'+VCBrand.h_333+'}tr:last-child td{border-bottom:none}.positive{color:'+VCBrand.h_16a34a+';font-weight:700}.negative{color:'+VCBrand.h_dc2626+';font-weight:700}.footer{text-align:center;font-size:11px;color:'+VCBrand.h_999+';margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
-    '<div class="no-print"><button type="button" class="btn-print" data-act="window.print()">Print / Save PDF</button><button type="button" data-act="window.close()" style="background:'+VCBrand.h_f1f3f5+';border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:14px">Close</button></div>'+
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;color:'+VCBrand.h_111+';background:'+VCBrand.h_fff+';padding:0}.page{max-width:800px;margin:0 auto;padding:32px}.header{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';padding:28px 32px;margin-bottom:28px;border-radius:12px}.header h1{font-size:1.375rem;font-weight:900;margin-bottom:4px}.header .sub{font-size:0.8125rem;opacity:.7}.nw-hero{background:'+VCBrand.h_f5f5f5+';border-radius:10px;padding:20px;margin-bottom:24px;text-align:center}.nw-hero .amount{font-size:2.25rem;font-weight:900;color:'+VCBrand.h_111+'}.nw-hero .label{font-size:0.8125rem;color:'+VCBrand.h_666+';margin-bottom:6px}.section{margin-bottom:24px}.section h2{font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+VCBrand.h_444+';margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:0.8125rem}.row .label{color:'+VCBrand.h_666+'}.row .value{font-weight:600;color:'+VCBrand.h_111+'}table{width:100%;border-collapse:collapse;font-size:0.75rem;margin-top:4px}th{background:'+VCBrand.h_f8f8f8+';padding:8px 10px;text-align:left;font-size:0.6875rem;text-transform:uppercase;letter-spacing:.04em;color:'+VCBrand.h_666+';font-weight:700}td{padding:8px 10px;border-bottom:1px solid #f0f0f0;color:'+VCBrand.h_333+'}tr:last-child td{border-bottom:none}.positive{color:'+VCBrand.h_16a34a+';font-weight:700}.negative{color:'+VCBrand.h_dc2626+';font-weight:700}.footer{text-align:center;font-size:0.6875rem;color:'+VCBrand.h_999+';margin-top:32px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn-print{background:'+VCBrand.h_111+';color:'+VCBrand.h_fff+';border:none;padding:12px 28px;border-radius:8px;font-size:0.875rem;font-weight:700;cursor:pointer}@media print{.no-print{display:none!important}.page{padding:16px}}</style></head><body><div class="page">'+
+    '<div class="no-print"><button type="button" class="btn-print" data-act="window.print()">Print / Save PDF</button><button type="button" data-act="window.close()" style="background:'+VCBrand.h_f1f3f5+';border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:0.875rem">Close</button></div>'+
     '<div class="header"><h1>VaultCap Financial Summary</h1><div class="sub">'+(S.user.name||'My Vault')+' · Generated '+dateStr+'</div></div>'+
     '<div class="nw-hero"><div class="label">Total Net Worth</div><div class="amount">'+fmtDisplay(nwPKR)+'</div><div class="label" style="margin-top:4px;margin-bottom:0">As of '+dateStr+'</div></div>'+
     section('Net Worth Breakdown',
@@ -1047,6 +1067,7 @@ const ExIm={
     (expiringDocs.length?section('Documents Expiring (next 90 days)',table(['Document','Holder','Expires'],expiringDocs.map(d=>[d.docType||'Document',d.holderName||'—',d.expiryDate?new Date(d.expiryDate).toLocaleDateString('en-GB'):'—']))):'')+
     '<div class="footer">Generated by VaultCap · Private & Encrypted · All data is stored locally on your device<br>'+dateStr+'</div>'+
     '</div></body></html>';
+    if(printReport(html,'VaultCap Summary'))return;
     const w=window.open('','_blank');
     if(w){w.document.write(html);w.document.close();}
     else Toast.show('Allow pop-ups to export PDF','warn');
@@ -1102,8 +1123,8 @@ const QRSync = {
     Modal.open('Sync to Another Device', `
       <div class="vc-ix-38">
         <p class="vc-ix-143">Scan QR on target device. Enter this one-time code there after scanning.</p>
-        <div style="font-size:28px;font-weight:800;letter-spacing:10px;font-family:var(--mono);color:var(--accent);margin-bottom:14px">${syncCode}</div>
-        <div id="qrChunkLabel" style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
+        <div style="font-size:1.75rem;font-weight:800;letter-spacing:10px;font-family:var(--mono);color:var(--accent);margin-bottom:14px">${syncCode}</div>
+        <div id="qrChunkLabel" style="font-size:0.75rem;font-weight:700;color:var(--accent);margin-bottom:8px">${total>1?'QR 1 of '+total+' — show this to the other device, then tap Next':'Ready to scan'}</div>
         <div id="qrContainer" style="display:inline-block;background:${VCBrand.h_fff};padding:10px;border-radius:12px;margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px">
           ${total>1?'<button type="button" class="btn btn-s btn-sm vc-ix-17" id="qrPrevBtn" data-act="QRSync._showChunk(-1)">← Prev</button>':''}
@@ -1142,9 +1163,9 @@ const QRSync = {
     const draw = () => {
       if (typeof QRCode !== 'undefined') {
         try { new QRCode(el, { text: chunkData, width:260, height:260, correctLevel: QRCode.CorrectLevel.L }); }
-        catch(e) { el.innerHTML = '<div style="font-size:12px;color:var(--err);padding:12px">QR generation failed — use Copy as text instead</div>'; }
+        catch(e) { el.innerHTML = '<div style="font-size:0.75rem;color:var(--err);padding:12px">QR generation failed — use Copy as text instead</div>'; }
       } else {
-        el.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:12px">QR library not loaded</div>';
+        el.innerHTML = '<div style="font-size:0.75rem;color:var(--text2);padding:12px">QR library not loaded</div>';
       }
     };
     if (typeof VaultLazy !== 'undefined') VaultLazy.qrcode().then(draw).catch(draw);
@@ -1157,7 +1178,7 @@ const QRSync = {
         <p class="vc-ix-143">Point your camera at the QR code shown on the other device.</p>
         <video id="qrVideo" style="width:100%;max-width:320px;border-radius:var(--r);background:${VCBrand.h_000}" autoplay playsinline></video>
         <canvas id="qrCanvas" style="display:none"></canvas>
-        <div id="qrStatus" style="font-size:12px;color:var(--text3);margin-top:8px">Starting camera…</div>
+        <div id="qrStatus" style="font-size:0.75rem;color:var(--text3);margin-top:8px">Starting camera…</div>
       </div>
     `, `<button type="button" class="btn btn-g" data-act="QRSync._stopCamera();Modal.close()">Cancel</button>`);
     setTimeout(() => this._startCamera(), 300);
@@ -1316,8 +1337,8 @@ const QRSync = {
       .map(k => `${(data[k]||[]).length} ${k}`).filter(s => !s.startsWith('0')).join(', ');
     Modal.open('Import from QR', `
       <p class="vc-ix-69">Successfully decoded vault data from QR codes.</p>
-      <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:12px;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
-      <p style="font-size:12px;color:var(--warn)">Existing items with matching IDs will be merged.</p>
+      <div style="background:var(--glass);border-radius:var(--r);padding:12px;font-size:0.75rem;color:var(--text2);margin-bottom:12px">${counts || 'No items found'}</div>
+      <p style="font-size:0.75rem;color:var(--warn)">Existing items with matching IDs will be merged.</p>
     `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="QRSync._applyPendingImport()">Merge & Import</button>`);
   },
 
@@ -1358,17 +1379,17 @@ const QRSync = {
       <div style="max-width:560px">
         <div style="background:linear-gradient(135deg,var(--glass),var(--glass2));border:1px solid var(--border);border-radius:var(--rlg);padding:20px;margin-bottom:16px;text-align:center">
         <div class="vc-ix-145">${_uiIcon('sync', 48)}</div>
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Sync Devices</h3>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">Transfer your vault to another device securely using a QR code and a one-time 6-digit sync code.</p>
+          <h3 style="font-size:1.125rem;font-weight:700;margin-bottom:8px">Sync Devices</h3>
+          <p style="font-size:0.8125rem;color:var(--text2);line-height:1.6;margin-bottom:16px">Transfer your vault to another device securely using a QR code and a one-time 6-digit sync code.</p>
           <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
-            <button type="button" class="btn btn-p" data-act="QRSync.exportQR()" style="padding:14px;font-size:15px;font-weight:700">Send to Another Device</button>
-            <button type="button" class="btn btn-s" data-act="QRSync.importQR()" style="padding:12px;font-size:14px">Receive from Another Device</button>
+            <button type="button" class="btn btn-p" data-act="QRSync.exportQR()" style="padding:14px;font-size:0.9375rem;font-weight:700">Send to Another Device</button>
+            <button type="button" class="btn btn-s" data-act="QRSync.importQR()" style="padding:12px;font-size:0.875rem">Receive from Another Device</button>
           </div>
         </div>
         <div class="vc-ix-146">
           <div class="vc-ix-147">How it works</div>
-          ${[['1','On the source device','Tap "Send" — a QR code and 6-digit code appear'],['2','On the target device','Tap "Receive" — scan the QR code'],['3','Enter the sync code','Type the 6-digit code shown on the source device'],['4','Done!','Your vault data merges securely on the target device']].map(([n,t,d])=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><span style="font-size:13px;font-weight:800;color:var(--accent);flex-shrink:0;width:20px">${n}</span><div><div style="font-size:13px;font-weight:600">${t}</div><div style="font-size:11px;color:var(--text2)">${d}</div></div></div>`).join('')}
-          <div style="margin-top:8px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)">Data is encrypted with AES-256-GCM. The code never leaves your device.</div>
+          ${[['1','On the source device','Tap "Send" — a QR code and 6-digit code appear'],['2','On the target device','Tap "Receive" — scan the QR code'],['3','Enter the sync code','Type the 6-digit code shown on the source device'],['4','Done!','Your vault data merges securely on the target device']].map(([n,t,d])=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><span style="font-size:0.8125rem;font-weight:800;color:var(--accent);flex-shrink:0;width:20px">${n}</span><div><div style="font-size:0.8125rem;font-weight:600">${t}</div><div style="font-size:0.6875rem;color:var(--text2)">${d}</div></div></div>`).join('')}
+          <div style="margin-top:8px;padding-top:10px;border-top:1px solid var(--border);font-size:0.6875rem;color:var(--text3)">Data is encrypted with AES-256-GCM. The code never leaves your device.</div>
         </div>
       </div>`;
   },
@@ -1427,7 +1448,7 @@ const WhatsNew={
       </div>
       <div class="vc-ix-53">
         <div class="vc-ix-54">Self-Check Engine</div>
-        <div class="vc-ix-13">Auto-detects and repairs data integrity issues. Runs every 5 min. ⌘K → Run Self-Check.</div>
+        <div class="vc-ix-13">Auto-detects and repairs data integrity issues. Runs every 5 min. Search → Run Self-Check.</div>
       </div>
       <div class="vc-ix-53">
         <div class="vc-ix-54">Dark / Light / System</div>
@@ -1446,8 +1467,8 @@ const ImportEngine={
       <!-- DRAG/UPLOAD ZONE -->
       <div id="ie-dropzone" data-act="document.getElementById('ie-file').click()" style="border:2px dashed var(--border2);border-radius:20px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:var(--glass)">
         <div class="vc-ix-145">${_uiIcon('download', 44)}</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Drop files here or tap to browse</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Images · CSV · JSON · Text · Vault files</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:6px">Drop files here or tap to browse</div>
+        <div style="font-size:0.75rem;color:var(--text2);margin-bottom:14px">Images · CSV · JSON · Text · Vault files</div>
         <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">
           <span class="vc-ix-32">Photos</span>
           <span class="vc-ix-32">PDFs</span>
@@ -1468,15 +1489,15 @@ const ImportEngine={
       <div class="vc-ix-17" id="ie-results"></div>
       <!-- MANUAL PARSE SECTION -->
       <div class="vc-ix-146">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Paste Text to Import</div>
-        <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultCap will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:13px;line-height:1.6"></textarea>
+        <div style="font-size:0.6875rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Paste Text to Import</div>
+        <textarea class="inp" id="ie-paste" rows="5" placeholder="Paste bank statement, card details, subscription list, or any text...&#10;&#10;VaultCap will detect and auto-fill entries from it." style="resize:vertical;min-height:80px;font-size:0.8125rem;line-height:1.6"></textarea>
         <button type="button" class="btn btn-p btn-sm vc-ix-151" data-act="ImportEngine.parseText(document.getElementById('ie-paste').value)">Detect & Import</button>
       </div>
       <!-- HISTORY -->
       ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).length>0?`
       <div class="widget">
         <div class="wh">Import History</div>
-        ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).slice(0,5).map(a=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${a.a}</span><span class="vc-ix-4">${Activity.ago(a.t)}</span></div>`).join('')}
+        ${S.activity.filter(a=>a.a.includes('import')||a.a.includes('Import')).slice(0,5).map(a=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.75rem"><span>${a.a}</span><span class="vc-ix-4">${Activity.ago(a.t)}</span></div>`).join('')}
       </div>`:''}
     </div>`;
     const zone = document.getElementById('ie-dropzone');
@@ -1849,13 +1870,13 @@ const ImportEngine={
         <input type="checkbox" id="ie-check-${i}" checked style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0">
         <div class="chip-ic vc-ix-21">${_uiIcon(typeIc[r.type]||'list',20)}</div>
         <div class="vc-ix-20">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.5px">${r.type} · <span style="color:${r.confidence==='high'?'var(--ok)':r.confidence==='medium'?'var(--warn)':'var(--text3)'}">${r.confidence}</span></div>
-          <div style="font-size:13px;font-weight:600;margin-top:2px">${Object.values(r.data).filter(Boolean)[0]||'—'}</div>
+          <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:.5px">${r.type} · <span style="color:${r.confidence==='high'?'var(--ok)':r.confidence==='medium'?'var(--warn)':'var(--text3)'}">${r.confidence}</span></div>
+          <div style="font-size:0.8125rem;font-weight:600;margin-top:2px">${Object.values(r.data).filter(Boolean)[0]||'—'}</div>
         </div>
-        <button type="button" data-act="ActHelpers.toggleEditPanel(this)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">Edit</button>
+        <button type="button" data-act="ActHelpers.toggleEditPanel(this)" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:0.8125rem;color:var(--text2)">Edit</button>
       </div>
       <div style="display:none;padding:0 14px 12px;border-top:1px solid var(--border);background:var(--glass)">
-        ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" data-act-input="ActHelpers.setIeResult(${i},'${k}',this.value)" style="padding:7px 10px;font-size:12px"></div>`).join('')}
+        ${Object.entries(r.data).map(([k,v])=>`<div style="margin-bottom:6px"><label style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);display:block;margin-bottom:3px">${k}</label><input class="inp" value="${String(v||'').replace(/"/g,'&quot;')}" data-act-input="ActHelpers.setIeResult(${i},'${k}',this.value)" style="padding:7px 10px;font-size:0.75rem"></div>`).join('')}
       </div>
     </div>`).join('')}
     <button type="button" class="btn btn-p btn-full" data-act="ImportEngine.importSelected()">Import Selected Items</button>
@@ -1902,8 +1923,8 @@ const Links={
       ${opts.map(o=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:10px;cursor:pointer;border:1px solid var(--border)">
         <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${o.id}" style="width:18px;height:18px;accent-color:var(--accent)">
         <span class="chip-ic">${_uiIcon(o.ic,18)}</span>
-        <div><div style="font-size:13px;font-weight:500">${o.label}</div><div class="vc-ix-3">${o.type}</div></div>
-      </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">No other entries to link to yet</div>'}
+        <div><div style="font-size:0.8125rem;font-weight:500">${o.label}</div><div class="vc-ix-3">${o.type}</div></div>
+      </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:0.8125rem;padding:20px">No other entries to link to yet</div>'}
     </div>`,
     `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>
      <button type="button" class="btn btn-p" data-act="Links.savLinks('${entryId}','${entryArr===S.banks?'banks':entryArr===S.cards?'cards':entryArr===S.investments?'investments':entryArr===S.sims?'sims':entryArr===S.assets?'assets':entryArr===S.expenses?'expenses':entryArr===S.emails?'emails':entryArr===S.gadgets?'gadgets':'digital'}')">Save Links</button>`);
@@ -1921,7 +1942,7 @@ const Links={
       return found?{label:found.name||found.bankName||found.cardName||found.network||found.email||found.serviceName||'Entry'}:null;
     }).filter(Boolean);
     if(!linked.length)return '';
-    return `<div class="vc-ix-52"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Linked</div><div style="display:flex;flex-wrap:wrap;gap:5px">${linked.map(l=>`<span style="padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:11px;color:var(--text2)">${l.label}</span>`).join('')}</div></div>`;
+    return `<div class="vc-ix-52"><div style="font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Linked</div><div style="display:flex;flex-wrap:wrap;gap:5px">${linked.map(l=>`<span style="padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--border);font-size:0.6875rem;color:var(--text2)">${l.label}</span>`).join('')}</div></div>`;
   }
 };
 
@@ -1937,9 +1958,9 @@ const BackupCenter={
     <!-- STATUS HERO -->
     <div class="hero" style="text-align:center;margin-bottom:14px">
       <div style="margin-bottom:10px;display:flex;justify-content:center">${_uiIcon(backupOk?'target':'bell', 44)}</div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:4px">${backupOk?'Vault Protected':'Backup Recommended'}</div>
+      <div style="font-size:1.125rem;font-weight:700;margin-bottom:4px">${backupOk?'Vault Protected':'Backup Recommended'}</div>
       <div class="vc-ix-10">${backupStatus}</div>
-      ${!backupOk?'<div style="font-size:12px;color:var(--err);margin-top:6px">Your vault data exists only on this device</div>':''}
+      ${!backupOk?'<div style="font-size:0.75rem;color:var(--err);margin-top:6px">Your vault data exists only on this device</div>':''}
     </div>
     <!-- BACKUP OPTIONS -->
     <div class="set-sec"><div class="set-title">Create Backup</div><div class="set-card">
@@ -1986,7 +2007,7 @@ const BackupCenter={
         {ic:'laptop',t:'Mac / Windows',d:'AirDrop or USB transfer — files app'},
         {ic:'building-2',t:'NAS / Home Server',d:'Transfer .vos via Wi-Fi file sharing'},
       ].map(({ic,t,d})=>`<div class="si"><div class="vc-ix-93"><span class="chip-ic">${_uiIcon(ic,22)}</span><div class="sil"><div class="name">${t}</div><div class="desc">${d}</div></div></div></div>`).join('')}
-      <div style="padding:12px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">All exports are encrypted with AES-256-GCM before leaving your device. No cloud servers involved. Only you hold the key (derived from your PIN).</div>
+      <div style="padding:12px 16px;font-size:0.6875rem;color:var(--text3);line-height:1.6;border-top:1px solid var(--border)">All exports are encrypted with AES-256-GCM before leaving your device. No cloud servers involved. Only you hold the key (derived from your PIN).</div>
     </div></div>
     <!-- BACKUP HISTORY -->
     ${history.length?`<div class="set-sec"><div class="set-title">Export History</div><div class="set-card">
@@ -1995,7 +2016,7 @@ const BackupCenter={
     <!-- DATA SUMMARY -->
     <div class="set-sec vc-ix-23"><div class="set-title">What Gets Backed Up</div><div class="set-card">
       ${[...ALL_MODULES.map(m=>[m.n,S[m.id]?.length||0,m.ic]),['Activity log',S.activity.length,'list'],['Custom tags',S.tags.length,'pin']].map(([n,c,ic])=>`<div class="si"><div style="display:flex;align-items:center;gap:8px;flex:1"><span class="chip-ic">${typeof VC!=='undefined'?VC.modIcon({ic},16):''}</span><div class="name">${n}</div></div><span style="font-weight:700;color:var(--accent)">${c}</span></div>`).join('')}
-      <div class="si"><div class="name">Total entries</div><div style="font-weight:800;font-size:16px;color:var(--accent)">${ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)}</div></div>
+      <div class="si"><div class="name">Total entries</div><div style="font-weight:800;font-size:1rem;color:var(--accent)">${ALL_MODULES.reduce((a,m)=>a+(S[m.id]?.length||0),0)}</div></div>
     </div></div>`;
   },
   exportVOS(){
@@ -2014,12 +2035,12 @@ const RecoveryCenter={
     b.innerHTML=`
     <!-- MASTER KEY -->
     <div class="hero" style="margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Emergency Master Key</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery key was shown once during vault setup and cannot be displayed again. If you wrote it down, use it below to reset your PIN and restore access.</div>
-      <div style="font-size:16px;font-weight:700;text-align:center;padding:18px;background:rgba(0,0,0,.35);border-radius:12px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
+      <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Emergency Master Key</div>
+      <div style="font-size:0.6875rem;color:var(--text2);margin-bottom:14px;line-height:1.6">Your recovery key was shown once during vault setup and cannot be displayed again. If you wrote it down, use it below to reset your PIN and restore access.</div>
+      <div style="font-size:1rem;font-weight:700;text-align:center;padding:18px;background:rgba(0,0,0,.35);border-radius:12px;color:${hasRecoveryKey?'var(--ok)':'var(--warn)'}">
         ${hasRecoveryKey?'Recovery key configured':'No recovery key on this device'}
       </div>
-      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
+      <div style="text-align:center;font-size:0.6875rem;color:var(--text3);margin-top:8px">Format: XXXXXX-XXXXXX-XXXXXX-XXXXXX</div>
       <div class="vc-ix-152" id="rc-copy">
         <button type="button" class="btn btn-s btn-sm vc-ix-5" data-act="Settings.useMasterKey()">Enter Master Key</button>
       </div>
@@ -2039,7 +2060,7 @@ const RecoveryCenter={
         {done:!!S.decoyPin,label:'Decoy PIN configured',tip:'Shows fake vault under coercion'},
         {done:!!S.user.lastBackup,label:'Vault backed up',tip:'Export encrypted backup to safe location'},
         {done:S.autoLock,label:'Auto-lock enabled',tip:'Vault locks automatically when idle'},
-      ].map(({done,label,tip})=>`<div class="si"><div class="vc-ix-93"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">Done</span>':'<span style="color:var(--err);font-size:11px">Needed</span>'}</div>`).join('')}
+      ].map(({done,label,tip})=>`<div class="si"><div class="vc-ix-93"><div class="status-dot ${done?'ok':'err'}"></div><div class="sil"><div class="name">${label}</div><div class="desc">${tip}</div></div></div>${done?'<span style="color:var(--ok);font-weight:700">Done</span>':'<span style="color:var(--err);font-size:0.6875rem">Needed</span>'}</div>`).join('')}
     </div></div>
     <!-- VAULT HEALTH -->
     <div class="set-sec"><div class="set-title">Vault Diagnostics</div><div class="set-card">
@@ -2050,13 +2071,13 @@ const RecoveryCenter={
         {label:'Activity records',val:S.activity.length+''},
         {label:'Last backup',val:S.user.lastBackup?Activity.ago(S.user.lastBackup):'Never'},
         {label:'App version',val:'VaultCap v'+VER},
-      ].map(({label,val})=>`<div class="si"><div class="name">${label}</div><div style="color:var(--text2);font-size:12px">${val}</div></div>`).join('')}
+      ].map(({label,val})=>`<div class="si"><div class="name">${label}</div><div style="color:var(--text2);font-size:0.75rem">${val}</div></div>`).join('')}
     </div></div>
     <!-- DEVELOPER DIAGNOSTICS -->
     <div class="set-sec vc-ix-23"><div class="set-title">Developer Diagnostics</div><div class="set-card">
       <div class="vc-ix-94" id="dev-diag-body">
         <button type="button" class="btn btn-g" data-act="DevDiag.run()" style="width:100%;margin-bottom:10px">Run Diagnostics</button>
-        <div id="dev-diag-results" style="font-size:12px;color:var(--text3);text-align:center">Tap to run diagnostics</div>
+        <div id="dev-diag-results" style="font-size:0.75rem;color:var(--text3);text-align:center">Tap to run diagnostics</div>
       </div>
     </div></div>`;
   },
@@ -2066,7 +2087,7 @@ const RecoveryCenter={
       `<div class="vc-ix-38">
         <p class="vc-ix-153">Generated ${new Date().toLocaleString()}</p>
         <div style="font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.12em;padding:16px;border-radius:var(--r);background:var(--glass2);word-break:break-all">${fmt}</div>
-        <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.6">Use <strong>Forgot PIN → Master Key</strong> on the lock screen.</p>
+        <p style="font-size:0.6875rem;color:var(--text3);margin-top:12px;line-height:1.6">Use <strong>Forgot PIN → Master Key</strong> on the lock screen.</p>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="ActHelpers.copyText('${fmt}')">Copy</button><button type="button" class="btn btn-p" data-act="Modal.close()">Done</button>`, true);
   }
@@ -2112,8 +2133,8 @@ const SelfCheck={
     const r=this.run();
     Modal.open('VaultCap Diagnostic',`
     <div class="vc-ix-154">Checked: ${this.lastCheck?.toLocaleTimeString()}</div>
-    ${r.errors.length?`<div class="vc-ix-26">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:12px">${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">All systems healthy</div>'}
-    ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:12px">${f}</div>`).join('')}</div>`:''}
+    ${r.errors.length?`<div class="vc-ix-26">${r.errors.map(e=>`<div style="padding:6px 10px;background:rgba(255,64,64,.1);border-radius:8px;margin-bottom:4px;font-size:0.75rem">${e}</div>`).join('')}</div>`:'<div style="padding:10px;background:rgba(0,200,100,.1);border-radius:10px;color:var(--ok);font-weight:600;margin-bottom:10px">All systems healthy</div>'}
+    ${r.fixes.length?`<div>${r.fixes.map(f=>`<div style="padding:5px 10px;background:rgba(0,200,100,.1);border-radius:8px;margin-bottom:3px;font-size:0.75rem">${f}</div>`).join('')}</div>`:''}
     <div style="margin-top:12px;padding:10px;background:var(--glass);border-radius:10px">
       ${['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].map(k=>`<div class="vc-ix-155"><span class="vc-ix-1">${k}</span><strong>${(S[k]||[]).length}</strong></div>`).join('')}
       <div class="vc-ix-155"><span class="vc-ix-1">documents</span><strong>${(S.documents||[]).length}</strong></div>
@@ -2177,9 +2198,9 @@ const SettingsNav = {
 
   _account() {
     const setupNudge = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
-    <div class="set-card" style="margin-bottom:12px;border-color:var(--accent)">
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px">Complete your profile</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
+    <div class="set-card" style="margin-bottom:12px;padding:16px;border-color:var(--accent)">
+      <div style="font-size:0.8125rem;font-weight:700;margin-bottom:6px">Complete your profile</div>
+      <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px;line-height:1.45">Set countries and display currency so imports and scores match your regions.</div>
       <button type="button" class="btn btn-p btn-sm" data-act="Settings.editCountries()">Set countries →</button>
     </div>` : '';
     const lastBackup = S.user.lastBackup ? Activity.ago(S.user.lastBackup) : 'Never';
@@ -2187,7 +2208,7 @@ const SettingsNav = {
     return `${setupNudge}${typeof Onboarding !== 'undefined' && !S.user.onboardingComplete ? Onboarding.showSettingsCard() : ''}
     <div class="set-sec"><div class="set-title">Identity</div><div class="set-card">
       <div class="si vc-ix-6" data-act="Settings.editProfile()">
-        <div class="vc-ix-72"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:22px">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span class="vc-ix-4">›</span>
+        <div class="vc-ix-72"><div style="width:44px;height:44px;border-radius:50%;background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:1.375rem">${S.user.avatar||'💼'}</div><div><div class="name">${S.user.name||'User'}</div><div class="desc">${S.user.email||'Tap to edit profile'} ${S.user.phone?'· '+S.user.phone:''}</div></div></div><span class="vc-ix-4">›</span>
       </div>
       <div class="si vc-ix-6" data-act="Settings.editCountries()">
         <div class="sil"><div class="name">Countries & Regions</div><div class="desc">${S.user.country ? U.flag(S.user.country)+' '+U.cname(S.user.country) : 'Not set'}${(S.user.secondaryCountries||[]).length ? ' · +'+(S.user.secondaryCountries||[]).length+' more' : ''}</div></div><span class="vc-ix-4">›</span>
@@ -2224,7 +2245,7 @@ const SettingsNav = {
         {label:'Decoy PIN',val:S.decoyPin?'Configured':'Not set',ok:!!S.decoyPin},
         {label:'Last backup',val:lastBackup,ok:!!S.user.lastBackup},
         {label:'Unlock sessions',val:sessionCount+' recorded',ok:true},
-      ].map(({label,val,ok})=>`<div class="si"><div class="name">${label}</div><div style="font-size:12px;color:${ok?'var(--ok)':'var(--warn)'};text-align:right;flex:1">${val}</div></div>`).join('')}
+      ].map(({label,val,ok})=>`<div class="si"><div class="name">${label}</div><div style="font-size:0.75rem;color:${ok?'var(--ok)':'var(--warn)'};text-align:right;flex:1">${val}</div></div>`).join('')}
     </div></div>
     <div class="set-sec vc-ix-23"><div class="set-title">Score dashboard</div><div class="set-card">
       <div class="si vc-ix-6" data-act="R.goto('security')"><div class="sil"><div class="name">Open Security Score</div><div class="desc">Cards, email 2FA, backup age — full checklist</div></div><span class="vc-ix-4">›</span></div>
@@ -2260,7 +2281,7 @@ const SettingsNav = {
                 <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
               </div>
               <div style="padding:8px 10px;border-top:1px solid var(--border)">
-                <div style="font-size:12px;font-weight:${active === o.id ? '700' : '600'};color:var(--text)">${o.label}</div>
+                <div style="font-size:0.75rem;font-weight:${active === o.id ? '700' : '600'};color:var(--text)">${o.label}</div>
               </div>
             </button>`).join('')}
         </div>
@@ -2269,10 +2290,10 @@ const SettingsNav = {
     <div class="set-sec vc-ix-23"><div class="set-title">Live preview</div><div class="set-card">
       <div class="vc-ix-157">
         <div class="vc-ix-7">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Sample card</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Net worth snapshot</div>
-          <div style="font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-0.5px">£ 1,248,500</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:6px">Primary text · secondary labels · borders follow your theme</div>
+          <div style="font-size:0.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Sample card</div>
+          <div style="font-size:0.9375rem;font-weight:700;color:var(--text);margin-bottom:4px">Net worth snapshot</div>
+          <div style="font-size:1.375rem;font-weight:800;color:var(--accent);letter-spacing:-0.5px">£ 1,248,500</div>
+          <div style="font-size:0.75rem;color:var(--text2);margin-top:6px">Primary text · secondary labels · borders follow your theme</div>
         </div>
       </div>
     </div></div>`;
@@ -2293,7 +2314,7 @@ const SettingsNav = {
       <div class="si vc-ix-6" data-act="R.goto('timeline')"><div class="sil"><div class="name">Timeline</div><div class="desc">Chronological upcoming dates</div></div><span class="vc-ix-4">›</span></div>
     </div></div>
     <div class="set-sec vc-ix-23"><div class="set-title">How alerts work</div><div class="set-card">
-      <div class="si"><div class="sil"><div class="name" style="font-size:12px;color:var(--text2);line-height:1.55;font-weight:400">VaultCap checks dates on-device when you unlock. No push servers. Keep expiry fields filled so reminders stay useful.</div></div></div>
+      <div class="si"><div class="sil"><div class="name" style="font-size:0.75rem;color:var(--text2);line-height:1.55;font-weight:400">VaultCap checks dates on-device when you unlock. No push servers. Keep expiry fields filled so reminders stay useful.</div></div></div>
     </div></div>`;
   },
 
@@ -2306,10 +2327,10 @@ const SettingsNav = {
     const llmOn = !!(S.user && S.user.llmEnabled);
     return `<div class="set-sec"><div class="set-title">Privacy</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Privacy Mode</div><div class="desc">Blur all sensitive values on screen</div></div><label class="tog"><input type="checkbox" ${S.privacyMode?'checked':''} data-act-change="ActHelpers.privacyMode(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Fetch missing bank logos</div><div class="desc">Opt-in · uses privacy proxy (off by default)</div></div><label class="tog"><input type="checkbox" ${logoOn?'checked':''} data-act-change="ActHelpers.logoProxyEnabled(this.checked)"><span class="ts"></span></label></div>
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Fetch missing bank logos</div><div class="desc">Opt-in · uses privacy proxy (off by default)</div></div><label class="tog"><input type="checkbox" ${logoOn?'checked':''} data-act-change="ActHelpers.logoProxyEnabled(this.checked)"><span class="ts"></span></label></div>`}
       <div class="si"><div class="sil"><div class="name">Fetch live FX / metals rates</div><div class="desc">Opt-in · uses public rate APIs (off by default; estimates still work)</div></div><label class="tog"><input type="checkbox" ${ratesOn?'checked':''} data-act-change="ActHelpers.ratesNetworkEnabled(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Optional Smart Import assistant</div><div class="desc">Opt-in · per-use confirm · model claude-haiku-4-5</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} data-act-change="ActHelpers.llmEnabled(this.checked)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Assistant status</div><div class="desc vc-ix-8" id="llm-health-privacy">Off unless enabled above</div></div></div>
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Optional Smart Import assistant</div><div class="desc">Off by default · sends only text you choose to Cloudflare Workers AI after you confirm</div></div><label class="tog"><input type="checkbox" ${llmOn?'checked':''} data-act-change="ActHelpers.llmEnabled(this.checked)"><span class="ts"></span></label></div>`}
+      ${isNativeApp()?'':`<div class="si"><div class="sil"><div class="name">Assistant status</div><div class="desc vc-ix-8" id="llm-health-privacy">Off unless enabled above</div></div></div>`}
     </div></div>
     <div class="set-sec"><div class="set-title">Backup &amp; export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
@@ -2329,7 +2350,7 @@ const SettingsNav = {
       <div class="si vc-ix-6" data-act="ExcelImport.open()"><div class="vc-ix-72"><span class="chip-ic">${_uiIcon('chart',28)}</span><div class="sil"><div class="name">Import Excel / Spreadsheet</div><div class="desc">Upload .xlsx or .xls</div></div></div><span class="vc-ix-159">→</span></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Plaintext export</div><div class="set-card">
-      <div style="padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:4px">Readable JSON/CSV leave your device <strong>unencrypted</strong>. Prefer .vos for backups. Confirm before sharing.</div>
+      <div style="padding:12px 14px;font-size:0.75rem;color:var(--text2);line-height:1.55;margin-bottom:4px">Readable JSON/CSV leave your device <strong>unencrypted</strong>. Prefer .vos for backups. Confirm before sharing.</div>
       <div style="padding:0 14px 12px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('json')">Export as JSON (readable)</button>
         <button type="button" class="btn btn-s btn-full btn-sm" data-act="ExIm.export('csv')">Export as CSV (spreadsheet)</button>
@@ -2345,7 +2366,7 @@ const SettingsNav = {
     </div></div>
     <div class="set-sec vc-ix-23"><div class="set-title">Delete</div><div class="set-card">
       <div class="vc-ix-95">
-        <div style="font-size:12px;color:var(--err);line-height:1.5">Irreversible. Export a .vos backup first.</div>
+        <div style="font-size:0.75rem;color:var(--err);line-height:1.5">Irreversible. Export a .vos backup first.</div>
         <button type="button" class="btn btn-d btn-full btn-sm" data-act="Settings.resetVault()">Reset Entire Vault</button>
       </div>
     </div></div>`;
@@ -2354,37 +2375,37 @@ const SettingsNav = {
   _about() {
     const vaultId = typeof getVaultId === 'function' ? getVaultId() : '—';
     return `<div class="set-sec"><div class="set-title">About VaultCap</div><div class="set-card">
-      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'}`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','Local device only — never sent anywhere'],['Encryption','AES-256-GCM (Web Crypto API)'],['Created by','Capricorn Systems']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:12px;text-align:right;flex:1">${v}</div></div>`).join('')}
+      ${[['Version',`v${typeof VER!=='undefined'?VER:'4.0'}`],['Schema Version',`v${typeof SCHEMA_VERSION!=='undefined'?SCHEMA_VERSION:4}`],['Vault Size',`${(JSON.stringify(S).length/1024).toFixed(1)} KB`],['Storage','On this device, encrypted — optional online features stay off unless you turn them on'],['Encryption','AES-256-GCM · PBKDF2-SHA256 600k'],['Created by','Capricorn Systems']].map(([k,v])=>`<div class="si"><div class="name">${k}</div><div style="color:var(--text2);font-size:0.75rem;text-align:right;flex:1">${v}</div></div>`).join('')}
       <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil" style="flex:1;min-width:140px"><div class="name">Vault ID</div><div class="desc">Public ticket ID only — not a password. Capricorn Systems cannot open your vault with it.</div></div><div class="vc-ix-161"><code style="font-family:var(--mono);font-weight:700;letter-spacing:.06em">${vaultId}</code><button type="button" class="btn btn-g btn-sm" data-act="copyVaultId()">Copy</button></div></div>
       <div class="si"><div class="name vc-ix-8">Support: support@capricornsystems.com — include Vault ID. We guide recovery on your device; we never hold your PIN or master key.</div></div>
-      <div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>
+      ${isNativeApp()?'':`<div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>`}
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="SelfCheck.renderReport()">Run Diagnostics</button>
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="WhatsNew.show()">What's New</button>
       </div>
       <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:16px;margin:0 14px 14px">
-        <div style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:8px">Your Data Guarantee</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--ok);margin-bottom:8px">Your Data Guarantee</div>
         <div class="vc-ix-162">
           • Your vault lives <strong>on this device only</strong> — never on any server<br>
-          • Even if this URL stops working, your data is safe in your <strong>.vos backup</strong><br>
-          • Any browser can open a .vos file — just visit the app from any device<br>
+          • Your encrypted <strong>.vos backup</strong> restores everything on a new device<br>
+          • ${isNativeApp()?'Restore it in VaultCap on any iPhone or iPad':'Any browser can open a .vos file — just visit the app from any device'}<br>
           • Export a backup regularly: Settings → Privacy
         </div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
-        <div style="font-size:13px;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">PIN &amp; recovery</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">PIN &amp; recovery</div>
         <div class="vc-ix-162">Your vault is encrypted on this device with your PIN. If you forget it, your data can't be recovered — keep an export somewhere safe.</div>
       </div>
       <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.18);border-radius:14px;padding:16px;margin:0 14px 14px">
-        <div style="font-size:13px;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">Enterprise disclaimer</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--warn,${VCBrand.h_ffc107});margin-bottom:8px">Enterprise disclaimer</div>
         <div class="vc-ix-162">
-          VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional LLM import sends text to a proxy you can disable — prefer Smart Parser for sensitive documents.
+          VaultCap is <strong>not a regulated financial institution</strong>. Demo data is fictional. You are responsible for tax, compliance, and data protection in your jurisdiction. Optional AI import (web app, off by default) sends only the text you choose to an AI model run by Cloudflare Workers AI through the Capricorn proxy, after you confirm — prefer the offline Smart Parser for sensitive documents.
         </div>
       </div>
     </div></div>
     <div class="set-sec vc-ix-23"><div class="set-title">Legal</div><div class="set-card">
-      <div class="si vc-ix-6" data-act="window.open('privacy.html','_blank')"><div class="sil"><div class="name">Privacy Policy</div><div class="desc">What stays on-device · optional network</div></div><span class="vc-ix-4">›</span></div>
-      <div class="si vc-ix-6" data-act="window.open('LICENSE','_blank')"><div class="sil"><div class="name">License</div><div class="desc">Source-available terms</div></div><span class="vc-ix-4">›</span></div>
+      <div class="si vc-ix-6" data-act="ActHelpers.openPrivacy()"><div class="sil"><div class="name">Privacy Policy</div><div class="desc">What stays on-device · optional network</div></div><span class="vc-ix-4">›</span></div>
+      <div class="si vc-ix-6" data-act="ActHelpers.openLicense()"><div class="sil"><div class="name">License</div><div class="desc">Source-available terms</div></div><span class="vc-ix-4">›</span></div>
     </div></div>`;
   },
 
@@ -2408,7 +2429,7 @@ const VaultHealthCenter = {
     el.innerHTML = `
     <div class="vc-ix-163">
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:20px;text-align:center">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Vault Backup Health</div>
+        <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Vault Backup Health</div>
         <div style="position:relative;width:100px;height:100px;margin:0 auto 12px">
           <svg viewBox="0 0 100 100" style="width:100px;height:100px;transform:rotate(-90deg)">
             <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="8"/>
@@ -2416,13 +2437,13 @@ const VaultHealthCenter = {
               stroke-dasharray="${ring.dash} 264" stroke-linecap="round"/>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <div style="font-size:24px;font-weight:900;color:var(--text)">${healthScore}</div>
-            <div style="font-size:11px;color:var(--text3)">/ 100</div>
+            <div style="font-size:1.5rem;font-weight:900;color:var(--text)">${healthScore}</div>
+            <div style="font-size:0.6875rem;color:var(--text3)">/ 100</div>
           </div>
         </div>
-        <div style="font-size:14px;font-weight:700;color:${ring.color}">${ring.label}</div>
+        <div style="font-size:0.875rem;font-weight:700;color:${ring.color}">${ring.label}</div>
         <div class="vc-ix-73">${daysSince >= 999 ? 'You have never backed up your vault' : daysSince === 0 ? 'Backed up today — excellent' : `Last backup: ${daysSince} day${daysSince>1?'s':''} ago`}</div>
-        ${fp ? `<div style="margin-top:8px;font-size:11px;color:var(--text3)">Fingerprint: <code style="background:var(--glass2);padding:2px 6px;border-radius:4px;color:var(--accent)">${fp}</code></div>` : ''}
+        ${fp ? `<div style="margin-top:8px;font-size:0.6875rem;color:var(--text3)">Fingerprint: <code style="background:var(--glass2);padding:2px 6px;border-radius:4px;color:var(--accent)">${fp}</code></div>` : ''}
       </div>
       <div class="vc-ix-89">
         <button type="button" data-act="ExIm.export('vault')" class="btn btn-p vc-ix-164">
@@ -2450,10 +2471,10 @@ const VaultHealthCenter = {
       <details class="vc-ix-7">
         <summary class="vc-ix-74">What if I lose my phone? <span class="vc-ix-4">▾</span></summary>
         <div class="vc-ix-75">
-          <strong>Step 1:</strong> Get a new phone or open any browser<br>
-          <strong>Step 2:</strong> Visit <strong>shamikhahmed.github.io/VaultCap</strong><br>
-          <strong>Step 3:</strong> Tap Settings → Import → select your .vos backup file<br>
-          <strong>Step 4:</strong> Enter your PIN to decrypt<br>
+          <strong>Step 1:</strong> ${isNativeApp()?'Install VaultCap on your new iPhone or iPad':'Get a new phone or open any browser'}<br>
+          <strong>Step 2:</strong> ${isNativeApp()?'Create a PIN, then open Settings → Privacy':'Visit <strong>shamikhahmed.github.io/VaultCap</strong>'}<br>
+          <strong>Step 3:</strong> Tap Import → select your .vos backup file<br>
+          <strong>Step 4:</strong> Enter the backup key shown when you exported<br>
           <strong>Step 5:</strong> Your entire vault is restored.<br><br>
           <em class="vc-ix-4">This is why regular backups are essential — without a backup file, your data cannot be recovered from a lost device.</em>
         </div>
@@ -2470,17 +2491,17 @@ const VaultHealthCenter = {
         </div>
       </details>
       <div class="vc-ix-7">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Recovery Checklist</div>
+        <div style="font-size:0.8125rem;font-weight:700;color:var(--text);margin-bottom:10px">Recovery Checklist</div>
         ${[
           [daysSince <= 30, daysSince >= 999 ? 'Export your first backup now' : daysSince <= 7 ? 'Backed up recently' : `Back up again — ${daysSince}d since last backup`],
           [!!fp, 'Backup fingerprint saved'],
-          [!!(S.pin && S.pin !== '123456'), 'Custom PIN set'],
+          [VaultHealth.customPin(), 'Custom PIN set'],
           [!!(S.user?.name), 'Profile name set'],
           [(S.banks||[]).length > 0 || (S.documents||[]).length > 0, 'Data added to vault'],
         ].map(([ok, label]) => `
           <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
-            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:${ok?'var(--ok)':'var(--err)'}">${ok?'OK':'!'}</div>
-            <div style="font-size:12px;color:${ok?'var(--text2)':'var(--warn)'};">${label}</div>
+            <div style="width:20px;height:20px;border-radius:50%;background:${ok?'rgba(0,255,136,.15)':'rgba(255,69,58,.1)'};display:flex;align-items:center;justify-content:center;font-size:0.6875rem;font-weight:700;flex-shrink:0;color:${ok?'var(--ok)':'var(--err)'}">${ok?'OK':'!'}</div>
+            <div style="font-size:0.75rem;color:${ok?'var(--text2)':'var(--warn)'};">${label}</div>
           </div>`).join('')}
       </div>
     </div>`;
@@ -2579,7 +2600,7 @@ const HelpCenter = {
           ${this._card('share', 'How to export a backup', 'Settings → Privacy → Export Encrypted Vault (.vos). A backup key is shown once — save it with the file (iCloud, Drive, or print). Prefer .vos over plain JSON.')}
           ${this._card('archive', 'How to restore a backup', 'Settings → Import → select your .vos file. Enter your PIN when prompted. Your data will be merged with any existing data (duplicates are skipped automatically).')}
           ${this._card('key', 'Backup fingerprint', 'After each export, an 8-character fingerprint is shown (e.g. A3F9KX2M). Note this down. You can use it to verify your backup file is intact and untampered.')}
-          ${this._card('smartphone', 'If you lose your phone', '1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter your PIN. Your vault is fully restored.')}
+          ${this._card('smartphone', 'If you lose your phone', (isNativeApp()?'1. Install VaultCap on your new iPhone or iPad. 2. Settings → Privacy → Import your .vos backup. 3. Enter the backup key shown when you exported. Your vault is fully restored.':'1. Open any browser on any device. 2. Visit shamikhahmed.github.io/VaultCap. 3. Import your .vos backup file. 4. Enter the backup key shown when you exported. Your vault is fully restored.'))}
           ${this._card('clock', 'How often to back up', 'We recommend backing up: after adding important documents, after major financial changes, and at minimum once a month. The app reminds you if you go more than 30 days without a backup.')}
           ${this._card('archive', 'Where to store your backup', 'iCloud Drive, Google Drive, Dropbox, OneDrive, or email it to yourself. The file is encrypted — even if someone else finds it, they cannot open it without your PIN.')}
         </div>`,
@@ -2614,7 +2635,7 @@ const HelpCenter = {
           ${this._card('book', 'Can I use this on multiple devices?', 'Export a .vos backup from one device and import it on another. Your vault is fully portable. There is no automatic sync between devices (this keeps your data private).')}
           ${this._card('book', 'What if I forget my PIN?', 'Unfortunately your PIN cannot be recovered — it is never stored anywhere. If you have a backup (.vos file) and remember your old PIN, you can restore from that. This is why regular backups are essential.')}
           ${this._card('book', 'Is this app free?', 'Yes, completely free. No ads, no subscriptions, no premium tier. The source code is available on GitHub.')}
-          ${this._card('book', 'Does it work offline?', 'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.')}
+          ${this._card('book', 'Does it work offline?', (isNativeApp()?'Yes. VaultCap works fully offline — your vault never needs an internet connection.':'Yes. After your first visit, install it as a PWA (Add to Home Screen) and it works with zero internet connection.'))}
           ${this._card('book', 'Who built this?', 'VaultCap is built by Capricorn Systems — independently, with no company or investor backing. It is a privacy-first tool built out of genuine need for people managing finances across multiple countries.')}
         </div>`,
     };
@@ -2629,7 +2650,7 @@ const HelpCenter = {
           ${ic ? `<span class="chip-ic">${ic}</span>` : ''}
           <div class="vc-ix-56">${title}</div>
         </div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.7">${body}</div>
+        <div style="font-size:0.75rem;color:var(--text2);line-height:1.7">${body}</div>
       </div>`;
   },
 };

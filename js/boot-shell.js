@@ -25,6 +25,8 @@
     setTimeout(syncDemoBanner, 600);
   }
   window.addEventListener('resize', scheduleSync);
+  // Dynamic Type changes the banner's height
+  document.addEventListener('vc-text-size', scheduleSync);
   document.addEventListener('vault-unlocked', scheduleSync);
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 

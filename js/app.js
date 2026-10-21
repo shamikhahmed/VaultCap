@@ -38,7 +38,8 @@ function mkEntity(type, fields = {}) {
 /* → js/core/app-helpers.js */
 // ===================== APP INIT =====================
 async function App() {
-  initSidebar();
+  // Sidebar chrome lives in the deferred app chunk — init on unlock via R.unlock.
+  if (typeof initSidebar === 'function') initSidebar();
   const splash = document.getElementById('splashScreen');
   const bar = document.getElementById('splashBar');
   const demoRequested = new URLSearchParams(location.search).get('demo') === '1';

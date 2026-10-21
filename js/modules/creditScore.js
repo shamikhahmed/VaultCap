@@ -44,7 +44,7 @@ const CreditScore = {
 
       // Score hero
       '<div style="background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:24px;text-align:center">' +
-        '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Credit Score</div>' +
+        '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Credit Score</div>' +
         '<div style="position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">' +
           '<svg width="160" height="160" viewBox="0 0 160 160">' +
             '<circle cx="80" cy="80" r="66" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"/>' +
@@ -52,7 +52,7 @@ const CreditScore = {
           '</svg>' +
           '<div style="position:absolute;text-align:center">' +
             '<div style="font-size:' + (score ? '42' : '28') + 'px;font-weight:900;color:' + scoreColor + ';letter-spacing:-2px;line-height:1">' + (score || '—') + '</div>' +
-            '<div style="font-size:13px;font-weight:700;color:' + scoreColor + ';margin-top:4px">' + scoreLabel + '</div>' +
+            '<div style="font-size:0.8125rem;font-weight:700;color:' + scoreColor + ';margin-top:4px">' + scoreLabel + '</div>' +
           '</div>' +
         '</div>' +
         (d.agency ? '<div class="vc-ix-211">Reported by ' + escHtml(d.agency) + '</div>' : '') +
@@ -63,7 +63,7 @@ const CreditScore = {
 
       // Score breakdown tips
       '<div class="vc-ix-7">' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px">What affects your score</div>' +
+        '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px">What affects your score</div>' +
         [
           ['card', 'Payment History', '35%', 'Always pay on time — biggest factor'],
           ['chart', 'Credit Utilisation', '30%', 'Keep card balances below 30% of limit'],
@@ -77,7 +77,7 @@ const CreditScore = {
             '<div class="vc-ix-5">' +
               '<div class="vc-ix-185">' +
                 '<div class="vc-ix-245">' + f[1] + '</div>' +
-                '<div style="font-size:12px;font-weight:800;color:var(--accent)">' + f[2] + '</div>' +
+                '<div style="font-size:0.75rem;font-weight:800;color:var(--accent)">' + f[2] + '</div>' +
               '</div>' +
               '<div class="vc-ix-115">' + f[3] + '</div>' +
             '</div>' +
@@ -93,7 +93,7 @@ const CreditScore = {
             const hColor = h.score >= 800 ? 'var(--ok)' : h.score >= 700 ? VCBrand.h_34c759 : h.score >= 600 ? 'var(--warn)' : 'var(--err)';
             return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">' +
               '<div class="vc-ix-13">' + new Date(h.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' }) + '</div>' +
-              '<div style="font-size:14px;font-weight:800;color:' + hColor + '">' + h.score + '</div>' +
+              '<div style="font-size:0.875rem;font-weight:800;color:' + hColor + '">' + h.score + '</div>' +
             '</div>';
           }).join('') +
         '</div>'
@@ -113,7 +113,7 @@ const CreditScore = {
               '<div style="flex:' + (a.good - a.fair) + ';background:var(--warn)"></div>' +
               '<div style="flex:' + (a.max - a.good) + ';background:var(--ok);border-radius:0 999px 999px 0"></div>' +
             '</div>' +
-            '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px">' +
+            '<div style="display:flex;justify-content:space-between;font-size:0.6875rem;color:var(--text3);margin-top:3px">' +
               '<span>Poor</span><span>Fair</span><span>Good</span><span>Excellent</span>' +
             '</div>' +
           '</div>';
@@ -135,7 +135,7 @@ const CreditScore = {
               '<div class="vc-ix-245">' + l[0] + ' ' + l[1] + '</div>' +
               '<div class="vc-ix-3">' + l[3] + '</div>' +
             '</div>' +
-            '<button type="button" data-act="window.open(\'' + l[2] + '\',\'_blank\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap">Visit →</button>' +
+            '<button type="button" data-act="ActHelpers.openExternal(\'' + l[2] + '\')" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--accent);font-size:0.75rem;cursor:pointer;white-space:nowrap">Visit →</button>' +
           '</div>';
         }).join('') +
       '</div>' +
@@ -149,7 +149,7 @@ const CreditScore = {
     Modal.open('Update Credit Score',
       '<div class="fg"><label class="fl">Your Credit Score</label>' +
         '<input class="inp" type="text" inputmode="numeric" id="cs-score" pattern="[0-9]*" maxlength="3" value="' + escAttr(d.score || '') + '" placeholder="e.g. 750" data-act-input="CreditScore._preview(this.value)"></div>' +
-      '<div id="cs-preview" style="text-align:center;padding:10px;font-size:24px;font-weight:900;color:var(--text3)"></div>' +
+      '<div id="cs-preview" style="text-align:center;padding:10px;font-size:1.5rem;font-weight:900;color:var(--text3)"></div>' +
       '<div class="fg"><label class="fl">Reporting Agency</label>' +
         '<select class="inp" id="cs-agency">' +
           agencies.map(function(a) { return '<option value="' + escAttr(a) + '"' + (d.agency === a ? ' selected' : '') + '>' + escHtml(a) + '</option>'; }).join('') +

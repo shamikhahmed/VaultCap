@@ -97,12 +97,12 @@ const Bills = {
     const userCur = S.user.currency || 'PKR';
     if (!upcoming.length) {
       return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Bills<button type="button" class="btn btn-g btn-sm wh-act" data-act="Bills.openAdd()">+ Add</button></div>'
-        + '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">No bills due in 30 days. Add one or set expense renewal dates.</div></div>';
+        + '<div style="padding:12px 14px;font-size:0.75rem;color:var(--text3)">No bills due in 30 days. Add one or set expense renewal dates.</div></div>';
     }
     const rows = upcoming.map(b => {
       const daysLeft = Math.round((b.due - new Date().setHours(0, 0, 0, 0)) / 86400000);
       const amtStr = (typeof U !== 'undefined' ? U.fmt(b.amount) : b.amount) + ' ' + escHtml(b.currency || userCur);
-      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div class="vc-ix-12">' + escHtml(b.name) + '</div><div class="vc-ix-3">' + (daysLeft <= 0 ? 'Due today' : daysLeft + 'd') + '</div></div><div style="font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap" class="sens">' + amtStr + '</div></div>';
+      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div class="vc-ix-12">' + escHtml(b.name) + '</div><div class="vc-ix-3">' + (daysLeft <= 0 ? 'Due today' : daysLeft + 'd') + '</div></div><div style="font-size:0.75rem;font-weight:700;color:var(--accent);white-space:nowrap" class="sens">' + amtStr + '</div></div>';
     }).join('');
     return '<div class="widget"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills<button type="button" class="btn btn-g btn-sm wh-act" data-act="Bills.openAdd()">+ Add</button></div><div style="padding:4px 14px 10px">' + rows + '</div></div>';
   },
@@ -144,7 +144,7 @@ const Bills = {
       const label = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
       const daysLeft = Math.round((d - new Date().setHours(0, 0, 0, 0)) / 86400000);
       const badge = daysLeft <= 0 ? 'b-err' : daysLeft <= 7 ? 'b-warn' : 'b-muted';
-      listHtml += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:12px 0 6px">' + escHtml(label) + '</div>';
+      listHtml += '<div style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:12px 0 6px">' + escHtml(label) + '</div>';
       byWeek[dateKey].forEach(b => {
         const amtStr = escHtml(b.currency) + ' ' + (typeof U !== 'undefined' ? U.fmt(b.amount) : b.amount);
         listHtml += '<div class="entry"><div class="entry-main"><div class="entry-ic">' + (typeof VC !== 'undefined' ? VC.expenseIcon(b.icon, 18) : '') + '</div>'
@@ -160,7 +160,7 @@ const Bills = {
     el.innerHTML = '<div class="widget vc-ix-9"><div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('calendar', 16) : '') + '</span>Upcoming Bills (30 days)</div>'
       + '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'
       + '<div><div class="vc-ix-18">Due this month</div>'
-      + '<div style="font-size:20px;font-weight:900;color:var(--accent)">' + (typeof U !== 'undefined' ? U.fmt(Math.round(monthDisp)) : monthDisp) + ' <span class="vc-ix-125">' + escHtml(userCur) + '</span></div></div>'
+      + '<div style="font-size:1.25rem;font-weight:900;color:var(--accent)">' + (typeof U !== 'undefined' ? U.fmt(Math.round(monthDisp)) : monthDisp) + ' <span class="vc-ix-125">' + escHtml(userCur) + '</span></div></div>'
       + '<button type="button" class="btn btn-p btn-sm" data-act="Bills.openAdd()">+ Add</button></div>'
       + '<div style="padding:0 14px 14px">' + listHtml + '</div></div>';
   },

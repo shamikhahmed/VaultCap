@@ -11,7 +11,7 @@ const Timeline={
   },
   render(){
     const b=document.getElementById('timelineBody');if(!b)return;
-    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div class="vc-ix-223">'+(S.activity||[]).length+' entries</div><button type="button" data-act="Timeline.clearLog()" style="font-size:12px;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Clear Log</button></div>';
+    const clearBar='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;margin-bottom:4px"><div class="vc-ix-223">'+(S.activity||[]).length+' entries</div><button type="button" data-act="Timeline.clearLog()" style="font-size:0.75rem;color:var(--err);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Clear Log</button></div>';
     const events=[];
     const now=new Date();
     const addEv=(date,label,type,icon,action)=>{
@@ -49,7 +49,7 @@ const Timeline={
     const overdue=events.filter(e=>e.overdue);
     const soon=events.filter(e=>!e.overdue&&e.diff<=30);
     const later=events.filter(e=>!e.overdue&&e.diff>30);
-    const renderGroup=(title,evs,cls)=>evs.length?`<div class="sdiv">${title}</div>${evs.map(e=>`<div class="insight${cls} vc-ix-6" data-act="Modal.close();${e.action.toString().replace(/\n/g,' ')}"><div class="insight-ic">${this._renderIcon(e.icon,18)}</div><div class="insight-body"><div class="insight-title">${escHtml(e.label)}</div><div class="insight-sub">${e.overdue?'Overdue by '+Math.abs(e.diff)+' day'+(Math.abs(e.diff)!==1?'s':''):e.diff===0?'Today':e.diff===1?'Tomorrow':'In '+e.diff+' days — '+e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="font-size:11px;font-weight:700;color:${e.overdue?'var(--err)':e.diff<=7?'var(--warn)':'var(--text3)'}">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>`).join('')}`:'';
+    const renderGroup=(title,evs,cls)=>evs.length?`<div class="sdiv">${title}</div>${evs.map(e=>`<div class="insight${cls} vc-ix-6" data-act="Modal.close();${e.action.toString().replace(/\n/g,' ')}"><div class="insight-ic">${this._renderIcon(e.icon,18)}</div><div class="insight-body"><div class="insight-title">${escHtml(e.label)}</div><div class="insight-sub">${e.overdue?'Overdue by '+Math.abs(e.diff)+' day'+(Math.abs(e.diff)!==1?'s':''):e.diff===0?'Today':e.diff===1?'Tomorrow':'In '+e.diff+' days — '+e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="font-size:0.6875rem;font-weight:700;color:${e.overdue?'var(--err)':e.diff<=7?'var(--warn)':'var(--text3)'}">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>`).join('')}`:'';
     b.innerHTML=clearBar+renderGroup('Overdue',overdue,' err')+renderGroup('Next 30 Days',soon,' warn')+renderGroup('Upcoming',later,' info');
   },
   calendarMode(){
@@ -77,7 +77,7 @@ const Timeline={
     let html=`<div class="vc-ix-94">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <button type="button" class="btn btn-g btn-sm" data-act="Timeline.render()">← List View</button>
-      <div style="font-size:16px;font-weight:700">${monthName}</div>
+      <div style="font-size:1rem;font-weight:700">${monthName}</div>
       <div style="width:80px"></div>
     </div>
     <div class="cal-grid vc-ix-108">
@@ -91,15 +91,15 @@ const Timeline={
         const isToday=year===now.getFullYear()&&month===now.getMonth()&&day===now.getDate();
         const evs=events[key]||[];
         return `<div class="cal-day${isToday?' today':''}${evs.length?' has-event':''}">
-          <div style="font-size:12px;font-weight:${isToday?700:400};text-align:center;margin-bottom:2px;color:${isToday?'var(--accent)':'var(--text)'}">${day}</div>
-          ${evs.slice(0,3).map(e=>`<div style="display:flex;align-items:center;gap:2px;margin-bottom:1px"><span style="display:flex;flex-shrink:0">${Timeline._renderIcon(e.icon,8)}</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtml(e.label).slice(0,8)}</span></div>`).join('')}
-          ${evs.length>3?`<div style="font-size:11px;color:var(--accent)">+${evs.length-3}</div>`:''}
+          <div style="font-size:0.75rem;font-weight:${isToday?700:400};text-align:center;margin-bottom:2px;color:${isToday?'var(--accent)':'var(--text)'}">${day}</div>
+          ${evs.slice(0,3).map(e=>`<div style="display:flex;align-items:center;gap:2px;margin-bottom:1px"><span style="display:flex;flex-shrink:0">${Timeline._renderIcon(e.icon,8)}</span><span style="font-size:0.6875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtml(e.label).slice(0,8)}</span></div>`).join('')}
+          ${evs.length>3?`<div style="font-size:0.6875rem;color:var(--accent)">+${evs.length-3}</div>`:''}
         </div>`;
       }).join('')}
     </div>
     ${Object.entries(events).length?`
     <div style="margin-top:18px"><div class="vc-ix-147">This month</div>
-    ${Object.entries(events).filter(([k])=>{const p=k.split('-');return parseInt(p[1])===month;}).sort(([a],[b])=>parseInt(a.split('-')[2])-parseInt(b.split('-')[2])).map(([key,evs])=>{const d=parseInt(key.split('-')[2]);return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:28px;text-align:center;font-size:13px;font-weight:700;color:var(--accent)">${d}</div><div>${evs.map(e=>`<div style="display:flex;align-items:center;gap:4px;font-size:12px;margin-bottom:2px"><span class="vc-ix-224">${Timeline._renderIcon(e.icon,10)}</span><span>${escHtml(e.label)}</span></div>`).join('')}</div></div>`;}).join('')}
+    ${Object.entries(events).filter(([k])=>{const p=k.split('-');return parseInt(p[1])===month;}).sort(([a],[b])=>parseInt(a.split('-')[2])-parseInt(b.split('-')[2])).map(([key,evs])=>{const d=parseInt(key.split('-')[2]);return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="min-width:28px;text-align:center;font-size:0.8125rem;font-weight:700;color:var(--accent)">${d}</div><div>${evs.map(e=>`<div style="display:flex;align-items:center;gap:4px;font-size:0.75rem;margin-bottom:2px"><span class="vc-ix-224">${Timeline._renderIcon(e.icon,10)}</span><span>${escHtml(e.label)}</span></div>`).join('')}</div></div>`;}).join('')}
     </div>`:''}
   </div>`;
     b.innerHTML=html;

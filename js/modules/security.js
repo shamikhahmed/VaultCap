@@ -13,9 +13,9 @@ const SecurityCenter={
     const scoreLabel = typeof VaultHealth !== 'undefined' ? VaultHealth.label(score) : '';
     b.innerHTML=`
     <div class="hero" style="margin-bottom:14px;text-align:center">
-      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Vault Security Score</div>
-      <div style="font-size:64px;font-weight:900;letter-spacing:-3px;color:${scoreColor};margin-bottom:4px">${score}</div>
-      <div style="font-size:14px;font-weight:600;color:${scoreColor};margin-bottom:14px">${scoreLabel}</div>
+      <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Vault Security Score</div>
+      <div style="font-size:4rem;font-weight:900;letter-spacing:-3px;color:${scoreColor};margin-bottom:4px">${score}</div>
+      <div style="font-size:0.875rem;font-weight:600;color:${scoreColor};margin-bottom:14px">${scoreLabel}</div>
       <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden;max-width:280px;margin:0 auto">
         <div style="height:100%;width:${score}%;background:${scoreColor};border-radius:4px;transition:width 1s var(--ease)"></div>
       </div>
@@ -28,7 +28,7 @@ const SecurityCenter={
         {ic:'share',label:'Last Backup',val:hasBackup?(backupAge===0?'Today':backupAge+' days ago'):'Never',ok:hasBackup&&backupAge<=7},
         {ic:'eye-off',label:'Decoy PIN',val:S.decoyPin?'Set':'Not configured',ok:!!S.decoyPin},
         {ic:'list',label:'Clipboard Clear',val:S.clipSecs+'s auto-clear',ok:S.clipSecs<=30},
-      ].map(({ic,label,val,ok})=>`<div style="background:var(--glass);border:1px solid ${ok?'var(--border)':'rgba(255,100,100,.25)'};border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span class="chip-ic">${typeof VC!=='undefined'?VC.icon(ic,18):''}</span><span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">${label}</span></div><div style="font-size:13px;font-weight:600;color:${ok?'var(--text)':'var(--warn)'}">${val}</div></div>`).join('')}
+      ].map(({ic,label,val,ok})=>`<div style="background:var(--glass);border:1px solid ${ok?'var(--border)':'rgba(255,100,100,.25)'};border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span class="chip-ic">${typeof VC!=='undefined'?VC.icon(ic,18):''}</span><span style="font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px">${label}</span></div><div style="font-size:0.8125rem;font-weight:600;color:${ok?'var(--text)':'var(--warn)'}">${val}</div></div>`).join('')}
     </div>
     ${[
       usingDefaultPIN&&{sev:'err',msg:'Using default PIN 123456 — change it immediately',btn:'Change PIN',act:'Settings.changePIN()'},

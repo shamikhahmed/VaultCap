@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8765';
-const OUT = path.join('qa', 'finish-loop', 'axe');
+const OUT = process.env.AXE_OUT || path.join('qa', 'finish-loop', 'axe');
 const ROUTES = [{ id: 'home-demo', path: '/?demo=1' }];
 const THEMES = ['light', 'dark'];
 

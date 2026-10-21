@@ -114,7 +114,7 @@ const NetWorthHistory = (() => {
       const pct = first ? ((diff / Math.abs(first)) * 100) : 0;
       const sign = diff >= 0 ? '+' : '';
       const col = diff >= 0 ? 'var(--ok)' : 'var(--err)';
-      deltaHtml = '<div style="font-size:11px;color:' + col + ';margin-top:4px">' + sign
+      deltaHtml = '<div style="font-size:0.6875rem;color:' + col + ';margin-top:4px">' + sign
         + (typeof U !== 'undefined' ? U.fmtCur(Math.abs(diff), dispCur) : Math.abs(diff).toLocaleString())
         + ' (' + sign + pct.toFixed(1) + '%) over ' + pts.length + 'd</div>';
     }
@@ -123,8 +123,8 @@ const NetWorthHistory = (() => {
       + '<div class="wh"><span class="vc-icon-wrap">' + (typeof VC !== 'undefined' ? VC.icon('chart', 16) : '') + '</span>Net Worth Trend</div>'
       + '<div style="padding:12px 14px 14px;display:flex;gap:14px;align-items:center">'
       + '<div class="vc-ix-20">'
-      + '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Today</div>'
-      + '<div style="font-size:22px;font-weight:900;color:var(--accent)" class="sens">' + fmt + '</div>'
+      + '<div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Today</div>'
+      + '<div style="font-size:1.375rem;font-weight:900;color:var(--accent)" class="sens">' + fmt + '</div>'
       + deltaHtml
       + '</div>'
       + '<div class="vc-ix-21">' + chartHtml(140) + '</div>'

@@ -21,8 +21,12 @@ const OB = {
     this.renderCats();
   },
   renderProg() {
-    document.getElementById('obProg').innerHTML = Array.from({ length: 7 }, (_, i) =>
-      `<div class="ob-pd${i < obStep ? ' on' : ''}"></div>`
+    // Quick path (welcome → PIN → recovery key → ready) shows 4 dots, full path all 7
+    const quick = typeof obProfileSkipped !== 'undefined' && obProfileSkipped;
+    const path = quick ? [1, 5, 6, 7] : [1, 2, 3, 4, 5, 6, 7];
+    const at = Math.max(1, path.filter(s => s <= obStep).length);
+    document.getElementById('obProg').innerHTML = path.map((_, i) =>
+      `<div class="ob-pd${i < at ? ' on' : ''}"></div>`
     ).join('');
   },
   renderCountries() {
@@ -37,7 +41,7 @@ const OB = {
     el.innerHTML = COUNTRIES.map(c =>
       `<div data-act="OB.toggleCountry('${c.code}',this)"
         style="padding:14px 12px;border-radius:14px;background:${obCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${obCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;transition:.15s">
-        <span style="font-size:22px">${c.flag}</span>
+        <span style="font-size:1.375rem">${c.flag}</span>
         <span class="vc-ix-12">${c.name}</span>
       </div>`
     ).join('');
@@ -94,6 +98,9 @@ const OB = {
     const p1 = document.getElementById('ob-pin')?.value;
     const p2 = document.getElementById('ob-pin2')?.value;
     const m  = document.getElementById('ob-pinmatch');
+    // Any edit invalidates a stale submit error ("PINs do not match" under a green "PINs match")
+    const err = document.getElementById('ob-perr');
+    if (err) err.textContent = '';
     if (!m || !p2) return;
     if (p2.length === 0) { m.textContent = ''; return; }
     if (p1 === p2 && p1.length === 6) { m.innerHTML = '<span style="color:var(--ok)">PINs match</span>'; }
@@ -109,6 +116,7 @@ const OB = {
       return;
     }
     const fmt = mk ? mk.match(/.{1,6}/g).join('-') : text;
+    if (typeof U !== 'undefined' && U.copy) { U.copy(fmt, 'Recovery key'); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(fmt).then(() => Toast.show('Recovery key copied — store it safely', 'success', 4000));
     } else {
@@ -132,7 +140,7 @@ const OB = {
     obStep = 5;
     document.querySelectorAll('.ob-step').forEach((el, i) => el.classList.toggle('on', i + 1 === obStep));
     this.renderProg();
-    Toast.show('Profile setup saved for later — finish anytime in Settings', 'info', 4000);
+    // No toast here: it covered the "Create vault" button; dashboard + Settings show the profile nudge.
   },
   _renderReadyStats() {
     const CNAMES = { PK:'🇵🇰 Pakistan', GB:'🇬🇧 UK', AE:'🇦🇪 UAE', US:'🇺🇸 USA' };
@@ -143,7 +151,7 @@ const OB = {
     const cats = Object.entries(obCats).filter(([, v]) => v).map(([k]) => CATLABELS[k]).join(', ') || 'None selected';
     const TYPE_LABELS = { personal:'Personal', family:'Family Manager', business:'Business Owner', expat:'Global Expat' };
     el.innerHTML = `
-      <div style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
+      <div style="font-size:0.6875rem;font-weight:700;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;text-transform:uppercase">Your Setup</div>
       <div class="vc-ix-177">Type: ${TYPE_LABELS[obUserType] || obUserType}</div>
       <div class="vc-ix-177">Countries: ${countries}</div>
       <div class="vc-ix-10">Tracking: ${cats}</div>`;
@@ -164,7 +172,7 @@ const OB = {
     VaultDB.init(p).then(async () => {
       VaultDB.setAuthMode('pin');
       if (!S.vaultMeta) S.vaultMeta = {};
-      try { S.vaultMeta.pinHash = await PinHash.digest(p); } catch (e) {}
+      try { S.vaultMeta.pinHash = await PinHash.digest(p); S.vaultMeta.pinWeak = PinHash.isWeak(p); } catch (e) {}
       Store.save();
       delete S.pin;
       if (!localStorage.getItem(recoveryKeyStorageKey())) {
@@ -239,8 +247,8 @@ const OB = {
       ov.id = 'quickStartOv';
       ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:24px';
       ov.innerHTML = `
-        <div style="font-size:22px;font-weight:800;margin-bottom:6px;text-align:center">Quick Start</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
+        <div style="font-size:1.375rem;font-weight:800;margin-bottom:6px;text-align:center">Quick Start</div>
+        <div style="font-size:0.8125rem;color:var(--text2);margin-bottom:20px;text-align:center">Tap a card to add your first entry</div>
         <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px">
           <div data-act="Banks.openAdd();document.getElementById('quickStartOv').remove()" style="background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;animation:obIn .35s .05s both">
             <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('bank', 26) : ''}</span><div class="vc-ix-5"><div class="vc-ix-99">Add your first bank</div><div class="vc-ix-13">Accounts, IBANs &amp; login details</div></div><span class="vc-ix-22">→</span>
@@ -252,7 +260,7 @@ const OB = {
             <span class="chip-ic">${typeof VC !== 'undefined' ? VC.icon('smartphone', 26) : ''}</span><div class="vc-ix-5"><div class="vc-ix-99">Add your SIM</div><div class="vc-ix-13">Mobile numbers &amp; networks</div></div><span class="vc-ix-22">→</span>
           </div>
         </div>
-        <button type="button" data-act="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
+        <button type="button" data-act="document.getElementById('quickStartOv').remove()" style="margin-top:18px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;padding:10px">Skip, go to dashboard →</button>
       `;
       document.body.appendChild(ov);
       setTimeout(() => { const e = document.getElementById('quickStartOv'); if (e) e.remove(); }, 8000);
