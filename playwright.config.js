@@ -4,17 +4,17 @@ const { defineConfig, devices } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
-  /* CI: one retry only; parallelize — serial 150+ tests still blew 60m after gallery skip. */
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : 1,
+  /* CI gate must finish ≪60m on ubuntu-latest; full suite stays local (`npm run test:e2e`). */
+  retries: process.env.CI ? 0 : 0,
+  workers: process.env.CI ? 4 : 1,
   use: {
     baseURL: 'http://127.0.0.1:8765',
-    trace: 'on-first-retry',
+    trace: process.env.CI ? 'off' : 'on-first-retry',
   },
   projects: [
     {
       name: 'chromium',
-      /* Gallery/screenshot/click-all sweeps stay local/verify — too heavy for gate CI. */
+      /* Heavy sweeps / volume suites stay local/verify — gate keeps smoke+security+nav core. */
       testIgnore: process.env.CI
         ? [
             /webkit-safari\.spec\.js/,
@@ -23,6 +23,10 @@ module.exports = defineConfig({
             /device-matrix\.spec\.js/,
             /banks-logo-shot\.spec\.js/,
             /click-all\.spec\.js/,
+            /full-navigation\.spec\.js/,
+            /forms-coverage\.spec\.js/,
+            /settings-tabs\.spec\.js/,
+            /crud-roundtrip\.spec\.js/,
           ]
         : [/webkit-safari\.spec\.js/],
     },
