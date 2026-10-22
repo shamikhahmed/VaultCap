@@ -4,12 +4,13 @@ const { defineConfig, devices } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
-  /* CI gate must finish ≪60m on ubuntu-latest; full suite stays local (`npm run test:e2e`). */
-  retries: process.env.CI ? 0 : 0,
-  workers: process.env.CI ? 4 : 1,
+  /* CI gate ~67 tests serial — parallel workers race VaultCap's SW/origin (PIN vs pgHome).
+     Full suite stays local (`npm run test:e2e`). */
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
   use: {
     baseURL: 'http://127.0.0.1:8765',
-    trace: process.env.CI ? 'off' : 'on-first-retry',
+    trace: 'on-first-retry',
   },
   projects: [
     {
