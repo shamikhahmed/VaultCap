@@ -5,8 +5,14 @@ const DEMO_PIN = '123456';
 
 /** @param {import('@playwright/test').Page} page */
 async function enterPin(page, pin) {
+  /* pgHome can sit above pgLock after SW/demo races — hide it before PIN taps. */
+  await page.evaluate(() => {
+    const home = document.getElementById('pgHome');
+    if (home) home.style.display = 'none';
+  });
+  await page.locator('#pgLock').waitFor({ state: 'visible', timeout: 15000 });
   for (const digit of pin) {
-    await page.locator(`#pgLock button.key[data-act="PIN.in('${digit}')"]`).click();
+    await page.locator(`#pgLock button.key[data-act="PIN.in('${digit}')"]`).click({ force: true });
   }
   await page.waitForFunction(() => document.getElementById('app')?.style.display === 'flex', { timeout: 15000 });
 }

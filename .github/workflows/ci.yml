@@ -33,6 +33,7 @@ jobs:
       - name: E2E tests (chromium; gallery/screenshot sweeps excluded)
         env:
           CI: true
+          VAULTCAP_CI_GATE: "1"
         run: npx playwright test --project=chromium
 
   # C-31: FINISH_MATRIX=1 required (see capricorn-tooling/shared/testing/FINISH-MATRIX-CI.md).
