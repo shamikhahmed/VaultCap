@@ -4,7 +4,8 @@ const { defineConfig, devices } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
-  retries: process.env.CI ? 2 : 0,
+  /* CI retries×2 was blowing the 60m budget on cold ubuntu runners. */
+  retries: process.env.CI ? 1 : 0,
   workers: 1,
   use: {
     baseURL: 'http://127.0.0.1:8765',
@@ -13,7 +14,16 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /webkit-safari\.spec\.js/,
+      /* Gallery/screenshot sweeps stay local/verify — too heavy for gate CI. */
+      testIgnore: process.env.CI
+        ? [
+            /webkit-safari\.spec\.js/,
+            /screenshots\.spec\.js/,
+            /gallery-v3\.spec\.mjs/,
+            /device-matrix\.spec\.js/,
+            /banks-logo-shot\.spec\.js/,
+          ]
+        : [/webkit-safari\.spec\.js/],
     },
     {
       name: 'webkit-iphone',

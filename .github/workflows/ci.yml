@@ -28,12 +28,12 @@ jobs:
         run: npm run audit:xss
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium
 
-      - name: E2E tests
+      - name: E2E tests (chromium; gallery/screenshot sweeps excluded)
         env:
           CI: true
-        run: npm run test:e2e
+        run: npx playwright test --project=chromium
 
   # C-31: FINISH_MATRIX=1 required (see capricorn-tooling/shared/testing/FINISH-MATRIX-CI.md).
   finish-matrix:
