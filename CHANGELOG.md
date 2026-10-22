@@ -1,3 +1,7 @@
+## [5.4.3] — 2026-10-22
+- Lighthouse mobile: defer `base`/`layout`/`components` CSS; load `storage.js` after first paint; move `migrate`/`demo-profiles`/`onboarding-flow`/`icons` into app chunk
+- SW `vaultcap-v99` · query `?v=5.4.3`
+
 ## [5.4.2] — 2026-10-22
 
 - LH mobile: defer non-critical CSS (`identity`, `luxe`, `brand-mark`, `fonts-local`) off first paint; critical `#pgHome` + solid system-ui LCP title (no gradient clip before paint)

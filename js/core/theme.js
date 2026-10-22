@@ -81,7 +81,13 @@ const ThemeEngine = {
             <div style="font-size:0.875rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px">${typeof VC!=='undefined'?VC.icon(o.icon,16):''}${o.label}</div>
           </div>`).join('')}
       </div>`;
-    document.getElementById('themeOv').classList.add('on');
+    const ov = document.getElementById('themeOv');
+    ov.classList.add('on');
+    ov.setAttribute('aria-hidden', 'false');
   },
-  closePicker() { document.getElementById('themeOv').classList.remove('on'); },
+  closePicker() {
+    const ov = document.getElementById('themeOv');
+    ov.classList.remove('on');
+    ov.setAttribute('aria-hidden', 'true');
+  },
 };

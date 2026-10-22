@@ -1,7 +1,7 @@
 'use strict';
-/* Yield for first paint, then load boot chunk (~180–200KB parse off LCP path). */
+/* Yield for first paint, then storage → boot (~smaller) → shell — off LCP path. */
 (function () {
-  var v = (window.APP_VERSION || window.VER || '5.4.2');
+  var v = (window.APP_VERSION || window.VER || '5.4.3');
   function inject(src, next) {
     var s = document.createElement('script');
     s.src = src;
@@ -10,8 +10,10 @@
     document.head.appendChild(s);
   }
   function go() {
-    inject('dist/vaultcap.boot.js?v=' + v, function () {
-      inject('js/boot-shell.js?v=' + v);
+    inject('js/storage.js?v=' + v, function () {
+      inject('dist/vaultcap.boot.js?v=' + v, function () {
+        inject('js/boot-shell.js?v=' + v);
+      });
     });
   }
   requestAnimationFrame(function () {

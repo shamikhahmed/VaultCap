@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
-  "version": "5.4.2",
-  "swCache": "vaultcap-v98",
+  "version": "5.4.3",
+  "swCache": "vaultcap-v99",
   "updated": "2026-10-22",
-  "notes": "v7-fix LH: defer cosmetic CSS/fonts; solid LCP title; webauthn → app chunk"
+  "notes": "v7-fix LH: defer base/layout/components; storage off critical path; migrate/demo-profiles/OB/icons → app"
 }

@@ -157,9 +157,17 @@ async function App() {
   if (S.largeText) applyLargeText(true);
   if (S.reduceMotion) applyReduceMotion(true);
 
-  // Check if old localStorage data exists (migration)
+  // Check if old localStorage data exists (Migrate lives in app chunk — never block home paint)
   const oldData = Store.loadRaw();
-  if (oldData) { Migrate.run(); }
+  function runMigrateIfNeeded() {
+    if (!oldData || typeof Migrate === 'undefined') return;
+    try { Migrate.run(); } catch (e) { /* unlock path retries */ }
+  }
+  if (oldData && typeof Migrate !== 'undefined') {
+    runMigrateIfNeeded();
+  } else if (oldData && typeof VaultLazy !== 'undefined') {
+    VaultLazy.ensure('app').then(runMigrateIfNeeded).catch(function () {});
+  }
 
   if (demoRequested) {
     localStorage.setItem('vo_active_profile', 'demo');
@@ -183,7 +191,10 @@ async function App() {
     R.showHome();
   } else {
     document.getElementById('pgOnboard').style.display = 'flex';
-    OB.init();
+    if (typeof OB === 'undefined' && typeof VaultLazy !== 'undefined') {
+      try { await VaultLazy.ensure('app'); } catch (e) { /* show empty onboard chrome */ }
+    }
+    if (typeof OB !== 'undefined') OB.init();
   }
 
   const demoPrep = isDemoProfile && typeof ensureDemoVaultReady === 'function'
@@ -201,7 +212,10 @@ async function App() {
   } else if (!shouldHome && paintHome) {
     document.getElementById('pgHome').style.display = 'none';
     document.getElementById('pgOnboard').style.display = 'flex';
-    OB.init();
+    if (typeof OB === 'undefined' && typeof VaultLazy !== 'undefined') {
+      try { await VaultLazy.ensure('app'); } catch (e) { /* show empty onboard chrome */ }
+    }
+    if (typeof OB !== 'undefined') OB.init();
   }
 
   if (isDemoProfile) {

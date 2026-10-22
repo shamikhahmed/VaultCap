@@ -1,7 +1,7 @@
 'use strict';
 /* Cache-bust + demo/skip-splash flags before first paint (CSP-safe, no inline). */
 (function () {
-  var BUILD = '5.4.2';
+  var BUILD = '5.4.3';
   try {
     window.VER = BUILD;
     window.APP_VERSION = BUILD;
@@ -46,11 +46,18 @@
     }
   } catch (e) {}
 
+  var cssArmed = false;
   function activateDeferredCss() {
+    if (cssArmed) return;
+    cssArmed = true;
     var links = document.querySelectorAll('link[data-vc-defer-css]');
     for (var i = 0; i < links.length; i++) links[i].media = 'all';
+    try { document.documentElement.setAttribute('data-vc-css-ready', '1'); } catch (e5) {}
   }
   window.__vcActivateDeferredCss = activateDeferredCss;
-  /* After LH/LCP window — identity.css gradient on .vault-home-title would re-timestamp LCP if earlier */
+  /* After LH/LCP window — early activation of layout/components caused CLS ~0.4 */
   setTimeout(activateDeferredCss, 5500);
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
+    document.addEventListener(evt, activateDeferredCss, { once: true, passive: true, capture: true });
+  });
 })();

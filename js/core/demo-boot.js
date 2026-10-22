@@ -1,6 +1,10 @@
 'use strict';
 
 async function seedDemoVault() {
+  if (typeof loadDemoProfile !== 'function' && typeof VaultLazy !== 'undefined') {
+    try { await VaultLazy.ensure('app'); } catch (e) { /* tryPin reseeds later */ }
+  }
+  if (typeof loadDemoProfile !== 'function') throw new Error('demo profile loader unavailable');
   loadDemoProfile('business');
   S.pin = VaultProfiles.DEMO_PIN;
   S.noPin = false;

@@ -146,7 +146,15 @@ const R = {
       if ((!S.familyMembers || !S.familyMembers.length) && S.family) {
         const _fLive = S.family;
         if ((_fLive.head && _fLive.head.name) || (_fLive.members && _fLive.members.length)) {
-          try { Migrate._runFamilyV13(S); Store.save(); } catch(e) {}
+          try {
+            if (typeof Migrate === 'undefined' && typeof VaultLazy !== 'undefined') {
+              VaultLazy.ensure('app').then(function () {
+                if (typeof Migrate !== 'undefined') { Migrate._runFamilyV13(S); Store.save(); }
+              }).catch(function () {});
+            } else if (typeof Migrate !== 'undefined') {
+              Migrate._runFamilyV13(S); Store.save();
+            }
+          } catch(e) {}
         }
       }
       S.unlocked = true; S.decoy = false;

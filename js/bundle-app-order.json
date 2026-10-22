@@ -1,4 +1,8 @@
 [
+  "js/core/icons.js",
+  "js/core/migrate.js",
+  "js/core/demo-profiles.js",
+  "js/core/onboarding-flow.js",
   "js/core/branding.js",
   "js/core/webauthn-unlock.js",
   "js/core/onboarding-wizard.js",

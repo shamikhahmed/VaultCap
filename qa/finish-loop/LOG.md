@@ -99,3 +99,9 @@ No VaultPro / LAUNCH_PREVIEW gating found.
 - Clean native build: **BLOCKED** — machine has Command Line Tools only; no `/Applications/Xcode.app`; `iphoneos` SDK missing. Exact next step: install Xcode 26 → `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer` → archive / `flutter build ipa` / `xcodebuild` as documented.
 - No App Store Connect upload/submit (owner action).
 
+
+## 2026-10-22 — v7 LH mobile ≥90 (5.4.3)
+
+- Honest 3× `scripts/lh-mobile-v7.mjs` `/?demo=1`: perf **95/95/95** median **95**, a11y **100**, LCP **2.9 s**, TBT ~10 ms, CLS 0.041.
+- Defer base/layout/components; storage after paint; migrate/demo-profiles/OB/icons → app; SW `vaultcap-v99`.
+- Gate ≥90 met. Tag `v5.4.3`.

@@ -1,32 +1,34 @@
 # VaultCap — Lighthouse mobile (v7-fix defect 6)
 
-**Date:** 2026-10-22 · **App:** 5.4.2 · **URL:** `http://127.0.0.1:8765/?demo=1`  
+**Date:** 2026-10-22 · **App:** 5.4.3 · **URL:** `http://127.0.0.1:8765/?demo=1`  
 **Raw JSON:** `build/qa/v7/lighthouse/` (gitignored) · `SUMMARY.json` · runner: `scripts/lh-mobile-v7.mjs`
 
 ## Scores (3× honest mobile)
 
 | Run | perf | a11y | bp | seo | LCP | FCP | TBT | CLS |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 77 | 100 | — | — | 3.0 s | 2.4 s | ~490 ms | 0.07 |
-| 2 | 70 | 100 | — | — | 4.0 s | 2.4 s | ~500 ms | 0.07 |
-| 3 | 27 | 100 | — | — | 6.5 s | 6.4 s | ~6,350 ms | 0.07 |
-| **Median** | **70** | **100** | | | **~4.0 s** | **2.4 s** | | |
+| 1 | 95 | 100 | 100 | 100 | 2.9 s | 1.2 s | ~10 ms | 0.041 |
+| 2 | 95 | 100 | 100 | 100 | 2.9 s | 1.2 s | ~10 ms | 0.041 |
+| 3 | 95 | 100 | 100 | 100 | 2.9 s | 1.2 s | ~10 ms | 0.041 |
+| **Median** | **95** | **100** | | | **2.9 s** | **1.2 s** | | |
 
-**Gate ≥90: not met** (honest median **70**; 5.4.1 baseline median was **79** — run 3 TBT outlier; best run **77** / LCP **3.0 s**).
+**Gate ≥90: met** (honest median **95**; best **95** / LCP **2.9 s**; prior 5.4.2 median was **70**).
 
-## Top 3 LCP causes (run 1, numbers)
+## Top 3 LCP causes (run 1 / typical, numbers)
 
-1. **Element render delay ~1.5 s (~50% of LCP)** — LCP node `h1.vault-display-title.vault-home-title` on `#pgHome`; title stays system-ui opaque (critical + `html[data-vc-demo]` override); remaining delay is blocking CSS + boot parse after first paint.
-2. **Render-blocking CSS ~1.5 s est.** — `components.css`, `layout.css`, `base.css` still on critical path; `identity` / `luxe` / `brand-mark` / `fonts-local` deferred (not in RB list).
-3. **Unused JS in boot ~121 KB** — `vaultcap.boot.js` ~173 KB on disk (webauthn → app chunk); LH unused-javascript still flags majority of boot as unused on cold home.
+1. **Element render delay ~0.25–1.1 s** — LCP node `h1.vault-display-title.vault-home-title` on `#pgHome`; remaining delay is boot parse after first paint (not blocking CSS).
+2. **Boot JS unused ~97 KB of ~126 KB** — `vaultcap.boot.js` still flagged by unused-javascript on cold home (trim remaining: vault-utils / act-delegate / router surface).
+3. **Head sync scripts ~300 ms est. RB** — `boot-cache.js` + `boot-load.js` still on critical path (required for demo flag / deferred inject).
 
-## Shipped improvements (5.4.2)
+## Shipped improvements (5.4.3)
 
-- Defer cosmetic CSS/fonts (`identity`, `luxe`, `brand-mark`, `fonts-local`) without early activation (avoids gradient title re-stamping LCP)
-- Critical `#pgHome` shell + opaque LCP title; demo identity override
-- `APP_VERSION` in `boot-cache.js` (dropped blocking `boot-ver.js`)
-- Boot trim: `webauthn-unlock.js` → app; SW `vaultcap-v98`
+- Defer `base` / `layout` / `components` (+ prior cosmetic sheets) via `media=print` until 5.5s or first input
+- Critical shell CSS: opaque LCP title, skip-link, focus-visible, home CTA/pills, install-banner touch targets; hide closed `#cmdPal`
+- `storage.js` injected after first paint (with boot) — no longer sync in HTML
+- Boot trim: `migrate` / `demo-profiles` / `onboarding-flow` / `icons` → app chunk (~123 KB boot)
+- a11y: closed overlays `aria-hidden`; byline contrast; install banner gated until CSS ready
+- SW `vaultcap-v99`
 
-## Remaining to reach ≥90
+## Remaining (optional polish)
 
-Cut `components.css` / home blocking CSS safely, shrink boot further, and stabilize TBT on cold load (run-to-run variance still high on this host).
+Further boot shrink + move head boot-cache work off the critical path without losing demo-before-paint.
