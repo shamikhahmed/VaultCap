@@ -94,10 +94,9 @@ const Banks={
     const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('');
     const name = escHtml(b.bankName||'Bank');
     const acts =
-      U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':''),ariaLabel:'Favorite'}) +
-      U.icb('eye',{onclick:`Banks.detail('${b.id}')`,ariaLabel:'View details'}) +
+      U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':''),ariaLabel:b.favorite?'Remove from favourites':'Add to favourites'}) +
       U.icb('more',{onclick:`Banks.rowMenu('${b.id}',event)`,ariaLabel:'More actions',title:'More'});
-    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic vc-ix-238">${logoHtml}</div><div class="entry-body"><div class="entry-name">${name}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+escHtml(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${escHtml(b.accountType||'')} · ${escHtml(b.currency||'')} ${b.last4?'· ****'+escHtml(b.last4):''}</div><div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType||'bank')}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${acts}</div></div></div>`;
+    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic vc-ix-238">${logoHtml}</div><div class="entry-body" data-act="Banks.detail('${b.id}')"><div class="entry-name">${name}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+escHtml(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${escHtml(b.accountType||'')} · ${escHtml(b.currency||'')} ${b.last4?'· ****'+escHtml(b.last4):''}</div><div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType||'bank')}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${acts}</div></div></div>`;
   },
   rowMenu(id, ev){
     const b = (S.banks||[]).find(x => x.id === id);
@@ -106,6 +105,7 @@ const Banks={
     const x = (ev && ev.clientX != null) ? ev.clientX : Math.max(8, window.innerWidth - 80);
     const y = (ev && ev.clientY != null) ? ev.clientY : 120;
     showContextMenu(x, y, [
+      { label: 'View details', ic: 'eye', action: () => Banks.detail(id) },
       { label: 'Edit', ic: 'pencil', action: () => Banks.edit(id) },
       { label: b.archived ? 'Unarchive' : 'Archive', ic: 'archive', action: () => Banks.archive(id) },
       { label: 'Delete', ic: 'trash', destructive: true, action: () => Banks.del(id) },

@@ -1,3 +1,13 @@
+## [Unreleased] — HIG 6 design (ScentCap 3.0 system)
+
+- Apple-HIG redesign on the shared Cap system: `css/design/tokens.css` (semantic light/dark/increased-contrast tokens, vault-gold accent, legacy bridge), `css/design/system.css` (`ui-*` primitives), `css/design/vaultcap.css` (shell + shared-class reskin); 5.x CSS demoted to `@layer legacy` via `css/app.css`
+- Shell: floating glass tab bar (48 pt tabs, labels no longer clipped), glass sidebar ≥700 px, no FAB — Add lives in headers (dashboard `+` opens the Add menu)
+- Dashboard rebuilt on `UIKit` (`js/core/ui-kit.js`): net-worth card, Money tiles, Security + Your vault inset lists
+- Sheets: grabber + Cancel / Title / Save bar (`Modal._sheetBar`); bank rows tap through to details; lock keypad, welcome and settings restyled
+- Fix: `?demo=1` kept `#pgHome` (critical `!important`) above the lock keypad and vault — attribute released in `R.showLock()`/`R.unlock()`, deferred CSS armed there too
+- Light accent is now deep gold `#8b6508` (AA) instead of ink navy — see `DESIGN.md`
+- New gate `tests/hig-design.spec.js` (before/after evidence: `qa/hig-6/`) · SW `vaultcap-v100`
+
 ## [5.4.3] — 2026-10-22
 - Lighthouse mobile: defer `base`/`layout`/`components` CSS; load `storage.js` after first paint; move `migrate`/`demo-profiles`/`onboarding-flow`/`icons` into app chunk
 - SW `vaultcap-v99` · query `?v=5.4.3`

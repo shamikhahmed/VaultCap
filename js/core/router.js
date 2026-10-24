@@ -30,6 +30,9 @@ const R = {
     }
   },
   showLock() {
+    // Early demo LCP pins #pgHome with !important (index.html critical CSS) — release it once we leave home
+    document.documentElement.removeAttribute('data-vc-demo');
+    if (window.__vcActivateDeferredCss) window.__vcActivateDeferredCss();
     ['pgHome', 'pgOnboard', 'app', 'pgProfilePicker'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     document.body.classList.add('on-lock');
     document.body.classList.remove('hide-btabs');
@@ -164,6 +167,8 @@ const R = {
         const linked = VaultRelations.linkOrphanCards({ createBank: false });
         if (linked > 0) Store.save();
       }
+      document.documentElement.removeAttribute('data-vc-demo');
+      if (window.__vcActivateDeferredCss) window.__vcActivateDeferredCss();
       ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
       document.body.classList.remove('on-lock');
       const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';

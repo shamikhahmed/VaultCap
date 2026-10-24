@@ -415,7 +415,9 @@ function buildNav() {
 function patchNavActiveState() {
   const page = S.currentPage;
   document.querySelectorAll('#sbNav .ni[data-pg]').forEach(el => {
-    el.classList.toggle('on', el.dataset.pg === page);
+    const on = el.dataset.pg === page;
+    el.classList.toggle('on', on);
+    if (on) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
   const bankingPages = new Set(['banks','cards','cash','loans','expenses','bc','finance-home']);
   const wealthPages = new Set(['investments','bonds','assets','vehicles','gadgets','gold','assets-home']);
@@ -427,6 +429,7 @@ function patchNavActiveState() {
   if (ti[1]) ti[1].classList.toggle('on', bankingPages.has(page));
   if (ti[2]) ti[2].classList.toggle('on', wealthPages.has(page));
   if (ti[3]) ti[3].classList.toggle('on', identityPages.has(page));
+  ti.forEach(el => el.setAttribute('aria-selected', el.classList.contains('on') ? 'true' : 'false'));
 }
 
 // ===================== SMART ADD (offline pattern detection) =====================

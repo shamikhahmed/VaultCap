@@ -37,6 +37,7 @@ const Modal = {
     document.getElementById('mTitle').textContent = title;
     document.getElementById('mBody').innerHTML = body;
     document.getElementById('mFoot').innerHTML = foot;
+    this._sheetBar();
     const modal = document.getElementById('modal');
     modal.style.transform = '';
     modal.style.transition = '';
@@ -59,6 +60,29 @@ const Modal = {
         });
       });
     }, 80);
+  },
+  /** HIG sheet bar: footer Cancel/Close → leading, single primary → trailing; the rest stay in the footer. */
+  _sheetBar() {
+    const foot = document.getElementById('mFoot');
+    const lead = document.getElementById('mLead');
+    const trail = document.getElementById('mTrail');
+    const close = document.getElementById('mClose');
+    const modal = document.getElementById('modal');
+    if (!foot || !lead || !trail || !close) return;
+    lead.innerHTML = '';
+    trail.querySelectorAll('button:not(#mClose)').forEach((el) => el.remove());
+    close.hidden = false;
+    const btns = [...foot.querySelectorAll(':scope > button')];
+    const cancel = btns.find((el) => /^\s*(Cancel|Close)\s*$/i.test(el.textContent) && /Modal\.close\(\)/.test(el.getAttribute('data-act') || ''));
+    const primaries = btns.filter((el) => el.classList.contains('btn-p'));
+    if (cancel) lead.appendChild(cancel);
+    if (primaries.length === 1 && cancel) {
+      close.hidden = true;
+      trail.appendChild(primaries[0]);
+    } else if (cancel) {
+      close.hidden = true;
+    }
+    if (modal) modal.classList.toggle('mf-empty', !foot.children.length);
   },
   /** Closes the modal, releases focus trap, and clears sensitive input fields. */
   close() {

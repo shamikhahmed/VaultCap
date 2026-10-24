@@ -55,14 +55,13 @@ const ThemeEngine = {
   renderDots() {
     const e = document.getElementById('homeThemes');
     if (!e) return;
-    const icons = { dark: 'moon', light: 'sun', auto: 'settings' };
+    // HIG segmented control — inline styles because #pgHome paints before the deferred CSS arrives
+    e.setAttribute('role', 'group');
+    e.setAttribute('aria-label', 'Appearance');
+    e.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;padding:2px;border-radius:10px;background:var(--fill)';
     e.innerHTML = THEMES.map(t => {
       const active = t.id === S.user.theme;
-      const ic = (typeof VC !== 'undefined' && VC.icon) ? VC.icon(icons[t.id], 16) : '';
-      return `<button type="button" data-act="ThemeEngine.apply('${t.id}')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:14px;border:1.5px solid ${active ? 'var(--accent)' : 'var(--border)'};background:${active ? 'var(--glass2)' : 'var(--glass)'};cursor:pointer;touch-action:manipulation;transition:all .2s;font-family:var(--font)">
-        <div style="width:36px;height:36px;border-radius:10px;background:${t.bg};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2)">${ic}</div>
-        <span style="font-size:0.6875rem;font-weight:${active ? '700' : '500'};color:${active ? 'var(--accent)' : 'var(--text3)'}">${t.n}</span>
-      </button>`;
+      return `<button type="button" aria-pressed="${active}" data-act="ThemeEngine.apply('${t.id}')" style="min-height:36px;border:0;border-radius:8px;cursor:pointer;touch-action:manipulation;font:inherit;font-size:0.9375rem;font-weight:${active ? '600' : '500'};color:var(--label);background:${active ? 'var(--surface-elevated)' : 'transparent'};box-shadow:${active ? '0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)' : 'none'}">${t.n}</button>`;
     }).join('');
   },
   openPicker() {

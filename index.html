@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VaultCap">
-<meta name="theme-color" content="#060a12" id="themeColorMeta">
+<meta name="theme-color" content="#000000" id="themeColorMeta">
 <meta name="author" content="Capricorn Systems">
 <meta name="description" content="Encrypted life vault — finance, identity, and documents on your device. Offline-first, by Capricorn Systems.">
 <title>VaultCap — Everything you own. Encrypted. · Capricorn Systems</title>
@@ -34,7 +34,7 @@
 <meta name="application-name" content="VaultCap">
 <meta name="rating" content="general">
 <meta name="format-detection" content="telephone=no">
-<meta name="msapplication-TileColor" content="#060a12">
+<meta name="msapplication-TileColor" content="#000000">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
@@ -45,35 +45,38 @@
 <!-- Critical LCP: #pgHome shell + opaque title; defer base/layout/components off critical path -->
 <style>
 *,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;background:#060a12;color:#f4f6fa;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;padding:0;height:100%;background:var(--bg,#000);color:var(--label,#fff);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 body{overflow:hidden;overscroll-behavior:none}
-:focus-visible{outline:2px solid #D4A017;outline-offset:3px;border-radius:4px}
+:focus-visible{outline:3px solid var(--tint,#D4A017);outline-offset:2px;border-radius:8px}
 .cap-skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10001}
-.cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:#0c1220;color:#f4f6fa;border:1px solid rgba(212,160,23,.45);border-radius:10px;outline:2px solid #D4A017;outline-offset:2px}
-#splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060a12;overflow:hidden}
+.cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:var(--surface-elevated,#2c2c2e);color:var(--label,#fff);border:0;border-radius:10px;outline:3px solid var(--tint,#D4A017);outline-offset:2px}
+#splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg,#000);overflow:hidden}
 html[data-vc-demo] #splashScreen,html[data-vc-skip-splash] #splashScreen{display:none!important}
 html[data-vc-demo] #pgHome{display:flex!important}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
 .vault-splash__mark{width:72px;height:72px;border-radius:18px;margin-bottom:18px;display:block}
-.vault-splash__title{margin:0 0 8px;font:700 1.625rem/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f6fa}
-.vault-splash__tagline{margin:0;font:500 0.8125rem/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(232,194,74,.75)}
-.vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
-.vault-splash__bar{width:0;height:100%;background:#D4A017}
+.vault-splash__title{margin:0 0 8px;font:700 1.75rem/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.02em;color:var(--label,#fff)}
+.vault-splash__tagline{margin:0;font:400 0.9375rem/1.3 -apple-system,system-ui,sans-serif;color:var(--label-2,rgba(235,235,245,.75))}
+.vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:var(--fill,rgba(118,118,128,.24));overflow:hidden}
+.vault-splash__bar{width:0;height:100%;background:var(--tint,#D4A017)}
 .vault-door{display:none}
-.vault-home-title,.vault-display-title{margin:0;font:700 clamp(36px,10vw,46px)/1.05 system-ui,-apple-system,sans-serif;letter-spacing:.18em;color:#f4f6fa!important;-webkit-text-fill-color:#f4f6fa!important;background:none!important;-webkit-background-clip:unset!important;background-clip:unset!important;text-transform:uppercase;font-family:system-ui,-apple-system,sans-serif!important}
-#pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:#060a12}
+.vault-home-title,.vault-display-title{margin:0;font:700 2.125rem/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.025em;color:var(--label,#fff)!important;-webkit-text-fill-color:currentColor!important;background:none!important;-webkit-background-clip:unset!important;background-clip:unset!important;text-transform:none;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important}
+#pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:var(--bg,#000)}
 #pgHome .vc-mark--hero{width:60px;height:60px;border-radius:16px;display:block;margin:0 auto}
 #homeThemes{min-height:48px}
 .home-modules{min-height:140px}
-.home-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:0.6875rem;color:rgba(244,246,250,.72);font-weight:500}
-.home-demo-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:4px 0 18px;padding:8px 14px;background:transparent;border:0;color:rgba(244,246,250,.72);font:500 0.9375rem/1.2 system-ui,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.home-mod-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:8px 2px;background:transparent;border:0;border-radius:10px;color:var(--label,#fff);font:inherit;cursor:pointer;touch-action:manipulation}
+.home-mod-ic{display:flex;color:var(--tint,#D4A017)}
+.home-mod-label{font-size:0.75rem;font-weight:500;color:var(--label-2,rgba(235,235,245,.75))}
+.home-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;background:var(--fill,rgba(118,118,128,.24));border:0;font-size:0.8125rem;color:var(--label-2,rgba(235,235,245,.75));font-weight:500}
+.home-demo-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:4px 0 18px;padding:8px 14px;background:transparent;border:0;color:var(--tint,#D4A017);font:500 1.0625rem/1.2 -apple-system,system-ui,sans-serif;cursor:pointer;text-decoration:none}
 #demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 0.75rem/1.2 system-ui,sans-serif}
 .panic-btn{display:none;width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;padding:0}
 .cap-demo-banner{position:fixed;top:0;left:0;right:0;z-index:10000;min-height:44px;box-sizing:border-box}
-.vault-panel--home{border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
-.vc-install-banner{position:fixed;bottom:72px;left:12px;right:12px;z-index:12000;min-height:64px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(15,20,40,.97);border:1px solid rgba(255,255,255,.12)}
-.vc-install-banner__close{flex-shrink:0;min-width:44px;min-height:44px;padding:0;border:0;background:none;color:rgba(244,246,250,.72);font-size:1.375rem;line-height:1;cursor:pointer;border-radius:10px}
-.vc-install-banner__btn{flex-shrink:0;min-height:44px;min-width:72px;padding:10px 16px;border:0;border-radius:12px;background:#0a1220;color:#fff;font:700 0.875rem/1.2 system-ui,sans-serif;cursor:pointer}
+.vault-panel--home{border-radius:20px;background:var(--surface,#1c1c1e);border:0}
+.vc-install-banner{position:fixed;bottom:72px;left:12px;right:12px;z-index:12000;min-height:64px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:var(--surface-elevated,#2c2c2e);border:0;box-shadow:0 18px 50px rgba(0,0,0,.3)}
+.vc-install-banner__close{flex-shrink:0;min-width:44px;min-height:44px;padding:0;border:0;background:none;color:var(--label-2,rgba(235,235,245,.75));font-size:1.375rem;line-height:1;cursor:pointer;border-radius:10px}
+.vc-install-banner__btn{flex-shrink:0;min-height:44px;min-width:72px;padding:10px 16px;border:0;border-radius:999px;background:var(--tint,#D4A017);color:var(--on-tint,#000);font:600 0.9375rem/1.2 -apple-system,system-ui,sans-serif;cursor:pointer}
 html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 #cmdPal{display:none}
 #cmdPal.on{display:block}
@@ -81,28 +84,10 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 <script src="js/boot-cache.js"></script>
 <link rel="preload" href="css/tokens.css" as="style">
 <link rel="stylesheet" href="css/tokens.css">
-<style>:root{--cap-accent:var(--accent);--cap-accent-fg:var(--accent-fg)}</style>
-<link rel="stylesheet" href="css/base.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/layout.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/components.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/fonts-local.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/brand-mark.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/identity.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/luxe.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/capricorn-core.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/themes.css" media="print" data-vc-defer-css>
-<link rel="stylesheet" href="css/ios-tokens.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/design/tokens.css">
+<link rel="stylesheet" href="css/app.css" media="print" data-vc-defer-css>
 <noscript>
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/fonts-local.css">
-<link rel="stylesheet" href="css/brand-mark.css">
-<link rel="stylesheet" href="css/identity.css">
-<link rel="stylesheet" href="css/luxe.css">
-<link rel="stylesheet" href="css/capricorn-core.css">
-<link rel="stylesheet" href="css/themes.css">
-<link rel="stylesheet" href="css/ios-tokens.css">
+<link rel="stylesheet" href="css/app.css">
 </noscript>
 </head>
 <body data-cap-app="1">
@@ -255,10 +240,10 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
   <div style="margin-bottom:4px">
     <h1 class="vault-display-title vault-home-title">VaultCap</h1>
   </div>
-  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:2px;font-weight:500" id="hWelcome">Everything you own, encrypted on your device</p>
-  <p style="font-size:0.6875rem;color:var(--text2);margin-bottom:24px;letter-spacing:.3px">by Capricorn Systems</p>
+  <p style="font-size:1.0625rem;color:var(--label-2);margin-bottom:2px;font-weight:400" id="hWelcome">Everything you own, encrypted on your device</p>
+  <p style="font-size:0.8125rem;color:var(--label-3);margin-bottom:24px">by Capricorn Systems</p>
   <!-- CTA -->
-  <button id="homeOpenBtn" data-act="R.showLock()" style="width:100%;padding:16px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:16px;font-size:1.0625rem;font-weight:700;cursor:pointer;box-shadow:0 8px 28px var(--glow),0 2px 8px rgba(0,0,0,.3);margin-bottom:10px;font-family:var(--font);letter-spacing:-.2px;transition:transform .15s,box-shadow .15s;touch-action:manipulation" class="vos-cta-lift">Open My Vault</button>
+  <button id="homeOpenBtn" data-act="R.showLock()" style="width:100%;min-height:50px;padding:0 22px;background:var(--tint);color:var(--on-tint);border:none;border-radius:14px;font-size:1.0625rem;font-weight:600;cursor:pointer;margin-bottom:10px;font-family:var(--font-ui);letter-spacing:-.01em;transition:transform .15s;touch-action:manipulation" class="vos-cta-lift">Open My Vault</button>
   <button type="button" id="homeDemoLink" class="home-demo-link" data-act="VaultProfiles.startDemo()">Explore a sample vault</button>
   <!-- Feature pills -->
   <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:20px">
@@ -268,12 +253,12 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
   </div>
   <!-- Module grid -->
   <div class="vault-panel vault-panel--home home-modules" style="width:100%;padding:16px;margin-bottom:20px">
-    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;text-align:left">Everything you can manage</div>
+    <div style="font-size:0.8125rem;letter-spacing:.02em;text-transform:uppercase;color:var(--label-3);margin-bottom:10px;text-align:left">Everything you can manage</div>
     <div id="homeModGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"></div>
   </div>
   <!-- Appearance — Apple-style segmented selector -->
   <div class="home-appearance" style="width:100%;margin-bottom:24px">
-    <div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;text-align:center">Appearance</div>
+    <div style="font-size:0.8125rem;letter-spacing:.02em;text-transform:uppercase;color:var(--label-3);margin-bottom:8px;text-align:left;padding-left:4px">Appearance</div>
     <div id="homeThemes" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
   </div>
 </div>
@@ -435,6 +420,7 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 <button type="button" class="btn btn-g btn-sm dash-act-desktop" data-act="CMD.open()" style="padding:6px 8px;font-size:0.6875rem;display:none" id="dashCmdBtn">⌘K</button>
 <button type="button" class="icb dash-act-desktop" id="dashPrivacyBtn" data-act="togglePrivacy()" title="Privacy" aria-label="Privacy" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="eye-off" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-desktop" id="dashLockBtn" data-act="R.lock()" title="Lock vault" aria-label="Lock vault" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="lock" data-vc-size="18"></button>
+<button type="button" class="icb" id="dashAddBtn" data-act="FAB.toggle()" title="Add" aria-label="Add to vault" aria-haspopup="menu" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="plus" data-vc-size="18"></button>
 <button type="button" class="icb dash-act-more" id="dashMoreBtn" data-act="Dash.toggleMore(event)" title="More actions" aria-label="More actions" style="width:44px;height:44px;min-width:44px;min-height:44px" data-vc-icon="more" data-vc-size="18"></button>
 <div class="dash-more-menu" id="dashMoreMenu" role="menu" aria-hidden="true">
 <button type="button" class="dash-more-item" role="menuitem" data-act="R.goto('settings');Dash.closeMore()"><span data-vc-icon="settings" data-vc-size="16"></span>Settings</button>
@@ -486,7 +472,7 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 <div class="page" id="pg-settings">
 <div class="settings-chrome">
 <div class="ph" style="border-bottom:none;padding-bottom:8px;display:flex;align-items:center;gap:10px">
-<button type="button" class="icb" data-act="R.goto('dashboard')" title="Back to dashboard" aria-label="Back to dashboard" style="width:44px;height:44px;min-width:44px;min-height:44px;flex-shrink:0" data-vc-icon="undo" data-vc-size="18"></button>
+<button type="button" class="icb" data-act="R.goto('dashboard')" title="Back to dashboard" aria-label="Back to dashboard" style="width:44px;height:44px;min-width:44px;min-height:44px;flex-shrink:0" data-vc-icon="chevron-left" data-vc-size="20"></button>
 <h2 style="flex:1;margin:0">Settings</h2>
 </div>
 <div id="settTabs" class="sett-tabs cap-tab-bar" role="tablist" aria-label="Settings"></div>
@@ -507,7 +493,7 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 
 <!-- MODAL -->
 <div class="overlay" id="overlay" aria-hidden="true" data-act="if(event.target===this)Modal.close()">
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mBody"><div class="mhandle"></div><div class="mh"><h3 id="mTitle">–</h3><button class="icb" data-act="Modal.close()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mBody"><div class="mhandle"></div><div class="mh"><span class="mh-lead" id="mLead"></span><h3 id="mTitle">–</h3><span class="mh-trail" id="mTrail"><button class="icb" id="mClose" data-act="Modal.close()" aria-label="Close"><span data-vc-icon="xmark" data-vc-size="16" aria-hidden="true"></span></button></span></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div>
 </div>
 
 <!-- THEME PICKER -->

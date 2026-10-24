@@ -20,7 +20,7 @@ module.exports = defineConfig({
       name: 'chromium',
       ...(process.env.VAULTCAP_CI_GATE
         ? {
-            /* Gate: unlock, a11y, XSS/export, lockout, KDF wrap, network-off, viewport HIG. */
+            /* Gate: unlock, a11y, XSS/export, lockout, KDF wrap, network-off, viewport HIG, HIG 6 design. */
             testMatch: [
               /smoke\.spec\.js/,
               /a11y\.spec\.js/,
@@ -29,6 +29,7 @@ module.exports = defineConfig({
               /vault-kdf-wrap\.spec\.js/,
               /network-default-off\.spec\.js/,
               /viewport\.spec\.js/,
+              /hig-design\.spec\.js/,
             ],
           }
         : {

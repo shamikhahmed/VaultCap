@@ -201,14 +201,6 @@ const Dash={
       ? '<div style="font-size:0.75rem;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div class="nw-hero-wrap" style="padding:0 16px;margin-top:12px"><div class="nw-hero-card" style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
-      '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:clamp(1.75rem,9vw,2.5rem);font-weight:800;color:var(--text);letter-spacing:-.03em;word-break:break-word" class="sens nw-hero-amount">'+fmt(nwPKR)+'</div>' +
-      ((nwChange !== 0 || pctStr) ? '<div style="font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:0.6875rem;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
-      sparkline +
-      multiCurHtml +
-      '</div></div>';
 
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
@@ -224,24 +216,6 @@ const Dash={
     const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
     const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
     const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
-    const cashByCur = {};
-    ctxFilter(S.cash||[]).forEach(c => { const cur = c.currency || 'PKR'; cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0); });
-    const cashCurKeys = Object.keys(cashByCur);
-    const cashBreakdown = cashCurKeys.length > 1
-      ? '<div style="font-size:0.6875rem;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
-        cashCurKeys.map(cur => '<span class="sens">' + U.fmt(cashByCur[cur]) + ' ' + cur + '</span>').join(' · ') + '</div>'
-      : '';
-    const moneyCell = (total, color, label, page) =>
-      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:0.6875rem;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
-    const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
-      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
-      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
-      (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
-      (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
-      (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
-      '</div>' + (isModOn('cash') && cashBreakdown ? cashBreakdown : '') +
-      '</div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
@@ -254,12 +228,6 @@ const Dash={
       return a + toB(x.currentValue||x.purchasePrice||0, x.currency);
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
-    const assetSum = isModOn('assets') && assetCount > 0 ?
-      '<div data-act="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
-      '<div style="font-size:1.375rem;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
-      '<div class="vc-ix-132"><div style="font-size:1.75rem;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
-      '<div class="vc-ix-18">items</div></div></div>' : '';
 
     const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
     const _reminders = (S.reminders || []).filter(r => !r.done).sort((a,b) => new Date(a.dueDate||0) - new Date(b.dueDate||0)).slice(0, 2);
@@ -279,17 +247,7 @@ const Dash={
       '</div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
-    const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : 'All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStatCell = (value, label, onclick) =>
-      '<div' + (onclick ? ' data-act="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
-      '<div style="font-size:0.8125rem;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
-      '<div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
-    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
-      quickStatCell(entityTotal, 'Records') +
-      quickStatCell(activeCountryLabel, 'Country') +
-      quickStatCell(lastBackupLabel, 'Backup', "ActHelpers.gotoSettingsTab('backup')") +
-      '</div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
     <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -322,15 +280,6 @@ const Dash={
     const wealthCount = (S.investments||[]).length + (S.assets||[]).length + (S.bonds||[]).length;
     const identityCount = (S.documents||[]).length + (S.sims||[]).length + (S.emails||[]).length + (S.digital||[]).length;
     const sealOk = health >= 70;
-    const vaultStatusSeal = `
-    <div class="vault-status-seal" role="status" aria-label="Vault security status">
-      <div class="vault-status-seal__lock" aria-hidden="true">${_uiIcon(sealOk ? 'lock' : 'shield', 18)}</div>
-      <div class="vault-status-seal__copy">
-        <div class="vault-status-seal__title">${sealOk ? 'Vault secure' : 'Improve your security'}</div>
-        <div class="vault-status-seal__sub">Security ${health}% · ${entityTotal} records · local AES</div>
-      </div>
-      <button type="button" class="vault-status-seal__score" data-act="R.goto('security')" style="color:${healthColor}" aria-label="Open security center">${health}%</button>
-    </div>`;
 
     const chambers = [
       { id:'money', label:'Money', page:'finance-home', icon:'banknote', count:moneyCount, show: typeof isPageModOn==='function' ? isPageModOn('finance-home') : true },
@@ -340,19 +289,6 @@ const Dash={
       { id:'zakat', label:'Zakat', page:'zakat', icon:'moon', count:0, show: isModOn('zakat') },
       { id:'tools', label:'Tools', page:'alerts', icon:'bell', count:allExpiring.length, show: true },
     ].filter(c => c.show);
-    const chamberFloor = `
-    <div class="chamber-floor" aria-label="Vault chambers">
-      <div class="chamber-floor__label">Your vault</div>
-      <div class="chamber-floor__grid">
-        ${chambers.map((c,i) => `
-          <button type="button" class="chamber-card" data-act="R.goto('${c.page}')" style="--chamber-i:${i}" aria-label="${c.label}${c.count!=null?' · '+c.count+' items':''}">
-            <span class="chamber-card__rim" aria-hidden="true"></span>
-            <span class="chamber-card__icon">${_uiIcon(c.icon, 20)}</span>
-            <span class="chamber-card__name">${c.label}</span>
-            ${c.count!=null?`<span class="chamber-card__count">${c.count}</span>`:''}
-          </button>`).join('')}
-      </div>
-    </div>`;
 
     const activityRows = (S.activity||[]).slice(0,5).map((a,i) => `
       <div class="ledger-strip" style="--strip-i:${i}">
@@ -413,17 +349,55 @@ const Dash={
       </div>
     </aside>`;
 
+    // ── 6.0 HIG dashboard: hero card, money tiles, security + vault lists (UIKit, DESIGN.md) ──
+    const K = UIKit;
+    const heroDelta = (nwChange !== 0 || pctStr)
+      ? '<p class="dash6-hero__delta">' +
+        (nwChange !== 0 ? '<span style="color:' + (nwChange >= 0 ? 'var(--success)' : 'var(--danger)') + '">' + nwChangeStr + '</span>' : '') +
+        (pctStr ? '<span>' + pctStr + '</span>' : '') + '</p>'
+      : '';
+    const heroCard = '<div class="ui-card ui-card--lg dash6-hero">' +
+      '<p class="ui-eyebrow">' + (activeCtx !== 'ALL' ? 'Net worth · ' + U.cname(activeCtx) : 'Net worth') + '</p>' +
+      '<p class="dash6-hero__value sens num">' + fmt(nwPKR) + '</p>' + heroDelta + sparkline + multiCurHtml + '</div>';
+    const moneyTiles = [
+      isModOn('banks') && K.widget({ icon: 'bank', label: 'Banks', value: fmt(bankTotal), act: "R.goto('banks')", sens: true }),
+      isModOn('investments') && K.widget({ icon: 'trending-up', label: 'Investments', value: fmt(invTotal), act: "R.goto('investments')", sens: true }),
+      isModOn('cash') && K.widget({ icon: 'banknote', label: 'Cash', value: fmt(cashTotal), act: "R.goto('cash')", sens: true }),
+      isModOn('assets') && assetCount > 0 && K.widget({ icon: 'building', label: 'Property', value: fmt(assetTotal), act: "R.goto('assets')", sens: true }),
+    ].filter(Boolean);
+    const moneySection = moneyTiles.length
+      ? K.section({ title: 'Money', id: 'dash6-money', action: { label: 'All', act: "R.goto('finance-home')" } }, '<div class="ui-widgets">' + moneyTiles.join('') + '</div>')
+      : '';
+    const securitySection = K.section({ title: 'Security', id: 'dash6-security' }, K.list([
+      K.row({
+        icon: sealOk ? 'lock' : 'shield',
+        title: sealOk ? 'Vault secure' : 'Improve your security',
+        sub: entityTotal + ' records · encrypted on this device',
+        value: '<span class="num" style="color:' + healthColor + '">' + health + '%</span>',
+        act: "R.goto('security')",
+        aria: 'Security ' + health + '%, open security center',
+      }),
+      K.row({ icon: 'share', title: 'Backup', value: lastBackupLabel, act: "ActHelpers.gotoSettingsTab('backup')" }),
+    ]));
+    const vaultSection = K.section({ title: 'Your vault', id: 'dash6-vault' }, K.list(chambers.map((c) => K.row({
+      icon: c.icon,
+      title: c.label,
+      value: c.count != null ? String(c.count) : '',
+      act: "R.goto('" + c.page + "')",
+    }))));
+
     b.innerHTML = `
     ${ctxBar}
     ${totalItems === 0 ? firstStepsBanner : ''}
     <div class="dash-vault-layout">
     <div class="dash-vault-main">
-    ${totalItems === 0 ? '' : nwHero}
+    <div class="dash6">
+    ${totalItems === 0 ? '' : heroCard}
     ${totalItems === 0 ? '' : setupBanner}
-    ${vaultStatusSeal}
-    ${totalItems === 0 ? '' : chamberFloor}
-
-    ${moneySum}
+    ${totalItems === 0 ? '' : moneySection}
+    ${securitySection}
+    ${totalItems === 0 ? '' : vaultSection}
+    </div>
 
     ${breakdownHtml}
 
@@ -433,11 +407,9 @@ const Dash={
 
     ${familyWidget}
 
-    ${assetSum}
 
     ${upcomingActions}
 
-    ${quickStats}
 
     <!-- WALLET -->
     ${isModOn('cards') && (S.cards||[]).length ? `
