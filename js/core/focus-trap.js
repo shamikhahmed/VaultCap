@@ -13,13 +13,13 @@ var FocusTrap = (function () {
     _el = el;
     _prev = document.activeElement;
     var first = _focusables()[0];
-    if (first) first.focus();
+    if (first) first.focus({ preventScroll: true });
     document.addEventListener('keydown', _onKey, true);
   }
 
   function release() {
     document.removeEventListener('keydown', _onKey, true);
-    if (_prev && typeof _prev.focus === 'function') _prev.focus();
+    if (_prev && typeof _prev.focus === 'function') _prev.focus({ preventScroll: true });
     _el = null;
     _prev = null;
   }

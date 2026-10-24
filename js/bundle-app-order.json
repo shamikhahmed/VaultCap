@@ -55,6 +55,5 @@
   "js/modules/gold.js",
   "js/modules/bc.js",
   "js/modules/bonds.js",
-  "js/modules/creditScore.js",
-  "js/capricorn-motion.js"
+  "js/modules/creditScore.js"
 ]

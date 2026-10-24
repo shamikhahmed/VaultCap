@@ -45,8 +45,9 @@
 <!-- Critical LCP: #pgHome shell + opaque title; defer base/layout/components off critical path -->
 <style>
 *,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;background:var(--bg,#000);color:var(--label,#fff);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-body{overflow:hidden;overscroll-behavior:none}
+html,body{margin:0;padding:0;min-height:100%;background:var(--bg,#000);color:var(--label,#fff);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+html,body{overflow-x:clip}
+body{overscroll-behavior-x:none;overscroll-behavior-y:auto}
 :focus-visible{outline:3px solid var(--tint,#D4A017);outline-offset:2px;border-radius:8px}
 .cap-skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10001}
 .cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:var(--surface-elevated,#2c2c2e);color:var(--label,#fff);border:0;border-radius:10px;outline:3px solid var(--tint,#D4A017);outline-offset:2px}

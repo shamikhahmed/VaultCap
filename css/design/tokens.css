@@ -225,3 +225,62 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- iOS / PWA touch behaviour (ScentCap 3.0.1 recipe) ---------- */
+
+/* No sideways wobble: clip (unlike hidden) doesn't create a scroll container, so sticky + scroll keep working. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Native rubber-band vertically; no accidental horizontal back-swipe bounce. */
+body {
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
+}
+
+/* iOS zooms (and shifts the page) when focusing inputs under 16px. */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+/* 5.x inline sub-16px sizes on fields (sort selects, compact inputs) */
+input[style*="font-size:0."],
+select[style*="font-size:0."],
+textarea[style*="font-size:0."],
+input[style*="font-size: 0."],
+select[style*="font-size: 0."],
+textarea[style*="font-size: 0."] {
+  font-size: 16px !important;
+}
+
+/* Instant taps (no double-tap-zoom delay), no long-press callouts on controls. */
+a,
+button,
+input,
+select,
+textarea,
+label,
+summary,
+[role="button"],
+[role="radio"],
+[role="tab"],
+[role="menuitem"],
+[data-act] {
+  touch-action: manipulation;
+}
+
+button,
+.ti,
+.ni,
+.chip,
+.btn,
+.icb,
+.key {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

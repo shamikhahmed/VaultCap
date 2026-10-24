@@ -28,7 +28,8 @@
     "logos:fetch": "node scripts/fetch-bank-logos.mjs",
     "logos": "npm run logos:fetch --",
     "test:matrix": "npm run build:js && FINISH_MATRIX=1 playwright test tests/finish-matrix.spec.mjs --workers=1",
-    "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs"
+    "tier1": "node ../capricorn-tooling/shared/testing/tier1.mjs",
+    "ios:check": "node scripts/ios-behaviour-check.mjs"
   },
   "dependencies": {
     "@capacitor/browser": "^8.0.5",

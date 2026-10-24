@@ -1067,7 +1067,7 @@ body.light .inp:focus {
 }
 
 #currBtn {
-  min-height: 34px;
+  min-height: var(--hit);
   padding: 0 12px !important;
   font-size: var(--t-subhead) !important;
   font-weight: 600;
@@ -1395,6 +1395,111 @@ body.light .key.act {
   font-size: var(--t-caption);
   font-weight: 500;
   color: var(--label-2);
+}
+
+/* ---------- Document scrolling (iOS): no inner scroll containers ---------- */
+/* 5.x pinned html/body at 100% with overflow:hidden and scrolled each .pb — iOS showed inner scrollbars,
+   lost rubber-banding and fought the Safari toolbar. The document scrolls now; the sidebar is sticky. */
+
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow-y: visible;
+  overscroll-behavior-y: auto;
+}
+
+.app,
+body.demo-banner-active #app {
+  height: auto;
+  max-height: none;
+  min-height: 100dvh;
+  overflow: visible;
+  align-items: flex-start;
+}
+
+.main {
+  overflow: visible;
+  min-height: 100dvh;
+}
+
+.page {
+  height: auto;
+  overflow: visible;
+  contain: none;
+}
+
+.pb,
+.mb,
+.main {
+  -webkit-overflow-scrolling: auto;
+}
+
+.pb,
+body .page.on > .pb {
+  flex: none;
+  overflow: visible;
+  overscroll-behavior: auto;
+  min-height: 0;
+}
+
+/* Sheets keep their own scroll; stop it chaining into the page */
+.mb,
+.vc-more-body,
+.vc-sheet-panel {
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 700px) {
+  .sidebar {
+    position: sticky;
+    top: var(--demo-banner-h, 0px);
+    align-self: flex-start;
+    height: calc(100dvh - var(--demo-banner-h, 0px));
+  }
+}
+
+/* Floating tab bar: clear the home indicator; pages pad for bar + 48px + safe area */
+.btabs {
+  bottom: max(14px, calc(env(safe-area-inset-bottom) + 6px));
+}
+
+@media (max-width: 699px) {
+  body .page.on > .pb {
+    padding-bottom: calc(var(--tabbar-h) + 48px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Hover only where a pointer can hover (no "stuck" hovered controls after a tap on iPhone) */
+@media (hover: none) {
+  .ni:hover,
+  .icb:hover,
+  .entry:hover,
+  .btn:hover,
+  .fmi:hover,
+  .home-mod-tile:hover,
+  .lk-switch-vault:hover,
+  .lk-emergency:hover,
+  .chip:hover,
+  .vc-sheet-tile:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .ni:hover {
+    background: transparent;
+  }
+  .ni.on:hover {
+    background: var(--tint);
+  }
+  .icb:hover {
+    background: var(--fill);
+  }
+  .entry-acts .icb:hover {
+    background: transparent;
+  }
+  .btn-p:hover {
+    background: var(--tint);
+  }
 }
 
 } /* @layer components */

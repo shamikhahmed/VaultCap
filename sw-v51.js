@@ -90,7 +90,8 @@ self.addEventListener('install', (e) => {
           })
         )
       )
-    ).then(() => self.skipWaiting())
+    )
+    // No skipWaiting/clients.claim: a new worker waits for the next cold launch instead of swapping a running app.
   );
 });
 
@@ -98,7 +99,7 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    )
   );
 });
 

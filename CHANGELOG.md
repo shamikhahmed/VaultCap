@@ -6,6 +6,10 @@
 - Sheets: grabber + Cancel / Title / Save bar (`Modal._sheetBar`); bank rows tap through to details; lock keypad, welcome and settings restyled
 - Fix: `?demo=1` kept `#pgHome` (critical `!important`) above the lock keypad and vault — attribute released in `R.showLock()`/`R.unlock()`, deferred CSS armed there too
 - Light accent is now deep gold `#8b6508` (AA) instead of ink navy — see `DESIGN.md`
+- iPhone (Safari + Home Screen PWA): taps on `<div data-act>` tabs/chips/rows were retargeted by WebKit touch adjustment to nearby buttons (e.g. Money tab → Cash tile) — `act-delegate` now gives every `data-act` element its own click listener
+- iPhone: the document scrolls (no inner `.pb` scrollers / `-webkit-overflow-scrolling`), sticky sidebar, `ScrollLock` (body fixed + exact restore) for every sheet, `focus({preventScroll})`, ≥16px fields, `touch-action: manipulation`, hover guards, pull-to-refresh removed (fired on normal swipes), `capricorn-motion` out of the app shell
+- SW no longer `skipWaiting`/`clients.claim` — a new worker applies on the next cold launch instead of swapping a running app
+- `scripts/ios-behaviour-check.mjs` (`npm run ios:check`, WebKit iPhone 15 Pro): origin/main 11 FAIL → 21/21 PASS
 - New gate `tests/hig-design.spec.js` (before/after evidence: `qa/hig-6/`) · SW `vaultcap-v100`
 
 ## [5.4.3] — 2026-10-22

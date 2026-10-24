@@ -88,7 +88,7 @@ const VaultProfiles = {
       '</div>',
       '<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start exploring</button>'
     );
-    setTimeout(() => document.getElementById('demo-guide-title')?.focus(), 50);
+    setTimeout(() => document.getElementById('demo-guide-title')?.focus({ preventScroll: true }), 50);
   },
   pickerProfiles() {
     const list = [...this.PROFILES, this.DEMO];
