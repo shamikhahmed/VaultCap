@@ -188,7 +188,7 @@ const Migrate = {
       const _cur13 = _uc13 === 'GB' ? 'GBP' : _uc13 === 'AE' ? 'AED' : _uc13 === 'US' ? 'USD' : 'PKR';
       const _fam13 = stored.family || { head: null, members: [] };
       const _familyMembers13 = [];
-      const _mkId13 = () => 'fm_' + Math.random().toString(36).slice(2, 10);
+      const _mkId13 = () => (typeof IdPolicy !== 'undefined' ? IdPolicy.newId() : ('fm_' + Math.random().toString(36).slice(2, 10)));
 
       const _migrateEntities13 = (person, memberId) => {
         // Banks (may be string names or full objects)
@@ -282,6 +282,7 @@ const Migrate = {
       });
     }
     stored.schemaVersion = SCHEMA_VERSION;
+    if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(stored);
     // Write back to localStorage only during migration phase (before VaultDB is active)
     try { localStorage.setItem('vos3', JSON.stringify(stored)); } catch(e) {}
   },
@@ -292,7 +293,7 @@ const Migrate = {
     const _uc = (store.user && store.user.country) || 'PK';
     const _cur = _uc === 'GB' ? 'GBP' : _uc === 'AE' ? 'AED' : _uc === 'US' ? 'USD' : 'PKR';
     const _fam = store.family || { head: null, members: [] };
-    const _mkId = () => 'fm_' + Math.random().toString(36).slice(2, 10);
+    const _mkId = () => (typeof IdPolicy !== 'undefined' ? IdPolicy.newId() : ('fm_' + Math.random().toString(36).slice(2, 10)));
     const newMembers = [];
 
     const _migrate = (person, memberId) => {
@@ -365,6 +366,7 @@ const Migrate = {
       if (store.family.head) store.family.head = { ...store.family.head, banks: [], cards: [], docs: [], cash: [] };
       if (store.family.members) store.family.members = store.family.members.map(m => ({ ...m, banks: [], cards: [], docs: [], cash: [] }));
     }
+    if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(store);
     if(window.__VC_DEBUG&&typeof window.__VC_log==='function')window.__VC_log('[VaultCap] Live migration: family → familyMembers (' + newMembers.length + ' members)');
   }
 };

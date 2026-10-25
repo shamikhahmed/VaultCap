@@ -45,8 +45,8 @@ const Banks={
     // Chips
     const chips=[['all','All','list'],['commercial','Commercial','bank'],['islamic','Islamic','moon'],['digital','Digital','smartphone'],['international','International','arrows'],['microfinance','MFB','bank'],['fav','Fav','star']];
     const ci=document.getElementById('bChips');
-    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l,ic])=>`<div class="chip${v===f?' on':''}" data-act="S.bF='${v}';Banks.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');ci.dataset.built='1';}
-    else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('on',chips[i][0]===f));
+    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l,ic])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.bF='${v}';Banks.render()"><span class="chip-ic" aria-hidden="true">${VC.icon(ic,12)}</span>${l}</button>`).join('');ci.dataset.built='1';}
+    else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>{const on=chips[i][0]===f;c.classList.toggle('on',on);c.setAttribute('aria-pressed',String(on));});
     const archivedCount=(S.banks||[]).filter(b=>b.archived).length;
     let data=S.banks.filter(b=>{
       if(b.archived&&!Banks._showArchived)return false;
@@ -66,7 +66,7 @@ const Banks={
     if(!data.length&&!archivedCount){el.innerHTML=this.emptyState();return;}
     const archiveToggle=archivedCount?`<div class="vc-ix-190"><button type="button" class="btn btn-g btn-sm" data-act="Banks._showArchived=!Banks._showArchived;Banks.render()">${Banks._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     if (data.length > 60 && typeof VirtualList !== 'undefined') {
-      el.innerHTML = archiveToggle + '<div id="bVirt" style="height:min(70vh,640px);overflow:auto;-webkit-overflow-scrolling:touch"></div>';
+      el.innerHTML = archiveToggle + '<div id="bVirt" tabindex="0" aria-label="Bank accounts" style="height:min(70vh,640px);overflow:auto;-webkit-overflow-scrolling:touch"></div>';
       VirtualList.render(document.getElementById('bVirt'), data, 76, (b) => this.row(b));
       if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
       initSwipeDelete(el);
@@ -94,10 +94,10 @@ const Banks={
     const _tagHtml=(b.tags||[]).filter(t=>t&&String(t).toLowerCase()!==_bt).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('');
     const name = escHtml(b.bankName||'Bank');
     const acts =
-      U.icb('star',{onclick:`Banks.fav('${b.id}')`,class:'fav'+(b.favorite?' on':''),ariaLabel:'Favorite'}) +
-      U.icb('eye',{onclick:`Banks.detail('${b.id}')`,ariaLabel:'View details'}) +
-      U.icb('more',{onclick:`Banks.rowMenu('${b.id}',event)`,ariaLabel:'More actions',title:'More'});
-    return `<div class="entry" data-id="${b.id}"><div class="entry-main"><div class="entry-ic vc-ix-238">${logoHtml}</div><div class="entry-body"><div class="entry-name">${name}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+escHtml(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${escHtml(b.accountType||'')} · ${escHtml(b.currency||'')} ${b.last4?'· ****'+escHtml(b.last4):''}</div><div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType||'bank')}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${acts}</div></div></div>`;
+      U.icb('star',{onclick:`Banks.fav('${U.actId(b.id)}')`,class:'fav'+(b.favorite?' on':''),ariaLabel:b.favorite?'Remove from favourites':'Add to favourites'}) +
+      U.icb('more',{onclick:`Banks.rowMenu('${U.actId(b.id)}',event)`,ariaLabel:'More actions',title:'More'});
+    const bid = U.actId(b.id);
+    return `<div class="entry" data-id="${escAttr(bid)}"><div class="entry-main"><div class="entry-ic vc-ix-238">${logoHtml}</div><div class="entry-body" data-act="Banks.detail('${bid}')"><div class="entry-name">${name}${b.ownership==='business'?' <span class="badge b-warn">Business</span>':''}${b.jointAccount&&b.jointWith?' <span class="badge b-muted">Joint: '+escHtml(b.jointWith.split(':')[1]||b.jointWith)+'</span>':''}${_sharedBadge}</div><div class="entry-sub">${escHtml(b.accountType||'')} · ${escHtml(b.currency||'')} ${b.last4?'· ****'+escHtml(b.last4):''}</div><div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType||'bank')}</span>${b.twoFA?'<span class="badge b-ok">2FA</span>':''} ${_tagHtml}</div></div><div class="entry-acts">${acts}</div></div></div>`;
   },
   rowMenu(id, ev){
     const b = (S.banks||[]).find(x => x.id === id);
@@ -106,6 +106,7 @@ const Banks={
     const x = (ev && ev.clientX != null) ? ev.clientX : Math.max(8, window.innerWidth - 80);
     const y = (ev && ev.clientY != null) ? ev.clientY : 120;
     showContextMenu(x, y, [
+      { label: 'View details', ic: 'eye', action: () => Banks.detail(id) },
       { label: 'Edit', ic: 'pencil', action: () => Banks.edit(id) },
       { label: b.archived ? 'Unarchive' : 'Archive', ic: 'archive', action: () => Banks.archive(id) },
       { label: 'Delete', ic: 'trash', destructive: true, action: () => Banks.del(id) },
@@ -244,7 +245,7 @@ const Banks={
     if(typeof Haptic!=='undefined')Haptic.save();
     if(!editId){promptAddAnother('Bank','Banks.openAdd');setTimeout(()=>Toast.show(`Added ${typeof escHtml==='function'?escHtml(name):name} — <button type="button" class="cpbtn" data-act="Cards.openAdd()">Add a card for this bank?</button>`,'info',6000, true),800);}
   },
-  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;Modal.open('Edit Bank',this.form(b),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Banks.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Banks.save('${id}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
+  edit(id){const b=S.banks.find(x=>x.id===id);if(!b)return;const sid=U.actId(id);Modal.open('Edit Bank',this.form(b),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Banks.del('${sid}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Banks.save('${sid}')">Update</button>`);setTimeout(()=>{[['bf-cc',b.country||'GB'],['bf-type',b.bankType||'commercial'],['bf-atype',b.accountType||'Current'],['bf-cur',b.currency||'GBP'],['bf-own',b.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});U.setLF(b);this.bindCC();if(b.country)this._showBankChips(b.country);},80);},
   detail(id){
     const b=S.banks.find(x=>x.id===id);if(!b)return;
     const linkedCards=(typeof VaultRelations!=='undefined')?VaultRelations.cardsForBank(b.id):[];
@@ -253,7 +254,8 @@ const Banks={
     const relatedDocs=(S.documents||[]).filter(d=>(d.tags||[]).some(t=>(t||'').toLowerCase().includes(bName)||(bName.length>2&&bName.includes((t||'').toLowerCase())))||(d.notes||'').toLowerCase().includes(bName));
     const relatedDocsHtml=relatedDocs.length?`<div class="vc-ix-240"><div class="vc-ix-37">Related Documents (${relatedDocs.length})</div>${relatedDocs.map(d=>`<div class="vc-ix-85"><span class="chip-ic">${VC.icon('file',16)}</span><div><div class="vc-ix-12">${d.name||d.docName||'Document'}</div><div class="vc-ix-3">${d.docType||''} ${d.expiryDate?'· Exp '+d.expiryDate:''}</div></div></div>`).join('')}</div>`:'';
     const auditHtml=typeof Audit!=='undefined'?Audit.render(b):'';
-    Modal.open(b.bankName,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}${linkedCardsHtml}${relatedDocsHtml}${auditHtml}</div>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Banks.edit('${id}');Modal.close()">Edit</button>`);
+    const sid=U.actId(id);
+    Modal.open(b.bankName,`<div>${[['Bank',b.bankName],['Country',U.flag(b.country)+' '+U.cname(b.country)],['Type',b.bankType],['Account Type',b.accountType],['Currency',b.currency],['Last 4','****'+(b.last4||'—')],['IBAN',b.iban?'••••':'-',b.iban],['Sort/SWIFT',b.sortCode||'—'],['Holder',b.holderName||'—'],['Email',b.email?'••••':'-',b.email],['Phone',b.phone?'••••':'-',b.phone],['Username',b.username?'••••':'-',b.username],['App PIN',b.appPin?'••••':'-',b.appPin],['2FA',b.twoFA||'None'],['Pwd Hint',b.pwdHint||'—'],['Ownership',b.ownership||'Personal'],['Balance',b.balance?U.fmt(b.balance)+' '+b.currency:'—'],['Notes',b.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')}${linkedCardsHtml}${relatedDocsHtml}${auditHtml}</div>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Banks.edit('${sid}');Modal.close()">Edit</button>`);
   },
   fav(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.favorite=!b.favorite;Store.save();this.render();},
   archive(id){const b=S.banks.find(x=>x.id===id);if(!b)return;b.archived=!b.archived;b.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(b.archived?'Archived':'Unarchived','info');},
@@ -264,6 +266,6 @@ const Banks={
     S.banks=S.banks.filter(x=>x.id!==id);
     if(typeof Haptic!=='undefined')Haptic.del();
     Activity.log('Trashed bank',b.bankName);Store.save();if(fm)Modal.close();this.render();
-    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${U.actId(S.trash[S.trash.length-1].id)}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
   }
 };

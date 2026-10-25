@@ -29,8 +29,8 @@ const Emergency = {
           ].map(f=>`<div>
             <div class="vc-ix-180">${f.label}</div>
             ${f.area
-              ?`<textarea id="${f.id}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:0.875rem;resize:none">${f.val}</textarea>`
-              :`<input id="${f.id}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:1rem">`
+              ?`<textarea id="${escAttr(U.actId(f.id))}" placeholder="${f.placeholder}" rows="3" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:0.875rem;resize:none">${f.val}</textarea>`
+              :`<input id="${escAttr(U.actId(f.id))}" type="${f.type||'text'}" placeholder="${f.placeholder}" value="${f.val}" style="width:100%;box-sizing:border-box;background:var(--glass2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:1rem">`
             }
           </div>`).join('')}
         </div>

@@ -1,0 +1,292 @@
+/**
+ * VaultCap 6 — HIG design tokens (render-blocking, unlayered).
+ * Ported from the ScentCap 3.0 system: semantic colours for light / dark / increased contrast,
+ * SF system type at 17pt body, 44pt targets. VaultCap keeps its own accent: vault gold.
+ * Dark is the default appearance; ThemeEngine adds body.light. Docs: DESIGN.md.
+ * The bottom block bridges legacy tokens (--text, --accent, --glass, --cap-*) so older screens inherit.
+ */
+
+:root,
+body.light {
+  /* Surfaces */
+  --bg: #f2f2f7;               /* systemGroupedBackground */
+  --surface: #ffffff;          /* secondarySystemGroupedBackground */
+  --surface-2: #f7f7fa;
+  --surface-elevated: #ffffff;
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+  --separator: rgba(60, 60, 67, 0.18);
+
+  /* Labels */
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.78);
+  --label-3: rgba(60, 60, 67, 0.64);
+  --label-4: rgba(60, 60, 67, 0.3);
+
+  /* Tint — vault gold, deepened for light backgrounds. AA 5.3:1 on white, 4.75:1 on grouped bg. */
+  --tint: #8b6508;
+  --tint-hover: #74540a;
+  --tint-soft: rgba(139, 101, 8, 0.12);
+  --on-tint: #ffffff;
+
+  --success: #248a3d;
+  --warning: #b25000;
+  --danger: #d70015;
+
+  /* Material */
+  --glass-material: rgba(249, 249, 251, 0.78);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.1);
+  --scrim: rgba(0, 0, 0, 0.35);
+
+  color-scheme: light;
+}
+
+/* Dark appearance (default): body without .light */
+body:not(.light) {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #232326;
+  --surface-elevated: #2c2c2e;
+  --fill: rgba(118, 118, 128, 0.24);
+  --fill-2: rgba(118, 118, 128, 0.32);
+  --separator: rgba(84, 84, 88, 0.6);
+  --label: #ffffff;
+  --label-2: rgba(235, 235, 245, 0.75);
+  --label-3: rgba(235, 235, 245, 0.6);
+  --label-4: rgba(235, 235, 245, 0.28);
+  /* Brand gold. 7.2:1 on #1c1c1e; black text on gold 8.8:1. */
+  --tint: #d4a017;
+  --tint-hover: #e2b43a;
+  --tint-soft: rgba(212, 160, 23, 0.16);
+  --on-tint: #000000;
+  --success: #30d158;
+  --warning: #ff9f0a;
+  --danger: #ff453a;
+  --glass-material: rgba(28, 28, 30, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.5);
+  --scrim: rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+@media (prefers-contrast: more) {
+  :root,
+  body.light {
+    --label-2: rgba(60, 60, 67, 0.9);
+    --label-3: rgba(60, 60, 67, 0.82);
+    --separator: rgba(60, 60, 67, 0.4);
+    --tint: #6e5005;
+    --tint-hover: #5a4104;
+  }
+  body:not(.light) {
+    --label-2: rgba(235, 235, 245, 0.9);
+    --label-3: rgba(235, 235, 245, 0.8);
+    --separator: rgba(140, 140, 145, 0.8);
+    --tint: #e8c84a;
+    --tint-hover: #f0d46a;
+  }
+}
+
+:root {
+  /* Type (rem so Dynamic Type --dt-scale on html cascades) */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
+  --font-rounded: ui-rounded, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono-ui: ui-monospace, "SF Mono", "IBM Plex Mono", monospace;
+  --t-large: 2.125rem;     /* 34 largeTitle */
+  --t-title1: 1.75rem;     /* 28 */
+  --t-title2: 1.375rem;    /* 22 */
+  --t-title3: 1.25rem;     /* 20 */
+  --t-headline: 1.0625rem; /* 17 semibold */
+  --t-body: 1.0625rem;     /* 17 */
+  --t-callout: 1rem;       /* 16 */
+  --t-subhead: 0.9375rem;  /* 15 */
+  --t-footnote: 0.8125rem; /* 13 */
+  --t-caption: 0.75rem;    /* 12 */
+  --t-caption2: 0.6875rem; /* 11 floor */
+
+  /* Shape + motion */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur: 220ms;
+  --hit: 44px;
+  --gutter: 20px;
+  --tabbar-h: 58px;
+}
+
+/* ---------- Legacy bridge: older screens inherit the HIG palette ---------- */
+
+:root,
+body,
+body.light,
+body:not(.light) {
+  --bg2: var(--surface);
+  --bg3: var(--surface-2);
+  --navy: var(--surface);
+  --navy-deep: var(--bg);
+  --gold: var(--tint);
+  --gold-light: var(--tint-hover);
+  --gold-dark: var(--tint);
+  --gold-seal: var(--tint);
+  --vault-panel-bg: var(--surface);
+  --vault-panel-border: transparent;
+  --vault-panel-inset: none;
+  --vault-panel-shadow: var(--shadow-1);
+  --glass: var(--surface);
+  --glass2: var(--fill);
+  --glass3: var(--fill-2);
+  --border: var(--separator);
+  --border2: var(--separator);
+  --border3: var(--label-4);
+  --input: var(--fill);
+  --text: var(--label);
+  --text2: var(--label-2);
+  --text3: var(--label-3);
+  --accent: var(--tint);
+  --accent-fg: var(--on-tint);
+  --on-accent: var(--on-tint);
+  --cap-accent: var(--tint);
+  --cap-accent-contrast: var(--on-tint);
+  --cap-accent-fg: var(--on-tint);
+  --glow: var(--tint-soft);
+  --indigo: var(--tint);
+  --purple: var(--label-2);
+  --ok: var(--success);
+  --warn: var(--warning);
+  --err: var(--danger);
+  --font: var(--font-ui);
+  --font-system: var(--font-ui);
+  --font-display-title: var(--font-ui);
+  --font-display: var(--font-ui);
+  --r: var(--r-md);
+  --rsm: var(--r-sm);
+  --rlg: var(--r-lg);
+  --rxl: var(--r-xl);
+  --shadow: var(--shadow-2);
+  --shadowlg: var(--shadow-3);
+  --surface-elev: var(--surface-elevated);
+  --cap-bg: var(--bg);
+  --cap-bg-2: var(--surface);
+  --cap-surface: var(--surface);
+  --cap-surface-2: var(--fill);
+  --cap-border: var(--separator);
+  --cap-border-strong: var(--separator);
+  --cap-text: var(--label);
+  --cap-text-dim: var(--label-2);
+  --cap-text-faint: var(--label-3);
+  --cap-glass-bg: var(--glass-material);
+  --cap-glass-border: var(--glass-border);
+  --cap-font-body: var(--font-ui);
+  --cap-font-display: var(--font-ui);
+  /* luxe.css (5.3 premium layer) */
+  --lx-bg: var(--bg);
+  --lx-surface: var(--surface);
+  --lx-surface-2: var(--surface-2);
+  --lx-surface-3: var(--surface-elevated);
+  --lx-hair: var(--separator);
+  --lx-hair-2: var(--separator);
+  --lx-text: var(--label);
+  --lx-text-2: var(--label-2);
+  --lx-text-3: var(--label-3);
+  --lx-gold: var(--tint);
+  --lx-gold-hi: var(--tint-hover);
+  --lx-gold-lo: var(--tint);
+  --lx-gold-grad: var(--tint);
+  --lx-gold-ink: var(--on-tint);
+  --lx-gold-soft: var(--tint-soft);
+  --lx-gold-line: var(--tint-soft);
+  --lx-shadow-1: var(--shadow-1);
+  --lx-shadow-2: var(--shadow-2);
+  --lx-r-ctl: var(--r-md);
+  --lx-r-card: var(--r-lg);
+  --lx-r-sheet: 16px;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--label);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- iOS / PWA touch behaviour (ScentCap 3.0.1 recipe) ---------- */
+
+/* No sideways wobble: clip (unlike hidden) doesn't create a scroll container, so sticky + scroll keep working. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Programmatic scrolls (new screen → top, sheet restore) land instantly: smooth scrolling read as auto-scroll on iPhone */
+html,
+body {
+  scroll-behavior: auto !important;
+}
+
+/* Native rubber-band vertically; no accidental horizontal back-swipe bounce. */
+body {
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
+}
+
+/* iOS zooms (and shifts the page) when focusing inputs under 16px. */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+/* 5.x inline sub-16px sizes on fields (sort selects, compact inputs) */
+input[style*="font-size:0."],
+select[style*="font-size:0."],
+textarea[style*="font-size:0."],
+input[style*="font-size: 0."],
+select[style*="font-size: 0."],
+textarea[style*="font-size: 0."] {
+  font-size: 16px !important;
+}
+
+/* Instant taps (no double-tap-zoom delay), no long-press callouts on controls. */
+a,
+button,
+input,
+select,
+textarea,
+label,
+summary,
+[role="button"],
+[role="radio"],
+[role="tab"],
+[role="menuitem"],
+[data-act] {
+  touch-action: manipulation;
+}
+
+button,
+.ti,
+.ni,
+.chip,
+.btn,
+.icb,
+.key {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

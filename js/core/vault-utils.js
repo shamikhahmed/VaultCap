@@ -17,12 +17,19 @@ window.docExpiry = docExpiry;
 function escAttr(str) { return escHtml(str); }
 window.escAttr = escAttr;
 
+/** Reject non-policy ids for Act / data-act string interpolation. */
+function actId(id) {
+  return (typeof IdPolicy !== 'undefined') ? IdPolicy.actId(id) : (/^[A-Za-z0-9_-]{1,64}$/.test(String(id ?? '')) ? String(id) : '');
+}
+window.actId = actId;
+
 const U = {
   esc: escHtml,
   escAttr,
   fv: escAttr,
+  actId,
   /** Generates a unique entity ID prefixed with 'i' using timestamp and random suffix. */
-  id:       () => 'i' + Date.now() + Math.random().toString(36).slice(2, 5),
+  id:       () => (typeof IdPolicy !== 'undefined' ? IdPolicy.newId() : ('i' + Date.now() + Math.random().toString(36).slice(2, 5))),
   flag:     c  => COUNTRIES.find(x => x.c === c)?.f || '🌐',
   cname:    c  => COUNTRIES.find(x => x.c === c)?.n || c,
   phone:    c  => COUNTRIES.find(x => x.c === c)?.p || '+0',
@@ -152,13 +159,13 @@ const U = {
     return `<button ${attrs}>${iconHtml}</button>`;
   },
   actsViewEditDel(prefix, id, view = 'detail') {
-    const q = `'${id}'`;
+    const q = `'${actId(id)}'`;
     return this.icb('eye', { onclick: `${prefix}.${view}(${q})`, ariaLabel: 'View details' })
       + this.icb('pencil', { onclick: `${prefix}.edit(${q})`, ariaLabel: 'Edit' })
       + this.icb('trash', { onclick: `${prefix}.del(${q})`, ariaLabel: 'Delete', class: 'del' });
   },
   actsEditDel(prefix, id) {
-    const q = `'${id}'`;
+    const q = `'${actId(id)}'`;
     return this.icb('pencil', { onclick: `${prefix}.edit(${q})`, ariaLabel: 'Edit' })
       + this.icb('trash', { onclick: `${prefix}.del(${q})`, ariaLabel: 'Delete', class: 'del' });
   },

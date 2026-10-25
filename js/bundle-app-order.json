@@ -22,6 +22,7 @@
   "js/core/combo-picker.js",
   "js/core/emergency.js",
   "js/core/ios-interactions.js",
+  "js/core/ui-kit.js",
   "js/core/nav-ui.js",
   "js/core/smart-actions.js",
   "js/core/virtual-list.js",
@@ -54,6 +55,5 @@
   "js/modules/gold.js",
   "js/modules/bc.js",
   "js/modules/bonds.js",
-  "js/modules/creditScore.js",
-  "js/capricorn-motion.js"
+  "js/modules/creditScore.js"
 ]

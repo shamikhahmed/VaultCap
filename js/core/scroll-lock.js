@@ -1,0 +1,55 @@
+'use strict';
+/* ScrollLock — freezes the document while any sheet/overlay is open, then restores the exact position.
+ * iOS ignores `overflow:hidden` on body for touch scrolling and jumps when it is toggled, so the body is
+ * pinned with position:fixed + top:-scrollY (ScentCap 3.0.1 recipe). Callers invoke ScrollLock.sync()
+ * from overlay open/close paths (Modal, hub sheets, More, theme picker, command palette, confirm dialogs). */
+const ScrollLock = (function () {
+  const OPEN = '#overlay.on, #themeOv.on, #cmdPal.on, .vc-sheet-overlay, .vc-more-overlay, .vc-dialog-backdrop';
+  let lockedY = null;
+
+  function lock() {
+    if (lockedY !== null) return;
+    lockedY = window.scrollY;
+    const b = document.body.style;
+    b.position = 'fixed';
+    b.top = -lockedY + 'px';
+    b.left = '0';
+    b.right = '0';
+    b.width = '100%';
+  }
+
+  function unlock() {
+    if (lockedY === null) return;
+    const y = lockedY;
+    lockedY = null;
+    const b = document.body.style;
+    b.position = '';
+    b.top = '';
+    b.left = '';
+    b.right = '';
+    b.width = '';
+    window.scrollTo(0, y);
+  }
+
+  function sync() {
+    // Lock for any open overlay — including theme picker on #pgHome and confirm
+    // dialogs on lock/onboarding (outside #app).
+    if (document.querySelector(OPEN)) lock();
+    else unlock();
+  }
+
+  /** Page position as the user sees it (the body is offset while locked). */
+  function currentY() {
+    return lockedY !== null ? lockedY : window.scrollY;
+  }
+
+  /** Navigation while a sheet is open: land at y when the lock releases instead of the old position. */
+  function scrollTo(y) {
+    if (lockedY !== null) lockedY = y;
+    else window.scrollTo(0, y);
+  }
+
+  return { lock, unlock, sync, currentY, scrollTo, isLocked: () => lockedY !== null };
+})();
+
+window.ScrollLock = ScrollLock;

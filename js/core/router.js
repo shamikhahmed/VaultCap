@@ -30,6 +30,9 @@ const R = {
     }
   },
   showLock() {
+    // Early demo LCP pins #pgHome with !important (index.html critical CSS) — release it once we leave home
+    document.documentElement.removeAttribute('data-vc-demo');
+    if (window.__vcActivateDeferredCss) window.__vcActivateDeferredCss();
     ['pgHome', 'pgOnboard', 'app', 'pgProfilePicker'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     document.body.classList.add('on-lock');
     document.body.classList.remove('hide-btabs');
@@ -95,7 +98,7 @@ const R = {
               S.fails = 0; S.lockedUntil = 0;
               try { LockoutStore.clear(); } catch (e) {}
               VaultDB.load().then(data => {
-                if (data) Object.assign(S, data);
+                if (data) Store.hydrate(data);
                 if (!Array.isArray(S.bills)) S.bills = [];
                 R.unlock();
               }).catch(() => Toast.show('Biometric unlock failed — use PIN', 'error'));
@@ -164,6 +167,8 @@ const R = {
         const linked = VaultRelations.linkOrphanCards({ createBank: false });
         if (linked > 0) Store.save();
       }
+      document.documentElement.removeAttribute('data-vc-demo');
+      if (window.__vcActivateDeferredCss) window.__vcActivateDeferredCss();
       ['pgLock', 'pgHome', 'pgOnboard'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
       document.body.classList.remove('on-lock');
       const fp = document.getElementById('forgotPinLink'); if (fp) fp.style.display = 'none';
@@ -179,10 +184,6 @@ const R = {
           if (S.currentPage === 'dashboard' && typeof Dash !== 'undefined') Dash.render();
         });
       }
-      setTimeout(() => {
-        const dashPb = document.getElementById('dashBody');
-        if (dashPb) pullToRefresh(dashPb, () => Dash.render());
-      }, 500);
       if (typeof NetWorthHistory !== 'undefined') {
         try { NetWorthHistory.onUnlock(); } catch (e) {}
       }
@@ -292,11 +293,10 @@ const R = {
     const prev = S.currentPage;
     // Save scroll position for the page we're leaving
     window._scrollCache = window._scrollCache || {};
-    if (prev && prev !== pg) {
-      const prevEl = document.getElementById('pg-' + prev);
-      const prevPb = prevEl?.querySelector('.pb');
-      if (prevPb) window._scrollCache[prev] = prevPb.scrollTop;
-    }
+    // 6.0: the document scrolls (no inner .pb scrollers) — remember where each screen was
+    const scrollY = () => (window.ScrollLock ? ScrollLock.currentY() : window.scrollY);
+    const scrollTo = (y) => (window.ScrollLock ? ScrollLock.scrollTo(y) : window.scrollTo(0, y));
+    if (prev && prev !== pg) window._scrollCache[prev] = scrollY();
     S.currentPage = pg;
     document.title = (pg.charAt(0).toUpperCase() + pg.slice(1).replace(/-/g, ' ')) + ' — VaultCap';
     document.querySelectorAll('.page').forEach(p => {
@@ -308,13 +308,12 @@ const R = {
     const el = document.getElementById('pg-' + pg);
     if (el) {
       el.classList.add('on');
-      const pb = el.querySelector('.pb');
       // force / reduce-motion: skip opacity:0 flash (Playwright treats opacity:0 as hidden)
       if (isFastNavigation() || force) {
         el.style.opacity = '';
         el.style.transform = '';
         el.style.transition = '';
-        if (pb) pb.scrollTop = window._scrollCache?.[pg] || 0;
+        if (prev !== pg) scrollTo(window._scrollCache?.[pg] || 0);
       } else {
         el.style.opacity = '0';
         el.style.transform = 'translateY(8px)';
@@ -322,8 +321,8 @@ const R = {
           el.style.transition = 'opacity var(--anim-fast,140ms) var(--ease-smooth,ease), transform var(--anim-fast,140ms) var(--ease-smooth,ease)';
           el.style.opacity = '1';
           el.style.transform = 'none';
-          if (pb) pb.scrollTop = window._scrollCache?.[pg] || 0;
         });
+        if (prev !== pg) scrollTo(window._scrollCache?.[pg] || 0);
       }
     }
     // Navigation dismisses modal chrome so destination page is not covered
@@ -331,6 +330,7 @@ const R = {
       if (typeof Modal !== 'undefined' && Modal.close) Modal.close();
       document.getElementById('overlay')?.classList.remove('on');
       document.getElementById('cmdPal')?.classList.remove('on');
+      if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     } catch (_) { /* ignore */ }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
     if (prev === pg && !force) return;
@@ -422,12 +422,6 @@ const R = {
     if (renders[pg]) renders[pg]();
     if (typeof U !== 'undefined' && U.applyIosGroups) U.applyIosGroups();
     if (prev !== pg) buildNav();
-    // Pull-to-refresh on module page bodies
-    const ptrMap = {banks:'bList',cards:'cItems',investments:'invItems',cash:'cashItems',loans:'loanItems',sims:'simItems',assets:'aItems',expenses:'expItems',emails:'emailItems',gadgets:'gItems',digital:'digItems',friends:'friendItems',documents:'docsItems',vehicles:'vItems'};
-    if (ptrMap[pg]) {
-      const ptrEl = document.getElementById(ptrMap[pg])?.closest('.pb') || document.getElementById('pg-'+pg)?.querySelector('.pb');
-      if (ptrEl && typeof pullToRefresh === 'function') pullToRefresh(ptrEl, () => { if (renders[pg]) renders[pg](); });
-    }
     // Wire debounced search inputs
     if (typeof _wireSearchDebounce === 'function') setTimeout(_wireSearchDebounce, 100);
   },
@@ -480,7 +474,9 @@ function updatePageChrome(pg) {
 window.resetScroll = function(pageId) {
   const pid = pageId || (typeof S !== 'undefined' ? S.currentPage : null);
   if (window._scrollCache && pid) window._scrollCache[pid] = 0;
-  const el = pid ? document.getElementById('pg-' + pid) : null;
-  const pb = el?.querySelector('.pb');
-  if (pb) pb.scrollTop = 0;
+  if (pid && typeof S !== 'undefined' && S.currentPage === pid) {
+    // window.scrollTo is a no-op while ScrollLock pins the body; unlock would restore stale Y.
+    if (window.ScrollLock) ScrollLock.scrollTo(0);
+    else window.scrollTo(0, 0);
+  }
 };

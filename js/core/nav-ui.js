@@ -1,10 +1,27 @@
 'use strict';
 /* openMoneySheet, openAssetsSheet, openIdentitySheet, openMore, closeMore, togglePrivacy, toggleSidebar, initSidebar, buildSettTabs, getTabPrefs, saveTabPrefs, renderFinanceHome, renderVaultHome, renderAssetsHome, buildNav, patchNavActiveState */
 
+function dismissSheetOverlay(overlay) {
+  if (!overlay) return;
+  if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+  overlay.remove();
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
+}
+
+function armSheetOverlay(overlay) {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) dismissSheetOverlay(overlay);
+  });
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
+  if (typeof FocusTrap !== 'undefined') {
+    FocusTrap.trap(overlay, () => dismissSheetOverlay(overlay));
+  }
+}
+
 function moneySheetTile(m) {
   const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-  const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-  return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+  const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+  return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
 }
 
 function openMoneySheet() {
@@ -37,8 +54,8 @@ function openMoneySheet() {
     '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
     '<div class="vc-sheet-kicker">Money' + ctxLabel + '</div>' +
     body + '</div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openMoneySheet = openMoneySheet;
 
@@ -63,12 +80,12 @@ function openAssetsSheet() {
     '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+      const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openAssetsSheet = openAssetsSheet;
 
@@ -94,12 +111,12 @@ function openIdentitySheet() {
     '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+      const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openIdentitySheet = openIdentitySheet;
 
@@ -152,8 +169,8 @@ function openMore() {
     '<div class="vc-sheet-grid">' +
     group.items.map(m =>
       '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'' + m.id + '\')">' +
-      '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
-      '<div class="vc-sheet-tile-label">' + m.n + '</div>' +
+      '<span class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</span>' +
+      '<span class="vc-sheet-tile-label">' + m.n + '</span>' +
       '</button>'
     ).join('') +
     '</div></div>'
@@ -167,9 +184,13 @@ function openMore() {
     bodyHtml +
     '</div>';
   document.body.appendChild(overlay);
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
+  if (typeof FocusTrap !== 'undefined') FocusTrap.trap(overlay, () => closeMore());
 }
 function closeMore() {
+  if (typeof FocusTrap !== 'undefined') FocusTrap.release();
   document.getElementById('moreOverlay')?.remove();
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
   const el = document.getElementById('moreSheet');
   if (el) el.style.display = 'none';
 }
@@ -221,7 +242,7 @@ function buildSettTabs() {
   ];
   const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'account';
   el.innerHTML = tabs.map(([id, label, ic]) =>
-    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
+    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${U.actId(id)}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
   ).join('');
 }
 
@@ -233,12 +254,12 @@ function saveTabPrefs(prefs) {
 }
 
 function financeHomeTile(m) {
-  return `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+  return `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`;
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`;
 }
 
 function renderFinanceHome() {
@@ -274,12 +295,12 @@ function renderVaultHome() {
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`).join('') + '</div>';
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`).join('') + '</div>';
 }
 
 function renderAssetsHome() {
@@ -294,12 +315,12 @@ function renderAssetsHome() {
     {id:'assets',ic:'layers',label:'Property',desc:(S.assets||[]).length+' items'+(vehicleCount||metalCount?' · inc. vehicles & metals':'')},
   ].filter(m => isModOn(m.id));
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`).join('') + '</div>';
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`).join('') + '</div>';
 }
 
 function renderHomeModules() {
@@ -322,8 +343,8 @@ function renderHomeModules() {
   ];
   grid.innerHTML = mods.map(m =>
     `<button type="button" class="home-mod-tile" data-act="ActHelpers.homeModGoto('${m.page}')" aria-label="${m.label}">
-      <div class="home-mod-ic">${VC.icon(m.ic, 20)}</div>
-      <div class="home-mod-label">${m.label}</div>
+      <span class="home-mod-ic">${VC.icon(m.ic, 20)}</span>
+      <span class="home-mod-label">${m.label}</span>
     </button>`
   ).join('');
 }
@@ -358,19 +379,19 @@ function buildNav() {
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
-  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></div>`;
+  let sbHTML = `<button type="button" class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></button>`;
   groupOrder.forEach((grp) => {
     const label = groups[grp];
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
+      `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${escAttr(U.actId(m.id))}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px" role="separator"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
+    `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${escAttr(U.actId(m.id))}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 
@@ -384,11 +405,11 @@ function buildNav() {
   document.getElementById('btabs').setAttribute('role', 'tablist');
   document.getElementById('btabs').setAttribute('aria-label', 'Main navigation');
   document.getElementById('btabs').innerHTML =
-    `<div class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" data-act="R.goto('dashboard')"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
-    `<div class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" data-act="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
-    `<div class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" data-act="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</div><span>Wealth</span></div>` +
-    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" data-act="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
-    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" data-act="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
+    `<button type="button" class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" data-act="R.goto('dashboard')"><span class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</span><span>Home</span></button>` +
+    `<button type="button" class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" data-act="openMoneySheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</span><span>Money</span></button>` +
+    `<button type="button" class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" data-act="openAssetsSheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</span><span>Wealth</span></button>` +
+    `<button type="button" class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" data-act="openIdentitySheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</span><span>Identity</span></button>` +
+    `<button type="button" class="ti" role="tab" aria-selected="false" aria-label="More options" data-act="openMore()"><span class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</span><span>More</span></button>`;
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [
@@ -398,16 +419,24 @@ function buildNav() {
     { id: 'cards', icon: 'card', label: 'Card', obj: 'Cards' },
   ].filter(q => isModOn(q.id) && document.getElementById('pg-' + q.id));
   const fabItems = [
-    ...quickAdds.map(q => `<div class="fmi" data-act="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</div>`),
-    '<div class="fmi" data-act="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</div>',
-    '<div class="fmi" data-act="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</div>',
-    '<div class="fmi" data-act="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</div>',
-    '<div class="fmi" data-act="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</div>',
-    '<div class="fmi" data-act="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</div>',
-    '<div class="fmi" data-act="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</div>',
-    '<div class="fmi" data-act="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</div>'
+    ...quickAdds.map(q => `<button type="button" class="fmi" role="menuitem" data-act="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</button>`),
+    '<button type="button" class="fmi" role="menuitem" data-act="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</button>'
   ];
-  document.getElementById('fabMenu').innerHTML = fabItems.join('');
+  const fabMenu = document.getElementById('fabMenu');
+  if (fabMenu) {
+    fabMenu.innerHTML = fabItems.join('');
+    if (!fabMenu.classList.contains('on')) {
+      fabMenu.hidden = true;
+      fabMenu.setAttribute('inert', '');
+      fabMenu.setAttribute('aria-hidden', 'true');
+    }
+  }
   patchNavActiveState();
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 }
@@ -415,7 +444,9 @@ function buildNav() {
 function patchNavActiveState() {
   const page = S.currentPage;
   document.querySelectorAll('#sbNav .ni[data-pg]').forEach(el => {
-    el.classList.toggle('on', el.dataset.pg === page);
+    const on = el.dataset.pg === page;
+    el.classList.toggle('on', on);
+    if (on) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
   const bankingPages = new Set(['banks','cards','cash','loans','expenses','bc','finance-home']);
   const wealthPages = new Set(['investments','bonds','assets','vehicles','gadgets','gold','assets-home']);
@@ -427,6 +458,7 @@ function patchNavActiveState() {
   if (ti[1]) ti[1].classList.toggle('on', bankingPages.has(page));
   if (ti[2]) ti[2].classList.toggle('on', wealthPages.has(page));
   if (ti[3]) ti[3].classList.toggle('on', identityPages.has(page));
+  ti.forEach(el => el.setAttribute('aria-selected', el.classList.contains('on') ? 'true' : 'false'));
 }
 
 // ===================== SMART ADD (offline pattern detection) =====================

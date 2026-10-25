@@ -1,0 +1,254 @@
+[
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "banks-add",
+  "msg": "Add bank failed: locator.click: Timeout 12000ms exceeded.\nCall log:\n  - waiting for locator('[data-act=\"Banks.openAdd()\"]').first()\n    - locator resolved to <button type=\"button\" data-audit-i=\"26\" data-act=\"Banks.openAdd()\">\u2026</button>\n  - attempting click action\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    23 \u00d7 waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+ },
+ {
+  "sev": "info",
+  "area": "E",
+  "screen": "fresh",
+  "msg": "surfaces {\"home\":\"none\",\"lock\":\"none\",\"onboard\":\"flex\",\"app\":\"none\"}"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "dashboard",
+  "msg": "aria-hidden-focus: ARIA hidden element must not be focusable or contain focusable elements (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "dashboard",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "dashboard",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "family",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "family",
+  "msg": "label: Form elements must have labels (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "family",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "banks",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "banks",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "banks",
+  "msg": "select-name: Select element must have an accessible name (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "cards",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "cards",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (4)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "cards",
+  "msg": "select-name: Select element must have an accessible name (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "investments",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "investments",
+  "msg": "button-name: Buttons must have discernible text (6)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "investments",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (2)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "investments",
+  "msg": "select-name: Select element must have an accessible name (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "documents",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "documents",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (2)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "search",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "search",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "settings",
+  "msg": "aria-required-children: Certain ARIA roles must contain particular children (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "settings",
+  "msg": "label: Form elements must have labels (2)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "G",
+  "screen": "settings",
+  "msg": "scrollable-region-focusable: Scrollable region must have keyboard access (1)",
+  "theme": "light"
+ },
+ {
+  "sev": "crit",
+  "area": "G",
+  "screen": "settings",
+  "msg": "select-name: Select element must have an accessible name (2)",
+  "theme": "light"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /base.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /components.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /fonts-local.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /identity.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /brand-mark.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /layout.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /luxe.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /themes.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /capricorn-core.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /ios-tokens.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /design/vaultcap.css"
+ },
+ {
+  "sev": "high",
+  "area": "D",
+  "screen": "console",
+  "msg": "404 /design/system.css"
+ }
+]

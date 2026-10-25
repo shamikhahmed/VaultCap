@@ -1,3 +1,26 @@
+## [Unreleased] — Prod-ready audit (HIG 3 branch)
+
+- Sync `VERSION.json` `swCache` → `vaultcap-v100` (matched `sw-v51.js`; was stale `v99`)
+- Esc on sheets now closes the overlay (`FocusTrap` → `Modal.close`), not only release focus
+- Tab bar CSS: early `bottom`/`padding-bottom` rules aligned with canonical `max(14px, safe+6)` and bar+48+safe
+- Pitch satellite links: `rel="noopener"` on `target=_blank`
+- Gate: `tests/version-coherence.spec.js`; inventory `qa/prod-ready/INVENTORY.md`; harness `scripts/prod-ready-audit.mjs`
+- Docs: README/HANDOVER version + SW cache brought to 5.4.3 / `vaultcap-v100`
+
+## [Unreleased] — HIG 6 design (ScentCap 3.0 system)
+
+- Apple-HIG redesign on the shared Cap system: `css/design/tokens.css` (semantic light/dark/increased-contrast tokens, vault-gold accent, legacy bridge), `css/design/system.css` (`ui-*` primitives), `css/design/vaultcap.css` (shell + shared-class reskin); 5.x CSS demoted to `@layer legacy` via `css/app.css`
+- Shell: floating glass tab bar (48 pt tabs, labels no longer clipped), glass sidebar ≥700 px, no FAB — Add lives in headers (dashboard `+` opens the Add menu)
+- Dashboard rebuilt on `UIKit` (`js/core/ui-kit.js`): net-worth card, Money tiles, Security + Your vault inset lists
+- Sheets: grabber + Cancel / Title / Save bar (`Modal._sheetBar`); bank rows tap through to details; lock keypad, welcome and settings restyled
+- Fix: `?demo=1` kept `#pgHome` (critical `!important`) above the lock keypad and vault — attribute released in `R.showLock()`/`R.unlock()`, deferred CSS armed there too
+- Light accent is now deep gold `#8b6508` (AA) instead of ink navy — see `DESIGN.md`
+- iPhone (Safari + Home Screen PWA): taps on `<div data-act>` tabs/chips/rows were retargeted by WebKit touch adjustment to nearby buttons (e.g. Money tab → Cash tile) — `act-delegate` now gives every `data-act` element its own click listener
+- iPhone: the document scrolls (no inner `.pb` scrollers / `-webkit-overflow-scrolling`), sticky sidebar, `ScrollLock` (body fixed + exact restore) for every sheet, `focus({preventScroll})`, ≥16px fields, `touch-action: manipulation`, hover guards, pull-to-refresh removed (fired on normal swipes), `capricorn-motion` out of the app shell
+- SW no longer `skipWaiting`/`clients.claim` — a new worker applies on the next cold launch instead of swapping a running app
+- `scripts/ios-behaviour-check.mjs` (`npm run ios:check`, WebKit iPhone 15 Pro): origin/main 11 FAIL → 21/21 PASS
+- New gate `tests/hig-design.spec.js` (before/after evidence: `qa/hig-6/`) · SW `vaultcap-v100`
+
 ## [5.4.3] — 2026-10-22
 - Lighthouse mobile: defer `base`/`layout`/`components` CSS; load `storage.js` after first paint; move `migrate`/`demo-profiles`/`onboarding-flow`/`icons` into app chunk
 - SW `vaultcap-v99` · query `?v=5.4.3`

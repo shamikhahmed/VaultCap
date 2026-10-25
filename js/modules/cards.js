@@ -24,10 +24,10 @@ const Cards={
     const f=S.cF;
     const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','Crypto'],['bnpl','BNPL'],['expiring','Expiring'],['fav','Favourites']];
     const ci=document.getElementById('cChips');
-    if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" data-act="S.cF='${v}';Cards.render()">${l}</div>`).join('');
+    if(ci)ci.innerHTML=chips.map(([v,l])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.cF='${v}';Cards.render()">${l}</button>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row" tabindex="0" aria-label="Cards carrying today">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
       if(c.archived&&!Cards._showArchived)return false;
@@ -56,7 +56,7 @@ const Cards={
           const GRADS={Visa:'linear-gradient(135deg,'+VCBrand.h_1a1f71+','+VCBrand.h_2575fc+')',Mastercard:'linear-gradient(135deg,'+VCBrand.h_eb001b+','+VCBrand.h_f79e1b+')','American Express':'linear-gradient(135deg,'+VCBrand.h_007b5e+','+VCBrand.h_00b894+')',UnionPay:'linear-gradient(135deg,'+VCBrand.h_c0392b+','+VCBrand.h_e74c3c+')',PayPak:'linear-gradient(135deg,'+VCBrand.h_007a3d+','+VCBrand.h_00b463+')'};
           const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(0,213,255,.8),rgba(0,213,255,.6))';
           const last4=c.last4||'····';
-          return '<div data-act="Cards.openDetail(\''+c.id+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
+          return '<div data-act="Cards.openDetail(\''+U.actId(c.id)+'\')" style="flex-shrink:0;width:240px;height:148px;border-radius:16px;background:'+bg+';position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 24px rgba(0,0,0,.4)">'+
             '<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 55%);pointer-events:none"></div>'+
             '<div style="position:absolute;top:14px;left:14px;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,.92);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(c.cardName||'Card')+'</div>'+
             '<div style="position:absolute;top:12px;right:12px;font-size:0.6875rem;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.1em">'+escHtml((c.network||'').toUpperCase())+'</div>'+
@@ -141,7 +141,7 @@ const Cards={
 
     const carryBorder=carrying?'animation:cardGlow 2.5s ease-in-out infinite':'box-shadow:0 8px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)';
 
-    return `<div class="wcard sens" data-id="${c.id}" data-act="Cards.openDetail('${c.id}')" style="background:${gradient};${carryBorder}">
+    return `<div class="wcard sens" data-id="${escAttr(U.actId(c.id))}" data-act="Cards.openDetail('${U.actId(c.id)}')" style="background:${gradient};${carryBorder}">
   <div class="wcard-shine"></div>
   <div class="wcard-inner">
     <div class="wcard-top">
@@ -165,10 +165,10 @@ const Cards={
     </div>
   </div>
   <div class="wcard-actions">
-    ${U.icb('wallet',{onclick:`event.stopPropagation();Cards.toggleCarry('${c.id}')`,title:'Toggle carry',class:'wc-act-btn'})}
-    ${U.icb('pencil',{onclick:`event.stopPropagation();Cards.edit('${c.id}')`,title:'Edit',class:'wc-act-btn'})}
-    ${U.icb('archive',{onclick:`event.stopPropagation();Cards.archive('${c.id}')`,title:c.archived?'Unarchive':'Archive',class:'wc-act-btn'})}
-    ${U.icb('trash',{onclick:`event.stopPropagation();Cards.del('${c.id}')`,title:'Delete',class:'wc-act-btn del'})}
+    ${U.icb('wallet',{onclick:`event.stopPropagation();Cards.toggleCarry('${U.actId(c.id)}')`,title:'Toggle carry',class:'wc-act-btn'})}
+    ${U.icb('pencil',{onclick:`event.stopPropagation();Cards.edit('${U.actId(c.id)}')`,title:'Edit',class:'wc-act-btn'})}
+    ${U.icb('archive',{onclick:`event.stopPropagation();Cards.archive('${U.actId(c.id)}')`,title:c.archived?'Unarchive':'Archive',class:'wc-act-btn'})}
+    ${U.icb('trash',{onclick:`event.stopPropagation();Cards.del('${U.actId(c.id)}')`,title:'Delete',class:'wc-act-btn del'})}
   </div>
 </div>`;
   },
@@ -462,7 +462,7 @@ const Cards={
   },
   edit(id){
     const c=S.cards.find(x=>x.id===id);if(!c)return;
-    Modal.open('Edit Card',this.form(c),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cards.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cards.save('${id}')">Update</button>`);
+    Modal.open('Edit Card',this.form(c),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cards.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cards.save('${U.actId(id)}')">Update</button>`);
     setTimeout(()=>{[['cf-net',c.network||'Visa'],['cf-type',c.cardType||'Credit'],['cf-cat',c.category||'Standard'],['cf-cc',c.country||'GB'],['cf-own',c.ownership||'personal']].forEach(([i,v])=>{const el=document.getElementById(i);if(el)el.value=v;});},60);
   },
   openDetail(id){
@@ -476,7 +476,7 @@ const Cards={
     }
     const cardNumRow=c.cardNumber&&c.cardNumber.length>=4?`<div class="dr"><span class="drk">Card Number</span><span class="drv sens" id="cdnum-disp">•••• •••• •••• ${c.last4||'????'}</span>${U.icb('eye',{onclick:`(function(){const el=document.getElementById('cdnum-disp');const num='${c.cardNumber}'.replace(/(\\d{4})/g,'$1 ').trim();if(el.dataset.shown){el.textContent='•••• •••• •••• ${c.last4||'????'}';delete el.dataset.shown;}else{el.textContent=num;el.dataset.shown='1';}})()`,ariaLabel:'Reveal card number',size:14})}${U.icb('copy',{onclick:`U.copy('${c.cardNumber}','Card number')`,ariaLabel:'Copy card number',size:14})}</div>`:U.drRow('Last 4','****'+(c.last4||'—'));
     const linkedBankName=c.linkedBank||(c.linkedBankId?(S.banks.find(b=>b.id===c.linkedBankId)||{}).bankName:'')||'—';
-    Modal.open(c.cardName,'<div>'+[['Card',c.cardName],['Linked Bank',linkedBankName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Cards.edit('${id}');Modal.close()">Edit</button>`);
+    Modal.open(c.cardName,'<div>'+[['Card',c.cardName],['Linked Bank',linkedBankName],['Network',c.network||'—'],['Type',c.cardType||'—'],['Category',c.category||'—'],['Country',U.flag(c.country)+' '+U.cname(c.country)]].map(([k,v])=>U.drRow(k,v)).join('')+cardNumRow+[['Expiry',c.expiry||'—'],['CVV',c.cvv?'•••':'-',c.cvv],['Card PIN',c.cardPin?'••••':'-',c.cardPin],['Credit Limit',_cardLimit(c)?U.fmtCur(typeof CurrencyEngine!=='undefined'?CurrencyEngine.toBase(_cardLimit(c),c.currency||'GBP'):_cardLimit(c),S.user.currency||'GBP'):'—'],['Rewards',c.rewardsProgram||'—'],['Points',c.rewardsPoints?U.fmt(c.rewardsPoints):'—'],['Annual Fee',c.annualFee?c.annualFee+'':'-'],['Username',c.username?'••••':'-',c.username],['Pwd Hint',c.pwdHint||'—'],['Ownership',c.ownership||'Personal'],['Notes',c.notes||'—']].map(([k,v,s])=>U.drRow(k,v,s)).join('')+photoHtml+'</div>',`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Cards.edit('${U.actId(id)}');Modal.close()">Edit</button>`);
   },
   fav(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.favorite=!c.favorite;Store.save();this.render();},
   archive(id){const c=S.cards.find(x=>x.id===id);if(!c)return;c.archived=!c.archived;c.updatedAt=new Date().toISOString();Store.save();this.render();Toast.show(c.archived?'Archived':'Unarchived','info');},
@@ -487,6 +487,6 @@ const Cards={
     S.trash.push({id:U.id(),type:'cards',data:c,deletedAt:new Date().toISOString()});
     S.cards=S.cards.filter(x=>x.id!==id);S.wallet=S.wallet.filter(x=>x!==id);
     Activity.log('Trashed card',c.cardName);Store.save();if(fm)Modal.close();this.render();
-    Toast.show('Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore(\''+S.trash[S.trash.length-1].id+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
+    Toast.show('Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore(\''+U.actId(S.trash[S.trash.length-1].id)+'\');this.closest(\'.toast\').remove()">Undo</button>','info',6000);
   }
 };

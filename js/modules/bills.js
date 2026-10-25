@@ -218,6 +218,7 @@ const Bills = {
         foot.innerHTML = '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>'
           + '<button type="button" class="btn btn-d btn-sm" data-act="Bills.del(\'' + id + '\',true)">Delete</button>'
           + '<button type="button" class="btn btn-p" data-act="Bills.save(\'' + id + '\')">Update</button>';
+        Modal._sheetBar();
       }
     }, 80);
   },

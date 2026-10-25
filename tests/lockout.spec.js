@@ -15,6 +15,8 @@ test.describe('VaultCap lockout persistence', () => {
     });
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
+    // The app bundle defines S after DOMContentLoaded — wait for boot before reading lockout state
+    await page.waitForFunction(() => typeof S !== 'undefined' && typeof S.fails === 'number', { timeout: 30000 });
     const state = await page.evaluate(() => ({
       fails: typeof S !== 'undefined' ? S.fails : -1,
       lockedUntil: typeof S !== 'undefined' ? S.lockedUntil : 0,

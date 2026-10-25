@@ -182,7 +182,7 @@ const Family = {
     const hideBal = !!S.familyHideBalances;
     const hideToggle = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
       <div><div class="vc-ix-56">Hide balances</div><div class="vc-ix-3">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
-      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
+      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} aria-label="Hide balances" data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
     </div>`;
 
     const _stat = (id) => {
@@ -206,7 +206,7 @@ const Family = {
     const rest = members.filter(m => !m.isHead);
 
     const headCard = head
-      ? `<div data-act="Family.openMember('${head.id}')" style="background:linear-gradient(135deg,rgba(0,213,255,.25),rgba(0,213,255,.15));border:1px solid rgba(0,213,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
+      ? `<div data-act="Family.openMember('${U.actId(head.id)}')" style="background:linear-gradient(135deg,rgba(0,213,255,.25),rgba(0,213,255,.15));border:1px solid rgba(0,213,255,.5);border-radius:20px;padding:20px;cursor:pointer;touch-action:manipulation;position:relative;overflow:hidden;margin-bottom:12px">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)"></div>
           <div style="position:absolute;top:10px;right:12px;font-size:0.6875rem;background:rgba(0,213,255,.4);color:${VCBrand.h_fff};padding:3px 8px;border-radius:8px;font-weight:700">HEAD</div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
@@ -230,7 +230,7 @@ const Family = {
         </div>`);
 
     const memberCards = rest.map(m =>
-      `<div data-act="Family.openMember('${m.id}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
+      `<div data-act="Family.openMember('${U.actId(m.id)}')" style="background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:14px">
         ${this.avatarHtml(m.name, 52)}
         <div class="vc-ix-20">
           <div class="vc-ix-77">${escHtml(m.name)} ${this._roleBadge(m.role || 'viewer')}</div>
@@ -259,7 +259,7 @@ const Family = {
     const tabs = this._visibleTabs();
 
     const tabBar = `<div class="cap-tab-bar" role="tablist" aria-label="Family member sections">
-      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${t.id}" role="tab" aria-selected="${this._tab === t.id}" data-act="Family._switchTab('${t.id}')"><span class="chip-ic">${VC.icon(t.icon,12)}</span>${t.label}</button>`).join('')}
+      ${tabs.map(t => `<button type="button" class="cap-tab${this._tab === t.id ? ' on' : ''}" data-tab="${escAttr(U.actId(t.id))}" role="tab" aria-selected="${this._tab === t.id}" data-act="Family._switchTab('${U.actId(t.id)}')"><span class="chip-ic">${VC.icon(t.icon,12)}</span>${t.label}</button>`).join('')}
     </div>`;
 
     const backBtn = `<button type="button" class="cap-subchrome-back" data-act="Family._activeId=null;Family._tab='overview';Family.render()">← Family</button>`;
@@ -270,7 +270,7 @@ const Family = {
         <div class="cap-member-name">${escHtml(m.name)}${m.isHead ? ' <span class="badge b-acc">Head</span>' : ''} ${this._roleBadge(m.role || (m.isHead ? 'admin' : 'viewer'))}</div>
         <div class="cap-member-sub">${escHtml(m.relation || '')}${m.dob ? ' · DOB: ' + escHtml(m.dob) : ''}</div>
       </div>
-      <button type="button" class="btn btn-g btn-sm" data-act="Family.editMember('${m.id}')">Edit</button>
+      <button type="button" class="btn btn-g btn-sm" data-act="Family.editMember('${U.actId(m.id)}')">Edit</button>
     </div>`;
 
     body.innerHTML = `<div class="cap-subchrome">${backBtn}${header}${tabBar}<div id="fm-tab-body" class="cap-tab-panel" role="tabpanel">${this._tabContent(m)}</div></div>`;
@@ -360,7 +360,7 @@ const Family = {
     if (this._tab === 'notes') {
       return `<div class="fg"><label class="fl">Private notes for ${escHtml(m.name)}</label>
         <textarea class="inp" id="fam-member-notes" rows="6" placeholder="Medical info, emergency contacts, school details…">${escHtml(m.notes || '')}</textarea></div>
-        <button type="button" class="btn btn-p btn-full vc-ix-51" data-act="Family._saveNotes('${id}')">Save Notes</button>`;
+        <button type="button" class="btn btn-p btn-full vc-ix-51" data-act="Family._saveNotes('${U.actId(id)}')">Save Notes</button>`;
     }
 
     return '';
@@ -402,7 +402,7 @@ const Family = {
         <div class="entry-meta"><span class="badge b-muted">${escHtml(b.bankType || 'bank')}</span>${b.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('banks','${b.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('banks','${b.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('banks','${U.actId(b.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('banks','${U.actId(b.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -418,7 +418,7 @@ const Family = {
         <div class="entry-meta">${expBadge}${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('cards','${c.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cards','${c.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('cards','${U.actId(c.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cards','${U.actId(c.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -432,7 +432,7 @@ const Family = {
         <div class="entry-meta">${c.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('cash','${c.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cash','${c.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('cash','${U.actId(c.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('cash','${U.actId(c.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -446,7 +446,7 @@ const Family = {
         <div class="entry-meta">${i.currentValue ? `<span class="badge b-acc sens">${U.fmt(i.currentValue)} ${i.currency || ''}</span>` : ''}${i.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('investments','${i.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('investments','${i.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('investments','${U.actId(i.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('investments','${U.actId(i.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -460,7 +460,7 @@ const Family = {
         <div class="entry-meta">${a.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('assets','${a.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('assets','${a.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('assets','${U.actId(a.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('assets','${U.actId(a.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -479,7 +479,7 @@ const Family = {
         <div class="entry-meta">${expBadge}${d.tags?.slice(0,2).map(t=>`<span class="badge b-muted">${t}</span>`).join('')||''}</div>
       </div>
       <div class="entry-acts">
-        ${U.icb('pencil',{onclick:`Family._editEntity('documents','${d.id}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('documents','${d.id}')`,ariaLabel:'Delete',class:'del'})}
+        ${U.icb('pencil',{onclick:`Family._editEntity('documents','${U.actId(d.id)}')`,ariaLabel:'Edit'})}${U.icb('trash',{onclick:`Family._delEntity('documents','${U.actId(d.id)}')`,ariaLabel:'Delete',class:'del'})}
       </div>
     </div></div>`;
   },
@@ -596,8 +596,8 @@ const Family = {
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="fam-notes" rows="2">${escHtml(m.notes || '')}</textarea></div>
       </div>`,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>` +
-      (!m.isHead ? `<button type="button" class="btn btn-d btn-sm" data-act="Family._deleteMember('${id}')">Delete</button>` : '') +
-      `<button type="button" class="btn btn-p" data-act="Family._updateMember('${id}')">Save</button>`
+      (!m.isHead ? `<button type="button" class="btn btn-d btn-sm" data-act="Family._deleteMember('${U.actId(id)}')">Delete</button>` : '') +
+      `<button type="button" class="btn btn-p" data-act="Family._updateMember('${U.actId(id)}')">Save</button>`
     );
   },
 
