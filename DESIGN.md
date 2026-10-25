@@ -10,7 +10,7 @@ Source of truth:
 | `css/design/tokens.css` | Semantic tokens (light / dark / increased contrast) + legacy bridge | render-blocking, unlayered |
 | `css/design/system.css` | `ui-*` primitives (ScentCap port) | `@layer components` via `css/app.css` |
 | `css/design/vaultcap.css` | Reskin of 5.x shell + shared classes (`.btabs`, `.ni`, `.entry`, `.si`, `.modal`…) | `@layer components` |
-| `css/app.css` | Cascade layer order (`@layer legacy, components`) only — sheets load as discrete `<link layer>` tags | deferred (`media=print` → `all`, see `js/boot-cache.js`) |
+| `css/app.css` | Cascade orchestrator: 5.x CSS demoted to `@layer legacy` | deferred (`media=print` → `all`, see `js/boot-cache.js`) |
 | `js/core/ui-kit.js` | `UIKit` — vanilla HTML-string kit for string-rendered screens | app bundle |
 
 ## Principles
