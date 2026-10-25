@@ -5,12 +5,8 @@
  * Checks: tab bar + header controls tappable, no sideways overflow, the document (not an inner box) scrolls,
  * navigation opens at top without reloading, sheets keep the page position, inputs ≥16px, SW doesn't self-activate.
  */
-import { webkit, chromium, devices } from '@playwright/test';
+import { webkit, devices } from '@playwright/test';
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const { chromiumLaunchOptions } = require('./chromium-launch-options.cjs');
 
 const BASE = process.argv[2] || 'http://127.0.0.1:8765/';
 const results = [];
@@ -23,16 +19,8 @@ const step = async (name, fn) => {
   }
 };
 
-const iphone = devices['iPhone 15 Pro'];
-const { defaultBrowserType, ...iphoneCtx } = iphone;
-let browser;
-try {
-  browser = await webkit.launch();
-} catch (e) {
-  console.warn(`WebKit unavailable (${e.message?.split('\n')[0]}); using Chromium + iPhone 15 Pro metrics`);
-  browser = await chromium.launch(chromiumLaunchOptions());
-}
-const ctx = await browser.newContext({ ...iphoneCtx, serviceWorkers: 'block' });
+const browser = await webkit.launch();
+const ctx = await browser.newContext({ ...devices['iPhone 15 Pro'], serviceWorkers: 'block' });
 const page = await ctx.newPage();
 page.setDefaultTimeout(8000);
 await page.addInitScript(() => {
