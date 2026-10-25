@@ -94,6 +94,40 @@ for (const pg of ['dashboard', 'banks', 'cards', 'investments', 'documents', 'se
 // 2b. The document really scrolls (and instantly — no smooth-scroll animation)
 check('programmatic scroll lands instantly', await page.evaluate(() => { window.scrollTo(0, 300); const y = window.scrollY; window.scrollTo(0, 0); return y >= 250; }));
 
+// 2c. A downward swipe at the top of the page neither reloads nor re-renders (no pull-to-refresh)
+await step('swipe at top', async () => {
+  await page.evaluate(() => { R.goto('dashboard'); window.scrollTo(0, 0); });
+  await page.waitForTimeout(400);
+  await page.evaluate(() => { document.getElementById('dashBody').firstElementChild.dataset.swipeProbe = '1'; });
+  const touched = await page.evaluate(async () => {
+    // WebKit forbids constructing Touch from script; fall back to a pointer drag there
+    let t;
+    try { t = (y) => new Touch({ identifier: 1, target: document.body, clientX: 200, clientY: y }); t(0); } catch { return false; }
+    const fire = (type, y) => document.body.dispatchEvent(new TouchEvent(type, {
+      bubbles: true, cancelable: true, touches: type === 'touchend' ? [] : [t(y)], changedTouches: [t(y)],
+    }));
+    fire('touchstart', 120);
+    for (let y = 140; y <= 420; y += 20) fire('touchmove', y);
+    fire('touchend', 420);
+    await new Promise((r) => setTimeout(r, 800));
+    return true;
+  });
+  if (!touched) {
+    await page.mouse.move(200, 120);
+    await page.mouse.down();
+    await page.mouse.move(200, 420, { steps: 15 });
+    await page.mouse.up();
+    await page.waitForTimeout(800);
+  }
+  const r = await page.evaluate(() => ({
+    marker: window.__noReload,
+    probe: document.getElementById('dashBody').firstElementChild?.dataset.swipeProbe,
+    ptrHooks: typeof initDocumentPullToRefresh !== 'undefined' || !!document.getElementById('ptrDocInd') || !!window._ptrDocInited,
+  }));
+  r.ptrHooks = r.ptrHooks ? 'present' : 'none';
+  check('downward swipe at top: no reload, no re-render, no pull-to-refresh', r.marker === 1 && r.probe === '1' && r.ptrHooks === 'none', JSON.stringify(r));
+});
+
 // 3. Navigation by tapping: shell stays, new screen opens at top, no reload
 await step('navigation by tapping', async () => {
 await page.evaluate(() => R.goto('dashboard'));
