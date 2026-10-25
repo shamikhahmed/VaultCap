@@ -141,6 +141,10 @@ async function consoleWatch(page) {
   page.on('console', (msg) => {
     if (msg.type() === 'error') errs.push({ type: 'console', msg: msg.text() });
   });
+  // A bare "Failed to load resource" says nothing; record the URL that failed
+  page.on('response', (r) => {
+    if (r.status() >= 400) errs.push({ type: 'http', msg: `${r.status()} ${r.url().replace(/^https?:\/\/[^/]+/, '')}` });
+  });
   return errs;
 }
 
