@@ -68,6 +68,9 @@ All helpers return trusted HTML; escape user data with `UIKit.esc()`. `act` stri
 - ≥700px: glass sidebar with grouped modules; selected row is a gold capsule.
 - Sheets (`Modal.open`): grabber on phone, centred card on iPad/desktop. `Modal._sheetBar()` promotes the footer's
   Cancel to the leading slot and a single primary to the trailing slot; anything else (Delete…) stays in the footer.
+- **Pull-to-refresh:** document-level (`initDocumentPullToRefresh` / `pullToRefresh(window, …)` in `ios-interactions.js`).
+  Touch at `scrollY === 0`, ~60px threshold, spinner, then `R.goto(currentPage, true)`. Skips while sheets/overlays are open.
+  (Inner `.pb` PTR was removed with document scrolling; this restores the gesture at the window.)
 
 ## Copy
 

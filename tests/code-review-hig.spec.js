@@ -47,4 +47,14 @@ test.describe('code-review hig fixes', () => {
     await expect(cashWidget.locator('.ui-footnote')).toContainText('USD');
     await expect(cashWidget.locator('.ui-footnote')).toContainText('PKR');
   });
+
+  test('document pull-to-refresh is armed after unlock', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
+    await unlockDemoVault(page);
+    await dismissOverlays(page);
+    const armed = await page.evaluate(() => !!window._ptrDocInited && !!document.getElementById('ptrDocInd'));
+    expect(armed).toBe(true);
+  });
 });
