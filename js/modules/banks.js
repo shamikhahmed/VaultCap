@@ -66,7 +66,7 @@ const Banks={
     if(!data.length&&!archivedCount){el.innerHTML=this.emptyState();return;}
     const archiveToggle=archivedCount?`<div class="vc-ix-190"><button type="button" class="btn btn-g btn-sm" data-act="Banks._showArchived=!Banks._showArchived;Banks.render()">${Banks._showArchived?'Hide':'Show'} ${archivedCount} archived</button></div>`:'';
     if (data.length > 60 && typeof VirtualList !== 'undefined') {
-      el.innerHTML = archiveToggle + '<div id="bVirt" style="height:min(70vh,640px);overflow:auto;-webkit-overflow-scrolling:touch"></div>';
+      el.innerHTML = archiveToggle + '<div id="bVirt" tabindex="0" aria-label="Bank accounts" style="height:min(70vh,640px);overflow:auto;-webkit-overflow-scrolling:touch"></div>';
       VirtualList.render(document.getElementById('bVirt'), data, 76, (b) => this.row(b));
       if (typeof LogoEngine !== 'undefined') LogoEngine.hydrate(el);
       initSwipeDelete(el);

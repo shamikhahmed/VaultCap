@@ -419,7 +419,7 @@ const Dash={
         <button type="button" class="tap-link" data-act="Dash.editWallet()">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
       ${wCards.length
-        ? `<div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
+        ? `<div class="wallet-row" tabindex="0" aria-label="Cards carrying today">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
         : `<button type="button" data-act="Dash.editWallet()" style="width:100%;background:var(--glass);border:1px dashed var(--border2);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;text-align:left"><div class="vc-ix-12">Set today's wallet</div><div class="vc-ix-36">Pick which cards you're carrying</div></button>`}
     </div>` : ''}
 
@@ -594,14 +594,16 @@ const Dash={
     const willOpen = !m.classList.contains('on');
     if (!willOpen) { this.closeMore(); return; }
     m.classList.add('on');
-    m.setAttribute('aria-hidden', 'false');
+    m.hidden = false;
+    m.removeAttribute('inert');
     setTimeout(() => document.addEventListener('click', () => this.closeMore(), { once: true }), 0);
   },
   closeMore() {
     const m = document.getElementById('dashMoreMenu');
     if (!m) return;
     m.classList.remove('on');
-    m.setAttribute('aria-hidden', 'true');
+    m.hidden = true;
+    m.setAttribute('inert', '');
   }
 };
 
@@ -2201,10 +2203,10 @@ const SettingsNav = {
       ${(typeof WebAuthnUnlock!=='undefined'?WebAuthnUnlock.settingsRow():'')}
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="Settings.showMasterKey()">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} data-act-change="ActHelpers.toggleNoPin(this)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} data-act-change="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm vc-ix-156" data-act-change="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
-      <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm vc-ix-156" data-act-change="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} aria-label="No PIN Mode" data-act-change="ActHelpers.toggleNoPin(this)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} aria-label="Auto-Lock" data-act-change="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name" id="sett-lock-timeout-lbl">Lock Timeout</div></div><select class="inp btn-sm vc-ix-156" aria-labelledby="sett-lock-timeout-lbl" data-act-change="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
+      <div class="si"><div class="sil"><div class="name" id="sett-clip-clear-lbl">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm vc-ix-156" aria-labelledby="sett-clip-clear-lbl" data-act-change="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="VaultProfiles.showSwitcher()">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g vc-ix-16" data-act="DataIntegrity.run()">Run Vault Integrity Check</button></div></div></div>

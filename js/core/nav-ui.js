@@ -398,16 +398,23 @@ function buildNav() {
     { id: 'cards', icon: 'card', label: 'Card', obj: 'Cards' },
   ].filter(q => isModOn(q.id) && document.getElementById('pg-' + q.id));
   const fabItems = [
-    ...quickAdds.map(q => `<div class="fmi" data-act="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</div>`),
-    '<div class="fmi" data-act="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</div>',
-    '<div class="fmi" data-act="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</div>',
-    '<div class="fmi" data-act="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</div>',
-    '<div class="fmi" data-act="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</div>',
-    '<div class="fmi" data-act="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</div>',
-    '<div class="fmi" data-act="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</div>',
-    '<div class="fmi" data-act="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</div>'
+    ...quickAdds.map(q => `<button type="button" class="fmi" role="menuitem" data-act="${q.obj}.openAdd();FAB.close()">${VC.icon(q.icon, 16)} Add ${q.label}</button>`),
+    '<button type="button" class="fmi" role="menuitem" data-act="SmartAdd.open();FAB.close()">'+VC.icon('sparkles', 16)+' Smart Add</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="AIImport.openImportModal();FAB.close()">'+VC.icon('download', 16)+' Smart Import</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="CMD.open();FAB.close()">'+VC.icon('search', 16)+' Search Everything</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'alerts\');FAB.close()">'+VC.icon('bell', 16)+' Alerts</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'timeline\');FAB.close()">'+VC.icon('calendar', 16)+' Timeline</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.goto(\'settings\');FAB.close()">'+VC.icon('settings', 16)+' Settings</button>',
+    '<button type="button" class="fmi" role="menuitem" data-act="R.lock();FAB.close()">'+VC.icon('lock', 16)+' Lock Vault</button>'
   ];
-  document.getElementById('fabMenu').innerHTML = fabItems.join('');
+  const fabMenu = document.getElementById('fabMenu');
+  if (fabMenu) {
+    fabMenu.innerHTML = fabItems.join('');
+    if (!fabMenu.classList.contains('on')) {
+      fabMenu.hidden = true;
+      fabMenu.setAttribute('inert', '');
+    }
+  }
   patchNavActiveState();
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 }

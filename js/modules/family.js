@@ -182,7 +182,7 @@ const Family = {
     const hideBal = !!S.familyHideBalances;
     const hideToggle = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:14px">
       <div><div class="vc-ix-56">Hide balances</div><div class="vc-ix-3">Kids / shared-screen mode — counts stay, money amounts hide app-wide via Privacy</div></div>
-      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
+      <label class="tog"><input type="checkbox" ${hideBal?'checked':''} aria-label="Hide balances" data-act-change="S.familyHideBalances=this.checked;if(this.checked){S.privacyMode=true;}Store.save();Family.render()"><span class="ts"></span></label>
     </div>`;
 
     const _stat = (id) => {

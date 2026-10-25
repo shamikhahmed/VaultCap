@@ -306,7 +306,10 @@ async function main() {
   await page.waitForTimeout(300);
   // open add sheet
   try {
-    await page.locator('[data-act="Banks.openAdd()"]').first().click();
+    const addBank = page.locator('#pg-banks.on .ph [data-act="Banks.openAdd()"]').first();
+    await addBank.scrollIntoViewIfNeeded();
+    await addBank.waitFor({ state: 'visible', timeout: 12000 });
+    await addBank.click({ timeout: 12000 });
     await page.waitForTimeout(400);
     await shot(page, 'sheet-add-bank');
     const modalOk = await page.evaluate(() => {

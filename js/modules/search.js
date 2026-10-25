@@ -35,8 +35,8 @@ const GlobalSearch = {
     <div style="padding:14px 14px 0;position:sticky;top:0;z-index:10;background:var(--bg2);padding-bottom:10px">
       <div style="position:relative;margin-bottom:10px">
         <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center">${searchIc}</span>
-        <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." style="padding-left:40px;font-size:0.9375rem;border-radius:14px" data-act-input="GlobalSearch.search(this.value)" autocomplete="off">
-        <button type="button" data-act="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.875rem;color:var(--text3)">Clear</button>
+        <input id="gs-input" class="inp" placeholder="Search everything — cards, banks, devices, docs..." aria-label="Search everything" style="padding-left:40px;font-size:0.9375rem;border-radius:14px" data-act-input="GlobalSearch.search(this.value)" autocomplete="off">
+        <button type="button" aria-label="Clear search" data-act="document.getElementById('gs-input').value='';GlobalSearch.search('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.875rem;color:var(--text3)">Clear</button>
       </div>
       <div class="cap-tab-bar cap-tab-bar--flush" role="tablist" aria-label="Search filters" style="padding:0 0 2px">
         ${filters.map(f => `<button type="button" class="cap-tab search-chip${GlobalSearch.activeFilter === f ? ' on' : ''}" role="tab" aria-selected="${GlobalSearch.activeFilter === f}" data-act="GlobalSearch.setFilter('${f}')">${filterLabels[f]}</button>`).join('')}

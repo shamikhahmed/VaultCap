@@ -24,10 +24,10 @@ const Cards={
     const f=S.cF;
     const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','Crypto'],['bnpl','BNPL'],['expiring','Expiring'],['fav','Favourites']];
     const ci=document.getElementById('cChips');
-    if(ci)ci.innerHTML=chips.map(([v,l])=>`<div class="chip${v===f?' on':''}" data-act="S.cF='${v}';Cards.render()">${l}</div>`).join('');
+    if(ci)ci.innerHTML=chips.map(([v,l])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.cF='${v}';Cards.render()">${l}</button>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
-    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
+    if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row" tabindex="0" aria-label="Cards carrying today">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
     const archivedCount=(S.cards||[]).filter(c=>c.archived).length;
     let data=S.cards.filter(c=>{
       if(c.archived&&!Cards._showArchived)return false;

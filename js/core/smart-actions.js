@@ -273,18 +273,24 @@ const FAB = {
     btn.classList.toggle('open', o);
     btn.textContent = o ? 'Close' : '＋';
     btn.setAttribute('aria-expanded', o ? 'true' : 'false');
+    m.hidden = !o;
+    if (o) m.removeAttribute('inert'); else m.setAttribute('inert', '');
     if (scrim) {
       scrim.classList.toggle('on', o);
-      scrim.setAttribute('aria-hidden', o ? 'false' : 'true');
+      scrim.hidden = !o;
+      if (o) scrim.removeAttribute('inert'); else scrim.setAttribute('inert', '');
     }
   },
   close() {
     const m = document.getElementById('fabMenu'), btn = document.getElementById('fab'), scrim = document.getElementById('fabScrim');
     m.classList.remove('on'); btn.classList.remove('open'); btn.textContent = '＋';
     btn.setAttribute('aria-expanded', 'false');
+    m.hidden = true;
+    m.setAttribute('inert', '');
     if (scrim) {
       scrim.classList.remove('on');
-      scrim.setAttribute('aria-hidden', 'true');
+      scrim.hidden = true;
+      scrim.setAttribute('inert', '');
     }
   }
 };

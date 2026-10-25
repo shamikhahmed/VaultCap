@@ -651,6 +651,7 @@ body:not(.light) .u-highlight-card {
   white-space: nowrap; box-shadow: none;
   transition: var(--t); animation: fabIn .18s var(--spring) backwards;
   min-width: 0;
+  font-family: inherit; color: inherit; text-align: left; width: 100%;
 }
 .fmi:hover { border-color: var(--accent); background: var(--glass2); }
 @keyframes fabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

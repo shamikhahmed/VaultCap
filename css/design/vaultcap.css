@@ -261,12 +261,16 @@ body.light .btabs {
 
 .ph,
 body.light .ph {
-  background: transparent;
+  background: var(--bg);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   border-bottom: 0;
   padding: calc(14px + var(--st)) var(--gutter) 8px;
   align-items: flex-end;
+  /* Keep + Add / trailing actions tappable after document scroll */
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 @media (max-width: 699px) {
@@ -507,8 +511,8 @@ body.light .inp:focus {
 /* ---------- Chips + tags ---------- */
 
 .chips {
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  overflow-x: visible;
   scrollbar-width: none;
   gap: 8px;
   padding: 2px 0 10px;
@@ -715,11 +719,12 @@ body.light .inp:focus {
   border-bottom: 0;
 }
 
+.cap-tab-bar,
 .sett-tabs,
 #settTabs {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  overflow-x: visible;
   gap: 8px;
   padding: 4px var(--gutter) 12px;
   background: transparent;

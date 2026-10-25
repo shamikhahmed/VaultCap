@@ -52,7 +52,7 @@ const DocsModule={
     const el=document.getElementById('docsItems');
     if(!ci||!el)return;
     const cats=[['all','All','id-card'],['passport','Passport','id-card'],['nic','ID','id-card'],['driving_license','Driving','car'],['visa','Visa','arrows'],['property_doc','Property','building'],['insurance_doc','Insurance','shield'],['vehicle_reg','Vehicle Reg','car'],['tax','Tax','receipt'],['medical','Medical','cross'],['warranty','Warranty','receipt'],['contract','Contract','book'],['certificate','Certificate','star'],['other','Other','file']];
-    ci.innerHTML=cats.map(([v,l,ic])=>`<div class="chip${this.filter===v?' on':''}" data-act="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');
+    ci.innerHTML=cats.map(([v,l,ic])=>`<button type="button" class="chip${this.filter===v?' on':''}" aria-pressed="${this.filter===v}" data-act="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic" aria-hidden="true">${VC.icon(ic,12)}</span>${l}</button>`).join('');
     const docs=this._filteredDocs();
     const selCount=Object.keys(this.selected).length;
     const toolbar=
