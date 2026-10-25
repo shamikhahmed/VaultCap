@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
-  "version": "5.4.3",
-  "swCache": "vaultcap-v100",
+  "version": "6.0.0",
+  "swCache": "vaultcap-v600",
   "updated": "2026-10-25",
-  "notes": "HIG-3 / vaultcap-v100 — VERSION.json synced to SW CACHE (prod-ready audit)"
+  "notes": "HIG 6 redesign + production audit — SW vaultcap-v600"
 }

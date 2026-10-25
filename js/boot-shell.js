@@ -31,7 +31,7 @@
   if (typeof VC !== 'undefined') VC.refreshShellIcons();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw-v51.js?v=5.4.3').catch(function () {});
+    navigator.serviceWorker.register('sw-v51.js?v=6.0.0').catch(function () {});
   }
 
   document.addEventListener('DOMContentLoaded', function () {

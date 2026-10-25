@@ -1,7 +1,7 @@
 'use strict';
 /* Cache-bust + demo/skip-splash flags before first paint (CSP-safe, no inline). */
 (function () {
-  var BUILD = '5.4.3';
+  var BUILD = '6.0.0';
   try {
     window.VER = BUILD;
     window.APP_VERSION = BUILD;
