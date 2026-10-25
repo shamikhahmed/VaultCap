@@ -58,3 +58,17 @@ cd /Users/shamikhahmed/Projects/Cap/Cap-Apps/_workspace/VaultCap-hig
 bash qa/prod-ready/run-prod-ready-local.sh
 # then refresh REPORT statuses from audit-findings.json + e2e-chromium.log + ios-check.txt
 ```
+
+## Round 2 (outside-sandbox evidence → code fixes)
+
+**Evidence in:** `qa/prod-ready/audit-findings.json`, `round2-findings.json`, WebKit ios-check **22/22**, Playwright **167 pass / 3 skip / 0 fail**.
+
+| Item | Root cause | Fix |
+|---|---|---|
+| axe ×36 (aria-required-children, scrollable-region-focusable, select-name, label, button-name, aria-hidden-focus) | Empty/`div` FAB menu under `role=menu`; closed menus used `aria-hidden` with focusable children; unlabeled selects/toggles; investment fav icon buttons; chip/`wallet-row` scrollers without keyboard name | Menuitems as `<button role="menuitem">`; closed menus `hidden`+`inert`; labels/`aria-label` on sorts & toggles; chip buttons; sticky/`tabindex` scrollers |
+| 12× CSS 404 (`/base.css` … `/design/vaultcap.css`) | `css/app.css` `@import` URLs re-resolved against document root when stylesheets are cloned (e.g. axe) | Discrete `<link layer="legacy\|components">` tags; `app.css` only declares `@layer` order |
+| Banks `openAdd` click timeout | Header Add scrolled off-screen under document-scroll + large-title layout; harness used unbound `.first()` | Sticky `.ph`; harness targets `#pg-banks.on .ph [data-act=…]` + scrollIntoView |
+
+**Regression specs:** `tests/prod-ready-round2.spec.js` (no root CSS 404s; axe smoke on dashboard/banks/settings; Banks Add visible after scroll).
+
+**Re-verify locally:** `npx playwright test tests/prod-ready-round2.spec.js` then `bash qa/prod-ready/run-prod-ready-local.sh`.
