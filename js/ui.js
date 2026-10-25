@@ -215,7 +215,18 @@ const Dash={
 
     const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
     const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
-    const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
+    const cashRows = ctxFilter(S.cash||[]);
+    const cashTotal = cashRows.reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
+    const cashByCur = {};
+    cashRows.forEach(c => {
+      const cur = c.currency || 'PKR';
+      cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0);
+    });
+    const cashCurKeys = Object.keys(cashByCur);
+    const _cashEsc = (s) => (typeof UIKit !== 'undefined' ? UIKit.esc(String(s)) : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'));
+    const cashBreakdown = cashCurKeys.length > 1
+      ? cashCurKeys.map(cur => '<span class="sens">' + _cashEsc(U.fmt(cashByCur[cur])) + ' ' + _cashEsc(cur) + '</span>').join(' · ')
+      : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
@@ -362,7 +373,7 @@ const Dash={
     const moneyTiles = [
       isModOn('banks') && K.widget({ icon: 'bank', label: 'Banks', value: fmt(bankTotal), act: "R.goto('banks')", sens: true }),
       isModOn('investments') && K.widget({ icon: 'trending-up', label: 'Investments', value: fmt(invTotal), act: "R.goto('investments')", sens: true }),
-      isModOn('cash') && K.widget({ icon: 'banknote', label: 'Cash', value: fmt(cashTotal), act: "R.goto('cash')", sens: true }),
+      isModOn('cash') && K.widget({ icon: 'banknote', label: 'Cash', value: fmt(cashTotal), act: "R.goto('cash')", sens: true, sub: cashBreakdown }),
       isModOn('assets') && assetCount > 0 && K.widget({ icon: 'building', label: 'Property', value: fmt(assetTotal), act: "R.goto('assets')", sens: true }),
     ].filter(Boolean);
     const moneySection = moneyTiles.length
