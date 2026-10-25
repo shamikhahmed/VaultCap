@@ -87,65 +87,7 @@ function initSwipeDelete(containerEl, deleteCallback) {
   });
 }
 
-/** Pull-to-refresh. Pass window/document for document-level (dashboard/modules); or a scrollable el. */
 function pullToRefresh(el, callback) {
-  const isDoc = !el || el === window || el === document || el === document.documentElement || el === document.body;
-  if (isDoc) {
-    if (window._ptrDocInited) return;
-    window._ptrDocInited = true;
-    const ind = document.createElement('div');
-    ind.className = 'ptr-indicator ptr-indicator--doc';
-    ind.id = 'ptrDocInd';
-    ind.textContent = '↻';
-    ind.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(ind);
-    let startY = 0, pulling = false;
-    const scrollTop = () => (window.ScrollLock && ScrollLock.isLocked && ScrollLock.isLocked())
-      ? 1
-      : (window.scrollY || document.documentElement.scrollTop || 0);
-    const overlayOpen = () => !!document.querySelector(
-      '#overlay.on, #themeOv.on, #cmdPal.on, .vc-sheet-overlay, .vc-more-overlay, .vc-dialog-backdrop'
-    );
-    const surface = () => document.getElementById('app') || document.body;
-    document.addEventListener('touchstart', (e) => {
-      if (typeof S !== 'undefined' && !S.unlocked) return;
-      if (overlayOpen()) return;
-      if (scrollTop() <= 0) { startY = e.touches[0].clientY; pulling = true; }
-    }, { passive: true });
-    document.addEventListener('touchmove', (e) => {
-      if (!pulling) return;
-      const dy = e.touches[0].clientY - startY;
-      if (dy > 0 && scrollTop() <= 0) {
-        const pull = Math.min(80, dy);
-        ind.style.top = (Math.max(8, pull - 20)) + 'px';
-        ind.classList.add('on');
-        const surf = surface();
-        surf.style.transform = 'translateY(' + (pull * 0.25) + 'px)';
-        surf.style.transition = 'none';
-      }
-    }, { passive: true });
-    document.addEventListener('touchend', (e) => {
-      if (!pulling) return;
-      pulling = false;
-      const dy = e.changedTouches[0].clientY - startY;
-      const surf = surface();
-      surf.style.transition = 'transform .3s var(--spring, ease)';
-      surf.style.transform = '';
-      ind.style.top = '';
-      ind.classList.remove('on');
-      if (dy > 60 && typeof callback === 'function') {
-        ind.textContent = '⟳';
-        ind.classList.add('on');
-        setTimeout(() => {
-          callback();
-          ind.textContent = '↻';
-          ind.classList.remove('on');
-        }, 300);
-      }
-      setTimeout(() => { surf.style.transition = ''; }, 400);
-    }, { passive: true });
-    return;
-  }
   if (!el || el._ptrInited) return;
   el._ptrInited = true;
   const ind = document.createElement('div');
@@ -180,15 +122,6 @@ function pullToRefresh(el, callback) {
     }
     setTimeout(() => { el.style.transition = ''; }, 400);
   }, {passive: true});
-}
-
-/** Document-level PTR for dashboard/module pages (replaces inner .pb pull-to-refresh). */
-function initDocumentPullToRefresh() {
-  pullToRefresh(window, () => {
-    if (typeof R !== 'undefined' && typeof S !== 'undefined' && S.unlocked && S.currentPage) {
-      R.goto(S.currentPage, true);
-    }
-  });
 }
 
 let _ctxMenuItems = [];

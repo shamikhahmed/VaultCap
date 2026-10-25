@@ -176,7 +176,6 @@ const R = {
       document.getElementById('fab').style.display = 'flex';
       if (typeof initSidebar === 'function') initSidebar();
       buildNav();
-      if (typeof initDocumentPullToRefresh === 'function') initDocumentPullToRefresh();
       this.goto('dashboard');
       setTimeout(() => Dash.render(), 50);
       Activity.log('Vault unlocked');

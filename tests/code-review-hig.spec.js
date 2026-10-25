@@ -48,14 +48,38 @@ test.describe('code-review hig fixes', () => {
     await expect(cashWidget.locator('.ui-footnote')).toContainText('PKR');
   });
 
-  test('document pull-to-refresh is armed after unlock', async ({ page }) => {
+  // Pull-to-refresh is deliberately removed (owner: the app must never "refresh" on a swipe).
+  test('downward swipe at the top neither reloads nor re-renders', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
     await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
     await unlockDemoVault(page);
     await dismissOverlays(page);
-    const armed = await page.evaluate(() => !!window._ptrDocInited && !!document.getElementById('ptrDocInd'));
-    expect(armed).toBe(true);
+    const before = await page.evaluate(() => {
+      window.__noReload = 1;
+      window.scrollTo(0, 0);
+      // Mark rendered content (not the container): a re-render replaces it and drops the mark
+      const body = document.getElementById('dashBody') || document.querySelector('.page.on');
+      body.firstElementChild.dataset.swipeProbe = '1';
+      return { hasPtr: !!document.getElementById('ptrDocInd') || !!window._ptrDocInited };
+    });
+    expect(before.hasPtr).toBe(false);
+    await page.evaluate(async () => {
+      const t = (y) => new Touch({ identifier: 1, target: document.body, clientX: 200, clientY: y });
+      const fire = (type, y) => document.body.dispatchEvent(new TouchEvent(type, {
+        bubbles: true, cancelable: true, touches: type === 'touchend' ? [] : [t(y)], changedTouches: [t(y)],
+      }));
+      fire('touchstart', 120);
+      for (let y = 140; y <= 420; y += 20) fire('touchmove', y);
+      fire('touchend', 420);
+      await new Promise((r) => setTimeout(r, 800));
+    });
+    const after = await page.evaluate(() => {
+      const body = document.getElementById('dashBody') || document.querySelector('.page.on');
+      return { marker: window.__noReload, probe: body && body.firstElementChild && body.firstElementChild.dataset.swipeProbe };
+    });
+    expect(after.marker).toBe(1);
+    expect(after.probe).toBe('1');
   });
 
   test('ScrollLock pins body for theme overlay while #app is hidden', async ({ page }) => {
