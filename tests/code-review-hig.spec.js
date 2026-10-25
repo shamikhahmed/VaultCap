@@ -88,6 +88,17 @@ test.describe('code-review hig fixes', () => {
     await expect(page.locator('#themeOv.on')).toHaveCount(0);
   });
 
+  test('home theme dots use ui-segmented markup', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof ThemeEngine !== 'undefined', { timeout: 30000 });
+    await page.evaluate(() => ThemeEngine.renderDots());
+    const seg = page.locator('#homeThemes .ui-segmented');
+    await expect(seg).toHaveCount(1);
+    await expect(seg.locator('button')).toHaveCount(3);
+    await expect(seg).toHaveAttribute('aria-label', 'Appearance');
+  });
+
   test('ScrollLock.sync is explicit — no body-wide MutationObserver', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');

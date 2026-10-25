@@ -55,14 +55,21 @@ const ThemeEngine = {
   renderDots() {
     const e = document.getElementById('homeThemes');
     if (!e) return;
-    // HIG segmented control — inline styles because #pgHome paints before the deferred CSS arrives
-    e.setAttribute('role', 'group');
-    e.setAttribute('aria-label', 'Appearance');
-    e.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;padding:2px;border-radius:10px;background:var(--fill)';
-    e.innerHTML = THEMES.map(t => {
-      const active = t.id === S.user.theme;
-      return `<button type="button" aria-pressed="${active}" data-act="ThemeEngine.apply('${t.id}')" style="min-height:36px;border:0;border-radius:8px;cursor:pointer;touch-action:manipulation;font:inherit;font-size:0.9375rem;font-weight:${active ? '600' : '500'};color:var(--label);background:${active ? 'var(--surface-elevated)' : 'transparent'};box-shadow:${active ? '0 3px 8px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)' : 'none'}">${t.n}</button>`;
-    }).join('');
+    const cur = (S.user && S.user.theme) || 'dark';
+    const items = THEMES.map((t) => ({ value: t.id, label: t.n }));
+    const actFor = (id) => "ThemeEngine.apply('" + id + "')";
+    // UIKit may still be loading on #pgHome; emit the same ui-segmented markup either way.
+    // Critical CSS for .ui-segmented lives in index.html so this paints before deferred sheets.
+    e.removeAttribute('role');
+    e.removeAttribute('aria-label');
+    e.style.cssText = '';
+    e.innerHTML = (typeof UIKit !== 'undefined')
+      ? UIKit.segmented(items, cur, actFor, 'Appearance')
+      : '<div class="ui-segmented" role="group" aria-label="Appearance">' +
+        items.map((it) =>
+          '<button type="button" aria-pressed="' + (it.value === cur) + '" data-act="' + actFor(it.value) + '">' + it.label + '</button>'
+        ).join('') +
+        '</div>';
   },
   openPicker() {
     const options = [

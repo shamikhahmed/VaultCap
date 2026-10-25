@@ -65,6 +65,10 @@ html[data-vc-demo] #pgHome{display:flex!important}
 #pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:var(--bg,#000)}
 #pgHome .vc-mark--hero{width:60px;height:60px;border-radius:16px;display:block;margin:0 auto}
 #homeThemes{min-height:48px}
+.ui-segmented{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill,rgba(118,118,128,.24));border-radius:10px;padding:2px;gap:2px}
+.ui-segmented button{min-height:36px;border-radius:8px;border:0;background:transparent;color:var(--label,#fff);font:inherit;font-size:0.9375rem;font-weight:500;cursor:pointer;touch-action:manipulation;position:relative}
+.ui-segmented button[aria-pressed="true"]{background:var(--surface-elevated,#2c2c2e);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.1),0 0 0 .5px rgba(0,0,0,.04)}
+body:not(.light) .ui-segmented button[aria-pressed="true"]{background:var(--seg-thumb-dark,#2c2c2e)}
 .home-modules{min-height:140px}
 .home-mod-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:8px 2px;background:transparent;border:0;border-radius:10px;color:var(--label,#fff);font:inherit;cursor:pointer;touch-action:manipulation}
 .home-mod-ic{display:flex;color:var(--tint,#D4A017)}
