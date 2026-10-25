@@ -430,6 +430,7 @@ function buildNav() {
     if (!fabMenu.classList.contains('on')) {
       fabMenu.hidden = true;
       fabMenu.setAttribute('inert', '');
+      fabMenu.setAttribute('aria-hidden', 'true');
     }
   }
   patchNavActiveState();

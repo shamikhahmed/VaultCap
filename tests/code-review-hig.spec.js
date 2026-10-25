@@ -87,4 +87,32 @@ test.describe('code-review hig fixes', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('#themeOv.on')).toHaveCount(0);
   });
+
+  test('FAB close keeps menu visible until transitionend (deferred hidden)', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
+    await unlockDemoVault(page);
+    await dismissOverlays(page);
+    await page.evaluate(() => {
+      document.getElementById('fab').style.display = 'flex';
+      FAB.toggle();
+    });
+    await expect(page.locator('#fabMenu.on')).toBeVisible();
+    const midClose = await page.evaluate(() => {
+      FAB.close();
+      const m = document.getElementById('fabMenu');
+      return {
+        hasOn: m.classList.contains('on'),
+        hidden: m.hidden,
+        inert: m.hasAttribute('inert'),
+        ariaHidden: m.getAttribute('aria-hidden'),
+      };
+    });
+    expect(midClose.hasOn).toBe(false);
+    expect(midClose.hidden).toBe(false);
+    expect(midClose.inert).toBe(true);
+    expect(midClose.ariaHidden).toBe('true');
+    await page.waitForFunction(() => document.getElementById('fabMenu').hidden === true, { timeout: 1000 });
+  });
 });
