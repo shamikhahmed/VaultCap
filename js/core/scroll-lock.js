@@ -1,12 +1,11 @@
 'use strict';
 /* ScrollLock — freezes the document while any sheet/overlay is open, then restores the exact position.
  * iOS ignores `overflow:hidden` on body for touch scrolling and jumps when it is toggled, so the body is
- * pinned with position:fixed + top:-scrollY (ScentCap 3.0.1 recipe). One observer covers every overlay type,
- * however it is opened or removed (Modal, hub sheets, More, theme picker, command palette, confirm dialogs). */
+ * pinned with position:fixed + top:-scrollY (ScentCap 3.0.1 recipe). Callers invoke ScrollLock.sync()
+ * from overlay open/close paths (Modal, hub sheets, More, theme picker, command palette, confirm dialogs). */
 const ScrollLock = (function () {
   const OPEN = '#overlay.on, #themeOv.on, #cmdPal.on, .vc-sheet-overlay, .vc-more-overlay, .vc-dialog-backdrop';
   let lockedY = null;
-  let queued = false;
 
   function lock() {
     if (lockedY !== null) return;
@@ -33,30 +32,11 @@ const ScrollLock = (function () {
   }
 
   function sync() {
-    queued = false;
     // Lock for any open overlay — including theme picker on #pgHome and confirm
     // dialogs on lock/onboarding (outside #app).
     if (document.querySelector(OPEN)) lock();
     else unlock();
   }
-
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(sync);
-  }
-
-  function init() {
-    new MutationObserver(schedule).observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
 
   /** Page position as the user sees it (the body is offset while locked). */
   function currentY() {

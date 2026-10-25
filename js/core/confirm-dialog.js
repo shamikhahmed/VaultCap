@@ -65,6 +65,7 @@
         window.removeEventListener('keydown', onKey, true);
         if (typeof FocusTrap !== 'undefined') FocusTrap.release();
         backdrop.remove();
+        if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
         resolve(val);
       };
       const onKey = (e) => {
@@ -101,6 +102,7 @@
         if (e.target === backdrop) close(input ? null : false);
       });
       document.body.appendChild(backdrop);
+      if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
       window.addEventListener('keydown', onKey, true);
       if (typeof FocusTrap !== 'undefined') FocusTrap.trap(dialog, () => close(input ? null : false));
       if (inputEl) inputEl.focus({ preventScroll: true });

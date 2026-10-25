@@ -331,6 +331,7 @@ const R = {
       if (typeof Modal !== 'undefined' && Modal.close) Modal.close();
       document.getElementById('overlay')?.classList.remove('on');
       document.getElementById('cmdPal')?.classList.remove('on');
+      if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     } catch (_) { /* ignore */ }
     document.querySelectorAll('.ni,[data-pg]').forEach(n => n.classList.toggle('on', n.dataset.pg === pg));
     if (prev === pg && !force) return;

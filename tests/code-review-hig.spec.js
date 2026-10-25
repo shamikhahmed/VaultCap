@@ -88,6 +88,24 @@ test.describe('code-review hig fixes', () => {
     await expect(page.locator('#themeOv.on')).toHaveCount(0);
   });
 
+  test('ScrollLock.sync is explicit — no body-wide MutationObserver', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof ScrollLock !== 'undefined', { timeout: 30000 });
+    const ok = await page.evaluate(() => {
+      const src = ScrollLock.sync.toString();
+      // Observer was removed; sync still locks when OPEN overlays exist.
+      ThemeEngine.openPicker();
+      const locked = ScrollLock.isLocked();
+      ThemeEngine.closePicker();
+      const unlocked = !ScrollLock.isLocked();
+      return { locked, unlocked, hasObserverInit: /MutationObserver/.test(src) === false };
+    });
+    expect(ok.locked).toBe(true);
+    expect(ok.unlocked).toBe(true);
+    expect(ok.hasObserverInit).toBe(true);
+  });
+
   test('FAB close keeps menu visible until transitionend (deferred hidden)', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');

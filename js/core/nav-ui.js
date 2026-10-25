@@ -5,12 +5,14 @@ function dismissSheetOverlay(overlay) {
   if (!overlay) return;
   if (typeof FocusTrap !== 'undefined') FocusTrap.release();
   overlay.remove();
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
 }
 
 function armSheetOverlay(overlay) {
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) dismissSheetOverlay(overlay);
   });
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
   if (typeof FocusTrap !== 'undefined') {
     FocusTrap.trap(overlay, () => dismissSheetOverlay(overlay));
   }
@@ -182,11 +184,13 @@ function openMore() {
     bodyHtml +
     '</div>';
   document.body.appendChild(overlay);
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
   if (typeof FocusTrap !== 'undefined') FocusTrap.trap(overlay, () => closeMore());
 }
 function closeMore() {
   if (typeof FocusTrap !== 'undefined') FocusTrap.release();
   document.getElementById('moreOverlay')?.remove();
+  if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
   const el = document.getElementById('moreSheet');
   if (el) el.style.display = 'none';
 }

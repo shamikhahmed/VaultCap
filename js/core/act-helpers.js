@@ -73,6 +73,7 @@ const ActHelpers = {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
     if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     this.gotoSettingsTab('general');
   },
 
@@ -80,6 +81,7 @@ const ActHelpers = {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
     if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     if (pageId && typeof R !== 'undefined') R.goto(pageId);
   },
 

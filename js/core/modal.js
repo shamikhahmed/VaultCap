@@ -44,6 +44,7 @@ const Modal = {
     const ov = document.getElementById('overlay');
     ov.classList.add('on');
     ov.setAttribute('aria-hidden', 'false');
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     this._initSwipe();
     if (typeof FocusTrap !== 'undefined') FocusTrap.trap(modal, () => Modal.close());
     // Wire amount formatting to numeric inputs in modal
@@ -93,6 +94,7 @@ const Modal = {
     const ov = document.getElementById('overlay');
     ov.classList.remove('on');
     ov.setAttribute('aria-hidden', 'true');
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     ['cf-cvv','cf-cpin','bf-pin','bf-appPin','cf-pwd','bf-pwd'].forEach(id => {
       const f = document.getElementById(id); if (f) f.value = '';
     });

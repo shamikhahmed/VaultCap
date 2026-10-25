@@ -89,6 +89,7 @@ const CMD = {
     pal.classList.add('on');
     document.getElementById('cmdIn').value = '';
     this.search('');
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     if (typeof FocusTrap !== 'undefined') FocusTrap.trap(pal, () => CMD.close());
     setTimeout(() => document.getElementById('cmdIn').focus({ preventScroll: true }), 80);
   },
@@ -96,6 +97,7 @@ const CMD = {
   close() {
     if (typeof FocusTrap !== 'undefined') FocusTrap.release();
     document.getElementById('cmdPal')?.classList.remove('on');
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     cmdIdx = -1;
   },
   fuzzyMatch(str, q) {
