@@ -72,3 +72,21 @@ bash qa/prod-ready/run-prod-ready-local.sh
 **Regression specs:** `tests/prod-ready-round2.spec.js` (no root CSS 404s; axe smoke on dashboard/banks/settings; Banks Add visible after scroll).
 
 **Re-verify locally:** `npx playwright test tests/prod-ready-round2.spec.js` then `bash qa/prod-ready/run-prod-ready-local.sh`.
+
+## Code review (hig-3 follow-ups)
+
+Nine review findings fixed on `design/hig-3` (one commit each). Cheap specs: `tests/code-review-hig.spec.js`. Browser not re-run in Cursor sandbox — re-verify locally: `npx playwright test tests/code-review-hig.spec.js`.
+
+| # | Finding | Fix |
+|---|---|---|
+| 1 | `resetScroll` ignored ScrollLock pin | `ScrollLock.scrollTo(0)` when locked |
+| 2 | Multi-currency cash breakdown missing | Cash widget `sub` with escaped `.sens` amounts |
+| 3 | Pull-to-refresh removed with `.pb` | Document-level PTR (`initDocumentPullToRefresh`) |
+| 4 | ScrollLock skipped overlays outside `#app` | Sync locks whenever OPEN overlay is visible |
+| 5 | FocusTrap Esc did not close all overlays | `onEscape` on theme, cmdPal, dialogs, sheets |
+| 6 | FAB `hidden` killed open/close transition | `inert`/`aria-hidden` immediately; `hidden` after `transitionend` |
+| 7 | Body-wide class MutationObserver | Explicit `ScrollLock.sync()` on open/close paths |
+| 8 | Theme dots were inline-styled buttons | `ui-segmented` (+ critical CSS) |
+| 9 | `<button>` tiles had `<div>` children | `<span>` + CSS `display:block/flex` |
+
+**Commits:** `81aedd0`–`f97ab5a` (+ this REPORT). Specs not executed in-agent (sandbox kills Chromium).
