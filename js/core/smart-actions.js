@@ -85,13 +85,19 @@ let cmdRes = [], cmdIdx = -1;
 const CMD = {
   /** Opens the command palette, clears input, and focuses the search field. */
   open() {
-    document.getElementById('cmdPal').classList.add('on');
+    const pal = document.getElementById('cmdPal');
+    pal.classList.add('on');
     document.getElementById('cmdIn').value = '';
     this.search('');
-    setTimeout(() => document.getElementById('cmdIn').focus(), 80);
+    if (typeof FocusTrap !== 'undefined') FocusTrap.trap(pal, () => CMD.close());
+    setTimeout(() => document.getElementById('cmdIn').focus({ preventScroll: true }), 80);
   },
   /** Closes the command palette and resets the keyboard-navigation index. */
-  close() { document.getElementById('cmdPal').classList.remove('on'); cmdIdx = -1; },
+  close() {
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    document.getElementById('cmdPal')?.classList.remove('on');
+    cmdIdx = -1;
+  },
   fuzzyMatch(str, q) {
     if (!str || !q) return false;
     const s = str.toLowerCase().trim();

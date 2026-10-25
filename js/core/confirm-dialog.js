@@ -63,6 +63,7 @@
 
       const close = (val) => {
         window.removeEventListener('keydown', onKey, true);
+        if (typeof FocusTrap !== 'undefined') FocusTrap.release();
         backdrop.remove();
         resolve(val);
       };
@@ -101,9 +102,10 @@
       });
       document.body.appendChild(backdrop);
       window.addEventListener('keydown', onKey, true);
-      if (inputEl) inputEl.focus();
-      else if (destructive && cancelBtn) cancelBtn.focus();
-      else h.focus();
+      if (typeof FocusTrap !== 'undefined') FocusTrap.trap(dialog, () => close(input ? null : false));
+      if (inputEl) inputEl.focus({ preventScroll: true });
+      else if (destructive && cancelBtn) cancelBtn.focus({ preventScroll: true });
+      else h.focus({ preventScroll: true });
     });
   }
 

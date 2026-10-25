@@ -1,6 +1,21 @@
 'use strict';
 /* openMoneySheet, openAssetsSheet, openIdentitySheet, openMore, closeMore, togglePrivacy, toggleSidebar, initSidebar, buildSettTabs, getTabPrefs, saveTabPrefs, renderFinanceHome, renderVaultHome, renderAssetsHome, buildNav, patchNavActiveState */
 
+function dismissSheetOverlay(overlay) {
+  if (!overlay) return;
+  if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+  overlay.remove();
+}
+
+function armSheetOverlay(overlay) {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) dismissSheetOverlay(overlay);
+  });
+  if (typeof FocusTrap !== 'undefined') {
+    FocusTrap.trap(overlay, () => dismissSheetOverlay(overlay));
+  }
+}
+
 function moneySheetTile(m) {
   const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
   const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
@@ -37,8 +52,8 @@ function openMoneySheet() {
     '<div class="vc-sheet-handle" aria-hidden="true"></div>' +
     '<div class="vc-sheet-kicker">Money' + ctxLabel + '</div>' +
     body + '</div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openMoneySheet = openMoneySheet;
 
@@ -67,8 +82,8 @@ function openAssetsSheet() {
       return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openAssetsSheet = openAssetsSheet;
 
@@ -98,8 +113,8 @@ function openIdentitySheet() {
       return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  armSheetOverlay(overlay);
 }
 window.openIdentitySheet = openIdentitySheet;
 
@@ -167,8 +182,10 @@ function openMore() {
     bodyHtml +
     '</div>';
   document.body.appendChild(overlay);
+  if (typeof FocusTrap !== 'undefined') FocusTrap.trap(overlay, () => closeMore());
 }
 function closeMore() {
+  if (typeof FocusTrap !== 'undefined') FocusTrap.release();
   document.getElementById('moreOverlay')?.remove();
   const el = document.getElementById('moreSheet');
   if (el) el.style.display = 'none';

@@ -83,9 +83,12 @@ const ThemeEngine = {
     const ov = document.getElementById('themeOv');
     ov.classList.add('on');
     ov.setAttribute('aria-hidden', 'false');
+    if (typeof FocusTrap !== 'undefined') FocusTrap.trap(ov, () => ThemeEngine.closePicker());
   },
   closePicker() {
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
     const ov = document.getElementById('themeOv');
+    if (!ov) return;
     ov.classList.remove('on');
     ov.setAttribute('aria-hidden', 'true');
   },

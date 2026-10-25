@@ -77,4 +77,14 @@ test.describe('code-review hig fixes', () => {
     expect(locked.pos).toBe('fixed');
     expect(locked.isLocked).toBe(true);
   });
+
+  test('FocusTrap Esc closes theme picker via onEscape', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof ThemeEngine !== 'undefined' && typeof FocusTrap !== 'undefined', { timeout: 30000 });
+    await page.evaluate(() => ThemeEngine.openPicker());
+    await expect(page.locator('#themeOv.on')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#themeOv.on')).toHaveCount(0);
+  });
 });

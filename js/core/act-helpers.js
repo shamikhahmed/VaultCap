@@ -72,12 +72,14 @@ const ActHelpers = {
   closeSheetGotoModules(sheetId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
     this.gotoSettingsTab('general');
   },
 
   closeSheetGoto(sheetId, pageId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
     if (pageId && typeof R !== 'undefined') R.goto(pageId);
   },
 
