@@ -233,12 +233,12 @@ function saveTabPrefs(prefs) {
 }
 
 function financeHomeTile(m) {
-  return `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+  return `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`;
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`;
 }
 
 function renderFinanceHome() {
@@ -274,12 +274,12 @@ function renderVaultHome() {
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`).join('') + '</div>';
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`).join('') + '</div>';
 }
 
 function renderAssetsHome() {
@@ -294,12 +294,12 @@ function renderAssetsHome() {
     {id:'assets',ic:'layers',label:'Property',desc:(S.assets||[]).length+' items'+(vehicleCount||metalCount?' · inc. vehicles & metals':'')},
   ].filter(m => isModOn(m.id));
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<div class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
-      <div class="vc-ix-107">›</div>
-    </div>`).join('') + '</div>';
+      <div class="vc-ix-107" aria-hidden="true">›</div>
+    </button>`).join('') + '</div>';
 }
 
 function renderHomeModules() {
@@ -358,19 +358,19 @@ function buildNav() {
   const grouped = {};
   active.forEach(m => { if (!grouped[m.group]) grouped[m.group] = []; grouped[m.group].push(m); });
 
-  let sbHTML = `<div class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></div>`;
+  let sbHTML = `<button type="button" class="ni${S.currentPage === 'dashboard' ? ' on' : ''}" data-pg="dashboard"><span class="ni-ic" aria-hidden="true">${VC.icon('chart', 18)}</span><span class="ni-txt">Dashboard</span></button>`;
   groupOrder.forEach((grp) => {
     const label = groups[grp];
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
+      `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px" role="separator"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<div class="ni${S.currentPage === m.id ? ' on' : ''}" role="menuitem" tabindex="0" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></div>`
+    `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 
@@ -384,11 +384,11 @@ function buildNav() {
   document.getElementById('btabs').setAttribute('role', 'tablist');
   document.getElementById('btabs').setAttribute('aria-label', 'Main navigation');
   document.getElementById('btabs').innerHTML =
-    `<div class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" data-act="R.goto('dashboard')"><div class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</div><span>Home</span></div>` +
-    `<div class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" data-act="openMoneySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</div><span>Money</span></div>` +
-    `<div class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" data-act="openAssetsSheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</div><span>Wealth</span></div>` +
-    `<div class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" data-act="openIdentitySheet()"><div class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</div><span>Identity</span></div>` +
-    `<div class="ti" role="tab" aria-selected="false" aria-label="More options" data-act="openMore()"><div class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</div><span>More</span></div>`;
+    `<button type="button" class="ti${S.currentPage === 'dashboard' || S.currentPage === 'family' ? ' on' : ''}" role="tab" aria-selected="${S.currentPage === 'dashboard' || S.currentPage === 'family'}" aria-label="Home" data-act="R.goto('dashboard')"><span class="ti-ic" aria-hidden="true">${VC.icon('home', 20)}</span><span>Home</span></button>` +
+    `<button type="button" class="ti${bankingPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${bankingPages.has(S.currentPage)}" aria-label="Money" data-act="openMoneySheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('wallet', 20)}</span><span>Money</span></button>` +
+    `<button type="button" class="ti${wealthPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${wealthPages.has(S.currentPage)}" aria-label="Wealth" data-act="openAssetsSheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('trending-up', 20)}</span><span>Wealth</span></button>` +
+    `<button type="button" class="ti${identityPages.has(S.currentPage) ? ' on' : ''}" role="tab" aria-selected="${identityPages.has(S.currentPage)}" aria-label="Identity" data-act="openIdentitySheet()"><span class="ti-ic" aria-hidden="true">${VC.icon('id-card', 20)}</span><span>Identity</span></button>` +
+    `<button type="button" class="ti" role="tab" aria-selected="false" aria-label="More options" data-act="openMore()"><span class="ti-ic" aria-hidden="true">${VC.icon('more', 20)}</span><span>More</span></button>`;
 
   const modMap = { banks:'Banks', cards:'Cards', investments:'Inv', cash:'Cash', loans:'Loans', friends:'Friends', sims:'Sims', assets:'Assets', expenses:'Exp', emails:'Emails', gadgets:'Gadgets', digital:'Digital', vehicles:'Vehicles', trash:'Trash' };
   const quickAdds = [

@@ -45,8 +45,8 @@ const Banks={
     // Chips
     const chips=[['all','All','list'],['commercial','Commercial','bank'],['islamic','Islamic','moon'],['digital','Digital','smartphone'],['international','International','arrows'],['microfinance','MFB','bank'],['fav','Fav','star']];
     const ci=document.getElementById('bChips');
-    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l,ic])=>`<div class="chip${v===f?' on':''}" data-act="S.bF='${v}';Banks.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');ci.dataset.built='1';}
-    else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('on',chips[i][0]===f));
+    if(ci&&!ci.dataset.built){ci.innerHTML=chips.map(([v,l,ic])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.bF='${v}';Banks.render()"><span class="chip-ic" aria-hidden="true">${VC.icon(ic,12)}</span>${l}</button>`).join('');ci.dataset.built='1';}
+    else if(ci)ci.querySelectorAll('.chip').forEach((c,i)=>{const on=chips[i][0]===f;c.classList.toggle('on',on);c.setAttribute('aria-pressed',String(on));});
     const archivedCount=(S.banks||[]).filter(b=>b.archived).length;
     let data=S.banks.filter(b=>{
       if(b.archived&&!Banks._showArchived)return false;

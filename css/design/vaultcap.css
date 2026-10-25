@@ -1502,4 +1502,38 @@ body .page.on > .pb {
   }
 }
 
+/* 6.0: tabs, sidebar rows, hub tiles and chips are real <button>s now (VoiceOver + iOS tap targeting) */
+button.ti,
+button.ni,
+button.vc-ix-104,
+button.chip {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button.ti {
+  border: 0;
+  width: 100%;
+}
+
+button.ni {
+  display: flex;
+  width: calc(100% - 20px);
+  text-align: left;
+  background: transparent;
+}
+
+button.vc-ix-104 {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1);
+  color: var(--label);
+}
+
 } /* @layer components */
