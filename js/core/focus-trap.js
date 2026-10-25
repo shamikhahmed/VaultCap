@@ -1,17 +1,19 @@
 'use strict';
 /* FocusTrap — keyboard accessibility for modal dialogs */
 var FocusTrap = (function () {
-  var _el = null, _prev = null;
+  var _el = null, _prev = null, _onEscape = null;
   var FOCUSABLE = [
     'a[href]','button:not([disabled])','input:not([disabled])',
     'select:not([disabled])','textarea:not([disabled])',
     '[tabindex]:not([tabindex="-1"])','summary','details'
   ].join(',');
 
-  function trap(el) {
+  /** @param {HTMLElement} el @param {function(): void} [onEscape] close handler (e.g. Modal.close) */
+  function trap(el, onEscape) {
     if (_el) release();
     _el = el;
     _prev = document.activeElement;
+    _onEscape = typeof onEscape === 'function' ? onEscape : null;
     var first = _focusables()[0];
     if (first) first.focus({ preventScroll: true });
     document.addEventListener('keydown', _onKey, true);
@@ -22,6 +24,7 @@ var FocusTrap = (function () {
     if (_prev && typeof _prev.focus === 'function') _prev.focus({ preventScroll: true });
     _el = null;
     _prev = null;
+    _onEscape = null;
   }
 
   function _focusables() {
@@ -33,7 +36,13 @@ var FocusTrap = (function () {
 
   function _onKey(e) {
     if (!_el) return;
-    if (e.key === 'Escape') { release(); return; }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      // Must close the overlay — release() alone left #overlay.on visible (prod-ready D/G).
+      if (_onEscape) _onEscape();
+      else release();
+      return;
+    }
     if (e.key !== 'Tab') return;
     var nodes = _focusables();
     if (!nodes.length) { e.preventDefault(); return; }

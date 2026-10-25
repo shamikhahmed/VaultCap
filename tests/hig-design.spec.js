@@ -72,7 +72,10 @@ for (const theme of ['dark', 'light']) {
       await expect(page.locator('#mTrail .btn-p')).toHaveText(/Save/);
       await expect(page.locator('#mClose')).toBeHidden();
       await shot(page, `phone-${theme}-03-add-bank`);
-      await page.evaluate(() => Modal.close());
+      // Esc must close the overlay (FocusTrap → Modal.close), not leave #overlay.on
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#overlay.on')).toHaveCount(0);
+      await page.evaluate(() => { if (document.getElementById('overlay')?.classList.contains('on')) Modal.close(); });
 
       await goto(page, 'settings');
       await shot(page, `phone-${theme}-04-settings`);

@@ -45,7 +45,7 @@ const Modal = {
     ov.classList.add('on');
     ov.setAttribute('aria-hidden', 'false');
     this._initSwipe();
-    if (typeof FocusTrap !== 'undefined') FocusTrap.trap(modal);
+    if (typeof FocusTrap !== 'undefined') FocusTrap.trap(modal, () => Modal.close());
     // Wire amount formatting to numeric inputs in modal
     setTimeout(() => {
       document.querySelectorAll('.mb input[type=number], .mb input[inputmode=numeric]').forEach(el => {
