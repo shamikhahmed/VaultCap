@@ -607,6 +607,7 @@ const Dash={
     m.classList.add('on');
     m.hidden = false;
     m.removeAttribute('inert');
+    m.setAttribute('aria-hidden', 'false');
     setTimeout(() => document.addEventListener('click', () => this.closeMore(), { once: true }), 0);
   },
   closeMore() {
@@ -615,6 +616,7 @@ const Dash={
     m.classList.remove('on');
     m.hidden = true;
     m.setAttribute('inert', '');
+    m.setAttribute('aria-hidden', 'true');
   }
 };
 

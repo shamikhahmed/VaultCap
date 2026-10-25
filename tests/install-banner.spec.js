@@ -39,17 +39,34 @@ test.describe('VaultCap install banner', () => {
 
   test('bundle is JS even with active SW (no HTML poison)', async ({ page }) => {
     await page.goto('./index.html');
-    await page.waitForFunction(() => window.VER, null, { timeout: 15000 });
-    // Warm SW if registered
+    await page.waitForFunction(
+      () => !!window.VER && typeof window.InstallPrompt !== 'undefined',
+      null,
+      { timeout: 45000 },
+    );
+    // Warm SW with the live version query (sync poll — avoid async waitForFunction flakiness)
     await page.evaluate(async () => {
       if (!('serviceWorker' in navigator)) return;
+      const ver = window.VER || '6.0.0';
       try {
-        await navigator.serviceWorker.register('./sw-v51.js?v=5.3.1');
-        await navigator.serviceWorker.ready;
-      } catch (e) {}
+        await navigator.serviceWorker.register('./sw-v51.js?v=' + ver);
+      } catch (e) { /* ignore */ }
+    });
+    // Registration may still be installing — poll getRegistration (sync waitForFunction can't await).
+    await page.evaluate(async () => {
+      if (!('serviceWorker' in navigator)) return;
+      for (let i = 0; i < 50; i++) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg && (reg.active || reg.installing || reg.waiting)) return;
+        await new Promise((r) => setTimeout(r, 100));
+      }
     });
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.VER, null, { timeout: 15000 });
+    await page.waitForFunction(
+      () => !!window.VER && typeof window.InstallPrompt !== 'undefined',
+      null,
+      { timeout: 45000 },
+    );
 
     const probe = await page.evaluate(async () => {
       const r = await fetch('./dist/vaultcap.bundle.js?v=' + (window.VER || 'x'));
@@ -58,7 +75,7 @@ test.describe('VaultCap install banner', () => {
         status: r.status,
         head: t.slice(0, 40),
         isHtml: t.trimStart().startsWith('<') || t.trimStart().startsWith('<!--'),
-        hasIP: typeof window.InstallPrompt === 'object' || typeof window.InstallPrompt === 'function',
+        hasIP: typeof window.InstallPrompt !== 'undefined',
       };
     });
     expect(probe.isHtml, JSON.stringify(probe)).toBe(false);

@@ -150,9 +150,11 @@ async function consoleWatch(page) {
 
 async function runAxe(page, screen, theme) {
   try {
+    // preload:false — axe stylesheet clone re-resolves @import against / → /base.css 404 artifact
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .disableRules(['color-contrast']) // contrast checked separately / flaky on glass
+      .options({ preload: false })
       .analyze();
     const bad = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
     return bad.map((v) => ({

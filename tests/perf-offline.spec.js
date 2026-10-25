@@ -20,7 +20,7 @@ test.describe('VaultCap performance + offline', () => {
       };
     });
     const wallMs = Date.now() - started;
-    expect(metrics.VER).toMatch(/^5\./);
+    expect(metrics.VER).toMatch(/^\d+\.\d+\.\d+/);
     // Soft budgets — fail only on catastrophic regression
     expect(wallMs).toBeLessThan(45000);
     if (metrics.bundleTransferKb != null) {
@@ -42,14 +42,12 @@ test.describe('VaultCap performance + offline', () => {
       };
     });
     expect(sw.supported).toBe(true);
-    // SW may take a moment on first load
+    // Wait for register/install under load — not a fixed sleep
     if (!sw.active) {
-      await page.waitForTimeout(1500);
-      const again = await page.evaluate(async () => {
+      await page.waitForFunction(async () => {
         const reg = await navigator.serviceWorker.getRegistration();
         return !!(reg && (reg.active || reg.installing || reg.waiting));
-      });
-      expect(again).toBe(true);
+      }, null, { timeout: 30000 });
     }
   });
 

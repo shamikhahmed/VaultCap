@@ -76,6 +76,13 @@ start_server() {
   done
 }
 
+# ── 0. HIG standing rules (static, no browser) ───────────────────────────────
+if run_logged "hig-guards" "$LOGS/00-hig-guards.log" node scripts/hig-guards.mjs; then
+  record "hig-guards (standing rules 1–4)" "PASS" "ok"
+else
+  record "hig-guards (standing rules 1–4)" "FAIL" "see $LOGS/00-hig-guards.log"
+fi
+
 # ── 1a. CI quality: build + xss ──────────────────────────────────────────────
 if run_logged "ci-build-js" "$LOGS/01-build-js.log" npm run build:js; then
   record "ci.yml quality · build:js" "PASS" "ok"

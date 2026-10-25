@@ -18,7 +18,8 @@ test.describe('code-review hig fixes', () => {
       const yBefore = ScrollLock.currentY();
       window.resetScroll('dashboard');
       const yAfter = ScrollLock.currentY();
-      const cache = (window._scrollCache && window._scrollCache.dashboard) || null;
+      // Use ?? so a valid cache of 0 is not treated as missing
+      const cache = window._scrollCache?.dashboard ?? null;
       ScrollLock.unlock();
       return { yBefore, yAfter, cache, lockedWasUpdated: yAfter === 0 };
     });
@@ -105,7 +106,16 @@ test.describe('code-review hig fixes', () => {
   test('FocusTrap Esc closes theme picker via onEscape', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
-    await page.waitForFunction(() => typeof ThemeEngine !== 'undefined' && typeof FocusTrap !== 'undefined', { timeout: 30000 });
+    // Boot globals — do not wait on __APP_READY__ (set early by boot-cache before ThemeEngine).
+    await page.waitForFunction(
+      () =>
+        typeof R !== 'undefined' &&
+        typeof ThemeEngine !== 'undefined' &&
+        typeof ThemeEngine.openPicker === 'function' &&
+        typeof FocusTrap !== 'undefined' &&
+        typeof FocusTrap.trap === 'function',
+      { timeout: 45000 },
+    );
     await page.evaluate(() => ThemeEngine.openPicker());
     await expect(page.locator('#themeOv.on')).toBeVisible();
     await page.keyboard.press('Escape');

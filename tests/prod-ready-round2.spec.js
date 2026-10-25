@@ -57,6 +57,7 @@ test.describe('prod-ready round 2 gates', () => {
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .disableRules(['color-contrast'])
+        .options({ preload: false })
         .analyze();
       const bad = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
       expect(bad, `${pg}: ${bad.map((v) => v.id).join(', ')}`).toEqual([]);
@@ -77,6 +78,8 @@ test.describe('prod-ready round 2 gates', () => {
     const add = page.locator('#pg-banks.on .ph [data-act="Banks.openAdd()"]').first();
     await expect(add).toBeVisible();
     await add.click();
-    await expect(page.locator('#overlay.on, #modal')).toBeVisible({ timeout: 5000 });
+    // Modal mounts #overlay.on and #modal together — assert the open overlay (strict-safe)
+    await expect(page.locator('#overlay.on')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('dialog', { name: /Add Bank/i })).toBeVisible({ timeout: 5000 });
   });
 });

@@ -1,7 +1,7 @@
 /* ═══════════ LAYOUT: app shell, sidebar, main, pages, header/body, bottom tabs ═══════════ */
 
 /* ─ App shell ─ */
-.app { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
+.app { display: flex; height: auto; min-height: 100vh; min-height: 100dvh; overflow: visible; }
 @media (min-width: 900px) {
   .app { max-width: 1200px; margin: 0 auto; box-shadow: 0 0 80px rgba(0,0,0,.5); border-radius: 0; }
   html { background: var(--navy-deep); }
@@ -114,16 +114,16 @@ body.sidebar-collapsed .ni.on::before { left: -4px; }
 body.light .sb-bot { background: var(--bg2); border-top-color: var(--border); }
 
 /* ─ Main content ─ */
-.main { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
+.main { flex: 1; min-width: 0; overflow: visible; display: flex; flex-direction: column; }
 @media (min-width: 700px) {
-  .main { flex: 1; min-width: 0; max-width: none; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .main { flex: 1; min-width: 0; max-width: none; margin: 0; overflow: visible; }
 }
 @media (max-width: 699px) { .main { padding-bottom: 0; } }
 @media (min-width: 700px) { .main { padding-bottom: 24px; } }
 @media (min-width: 1400px) { .main { padding: 24px; } }
 
 /* ─ Pages ─ */
-.page { display: none; flex-direction: column; height: 100%; overflow: hidden; contain: layout style; }
+.page { display: none; flex-direction: column; height: auto; overflow: visible; contain: none; }
 .page.on { display: flex; animation: pgIn .2s var(--ease); }
 
 /* ─ Demo mode banner (fixed; offsets app shell below) ─ */
@@ -206,8 +206,8 @@ body.is-pushed .ph h2,
 }
 @media (max-width: 699px) { .ph { padding-top: calc(max(env(safe-area-inset-top, 0px), var(--cap-safe-t, 0px)) + 10px); } }
 
-/* ─ Page body ─ */
-.pb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 32px; overscroll-behavior: contain; min-height: 0; }
+/* ─ Page body (document scrolls — no inner .pb scroller) ─ */
+.pb { flex: none; overflow: visible; padding: 16px 20px 32px; overscroll-behavior: auto; min-height: 0; }
 .pb::-webkit-scrollbar { width: 0; }
 
 /* iOS inset grouped lists */
@@ -604,9 +604,9 @@ body.hide-btabs var(--vc-hex-fab) { display: none; }
 }
 .panic-btn:hover { background: var(--err); color: var(--on-accent); transform: scale(1.1); }
 
-/* ─ PWA: macOS Safari desktop fix ─ */
+/* ─ PWA: macOS Safari desktop — document scrolls (no body/.app scroll lock) ─ */
 @supports (-webkit-touch-callout: none) {}
 @media (min-width: 700px) {
-  .app { height: 100dvh; max-height: 100dvh; overflow: hidden; }
-  body { height: 100dvh; overflow: hidden; }
+  .app { height: auto; max-height: none; min-height: 100dvh; overflow: visible; }
+  body { height: auto; min-height: 100dvh; overflow: visible; }
 }

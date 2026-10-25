@@ -53,7 +53,7 @@ for (const route of ROUTES) {
     }, theme);
     await page.waitForTimeout(400);
 
-    const axe = await new AxeBuilder({ page }).analyze();
+    const axe = await new AxeBuilder({ page }).options({ preload: false }).analyze();
     const outName = `${route.id}-${theme}.json`;
     const payload = {
       url: page.url(),

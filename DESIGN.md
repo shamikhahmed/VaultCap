@@ -13,6 +13,20 @@ Source of truth:
 | `css/app.css` | Cascade orchestrator: 5.x CSS demoted to `@layer legacy` | deferred (`media=print` → `all`, see `js/boot-cache.js`) |
 | `js/core/ui-kit.js` | `UIKit` — vanilla HTML-string kit for string-rendered screens | app bundle |
 
+**Cascade note:** Layers via `@import url(…) layer(name)` in `app.css` only — never `<link layer="…">` (browsers ignore it). Root-relative CSS 404s during axe are an audit artifact (axe stylesheet preload/clone); run axe with `preload: false`.
+
+### Scroll exceptions (inner overflow allowed)
+
+Documented leaves only — everything else uses document scroll:
+
+| Selector | Why |
+|---|---|
+| `.mb` | Modal sheet body |
+| `.vc-more-body`, `.vc-sheet-panel` | Hub / more sheet bodies |
+| `.cmd-list` | Command palette results |
+| `.sb-nav` | Sticky desktop sidebar nav (≥700px) |
+| `.ui-scroller` | Deliberate horizontal chip/carousel leaf |
+
 ## Principles
 
 1. **Content first.** Numbers and names carry the screen; surfaces are grey/white (light) or black/graphite (dark).

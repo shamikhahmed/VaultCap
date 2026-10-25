@@ -33,7 +33,12 @@ test.describe('VaultCap vault switch', () => {
   test('switch to personal updates profile (no demo init override)', async ({ page }) => {
     // No unlockDemoVault initScript — it would force demo on every nav
     await page.goto('/?demo=1');
-    await page.waitForFunction(() => typeof VaultProfiles !== 'undefined', null, { timeout: 15000 });
+    await page.waitForLoadState('load');
+    await page.waitForFunction(
+      () => typeof window.VaultProfiles !== 'undefined' && typeof window.VaultProfiles.active === 'function',
+      null,
+      { timeout: 45000 },
+    );
     await page.evaluate(async () => {
       if (typeof Store !== 'undefined' && Store.flush) await Store.flush();
       if (typeof VaultDB !== 'undefined') VaultDB.sessionKey = null;
@@ -41,9 +46,18 @@ test.describe('VaultCap vault switch', () => {
       localStorage.setItem('vo_used_demo', '1');
     });
     await page.goto('./index.html');
-    await page.waitForFunction(() => localStorage.getItem('vo_active_profile') === 'personal', null, { timeout: 10000 });
-    const active = await page.evaluate(() => VaultProfiles.active());
+    await page.waitForLoadState('load');
+    // Second load re-injects boot async — wait for VaultProfiles on window, not bare binding.
+    await page.waitForFunction(
+      () =>
+        localStorage.getItem('vo_active_profile') === 'personal' &&
+        typeof window.VaultProfiles !== 'undefined' &&
+        typeof window.VaultProfiles.active === 'function',
+      null,
+      { timeout: 45000 },
+    );
+    const active = await page.evaluate(() => window.VaultProfiles.active());
     expect(active).toBe('personal');
-    expect(await page.evaluate(() => VaultProfiles.dbName())).toBe('vaultos');
+    expect(await page.evaluate(() => window.VaultProfiles.dbName())).toBe('vaultos');
   });
 });

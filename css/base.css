@@ -9,10 +9,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 /* Dynamic Type: every font-size is rem; the iOS app sets --dt-scale from the system text size */
-html { height: 100%; -webkit-text-size-adjust: 100%; font-size: calc(16px * var(--dt-scale, 1)); }
+html { height: auto; min-height: 100%; -webkit-text-size-adjust: 100%; font-size: calc(16px * var(--dt-scale, 1)); scroll-behavior: auto; }
 body {
   font-family: var(--font-system); background: var(--bg); color: var(--text);
-  height: 100%; overflow: hidden; overscroll-behavior: none;
+  height: auto; min-height: 100%; overflow: visible; overscroll-behavior-y: auto;
   -webkit-font-smoothing: antialiased;
   font-feature-settings: 'kern' 1, 'liga' 1;
   text-rendering: optimizeLegibility;

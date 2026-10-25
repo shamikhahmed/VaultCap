@@ -51,7 +51,7 @@ const Cards={
     const el=document.getElementById('cItems');if(!el)return;
     // Wallet strip — horizontal scroll of all cards (shown even when list is filtered)
     const walletHtml=S.cards.length>0
-      ?'<div style="overflow-x:auto;display:flex;gap:12px;padding:4px 4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:4px">'+
+      ?'<div tabindex="0" aria-label="Card carousel" style="overflow-x:auto;display:flex;gap:12px;padding:4px 4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:4px">'+
         S.cards.filter(c=>!c.archived).map(c=>{
           const GRADS={Visa:'linear-gradient(135deg,'+VCBrand.h_1a1f71+','+VCBrand.h_2575fc+')',Mastercard:'linear-gradient(135deg,'+VCBrand.h_eb001b+','+VCBrand.h_f79e1b+')','American Express':'linear-gradient(135deg,'+VCBrand.h_007b5e+','+VCBrand.h_00b894+')',UnionPay:'linear-gradient(135deg,'+VCBrand.h_c0392b+','+VCBrand.h_e74c3c+')',PayPak:'linear-gradient(135deg,'+VCBrand.h_007a3d+','+VCBrand.h_00b463+')'};
           const bg=GRADS[c.network]||cardGradient(c)||'linear-gradient(135deg,rgba(0,213,255,.8),rgba(0,213,255,.6))';
