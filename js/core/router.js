@@ -473,5 +473,9 @@ function updatePageChrome(pg) {
 window.resetScroll = function(pageId) {
   const pid = pageId || (typeof S !== 'undefined' ? S.currentPage : null);
   if (window._scrollCache && pid) window._scrollCache[pid] = 0;
-  if (pid && typeof S !== 'undefined' && S.currentPage === pid) window.scrollTo(0, 0);
+  if (pid && typeof S !== 'undefined' && S.currentPage === pid) {
+    // window.scrollTo is a no-op while ScrollLock pins the body; unlock would restore stale Y.
+    if (window.ScrollLock) ScrollLock.scrollTo(0);
+    else window.scrollTo(0, 0);
+  }
 };
