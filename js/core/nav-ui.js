@@ -20,8 +20,8 @@ function armSheetOverlay(overlay) {
 
 function moneySheetTile(m) {
   const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-  const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-  return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+  const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+  return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moneySheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
 }
 
 function openMoneySheet() {
@@ -80,8 +80,8 @@ function openAssetsSheet() {
     '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+      const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'assetsSheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No wealth modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'assetsSheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   document.body.appendChild(overlay);
@@ -111,8 +111,8 @@ function openIdentitySheet() {
     '<div class="vc-sheet-grid vc-sheet-grid--4">' +
     (items.length ? items.map(m => {
       const cnt = typeof ContextSwitcher !== 'undefined' ? ContextSwitcher.filter(S[m.id]||[]).length : (S[m.id]||[]).length;
-      const badge = cnt > 0 ? '<div class="vc-sheet-tile-badge">'+cnt+'</div>' : '';
-      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><div class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</div><div class="vc-sheet-tile-label">'+m.n+'</div>'+badge+'</button>';
+      const badge = cnt > 0 ? '<span class="vc-sheet-tile-badge">'+cnt+'</span>' : '';
+      return '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'identitySheet\',\''+m.id+'\')"><span class="vc-icon-wrap vc-icon-wrap--sheet">'+VC.modIcon(m,22)+'</span><span class="vc-sheet-tile-label">'+m.n+'</span>'+badge+'</button>';
     }).join('') : '<div class="vc-ix-186"><div class="vc-ix-103">No identity modules enabled.</div><button type="button" class="btn btn-p btn-sm" data-act="ActHelpers.closeSheetGotoModules(\'identitySheet\')">Enable in Settings →</button></div>') +
     '</div></div>';
   document.body.appendChild(overlay);
@@ -169,8 +169,8 @@ function openMore() {
     '<div class="vc-sheet-grid">' +
     group.items.map(m =>
       '<button type="button" class="vc-sheet-tile" data-act="ActHelpers.closeSheetGoto(\'moreOverlay\',\'' + m.id + '\')">' +
-      '<div class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</div>' +
-      '<div class="vc-sheet-tile-label">' + m.n + '</div>' +
+      '<span class="vc-icon-wrap vc-icon-wrap--sheet">' + moreItemIcon(m.id, 22) + '</span>' +
+      '<span class="vc-sheet-tile-label">' + m.n + '</span>' +
       '</button>'
     ).join('') +
     '</div></div>'
@@ -343,8 +343,8 @@ function renderHomeModules() {
   ];
   grid.innerHTML = mods.map(m =>
     `<button type="button" class="home-mod-tile" data-act="ActHelpers.homeModGoto('${m.page}')" aria-label="${m.label}">
-      <div class="home-mod-ic">${VC.icon(m.ic, 20)}</div>
-      <div class="home-mod-label">${m.label}</div>
+      <span class="home-mod-ic">${VC.icon(m.ic, 20)}</span>
+      <span class="home-mod-label">${m.label}</span>
     </button>`
   ).join('');
 }

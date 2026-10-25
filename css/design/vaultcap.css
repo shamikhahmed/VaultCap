@@ -1010,6 +1010,7 @@ body.light .inp:focus {
 }
 
 .vc-sheet-tile-label {
+  display: block;
   font-size: var(--t-subhead);
   font-weight: 500;
   text-transform: none;

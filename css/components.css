@@ -1490,15 +1490,23 @@ body.light .wcard { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
   outline-offset: 2px;
 }
 .vc-sheet-tile-label {
+  display: block;
   font-size: 0.6875rem;
   font-weight: var(--fw-semibold);
   color: var(--text);
   line-height: var(--lh-tight);
 }
 .vc-sheet-tile-badge {
+  display: block;
   font-size: 0.6875rem;
   color: var(--text3);
   margin-top: 1px;
+}
+/* <button> children must be phrasing — tiles use <span> with block/flex display */
+.vc-sheet-tile > .vc-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .vc-more-overlay {
   position: fixed;

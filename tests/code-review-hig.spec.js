@@ -88,6 +88,21 @@ test.describe('code-review hig fixes', () => {
     await expect(page.locator('#themeOv.on')).toHaveCount(0);
   });
 
+  test('hub sheet tiles use phrasing spans inside buttons', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof R !== 'undefined', { timeout: 30000 });
+    await unlockDemoVault(page);
+    await dismissOverlays(page);
+    await page.evaluate(() => openMoneySheet());
+    const bad = await page.evaluate(() => {
+      const tiles = [...document.querySelectorAll('#moneySheet .vc-sheet-tile')];
+      return tiles.filter((btn) => [...btn.children].some((c) => c.tagName === 'DIV')).length;
+    });
+    expect(bad).toBe(0);
+    await page.evaluate(() => document.getElementById('moneySheet')?.remove());
+  });
+
   test('home theme dots use ui-segmented markup', async ({ page }) => {
     await page.goto('/?demo=1');
     await page.waitForLoadState('load');
