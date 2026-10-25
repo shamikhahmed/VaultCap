@@ -91,6 +91,9 @@ for (const pg of ['dashboard', 'banks', 'cards', 'investments', 'documents', 'se
   if (pg !== 'settings') check(`document scrolls (no inner scroller) · ${pg}`, m.docScroll && m.innerScroller === 'visible', JSON.stringify(m));
 }
 
+// 2b. The document really scrolls (and instantly — no smooth-scroll animation)
+check('programmatic scroll lands instantly', await page.evaluate(() => { window.scrollTo(0, 300); const y = window.scrollY; window.scrollTo(0, 0); return y >= 250; }));
+
 // 3. Navigation by tapping: shell stays, new screen opens at top, no reload
 await step('navigation by tapping', async () => {
 await page.evaluate(() => R.goto('dashboard'));

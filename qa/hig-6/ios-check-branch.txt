@@ -12,6 +12,7 @@ PASS  document scrolls (no inner scroller) · investments
 PASS  no sideways overflow · documents
 PASS  document scrolls (no inner scroller) · documents
 PASS  no sideways overflow · settings
+PASS  programmatic scroll lands instantly
 PASS  tab → sheet → module keeps shell (no reload)
 PASS  new screen opens at top
 PASS  page locked behind sheet
