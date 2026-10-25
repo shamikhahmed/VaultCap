@@ -38,6 +38,14 @@ www/
 # Playwright
 test-results/
 playwright-report/
+.pw-browsers/
+.cache/
+
+# Prod-ready run logs (keep REPORT/INVENTORY/scripts)
+qa/prod-ready/*.log
+qa/prod-ready/*.pid
+qa/prod-ready/outside-run.*
+qa/prod-ready/shots/
 
 # Device-matrix capture artifacts (keep REPORT.md)
 qa/device-matrix/**/*.png
