@@ -44,6 +44,16 @@
 | After (proven here) | version-coherence **1 passed**; xss **ok**; build **ok** |
 | ios-check (prior on branch) | **21/21 PASS** (`qa/hig-6/ios-check-branch.txt`) |
 
+## Security — record id policy (2026-10-25)
+
+**Finding (Med):** Record ids were interpolated unescaped into `data-act` / `data-id` / `U.icb` Act strings (e.g. `banks.js` `Banks.detail('${b.id}')`). A crafted backup/import/QR id could break out of attributes (`style-src 'unsafe-inline'`) or chain extra Act statements on tap.
+
+**Fix:**
+1. **IdPolicy** (`js/core/id-policy.js`): ids must match `/^[A-Za-z0-9_-]{1,64}$/`. `sanitizeVault` remaps non-conforming ids and keeps FKs (`linkedBankId`, `ownerId`, `wallet`, trash payloads, family) consistent.
+2. **Entry points:** `Store.hydrate` / `Store.sanitizeIds` on unlock, PIN restore, biometric load, decoy, ExIm/QR/merge import, AI import, schema migrate.
+3. **Defence in depth:** `U.actId` / `escAttr` on Act + attribute interpolations (incl. `actsViewEditDel` / `actsEditDel`).
+4. **Tests:** `tests/id-policy-unit.mjs` (node); `tests/id-policy.spec.js` (Playwright — malicious restore + normal round-trip).
+
 ## External hosts (CSP / connect-src)
 
 - `open.er-api.com` (FX)

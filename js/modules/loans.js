@@ -84,13 +84,13 @@ const Loans = {
       const cur = l.currency || userCur;
 
       const settle  = status !== 'Settled'
-        ? `${U.icb('target',{onclick:`Loans.settle('${l.id}')`,ariaLabel:'Mark settled',title:'Mark settled'})}`
+        ? `${U.icb('target',{onclick:`Loans.settle('${U.actId(l.id)}')`,ariaLabel:'Mark settled',title:'Mark settled'})}`
         : '';
       const payBtn = status !== 'Settled'
-        ? `${U.icb('banknote',{onclick:`Loans.recordPayment('${l.id}')`,ariaLabel:'Record payment',title:'Record payment'})}`
+        ? `${U.icb('banknote',{onclick:`Loans.recordPayment('${U.actId(l.id)}')`,ariaLabel:'Record payment',title:'Record payment'})}`
         : '';
 
-      return `<div class="entry" data-id="${l.id}">
+      return `<div class="entry" data-id="${escAttr(U.actId(l.id))}">
         <div class="entry-main">
           <div class="entry-ic">${VC.icon(l.type === 'lent' ? 'arrow-right' : 'undo', 18)}</div>
           <div class="entry-body">
@@ -220,7 +220,7 @@ const Loans = {
 
   edit(id) {
     const l = (S.loans || []).find(x => x.id === id); if (!l) return;
-    Modal.open('Edit Loan', this.form(l), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Loans.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Loans.save('${id}')">Update</button>`);
+    Modal.open('Edit Loan', this.form(l), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Loans.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Loans.save('${U.actId(id)}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('lf-cur');
       if (cur) cur.value = l.currency || S.user.currency || 'PKR';
@@ -250,7 +250,7 @@ const Loans = {
         <div>Paid so far: <strong>${cur} ${Math.round(paid).toLocaleString()}</strong></div>
         <div>Remaining: <strong class="vc-ix-242">${cur} ${Math.round(remaining).toLocaleString()}</strong></div>
       </div>`,
-      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Loans.savePayment('${id}')">Record</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Loans.savePayment('${U.actId(id)}')">Record</button>`
     );
     setTimeout(() => {
       const amtEl = document.getElementById('lp-amt');

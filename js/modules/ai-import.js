@@ -456,7 +456,7 @@ const AIImport = {
       if (chk && !chk.checked) return;
 
       const d = item.data || {};
-      const id = Math.random().toString(36).slice(2);
+      const id = (typeof U !== 'undefined' && U.id) ? U.id() : ('i' + Date.now() + Math.random().toString(36).slice(2, 5));
 
       if (item.type === 'bank') {
         if (!S.banks) S.banks = [];
@@ -493,7 +493,7 @@ const AIImport = {
       } else if (item.type === 'gold') {
         S.assets = S.assets || [];
         S.assets.push({
-          id: 'ast_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+          id: (typeof U !== 'undefined' && U.id) ? U.id() : ('i' + Date.now() + Math.random().toString(36).slice(2, 5)),
           assetType: 'precious_metals',
           name: d.label || ((d.metal || 'Gold') + (d.weight ? ' ' + d.weight + (d.unit||'g') : '')),
           metalType: d.metal || 'Gold',
@@ -520,6 +520,7 @@ const AIImport = {
     });
 
     if (count > 0) {
+      if (typeof Store !== 'undefined' && Store.sanitizeIds) Store.sanitizeIds();
       Store.save();
       if (typeof buildNav === 'function') buildNav();
       Toast.show('Imported ' + count + ' item' + (count > 1 ? 's' : ''), 'success');

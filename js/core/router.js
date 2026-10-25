@@ -98,7 +98,7 @@ const R = {
               S.fails = 0; S.lockedUntil = 0;
               try { LockoutStore.clear(); } catch (e) {}
               VaultDB.load().then(data => {
-                if (data) Object.assign(S, data);
+                if (data) Store.hydrate(data);
                 if (!Array.isArray(S.bills)) S.bills = [];
                 R.unlock();
               }).catch(() => Toast.show('Biometric unlock failed — use PIN', 'error'));

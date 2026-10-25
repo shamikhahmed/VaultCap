@@ -242,7 +242,7 @@ function buildSettTabs() {
   ];
   const cur = (typeof SettingsNav !== 'undefined' ? SettingsNav.current : null) || 'account';
   el.innerHTML = tabs.map(([id, label, ic]) =>
-    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${id}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
+    `<button type="button" class="cap-tab tab-pill${cur === id ? ' on' : ''}" role="tab" aria-selected="${cur === id}" data-act="SettingsNav.show('${U.actId(id)}')">${VC.icon(ic, 14)}<span>${label}</span></button>`
   ).join('');
 }
 
@@ -254,7 +254,7 @@ function saveTabPrefs(prefs) {
 }
 
 function financeHomeTile(m) {
-  return `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
+  return `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
@@ -295,7 +295,7 @@ function renderVaultHome() {
     {id:'friends',ic:'user',label:'Contacts',desc:(S.friends||[]).length+' contacts'},
   ];
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
@@ -315,7 +315,7 @@ function renderAssetsHome() {
     {id:'assets',ic:'layers',label:'Property',desc:(S.assets||[]).length+' items'+(vehicleCount||metalCount?' · inc. vehicles & metals':'')},
   ].filter(m => isModOn(m.id));
   b.innerHTML = '<div class="vc-ix-188">' +
-    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${m.id}')">
+    modules.map(m => `<button type="button" class="vc-ix-104" data-act="R.goto('${U.actId(m.id)}')">
       <div class="vc-icon-wrap vc-ix-105">${VC.icon(m.ic, 22)}</div>
       <div class="vc-ix-25">${m.label}</div>
       <div class="vc-ix-106">${m.desc}</div>
@@ -385,13 +385,13 @@ function buildNav() {
     if (!grouped[grp] || !grouped[grp].length) return;
     sbHTML += `<div style="font-size:0.6875rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px" role="separator" aria-label="${label}">${label}</div>`;
     sbHTML += grouped[grp].filter(m => !!document.getElementById('pg-' + m.id)).map(m =>
-      `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
+      `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${escAttr(U.actId(m.id))}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
     ).join('');
   });
   sbHTML += `<div style="height:1px;background:var(--border);margin:8px 14px" role="separator"></div>`;
   const activeModIds = new Set(active.map(m => m.id));
   sbHTML += extras.filter(m => !activeModIds.has(m.id)).map(m =>
-    `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${m.id}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
+    `<button type="button" class="ni${S.currentPage === m.id ? ' on' : ''}" data-pg="${escAttr(U.actId(m.id))}"><span class="ni-ic" aria-hidden="true">${VC.modIcon(m, 18)}</span><span class="ni-txt">${m.n}</span></button>`
   ).join('');
   document.getElementById('sbNav').innerHTML = sbHTML;
 

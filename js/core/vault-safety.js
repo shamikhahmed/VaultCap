@@ -21,7 +21,7 @@ const VaultSafety = {
   async restore() {
     try {
       const data = await VaultDB.restorePinBackup();
-      Object.assign(S, data);
+      Store.hydrate(data);
       await Store.save();
       Modal.close();
       buildNav();

@@ -9,7 +9,7 @@ const WorkspaceManager = {
     const current = S.workspace || 'default';
     el.innerHTML = `<div style="font-size:0.6875rem;color:var(--text3);padding:0 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Switch between pre-configured module layouts</div>` +
       presets.map(([id, p]) => `
-        <div class="entry" style="${current===id?'border-left:3px solid var(--accent)':''}" data-act="WorkspaceManager.apply('${id}')">
+        <div class="entry" style="${current===id?'border-left:3px solid var(--accent)':''}" data-act="WorkspaceManager.apply('${U.actId(id)}')">
           <div class="entry-main">
             <div class="entry-ic">${VC.icon(p.ic, 18)}</div>
             <div class="entry-body">
@@ -59,7 +59,7 @@ function applyDecoyUnlock(decoyData) {
     ((decoyData.banks && decoyData.banks.length) || (decoyData.cards && decoyData.cards.length) ||
      (decoyData.documents && decoyData.documents.length));
   if (hasCustomVault) {
-    Object.assign(S, decoyData);
+    Store.hydrate(decoyData);
     S.decoy = true;
     Activity.log('Vault unlocked (decoy)');
     Store.save();

@@ -80,7 +80,7 @@ const ThemeEngine = {
     document.getElementById('themePicker').innerHTML = `
       <div style="display:grid;grid-template-columns:1fr;gap:10px">
         ${options.map(o => `
-          <div data-act="ThemeEngine.apply('${o.id}');ThemeEngine.closePicker()" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${o.id === S.user.theme ? 'var(--accent)' : 'var(--border)'};display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--glass)">
+          <div data-act="ThemeEngine.apply('${U.actId(o.id)}');ThemeEngine.closePicker()" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${o.id === S.user.theme ? 'var(--accent)' : 'var(--border)'};display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--glass)">
             <div style="width:40px;height:40px;border-radius:12px;background:${o.preview};border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center">
               <div style="width:12px;height:12px;border-radius:50%;background:${o.accent}"></div>
             </div>

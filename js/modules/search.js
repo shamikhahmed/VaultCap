@@ -210,7 +210,7 @@ const GlobalSearch = {
         const ownerBadge = item._owner ? ` · ${escHtml(item._owner)}` : '';
         const secLine = [item._secondary ? escHtml(item._secondary) : '', ownerBadge].filter(Boolean).join('');
         const rowIc = typeof VC !== 'undefined' ? VC.iconKey(item._icon, 22) : '';
-        return `<div data-act="GlobalSearch.open('${item._key}','${item._id||''}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" class="vos-hover-glass">
+        return `<div data-act="GlobalSearch.open('${U.actId(item._key)}','${U.actId(item._id||'')}')" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 14px;margin:0 8px 8px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent" class="vos-hover-glass">
           <div class="chip-ic vc-ix-21">${rowIc}</div>
           <div class="vc-ix-20">
             <div style="font-size:0.875rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ql ? this.highlight(item._primary, q) : escHtml(item._primary)}</div>

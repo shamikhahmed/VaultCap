@@ -5,6 +5,7 @@
   "js/core/constants.js",
   "js/core/native-bridge.js",
   "js/core/validators.js",
+  "js/core/id-policy.js",
   "js/core/vault-meta.js",
   "js/core/theme.js",
   "js/core/lazy-loader.js",

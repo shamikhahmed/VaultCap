@@ -439,7 +439,7 @@ const Dash={
     <div class="vc-ix-30">
       <div class="vc-ix-135"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
       ${allExpiring.slice(0,3).map(x => `
-        <div data-act="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
+        <div data-act="Dash.openExpiring('${x.type}','${U.actId(x.id||'')}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="chip-ic vc-ix-21">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
@@ -523,7 +523,7 @@ const Dash={
     const f3=h>=100?'9px':'8px';
     const mb1=h>=100?'6px':'4px';
     const st=U.expSt(c.expiry);
-    return `<div class="wc-mini" data-act="Cards.openDetail('${c.id}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
+    return `<div class="wc-mini" data-act="Cards.openDetail('${U.actId(c.id)}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
   <div style="position:absolute;top:-30%;right:-15%;width:${Math.round(h*1.4)}px;height:${Math.round(h*1.4)}px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
     <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" alt="" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" data-act-error="ActHelpers.hideEl(this)">`:''}${bankName}</div>
@@ -537,7 +537,7 @@ const Dash={
 </div>`;
   },
   editWallet(){
-    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${c.id}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
+    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${U.actId(c.id)}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
   },
   editNW(){
     // Net worth is live-computed from banks/cash/investments/assets — open breakdown instead of a dead manual field
@@ -979,9 +979,11 @@ const ExIm={
             if(!await window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
+              if(typeof IdPolicy!=='undefined')IdPolicy.sanitizeVault(data);
               ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
               if(data.vaultMeta&&typeof VaultMeta!=='undefined'){VaultMeta._ensure();Object.keys(data.vaultMeta).forEach(k=>{if(data.vaultMeta[k]&&typeof data.vaultMeta[k]==='object')S.vaultMeta[k]={...S.vaultMeta[k],...data.vaultMeta[k]};});}
+              Store.sanitizeIds();
               Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
             }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}
           }catch(err){Toast.show('Failed: '+err.message,'error');}
@@ -1343,6 +1345,7 @@ const QRSync = {
 
   _applyImportData(data) {
     try {
+      if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
       const now = t => t ? new Date(t).getTime() : 0;
       QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
@@ -1352,6 +1355,7 @@ const QRSync = {
           else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
         });
       });
+      Store.sanitizeIds();
       Store.save(); buildNav(); Modal.close();
       Toast.show('Vault imported from QR!', 'success');
       R.goto(S.currentPage || 'dashboard');
@@ -1386,6 +1390,7 @@ const QRSync = {
       const enc = decodeURIComponent(encEncoded);
       const raw = await Crypto.decrypt(enc, code);
       const data = JSON.parse(raw);
+      if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
       const now = t => t ? new Date(t).getTime() : 0;
       QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
@@ -1395,6 +1400,7 @@ const QRSync = {
           else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
         });
       });
+      Store.sanitizeIds();
       Store.save(); buildNav(); Modal.close();
       Toast.show('Vault synced successfully!', 'success');
       R.goto(S.currentPage || 'dashboard');
@@ -1606,9 +1612,11 @@ const ImportEngine={
   },
   mergeVault(data){
     if(!data.banks&&!data.cards){Toast.show('Not a valid VaultCap file','error');return;}
+    if(typeof IdPolicy!=='undefined')IdPolicy.sanitizeVault(data);
     const total=['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].reduce((a,k)=>{
       if(Array.isArray(data[k])){const new_=data[k].filter(x=>!S[k]?.find(y=>y.id===x.id));S[k]=[...(S[k]||[]),...new_];return a+new_.length;}return a;
     },0);
+    Store.sanitizeIds();
     Store.save();buildNav();Activity.log('Vault merged',''+total+' new entries');
     Toast.show('Imported '+total+' new entries','success');this.render();
   },
@@ -1906,7 +1914,7 @@ const Links={
     <p class="vc-ix-66">Connect related entries — property with insurance, card with bank, device with email account...</p>
     <div style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:7px">
       ${opts.map(o=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:10px;cursor:pointer;border:1px solid var(--border)">
-        <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${o.id}" style="width:18px;height:18px;accent-color:var(--accent)">
+        <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${escAttr(U.actId(o.id))}" style="width:18px;height:18px;accent-color:var(--accent)">
         <span class="chip-ic">${_uiIcon(o.ic,18)}</span>
         <div><div style="font-size:0.8125rem;font-weight:500">${o.label}</div><div class="vc-ix-3">${o.type}</div></div>
       </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:0.8125rem;padding:20px">No other entries to link to yet</div>'}
@@ -2242,7 +2250,7 @@ const SettingsNav = {
     const mods = typeof ALL_MODULES !== 'undefined' ? ALL_MODULES : [];
     const byGroup = {};
     mods.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
-    const row = m => `<div class="si"><div class="vc-ix-93"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`;
+    const row = m => `<div class="si"><div class="vc-ix-93"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${U.actId(m.id)}',this.checked)"><span class="ts"></span></label></div>`;
     const sections = order.filter(g => byGroup[g]?.length).map(g =>
       `<div class="set-sec"><div class="set-title">${g}</div><div class="set-card">${byGroup[g].map(row).join('')}</div></div>`
     ).join('');
@@ -2261,7 +2269,7 @@ const SettingsNav = {
         <div class="vc-ix-158">Dark, Light, or match your device. Accessibility controls live under Access.</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" role="radiogroup" aria-label="Theme">
           ${options.map(o => `
-            <button type="button" role="radio" aria-checked="${active === o.id}" data-act="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
+            <button type="button" role="radio" aria-checked="${active === o.id}" data-act="ThemeEngine.apply('${U.actId(o.id)}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
               <div style="height:48px;background:${o.preview};display:flex;align-items:center;justify-content:center">
                 <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
               </div>
@@ -2530,7 +2538,7 @@ const HelpCenter = {
       <button type="button" class="btn btn-p btn-full vc-ix-167" data-act="SmartHelp.open()">Ask Smart Help</button>
       <div style="display:flex;gap:8px;overflow-x:auto;padding:2px 4px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
         ${sections.map(s => `
-          <div data-act="HelpCenter._section='${s.id}';HelpCenter._renderContent()"
+          <div data-act="HelpCenter._section='${U.actId(s.id)}';HelpCenter._renderContent()"
             class="chip${this._section===s.id?' on':''}"
             style="white-space:nowrap;padding:6px 14px;cursor:pointer;touch-action:manipulation;display:inline-flex;align-items:center;gap:6px">
             ${typeof VC !== 'undefined' ? VC.icon(s.icon, 14) : ''} ${s.label}
