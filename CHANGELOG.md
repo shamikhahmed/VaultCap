@@ -1,3 +1,12 @@
+## [Unreleased] — Prod-ready audit (HIG 3 branch)
+
+- Sync `VERSION.json` `swCache` → `vaultcap-v100` (matched `sw-v51.js`; was stale `v99`)
+- Esc on sheets now closes the overlay (`FocusTrap` → `Modal.close`), not only release focus
+- Tab bar CSS: early `bottom`/`padding-bottom` rules aligned with canonical `max(14px, safe+6)` and bar+48+safe
+- Pitch satellite links: `rel="noopener"` on `target=_blank`
+- Gate: `tests/version-coherence.spec.js`; inventory `qa/prod-ready/INVENTORY.md`; harness `scripts/prod-ready-audit.mjs`
+- Docs: README/HANDOVER version + SW cache brought to 5.4.3 / `vaultcap-v100`
+
 ## [Unreleased] — HIG 6 design (ScentCap 3.0 system)
 
 - Apple-HIG redesign on the shared Cap system: `css/design/tokens.css` (semantic light/dark/increased-contrast tokens, vault-gold accent, legacy bridge), `css/design/system.css` (`ui-*` primitives), `css/design/vaultcap.css` (shell + shared-class reskin); 5.x CSS demoted to `@layer legacy` via `css/app.css`
