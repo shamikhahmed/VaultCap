@@ -57,4 +57,24 @@ test.describe('code-review hig fixes', () => {
     const armed = await page.evaluate(() => !!window._ptrDocInited && !!document.getElementById('ptrDocInd'));
     expect(armed).toBe(true);
   });
+
+  test('ScrollLock pins body for theme overlay while #app is hidden', async ({ page }) => {
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof ScrollLock !== 'undefined' && typeof ThemeEngine !== 'undefined', { timeout: 30000 });
+    const locked = await page.evaluate(() => {
+      const app = document.getElementById('app');
+      if (app) app.style.display = 'none';
+      window.scrollTo(0, 120);
+      ThemeEngine.openPicker();
+      ScrollLock.sync();
+      const pos = document.body.style.position;
+      const isLocked = ScrollLock.isLocked();
+      ThemeEngine.closePicker();
+      ScrollLock.sync();
+      return { pos, isLocked };
+    });
+    expect(locked.pos).toBe('fixed');
+    expect(locked.isLocked).toBe(true);
+  });
 });

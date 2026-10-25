@@ -34,9 +34,9 @@ const ScrollLock = (function () {
 
   function sync() {
     queued = false;
-    const app = document.getElementById('app');
-    const appVisible = app && app.style.display !== 'none';
-    if (appVisible && document.querySelector(OPEN)) lock();
+    // Lock for any open overlay — including theme picker on #pgHome and confirm
+    // dialogs on lock/onboarding (outside #app).
+    if (document.querySelector(OPEN)) lock();
     else unlock();
   }
 
