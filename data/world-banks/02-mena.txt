@@ -23,8 +23,8 @@ Wio Bank|d|B|wio.io||ADQ/FAB digital bank
 Liv. (Emirates NBD)|d|B|liv.me||
 Mashreq Neo|d|B|mashreq.com/neo||
 Zand Bank|d|B|zand.ae||Digital bank
-Ruya|d|B|ruya.ae||Islamic digital community bank*
-E20.|d|B|e20.ae||Digital bank by Edenred/? *
+Ruya Community Islamic Bank|i|B|ruyabank.ae||Islamic digital community bank
+E20.|d|B|emiratesnbd.com/en/e20||Digital SME banking brand of Emirates NBD (not Edenred); not a separately licensed bank
 HSBC UAE|x|B|hsbc.ae|BBMEAEAD|
 Citibank UAE|x|B|citibank.ae|CITIAEAD|
 Standard Chartered UAE|x|B|sc.com/ae|SCBLAEAD|
@@ -85,7 +85,7 @@ Attijariwafa Bank Egypt|x|?|attijariwafabank.com.eg||
 Mashreq Egypt|x|?|mashreq.com.eg||
 First Abu Dhabi Bank Misr|x|?|bankfabmisr.com||
 Arab Bank Egypt|x|?|arabbank.com.eg||
-ONE Bank (Banque Misr digital)|d|B|onebank.com.eg||Digital bank*
+onebank|d|B|onebank.eg||Egypt's first fully digital bank (ex Misr Digital Innovation, Banque Misr-backed); CBE licence 2025, launch 2026
 Vodafone Cash|w|B|vodafone.com.eg||Mobile wallet
 InstaPay|w|B|instapay.eg||National instant payments app
 Fawry|w|B|fawry.com||Payments network
@@ -113,7 +113,7 @@ HSBC Israel|x|N|hsbc.co.il||Corporate
 Rafidain Bank|g|B|rafidain-bank.gov.iq|RAFBIQBA|State-owned, largest
 Rasheed Bank|g|?|rasheedbank.gov.iq|RSHBIQBA|State-owned
 Trade Bank of Iraq (TBI)|g|B|tbi.com.iq|TRIBIQBA|
-Iraqi Islamic Bank|i|?|iraqiislamicb.com||*
+Iraqi Islamic Bank|i|?|iraqiislamicb.com||
 Kurdistan International Islamic Bank|i|?|kib.iq||
 Bank of Baghdad|c|B|bankofbaghdad.com.iq||
 Credit Bank of Iraq|c|?|creditbankofiraq.com.iq||
@@ -121,8 +121,8 @@ Gulf Commercial Bank|c|?|gcb.iq||
 National Bank of Iraq|c|B|nbi.iq||Capital Bank group
 Ashur International Bank|c|?|ashurbank.iq||
 Cihan Bank|i|?|cihanbank.com||
-Al-Taif Islamic Bank|i|?|altaifbank.com||*
-Bank of Mosul|c|?|bankofmosul.iq||*
+Al-Taif Islamic Bank for Investment and Finance|i|?|altaifbank.com|AINIIQBA|SWIFT from directory
+Mosul Bank for Development and Investment|c|?|almosulbank.iq|MOUUIQBA|
 Al Rafidain QiCard|w|B|qi.iq||Qi Card / SuperQi
 ZainCash|w|B|zaincash.iq||Mobile wallet
 FastPay|w|B|fast-pay.iq||Wallet (Kurdistan)
@@ -142,7 +142,6 @@ Parsian Bank|c|A|parsian-bank.ir||
 Bank Pasargad|c|A|bpi.ir||
 Saman Bank|c|A|sb24.ir||
 EN Bank (Eghtesad Novin)|c|A|enbank.ir||
-Ayandeh Bank|c|N|ba24.ir||Dissolved into Bank Melli (2025)*
 Bank Day|c|A|bank-day.ir||
 Sina Bank|c|A|sinabank.ir||
 Blu Bank (Saman)|d|A|blubank.com||Digital bank
@@ -163,8 +162,7 @@ Etihad Bank|c|B|bankaletihad.com||
 Société Générale de Banque – Jordanie|x|?|sgbj.com.jo||
 Jordan Islamic Bank|i|B|jordanislamicbank.com||
 Islamic International Arab Bank|i|?|iiabank.com.jo||
-Safwa Islamic Bank|i|?|safwabank.com||
-Jordan Dubai Islamic Bank|i|?|jdib.jo||*
+Safwa Islamic Bank|i|?|safwabank.com|JDIBJOAM|Formerly Jordan Dubai Islamic Bank (renamed 2017)
 Reflect (Arab Bank)|d|B|reflect.jo||Digital
 CliQ|w|B|jopacc.com||Instant payments
 Zain Cash Jordan|w|B|zaincash.jo||Wallet
@@ -209,8 +207,8 @@ North Africa Bank|c|?|nab.ly||
 Aman Bank|c|B|aman-bank.com||Aman Mobile
 Libyan Foreign Bank|g|N|lfb.ly||Correspondent / foreign trade
 Bank of Commerce & Development|c|?|bcd.ly||
-Mediterranean Bank|c|?|medbank.ly||*
-Libyan Islamic Bank|i|?|lib.ly||*
+Mediterranean Bank|c|?|meditbank.net|METILYLT|
+Libyan Islamic Bank|i|B|lib.com.ly|LYIBLYLT|
 
 ## MA Morocco | bkam.ma | https://www.bkam.ma/en/Banking-supervision/Legal-and-regulatory-framework/Lists-of-credit-institutions
 Attijariwafa Bank|c|B|attijariwafabank.com|BCMAMAMC|Largest
@@ -244,7 +242,7 @@ Meethaq (Bank Muscat)|i|B|meethaq.om||Islamic window
 Development Bank Oman|g|N|db.om||
 HSBC Oman|x|N|hsbc.co.om||Merged into Sohar International (2023)
 Standard Chartered Oman|x|?|sc.com/om||
-OmanNet / Thawani|w|B|thawani.om||Wallet*
+Thawani Pay|w|B|thawani.om||CBO-licensed non-bank payment service provider; Mojab wallet
 
 ## PS Palestine | pma.ps | https://www.pma.ps/en/Banking-System/Banks-Operating-in-Palestine
 Bank of Palestine|c|B|bop.ps|PALSPS22|Largest
@@ -272,7 +270,7 @@ Qatar Development Bank|g|N|qdb.qa||
 HSBC Qatar|x|?|hsbc.com.qa||
 Standard Chartered Qatar|x|?|sc.com/qa||
 Ooredoo Money|w|B|ooredoo.qa||Wallet
-Vodafone Cash Qatar|w|B|vodafone.qa||Wallet*
+iPay (Vodafone Qatar)|w|B|vodafone.qa||Wallet
 
 ## SA Saudi Arabia | sama.gov.sa | https://www.sama.gov.sa/en-US/MediaCenter/News/Pages/news-1071.aspx ; https://enterpriseam.com/ksa/2025/09/16/vision-bank-is-the-third-digital-bank-to-get-samas-approval/
 Saudi National Bank (SNB)|c|B|alahli.com|NCBKSAJE|Largest
@@ -288,27 +286,27 @@ Saudi Investment Bank|c|B|saib.com.sa|SIBCSARI|
 Gulf International Bank (meem)|c|B|gib.com||meem digital
 STC Bank|d|B|stcbank.com.sa||Former stc pay; digital bank 2025
 D360 Bank|d|B|d360.com||First Saudi digital bank (Shariah), 2025
-Vision Bank|d|B|visionbank.com.sa||Digital bank, launched 2025*
-EZ Bank|d|N|||Licensed Sept 2025, not yet operational*
+Vision Bank|d|B|visionbank.com.sa|VIIOSARI|Sharia-compliant digital bank (ex-Saudi Digital Bank); SAMA go-live Sept 2025
+EZ Bank|d|N|||QNB + Ajlan & Bros JV; SAMA licence Sept/Oct 2025 (SAR 2.5bn capital); not yet launched
 Emirates NBD KSA|x|?|emiratesnbd.com.sa||
 Urpay|w|B|urpay.com.sa||Wallet
-Barq|w|B|barq.com||Wallet*
+Barq|w|B|barq.com||Wallet
 Tabby|w|B|tabby.ai||BNPL
 Tamara|w|B|tamara.co||BNPL
 
 ## SY Syria | cb.gov.sy | https://en.wikipedia.org/wiki/List_of_banks_in_Syria ; https://blog.blominvestbank.com/wp-content/uploads/2025/05/A-Look-at-Syria’s-Banking-Sector.pdf
 Commercial Bank of Syria|g|?|cbs-bank.sy||State-owned, largest
-Real Estate Bank|g|?|reb.sy||*
-Agricultural Cooperative Bank|g|?|||*
+Real Estate Bank|g|?|reb.sy||
+Agricultural Cooperative Bank|g|?|agrobank.gov.sy||
 Bank of Syria and Overseas|c|?|bso.com.sy||BLOM group
 Banque Bemo Saudi Fransi|c|?|bbsfbank.com||
 Byblos Bank Syria|c|?|byblosbank.com.sy||
-Bank Audi Syria|c|?|banqueaudi.com.sy||*
+Ahli Trust Bank (ATB)|c|?|banqueaudi.com.sy||Formerly Bank Audi Syria; Bank Audi exited 2020 (stake sold to BEMO Saudi Fransi)
 Fransabank Syria|c|?|fransabank.sy||*
 Syria International Islamic Bank|i|?|siib.sy||
 Cham Bank|i|?|chambank.sy||
 Al Baraka Bank Syria|i|?|albarakasyria.com||
-Sham Cash|w|A|shamcash.com||Wallet outside banking system*
+Sham Cash|w|A|shamcash.com||Govt salary wallet; APK from website only, not on app stores; licensing unclear
 
 ## TN Tunisia | bct.gov.tn | https://www.bct.gov.tn/bct/siteprod/page.jsp?id=58
 Société Tunisienne de Banque (STB)|g|B|stb.com.tn|STBKTNTT|State
@@ -336,10 +334,10 @@ Yemen Kuwait Bank|c|?|ykb.com||Jawali partner
 Yemen Commercial Bank|c|?|ycb.com.ye||
 International Bank of Yemen|c|?|ibyemen.com||
 Saba Islamic Bank|i|?|sababank.com||
-Shamil Bank of Yemen & Bahrain|i|?|sby-ye.com||*
+Shamil Bank of Yemen & Bahrain|i|B|sbyb.net|SBYBYESA|
 Al-Kuraimi Islamic Microfinance Bank|m|B|alkuraimi.com||Kuraimi Jawal app
 Al-Amal Microfinance Bank|m|?|alamalbank.com||
 Jawali (WeCash)|w|B|jawali.com.ye||Wallet
-ONE Cash|w|B|onecashye.com||Wallet*
-Floosak|w|?|floosak.com||Wallet*
-Jaib|w|?|jaib.com.ye||Wallet*
+ONE Cash|w|B|onecashye.com||Wallet
+Floosak|w|B|floosak.com||E-money wallet by Yemen Kuwait Bank + QualityConnect
+Jaib|w|I|e-jaib.com||Wallet

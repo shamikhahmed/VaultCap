@@ -59,8 +59,8 @@ Rietumu Banka|c|?|rietumu.com||
 DNB|c|B|dnb.no|DNBANOKK|Largest
 Nordea Norway|c|B|nordea.no|NDEANOKK|
 SpareBank 1|c|B|sparebank1.no||Alliance of savings banks
-Sparebanken Vest / Sør (Sparebanken Norge)|c|B|spv.no||*
-Handelsbanken Norway|x|N|handelsbanken.no||Exiting retail*
+Sparebanken Norge|c|B|sparebankennorge.no||Vest + Sør merged May 2025
+Handelsbanken Norway|x|B|handelsbanken.no||Branch of Svenska Handelsbanken; expanding retail (2026)
 Storebrand Bank|c|B|storebrand.no||
 Sbanken (DNB)|d|B|sbanken.no||
 Bulder Bank|d|B|bulderbank.no||
@@ -83,8 +83,8 @@ Swish|w|B|swish.nu||National P2P
 Banka Kombëtare Tregtare (BKT)|c|B|bkt.com.al|NCBAALTX|Largest
 Raiffeisen Bank Albania|c|B|raiffeisen.al|SGSBALTX|
 Credins Bank|c|B|bankacredins.com||
-Intesa Sanpaolo Albania|c|B|intesasanpaolobank.al||Merged First Investment Bank 2025*
-OTP Bank Albania|c|B|otpbank.al||*
+Intesa Sanpaolo Albania|c|B|intesasanpaolobank.al||
+OTP Bank Albania|c|B|otpbank.al|PUPPALTR|SWIFT from directory
 Union Bank|c|B|unionbank.al||
 ProCredit Albania|c|B|procreditbank.com.al||
 Tirana Bank|c|B|tiranabank.al||
@@ -121,7 +121,7 @@ Belarusbank|g|B|belarusbank.by|AKBBBY2X|State, largest; sanctioned
 Belagroprombank|g|B|belapb.by||State; sanctioned
 Belinvestbank|g|B|belinvestbank.by||
 BNB-Bank|c|B|bnb.by||
-Priorbank (Raiffeisen)|c|B|priorbank.by||Raiffeisen exit pending*
+Priorbank|c|B|priorbank.by||RBI sold 87.74% to Soven 1 Holding (UAE), Nov 2024
 Alfa-Bank Belarus|c|B|alfabank.by||
 MTBank|c|B|mtbank.by||
 Belgazprombank|c|B|belgazprombank.by||
@@ -172,12 +172,12 @@ Addiko Bank Montenegro|c|B|addiko.me||
 ## MK North Macedonia | nbrm.mk | https://www.nbrm.mk/banki-en.nspx
 Komercijalna Banka Skopje|c|B|kb.com.mk||
 NLB Banka Skopje|c|B|nlb.mk||
-Stopanska Banka Skopje|c|B|stb.com.mk||*
+Stopanska Banka Skopje|c|B|stb.com.mk|STOBMK2X|
 Halkbank Skopje|x|B|halkbank.mk||
 Sparkasse Bank Macedonia|c|B|sparkasse.mk||
 ProCredit Bank Macedonia|c|B|pcb.mk||
 TTK Banka|c|?|ttk.com.mk||
-Silk Road Bank|c|?|silkroadbank.com.mk||*
+Silk Road Bank|c|?|silkroadbank.com.mk|KRSKMK2X|Ex-Alpha Bank Skopje; owned by Silk Road Capital AG
 
 ## MD Moldova | bnm.md | https://www.bnm.md/en/content/licensed-banks
 Moldova Agroindbank (MAIB)|c|B|maib.md|AGRNMD2X|Largest
@@ -193,7 +193,7 @@ Comerțbank|c|?|comertbank.md||
 ## PL Poland | knf.gov.pl | https://www.knf.gov.pl/podmioty/wyszukiwarka_podmiotow
 PKO Bank Polski|g|B|pkobp.pl|BPKOPLPW|State-controlled, largest; IKO app
 Bank Pekao|g|B|pekao.com.pl|PKOPPLPW|
-Santander Bank Polska|c|B|santander.pl|WBKPPLPP|Acquired by Erste 2025*
+Erste Bank Polska|c|B|erste.pl|WBKPPLPP|Renamed from Santander Bank Polska 24 Apr 2026 after Erste took 49% (Jan 2026)
 ING Bank Śląski|c|B|ing.pl|INGBPLPW|
 mBank|c|B|mbank.pl|BREXPLPW|
 Bank Millennium|c|B|bankmillennium.pl|BIGBPLPW|
@@ -218,7 +218,6 @@ UniCredit Bank Romania|c|B|unicredit.ro|BACXROBU|
 CEC Bank|g|B|cec.ro|CECEROBU|State-owned
 Exim Banca Românească|g|B|eximbank.ro||State-owned
 Libra Internet Bank|d|B|librabank.ro||
-Alpha Bank Romania (UniCredit)|c|B|alphabank.ro||Merged into UniCredit 2025*
 Salt Bank|d|B|salt.bank||Neobank (BT group)
 Revolut Romania|d|B|revolut.com||Very large user base
 
@@ -231,7 +230,7 @@ AIK Banka|c|B|aikbanka.rs||
 NLB Komercijalna Banka|c|B|nlbkb.rs||
 Erste Bank Serbia|c|B|erstebank.rs||
 Banka Poštanska štedionica|g|B|posted.co.rs||State
-Addiko Bank Serbia|c|B|addiko.rs||*
+Addiko Bank Serbia|c|B|addiko.rs|HAABRSBG|
 ProCredit Bank Serbia|c|B|procreditbank.rs||
 Yettel Bank / 3 Banka|d|B|yettelbank.rs||
 
@@ -278,7 +277,7 @@ Ziraat Katılım|i|B|ziraatkatilim.com.tr||State participation bank
 Vakıf Katılım|i|B|vakifkatilim.com.tr||State participation bank
 Emlak Katılım|i|B|emlakkatilim.com.tr||
 Enpara.com|d|B|enpara.com||Digital bank (QNB)
-Papara|w|B|papara.com||Wallet (under administration 2025)*
+Papara|w|B|papara.com||E-money wallet; seized by TMSF 2025, licence revocation reversed Jan 2026; sold to Emlak Katılım (Apr 2026)
 ininal|w|B|ininal.com||Prepaid
 
 ## UA Ukraine | bank.gov.ua | https://bank.gov.ua/en/supervision/institutions

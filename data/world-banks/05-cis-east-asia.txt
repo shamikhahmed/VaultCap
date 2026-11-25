@@ -28,7 +28,6 @@ Converse Bank|c|B|conversebank.am||
 Armeconombank|c|B|aeb.am||
 Unibank Armenia|c|B|unibank.am||
 IDBank|c|B|idbank.am||
-HSBC Armenia|x|N|hsbc.am||Sold to Ardshinbank 2024*
 VTB Armenia|x|?|vtb.am||
 Idram|w|B|idram.am||Wallet
 Telcell|w|B|telcell.am||Wallet
@@ -56,7 +55,7 @@ Credo Bank|m|B|credobank.ge||
 Tera Bank|c|B|terabank.ge||
 Halyk Bank Georgia|x|B|halykbank.ge||
 Space (TBC)|d|B|space.ge||Digital bank
-Paybox|w|B|tbcpay.ge||Payment kiosks/wallet*
+TBC Pay|w|B|tbcpay.ge||Payment kiosks (4,000+) and wallet app
 
 ## KG Kyrgyzstan | nbkr.kg | https://www.nbkr.kg/index1.jsp?item=63&lang=ENG
 Optima Bank|c|B|optimabank.kg||
@@ -66,7 +65,7 @@ Bakai Bank|c|B|bakai.kg||
 RSK Bank|g|B|rsk.kg||State
 Aiyl Bank|g|B|ab.kg||State
 MBank (Kyrgyzstan)|d|B|mbank.kg||Leading app
-Keremet Bank|c|B|keremetbank.kg||Sanctioned 2024*
+Keremet Bank|c|B|keremetbank.kg||US (Jan 2025) and UK (Feb 2025) sanctioned; delisting talks ongoing
 Elcart|w|N|elcart.kg||National card scheme
 O!Dengi|w|B|odengi.kg||Wallet
 
@@ -82,7 +81,7 @@ Home Credit Bank Kazakhstan|c|B|homebank.kz||
 RBK Bank|c|B|bankrbk.kz||
 Otbasy Bank|g|B|otbasybank.kz||State housing savings bank
 Citibank Kazakhstan|x|N|citibank.kz||
-Alatau City Bank|c|?|alataucitybank.kz||Formerly Sberbank KZ / Bereke*
+Alatau City Bank|c|B|alataucitybank.kz||Formerly Jusan Bank (First Heartland Jusan), renamed June 2025
 
 ## TJ Tajikistan | nbt.tj | https://nbt.tj/en/banking_system/
 Amonatbonk|g|B|amonatbonk.tj||State savings bank
@@ -97,11 +96,10 @@ Dushanbe City Bank|d|B|dc.tj||
 ## TM Turkmenistan | cbt.tm | https://www.cbt.tm
 Türkmenbaşy Bank|g|?|tnbk.tm||State
 Daýhanbank|g|?|daykhanbank.gov.tm||State agricultural
-Halk Bank Turkmenistan|g|?|halkbank.gov.tm||State savings*
+Halkbank (Turkmenistan)|c|?|halkbank.gov.tm||State-owned joint-stock commercial bank (ex-Savings Bank)
 Senagat Bank|g|?|senagatbank.gov.tm||State
 State Bank for Foreign Economic Affairs (Türkmenistan)|g|N|tfeb.gov.tm||
 Rysgal Bank|c|?|rysgalbank.tm||Private
-Altyn Asyr Card|w|?|||National card system*
 > Closed market; most banking is state-owned. App availability limited and unverified.
 
 ## UZ Uzbekistan | cbu.uz | https://cbu.uz/en/credit-organizations/banks/
@@ -147,7 +145,7 @@ Standard Chartered China|x|B|sc.com/cn||
 
 ## HK Hong Kong | hkma.gov.hk | https://www.hkma.gov.hk/eng/key-functions/banking/banking-regulatory-and-supervisory-regime/register-of-authorized-institutions/
 HSBC Hong Kong|c|B|hsbc.com.hk|HSBCHKHH|
-Hang Seng Bank|c|B|hangseng.com|HASEHKHH|HSBC privatisation 2025*
+Hang Seng Bank|c|B|hangseng.com|HASEHKHH|Privatised by HSBC Jan 2026; wholly owned, delisted
 Bank of China (Hong Kong)|c|B|bochk.com|BKCHHKHH|
 Standard Chartered Hong Kong|c|B|sc.com/hk|SCBLHKHH|
 Bank of East Asia|c|B|hkbea.com|BEASHKHH|
@@ -198,7 +196,7 @@ Rakuten Pay|w|B|pay.rakuten.co.jp||
 > Sanctioned and isolated; no access from international app stores. Listed for completeness only.
 Central Bank of the DPRK|g|N|||Issues Jonsong cash card
 Foreign Trade Bank|g|N|||US/UN sanctioned
-Korea Kwangson Banking Corp|g|N|||Sanctioned*
+Korea Kwangson Banking Corp|g|N|||Sanctioned
 
 ## KR South Korea | fss.or.kr | https://www.fss.or.kr/eng/main/main.do
 KB Kookmin Bank|c|B|kbstar.com|CZNBKRSE|Largest

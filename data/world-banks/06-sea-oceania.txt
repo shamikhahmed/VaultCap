@@ -5,9 +5,9 @@ Bank Islam Brunei Darussalam (BIBD)|i|B|bibd.com.bn|BIBDBNBB|Largest
 Baiduri Bank|c|B|baiduri.com|BAIDBNBB|
 Tabung Amanah Islam Brunei (TAIB)|i|B|taib.com.bn||
 Standard Chartered Brunei|x|B|sc.com/bn||
-United Overseas Bank Brunei|x|?|uob.com.bn||*
-Maybank Brunei|x|?|maybank.com.bn||*
-Progresif Pay|w|B|progresif.com||Wallet*
+United Overseas Bank Brunei|x|?|uob.com.sg/brunei||Wholesale only; retail sold to Baiduri Bank 2015
+Maybank Brunei|x|?|maybank.com/bn||
+Ding! (Progresif)|w|B|progresif.com||Progresif Pay closed Dec 2023; replaced by Ding! in Progresif CARE+ app
 
 ## ID Indonesia | ojk.go.id | https://www.ojk.go.id/id/kanal/perbankan/data-dan-statistik/
 Bank Mandiri|g|B|bankmandiri.co.id|BMRIIDJA|Livin' app
@@ -95,7 +95,7 @@ Agrobank|g|B|agrobank.com.my||
 GXBank|d|B|gxbank.my||Digital (Grab)
 AEON Bank|d|B|aeonbank.com.my||Digital Islamic
 Boost Bank|d|B|boostbank.my||Digital
-KAF Digital Bank|d|B|kaf.com.my||*
+KAF Digital Bank|i|B|kafdigital.com.my||
 Ryt Bank (YTL Digital)|d|B|rytbank.my||Digital (YTL/Sea), 2025
 Touch 'n Go eWallet|w|B|touchngo.com.my||
 DuitNow|w|N|duitnow.my||National instant payments
@@ -164,8 +164,8 @@ Banco Nacional de Comércio de Timor-Leste (BNCTL)|g|B|bnctl.tl||State
 BNU Timor (CGD)|x|B|bnu.tl||
 ANZ Timor-Leste|x|B|anz.com/timorleste||
 Bank Mandiri Timor-Leste|x|?|bankmandiri.co.id||
-BRI Timor-Leste|x|?|bri.co.id||*
-Mosan (Telemor)|w|B|mosan.tl||Wallet*
+BRI Timor-Leste|x|?|bri.co.id|BRINTLDI|
+Mosan (Telemor)|w|B|mosan.telemor.tl||Wallet
 
 ## VN Vietnam | sbv.gov.vn | https://www.sbv.gov.vn
 Vietcombank|g|B|vietcombank.com.vn|BFTVVNVX|State
@@ -219,17 +219,16 @@ HFC Bank|c|B|hfc.com.fj||Locally owned
 Bred Bank Fiji|x|?|bred.com.fj||
 Fiji Development Bank|g|N|fdb.com.fj||
 M-PAiSA (Vodafone)|w|B|mpaisa.vodafone.com.fj||Wallet
-MyCash (Digicel)|w|B|digicelgroup.com/fj||Wallet*
+MyCash (Digicel)|w|B|digicelpacific.com/fj||Wallet
 
 ## FM Micronesia | FSM Banking Board | https://www.imf.org/-/media/files/publications/wp/2017/wp1790.pdf.md
-Bank of the Federated States of Micronesia|c|?|bankfsm.com||Locally owned*
+Bank of the Federated States of Micronesia|c|?|bofsm.fm||Locally owned
 Bank of Guam (FSM branches)|x|B|bankguam.com||US FDIC-insured
 FSM Development Bank|g|N|fsmdb.fm||*
 
 ## KI Kiribati | — (Ministry of Finance) | https://www.anz.com/kiribati/en/about-us/anz-kiribati
 ANZ Kiribati|x|B|anz.com/kiribati||ANZ Pacific app
-Development Bank of Kiribati|g|N|dbk.ki||*
-Kiribati Provident Fund|g|N|kpf.com.ki||Pension*
+Development Bank of Kiribati|g|N|dbk.ki||
 
 ## MH Marshall Islands | RMI Banking Commission | https://www.griffith.edu.au/__data/assets/pdf_file/0028/1705375/RMI-monetary-authority-policy-brief-web.pdf
 Bank of the Marshall Islands (BOMI)|c|?|bomi.biz||Locally owned
@@ -257,34 +256,34 @@ BSP (Bank South Pacific)|c|B|bsp.com.pg|BOSPPGPM|Largest
 Kina Bank|c|B|kinabank.com.pg||Bought ANZ PNG retail
 Westpac PNG|x|B|westpac.com.pg||
 ANZ PNG|x|B|anz.com/png||Institutional
-Credit Corporation / Teachers Savings & Loan|m|?|tisa.com.pg||*
+TISA Bank|c|?|tisa.com.pg||Ex-Teachers Savings & Loan Society; banking licence 2024
 National Development Bank PNG|g|N|ndb.com.pg||
 CellMoni (Digicel)|w|B|cellmoni.com.pg||Wallet
-MiCash (Telikom/Mibank)|w|?|mibank.com.pg||*
+MiBank (MiCash)|m|?|mibank.com.pg||Nationwide Microbank; MiCash mobile wallet, also via govt SevisWallet app (2026)
 
 ## PW Palau | Financial Institutions Commission (ropfic.org) | https://mail.ropfic.org/pdf/CENTRAL-REGISTRY-FOR-BANKS%20_UPDATED-9.17.18.pdf
 Bank of Hawaii (Palau)|x|B|boh.com||
 Bank of Guam (Palau)|x|B|bankguam.com||
-Asia Pacific Commercial Bank|c|?|apcb.com.pw||*
-National Development Bank of Palau|g|N|ndbp.com||*
+Asia Pacific Commercial Bank|c|?|apcb.com.pw||
+National Development Bank of Palau|g|N|ndbp.com||
 
 ## SB Solomon Islands | cbsi.com.sb | https://www.cbsi.com.sb/licensed-financial-institutions/
 BSP Solomon Islands|x|B|bsp.com.sb||
 ANZ Solomon Islands|x|B|anz.com/solomonislands||
-Pan Oceanic Bank|c|?|pob.com.sb||Locally owned*
-Credit Corporation (SI)|m|N|creditcorporation.com.sb||*
-M-Sela (Our Telekom)|w|?|ourtelekom.com.sb||*
+Pan Oceanic Bank|c|?|pob.com.sb||Locally incorporated; Singapore-owned
+Credit Corporation Solomon Islands|m|N|creditcorporation.com.pg||
+M-Sela (Our Telekom)|w|?|ourtelekom.com.sb||
 
 ## TO Tonga | reservebank.to | https://www.reservebank.to/
 ANZ Tonga|x|B|anz.com/tonga||
 BSP Tonga|x|B|bsp.com.to||
 Tonga Development Bank|g|N|tdb.to||
-MBf Bank Tonga|c|?|mbfbank.to||*
-Digicel MyCash Tonga|w|?|digicelgroup.com/to||*
+MBf Bank Limited|c|?|mbfbank.to|MBFMTONU|
+Digicel MyCash Tonga|w|B|digicelpacific.com/mobile/to||
 
 ## TV Tuvalu | — | https://pacificpsdi.org/assets/Uploads/ADB-PSDI-GovernmentOwnedBanks-Web.pdf
 National Bank of Tuvalu|g|?|nbt.tv||Government-owned; sole commercial bank
-Development Bank of Tuvalu|g|N|||Government-owned*
+Development Bank of Tuvalu|g|N|||Government-owned
 
 ## VU Vanuatu | rbv.gov.vu | https://www.rbv.gov.vu/
 National Bank of Vanuatu|g|B|nbv.vu||State
@@ -298,4 +297,4 @@ BSP Samoa|x|B|bsp.com.ws||
 Samoa Commercial Bank|c|?|scb.ws||Locally owned
 National Bank of Samoa|c|?|nbs.ws||Locally owned
 Development Bank of Samoa|g|N|dbs.ws||
-Digicel MyCash Samoa|w|?|digicelgroup.com/ws||*
+Digicel MyCash Samoa|w|B|digicelpacific.com/ws||

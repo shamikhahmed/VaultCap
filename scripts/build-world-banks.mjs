@@ -92,6 +92,21 @@ for (const r of regions) {
   out.push(`| ${r.name} | ${r.countries.length} | ${list.length} | ${typeKeys.map(k => c[k]).join(' | ')} | ${list.filter(b => b.u).length} | ${list.filter(b => b.logo).length} |`);
 }
 out.push(`| **All** | **${countries.length}** | **${banks.length}** | ${typeKeys.map(k => `**${tot[k]}**`).join(' | ')} | **${banks.filter(b => b.u).length}** | **${banks.filter(b => b.logo).length}** |`, '');
+// Verification passes: data/world-banks/verification-YYYY-MM-DD.json
+//   rows [action ('remove'|'rename'), cc, oldName, newName, reason, source]
+for (const f of readdirSync(SRC).filter(f => /^verification-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort()) {
+  const day = f.slice(13, 23);
+  const log = JSON.parse(readFileSync(join(SRC, f), 'utf8'));
+  const link = u => (u ? `<${u}>` : '—');
+  out.push(`## Verification pass ${day}`, '');
+  out.push('Every entry previously marked unverified was re-checked against regulator lists, bank announcements and app-store listings. Confirmed entries lost the flag, corrected entries were updated in place, defunct ones were removed. Fields a checker could not confirm were left unchanged. SWIFT codes found only in third-party directories carry the note "SWIFT from directory".', '');
+  const rm = log.filter(r => r[0] === 'remove'), rn = log.filter(r => r[0] === 'rename');
+  out.push(`### Removed (${rm.length})`, '', '| Country | Institution | Why | Source |', '|---|---|---|---|');
+  rm.forEach(r => out.push(`| ${r[1]} | ${esc(r[2])} | ${esc(r[4])} | ${link(r[5])} |`));
+  out.push('', `### Renamed / re-identified (${rn.length})`, '', '| Country | Was | Now | Why | Source |', '|---|---|---|---|---|');
+  rn.forEach(r => out.push(`| ${r[1]} | ${esc(r[2])} | ${esc(r[3])} | ${esc(r[4])} | ${link(r[5])} |`));
+  out.push('');
+}
 out.push('## Countries', '');
 for (const r of regions) {
   out.push(`### ${r.name}`, '');

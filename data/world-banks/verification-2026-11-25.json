@@ -1,0 +1,498 @@
+[
+[
+"remove",
+"PK",
+"Silkbank",
+"Silkbank",
+"Amalgamated into United Bank Limited, effective 11 Mar 2025 (SBP sanction 10 Mar 2025). Successor: UBL (ubldigital.com).",
+"https://propakistani.pk/2025/03/11/sbp-approves-merger-of-silk-bank-with-united-bank-limited/"
+],
+[
+"rename",
+"AE",
+"Ruya",
+"Ruya Community Islamic Bank",
+"CBUAE-licensed Islamic specialised bank (Ajman, 2024); app 'ruya bank' live. Domain is ruyabank.ae, not ruya.ae.",
+"https://www.wam.ae/en/article/b1wprto-ruya-digital-community-islamic-bank-launched-uae"
+],
+[
+"rename",
+"EG",
+"ONE Bank (Banque Misr digital)",
+"onebank",
+"Brand is 'onebank'; onebank.com.eg 301-redirects to onebank.eg. App availability not confirmed yet (launch slated 2026).",
+"https://www.zawya.com/en/business/fintech/misr-digital-innovation-gains-central-bank-approval-to-transition-into-onebank-gadersnt"
+],
+[
+"rename",
+"IQ",
+"Al-Taif Islamic Bank",
+"Al-Taif Islamic Bank for Investment and Finance",
+"Exists (Baghdad, Karrada). Official website not confirmed; altaifbank.com unverified.",
+"https://wise.com/us/swift-codes/AINIIQBAXXX"
+],
+[
+"rename",
+"IQ",
+"Bank of Mosul",
+"Mosul Bank for Development and Investment",
+"Legal name is Mosul Bank for Development and Investment (ISX: BMFI). Domain is almosulbank.iq, not bankofmosul.iq.",
+"https://csd.gov.iq/en/mosul-bank-for-development-and-investment1/"
+],
+[
+"remove",
+"IR",
+"Ayandeh Bank",
+"Ayandeh Bank",
+"Dissolved by CBI on 23 Oct 2025; branches, customers and staff absorbed by Bank Melli Iran.",
+"https://aljazeera.com/news/2025/10/27/corruption-mismanagement-in-spotlight-as-iran-dissolves-major-private-bank"
+],
+[
+"rename",
+"JO",
+"Jordan Dubai Islamic Bank",
+"Safwa Islamic Bank",
+"Renamed Safwa Islamic Bank (2017); BIC JDIBJOAM retained.",
+"https://www.cbinsights.com/company/safwa-islamic-bank"
+],
+[
+"rename",
+"OM",
+"OmanNet / Thawani",
+"Thawani Pay",
+"OmanNet is the separate national switch; the wallet/app is Thawani Pay (iOS confirmed). thawani.om live.",
+"https://apps.apple.com/om/app/thawani-pay/id1511347191"
+],
+[
+"rename",
+"QA",
+"Vodafone Cash Qatar",
+"iPay (Vodafone Qatar)",
+"Vodafone Qatar's QCB-licensed wallet is iPay (Infinity Payment Solutions); no 'Vodafone Cash' product in Qatar.",
+"https://www.vodafone.qa/en/about-us/media/press-release/vodafone-qatar-granted-first-license-for-electronic-payment-services-through-ipay"
+],
+[
+"rename",
+"SY",
+"Bank Audi Syria",
+"Ahli Trust Bank (ATB)",
+"Renamed Ahli Trust Bank after Bank Audi sold its stake. The banqueaudi.com.sy domain is likely stale; new domain not confirmed.",
+"https://www.zawya.com/company/5001110215/ahli-trust-bank"
+],
+[
+"remove",
+"FR",
+"Ma French Bank",
+"Ma French Bank",
+"La Banque Postale shut Ma French Bank; accounts closed in 2024. Successor: La Banque Postale.",
+"https://fr.wikipedia.org/wiki/Ma_French_Bank"
+],
+[
+"rename",
+"GI",
+"IDT Financial Services",
+"IDT Finance (IDT Financial Services Ltd)",
+"Trades as IDT Finance; licensed bank in Gibraltar (not EMI), also MFSA Malta licence. idtfinance.com live.",
+"https://gibraltar.com/en/business/companies/finance/banks/idt-finance.php"
+],
+[
+"rename",
+"IE",
+"Zippay / Zip",
+"Zippay",
+"Launched March 2026 as a feature inside banks' apps, no standalone app.",
+"https://www.irishtimes.com/business/2026/03/09/banks-to-launch-zippay-instant-payments-this-week"
+],
+[
+"remove",
+"IT",
+"Banca Popolare di Sondrio",
+"Banca Popolare di Sondrio",
+"Merged by incorporation into BPER Banca effective 20 Apr 2026; customers migrated to BPER (new IBANs). Successor: BPER Banca (bper.it).",
+"https://www.teleborsa.it/AMP/News/2026/04/20/banca-popolare-di-sondrio-e-diventata-bper-completata-l-integrazione-225.html"
+],
+[
+"rename",
+"NO",
+"Sparebanken Vest / Sør (Sparebanken Norge)",
+"Sparebanken Norge",
+"Merger completed 2 May 2025, renamed Sparebanken Norge; spv.no redirects to sparebankennorge.no.",
+"https://live.euronext.com/en/products/equities/company-news/2025-05-02-completion-merger-between-sparebanken-vest-and"
+],
+[
+"rename",
+"BY",
+"Priorbank (Raiffeisen)",
+"Priorbank",
+"Raiffeisen exit completed Nov 2024; bank still operating at priorbank.by.",
+"https://rbinternational.com/en/raiffeisen/media-hub/press-releases/2024/rbi-successfully-closes-the-sale-of-priorbank.html"
+],
+[
+"rename",
+"PL",
+"Santander Bank Polska",
+"Erste Bank Polska",
+"Legally renamed Erste Bank Polska on 24 Apr 2026. The website moved to erste.pl and the app was renamed Erste. Check that the BIC WBKPPLPP is unchanged.",
+"https://www.erste.pl/en/investor-relations/reports/reports-list/current-report-no-28-2026"
+],
+[
+"remove",
+"RO",
+"Alpha Bank Romania (UniCredit)",
+"Alpha Bank Romania (UniCredit)",
+"Merged into UniCredit Bank S.A., effective 15 Aug 2025. Successor: UniCredit Bank Romania (unicredit.ro).",
+"https://www.unicreditgroup.eu/en/press-media/press-releases/2025/august/unicredit-bank-romania-merger-with-alpha-bank-romania-successful.html"
+],
+[
+"remove",
+"AM",
+"HSBC Armenia",
+"HSBC Armenia",
+"Ardshinbank acquired it in Nov 2024 and renamed it Ardshininvestbank. It merged into Ardshinbank and the licence was revoked on 21 Apr 2025. Successor: Ardshinbank.",
+"https://arka.am/en/news/business/ardshinbank-successfully-completes-acquisition-of-hsbc-armenia"
+],
+[
+"rename",
+"GE",
+"Paybox",
+"TBC Pay",
+"No standalone 'Paybox' wallet found; operator is TBC Pay LLC with app 'TBC Pay Mobile'. ('Pay Box' is a ProCredit deposit service.)",
+"https://www.tbcpay.ge/en/about-us"
+],
+[
+"rename",
+"TM",
+"Halk Bank Turkmenistan",
+"Halkbank (Turkmenistan)",
+"halkbank.gov.tm is correct. It became a joint-stock commercial bank in 2021 and has mobile banking.",
+"https://halkbank.gov.tm/en/history"
+],
+[
+"remove",
+"TM",
+"Altyn Asyr Card",
+"Altyn Asyr Card",
+"Not an institution: domestic card scheme of the Central Bank of Turkmenistan; cards issued by banks such as Halkbank (halkbank.gov.tm).",
+"https://en.wikipedia.org/wiki/Altyn_Asyr_(payment_system)"
+],
+[
+"rename",
+"BN",
+"Progresif Pay",
+"Ding! (Progresif)",
+"Progresif Pay discontinued 1 Dec 2023; successor wallet Ding! (BDCB-regulated).",
+"https://progresif.com/support/ding"
+],
+[
+"remove",
+"KI",
+"Kiribati Provident Fund",
+"Kiribati Provident Fund",
+"Statutory pension fund, not a bank or wallet.",
+"https://kpf.com.ki"
+],
+[
+"rename",
+"PG",
+"Credit Corporation / Teachers Savings & Loan",
+"TISA Bank",
+"The entry mixes up two unrelated firms. The Teachers Savings & Loan Society group (TISA) got a BPNG banking licence in 2024 and launched TISA Bank. Credit Corporation PNG is separate.",
+"https://islandsbusiness.com/news-break/tisabank-launched/"
+],
+[
+"rename",
+"PG",
+"MiCash (Telikom/Mibank)",
+"MiBank (MiCash)",
+"MiCash is MiBank's own bank-led wallet, not Telikom's; MiBank is a BPNG-licensed microbank. mibank.com.pg live.",
+"https://www.businessadvantagepng.com/mibanks-tech-solution-solves-remote-banking-challenge-in-papua-new-guinea"
+],
+[
+"rename",
+"SB",
+"Credit Corporation (SI)",
+"Credit Corporation Solomon Islands",
+"CBSI lists it as a licensed credit institution (PNG-owned) with website creditcorporation.com.pg; creditcorporation.com.sb does not resolve.",
+"https://www.cbsi.com.sb/financial-stability/guidelines/financial-system-infrastructure"
+],
+[
+"rename",
+"TO",
+"MBf Bank Tonga",
+"MBf Bank Limited",
+"Operating, supervised by National Reserve Bank of Tonga (2025 disclosure). mbfbank.to plausible but unconfirmed.",
+"https://matangitonga.to/sites/default/files/9132%20MBF_Key_Disclosure_Statement_2025.pdf"
+],
+[
+"remove",
+"CA",
+"HSBC Canada (RBC)",
+"HSBC Canada (RBC)",
+"Acquired by RBC and integrated Mar 2024. Successor: RBC Royal Bank.",
+"https://www.rbc.com/newsroom/news/article.html?article=125897"
+],
+[
+"rename",
+"AI",
+"National Bank of Anguilla (NCBA)",
+"National Commercial Bank of Anguilla (NCBA)",
+"NBA and CCB were merged into NCBA (2016); BIC ANGUAIAI. Domain not confirmed.",
+"https://www.remitly.com/us/en/swift-codes/anguilla/anguaiaixxx/national-commercial-bank-of-anguilla-ltd"
+],
+[
+"rename",
+"AI",
+"Republic Bank Anguilla",
+"Republic Bank (Anguilla) Limited",
+"Operating (ECCB-regulated). Dedicated domain republicbankanguilla.com not confirmed; online banking via republiconline.republictt.com/ai.",
+"https://www.eccb-centralbank.org/contact-information-anguilla"
+],
+[
+"rename",
+"BB",
+"Sagicor Bank",
+"Sagicor Bank (Barbados)",
+"On the Central Bank of Barbados licensed-bank list (June 2026). Fully digital and branchless.",
+"https://cdn.centralbank.org.bb/documents/2026-07-02-17-32-13-COMMERCIAL-BANKS-AND-BANK-HOLDING-COMPANIES-LICENSED-TO-OPERATE-IN-BARBADOS-as-at-June-2026.pdf"
+],
+[
+"remove",
+"DM",
+"CIBC Caribbean Dominica",
+"CIBC Caribbean Dominica",
+"CIBC FirstCaribbean ceased Dominica operations 31 Jan 2023 (group renamed CIBC Caribbean 2024).",
+"https://www.searchlight.vc/press-release/2022/09/03/cibc-firstcaribbean-international-bank-close-business-dominica"
+],
+[
+"remove",
+"DM",
+"Dominica credit unions",
+"Dominica credit unions",
+"Generic category, not a single institution. Add specific entities instead (e.g. National Bank of Dominica, Republic Bank Dominica, or a named credit union).",
+"https://www.eccb-centralbank.org/"
+],
+[
+"remove",
+"GD",
+"CIBC Caribbean Grenada",
+"CIBC Caribbean Grenada",
+"CIBC FirstCaribbean sold its Grenada business to Grenada Co-operative Bank (completed 14 Jul 2023). Successor: Grenada Co-operative Bank.",
+"https://antigua.news/2024/02/06/cibc-firstcaribbean-unveils-rebrand-to-cibc-caribbean/"
+],
+[
+"rename",
+"HT",
+"Lajan Cash (Natcom)",
+"Natcash (Natcom)",
+"Natcom's current wallet is Natcash (Lajan Cash was the 2015 product).",
+"https://apps.apple.com/us/app/natcash-natcom/id1613464862"
+],
+[
+"remove",
+"LC",
+"RBC Royal Bank Saint Lucia",
+"RBC Royal Bank Saint Lucia",
+"RBC sold its Eastern Caribbean operations, including St Lucia, on 1 Apr 2021. The St Lucia business went to 1st National Bank St Lucia (consortium of ECCU banks).",
+"https://www.rbcroyalbank.com/caribbean/rbc-in-the-caribbean/latest-news/news/sale-of-ec-final-close.html"
+],
+[
+"rename",
+"LC",
+"First National Bank St Lucia",
+"1st National Bank St. Lucia",
+"Official name uses '1st'; site 1stnationalbankonline.com live.",
+"https://1stnationalbankonline.com"
+],
+[
+"rename",
+"VC",
+"Republic Bank SVG",
+"Republic Bank (EC) Limited – St Vincent",
+"It operates as a branch of Republic Bank (EC) Ltd (ex-Scotiabank SVG, 2019). republicsvg.com is not confirmed; a third-party source gives republicbank.com.vc.",
+"https://www.eccb-centralbank.org/contact-information-saint-vincent-and-the-grenadines"
+],
+[
+"rename",
+"BZ",
+"Belize credit unions (Holy Redeemer)",
+"Holy Redeemer Credit Union",
+"Official site is hrcubelize.org (hrcu.bz does not resolve); online access via online.hrcubelize.org, no app found. CBB-supervised credit union.",
+"https://www.hrcubelize.org"
+],
+[
+"rename",
+"CR",
+"Scotiabank Costa Rica (Davivienda)",
+"DAVIbank Costa Rica",
+"Renamed DAVIbank after transfer to Davivienda Group. App now 'DAVIbank Costa Rica'. Web still scotiabankcr.com per app listing (davibank.cr unconfirmed).",
+"https://observador.cr/scotiabank-en-costa-rica-adopta-el-nombre-davibank-tras-concluir-integracion-con-davivienda/"
+],
+[
+"remove",
+"PA",
+"Nequi Panamá",
+"Nequi Panamá",
+"Nequi ceased operating in Panama on 31 Dec 2024; users migrated to Banistmo (banistmo.com).",
+"https://www.prensa.com/economia/nequi-el-banco-digital-dejara-de-operar-a-partir-del-31-de-diciembre/"
+],
+[
+"rename",
+"BJ",
+"Société Générale Bénin (Vista Bank)",
+"Société Générale Bénin",
+"Buyer was the Beninese state, not Vista; vistabank.bj does not resolve; societegenerale.bj still live under SG Bénin brand.",
+"https://www.societegenerale.com/en/news/press-release/societe-generale-signs-agreement-state-benin-sell-societe-generale-benin"
+],
+[
+"rename",
+"GN",
+"Société Générale Guinée (Vista Bank)",
+"AFG Bank Guinée",
+"Buyer was Atlantic Financial Group, not Vista (Vista Guinée is ex-BICIGUI). afgbank.gn live.",
+"https://www.societegenerale.com/en/news/press-release/agreement-atlantic-financial-group-sg-guinee"
+],
+[
+"rename",
+"LR",
+"GN Bank Liberia",
+"Sapelle International Bank Liberia (SIB)",
+"CBL approved its operation as Sapelle International Bank Liberia Ltd, trading as SIB. The gnbankliberia.com domain is likely stale.",
+"https://thenewdawnliberia.com/gnbank-transitions-to-sibll/"
+],
+[
+"rename",
+"ML",
+"BICIM",
+"AFG Bank Mali",
+"BICIM renamed AFG Bank Mali; afgbankmali.com live.",
+"https://afgbankmali.com/en/?p=626"
+],
+[
+"rename",
+"MR",
+"Banque Al Wava",
+"Banque Al Wava Mauritanienne Islamique (BAMIS)",
+"Operating (Nouakchott). Domain is bamis.mr, not bawm.mr.",
+"https://openbankingtracker.com/swift-codes/mr/banque-al-wava-mauritanienne-islamique-bamis"
+],
+[
+"rename",
+"SN",
+"SGBS (ex-Société Générale Sénégal)",
+"Société Générale Sénégal (SGBS)",
+"No completed sale found as of late 2026; site still branded Société Générale Sénégal.",
+"https://www.financialafrik.com/en/2025/12/31/opinion-the-strategic-opportunity-and-manageable-risks-of-acquiring-societe-generale-senegal/"
+],
+[
+"rename",
+"SN",
+"BICIS",
+"SUNU Bank Sénégal",
+"SUNU Group bought 54% in Apr 2023; officially renamed SUNU Bank Sénégal.",
+"https://www.seneweb.com/en/news/Economie/change-of-company-name-bicis-officially-becomes-sunu-bank-senegal_n_472135.html"
+],
+[
+"rename",
+"CM",
+"SG Cameroun (ex-Société Générale)",
+"General Bank of Cameroon (GBC)",
+"The State finished buying SG's 58.08% stake in May 2026 and the bank was renamed General Bank of Cameroon. The societegenerale.cm domain is probably changing, and the new one is not confirmed.",
+"https://www.financialafrik.com/2026/05/13/cameroun-letat-finalise-la-reprise-de-societe-generale-cameroun-et-lance-general-bank-of-cameroon/"
+],
+[
+"rename",
+"GA",
+"BICIG",
+"AFG Bank Gabon",
+"Renamed AFG Bank Gabon 1 Jul 2024 after AFG took majority from state fund.",
+"https://ecomatin.net/gabon-bicig-devient-afg-bank-et-triple-son-capital-social-a-54-milliards-de-fcfa"
+],
+[
+"rename",
+"GQ",
+"SGBGE (ex-Société Générale)",
+"Banque Générale de Guinée Équatoriale (BGGE)",
+"Renamed BGGE; sgbge.gq likely obsolete. Ownership in flux.",
+"https://www.capmad.com/post/cemac-commission-reviews-vista-banks-acquisition-of-sgbge"
+],
+[
+"rename",
+"TD",
+"Société Générale Tchad",
+"Coris Bank International Tchad",
+"Sold to Coris group Jan 2024; relaunched as Coris Bank International Tchad Jun 2025.",
+"https://leconomistedufaso.com/2025/07/09/coris-bank-international-sinstalle-officiellement-au-tchad-dixieme-implantation-du-groupe-coris-en-afrique/"
+],
+[
+"rename",
+"KM",
+"Snpsf (Postal financial services)",
+"Société Nationale des Postes et des Services Financiers (SNPSF)",
+"Operating, BCC-supervised; restructuring into a postal bank. snpsf.km unconfirmed (Wikipedia lists snpsf.com).",
+"https://banque-comores.km/uploads/APPEL-A-CANDIDATURE-DG-BPC-pour-publication-court.pdf"
+],
+[
+"rename",
+"MG",
+"BFV-Société Générale",
+"BRED Madagasikara Banque Populaire",
+"Renamed SG Madagasikara 2019; BRED bought SG's 70%, BIC now registered as BRED Madagasikara. Domain not confirmed.",
+"https://www.remitly.com/us/en/swift-codes/madagascar/bfavmgmgxxx/bred-madagasikara-banque-populaire-formerly-bfv-societe"
+],
+[
+"rename",
+"MU",
+"blink (Emtel)",
+"blink by Emtel",
+"Operating, BoM-licensed; app on iOS/Android. Domain is blink.emtel.com, not blink.mu.",
+"https://blink.emtel.com"
+],
+[
+"rename",
+"SC",
+"Bank of Ceylon Seychelles",
+"Bank of Ceylon (Seychelles branch)",
+"Operates as a branch, Oliaji Building, Victoria; web boc.lk is the parent.",
+"https://www.theswiftcodes.com/seychelles/bceyscsc/"
+],
+[
+"rename",
+"SD",
+"Fawry Sudan / O-Cash",
+"Omdurman National Bank (O-Cash)",
+"O-Cash is Omdurman National Bank's mobile banking app, unrelated to Fawry; ocash.sd does not resolve.",
+"https://cbos.gov.sd/en/content/omdurman-national-bank"
+],
+[
+"remove",
+"SO",
+"Qatar National Bank (Somalia)",
+"Qatar National Bank (Somalia)",
+"No QNB licence or branch in Somalia; CBS foreign licensees are Ziraat Katilim and Banque Misr.",
+"https://www.newarab.com/news/egypt-turkey-banks-operate-somalia"
+],
+[
+"remove",
+"NA",
+"Trustco Bank",
+"Trustco Bank",
+"Banking licence surrendered and cancelled by Bank of Namibia (30 Aug 2024); depositors refunded by Feb 2025; defunct.",
+"https://www.namibian.com.na/trustco-stops-banking-business/"
+],
+[
+"rename",
+"ZA",
+"Old Mutual Bank",
+"OM Bank (Old Mutual)",
+"Brands itself as OM Bank. It launched publicly in Aug 2025 with an app on iOS and Android.",
+"https://businesstech.co.za/news/banking/836138/new-bank-taking-on-capitec-officially-launches-in-south-africa/"
+],
+[
+"remove",
+"ZA",
+"Sasfin Bank",
+"Sasfin Bank",
+"Exited banking; loan books sold to African Bank (2025); SARB cancelled bank registration effective 30 Jun 2026. Sasfin Holdings now an investment holding co.",
+"https://businesstech.co.za/news/banking/866609/end-of-an-era-for-75-year-old-banking-giant-in-south-africa/"
+]
+]
