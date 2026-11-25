@@ -1,0 +1,301 @@
+# Region: Southeast Asia & Oceania / Pacific
+
+## BN Brunei | bdcb.gov.bn | https://www.bdcb.gov.bn/banking
+Bank Islam Brunei Darussalam (BIBD)|i|B|bibd.com.bn|BIBDBNBB|Largest
+Baiduri Bank|c|B|baiduri.com|BAIDBNBB|
+Tabung Amanah Islam Brunei (TAIB)|i|B|taib.com.bn||
+Standard Chartered Brunei|x|B|sc.com/bn||
+United Overseas Bank Brunei|x|?|uob.com.bn||*
+Maybank Brunei|x|?|maybank.com.bn||*
+Progresif Pay|w|B|progresif.com||Wallet*
+
+## ID Indonesia | ojk.go.id | https://www.ojk.go.id/id/kanal/perbankan/data-dan-statistik/
+Bank Mandiri|g|B|bankmandiri.co.id|BMRIIDJA|Livin' app
+Bank Rakyat Indonesia (BRI)|g|B|bri.co.id|BRINIDJA|BRImo
+Bank Negara Indonesia (BNI)|g|B|bni.co.id|BNINIDJA|wondr
+Bank Tabungan Negara (BTN)|g|B|btn.co.id|BTANIDJA|
+Bank Central Asia (BCA)|c|B|bca.co.id|CENAIDJA|Largest private
+CIMB Niaga|x|B|cimbniaga.co.id|BNIAIDJA|
+Bank Danamon (MUFG)|x|B|danamon.co.id|BDINIDJA|
+Bank Permata|x|B|permatabank.com|BBBAIDJA|
+Maybank Indonesia|x|B|maybank.co.id|IBBKIDJA|
+OCBC Indonesia|x|B|ocbc.id||
+Panin Bank|c|B|panin.co.id||
+Bank Syariah Indonesia (BSI)|i|B|bankbsi.co.id|BSMDIDJA|Largest Islamic
+Bank Muamalat|i|B|bankmuamalat.co.id|MUABIDJA|
+Bank Jago|d|B|jago.com||Digital
+SeaBank Indonesia|d|B|seabank.co.id||Digital
+blu (BCA Digital)|d|B|blubybcadigital.id||Digital
+Allo Bank|d|B|allobank.com||Digital
+Bank Neo Commerce (neobank)|d|B|bankneocommerce.co.id||Digital
+Jenius (SMBC Indonesia)|d|B|jenius.com||Digital
+GoPay|w|B|gopay.co.id||Wallet
+OVO|w|B|ovo.id||Wallet
+DANA|w|B|dana.id||Wallet
+ShopeePay|w|B|shopeepay.co.id||Wallet
+LinkAja|w|B|linkaja.id||State wallet
+
+## KH Cambodia | nbc.gov.kh | https://www.nbc.gov.kh/english/supervision/list_of_banks.php
+ABA Bank|c|B|ababank.com|ABAAKHPP|Largest app user base
+ACLEDA Bank|c|B|acledabank.com.kh|ACLBKHPP|
+Canadia Bank|c|B|canadiabank.com.kh||
+Wing Bank|d|B|wingbank.com.kh||Mobile-first bank
+Prince Bank|c|B|princebank.com.kh||
+Sathapana Bank|c|B|sathapana.com.kh||
+Hattha Bank|c|B|hatthabank.com||
+Foreign Trade Bank of Cambodia|g|B|ftbbank.com||
+Maybank Cambodia|x|?|maybank2u.com.kh||
+Bakong|w|B|bakong.nbc.gov.kh||Central-bank payment system
+TrueMoney Cambodia|w|B|truemoney.com.kh||
+Pi Pay|w|B|pipay.com||
+
+## LA Laos | bol.gov.la | https://www.bol.gov.la/en/
+Banque pour le Commerce Extérieur Lao (BCEL)|g|B|bcel.com.la|COEBLALA|State, largest; BCEL One
+Lao Development Bank|g|B|ldblao.la||State
+Agricultural Promotion Bank|g|?|apb.com.la||State
+Joint Development Bank (JDB)|c|B|jdbbank.com.la||
+Phongsavanh Bank|c|B|phongsavanhbank.com||
+ST Bank|c|?|stbank.la||
+BIC Bank Lao|c|?|bicbank.la||
+Lao-Viet Bank|x|?|laovietbank.com.la||
+ACLEDA Bank Lao|x|?|acledabank.com.la||
+U-Money (Unitel)|w|B|umoney.la||Wallet
+
+## MM Myanmar | cbm.gov.mm | https://www.cbm.gov.mm/content/banks
+KBZ Bank|c|B|kbzbank.com|KBZBMMMY|Largest; KBZPay
+AYA Bank|c|B|ayabank.com|AYABMMMY|AYA Pay
+CB Bank|c|B|cbbank.com.mm|CPOBMMMY|
+Yoma Bank|c|B|yomabank.com||
+A Bank|c|B|abank.com.mm||
+Myanmar Economic Bank|g|?|meb.gov.mm||State
+Myanma Foreign Trade Bank|g|N|mftb.gov.mm||State; sanctioned
+Myanma Investment & Commercial Bank|g|N|micb.gov.mm||Sanctioned
+uab bank|c|B|uab.com.mm||
+KBZPay|w|B|kbzpay.com||Wallet
+Wave Money|w|B|wavemoney.com.mm||Wallet
+
+## MY Malaysia | bnm.gov.my | https://www.bnm.gov.my/list-of-regulatees
+Maybank|c|B|maybank2u.com.my|MBBEMYKL|Largest; MAE app
+CIMB Bank|c|B|cimb.com.my|CIBBMYKL|
+Public Bank|c|B|pbebank.com|PBBEMYKL|
+RHB Bank|c|B|rhbgroup.com|RHBBMYKL|
+Hong Leong Bank|c|B|hlb.com.my|HLBBMYKL|
+AmBank|c|B|ambank.com.my|ARBKMYKL|
+Alliance Bank|c|B|alliancebank.com.my|MFBBMYKL|
+Affin Bank|c|B|affinalways.com|PHBMMYKL|
+UOB Malaysia|x|B|uob.com.my|UOVBMYKL|
+OCBC Malaysia|x|B|ocbc.com.my|OCBCMYKL|
+HSBC Malaysia|x|B|hsbc.com.my|HBMBMYKL|
+Standard Chartered Malaysia|x|B|sc.com/my|SCBLMYKX|
+Bank Islam Malaysia|i|B|bankislam.com|BIMBMYKL|
+Bank Muamalat Malaysia|i|B|muamalat.com.my|BMMBMYKL|
+Bank Rakyat|i|B|bankrakyat.com.my||Cooperative Islamic
+BSN (Bank Simpanan Nasional)|g|B|mybsn.com.my||
+Agrobank|g|B|agrobank.com.my||
+GXBank|d|B|gxbank.my||Digital (Grab)
+AEON Bank|d|B|aeonbank.com.my||Digital Islamic
+Boost Bank|d|B|boostbank.my||Digital
+KAF Digital Bank|d|B|kaf.com.my||*
+Ryt Bank (YTL Digital)|d|B|rytbank.my||Digital (YTL/Sea), 2025
+Touch 'n Go eWallet|w|B|touchngo.com.my||
+DuitNow|w|N|duitnow.my||National instant payments
+
+## PH Philippines | bsp.gov.ph | https://www.bsp.gov.ph/SitePages/FinancialStability/DirBanksFIList.aspx
+BDO Unibank|c|B|bdo.com.ph|BNORPHMM|Largest
+Bank of the Philippine Islands (BPI)|c|B|bpi.com.ph|BOPIPHMM|
+Metrobank|c|B|metrobank.com.ph|MBTCPHMM|
+Land Bank of the Philippines|g|B|landbank.com|TLBPPHMM|State
+Development Bank of the Philippines|g|B|dbp.ph||State
+Philippine National Bank (PNB)|c|B|pnb.com.ph|PNBMPHMM|
+Security Bank|c|B|securitybank.com|SETCPHMM|
+China Banking Corp (Chinabank)|c|B|chinabank.ph|CHBKPHMM|
+RCBC|c|B|rcbc.com|RCBCPHMM|
+UnionBank of the Philippines|c|B|unionbankph.com|UBPHPHMM|
+EastWest Bank|c|B|eastwestbanker.com||
+Al-Amanah Islamic Bank|i|?|al-amanah.com.ph||
+GoTyme Bank|d|B|gotyme.com.ph||Digital
+Maya Bank|d|B|maya.ph||Digital
+Tonik|d|B|tonikbank.com||Digital
+UNOBank|d|B|uno.bank||Digital
+CIMB Bank Philippines|d|B|cimbbank.com.ph||Digital
+OFBank|d|B|ofbank.com.ph||Digital (Landbank)
+GCash|w|B|gcash.com||Largest wallet
+Maya|w|B|maya.ph||Wallet
+Seabank PH|d|B|seabank.ph||Rural bank (Sea)
+CARD Bank|m|B|cardbankph.com||Microfinance
+
+## SG Singapore | mas.gov.sg | https://eservices.mas.gov.sg/fid
+DBS Bank|c|B|dbs.com.sg|DBSSSGSG|Largest; digibank
+OCBC|c|B|ocbc.com|OCBCSGSG|
+UOB|c|B|uob.com.sg|UOVBSGSG|
+POSB (DBS)|c|B|posb.com.sg|DBSSSGSG|
+Standard Chartered Singapore|x|B|sc.com/sg|SCBLSG22|
+HSBC Singapore|x|B|hsbc.com.sg|HSBCSGS2|
+Citibank Singapore|x|B|citibank.com.sg|CITISGSG|
+Maybank Singapore|x|B|maybank2u.com.sg||
+Bank of China Singapore|x|B|bankofchina.com/sg||
+GXS Bank|d|B|gxs.com.sg||Digital (Grab/Singtel)
+Trust Bank|d|B|trustbank.sg||Digital (SC/FairPrice)
+MariBank|d|B|maribank.sg||Digital (Sea)
+ANEXT Bank|d|B|anextbank.com||Digital wholesale (Ant)
+PayNow|w|N|abs.org.sg||National instant payments
+YouTrip|w|B|you.co||Multi-currency wallet
+
+## TH Thailand | bot.or.th | https://www.bot.or.th/en/financial-institutions/list-of-financial-institutions.html
+Bangkok Bank|c|B|bangkokbank.com|BKKBTHBK|
+Kasikornbank|c|B|kasikornbank.com|KASITHBK|K PLUS
+Siam Commercial Bank (SCB)|c|B|scb.co.th|SICOTHBK|SCB EASY
+Krungthai Bank|g|B|krungthai.com|KRTHTHBK|State; Paotang
+Krungsri (Bank of Ayudhya)|c|B|krungsri.com|AYUDTHBK|MUFG
+TMBThanachart (ttb)|c|B|ttbbank.com|TMBKTHBK|
+Government Savings Bank|g|B|gsb.or.th||State
+BAAC|g|B|baac.or.th||Agricultural
+Government Housing Bank|g|B|ghbank.co.th||
+Islamic Bank of Thailand|i|?|ibank.co.th||State Islamic
+UOB Thailand|x|B|uob.co.th||
+CIMB Thai|x|B|cimbthai.com||
+Kiatnakin Phatra Bank|c|B|kkpfg.com||
+TISCO Bank|c|B|tisco.co.th||
+TrueMoney|w|B|truemoney.com||Wallet
+PromptPay|w|N|bot.or.th||National instant payments
+
+## TL Timor-Leste | bancocentral.tl | https://www.bancocentral.tl/en/go/licensed-institutions
+Banco Nacional de Comércio de Timor-Leste (BNCTL)|g|B|bnctl.tl||State
+BNU Timor (CGD)|x|B|bnu.tl||
+ANZ Timor-Leste|x|B|anz.com/timorleste||
+Bank Mandiri Timor-Leste|x|?|bankmandiri.co.id||
+BRI Timor-Leste|x|?|bri.co.id||*
+Mosan (Telemor)|w|B|mosan.tl||Wallet*
+
+## VN Vietnam | sbv.gov.vn | https://www.sbv.gov.vn
+Vietcombank|g|B|vietcombank.com.vn|BFTVVNVX|State
+VietinBank|g|B|vietinbank.vn|ICBVVNVX|State
+BIDV|g|B|bidv.com.vn|BIDVVNVX|State
+Agribank|g|B|agribank.com.vn|VBAAVNVX|State
+Techcombank|c|B|techcombank.com|VTCBVNVX|
+VPBank|c|B|vpbank.com.vn|VPBKVNVX|
+MB Bank|c|B|mbbank.com.vn|MSCBVNVX|
+ACB|c|B|acb.com.vn|ASCBVNVX|
+Sacombank|c|B|sacombank.com.vn|SGTTVNVX|
+HDBank|c|B|hdbank.com.vn||
+TPBank|c|B|tpb.vn||
+SHB|c|B|shb.com.vn||
+VIB|c|B|vib.com.vn||
+OCB|c|B|ocb.com.vn||
+Cake by VPBank|d|B|cake.vn||Digital
+Timo|d|B|timo.vn||Digital
+MoMo|w|B|momo.vn||Largest wallet
+ZaloPay|w|B|zalopay.vn||
+VNPay|w|B|vnpay.vn||
+ShopeePay VN|w|B|shopeepay.vn||
+
+## AU Australia | apra.gov.au | https://www.apra.gov.au/register-of-authorised-deposit-taking-institutions
+Commonwealth Bank (CBA)|c|B|commbank.com.au|CTBAAU2S|Largest
+Westpac|c|B|westpac.com.au|WPACAU2S|
+ANZ|c|B|anz.com.au|ANZBAU3M|
+NAB|c|B|nab.com.au|NATAAU33|
+Macquarie Bank|c|B|macquarie.com.au|MACQAU2S|
+Bendigo Bank|c|B|bendigobank.com.au|BENDAU3B|
+Suncorp Bank (ANZ)|c|B|suncorp.com.au||Acquired by ANZ 2024
+Bank of Queensland|c|B|boq.com.au|QBANAU4B|
+ING Australia|d|B|ing.com.au|INGBAU2S|
+St.George (Westpac)|c|B|stgeorge.com.au||
+Bankwest (CBA)|c|B|bankwest.com.au||
+HSBC Australia|x|B|hsbc.com.au||
+Great Southern Bank|c|B|greatsouthernbank.com.au||Mutual
+UBank (NAB)|d|B|ubank.com.au||
+Up (Bendigo)|d|B|up.com.au||
+Judo Bank|d|N|judo.bank||SME
+Australia Post (Bank@Post)|g|N|auspost.com.au||Agency banking
+Afterpay|w|B|afterpay.com||BNPL
+PayID / Osko|w|N|payid.com.au||Instant payments
+
+## FJ Fiji | rbf.gov.fj | https://www.rbf.gov.fj/
+ANZ Fiji|x|B|anz.com/fiji||ANZ Pacific app
+Westpac Fiji|x|B|westpac.com.fj||
+BSP Fiji|x|B|bsp.com.fj||
+Bank of Baroda Fiji|x|?|bankofbaroda.com.fj||
+HFC Bank|c|B|hfc.com.fj||Locally owned
+Bred Bank Fiji|x|?|bred.com.fj||
+Fiji Development Bank|g|N|fdb.com.fj||
+M-PAiSA (Vodafone)|w|B|mpaisa.vodafone.com.fj||Wallet
+MyCash (Digicel)|w|B|digicelgroup.com/fj||Wallet*
+
+## FM Micronesia | FSM Banking Board | https://www.imf.org/-/media/files/publications/wp/2017/wp1790.pdf.md
+Bank of the Federated States of Micronesia|c|?|bankfsm.com||Locally owned*
+Bank of Guam (FSM branches)|x|B|bankguam.com||US FDIC-insured
+FSM Development Bank|g|N|fsmdb.fm||*
+
+## KI Kiribati | — (Ministry of Finance) | https://www.anz.com/kiribati/en/about-us/anz-kiribati
+ANZ Kiribati|x|B|anz.com/kiribati||ANZ Pacific app
+Development Bank of Kiribati|g|N|dbk.ki||*
+Kiribati Provident Fund|g|N|kpf.com.ki||Pension*
+
+## MH Marshall Islands | RMI Banking Commission | https://www.griffith.edu.au/__data/assets/pdf_file/0028/1705375/RMI-monetary-authority-policy-brief-web.pdf
+Bank of the Marshall Islands (BOMI)|c|?|bomi.biz||Locally owned
+Bank of Guam (RMI)|x|B|bankguam.com||US FDIC-insured branch
+Marshall Islands Development Bank|g|N|midb.com.mh||*
+
+## NR Nauru | — | https://pina.com.fj/2025/08/12/bendigo-bank-cease-operations-in-nauru-commonwealth-bank-of-australia-opens-today/
+Commonwealth Bank (Nauru agency)|x|B|commbank.com.au||Sole bank since Aug 2025 (replaced Bendigo)
+Bendigo Bank (closing)|x|N|bendigobank.com.au||Exited Nauru 2025
+
+## NZ New Zealand | rbnz.govt.nz | https://www.rbnz.govt.nz/regulation-and-supervision/oversight-of-banks/registered-banks-in-new-zealand
+ANZ New Zealand|c|B|anz.co.nz|ANZBNZ22|Largest
+ASB Bank (CBA)|c|B|asb.co.nz|ASBBNZ2A|
+Westpac NZ|c|B|westpac.co.nz|WPACNZ2W|
+BNZ (NAB)|c|B|bnz.co.nz|BKNZNZ22|
+Kiwibank|g|B|kiwibank.co.nz|KIWINZ22|State-owned
+TSB (NZ)|c|B|tsb.co.nz||
+Co-operative Bank NZ|c|B|co-operativebank.co.nz||
+Heartland Bank|c|B|heartland.co.nz||
+Rabobank NZ|x|B|rabobank.co.nz||
+SBS Bank|c|B|sbsbank.co.nz||
+
+## PG Papua New Guinea | bankpng.gov.pg | https://www.bankpng.gov.pg/financial-system/licensed-financial-institutions/
+BSP (Bank South Pacific)|c|B|bsp.com.pg|BOSPPGPM|Largest
+Kina Bank|c|B|kinabank.com.pg||Bought ANZ PNG retail
+Westpac PNG|x|B|westpac.com.pg||
+ANZ PNG|x|B|anz.com/png||Institutional
+Credit Corporation / Teachers Savings & Loan|m|?|tisa.com.pg||*
+National Development Bank PNG|g|N|ndb.com.pg||
+CellMoni (Digicel)|w|B|cellmoni.com.pg||Wallet
+MiCash (Telikom/Mibank)|w|?|mibank.com.pg||*
+
+## PW Palau | Financial Institutions Commission (ropfic.org) | https://mail.ropfic.org/pdf/CENTRAL-REGISTRY-FOR-BANKS%20_UPDATED-9.17.18.pdf
+Bank of Hawaii (Palau)|x|B|boh.com||
+Bank of Guam (Palau)|x|B|bankguam.com||
+Asia Pacific Commercial Bank|c|?|apcb.com.pw||*
+National Development Bank of Palau|g|N|ndbp.com||*
+
+## SB Solomon Islands | cbsi.com.sb | https://www.cbsi.com.sb/licensed-financial-institutions/
+BSP Solomon Islands|x|B|bsp.com.sb||
+ANZ Solomon Islands|x|B|anz.com/solomonislands||
+Pan Oceanic Bank|c|?|pob.com.sb||Locally owned*
+Credit Corporation (SI)|m|N|creditcorporation.com.sb||*
+M-Sela (Our Telekom)|w|?|ourtelekom.com.sb||*
+
+## TO Tonga | reservebank.to | https://www.reservebank.to/
+ANZ Tonga|x|B|anz.com/tonga||
+BSP Tonga|x|B|bsp.com.to||
+Tonga Development Bank|g|N|tdb.to||
+MBf Bank Tonga|c|?|mbfbank.to||*
+Digicel MyCash Tonga|w|?|digicelgroup.com/to||*
+
+## TV Tuvalu | — | https://pacificpsdi.org/assets/Uploads/ADB-PSDI-GovernmentOwnedBanks-Web.pdf
+National Bank of Tuvalu|g|?|nbt.tv||Government-owned; sole commercial bank
+Development Bank of Tuvalu|g|N|||Government-owned*
+
+## VU Vanuatu | rbv.gov.vu | https://www.rbv.gov.vu/
+National Bank of Vanuatu|g|B|nbv.vu||State
+Bank South Pacific (BSP) Vanuatu|x|B|bsp.com.vu||
+ANZ Vanuatu|x|B|anz.com/vanuatu||
+BRED Vanuatu|x|?|bred.vu||
+
+## WS Samoa | cbs.gov.ws | https://www.cbs.gov.ws/
+ANZ Samoa|x|B|anz.com/samoa||
+BSP Samoa|x|B|bsp.com.ws||
+Samoa Commercial Bank|c|?|scb.ws||Locally owned
+National Bank of Samoa|c|?|nbs.ws||Locally owned
+Development Bank of Samoa|g|N|dbs.ws||
+Digicel MyCash Samoa|w|?|digicelgroup.com/ws||*

@@ -34,6 +34,8 @@ function bankDomain(name){
       if(k.toLowerCase()===lc)return v;
     }
   }
+  // World catalog (lazy-loaded, exact name) → its website domain for the logo lookup
+  if(typeof WorldBanks!=='undefined'){const d=WorldBanks.domain(n);if(d)return d;}
   // SMART_DB aliases → catalog keys (exact / case-insensitive)
   if(typeof SMART_DB!=='undefined'&&Array.isArray(SMART_DB.banks)){
     for(const b of SMART_DB.banks){

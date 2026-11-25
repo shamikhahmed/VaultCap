@@ -85,7 +85,16 @@ const U = {
   homeCC:      () => (S.user && S.user.country) || ((((typeof navigator !== 'undefined' && navigator.language) || '').match(/-([A-Z]{2})$/i) || [])[1] || 'US').toUpperCase(),
   countries:   (sel) => { const h = sel || U.homeCC(); return COUNTRIES.map(c => `<option value="${c.c}"${c.c === h ? ' selected' : ''}>${c.f} ${c.n}</option>`).join(''); },
   currencies:  () => CURRENCIES.map(c  => `<option value="${c}">${c}</option>`).join(''),
-  bankOpts:    cc => (cc ? BANKS_DB.filter(b => b.c === cc || b.c === 'OTHER') : BANKS_DB).map(b => `<option value="${b.n}">`).join(''),
+  /** Bank suggestions for a country: curated BANKS_DB first, then the lazy-loaded
+      world catalog (js/core/world-banks.js) for every other country. */
+  bankOpts:    cc => {
+    const base = cc ? BANKS_DB.filter(b => b.c === cc || b.c === 'OTHER') : BANKS_DB;
+    const W = typeof WorldBanks !== 'undefined' ? WorldBanks : null;
+    if (W && !W.rows) W.load();
+    const seen = new Set(base.map(b => b.n.toLowerCase()));
+    const extra = (W && cc) ? W.forCountry(cc).filter(b => !seen.has(b.n.toLowerCase()) && seen.add(b.n.toLowerCase())) : [];
+    return base.concat(extra).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   cardOpts:    () => CARDS_DB.map(c  => `<option value="${c.n}">`).join(''),
   brokerOpts:  () => BROKERS_DB.map(b => `<option value="${b}">`).join(''),
   netOpts:     cc => (cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB).map(n => `<option value="${n.n}">`).join(''),

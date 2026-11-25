@@ -1,0 +1,298 @@
+# Region: Western & Southern Europe
+# Pan-EU neobanks (Revolut, N26, Wise, bunq, Trade Republic) are listed under their home country;
+# they passport across the EEA.
+
+## AD Andorra | afa.ad | https://www.afa.ad/en/supervised-entities
+Andbank|c|B|andbank.com|BACAADAD|
+Crèdit Andorrà|c|B|creditandorra.ad|CRDAADAD|
+MoraBanc|c|B|morabanc.ad|BINAADAD|
+Banc Sabadell d'Andorra|c|B|bancsabadell.ad||
+Vall Banc|c|B|vallbanc.ad||
+
+## AT Austria | fma.gv.at | https://www.fma.gv.at/en/search-company-database/
+Erste Bank (George)|c|B|sparkasse.at/erstebank|GIBAATWW|George app
+Raiffeisen Bank International / Raiffeisenlandesbanken|c|B|raiffeisen.at|RZBAATWW|
+UniCredit Bank Austria|c|B|bankaustria.at|BKAUATWW|
+BAWAG P.S.K.|c|B|bawag.at|BAWAATWW|
+Oberbank|c|B|oberbank.at|OBKLAT2L|
+Volksbank Wien|c|B|volksbankwien.at||
+Hypo Vorarlberg|c|?|hypovbg.at||
+easybank|d|B|easybank.at||BAWAG brand
+Bank99|d|B|bank99.at||Austrian Post bank
+N26 Austria|d|B|n26.com||Passported from DE
+Dadat Bank|d|B|dadat.at||
+
+## BE Belgium | nbb.be | https://www.nbb.be/en/financial-oversight/prudential-supervision/areas-responsibility/credit-institutions
+BNP Paribas Fortis|c|B|bnpparibasfortis.be|GEBABEBB|Largest
+KBC|c|B|kbc.be|KREDBEBB|
+Belfius|g|B|belfius.be|GKCCBEBB|State-owned
+ING Belgium|c|B|ing.be|BBRUBEBB|
+Argenta|c|B|argenta.be|ARSPBE22|
+Crelan (incl. AXA Bank)|c|B|crelan.be|NICABEBB|
+Beobank|c|B|beobank.be|CTBKBEBX|
+bpost bank (BNP)|c|B|bpostbank.be||Merged into BNP Paribas Fortis
+Keytrade Bank|d|B|keytradebank.be||
+Hello bank! Belgium|d|B|hellobank.be||
+Euroclear Bank|x|N|euroclear.com|MGTCBEBE|Securities settlement
+Payconiq|w|B|payconiq.be||Wallet
+
+## CH Switzerland | finma.ch | https://www.finma.ch/en/finma-public/authorised-institutions-individuals-and-products/
+UBS|c|B|ubs.com|UBSWCHZH|Merged Credit Suisse 2023
+PostFinance|g|B|postfinance.ch|POFICHBE|
+Raiffeisen Switzerland|c|B|raiffeisen.ch|RAIFCH22|
+Zürcher Kantonalbank|g|B|zkb.ch|ZKBKCHZZ|
+Banque Cantonale Vaudoise|g|B|bcv.ch|BCVLCH2L|
+Berner Kantonalbank|g|B|bekb.ch||
+Luzerner Kantonalbank|g|B|lukb.ch||
+St.Galler Kantonalbank|g|B|sgkb.ch||
+Basler Kantonalbank|g|B|bkb.ch||
+Banque Cantonale de Genève|g|B|bcge.ch||
+Migros Bank|c|B|migrosbank.ch|MIGRCHZZ|
+Valiant|c|B|valiant.ch||
+Julius Bär|c|B|juliusbaer.com|BAERCHZZ|Private bank
+Pictet|c|N|pictet.com||Private bank
+Lombard Odier|c|B|lombardodier.com||Private bank
+Neon|d|B|neon-free.ch||
+Yuh (Swissquote/PostFinance)|d|B|yuh.com||
+Zak (Bank Cler)|d|B|cler.ch/zak||
+Swissquote|d|B|swissquote.com||
+TWINT|w|B|twint.ch||National mobile payments
+
+## CY Cyprus | centralbank.cy | https://www.centralbank.cy/en/licensing-supervision/banks/register-of-credit-institutions-operating-in-cyprus
+Bank of Cyprus|c|B|bankofcyprus.com|BCYPCY2N|
+Hellenic Bank (Eurobank)|c|B|hellenicbank.com|HEBACY2N|
+Eurobank Cyprus|x|B|eurobank.com.cy||
+Alpha Bank Cyprus|x|?|alphabank.com.cy||*
+Astrobank|c|B|astrobank.com||
+Ancoria Bank|c|B|ancoriabank.com||
+Housing Finance Corporation|g|N|hfc.com.cy||
+Revolut (Cyprus)|d|B|revolut.com||Passported
+
+## DE Germany | bafin.de | https://portal.mvp.bafin.de/database/InstInfo/
+Deutsche Bank|c|B|deutsche-bank.de|DEUTDEFF|
+Commerzbank|c|B|commerzbank.de|COBADEFF|
+Sparkasse (Savings banks group)|g|B|sparkasse.de||~350 savings banks; Sparkasse app
+Volksbanken Raiffeisenbanken|c|B|vr.de||Cooperative banks; VR Banking app
+DZ Bank|c|N|dzbank.de|GENODEFF|Coop central bank
+Postbank|c|B|postbank.de|PBNKDEFF|Deutsche Bank brand
+HypoVereinsbank (UniCredit)|c|B|hypovereinsbank.de|HYVEDEMM|
+ING Deutschland|d|B|ing.de|INGDDEFF|
+DKB|d|B|dkb.de|BYLADEM1001|
+comdirect (Commerzbank)|d|B|comdirect.de|COBADEHD|
+Consorsbank (BNP)|d|B|consorsbank.de||
+Targobank|c|B|targobank.de||
+Santander Consumer Bank|c|B|santander.de||
+Sparda-Bank|c|B|sparda.de||
+PSD Bank|c|B|psd-bank.de||
+KfW|g|N|kfw.de|KFWIDEFF|Development bank
+N26|d|B|n26.com|NTSBDEB1|
+Trade Republic|d|B|traderepublic.com||Bank licence
+C24 Bank|d|B|c24.de||
+Tomorrow Bank|d|B|tomorrow.one||
+Vivid Money|d|B|vivid.money||*
+Kontist|d|B|kontist.com||Freelancers*
+Solaris|d|N|solarisgroup.com||BaaS
+PayPal Deutschland|w|B|paypal.com||Wallet
+
+## ES Spain | bde.es | https://www.bde.es/wbe/en/entidades-profesionales/supervisadas/
+Banco Santander|c|B|bancosantander.es|BSCHESMM|
+BBVA|c|B|bbva.es|BBVAESMM|
+CaixaBank|c|B|caixabank.es|CAIXESBB|Merged Bankia 2021
+Banco Sabadell|c|B|bancsabadell.com|BSABESBB|
+Bankinter|c|B|bankinter.com|BKBKESMM|
+Unicaja|c|B|unicajabanco.es|UCJAES2M|
+Kutxabank|c|B|kutxabank.es|BASKES2B|
+Abanca|c|B|abanca.com|CAGLESMM|
+Ibercaja|c|B|ibercaja.es|CAZRES2Z|
+Cajamar|c|B|cajamar.es|CCRIES2A|
+Banca March|c|B|bancamarch.es||
+ING España|d|B|ing.es|INGDESMM|
+Openbank (Santander)|d|B|openbank.es|OPENESMM|
+EVO Banco|d|B|evobanco.com||
+imagin (CaixaBank)|d|B|imagin.com||
+MyInvestor|d|B|myinvestor.es||
+Bizum|w|B|bizum.es||National P2P payments
+
+## FR France | acpr.banque-france.fr | https://www.regafi.fr/
+BNP Paribas|c|B|mabanque.bnpparibas|BNPAFRPP|
+Crédit Agricole|c|B|credit-agricole.fr|AGRIFRPP|
+Société Générale|c|B|societegenerale.fr|SOGEFRPP|
+Banque Populaire|c|B|banquepopulaire.fr||BPCE group
+Caisse d'Epargne|c|B|caisse-epargne.fr||BPCE group
+Crédit Mutuel|c|B|creditmutuel.fr|CMCIFRPP|
+CIC|c|B|cic.fr|CMCIFR2A|
+LCL|c|B|lcl.fr|CRLYFRPP|
+La Banque Postale|g|B|labanquepostale.fr|PSSTFRPP|
+HSBC France (CCF)|c|B|ccf.fr||Sold to My Money Group, renamed CCF 2024
+Crédit du Nord|c|N|credit-du-nord.fr||Merged into SG 2023
+Boursorama (BoursoBank)|d|B|boursobank.com|BOUSFRPP|Largest French online bank
+Fortuneo|d|B|fortuneo.fr||
+Hello bank!|d|B|hellobank.fr||
+Monabanq|d|B|monabanq.com||
+Ma French Bank|d|N|mafrenchbank.fr||Closed 2024*
+Shine|d|B|shine.fr||Business neobank
+Qonto|d|B|qonto.com||Business neobank
+Nickel|d|B|nickel.eu||Account at tobacconists
+Lydia / Sumeria|w|B|lydia-app.com||P2P → Sumeria bank account
+Wero (EPI)|w|B|wero-wallet.eu||European wallet
+Bpifrance|g|N|bpifrance.fr||Public investment bank
+
+## GB United Kingdom | bankofengland.co.uk | https://www.bankofengland.co.uk/prudential-regulation/authorisations/which-firms-does-the-pra-regulate
+HSBC UK|c|B|hsbc.co.uk|HBUKGB4B|
+Barclays|c|B|barclays.co.uk|BARCGB22|
+NatWest|c|B|natwest.com|NWBKGB2L|
+Lloyds Bank|c|B|lloydsbank.com|LOYDGB2L|
+Santander UK|c|B|santander.co.uk|ABBYGB2L|
+Halifax|c|B|halifax.co.uk|HLFXGB21|Lloyds group
+Bank of Scotland|c|B|bankofscotland.co.uk|BOFSGB21|
+Royal Bank of Scotland|c|B|rbs.co.uk|RBOSGB2L|
+Nationwide Building Society|c|B|nationwide.co.uk|NAIAGB21|
+TSB Bank|c|B|tsb.co.uk|TSBSGB2A|Acquired by Santander 2025*
+Metro Bank|c|B|metrobankonline.co.uk|MYMBGB2L|
+Virgin Money (Nationwide)|c|B|virginmoney.com||Acquired by Nationwide 2024
+Co-operative Bank|c|B|co-operativebank.co.uk|CPBKGB22|Acquired by Coventry BS 2025
+Coventry Building Society|c|B|coventrybuildingsociety.co.uk||
+Yorkshire Building Society|c|B|ybs.co.uk||
+Skipton Building Society|c|?|skipton.co.uk||
+Danske Bank UK (Northern Ireland)|c|B|danskebank.co.uk||
+Bank of Ireland UK|c|B|bankofirelanduk.com||
+AIB (NI)|c|N|aibni.co.uk||Exited NI 2024*
+Ulster Bank NI|c|B|ulsterbank.co.uk||NatWest group
+First Direct|d|B|firstdirect.com||HSBC brand
+Monzo|d|B|monzo.com|MONZGB2L|
+Starling Bank|d|B|starlingbank.com|SRLGGB2L|
+Revolut|d|B|revolut.com|REVOGB21|UK bank licence 2024 (mobilisation)
+Chase UK|d|B|chase.co.uk||JPMorgan
+Kroo|d|B|kroo.com||
+Zopa|d|B|zopa.com||
+Atom Bank|d|B|atombank.co.uk||
+Allica Bank|d|B|allica.bank||SME
+Tide|d|B|tide.co||SME
+Wise|x|B|wise.com||Multi-currency EMI
+Al Rayan Bank|i|B|alrayanbank.co.uk||Islamic
+Gatehouse Bank|i|?|gatehousebank.com||Islamic
+Nomo|i|B|bankwithnomo.com||Digital Islamic (Boubyan)
+NS&I|g|B|nsandi.com||Government savings
+Post Office Money|g|?|postoffice.co.uk||
+PayPal UK|w|B|paypal.com||
+
+## GI Gibraltar | gfsc.gi | https://www.gibraltarlaw.com/?p=13939 ; https://en.wikipedia.org/wiki/List_of_banks_in_Gibraltar
+Gibraltar International Bank|g|B|gibintbank.gi||Government-owned
+Bank J. Safra Sarasin (Gibraltar)|c|N|jsafrasarasin.com||Private bank
+Turicum Private Bank|c|N|turicum.com||Private bank
+Moneycorp Bank|x|B|moneycorp.com||FX bank
+SG Kleinwort Hambros (Gibraltar)|c|N|kleinworthambros.com||Private bank
+Xapo Bank|d|B|xapobank.com||Bitcoin-oriented bank
+IDT Financial Services|w|?|idtfinance.com||EMI*
+
+## GR Greece | bankofgreece.gr | https://www.bankofgreece.gr/en/main-tasks/supervision/supervised-institutions
+National Bank of Greece|c|B|nbg.gr|ETHNGRAA|
+Piraeus Bank|c|B|piraeusbank.gr|PIRBGRAA|winbank
+Eurobank|c|B|eurobank.gr|ERBKGRAA|
+Alpha Bank|c|B|alpha.gr|CRBAGRAA|
+Attica Bank (Attica-Pancreta)|c|B|atticabank.gr||Merged with Pancreta 2024
+Optima bank|c|B|optimabank.gr||
+Viva Wallet|d|B|vivawallet.com||Neobank/acquirer
+IRIS|w|B|iris.gr||National instant payments
+
+## IE Ireland | centralbank.ie | https://registers.centralbank.ie/
+AIB|c|B|aib.ie|AIBKIE2D|
+Bank of Ireland|c|B|bankofireland.com|BOFIIE2D|
+PTSB|c|B|ptsb.ie|IPBSIE2D|
+Credit Unions|c|?|creditunion.ie||~200 credit unions
+An Post Money|g|B|anpost.com/money||
+Revolut Bank (Ireland)|d|B|revolut.com||Largest by users in IE
+N26 Ireland|d|B|n26.com||
+bunq Ireland|d|B|bunq.com||
+Ulster Bank / KBC Ireland|c|N|ulsterbank.ie||Exited 2023
+Zippay / Zip|w|B|zippay.ie||Bank-owned P2P (planned)*
+
+## IT Italy | bancaditalia.it | https://infostat.bancaditalia.it/GIAVAInquiry-public/ng/
+Intesa Sanpaolo|c|B|intesasanpaolo.com|BCITITMM|Largest
+UniCredit|c|B|unicredit.it|UNCRITMM|
+Banco BPM|c|B|bancobpm.it|BAPPIT21|
+BPER Banca|c|B|bper.it|BPMOIT22|
+Monte dei Paschi di Siena|c|B|mps.it|PASCITMM|
+Crédit Agricole Italia|x|B|credit-agricole.it||
+BNL (BNP Paribas)|x|B|bnl.it|BNLIITRR|
+Banca Popolare di Sondrio|c|B|popso.it||Merged into BPER 2025*
+Banca Mediolanum|c|B|bancamediolanum.it||
+Credem|c|B|credem.it||
+Mediobanca / CheBanca!|c|B|mediobanca.com||
+Fineco|d|B|finecobank.com|FEBIITM1|
+Banca Sella|c|B|sella.it||
+illimity|d|B|illimity.com||
+Isybank (Intesa)|d|B|isybank.com||
+Poste Italiane (BancoPosta)|g|B|poste.it||
+Satispay|w|B|satispay.com||
+Hype|d|B|hype.it||
+
+## LI Liechtenstein | fma-li.li | https://www.fma-li.li/en/supervision/supervised-entities
+LGT Bank|c|B|lgt.com|BLFLLI2X|Private bank (princely family)
+Liechtensteinische Landesbank (LLB)|g|B|llb.li|LILALI2X|
+VP Bank|c|B|vpbank.com|VPBVLI2X|
+Bank Frick|c|N|bankfrick.li||
+Kaiser Partner Privatbank|c|N|kaiserpartner.bank||
+Neue Bank|c|N|neuebank.li||
+
+## LU Luxembourg | cssf.lu | https://edesk.apps.cssf.lu/search-entities/
+Spuerkeess (BCEE)|g|B|spuerkeess.lu|BCEELULL|State savings bank
+BGL BNP Paribas|c|B|bgl.lu|BGLLLULL|
+Banque Internationale à Luxembourg (BIL)|c|B|bil.com|BILLLULL|
+ING Luxembourg|c|B|ing.lu|CELLLULL|
+Banque Raiffeisen|c|B|raiffeisen.lu||
+POST Luxembourg|g|B|post.lu||
+Payconiq Luxembourg|w|B|payconiq.lu||
+Clearstream|x|N|clearstream.com||Securities
+Advanzia Bank|d|B|advanzia.com||Card bank
+
+## MC Monaco | ccaf.mc | https://www.ccaf.mc
+CFM Indosuez Wealth|c|B|ca-indosuez.com||
+Compagnie Monégasque de Banque (CMB)|c|B|cmb.mc||
+Banque Populaire Méditerranée|c|B|bpmed.fr||
+Barclays Private Bank Monaco|x|N|privatebank.barclays.com||
+UBS Monaco|x|N|ubs.com||
+Société Générale Private Banking Monaco|x|N|privatebanking.societegenerale.com||
+
+## MT Malta | mfsa.mt | https://www.mfsa.mt/financial-services-register/
+Bank of Valletta|c|B|bov.com|VALLMTMT|Largest
+HSBC Malta|x|B|hsbc.com.mt|MMEBMTMT|
+APS Bank|c|B|apsbank.com.mt||
+BNF Bank|c|B|bnf.bank||
+Lombard Bank|c|?|lombardmalta.com||
+MeDirect|d|B|medirect.com.mt||
+Izola Bank|c|?|izolabank.com||
+
+## NL Netherlands | dnb.nl | https://www.dnb.nl/en/public-register/
+ING|c|B|ing.nl|INGBNL2A|Largest
+Rabobank|c|B|rabobank.nl|RABONL2U|
+ABN AMRO|c|B|abnamro.nl|ABNANL2A|
+de Volksbank (SNS / ASN / RegioBank)|g|B|devolksbank.nl|SNSBNL2A|State-owned
+Triodos Bank|c|B|triodos.nl|TRIONL2U|
+Knab|d|B|knab.nl||Acquired by BAWAG 2024
+bunq|d|B|bunq.com|BUNQNL2A|
+Van Lanschot Kempen|c|B|vanlanschotkempen.com||
+Tikkie (ABN AMRO)|w|B|tikkie.me||Payment requests
+iDEAL / Wero|w|B|ideal.nl||National online payments
+
+## PT Portugal | bportugal.pt | https://www.bportugal.pt/en/entidades-autorizadas
+Caixa Geral de Depósitos|g|B|cgd.pt|CGDIPTPL|State-owned
+Millennium bcp|c|B|millenniumbcp.pt|BCOMPTPL|
+Novo Banco|c|B|novobanco.pt|BESCPTPL|Acquired by BPCE 2025*
+Santander Totta|c|B|santander.pt|TOTAPTPL|
+BPI (CaixaBank)|c|B|bancobpi.pt|BBPIPTPL|
+Crédito Agrícola|c|B|creditoagricola.pt||
+Banco Montepio|c|B|bancomontepio.pt||
+ActivoBank|d|B|activobank.pt||Millennium brand
+Banco CTT|g|B|bancoctt.pt||Postal bank
+MB WAY|w|B|mbway.pt||National wallet
+
+## SM San Marino | bcsm.sm | https://www.bcsm.sm
+Banca di San Marino|c|B|bsm.sm||
+Cassa di Risparmio della Repubblica di San Marino|g|B|carisp.sm||State-owned
+Banca Agricola Commerciale (BAC)|c|B|bac.sm||
+Banca Sammarinese di Investimento (BSI)|c|?|bsi.sm||
+
+## VA Vatican City | asif.va | https://www.ior.va
+Institute for the Works of Religion (IOR)|g|N|ior.va||Serves clergy, institutions & Vatican employees only
+> No retail banking market; residents and employees typically also bank with Italian banks.

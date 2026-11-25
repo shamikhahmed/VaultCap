@@ -1,0 +1,308 @@
+# Region: Nordics, Baltics, Central & Eastern Europe, Balkans, Türkiye
+
+## DK Denmark | finanstilsynet.dk | https://www.finanstilsynet.dk/en/Virksomhedsregister
+Danske Bank|c|B|danskebank.dk|DABADKKK|Largest
+Jyske Bank|c|B|jyskebank.dk|JYBADKKK|
+Nykredit Bank|c|B|nykredit.dk|NYKBDKKK|
+Sydbank|c|B|sydbank.dk|SYBKDK22|
+Spar Nord (Nykredit)|c|B|sparnord.dk||Acquired by Nykredit 2025
+Arbejdernes Landsbank|c|B|al-bank.dk||
+Nordea Danmark|c|B|nordea.dk|NDEADKKK|
+Lunar|d|B|lunar.app||
+MobilePay|w|B|mobilepay.dk||National P2P (Vipps MobilePay)
+
+## EE Estonia | fi.ee | https://www.fi.ee/en/banks
+Swedbank Estonia|c|B|swedbank.ee|HABAEE2X|Largest
+SEB Estonia|c|B|seb.ee|EEUHEE2X|
+LHV Pank|c|B|lhv.ee|LHVBEE22|
+Luminor|c|B|luminor.ee|RIKOEE22|
+Coop Pank|c|B|cooppank.ee||
+Inbank|d|B|inbank.ee||
+Bigbank|c|?|bigbank.ee||
+
+## FI Finland | finanssivalvonta.fi | https://www.finanssivalvonta.fi/en/registers/supervised-entities/
+OP Financial Group|c|B|op.fi|OKOYFIHH|Largest
+Nordea Finland|c|B|nordea.fi|NDEAFIHH|
+Danske Bank Finland|c|B|danskebank.fi|DABAFIHH|
+S-Pankki|c|B|s-pankki.fi|SBANFIHH|
+Aktia|c|B|aktia.fi|HELSFIHH|
+Säästöpankki (Savings Banks)|c|B|saastopankki.fi||
+POP Pankki|c|B|poppankki.fi||
+Handelsbanken Finland|x|N|handelsbanken.fi||Retail sold to S-Bank 2024
+MobilePay Finland|w|B|mobilepay.fi||
+
+## IS Iceland | cb.is | https://www.cb.is/financial-supervision/supervised-entities/
+Landsbankinn|g|B|landsbankinn.is|NBIIISRE|State-owned
+Arion banki|c|B|arionbanki.is|ESJAISRE|
+Íslandsbanki|c|B|islandsbanki.is|GLITISRE|
+Kvika banki|c|B|kvika.is||Auður digital
+Indó|d|B|indo.is||Neobank
+
+## LT Lithuania | lb.lt | https://www.lb.lt/en/sfi-financial-market-participants
+Swedbank Lithuania|c|B|swedbank.lt|HABALT22|
+SEB Lithuania|c|B|seb.lt|CBVILT2X|
+Luminor Lithuania|c|B|luminor.lt|AGBLLT2X|
+Šiaulių bankas|c|B|sb.lt|CBSBLT26|
+Revolut Bank UAB|d|B|revolut.com|REVOLT21|EU bank HQ
+Paysera|w|B|paysera.com||EMI
+Citadele Lithuania|c|B|citadele.lt||
+
+## LV Latvia | bank.lv | https://www.bank.lv/en/
+Swedbank Latvia|c|B|swedbank.lv|HABALV22|
+SEB Latvia|c|B|seb.lv|UNLALV2X|
+Citadele|c|B|citadele.lv|PARXLV22|
+Luminor Latvia|c|B|luminor.lv|RIKOLV2X|
+BluOr Bank|c|?|bluorbank.lv||
+Rietumu Banka|c|?|rietumu.com||
+
+## NO Norway | finanstilsynet.no | https://www.finanstilsynet.no/en/finanstilsynets-registre/
+DNB|c|B|dnb.no|DNBANOKK|Largest
+Nordea Norway|c|B|nordea.no|NDEANOKK|
+SpareBank 1|c|B|sparebank1.no||Alliance of savings banks
+Sparebanken Vest / Sør (Sparebanken Norge)|c|B|spv.no||*
+Handelsbanken Norway|x|N|handelsbanken.no||Exiting retail*
+Storebrand Bank|c|B|storebrand.no||
+Sbanken (DNB)|d|B|sbanken.no||
+Bulder Bank|d|B|bulderbank.no||
+Vipps|w|B|vipps.no||National P2P (Vipps MobilePay)
+
+## SE Sweden | fi.se | https://www.fi.se/en/our-registers/company-register/
+Swedbank|c|B|swedbank.se|SWEDSESS|
+Handelsbanken|c|B|handelsbanken.se|HANDSESS|
+SEB|c|B|seb.se|ESSESESS|
+Nordea Sweden|c|B|nordea.se|NDEASESS|
+Länsförsäkringar Bank|c|B|lansforsakringar.se||
+Skandia Bank|c|B|skandia.se||
+ICA Banken|c|B|icabanken.se||
+Avanza|d|B|avanza.se||
+Nordnet|d|B|nordnet.se||
+Klarna Bank|d|B|klarna.com||Bank licence
+Swish|w|B|swish.nu||National P2P
+
+## AL Albania | bankofalbania.org | https://www.bankofalbania.org/Supervision/Licensed_Institutions/
+Banka Kombëtare Tregtare (BKT)|c|B|bkt.com.al|NCBAALTX|Largest
+Raiffeisen Bank Albania|c|B|raiffeisen.al|SGSBALTX|
+Credins Bank|c|B|bankacredins.com||
+Intesa Sanpaolo Albania|c|B|intesasanpaolobank.al||Merged First Investment Bank 2025*
+OTP Bank Albania|c|B|otpbank.al||*
+Union Bank|c|B|unionbank.al||
+ProCredit Albania|c|B|procreditbank.com.al||
+Tirana Bank|c|B|tiranabank.al||
+American Bank of Investments|c|?|abi.al||
+Easypay|w|B|easypay.al||
+
+## BA Bosnia and Herzegovina | cbbh.ba | https://www.fba.ba ; https://www.abrs.ba
+UniCredit Bank (Mostar / Banja Luka)|c|B|unicredit.ba|UNCRBA22|
+Raiffeisen Bank BiH|c|B|raiffeisenbank.ba|RZBABA2S|
+Intesa Sanpaolo Banka BiH|c|B|intesasanpaolobanka.ba||
+ASA Banka|c|B|asabanka.ba||
+Nova Banka|c|B|novabanka.com||
+NLB Banka (Sarajevo / Banja Luka)|c|B|nlb.ba||
+ProCredit BiH|c|B|procreditbank.ba||
+Sparkasse Bank BiH|c|B|sparkasse.ba||
+Addiko Bank BiH|c|B|addiko.ba||
+Bosna Bank International|i|B|bbi.ba||Islamic
+Union Banka|g|?|unionbank.ba||State
+
+## BG Bulgaria | bnb.bg | https://www.bnb.bg/BankSupervision/BSCreditInstitution/BSCIRegisters/
+UniCredit Bulbank|c|B|unicreditbulbank.bg|UNCRBGSF|Largest
+DSK Bank (OTP)|c|B|dskbank.bg|STSABGSF|
+United Bulgarian Bank (KBC)|c|B|ubb.bg|UBBSBGSF|
+Postbank (Eurobank Bulgaria)|c|B|postbank.bg|BPBIBGSF|
+Fibank (First Investment Bank)|c|B|fibank.bg|FINVBGSF|
+Central Cooperative Bank|c|B|ccbank.bg||
+Allianz Bank Bulgaria|c|B|allianz.bg||
+ProCredit Bulgaria|c|B|procreditbank.bg||
+Bulgarian Development Bank|g|N|bbr.bg||
+iCard|w|B|icard.com||
+
+## BY Belarus | nbrb.by | https://www.nbrb.by/engl/system/banks
+Belarusbank|g|B|belarusbank.by|AKBBBY2X|State, largest; sanctioned
+Belagroprombank|g|B|belapb.by||State; sanctioned
+Belinvestbank|g|B|belinvestbank.by||
+BNB-Bank|c|B|bnb.by||
+Priorbank (Raiffeisen)|c|B|priorbank.by||Raiffeisen exit pending*
+Alfa-Bank Belarus|c|B|alfabank.by||
+MTBank|c|B|mtbank.by||
+Belgazprombank|c|B|belgazprombank.by||
+Dabrabyt|c|?|bankdabrabyt.by||
+
+## CZ Czechia | cnb.cz | https://www.cnb.cz/en/supervision-financial-market/lists-registers/
+Česká spořitelna (Erste)|c|B|csas.cz|GIBACZPX|George app
+ČSOB (KBC)|c|B|csob.cz|CEKOCZPP|
+Komerční banka (SG)|c|B|kb.cz|KOMBCZPP|
+Raiffeisenbank CZ|c|B|rb.cz|RZBCCZPP|
+UniCredit Bank CZ|c|B|unicreditbank.cz|BACXCZPP|
+Moneta Money Bank|c|B|moneta.cz|AGBACZPP|
+Fio banka|c|B|fio.cz|FIOBCZPP|
+Air Bank|d|B|airbank.cz|AIRACZPP|
+mBank CZ|d|B|mbank.cz||
+Partners Banka|d|B|partnersbanka.cz||
+Trinity Bank|c|?|trinitybank.cz||
+
+## HR Croatia | hnb.hr | https://www.hnb.hr/en/core-functions/supervision/list-of-credit-institutions
+Zagrebačka banka (UniCredit)|c|B|zaba.hr|ZABAHR2X|
+Privredna banka Zagreb (Intesa)|c|B|pbz.hr|PBZGHR2X|
+Erste Bank Croatia|c|B|erstebank.hr|ESBCHR22|
+OTP banka Hrvatska|c|B|otpbanka.hr|OTPVHR2X|
+Raiffeisen (RBA) / Addiko Croatia|c|B|rba.hr|RZBHHR2X|
+Hrvatska poštanska banka (HPB)|g|B|hpb.hr|HPBZHR2X|State
+Addiko Bank Croatia|c|B|addiko.hr||
+Aircash|w|B|aircash.eu||
+
+## HU Hungary | mnb.hu | https://intezmenykereso.mnb.hu/
+OTP Bank|c|B|otpbank.hu|OTPVHUHB|Largest
+MBH Bank|c|B|mbhbank.hu|MKKBHUHB|Merger of MKB, Budapest Bank, Takarék
+K&H Bank (KBC)|c|B|kh.hu|OKHBHUHB|
+Erste Bank Hungary|c|B|erstebank.hu|GIBAHUHB|
+Raiffeisen Bank Hungary|c|B|raiffeisen.hu|UBRTHUHB|
+UniCredit Bank Hungary|c|B|unicreditbank.hu|BACXHUHB|
+CIB Bank (Intesa)|c|B|cib.hu|CIBHHUHB|
+Gránit Bank|d|B|granitbank.hu||
+
+## ME Montenegro | cbcg.me | https://www.cbcg.me/en/core-functions/supervision/banks
+Crnogorska Komercijalna Banka (OTP)|c|B|ckb.me||
+NLB Banka Podgorica|c|B|nlb.me||
+Erste Bank Montenegro|c|B|erstebank.me||
+Hipotekarna Banka|c|B|hipotekarnabanka.com||
+Lovćen Banka|c|?|lovcenbanka.me||
+Prva Banka CG|c|?|prvabankacg.com||
+Addiko Bank Montenegro|c|B|addiko.me||
+
+## MK North Macedonia | nbrm.mk | https://www.nbrm.mk/banki-en.nspx
+Komercijalna Banka Skopje|c|B|kb.com.mk||
+NLB Banka Skopje|c|B|nlb.mk||
+Stopanska Banka Skopje|c|B|stb.com.mk||*
+Halkbank Skopje|x|B|halkbank.mk||
+Sparkasse Bank Macedonia|c|B|sparkasse.mk||
+ProCredit Bank Macedonia|c|B|pcb.mk||
+TTK Banka|c|?|ttk.com.mk||
+Silk Road Bank|c|?|silkroadbank.com.mk||*
+
+## MD Moldova | bnm.md | https://www.bnm.md/en/content/licensed-banks
+Moldova Agroindbank (MAIB)|c|B|maib.md|AGRNMD2X|Largest
+Moldindconbank|c|B|micb.md|MOLDMD2X|
+Victoriabank|c|B|victoriabank.md|VICBMD2X|
+OTP Bank Moldova|c|B|otpbank.md||
+ProCredit Bank Moldova|c|B|procreditbank.md||
+FinComBank|c|B|fincombank.com||
+Eximbank Moldova|c|?|eximbank.com||
+Energbank|c|?|energbank.com||
+Comerțbank|c|?|comertbank.md||
+
+## PL Poland | knf.gov.pl | https://www.knf.gov.pl/podmioty/wyszukiwarka_podmiotow
+PKO Bank Polski|g|B|pkobp.pl|BPKOPLPW|State-controlled, largest; IKO app
+Bank Pekao|g|B|pekao.com.pl|PKOPPLPW|
+Santander Bank Polska|c|B|santander.pl|WBKPPLPP|Acquired by Erste 2025*
+ING Bank Śląski|c|B|ing.pl|INGBPLPW|
+mBank|c|B|mbank.pl|BREXPLPW|
+Bank Millennium|c|B|bankmillennium.pl|BIGBPLPW|
+BNP Paribas Bank Polska|c|B|bnpparibas.pl|PPABPLPK|
+Alior Bank|g|B|aliorbank.pl|ALBPPLPW|
+Credit Agricole Polska|c|B|credit-agricole.pl||
+Citi Handlowy|c|N|citihandlowy.pl|CITIPLPX|Retail sold to VeloBank 2024
+VeloBank|c|B|velobank.pl||Formerly Getin
+BOŚ Bank|g|B|bosbank.pl||
+Bank Pocztowy|g|B|pocztowy.pl||
+Nest Bank|d|B|nestbank.pl||
+BLIK|w|B|blik.com||National mobile payments
+Bank Spółdzielczy (cooperative banks)|c|?|bs.net.pl||~500 cooperative banks
+
+## RO Romania | bnr.ro | https://www.bnr.ro/Registrul-institutiilor-de-credit-3359.aspx
+Banca Transilvania|c|B|bancatransilvania.ro|BTRLRO22|Largest
+BCR (Erste)|c|B|bcr.ro|RNCBROBU|George app
+BRD (Société Générale)|c|B|brd.ro|BRDEROBU|
+ING Bank Romania|c|B|ing.ro|INGBROBU|
+Raiffeisen Bank Romania|c|B|raiffeisen.ro|RZBRROBU|
+UniCredit Bank Romania|c|B|unicredit.ro|BACXROBU|
+CEC Bank|g|B|cec.ro|CECEROBU|State-owned
+Exim Banca Românească|g|B|eximbank.ro||State-owned
+Libra Internet Bank|d|B|librabank.ro||
+Alpha Bank Romania (UniCredit)|c|B|alphabank.ro||Merged into UniCredit 2025*
+Salt Bank|d|B|salt.bank||Neobank (BT group)
+Revolut Romania|d|B|revolut.com||Very large user base
+
+## RS Serbia | nbs.rs | https://nbs.rs/en/finansijske-institucije/banke/spisak-banaka/
+Banca Intesa Beograd|c|B|bancaintesa.rs|DBDBRSBG|Largest
+OTP Banka Srbija|c|B|otpbanka.rs||Merged Komercijalna
+UniCredit Bank Serbia|c|B|unicreditbank.rs|BACXRSBG|
+Raiffeisen Banka Serbia|c|B|raiffeisenbank.rs|RZBSRSBG|
+AIK Banka|c|B|aikbanka.rs||
+NLB Komercijalna Banka|c|B|nlbkb.rs||
+Erste Bank Serbia|c|B|erstebank.rs||
+Banka Poštanska štedionica|g|B|posted.co.rs||State
+Addiko Bank Serbia|c|B|addiko.rs||*
+ProCredit Bank Serbia|c|B|procreditbank.rs||
+Yettel Bank / 3 Banka|d|B|yettelbank.rs||
+
+## SI Slovenia | bsi.si | https://www.bsi.si/en/financial-stability/banking-system-supervision/list-of-banks
+NLB|c|B|nlb.si|LJBASI2X|Largest
+OTP banka Slovenija|c|B|otpbanka.si||Merged NKBM & SKB
+Intesa Sanpaolo Bank Slovenija|c|B|intesasanpaolobank.si||
+Addiko Bank Slovenija|c|B|addiko.si||
+Delavska hranilnica|c|B|dh.si||
+Gorenjska banka|c|B|gbkr.si||
+Sparkasse Slovenia|c|B|sparkasse.si||
+
+## SK Slovakia | nbs.sk | https://subjekty.nbs.sk/
+Slovenská sporiteľňa (Erste)|c|B|slsp.sk|GIBASKBX|George app
+VÚB (Intesa)|c|B|vub.sk|SUBASKBX|
+Tatra banka (Raiffeisen)|c|B|tatrabanka.sk|TATRSKBX|
+ČSOB Slovakia|c|B|csob.sk|CEKOSKBX|
+Prima banka|c|B|primabanka.sk||
+365.bank|d|B|365.bank||Formerly Poštová banka
+UniCredit Bank SK|c|B|unicreditbank.sk||
+mBank SK|d|B|mbank.sk||
+Fio banka SK|c|B|fio.sk||
+
+## TR Türkiye | bddk.org.tr | https://www.bddk.org.tr/Kurulus/Liste/77
+Ziraat Bankası|g|B|ziraatbank.com.tr|TCZBTR2A|State, largest
+Halkbank|g|B|halkbank.com.tr|TRHBTR2A|State
+VakıfBank|g|B|vakifbank.com.tr|TVBATR2A|State
+İş Bankası|c|B|isbank.com.tr|ISBKTRIS|
+Garanti BBVA|c|B|garantibbva.com.tr|TGBATRIS|
+Akbank|c|B|akbank.com|AKBKTRIS|
+Yapı Kredi|c|B|yapikredi.com.tr|YAPITRIS|
+QNB Türkiye (Finansbank)|c|B|qnb.com.tr|FNNBTRIS|Enpara digital
+DenizBank (Emirates NBD)|c|B|denizbank.com|DENITRIS|
+TEB (BNP Paribas)|c|B|teb.com.tr|TEBUTRIS|
+ING Türkiye|c|B|ing.com.tr|INGBTRIS|
+HSBC Türkiye|x|B|hsbc.com.tr|HSBCTRIX|
+Şekerbank|c|B|sekerbank.com.tr||
+Odeabank|c|B|odeabank.com.tr||
+Fibabanka|c|B|fibabanka.com.tr||
+Kuveyt Türk|i|B|kuveytturk.com.tr|KTEFTRIS|Participation bank
+Albaraka Türk|i|B|albaraka.com.tr||Participation bank
+Türkiye Finans|i|B|turkiyefinans.com.tr||Participation bank
+Ziraat Katılım|i|B|ziraatkatilim.com.tr||State participation bank
+Vakıf Katılım|i|B|vakifkatilim.com.tr||State participation bank
+Emlak Katılım|i|B|emlakkatilim.com.tr||
+Enpara.com|d|B|enpara.com||Digital bank (QNB)
+Papara|w|B|papara.com||Wallet (under administration 2025)*
+ininal|w|B|ininal.com||Prepaid
+
+## UA Ukraine | bank.gov.ua | https://bank.gov.ua/en/supervision/institutions
+PrivatBank|g|B|privatbank.ua|PBANUA2X|State, largest; Privat24
+Oschadbank|g|B|oschadbank.ua|COSBUAUK|State
+Ukreximbank|g|B|eximb.com|EXBSUAUX|State
+Sense Bank (ex-Alfa)|g|B|sensebank.ua||Nationalised 2023
+Raiffeisen Bank Ukraine|c|B|raiffeisen.ua|AVALUAUK|
+PUMB (FUIB)|c|B|pumb.ua|FUIBUA2X|
+Ukrgasbank|g|B|ukrgasbank.com||State
+OTP Bank Ukraine|c|B|otpbank.com.ua||
+UkrSibbank (BNP)|c|B|ukrsibbank.com||
+Credit Agricole Ukraine|c|B|credit-agricole.ua||
+A-Bank|c|B|a-bank.com.ua||
+monobank (Universal Bank)|d|B|monobank.ua||Leading neobank
+izibank|d|B|izibank.com.ua||
+
+## XK Kosovo | bqk-kos.org | https://bqk-kos.org/?id=96
+ProCredit Bank Kosovo|c|B|procreditbank-kos.com||
+Raiffeisen Bank Kosovo|c|B|raiffeisen-kosovo.com||
+TEB Kosovo|c|B|teb-kos.com||
+NLB Banka Kosovo|c|B|nlb-kos.com||
+Banka Kombëtare Tregtare Kosovo|c|B|bkt-ks.com||
+Banka Ekonomike|c|B|bek.com||
+Banka për Biznes|c|B|bpb-bank.com||
+İşbank Kosovo|x|?|isbank-kosova.com||
+Ziraat Bankası Kosovo|x|?|ziraatbank-kosova.com||
