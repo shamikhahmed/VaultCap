@@ -175,8 +175,9 @@ body.light .alive-chip b { filter: brightness(.72); }
 @media (max-width: 600px) { .alive-chip { font-size: .75rem; } }
 
 /* B. Rolling digits (departures-board style) */
-.alive-d { display: inline-block; overflow: hidden; vertical-align: bottom; height: 1.15em; }
-.alive-d > span { display: inline-block; animation: alive-roll .7s cubic-bezier(.2,.9,.25,1.2) both; animation-delay: calc(var(--alive-i, 0) * 35ms); }
+.nw-hero-amount > span { display: inline-block; vertical-align: top; line-height: inherit; }
+.alive-d { overflow: hidden; height: 1lh; }
+.alive-d > span { display: block; animation: alive-roll .7s cubic-bezier(.2,.9,.25,1.2) both; animation-delay: calc(var(--alive-i, 0) * 35ms); }
 @keyframes alive-roll { 0% { transform: translateY(-110%); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; } }
 
 /* C. Hero chart hover */
