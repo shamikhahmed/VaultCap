@@ -34,7 +34,7 @@ const VaultLazy = (() => {
       return _appPromise;
     },
     async smartDb() { return loadLocal('js/core/smart-db.js'); },
-    async tax() { await this.app(); return loadLocal('js/modules/tax.js'); },
+    async tax() { await this.app(); await loadLocal('js/modules/tax-presets.js'); return loadLocal('js/modules/tax.js'); },
     async zakat() { await this.app(); return loadLocal('js/modules/zakat.js'); },
     async family() { await this.app(); return loadLocal('js/modules/family.js'); },
     async documents() { await this.app(); return loadLocal('js/modules/documents.js'); },

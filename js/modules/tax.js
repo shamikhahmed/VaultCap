@@ -1,8 +1,8 @@
 'use strict';
 const Tax = {
-  _country: 'PK',
+  _country: null,
   _filing: null,
-  _taxYear: '2024-25',
+  _taxYear: '2025-26',
 
   config: {
     GB: {
@@ -10,7 +10,7 @@ const Tax = {
       filings: {
         employed: {
           name:'Employed (PAYE)',
-          year:'2024/25',
+          year:'2025/26',
           note:'Standard PAYE employment. Personal allowance £12,570. Includes National Insurance Class 1.',
           slabs:[
             {label:'Personal Allowance',min:0,max:12570,rate:0},
@@ -23,7 +23,7 @@ const Tax = {
         },
         selfemployed: {
           name:'Self-Employed',
-          year:'2024/25',
+          year:'2025/26',
           note:'Self Assessment. Same income tax bands. NI Class 2 (£3.45/week if profit > £12,570) + Class 4.',
           slabs:[
             {label:'Personal Allowance',min:0,max:12570,rate:0},
@@ -36,7 +36,7 @@ const Tax = {
         },
         landlord: {
           name:'Landlord (Rental Income)',
-          year:'2024/25',
+          year:'2025/26',
           note:'Rental income taxed as income. Mortgage interest relief capped at 20%. No NI on rental income.',
           slabs:[
             {label:'Personal Allowance',min:0,max:12570,rate:0},
@@ -49,15 +49,15 @@ const Tax = {
         },
         cgt: {
           name:'Capital Gains Tax',
-          year:'2024/25',
-          note:'CGT applies to profits from selling assets above the £3,000 annual exempt amount. Rates changed October 30, 2024.',
+          year:'2025/26',
+          note:'CGT applies to profits from selling assets above the £3,000 annual exempt amount. Rates from 30 October 2024 (unchanged for 2025/26).',
           isCGT: true,
           annualExempt: 3000,
           rates: { basic:{ property:0.18, other:0.18 }, higher:{ property:0.24, other:0.24 } }
         },
         dividend: {
           name:'Dividend Tax',
-          year:'2024/25',
+          year:'2025/26',
           note:'Tax on dividends received above the £500 annual dividend allowance.',
           isDividend: true,
           allowance: 500,
@@ -65,7 +65,7 @@ const Tax = {
         },
         iht: {
           name:'Inheritance Tax',
-          year:'2024/25',
+          year:'2025/26',
           note:'IHT applies to estates above the nil-rate band. Married couples can combine allowances up to £1,000,000 with residence nil-rate band.',
           isIHT: true,
           nilRateBand: 325000,
@@ -91,7 +91,7 @@ const Tax = {
         },
         vat: {
           name:'VAT Calculator',
-          year:'2024/25',
+          year:'2025/26',
           note:'UK VAT registration threshold: £90,000 annual turnover. Mandatory registration required above this.',
           isVAT: true,
           isGbVAT: true,
@@ -220,10 +220,74 @@ const Tax = {
     }
   },
 
+  /** Detailed calculators (GB/PK/AE) first, then researched presets, then a custom-bracket
+      shell for every other country — so the page works wherever the user lives. */
+  _cfg(cc) {
+    if (this.config[cc]) return this.config[cc];
+    const name = (typeof U !== 'undefined' && U.cname) ? U.cname(cc) : cc;
+    const p = typeof TAX_PRESETS !== 'undefined' ? TAX_PRESETS[cc] : null;
+    const cur = p ? p.cur : (typeof countryCurrency === 'function' ? countryCurrency(cc) : 'USD');
+    if (p) {
+      let lo = 0;
+      const slabs = p.b.map(([hi, rate], i) => { const sl = { label: i === 0 && rate === 0 ? 'Tax-free' : 'Band ' + (i + 1), min: lo, max: hi == null ? Infinity : hi, rate }; lo = hi || lo; return sl; });
+      return { name, currency: cur, symbol: cur + ' ', preset: true, filings: { income: {
+        name: p.label, year: p.year, note: p.note, slabs, ni: [], extras: [], preset: p } } };
+    }
+    const free = typeof TAX_FREE_COUNTRIES !== 'undefined' ? TAX_FREE_COUNTRIES[cc] : null;
+    if (free) {
+      return { name, currency: cur, symbol: cur + ' ', taxFree: true, filings: { income: {
+        name: 'Individual', year: 'Current', note: free + ' Use the bracket editor if a tax applies to you.',
+        slabs: [{ label: 'No income tax', min: 0, max: Infinity, rate: 0 }], ni: [], extras: [] } } };
+    }
+    return { name, currency: cur, symbol: cur + ' ', custom: true, filings: { income: {
+      name: 'Your brackets', year: 'Your figures', custom: true,
+      note: 'VaultCap has no built-in table for ' + name + ' yet. Add your country\'s brackets once (from your tax authority\'s website) and they are saved, encrypted, in this vault.',
+      slabs: [], ni: [], extras: [] } } };
+  },
+
+  /** Home country first; saved choice wins once the user picks a country on this page. */
+  _initCountry() {
+    if (this._country) return;
+    const saved = typeof VaultMeta !== 'undefined' ? (VaultMeta.get('taxCalc') || {}) : {};
+    const home = (typeof U !== 'undefined' && U.homeCC) ? U.homeCC() : ((S.user && S.user.country) || 'GB');
+    this._country = saved.country || (home === 'OTHER' ? 'US' : home);
+    if (saved.taxYear) this._taxYear = saved.taxYear;
+  },
+
+  setCountry(cc) {
+    if (!cc) return;
+    this._country = cc;
+    this._filing = null;
+    if (typeof VaultMeta !== 'undefined') {
+      const saved = VaultMeta.get('taxCalc') || {};
+      VaultMeta.set('taxCalc', { ...saved, country: cc, filing: null, income: '' });
+    }
+    this.render();
+  },
+
+  _countryPicker(cc) {
+    const all = typeof COUNTRIES !== 'undefined' ? COUNTRIES.filter(c => c.c !== 'OTHER') : [];
+    const detailed = ['GB', 'PK', 'AE'];
+    const presets = Object.keys(typeof TAX_PRESETS !== 'undefined' ? TAX_PRESETS : {});
+    const free = Object.keys(typeof TAX_FREE_COUNTRIES !== 'undefined' ? TAX_FREE_COUNTRIES : {});
+    const opt = c => '<option value="' + c.c + '"' + (c.c === cc ? ' selected' : '') + '>' + c.f + ' ' + escHtml(c.n) + '</option>';
+    const grp = (label, list) => list.length ? '<optgroup label="' + escAttr(label) + '">' + list.map(opt).join('') + '</optgroup>' : '';
+    const inSet = set => all.filter(c => set.includes(c.c));
+    const built = inSet(detailed.concat(presets));
+    const rest = all.filter(c => !detailed.includes(c.c) && !presets.includes(c.c) && !free.includes(c.c));
+    return '<div class="fg" style="margin-bottom:12px"><label class="fl" for="tax-country">Country</label>' +
+      '<select class="inp" id="tax-country" data-act-change="Tax.setCountry(this.value)">' +
+      grp('Built-in rates (' + built.length + ' countries)', built) +
+      grp('No personal income tax', inSet(free)) +
+      grp('Enter your own brackets', rest) +
+      '</select></div>';
+  },
+
   _getActiveSlabs(filing) {
     const key = this._slabsKey();
     const custom = typeof VaultMeta !== 'undefined' ? VaultMeta.get(key) : null;
-    if (custom && custom.length) return custom;
+    /* JSON turns Infinity into null — restore the open-ended top band. */
+    if (custom && custom.length) return custom.map(sl => ({ ...sl, max: (sl.max == null || sl.max === '') ? Infinity : sl.max }));
     if (filing.taxYears) return (filing.taxYears[this._taxYear] || filing.taxYears['2024-25'] || {}).slabs || [];
     return filing.slabs || [];
   },
@@ -240,17 +304,10 @@ const Tax = {
   render() {
     const body = document.getElementById('pg-tax-body');
     if(!body) return;
-    if (!this._countryInit && S.user?.country) {
-      this._countryInit = true;
-      if (S.user.country === 'GB') this._country = 'GB';
-      else if (S.user.country === 'AE') this._country = 'AE';
-      else if (S.user.country === 'PK') this._country = 'PK';
-    }
-    const saved = typeof VaultMeta !== 'undefined' ? VaultMeta.get('taxCalc') : {};
-    if(saved.country) this._country = saved.country;
-    if(saved.taxYear) this._taxYear = saved.taxYear;
+    this._initCountry();
+    const saved = (typeof VaultMeta !== 'undefined' ? VaultMeta.get('taxCalc') : null) || {};
     const cc = this._country;
-    const cfg = this.config[cc];
+    const cfg = this._cfg(cc);
     if(!this._filing || !cfg.filings[this._filing]) this._filing = Object.keys(cfg.filings)[0];
     const filing = cfg.filings[this._filing];
     const slabs = this._getActiveSlabs(filing);
@@ -265,22 +322,23 @@ const Tax = {
       if (filing.isSDLT)    return this._sdltForm(saved);
       if (filing.isGbVAT)   return this._gbVatForm(saved);
       if (filing.isVAT)     return this._vatForm(saved);
+      if (filing.custom && !slabs.length) return `<div class="empty-ios" id="tax-custom-empty"><div class="ei-title">Add ${escHtml(cfg.name)}'s brackets</div><div class="ei-sub">Enter each band once — from, to and rate. Amounts in ${escHtml(cfg.currency)}.</div><button type="button" class="btn btn-p" data-act="Tax.openEditSlabs()">+ Add brackets</button></div><div id="tax-result"></div>`;
       return this._incomeForm(saved, cfg.symbol, filing);
     })();
 
     const showBrackets = slabs.length > 0 && !filing.isCGT && !filing.isDividend && !filing.isIHT && !filing.isExcise && !filing.isFreezone;
 
     body.innerHTML = `<div class="vc-ix-209">
-      <div style="display:flex;gap:6px;margin-bottom:16px">
-        ${['GB','PK','AE'].map(c=>`<button type="button" data-act="Tax._country='${c}';Tax._filing=null;Tax.render()" style="flex:1;padding:10px;border-radius:10px;font-size:0.8125rem;font-weight:700;cursor:pointer;touch-action:manipulation;border:1px solid ${cc===c?'rgba(0,213,255,.6)':'var(--border)'};background:${cc===c?'rgba(0,213,255,.15)':'transparent'};color:${cc===c?'var(--info)':'var(--text3)'}">${c==='GB'?'🇬🇧 UK':c==='PK'?'🇵🇰 PK':'🇦🇪 UAE'}</button>`).join('')}
-      </div>
+      ${this._countryPicker(cc)}
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
         ${Object.entries(cfg.filings).map(([k,f])=>`<button type="button" data-act="Tax._filing='${k}';Tax.render()" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;cursor:pointer;touch-action:manipulation;white-space:nowrap;border:1px solid ${this._filing===k?'var(--accent)':'var(--border)'};background:${this._filing===k?'rgba(0,213,255,.2)':'transparent'};color:${this._filing===k?'var(--accent)':'var(--text3)'}">${f.name}</button>`).join('')}
       </div>
       <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:16px;font-size:0.75rem;color:var(--text3);line-height:1.7">
-        ${filing.note}<br>
-        <span style="color:var(--info);font-weight:600">${filing.year} rates</span>
-        ${slabs.length ? `<button type="button" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:0.6875rem;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600">Edit slabs</button>` : ''}
+        ${escHtml(filing.note)}<br>
+        <span style="color:var(--info);font-weight:600">${escHtml(filing.year)} rates</span>
+        ${(slabs.length || filing.custom) ? `<button type="button" id="tax-edit-slabs" data-act="Tax.openEditSlabs()" style="margin-left:10px;font-size:0.6875rem;color:var(--accent);background:none;border:none;cursor:pointer;touch-action:manipulation;font-weight:600;min-height:32px">${filing.custom && !slabs.length ? '+ Add your brackets' : 'Edit brackets'}</button>` : ''}
+        ${filing.preset ? `<div style="margin-top:6px;font-size:0.6875rem">Source: <a href="${escAttr(filing.preset.src)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">${escHtml(filing.preset.src.replace(/^https?:\/\//,'').split('/')[0])}</a>${filing.preset.verify ? ' · <span style="color:var(--warning)">some figures still to verify against the official text</span>' : ''}${filing.preset.approx ? ' · <span style="color:var(--warning)">approximation</span>' : ''}</div>` : ''}
+        ${typeof VaultMeta !== 'undefined' && VaultMeta.get(this._slabsKey()) && (VaultMeta.get(this._slabsKey())||[]).length && !filing.custom ? `<div style="margin-top:6px;font-size:0.6875rem;color:var(--warning)">Using your edited brackets. <button type="button" data-act="Tax.resetSlabs()" style="font-size:0.6875rem;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">Restore built-in</button></div>` : ''}
         ${surcharge ? `<div style="margin-top:6px;color:var(--warning);font-size:0.6875rem">Warning: ${surcharge}</div>` : ''}
       </div>
       ${formHtml}
@@ -290,7 +348,7 @@ const Tax = {
       </div>` : ''}
     </div>`;
     setTimeout(function() {
-      const cur = (S.user && S.user.currency) || 'PKR';
+      const cur = (cfg && cfg.currency) || (S.user && S.user.currency) || 'USD';
       ['tax-income','iht-estate','iht-home','sdlt-price'].forEach(function(id) {
         const el = document.getElementById(id);
         if (el) U.numInput(el, cur);
@@ -458,7 +516,7 @@ const Tax = {
 
   calculate() {
     const cc = this._country;
-    const cfg = this.config[cc];
+    const cfg = this._cfg(cc);
     const filing = cfg.filings[this._filing];
     const income = parseFloat((document.getElementById('tax-income')?.value||'').replace(/,/g,''))||0;
     if(!income){ if(window.Toast) Toast.show('Enter income','error'); return; }
@@ -488,6 +546,7 @@ const Tax = {
     }
 
     const slabs = this._getActiveSlabs(filing);
+    if (filing.preset) return this._renderPresetResult(cfg, filing, income, slabs);
     let tax = 0;
     const breakdown = [];
     slabs.forEach(slab=>{
@@ -760,11 +819,59 @@ const Tax = {
     </div>`;
   },
 
+  _renderPresetResult(cfg, filing, income, slabs) {
+    const p = filing.preset;
+    const edited = typeof VaultMeta !== 'undefined' && (VaultMeta.get(this._slabsKey()) || []).length;
+    const r = computePresetTax(p, income, edited ? slabs : null);
+    const sym = cfg.symbol;
+    const fmt = n => sym + Math.round(n).toLocaleString();
+    const takeHome = income - r.total;
+    const eff = income > 0 ? ((r.total / income) * 100).toFixed(1) : 0;
+    VaultMeta.set('taxCalc', { country: this._country, filing: this._filing, income, taxYear: this._taxYear });
+    const res = document.getElementById('tax-result');
+    if (!res) return r;
+    const row = (l, v, cls) => `<div class="vc-ix-2"><span class="vc-ix-1">${l}</span><span class="${cls || 'vc-ix-15'}">${v}</span></div>`;
+    res.innerHTML = `<div class="vc-ix-45" id="tax-report">
+      <div class="vc-ix-34">
+        <div class="vc-ix-61">Tax Report — ${escHtml(cfg.name)} · ${escHtml(filing.name)} (${escHtml(p.year)})</div>
+        <button class="vc-ix-35" type="button" data-act="Tax.printReport()">Print</button>
+      </div>
+      <div class="vc-ix-46">
+        ${row('Gross Income', fmt(income))}
+        ${r.deduction ? row('Allowance / deduction', '− ' + fmt(r.deduction), 'vc-ix-62') : ''}
+        ${row('Taxable Income', fmt(r.taxable))}
+        ${row('Income Tax', '− ' + fmt(r.incomeTax), 'vc-ix-214')}
+        ${r.credits.map(c => row(escHtml(c.label), 'applied ' + fmt(c.amount), 'vc-ix-62')).join('')}
+        ${r.extras.map(e => row(escHtml(e.label), '− ' + fmt(e.amount), 'vc-ix-62')).join('')}
+        <div class="vc-ix-63"></div>
+        <div style="display:flex;justify-content:space-between;padding:12px;background:rgba(0,255,136,.1);border-radius:10px">
+          <span class="vc-ix-47">Take-Home Pay</span>
+          <span class="vc-ix-215" id="tax-takehome">${fmt(takeHome)}</span>
+        </div>
+        ${row('Total tax', fmt(r.total))}
+        ${row('Effective Rate', eff + '%', 'vc-ix-83')}
+        ${row('Monthly Take-Home', fmt(takeHome / 12))}
+      </div>
+      ${r.breakdown.length ? `<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Band Breakdown</div>
+        ${r.breakdown.map(b => `<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;color:var(--text3)"><span>${escHtml(b.label)} (${+(b.rate * 100).toFixed(2)}%)</span><span>${fmt(b.tax)}</span></div>`).join('')}
+      </div>` : ''}
+      <div style="margin-top:12px;font-size:0.6875rem;color:var(--text3);line-height:1.6">Estimate for guidance only. Check with your tax authority or an adviser before filing.</div>
+    </div>`;
+    return r;
+  },
+
+  resetSlabs() {
+    if (typeof VaultMeta !== 'undefined') VaultMeta.set(this._slabsKey(), []);
+    if (window.Toast) Toast.show('Built-in brackets restored', 'success');
+    this.render();
+  },
+
   printReport() {
     const report = document.getElementById('tax-report');
     if(!report) return;
     const cc = this._country;
-    const cfg = this.config[cc];
+    const cfg = this._cfg(cc);
     const filing = cfg?.filings[this._filing];
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tax Report — VaultCap</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Arial,sans-serif;background:${VCBrand.h_fff};color:${VCBrand.h_1a1a2e}}.page{max-width:600px;margin:0 auto;padding:40px 32px}.header{background:linear-gradient(135deg,${VCBrand.h_1a237e},${VCBrand.h_283593});color:white;padding:28px 32px;border-radius:16px;margin-bottom:28px}.header h1{font-size:1.5rem;font-weight:900;margin-bottom:4px}.header .sub{font-size:0.8125rem;opacity:.8}.meta{background:${VCBrand.h_f1f3f5};border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:0.8125rem;color:${VCBrand.h_555};line-height:1.7}.section{background:${VCBrand.h_f8f9fa};border-radius:12px;padding:20px;margin-bottom:16px}.section-title{font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${VCBrand.h_666};margin-bottom:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e9ecef;font-size:0.875rem}.row:last-child{border-bottom:none}.row .label{color:${VCBrand.h_555}}.row .value{font-weight:600}.footer{text-align:center;font-size:0.6875rem;color:${VCBrand.h_999};margin-top:28px;padding-top:16px;border-top:1px solid #eee}.no-print{display:flex;gap:10px;justify-content:center;margin:20px 0}.btn{padding:12px 28px;border-radius:10px;border:none;font-size:0.875rem;font-weight:700;cursor:pointer}.btn-print{background:${VCBrand.h_1a237e};color:white}.btn-close{background:${VCBrand.h_f1f3f5};color:${VCBrand.h_333}}@media print{.no-print{display:none!important}body{padding:0}.page{padding:20px}}</style></head><body><div class="page"><div class="no-print"><button type="button" class="btn btn-print" data-act="window.print()">Print</button><button type="button" class="btn btn-close" data-act="window.close()">Close</button></div><div class="header"><h1>Tax Report</h1><div class="sub">Generated by VaultCap · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="meta">Country: ${cfg?.name||''} &nbsp;|&nbsp; Filing: ${filing?.name||''} &nbsp;|&nbsp; Tax Year: ${filing?.year||''}</div><div class="section"><div class="section-title">Tax Calculation</div>${report.innerText.trim().split('\n').filter(l=>l.trim()&&!l.includes('Print')&&!l.includes('Tax Report')).map(l=>{const p=l.split(/\s{2,}|\t/);return p.length>=2?'<div class="row"><span class="label">'+p[0]+'</span><span class="value">'+p.slice(1).join(' ')+'</span></div>':'<div class="row"><span>'+l+'</span></div>';}).join('')}</div><div class="footer">VaultCap — Your Personal Financial Vault<br>For guidance only — consult a qualified tax professional.</div><div class="no-print" style="margin-top:16px"><button type="button" class="btn btn-close" data-act="window.close()">Close Window</button></div></div></body></html>`;
     if (printReport(html, 'Tax Report')) return;
@@ -775,8 +882,9 @@ const Tax = {
   },
 
   openEditSlabs() {
-    const filing = this.config[this._country]?.filings[this._filing];
+    const filing = this._cfg(this._country)?.filings[this._filing];
     if (!filing) return;
+    const curLbl = this._cfg(this._country).currency || '';
     const slabs = this._getActiveSlabs(filing).map(s => ({ ...s }));
     if (!slabs.length) slabs.push({ label: 'Slab 1', min: 0, max: Infinity, rate: 0 });
     const rowHtml = (s, i) => `<div class="tax-slab-row" data-i="${i}" style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;align-items:center;margin-bottom:8px">
@@ -787,7 +895,7 @@ const Tax = {
       <button class="vc-ix-218" type="button" data-act="this.closest('.tax-slab-row').remove()" aria-label="Remove slab">×</button>
     </div>`;
   Modal.open('Edit Tax Slabs',
-      `<div class="vc-ix-158">Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
+      `<div class="vc-ix-158">Amounts in <strong>${escHtml(curLbl)}</strong>${filing.preset && filing.preset.ded ? ', applied after the ' + escHtml(curLbl) + ' ' + Math.round(filing.preset.ded).toLocaleString() + ' allowance' : ''}. Adjust official brackets or add custom slabs. Leave <strong>To</strong> blank for no upper limit. Rates as % (e.g. 20).</div>
       <div style="display:grid;grid-template-columns:1fr 72px 72px 64px 32px;gap:6px;font-size:0.6875rem;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">
         <span>Label</span><span>From</span><span>To</span><span>Rate</span><span></span>
       </div>

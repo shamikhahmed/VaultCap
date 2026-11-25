@@ -55,9 +55,32 @@ const RatesEngine = {
     return `<span style="font-size:0.6875rem;color:${color};display:inline-flex;align-items:center;gap:4px">${icon} Rates: ${this.lastUpdated()}</span>`;
   },
 
+  /** Manual overrides from the Currency page (units per 1 USD), applied on top of live/offline rates. */
+  _manual() {
+    try {
+      const m = JSON.parse(localStorage.getItem('vo_currency_manual') || '{}');
+      const out = {};
+      Object.keys(m || {}).forEach(k => { const v = +m[k]; if (/^[A-Z]{3}$/.test(k) && v > 0 && isFinite(v)) out[k] = v; });
+      return out;
+    } catch (e) { return {}; }
+  },
+
   getFX() {
     const c = this._cache();
+    const base = c && c.fx ? { ...this._FX_FALLBACK, ...c.fx } : { ...this._FX_FALLBACK };
+    return { ...base, ...this._manual(), USD: 1 };
+  },
+
+  /** Rates without manual overrides, so the Currency page can show what an override replaced. */
+  getMarketFX() {
+    const c = this._cache();
     return c && c.fx ? { ...this._FX_FALLBACK, ...c.fx } : { ...this._FX_FALLBACK };
+  },
+
+  /** True when this currency has a live (fetched) rate rather than an offline estimate. */
+  hasLive(code) {
+    const c = this._cache();
+    return !!(c && c.fx && c.fx[code]);
   },
 
   convert(amount, from, to) {

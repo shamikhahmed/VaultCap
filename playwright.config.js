@@ -1,6 +1,9 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
+/* VAULTCAP_PORT lets parallel checkouts (worktrees) test side by side without reusing each other's server. */
+const PORT = process.env.VAULTCAP_PORT || '8765';
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
@@ -10,7 +13,7 @@ module.exports = defineConfig({
   retries: process.env.VAULTCAP_CI_GATE ? 0 : (process.env.CI ? 1 : 0),
   workers: 1,
   use: {
-    baseURL: 'http://127.0.0.1:8765',
+    baseURL: `http://127.0.0.1:${PORT}`,
     trace: process.env.VAULTCAP_CI_GATE ? 'off' : 'on-first-retry',
     /* Block SW so prior tests cannot leave a controlling worker that skips lock UI. */
     serviceWorkers: 'block',
@@ -43,8 +46,8 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: 'python3 -m http.server 8765',
-    url: 'http://127.0.0.1:8765',
+    command: `python3 -m http.server ${PORT}`,
+    url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: true,
     timeout: 120000,
   },
