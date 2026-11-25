@@ -43,6 +43,29 @@ const CATALOGS = {
     },
     otherLabel: 'Global networks & multi-country cards',
   },
+  subs: {
+    title: 'World subscriptions, streaming, social & SaaS',
+    unit: 'services',
+    defType: () => 'saas',
+    types: {
+      s: 'streaming', m: 'music', o: 'social', a: 'saas', v: 'vpn',
+      c: 'cloud', g: 'gaming', n: 'news', f: 'fitness', x: 'security', u: 'utility',
+    },
+    labels: {
+      streaming: 'streaming / video',
+      music: 'music / audio',
+      social: 'social / messaging',
+      saas: 'SaaS / productivity',
+      vpn: 'VPN',
+      cloud: 'cloud storage',
+      gaming: 'gaming',
+      news: 'news / press',
+      fitness: 'fitness',
+      security: 'security / password',
+      utility: 'utility / local club',
+    },
+    otherLabel: 'Global streaming, social & SaaS',
+  },
 };
 
 const slug = d => String(d || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

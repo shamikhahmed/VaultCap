@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v108';
+const CACHE = 'vaultcap-v109';
 // widget-data.json is local/gitignored — never precache it (addAll would fail install).
 const ASSETS = [
   './',
@@ -56,6 +56,7 @@ const ASSETS = [
   './assets/data/world-carriers.min.json',
   './assets/data/world-brokers.min.json',
   './assets/data/world-cards.min.json',
+  './assets/data/world-subs.min.json',
 ];
 
 const PRECACHE_PATHS = new Set(

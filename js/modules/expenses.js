@@ -41,7 +41,7 @@ const Exp={
   toggle(id,v){const e=S.expenses.find(x=>x.id===id);if(e){e.active=v;Store.save();Exp.render();}},
   openAdd(){Modal.open('Add Expense / Subscription',this.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Exp.save()">Save</button>`);setTimeout(()=>{const el=document.getElementById('ef-amt');if(el)U.numInput(el,S.user.currency||'PKR');},60);},
   form(e={}){
-    return `<datalist id="subDL2">${SUBS_DB.map(s=>`<option value="${escAttr(s.n)}">`).join('')}</datalist>
+    return `<datalist id="subDL2">${U.subOpts((S.user&&S.user.country)||'')}</datalist>
     <div class="fg"><label class="fl">Name *</label><input class="inp" id="ef-name" value="${escAttr(e.name||'')}" list="subDL2" placeholder="Netflix, Gym, Rent, NordVPN..." data-act-input="Exp.autofill(this.value)" autocomplete="off"></div>
     <div class="fr"><div class="fg"><label class="fl">Category</label><datalist id="efCatDL"><option>Streaming</option><option>Music</option><option>VPN</option><option>Cloud</option><option>Fitness</option><option>Gaming</option><option>AI</option><option>Productivity</option><option>Security</option><option>News</option><option>Utilities</option><option>Rent</option><option>Insurance</option><option>Other</option></datalist><input class="inp" id="ef-cat" value="${escAttr(e.category||'')}" list="efCatDL" placeholder="Streaming, Fitness..."></div><input type="hidden" id="ef-icon" value="${escAttr(e.icon||'repeat')}"></div>
     <div class="fr"><div class="fg"><label class="fl">Amount / month *</label><input class="inp num-inp" id="ef-amt" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(e.amount||'')}" placeholder="9.99"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="ef-cur">${U.currencies()}</select></div></div>
@@ -50,7 +50,18 @@ const Exp={
     <div class="fg"><label class="fl">Notes</label><input class="inp" id="ef-notes" value="${escAttr(e.notes||'')}" placeholder="Account email, plan details..."></div>
     <label class="vc-ix-126"><input type="checkbox" id="ef-active" ${e.active!==false?'checked':''}> Active (counts in monthly total)</label>`;
   },
-  autofill(n){const s=SUBS_DB.find(x=>x.n.toLowerCase()===n.toLowerCase());if(!s)return;const c=document.getElementById('ef-cat');const i=document.getElementById('ef-icon');if(c&&!c.value)c.value=s.c;if(i)i.value=VC_SUB_CAT_ICON[s.c]||VC.resolveIconKey(s.ic)||'repeat';},
+  autofill(n){
+    const s=SUBS_DB.find(x=>x.n.toLowerCase()===n.toLowerCase());
+    let cat=s&&s.c, ic=s&&s.ic;
+    if(!cat&&typeof WorldSubs!=='undefined'&&WorldSubs.rows){
+      const row=WorldSubs.rows.find(r=>String(r[0]).toLowerCase()===String(n).toLowerCase());
+      const map={streaming:'Streaming',music:'Music',social:'Other',saas:'Productivity',vpn:'VPN',cloud:'Cloud',gaming:'Gaming',news:'News',fitness:'Fitness',security:'Security',utility:'Utilities'};
+      if(row) cat=map[row[2]]||'Other';
+    }
+    if(!cat)return;
+    const c=document.getElementById('ef-cat');const i=document.getElementById('ef-icon');
+    if(c&&!c.value)c.value=cat;if(i)i.value=VC_SUB_CAT_ICON[cat]||VC.resolveIconKey(ic)||'repeat';
+  },
   save(editId=null){
     const name=document.getElementById('ef-name').value.trim();
     if(!name){Toast.show('Name required','warning');return;}

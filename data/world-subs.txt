@@ -1,0 +1,212 @@
+# World subscriptions, streaming, social & SaaS — one line per country.
+# Format: CC|Name~website~type;...   type: s=streaming, m=music, o=social, a=saas,
+#   v=vpn, c=cloud, g=gaming, n=news, f=fitness, x=security, u=utility/local club.
+# Suffix "*" = unverified. Global services that span many countries are under OTHER.
+# Primary sources: operator / service websites, regional streaming guides, press sites.
+# Used by Expenses (subscriptions) and Digital Accounts pickers via WorldSubs.
+OTHER|Netflix~netflix.com~s;Disney+~disneyplus.com~s;Amazon Prime Video~primevideo.com~s;Apple TV+~tv.apple.com~s;YouTube Premium~youtube.com~s;Max (HBO)~max.com~s;Paramount+~paramountplus.com~s;Spotify~spotify.com~m;Apple Music~music.apple.com~m;YouTube Music~music.youtube.com~m;Tidal~tidal.com~m;Deezer~deezer.com~m;Instagram~instagram.com~o;Facebook~facebook.com~o;TikTok~tiktok.com~o;X (Twitter)~x.com~o;LinkedIn~linkedin.com~o;WhatsApp~whatsapp.com~o;Telegram~telegram.org~o;Signal~signal.org~o;Discord~discord.com~o;Snapchat~snapchat.com~o;Reddit~reddit.com~o;Threads~threads.net~o;Pinterest~pinterest.com~o;Twitch~twitch.tv~o;BeReal~bereal.com~o;Google One~one.google.com~c;iCloud+~icloud.com~c;Dropbox~dropbox.com~c;Microsoft 365~microsoft.com~a;Adobe Creative Cloud~adobe.com~a;Notion~notion.so~a;ChatGPT Plus~chatgpt.com~a;Claude Pro~claude.ai~a;Gemini Advanced~gemini.google.com~a;GitHub~github.com~a;Canva Pro~canva.com~a;Figma~figma.com~a;Grammarly~grammarly.com~a;NordVPN~nordvpn.com~v;ExpressVPN~expressvpn.com~v;Surfshark~surfshark.com~v;Proton VPN~protonvpn.com~v;1Password~1password.com~x;Bitwarden~bitwarden.com~x;Proton Pass~proton.me~x;PlayStation Plus~playstation.com~g;Xbox Game Pass~xbox.com~g;Nintendo Switch Online~nintendo.com~g;Duolingo Super~duolingo.com~a;Coursera Plus~coursera.org~a;LinkedIn Premium~linkedin.com~a;FT.com~ft.com~n;The Economist~economist.com~n;NYTimes~nytimes.com~n
+AD|Andorra Telecom TV~andorratelecom.ad~s;Diari d'Andorra~diariandorra.ad~n*
+AE|Shahid~shahid.net~s;OSN+~osn.com~s;TOD~tod.tv~s;Starzplay~starzplay.com~s;Anghami~anghami.com~m;Jawwy TV~jawwy.ae~s;du TV~du.ae~s;Careem Plus~careem.com~u;The National~thenationalnews.com~n
+AF|Ariana Television~arianatelevision.com~s;TOLO TV~tolo.tv~s;Radio Azadi~pa.azadiradio.com~n*
+AG|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+AI|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+AL|Voyo~voyo.tv~s
+AM|IVI~ivi.ru~s;Okko~okko.tv~s
+AO|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+AR|Flow~flow.com.ar~s;Paramount+ LatAm~paramountplus.com~s;TyC Sports Play~tycsports.com~s;Clarín~clarin.com~n;La Nación~lanacion.com.ar~n
+AT|ORF ON~orf.at~s;Sky Österreich~sky.at~s;DAZN Austria~dazn.com~s;Der Standard~derstandard.at~n
+AU|Stan~stan.com.au~s;Binge~binge.com.au~s;Kayo Sports~kayosports.com.au~s;Foxtel Now~foxtel.com.au~s;9Now~9now.com.au~s;7plus~7plus.com.au~s;ABC iview~iview.abc.net.au~s;SBS On Demand~sbs.com.au~s;The Australian~theaustralian.com.au~n
+AW|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+AZ|IVI~ivi.ru~s;Okko~okko.tv~s
+BA|Voyo~voyo.tv~s
+BB|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+BD|Bongo~bongobd.com~s;Chorki~chorki.com~s;Bioscope~bioscopelive.com~s;GP Music~grameenphone.com~m;Prothom Alo~prothomalo.com~n;bdnews24~bdnews24.com~n
+BE|Streamz~streamz.be~s;VRT MAX~vrt.be~s;RTBF Auvio~rtbf.be~s;Proximus Pickx~proximus.be~s;Le Soir~lesoir.be~n
+BF|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+BG|Voyo BG~voyo.bg~s;Nova Play~nova.bg~s;24 Chasa~24chasa.bg~n
+BH|Shahid~shahid.net~s;OSN+~osn.com~s;TOD~tod.tv~s;Anghami~anghami.com~m;Batelco TV~batelco.com~s
+BI|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+BJ|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+BM|Flow Bermuda~discoverflow.co~s;The Royal Gazette~royalgazette.com~n
+BN|Viu~viu.com~s;JOOX~joox.com~m
+BO|Claro Video~clarovideo.com~s;ViX~vix.com~s
+BR|Globoplay~globoplay.globo.com~s;Premiere~premiere.globo.com~s;Claro tv+~claro.com.br~s;Looke~looke.com.br~s;Kwai~kwai.com~o;Mercado Livre~mercadolivre.com.br~u;Folha de S.Paulo~folha.uol.com.br~n;UOL~uol.com.br~n
+BS|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+BT|Bhutan Broadcasting Service~bbs.bt~s;Kuensel~kuenselonline.com~n;The Bhutanese~thebhutanese.bt~n*
+BW|Showmax~showmax.com~s;DSTV Stream~dstv.com~s
+BY|IVI~ivi.ru~s;Okko~okko.tv~s
+BZ|Claro Video~clarovideo.com~s;ViX~vix.com~s
+CA|Crave~crave.ca~s;CBC Gem~cbc.ca~s;Sportsnet NOW~sportsnet.ca~s;TSN~tsn.ca~s;Club Illico~clubillico.com~s;Quebecor~quebecor.com~s;The Globe and Mail~theglobeandmail.com~n;Qub Musique~qub.ca~m
+CD|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+CF|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+CG|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+CH|Play Suisse~playsuisse.ch~s;Blue TV~swisscom.ch~s;Sunrise TV~sunrise.ch~s;NZZ~nzz.ch~n
+CI|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+CL|Zapping~zapping.com~s;Movistar TV~movistar.cl~s;Chilevisión~chilevision.cl~s;Emol~emol.com~n
+CM|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+CN|iQIYI~iqiyi.com~s;Youku~youku.com~s;Tencent Video~v.qq.com~s;Bilibili~bilibili.com~s;Mango TV~mgtv.com~s;NetEase Cloud Music~music.163.com~m;QQ Music~y.qq.com~m;WeChat~weixin.qq.com~o;Weibo~weibo.com~o;Douyin~douyin.com~o;Xiaohongshu~xiaohongshu.com~o;Baidu~baidu.com~o;Zhihu~zhihu.com~o
+CO|Claro Video~clarovideo.com~s;Win Sports Online~winsports.co~s;Caracol Play~caracoltv.com~s;El Tiempo~eltiempo.com~n
+CR|Claro Video~clarovideo.com~s;ViX~vix.com~s
+CU|Claro Video~clarovideo.com~s;ViX~vix.com~s
+CV|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+CY|Cyta Vision~cyta.com.cy~s;Cablenet~cablenet.com.cy~s;Cyprus Mail~cyprus-mail.com~n
+CZ|Voyo CZ~voyo.cz~s;Prima+~iprima.cz~s;Česká televize iVysílání~ceskatelevize.cz~s;Seznam Zprávy~seznamzpravy.cz~n
+DE|Joyn~joyn.de~s;RTL+~plus.rtl.de~s;Sky Deutschland~sky.de~s;DAZN~dazn.com~s;MagentaTV~telekom.de~s;ARD Mediathek~ardmediathek.de~s;ZDF Mediathek~zdf.de~s;Spiegel~spiegel.de~n;FAZ~faz.net~n
+DJ|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+DK|DR TV~dr.dk~s;TV 2 Play DK~tv2.dk~s;Viaplay Denmark~viaplay.com~s;Politiken~politiken.dk~n
+DM|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+DO|Claro Video~clarovideo.com~s;ViX~vix.com~s
+DZ|Shahid~shahid.net~s;Djezzy apps~djezzy.dz~u;El Watan~elwatan.com~n*
+EC|Claro Video~clarovideo.com~s;ViX~vix.com~s
+EE|ERR Jupiter~jupiter.err.ee~s;Telía Estonia~telia.ee~s;Postimees~postimees.ee~n
+EG|Shahid~shahid.net~s;Watch iT~watchit.com~s;Anghami~anghami.com~m;Weyyak~weyyak.com~s;Vodafone TV Egypt~vodafone.com.eg~s;Al Masry Al Youm~almasryalyoum.com~n
+ER|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+ES|Movistar Plus+~movistarplus.es~s;Atresplayer~atresplayer.com~s;RTVE Play~rtve.es~s;DAZN Spain~dazn.com~s;El País~elpais.com~n
+ET|Ethio Telecom apps~ethiotelecom.et~u;EBC~ebc.et~s;Addis Standard~addisstandard.com~n*
+FI|Yle Areena~areena.yle.fi~s;Ruutu~ruutu.fi~s;MTV Katsomo~katsomo.fi~s;Helsingin Sanomat~hs.fi~n
+FJ|Digicel Play~digicelgroup.com~s
+FM|Digicel Play~digicelgroup.com~s
+FR|Canal+~canalplus.com~s;france.tv~france.tv~s;Molotov~molotov.tv~s;MyCanal~canalplus.com~s;Deezer France~deezer.com~m;Le Monde~lemonde.fr~n;Le Figaro~lefigaro.fr~n
+GA|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+GB|BBC iPlayer~bbc.co.uk~s;ITVX~itv.com~s;Channel 4~channel4.com~s;Sky~sky.com~s;NOW~nowtv.com~s;BritBox~britbox.com~s;DAZN UK~dazn.com~s;PureGym~puregym.com~f;David Lloyd~davidlloyd.co.uk~f;The Times~thetimes.co.uk~n;The Guardian~theguardian.com~n;BBC Sounds~bbc.co.uk~m
+GD|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+GE|IVI~ivi.ru~s;Okko~okko.tv~s
+GH|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Joy Online~myjoyonline.com~n;Boomplay~boomplay.com~m
+GI|GBC Gibraltar~gbc.gi~s;Gibtelecom TV~gibtelecom.net~s*
+GM|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+GN|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+GQ|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+GR|COSMOTE TV~cosmote.gr~s;ANT1+~ant1player.gr~s;ERTFLIX~ertflix.gr~s;Kathimerini~kathimerini.gr~n
+GT|Claro Video~clarovideo.com~s;ViX~vix.com~s
+GW|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+GY|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+HK|Viu~viu.com~s;myTV SUPER~mytvsuper.com~s;Now TV~nowtv.now.com~s;JOOX~joox.com~m;SCMP~scmp.com~n
+HN|Claro Video~clarovideo.com~s;ViX~vix.com~s
+HR|Voyo HR~voyo.hr~s;HRT~hrt.hr~s;Jutarnji~jutarnji.hr~n
+HT|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+HU|RTL+ Hungary~rtl.hu~s;TV2 Play HU~tv2play.hu~s;Médiamix~mediamix.hu~s*;Index.hu~index.hu~n
+ID|Vidio~vidio.com~s;RCTI+~rctiplus.com~s;MAXStream~maxstream.id~s;Vision+~visionplus.id~s;Joox Indonesia~joox.com~m;Langit Musik~langitmusik.co.id~m;Kompas~kompas.com~n;Detik~detik.com~n
+IE|RTÉ Player~rte.ie~s;Virgin Media Player~virginmediatelevision.ie~s;Sky Ireland~sky.com~s;The Irish Times~irishtimes.com~n
+IL|Partner TV~partner.co.il~s;Cellcom TV~cellcom.co.il~s;Kan~kan.org.il~s;Haaretz~haaretz.com~n;Walla~walla.co.il~n
+IN|JioCinema~jiocinema.com~s;Disney+ Hotstar~hotstar.com~s;SonyLIV~sonyliv.com~s;Zee5~zee5.com~s;MX Player~mxplayer.in~s;Aha~aha.video~s;Sun NXT~sunnxt.com~s;Gaana~gaana.com~m;JioSaavn~jiosaavn.com~m;Wynk Music~wynk.in~m;ShareChat~sharechat.com~o;Moj~mojapp.in~o;Josh~joshapp.com~o;Kuku FM~kukufm.com~m;Airtel Xstream~airtel.in~s;The Hindu~thehindu.com~n
+IQ|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+IR|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+IS|RÚV~ruv.is~s;Síminn Premium~siminn.is~s;Vísir~visir.is~n
+IT|RaiPlay~raiplay.it~s;Mediaset Infinity~mediasetinfinity.mediaset.it~s;NOW Italia~nowtv.it~s;DAZN Italy~dazn.com~s;Corriere della Sera~corriere.it~n
+JM|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+JO|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m;Roya TV~roya.tv~s
+JP|U-NEXT~unext.jp~s;Abema~abema.tv~s;Hulu Japan~hulu.jp~s;dTV~dtv.dmkt-sp.jp~s;TVer~tver.jp~s;DAZN Japan~dazn.com~s;LINE~line.me~o;Yahoo! Japan~yahoo.co.jp~o;Niconico~nicovideo.jp~o;Radiko~radiko.jp~m;AWA~awa.fm~m;Recochoku~recochoku.jp~m;Nikkei~nikkei.com~n
+KE|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Mdundo~mdundo.com~m;Nation Africa~nation.africa~n;Standard Media~standardmedia.co.ke~n
+KG|IVI~ivi.ru~s;Okko~okko.tv~s
+KH|Viu~viu.com~s;JOOX~joox.com~m
+KI|Digicel Play~digicelgroup.com~s
+KM|Comoros Telecom apps~comorestelecom.km~u;Al Watwan~alwatwan.net~n*
+KN|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+KP|Korean Central Television (domestic)~kcna.kp~s*;—No public consumer streaming apps internationally
+KR|Wavve~wavve.com~s;TVING~tving.com~s;Coupang Play~coupangplay.com~s;Watcha~watcha.com~s;KakaoTalk~kakaocorp.com~o;Naver~naver.com~o;Melon~melon.com~m;Genie Music~genie.co.kr~m;FLO~music-flo.com~m;Chosun Ilbo~chosun.com~n
+KW|Shahid~shahid.net~s;OSN+~osn.com~s;TOD~tod.tv~s;Anghami~anghami.com~m;Ooredoo TV~ooredoo.com.kw~s
+KY|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+KZ|IVI~ivi.ru~s;Okko~okko.tv~s
+LA|Viu~viu.com~s;JOOX~joox.com~m
+LB|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m;LBCI~lbcgroup.tv~s
+LC|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+LI|Telecom Liechtenstein~telecom.li~u;Liechtensteiner Vaterland~vaterland.li~n*
+LK|Dialog ViU~dialog.lk~s;Derana~derana.lk~s;Hiru TV~hiru.lk~s;Sooriyan FM~sooriyanfm.lk~m;Daily Mirror LK~dailymirror.lk~n
+LR|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+LS|Showmax~showmax.com~s;DSTV Stream~dstv.com~s
+LT|LRT Epika~lrt.lt~s;Telía Play~telia.lt~s;Delfi LT~delfi.lt~n
+LU|RTL Play LU~rtl.lu~s;POST TV~post.lu~s;Luxemburger Wort~wort.lu~n
+LV|LSM~lsm.lv~s;Tet TV+~tet.lv~s;Delfi LV~delfi.lv~n
+LY|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+MA|Shahid~shahid.net~s;inwi tv~inwi.ma~s;Orange TV Maroc~orange.ma~s;Médias24~medias24.com~n
+MC|Monaco Telecom TV~monaco-telecom.mc~s;Monaco-Matin~monacomatin.mc~n*
+MD|IVI~ivi.ru~s;Okko~okko.tv~s
+ME|Voyo~voyo.tv~s
+MG|Canal+ Madagascar~canalplus.com~s;Telma TV~telma.mg~s*;Midi Madagasikara~midi-madagasikara.mg~n*
+MH|Digicel Play~digicelgroup.com~s
+MK|Voyo~voyo.tv~s
+ML|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+MM|Viu~viu.com~s;JOOX~joox.com~m
+MN|IVI~ivi.ru~s;Okko~okko.tv~s
+MO|Macau Cable~macaucabletv.com~s;TDM~tdm.com.mo~s*
+MR|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+MT|GO TV~go.com.mt~s;TVM~tvm.com.mt~s;Times of Malta~timesofmalta.com~n
+MU|my.t Entertainment~telecom.mu~s;MCVision~mcvision.mu~s;L'Express MU~lexpress.mu~n
+MV|Medianet~medianet.mv~s;Raajje TV~raajje.mv~s*;Sun Online~sun.mv~n
+MW|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+MX|ViX~vix.com~s;Blim TV~blim.com~s;Claro Video~clarovideo.com~s;Izzi TV~izzi.mx~s;TelevisaUnivision~televisaunivision.com~s;Reforma~reforma.com~n
+MY|Astro GO~astro.com.my~s;iflix~iflix.com~s;Viu Malaysia~viu.com~s;JOOX~joox.com~m;The Star MY~thestar.com.my~n
+MZ|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+NA|Showmax~showmax.com~s;DSTV Stream~dstv.com~s
+NE|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+NG|Showmax~showmax.com~s;IrokoTV~irokotv.com~s;Boomplay~boomplay.com~m;Pulse Nigeria~pulse.ng~n;Punch~punchng.com~n;DSTV Stream~dstv.com~s
+NI|Claro Video~clarovideo.com~s;ViX~vix.com~s
+NL|Videoland~videoland.com~s;NPO Start~npo.nl~s;Ziggo GO~ziggo.nl~s;NLZIET~nlziet.nl~s;NOS~nos.nl~n
+NO|NRK TV~tv.nrk.no~s;TV 2 Play~tv2.no~s;Viaplay Norway~viaplay.com~s;VG~vg.no~n
+NP|Nepal Telecom apps~ntc.net.np~u;Kantipur~ekantipur.com~n;OnlineKhabar~onlinekhabar.com~n
+NR|Digicel Play~digicelgroup.com~s
+NZ|Neon~neontv.co.nz~s;Sky Sport Now~skysportnow.co.nz~s;TVNZ+~tvnz.co.nz~s;ThreeNow~threenow.co.nz~s;RNZ~rnz.co.nz~n
+OM|Shahid~shahid.net~s;OSN+~osn.com~s;TOD~tod.tv~s;Anghami~anghami.com~m;Ooredoo TV Oman~ooredoo.om~s
+PA|Claro Video~clarovideo.com~s;ViX~vix.com~s
+PE|Movistar TV App~movistar.com.pe~s;Claro Video~clarovideo.com~s;El Comercio PE~elcomercio.pe~n
+PG|Digicel Play~digicelgroup.com~s
+PH|iWantTFC~iwanttfc.com~s;Viu Philippines~viu.com~s;Cignal Play~cignal.tv~s;Spotify PH~spotify.com~m;Inquirer~inquirer.net~n
+PK|Tapmad~tapmad.com~s;ARY ZAP~aryzap.com~s;Geo TV apps~geo.tv~s;Patari~patari.pk~m;Daraz VIP~daraz.pk~u;Careem~careem.com~u;Dawn~dawn.com~n;The News~thenews.com.pk~n;Jazz World~jazz.com.pk~u;Samaa Digital~samaa.tv~n
+PL|Player.pl~player.pl~s;TVP VOD~vod.tvp.pl~s;Polsat Box Go~polsatboxgo.pl~s;Canal+ Poland~canalplus.com~s;Gazeta Wyborcza~wyborcza.pl~n
+PR|Claro Video~clarovideo.com~s;ViX~vix.com~s
+PS|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+PT|NOS Play~nos.pt~s;MEO~meo.pt~s;RTP Play~rtp.pt~s;SIC Notícias~sicnoticias.pt~n
+PW|Digicel Play~digicelgroup.com~s
+PY|Claro Video~clarovideo.com~s;ViX~vix.com~s
+QA|Shahid~shahid.net~s;beIN CONNECT~beIN.com~s;OSN+~osn.com~s;Anghami~anghami.com~m;Ooredoo TV Qatar~ooredoo.qa~s
+RO|Voyo~voyo.ro~s;Digi Online~digi.ro~s;Pro TV~protv.ro~s;HotNews~hotnews.ro~n
+RS|Arena Sport~arenasport.tv~s;RTS Planeta~rts.rs~s;Blic~blic.rs~n
+RU|Kinopoisk~kinopoisk.ru~s;Okko~okko.tv~s;IVI~ivi.ru~s;VK~vk.com~o;Yandex Music~music.yandex.ru~m;Telegram Russia~telegram.org~o;RBC~rbc.ru~n
+RW|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+SA|Shahid~shahid.net~s;STC TV~stc.com.sa~s;TOD~tod.tv~s;Anghami~anghami.com~m;Starzplay~starzplay.com~s;Jawwy TV~stc.com.sa~s;Jarir Reader~jarir.com~n;Okaz~okaz.com.sa~n
+SB|Digicel Play~digicelgroup.com~s
+SC|Cable & Wireless Seychelles TV~cwseychelles.com~s;SBC~sbc.sc~s;Seychelles Nation~nation.sc~n
+SD|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+SE|SVT Play~svtplay.se~s;TV4 Play~tv4play.se~s;Viaplay~viaplay.com~s;Aftonbladet~aftonbladet.se~n
+SG|meWATCH~mewatch.sg~s;Toggle~toggle.sg~s;Viu Singapore~viu.com~s;Straits Times~straitstimes.com~n;JOOX~joox.com~m
+SI|Voyo~voyo.tv~s
+SK|Voyo SK~voyo.sk~s;JOJ Play~joj.sk~s;SME~sme.sk~n
+SL|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+SM|San Marino RTV~sanmarinortv.sm~s*
+SN|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+SO|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+SR|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+SS|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+ST|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+SV|Claro Video~clarovideo.com~s;ViX~vix.com~s
+SY|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+SZ|Showmax~showmax.com~s;DSTV Stream~dstv.com~s
+TD|Canal+ Afrique~canalplus.com~s;DSTV Stream~dstv.com~s
+TG|Canal+ Afrique~canalplus.com~s;Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Boomplay~boomplay.com~m
+TH|TrueID~trueid.net~s;AIS PLAY~ais.th~s;VIU Thailand~viu.com~s;Joox Thailand~joox.com~m;Line Thailand~line.me~o;Thairath~thairath.co.th~n
+TJ|IVI~ivi.ru~s;Okko~okko.tv~s
+TL|RTTL~rttl.tl~s*;Tatoli~tatoli.tl~n*;GMN TV~gmntv.tl~s*
+TM|IVI~ivi.ru~s;Okko~okko.tv~s
+TN|Shahid~shahid.net~s;Orange TV Tunisie~orange.tn~s;Watania Replay~watania.tn~s*
+TO|Digicel Play~digicelgroup.com~s
+TR|Gain~gain.tv~s;Blutv~blutv.com~s;Exxen~exxen.com~s;TOD Turkey~tod.tv~s;YouTube Music TR~music.youtube.com~m;Hürriyet~hurriyet.com.tr~n
+TT|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+TV|Digicel Play~digicelgroup.com~s
+TW|KKTV~kktv.me~s;LINE TV~linetv.tw~s;friDay Video~video.friday.tw~s;myVideo~myvideo.net.tw~s;KKBOX~kkbox.com~m;LINE~line.me~o;PTT~ptt.cc~o;udn~udn.com~n
+TZ|Azam TV~azamtv.com~s;DSTV Stream~dstv.com~s;Clouds FM~cloudsfm.co.tz~m;The Citizen TZ~thecitizen.co.tz~n
+UA|Megogo~megogo.net~s;sweet.tv~sweet.tv~s;1+1 video~1plus1.ua~s;Ukrainska Pravda~pravda.com.ua~n
+UG|DSTV Stream~dstv.com~s;Showmax~showmax.com~s;NBS Television~nbs.ug~n;Bukedde~bukedde.co.ug~n
+US|Hulu~hulu.com~s;Peacock~peacocktv.com~s;ESPN+~espn.com~s;Apple Fitness+~fitness.apple.com~f;Peloton~onepeloton.com~f;Strava~strava.com~f;Washington Post~washingtonpost.com~n;Wall Street Journal~wsj.com~n;Audible~audible.com~m;Crunchyroll~crunchyroll.com~s;Discovery+~discoveryplus.com~s
+UY|Claro Video~clarovideo.com~s;ViX~vix.com~s
+UZ|IVI~ivi.ru~s;Okko~okko.tv~s
+VA|Vatican News~vaticannews.va~n
+VC|Flow TV~discoverflow.co~s;Digicel Play~digicelgroup.com~s
+VE|Claro Video~clarovideo.com~s;ViX~vix.com~s
+VN|FPT Play~fptplay.vn~s;VieON~vieon.vn~s;Galaxy Play~galaxyplay.vn~s;Zing MP3~zingmp3.vn~m;Zalo~zalo.me~o;VnExpress~vnexpress.net~n
+VU|Digicel Play~digicelgroup.com~s
+WS|Digicel Play~digicelgroup.com~s
+XK|Voyo~voyo.tv~s
+YE|Shahid~shahid.net~s;OSN+~osn.com~s;Anghami~anghami.com~m
+ZA|Showmax~showmax.com~s;DStv~dstv.com~s;SuperSport~supersport.com~s;SABC Plus~sabc.co.za~s;News24~news24.com~n;Jacaranda FM~jacarandafm.com~m
+ZM|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s
+ZW|Showmax~showmax.com~s;DSTV Stream~dstv.com~s;Azam TV~azamtv.com~s

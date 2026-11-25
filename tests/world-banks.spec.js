@@ -79,4 +79,25 @@ test.describe('world bank catalog', () => {
     expect(r.ke).toContain('Equity Bank');
     expect(r.none).toContain('Amex Platinum'); // curated CARDS_DB without country
   });
+
+  test('subOpts and digOpts suggest local + global streaming/social/SaaS', async ({ page }) => {
+    const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/data/world-subs.min.json'), 'utf8'));
+    expect(new Set(rows.map(r => r[1])).size).toBeGreaterThanOrEqual(206);
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldSubs !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldSubs.load());
+    const r = await page.evaluate(() => ({
+      pk: U.subOpts('PK'),
+      in: U.subOpts('IN'),
+      dig: U.digOpts('JP'),
+      none: U.subOpts(''),
+    }));
+    expect(r.pk).toContain('Tapmad');
+    expect(r.pk).toContain('Netflix'); // global OTHER
+    expect(r.in).toContain('JioCinema');
+    expect(r.in).toContain('Hotstar');
+    expect(r.dig).toContain('LINE');
+    expect(r.dig).toContain('Instagram');
+    expect(r.none).toContain('Netflix'); // curated SUBS_DB still shown
+  });
 });
