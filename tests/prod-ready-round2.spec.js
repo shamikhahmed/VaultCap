@@ -77,6 +77,6 @@ test.describe('prod-ready round 2 gates', () => {
     const add = page.locator('#pg-banks.on .ph [data-act="Banks.openAdd()"]').first();
     await expect(add).toBeVisible();
     await add.click();
-    await expect(page.locator('#overlay.on, #modal')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('#modal')).toBeVisible({ timeout: 5000 });
   });
 });

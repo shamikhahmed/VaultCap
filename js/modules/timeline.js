@@ -37,6 +37,7 @@ const Timeline={
     S.assets.filter(a=>a.assetType==='document'&&a.expiryDate).forEach(a=>{addEv(a.expiryDate,(a.docType||a.name)+' expires','doc','id-card',()=>Assets.edit(a.id));});
     (S.assets||[]).filter(a=>(a.assetType==='electronics'||a.assetType==='gadget')&&a.warranty).forEach(g=>{addEv(g.warranty,g.name+' warranty ends','warranty','laptop',()=>Assets.edit(g.id));});
     (S.gadgets||[]).filter(g=>g.warranty&&!(S.assets||[]).some(a=>a.id===g.id)).forEach(g=>{addEv(g.warranty,g.name+' warranty ends','warranty','laptop',()=>Gadgets.edit(g.id));});
+    if(typeof WorldLedgers!=='undefined')WorldLedgers.timeline(addEv);
     S.expenses.filter(e=>e.renewalDate&&e.active).forEach(e=>{addEv(e.renewalDate,e.name+' renewal','expense',e.icon||'repeat',()=>Exp.edit(e.id));});
     S.assets.filter(a=>a.assetType==='loan'&&a.dueDate).forEach(a=>{addEv(a.dueDate,a.name+' due','loan','banknote',()=>Assets.edit(a.id));});
     (S.loans||[]).filter(l=>l.dueDate&&l.status!=='Settled').forEach(l=>{addEv(l.dueDate,(l.person||'Loan')+' due','loan','banknote',()=>Loans.edit(l.id));});
@@ -49,7 +50,7 @@ const Timeline={
     const overdue=events.filter(e=>e.overdue);
     const soon=events.filter(e=>!e.overdue&&e.diff<=30);
     const later=events.filter(e=>!e.overdue&&e.diff>30);
-    const renderGroup=(title,evs,cls)=>evs.length?`<div class="sdiv">${title}</div>${evs.map(e=>`<div class="insight${cls} vc-ix-6" data-act="Modal.close();${e.action.toString().replace(/\n/g,' ')}"><div class="insight-ic">${this._renderIcon(e.icon,18)}</div><div class="insight-body"><div class="insight-title">${escHtml(e.label)}</div><div class="insight-sub">${e.overdue?'Overdue by '+Math.abs(e.diff)+' day'+(Math.abs(e.diff)!==1?'s':''):e.diff===0?'Today':e.diff===1?'Tomorrow':'In '+e.diff+' days — '+e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="font-size:0.6875rem;font-weight:700;color:${e.overdue?'var(--err)':e.diff<=7?'var(--warn)':'var(--text3)'}">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>`).join('')}`:'';
+    const renderGroup=(title,evs,cls)=>evs.length?`<div class="sdiv">${title}</div>${evs.map(e=>`<div class="insight${cls} vc-ix-6" data-act="Modal.close();${e.action.toString().replace(/\n/g,' ')}"><div class="insight-ic">${this._renderIcon(e.icon,18)}</div><div class="insight-body"><div class="insight-title">${escHtml(e.label)}</div><div class="insight-sub">${e.overdue?'Overdue by '+Math.abs(e.diff)+' day'+(Math.abs(e.diff)!==1?'s':''):e.diff===0?'Today':e.diff===1?'Tomorrow':'In '+e.diff+' days — '+e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}${typeof WorldCal!=='undefined'&&WorldCal.cal()?'<span class="wc-alt" dir="auto"> · '+escHtml(WorldCal.fmt(e.date))+'</span>':''}</div></div><div style="font-size:0.6875rem;font-weight:700;color:${e.overdue?'var(--err)':e.diff<=7?'var(--warn)':'var(--text3)'}">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>`).join('')}`:'';
     b.innerHTML=clearBar+renderGroup('Overdue',overdue,' err')+renderGroup('Next 30 Days',soon,' warn')+renderGroup('Upcoming',later,' info');
   },
   calendarMode(){

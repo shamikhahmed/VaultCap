@@ -9,7 +9,7 @@ function loadDemoProfile(type) {
   const daysFromNow = d => new Date(now.getTime() + d*86400000).toISOString().split('T')[0];
 
   // Reset all arrays
-  ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents','bc','bonds'].forEach(k => { S[k]=[]; });
+  ['banks','cards','investments','cash','loans','friends','sims','assets','expenses','emails','gadgets','digital','vehicles','documents','bc','bonds','payids','remits','giving'].forEach(k => { S[k]=[]; });
 
   // ── Alex Khan — UK-based Pakistani professional (full demo) ──
   S.user.name = 'Alex Khan';
@@ -148,6 +148,17 @@ function loadDemoProfile(type) {
   // BC / Committees (2)
   S.bc.push({id:id(),name:'Family BC 2026',role:'participant',type:'ballot',members:10,contribution:10000,currency:'PKR',frequency:'monthly',totalRounds:10,myTurnRound:7,currentRound:4,startDate:'2026-01-01',paymentDay:5,organiser:'Ammi',notes:'Family rotating committee',memberList:[],paymentHistory:[],createdAt:ts,updatedAt:ts});
   S.bc.push({id:id(),name:'Office Pardner',role:'participant',type:'ballot',members:6,contribution:200,currency:'GBP',frequency:'monthly',totalRounds:6,myTurnRound:3,currentRound:2,startDate:'2026-04-01',paymentDay:1,organiser:'James (PM)',notes:'Office savings committee',memberList:[],paymentHistory:[],createdAt:ts,updatedAt:ts});
+
+  // Payment handles, remittances, giving (worldwide ledgers)
+  const _iso = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  S.payids.push({id:id(),rail:'fps',idType:'Mobile number',value:'+44 7700 900123',label:'Personal',holder:'Alex Khan',linkedBankId:bankMonzo||'',primary:true,notes:'',createdAt:ts,updatedAt:ts});
+  S.payids.push({id:id(),rail:'wise',idType:'Wisetag',value:'@alexk',label:'Travel money',holder:'Alex Khan',primary:true,notes:'',createdAt:ts,updatedAt:ts});
+  S.payids.push({id:id(),rail:'raast',idType:'Raast ID (mobile)',value:'0300 1234567',label:'Pakistan account',holder:'Alex Khan',primary:false,notes:'For family in Lahore',createdAt:ts,updatedAt:ts});
+  S.remits.push({id:id(),date:_iso(-20),recipient:'Ammi',recipientCountry:'PK',sent:300,sentCur:'GBP',fee:1.9,received:104500,recvCur:'PKR',midRateAuto:352,provider:'Wise',method:'bank',purpose:'Family support',repeat:true,nextDue:_iso(10),notes:'',createdAt:ts,updatedAt:ts});
+  S.remits.push({id:id(),date:_iso(-50),recipient:'Bilal (cousin)',recipientCountry:'PK',sent:200,sentCur:'GBP',fee:4.99,received:65000,recvCur:'PKR',midRateAuto:352,provider:'Western Union',method:'cash',purpose:'Education',repeat:false,notes:'Cash pickup, Anarkali agent',createdAt:ts,updatedAt:ts});
+  S.giving.push({id:id(),kind:'zakat',status:'paid',date:_iso(-120),amount:850,currency:'GBP',recipient:'Local mosque',regNo:'',taxRelief:'none',receipt:true,notes:'',createdAt:ts,updatedAt:ts});
+  S.giving.push({id:id(),kind:'charity',status:'paid',date:_iso(-30),amount:120,currency:'GBP',recipient:'British Red Cross',regNo:'220949',taxRelief:'giftaid',receipt:true,notes:'Gift Aid declared',createdAt:ts,updatedAt:ts});
+  S.giving.push({id:id(),kind:'sadaqah',status:'pledged',date:_iso(14),amount:50,currency:'GBP',recipient:'Food bank',regNo:'',taxRelief:'none',receipt:false,notes:'',createdAt:ts,updatedAt:ts});
 
   // Prize Bonds (2)
   S.bonds.push({id:id(),name:'Prize Bond PKR 7500',typeId:'prize_bond',quantity:5,faceValue:7500,amount:7500,currency:'PKR',country:'PK',purchaseDate:'2025-01-10',maturityDate:'',annualRate:0,bondNumbers:['PB-001234','PB-001235','PB-001236','PB-001237','PB-001238'],notes:'Bought in Lahore',createdAt:ts,updatedAt:ts});

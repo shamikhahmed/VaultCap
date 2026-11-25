@@ -23,9 +23,9 @@ const Trash = {
     };
     const emptyBtn = `<div class="vc-ix-239"><button type="button" class="btn btn-d btn-sm" data-act="Trash.emptyAll()">${VC.icon('trash', 14)} Empty Trash</button></div>`;
     el.innerHTML = emptyBtn + Object.entries(grouped).map(([type, arr]) => `
-      <div class="sdiv"><span class="sdiv-ic">${typeIc(type, 14)}</span> ${type.charAt(0).toUpperCase() + type.slice(1)} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
+      <div class="sdiv"><span class="sdiv-ic">${typeIc(type, 14)}</span> ${escHtml(({payids:'Payment handles',remits:'Remittances',giving:'Giving'})[type] || (type.charAt(0).toUpperCase() + type.slice(1)))} <span style="font-weight:400;color:var(--text3)">(${arr.length})</span></div>
       ${arr.map(item => {
-        const label = item.data?.bankName || item.data?.cardName || item.data?.investmentName || item.data?.network || item.data?.name || item.data?.serviceName || item.data?.email || item.id;
+        const label = (typeof WorldLedgers !== 'undefined' && WorldLedgers.has(item.type) && item.data ? WorldLedgers.mod(item.type).def.title(item.data) : '') || item.data?.bankName || item.data?.cardName || item.data?.investmentName || item.data?.network || item.data?.name || item.data?.serviceName || item.data?.email || item.id;
         return `<div class="entry">
           <div class="entry-main">
             <div class="entry-ic">${typeIc(item.type, 18)}</div>

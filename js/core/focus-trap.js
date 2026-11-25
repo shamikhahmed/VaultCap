@@ -1,6 +1,6 @@
 'use strict';
 /* FocusTrap — keyboard accessibility for modal dialogs */
-var FocusTrap = (function () {
+const FocusTrap = (function () {
   var _el = null, _prev = null, _onEscape = null;
   var FOCUSABLE = [
     'a[href]','button:not([disabled])','input:not([disabled])',

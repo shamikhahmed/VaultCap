@@ -25,6 +25,9 @@ const BackupVerify = (() => {
       ['Family members', (data.familyMembers || []).length],
       ['BC holdings', (data.bc || []).length],
       ['Bonds', (data.bonds || []).length],
+      ['Payment handles', (data.payids || []).length],
+      ['Remittances', (data.remits || []).length],
+      ['Giving', (data.giving || []).length],
     ];
     return rows.filter(([, n]) => n > 0);
   }

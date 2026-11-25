@@ -32,6 +32,7 @@ const Reminders = {
             '<div class="entry-body">' +
               '<div class="entry-name">' + escHtml(r.title || r.label || '') + '</div>' +
               '<div class="entry-sub">' + escHtml(r.sub || '') + '</div>' +
+              (function () { if (typeof WorldCal === 'undefined' || !WorldCal.cal() || r.daysLeft == null) return ''; const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + r.daysLeft); const t = WorldCal.fmt(d); return t ? '<div class="entry-sub wc-alt" dir="auto">' + escHtml(t) + '</div>' : ''; })() +
               '<div class="entry-meta"><span class="badge ' + badge + '">' + daysLabel + '</span><span class="badge b-muted">' + escHtml(r.category || '') + '</span></div>' +
             '</div>' +
             (r.page ? '<button type="button" class="icb" aria-label="Go to" data-act="R.goto(\'' + r.page + '\')" title="Go to">›</button>' : '') +
@@ -204,6 +205,9 @@ const Reminders = {
         category: 'BC',
       });
     });
+
+    // Remittance repeats + giving pledges (WorldLedgers)
+    if (typeof WorldLedgers !== 'undefined') WorldLedgers.reminderItems().forEach(function(x) { items.push(x); });
 
     // Prize bond draws
     (S.bonds || []).forEach(function(b) {

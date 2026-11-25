@@ -18,7 +18,7 @@ test.describe('code-review hig fixes', () => {
       const yBefore = ScrollLock.currentY();
       window.resetScroll('dashboard');
       const yAfter = ScrollLock.currentY();
-      const cache = (window._scrollCache && window._scrollCache.dashboard) || null;
+      const cache = window._scrollCache?.dashboard ?? null;
       ScrollLock.unlock();
       return { yBefore, yAfter, cache, lockedWasUpdated: yAfter === 0 };
     });

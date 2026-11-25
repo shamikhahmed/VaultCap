@@ -218,7 +218,7 @@ const VaultRecovery = {
 
   repair() {
     let fixed = 0;
-    ['banks','cards','documents','investments','cash','loans','vehicles','assets','friends','sims','emails','gadgets','digital','expenses','activity','trash','tags'].forEach(k => {
+    ['banks','cards','documents','investments','cash','loans','vehicles','assets','friends','sims','emails','gadgets','digital','expenses','payids','remits','giving','activity','trash','tags'].forEach(k => {
       if (!Array.isArray(S[k])) { S[k] = []; fixed++; }
     });
     ['banks','cards','documents','investments'].forEach(k => {

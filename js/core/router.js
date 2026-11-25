@@ -394,6 +394,9 @@ const R = {
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
       gold:        () => Assets.render(),
       bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
+      payids:      () => { if (typeof PayIDs !== 'undefined') PayIDs.render(); },
+      remits:      () => { if (typeof Remits !== 'undefined') Remits.render(); },
+      giving:      () => { if (typeof Giving !== 'undefined') Giving.render(); },
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => {
         const run = () => { if (typeof Zakat !== 'undefined') Zakat.render(); };
@@ -480,7 +483,10 @@ function updatePageChrome(pg) {
 
 window.resetScroll = function(pageId) {
   const pid = pageId || (typeof S !== 'undefined' ? S.currentPage : null);
-  if (window._scrollCache && pid) window._scrollCache[pid] = 0;
+  if (pid) {
+    window._scrollCache = window._scrollCache || {};
+    window._scrollCache[pid] = 0;
+  }
   if (pid && typeof S !== 'undefined' && S.currentPage === pid) {
     // window.scrollTo is a no-op while ScrollLock pins the body; unlock would restore stale Y.
     if (window.ScrollLock) ScrollLock.scrollTo(0);

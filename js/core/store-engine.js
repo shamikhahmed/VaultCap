@@ -5,8 +5,8 @@ let S = {
   unlocked: false, decoy: false,
   user: { name:'', avatar:'💼', theme:'dark', currency:'GBP', netWorth:0, nwHistory:[], email:'', phone:'', homeAddr:'', workAddr:'', dob:'', lastBackup:'' },
   pin: '123456', decoyPin: '', noPin: false,
-  modules: { banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true, family:true },
-  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], bills:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], activity:[], tags:[], trash:[],
+  modules: { payids:true, remits:true, giving:true, banks:true, cards:true, investments:true, cash:true, loans:true, sims:true, friends:true, assets:true, expenses:true, credit:true, zakat:true, tax:true, currency:true, gold:true, emails:true, gadgets:true, digital:true, documents:true, search:true, import:true, timeline:true, security:true, backup:true, recovery:true, workspace:true, vehicles:true, reminders:true, emergency:true, bc:true, bonds:true, family:true },
+  banks:[], cards:[], investments:[], cash:[], loans:[], friends:[], sims:[], assets:[], expenses:[], bills:[], emails:[], gadgets:[], digital:[], documents:[], vehicles:[], bc:[], bonds:[], payids:[], remits:[], giving:[], activity:[], tags:[], trash:[],
   family: { head: null, members: [] },
   familyMembers: [],
   vaultMeta: { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
@@ -30,7 +30,8 @@ const Store = {
       banks: S.banks, cards: S.cards, investments: S.investments, cash: S.cash, loans: S.loans, friends: S.friends, sims: S.sims,
       assets: S.assets, expenses: S.expenses, bills: S.bills || [], emails: S.emails, gadgets: S.gadgets,
       digital: S.digital, vehicles: S.vehicles, activity: S.activity.slice(0, 80), tags: S.tags, wallet: S.wallet, trash: S.trash,
-      documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [], emergency: S.emergency || {},
+      documents: S.documents || [], bc: S.bc || [], bonds: S.bonds || [],
+      payids: S.payids || [], remits: S.remits || [], giving: S.giving || [], emergency: S.emergency || {},
       family: S.family || { head: null, members: [] },
       familyMembers: S.familyMembers || [],
       vaultMeta: S.vaultMeta || { creditScore: {}, zakatState: {}, zakatCalc: {}, taxCalc: {} },
@@ -157,6 +158,11 @@ const Store = {
     if (!data || typeof data !== 'object') return false;
     if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
     Object.assign(S, data);
+    /* Modules added after a vault was created start ON (an absent flag reads as off). */
+    ['payids', 'remits', 'giving'].forEach(k => {
+      if (!Array.isArray(S[k])) S[k] = [];
+      if (S.modules && S.modules[k] === undefined) S.modules[k] = true;
+    });
     return true;
   },
 

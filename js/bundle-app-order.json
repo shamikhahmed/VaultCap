@@ -11,6 +11,8 @@
   "js/modules/currency-engine.js",
   "js/core/lookup-data.js",
   "js/core/world-catalog.js",
+  "js/core/id-check.js",
+  "js/core/locale-extras.js",
   "js/core/doc-schemas.js",
   "js/core/vault-safety.js",
   "js/core/module-registry.js",
@@ -55,6 +57,7 @@
   "js/modules/currency.js",
   "js/modules/gold.js",
   "js/modules/bc.js",
+  "js/modules/world-ledgers.js",
   "js/modules/bonds.js",
   "js/modules/creditScore.js"
 ]
