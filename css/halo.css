@@ -84,6 +84,13 @@ body.light {
   --h-bar: rgb(249 249 251 / .78);
   --border3: rgb(0 0 0 / .2);
   --info: #0066cc;
+  /* Cap DNA: light-mode accent is ink navy; gold stays the brand highlight */
+  --accent: #0a1220; --accent-fg: #ffffff; --cap-accent: #0a1220; --cap-accent-contrast: #ffffff;
+  --glow: rgb(10 18 32 / .14);
+}
+body.light .btn-p, body.light #homeOpenBtn {
+  background: #0a1220 !important; color: #fff !important;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .12) inset, 0 8px 22px -12px rgb(10 18 32 / .55) !important;
 }
 @media (prefers-contrast: more) {
   body { --h-hair: rgb(255 255 255 / .22); --h-text2: rgb(235 235 245 / .85); --h-text3: rgb(235 235 245 / .7); }
