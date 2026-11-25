@@ -201,7 +201,7 @@ body.light .sidebar { background: #fafafc !important; }
 
 /* Toggle → iOS switch */
 .tog { width: 51px !important; height: 31px !important; }
-.tog .ts { border-radius: 999px !important; background: var(--h-s3) !important; transition: background .25s var(--h-spring) !important; box-shadow: none !important; }
+.tog .ts { border-radius: 999px !important; background: rgb(120 120 128 / .36) !important; transition: background .25s var(--h-spring) !important; box-shadow: none !important; }
 .tog .ts::before {
   width: 27px !important; height: 27px !important; left: 2px !important; top: 2px !important; border-radius: 50% !important;
   background: #fff !important; box-shadow: 0 3px 8px rgb(0 0 0 / .25), 0 1px 1px rgb(0 0 0 / .16) !important;
@@ -300,6 +300,7 @@ body.light .vault-splash { background: radial-gradient(60% 50% at 50% 42%, rgb(2
 .key:active, .key.pressed { background: var(--h-s3) !important; transform: scale(.94); }
 .key-sub { font-size: .625rem !important; letter-spacing: .14em !important; color: var(--h-text3) !important; font-weight: 600 !important; }
 body.light .key { background: rgb(0 0 0 / .06) !important; }
+body.light .tog .ts { background: rgb(120 120 128 / .2) !important; }
 .key.act, body.light .key.act { background: transparent !important; color: var(--h-text2) !important; }
 body.light .key:active, body.light .key.pressed { background: rgb(0 0 0 / .14) !important; }
 
@@ -321,3 +322,71 @@ body.light .key:active, body.light .key.pressed { background: rgb(0 0 0 / .14) !
 #homeThemes:empty { min-height: 72px; }
 @keyframes halo-skel { from { background-position: 100% 0; } to { background-position: 0 0; } }
 @media (prefers-reduced-motion: reduce) { #homeModGrid:empty, #homeThemes:empty { animation: none; } }
+
+/* ── 13. Command palette → Spotlight ──────────────────────────────── */
+.cmd-bg { background: rgb(0 0 0 / .42) !important; backdrop-filter: blur(4px) !important; -webkit-backdrop-filter: blur(4px) !important; }
+body.light .cmd-bg { background: rgb(0 0 0 / .16) !important; }
+.cmd-box {
+  background: var(--h-s1) !important; border: 1px solid var(--h-hair2) !important; border-radius: 22px !important;
+  box-shadow: var(--h-shadow-2), 0 0 0 .5px rgb(0 0 0 / .4) !important; overflow: hidden;
+  animation: halo-spot .38s var(--h-spring) both;
+}
+@keyframes halo-spot { from { opacity: 0; transform: translateY(-10px) scale(.98); } }
+.cmd-in {
+  font-family: var(--h-display) !important; font-size: 1.375rem !important; font-weight: 400 !important; letter-spacing: -.01em;
+  background: transparent !important; border: 0 !important; border-bottom: 1px solid var(--h-hair) !important;
+  padding: 18px 20px !important; color: var(--h-text) !important; box-shadow: none !important; border-radius: 0 !important;
+}
+.cmd-in::placeholder { color: var(--h-text3) !important; }
+.ci-cat { font-size: .75rem !important; font-weight: 600 !important; letter-spacing: .01em !important; text-transform: none !important; color: var(--h-text3) !important; padding: 12px 20px 4px !important; }
+.ci { border-radius: 10px !important; margin: 0 8px !important; padding: 9px 12px !important; transition: background .12s ease; }
+.ci:hover, .ci.hi, .ci.sel, body.light .ci:hover, body.light .ci.sel { background: var(--h-gold-soft) !important; color: var(--h-text) !important; }
+.ci-ic { border-radius: 8px !important; color: var(--h-gold-text) !important; }
+.cmd-hint { color: var(--h-text3) !important; border-top: 1px solid var(--h-hair) !important; }
+
+/* ── 14. Toasts → iOS banners ─────────────────────────────────────── */
+.tw { top: calc(env(safe-area-inset-top, 0px) + 14px) !important; left: 50% !important; right: auto !important; transform: translateX(-50%); align-items: center; }
+.toast {
+  background: var(--h-bar) !important; color: var(--h-text) !important;
+  border: 1px solid var(--h-hair2) !important; border-left-width: 1px !important; border-radius: 999px !important;
+  backdrop-filter: saturate(180%) blur(24px); -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: 0 12px 36px -12px rgb(0 0 0 / .5) !important; padding: 10px 18px !important;
+  font-weight: 500; font-size: .9375rem !important; animation: halo-banner .5s var(--h-spring) both !important;
+}
+.toast.ok { box-shadow: inset 0 0 0 1px rgb(48 209 88 / .35), 0 12px 36px -12px rgb(0 0 0 / .5) !important; }
+.toast.err { box-shadow: inset 0 0 0 1px rgb(255 69 58 / .4), 0 12px 36px -12px rgb(0 0 0 / .5) !important; }
+@keyframes halo-banner { from { opacity: 0; transform: translateY(-16px) scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .cmd-box, .toast { animation: none !important; } }
+
+/* ── 15. More sheet → App Library: colour per section ─────────────── */
+.vc-more-overlay { background: var(--h-bg) !important; }
+.vc-sheet-section { font-size: .8125rem !important; font-weight: 600 !important; letter-spacing: .01em !important; text-transform: none !important; color: var(--h-text3) !important; }
+.vc-sheet-tile {
+  --c: 242 181 58;
+  background: var(--h-s1) !important; border: 1px solid var(--h-hair) !important; border-radius: 18px !important;
+  transition: transform .2s var(--h-pop), background .2s ease !important;
+}
+.vc-sheet-tile:active { transform: scale(.95); }
+.vc-sheet-tile .vc-icon-wrap {
+  width: 40px; height: 40px; border-radius: 12px !important; display: inline-grid !important; place-items: center;
+  color: rgb(var(--c)) !important; background: rgb(var(--c) / .15) !important;
+}
+.vc-sheet-tile-label { font-weight: 500 !important; color: var(--h-text) !important; }
+.vc-more-body > :nth-child(8n+2) .vc-sheet-tile { --c: 10 132 255; }
+.vc-more-body > :nth-child(8n+3) .vc-sheet-tile { --c: 255 159 10; }
+.vc-more-body > :nth-child(8n+4) .vc-sheet-tile { --c: 48 209 88; }
+.vc-more-body > :nth-child(8n+5) .vc-sheet-tile { --c: 94 92 230; }
+.vc-more-body > :nth-child(8n+6) .vc-sheet-tile { --c: 191 90 242; }
+.vc-more-body > :nth-child(8n+7) .vc-sheet-tile { --c: 48 200 190; }
+.vc-more-body > :nth-child(8n+8) .vc-sheet-tile { --c: 255 100 130; }
+body.light .vc-sheet-tile .vc-icon-wrap { filter: saturate(1.1) brightness(.85); }
+
+/* Welcome grid icons pick up the same spectrum */
+#homeModGrid > * { border-radius: 14px; transition: background .2s ease; }
+#homeModGrid > *:hover { background: var(--h-s2); }
+#homeModGrid > :nth-child(6n+1) svg { color: #0a84ff; } #homeModGrid > :nth-child(6n+2) svg { color: #ff9f0a; }
+#homeModGrid > :nth-child(6n+3) svg { color: #30d158; } #homeModGrid > :nth-child(6n+4) svg { color: #f2b53a; }
+#homeModGrid > :nth-child(6n+5) svg { color: #bf5af2; } #homeModGrid > :nth-child(6n+6) svg { color: #30c8be; }
+
+/* ── 16. Inspector seal row: readable in light ─────────────────────── */
+body.light .dash-inspector__seal-row, body.light .dash-inspector__seal-row * { color: var(--h-text) !important; }
