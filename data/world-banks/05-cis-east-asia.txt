@@ -1,0 +1,261 @@
+# Region: Russia, Caucasus, Central Asia, East Asia
+
+## RU Russia | cbr.ru | https://www.cbr.ru/eng/banking_sector/credit/
+> Most large Russian bank apps were removed from Apple's App Store in 2022–23 under sanctions; Android/web and RuStore remain. SWIFT access cut for many.
+Sberbank|g|A|sberbank.ru|SABRRUMM|State, largest; removed from App Store
+VTB|g|A|vtb.ru|VTBRRUMM|State; removed from App Store
+Gazprombank|g|A|gazprombank.ru|GAZPRUMM|
+Alfa-Bank|c|A|alfabank.ru|ALFARUMM|
+Rosselkhozbank|g|A|rshb.ru||Agricultural
+Promsvyazbank (PSB)|g|A|psbank.ru||Defence-sector bank
+T-Bank (Tinkoff)|d|A|tbank.ru|TICSRUMM|Largest digital bank
+Sovcombank|c|A|sovcombank.ru||
+Otkritie (merged into VTB)|c|N|open.ru||Merged 2024
+Raiffeisenbank Russia|x|B|raiffeisen.ru|RZBMRUMM|
+UniCredit Russia|x|?|unicreditbank.ru||Wind-down
+Ozon Bank|d|A|bank.ozon.ru||
+Yandex Bank|d|A|bank.yandex.ru||
+Pochta Bank|g|A|pochtabank.ru||Postal bank
+Sber SBP (Faster Payments)|w|A|sbp.nspk.ru||National instant payments
+
+## AM Armenia | cba.am | https://www.cba.am/en/SitePages/fscfobanks.aspx
+Ameriabank|c|B|ameriabank.am|ARMIAM22|Largest
+ACBA Bank|c|B|acba.am|AGCAAM22|
+Ardshinbank|c|B|ardshinbank.am|ASHBAM22|
+Inecobank|c|B|inecobank.am|INECAM22|
+Evocabank|d|B|evoca.am||
+Converse Bank|c|B|conversebank.am||
+Armeconombank|c|B|aeb.am||
+Unibank Armenia|c|B|unibank.am||
+IDBank|c|B|idbank.am||
+HSBC Armenia|x|N|hsbc.am||Sold to Ardshinbank 2024*
+VTB Armenia|x|?|vtb.am||
+Idram|w|B|idram.am||Wallet
+Telcell|w|B|telcell.am||Wallet
+
+## AZ Azerbaijan | cbar.az | https://www.cbar.az/page-41/banks
+Kapital Bank|c|B|kapitalbank.az|AIIBAZ2X|Birbank app
+International Bank of Azerbaijan (ABB)|g|B|abb-bank.az|IBAZAZ2X|State
+PASHA Bank|c|B|pashabank.az|PAHAAZ22|
+Bank Respublika|c|B|bankrespublika.az||
+Xalq Bank|c|B|xalqbank.az||
+Unibank|c|B|unibank.az||
+AccessBank Azerbaijan|c|B|accessbank.az||
+Yelo Bank|d|B|yelo.az||
+Rabitabank|c|B|rabitabank.com||
+Leobank|d|B|leobank.az||Digital bank
+m10|w|B|m10.az||Wallet
+
+## GE Georgia | nbg.gov.ge | https://nbg.gov.ge/en/page/commercial-banks
+Bank of Georgia|c|B|bankofgeorgia.ge|BAGAGE22|Largest
+TBC Bank|c|B|tbcbank.ge|TBCBGE22|
+Liberty Bank|c|B|libertybank.ge|LBRTGE22|
+ProCredit Bank Georgia|c|B|procreditbank.ge||
+Basisbank|c|B|basisbank.ge||
+Credo Bank|m|B|credobank.ge||
+Tera Bank|c|B|terabank.ge||
+Halyk Bank Georgia|x|B|halykbank.ge||
+Space (TBC)|d|B|space.ge||Digital bank
+Paybox|w|B|tbcpay.ge||Payment kiosks/wallet*
+
+## KG Kyrgyzstan | nbkr.kg | https://www.nbkr.kg/index1.jsp?item=63&lang=ENG
+Optima Bank|c|B|optimabank.kg||
+Demir Bank|c|B|demirbank.kg||
+KICB|c|B|kicb.net||
+Bakai Bank|c|B|bakai.kg||
+RSK Bank|g|B|rsk.kg||State
+Aiyl Bank|g|B|ab.kg||State
+MBank (Kyrgyzstan)|d|B|mbank.kg||Leading app
+Keremet Bank|c|B|keremetbank.kg||Sanctioned 2024*
+Elcart|w|N|elcart.kg||National card scheme
+O!Dengi|w|B|odengi.kg||Wallet
+
+## KZ Kazakhstan | ardfm.kz | https://www.gov.kz/memleket/entities/ardfm
+Halyk Bank|c|B|halykbank.kz|HSBKKZKX|Largest
+Kaspi Bank|d|B|kaspi.kz|CASPKZKA|Super-app
+Freedom Bank|d|B|bankffin.kz||
+ForteBank|c|B|forte.kz|IRTYKZKA|
+Bank CenterCredit|c|B|bcc.kz|KCJBKZKX|
+Jusan Bank|c|B|jusan.kz||
+Eurasian Bank|c|B|eubank.kz||
+Home Credit Bank Kazakhstan|c|B|homebank.kz||
+RBK Bank|c|B|bankrbk.kz||
+Otbasy Bank|g|B|otbasybank.kz||State housing savings bank
+Citibank Kazakhstan|x|N|citibank.kz||
+Alatau City Bank|c|?|alataucitybank.kz||Formerly Sberbank KZ / Bereke*
+
+## TJ Tajikistan | nbt.tj | https://nbt.tj/en/banking_system/
+Amonatbonk|g|B|amonatbonk.tj||State savings bank
+Orienbank|c|B|orienbank.tj||
+Eskhata Bank|c|B|eskhata.com||
+Spitamen Bank|c|B|spitamenbank.tj||
+Bank Arvand|c|B|arvand.tj||
+Humo|m|B|humo.tj||
+Alif Bank|d|B|alif.tj||Islamic digital bank
+Dushanbe City Bank|d|B|dc.tj||
+
+## TM Turkmenistan | cbt.tm | https://www.cbt.tm
+Türkmenbaşy Bank|g|?|tnbk.tm||State
+Daýhanbank|g|?|daykhanbank.gov.tm||State agricultural
+Halk Bank Turkmenistan|g|?|halkbank.gov.tm||State savings*
+Senagat Bank|g|?|senagatbank.gov.tm||State
+State Bank for Foreign Economic Affairs (Türkmenistan)|g|N|tfeb.gov.tm||
+Rysgal Bank|c|?|rysgalbank.tm||Private
+Altyn Asyr Card|w|?|||National card system*
+> Closed market; most banking is state-owned. App availability limited and unverified.
+
+## UZ Uzbekistan | cbu.uz | https://cbu.uz/en/credit-organizations/banks/
+National Bank of Uzbekistan (NBU)|g|B|nbu.uz|NBFAUZ2X|State, largest
+Uzpromstroybank (SQB)|g|B|sqb.uz||State
+Asaka Bank|g|B|asakabank.uz||State
+Agrobank|g|B|agrobank.uz||State
+Xalq Banki|g|B|xb.uz||State
+Ipoteka Bank (OTP)|c|B|ipotekabank.uz||OTP group
+Kapitalbank|c|B|kapitalbank.uz||
+Hamkorbank|c|B|hamkorbank.uz||
+TBC Bank Uzbekistan|d|B|tbcbank.uz||Digital
+Anorbank|d|B|anorbank.uz||
+Uzum Bank|d|B|uzumbank.uz||Super-app
+Payme|w|B|payme.uz||Wallet
+Click|w|B|click.uz||Wallet
+
+## CN China | nfra.gov.cn | https://www.nfra.gov.cn/en/view/pages/index/index.html
+Industrial and Commercial Bank of China (ICBC)|g|B|icbc.com.cn|ICBKCNBJ|World's largest bank
+China Construction Bank|g|B|ccb.com|PCBCCNBJ|
+Agricultural Bank of China|g|B|abchina.com|ABOCCNBJ|
+Bank of China|g|B|boc.cn|BKCHCNBJ|
+Bank of Communications|g|B|bankcomm.com|COMMCNSH|
+Postal Savings Bank of China|g|B|psbc.com|PSBCCNBJ|
+China Merchants Bank|c|B|cmbchina.com|CMBCCNBS|
+Industrial Bank|c|B|cib.com.cn|FJIBCNBA|
+China CITIC Bank|c|B|citicbank.com|CIBKCNBJ|
+Shanghai Pudong Development Bank|c|B|spdb.com.cn|SPDBCNSH|
+China Minsheng Bank|c|B|cmbc.com.cn|MSBCCNBJ|
+China Everbright Bank|c|B|cebbank.com|EVERCNBJ|
+Ping An Bank|c|B|bank.pingan.com|SZDBCNBS|
+Hua Xia Bank|c|B|hxb.com.cn|HXBKCNBJ|
+China Guangfa Bank|c|B|cgbchina.com.cn||
+Bank of Beijing|c|B|bankofbeijing.com.cn||
+Bank of Shanghai|c|B|bosc.cn||
+WeBank (Tencent)|d|B|webank.com||Digital bank
+MYbank (Ant)|d|B|mybank.cn||Digital bank
+Alipay|w|B|alipay.com||Wallet
+WeChat Pay|w|B|pay.weixin.qq.com||Wallet
+UnionPay app (Yunshanfu)|w|B|unionpayintl.com||
+HSBC China|x|B|hsbc.com.cn||
+Standard Chartered China|x|B|sc.com/cn||
+
+## HK Hong Kong | hkma.gov.hk | https://www.hkma.gov.hk/eng/key-functions/banking/banking-regulatory-and-supervisory-regime/register-of-authorized-institutions/
+HSBC Hong Kong|c|B|hsbc.com.hk|HSBCHKHH|
+Hang Seng Bank|c|B|hangseng.com|HASEHKHH|HSBC privatisation 2025*
+Bank of China (Hong Kong)|c|B|bochk.com|BKCHHKHH|
+Standard Chartered Hong Kong|c|B|sc.com/hk|SCBLHKHH|
+Bank of East Asia|c|B|hkbea.com|BEASHKHH|
+DBS Hong Kong|x|B|dbs.com.hk|DHBKHKHH|
+Citibank Hong Kong|x|B|citibank.com.hk|CITIHKHX|
+ICBC (Asia)|x|B|icbcasia.com||
+China Construction Bank (Asia)|x|B|asia.ccb.com||
+Dah Sing Bank|c|B|dahsing.com||
+OCBC Hong Kong|x|B|ocbc.com.hk||
+Nanyang Commercial Bank|c|B|ncb.com.hk||
+ZA Bank|d|B|za.group||Virtual bank
+Mox Bank|d|B|mox.com||Virtual bank (SC)
+WeLab Bank|d|B|welab.bank||
+livi bank|d|B|livibank.com||
+Airstar Bank|d|B|airstarbank.com||
+PAOB|d|B|paob.com.hk||
+Fusion Bank|d|B|fusionbank.com||
+Ant Bank (HK)|d|B|antbank.hk||
+AlipayHK|w|B|alipayhk.com||
+Octopus|w|B|octopus.com.hk||
+PayMe (HSBC)|w|B|payme.hsbc.com.hk||
+FPS (Faster Payment System)|w|N|fps.hk||Interbank
+
+## JP Japan | fsa.go.jp | https://www.fsa.go.jp/en/regulated/licensed/index.html
+MUFG Bank|c|B|bk.mufg.jp|BOTKJPJT|Largest
+Sumitomo Mitsui Banking Corp (SMBC)|c|B|smbc.co.jp|SMBCJPJT|Olive app
+Mizuho Bank|c|B|mizuhobank.co.jp|MHCBJPJT|
+Resona Bank|c|B|resonabank.co.jp|DIWAJPJT|
+Japan Post Bank|g|B|jp-bank.japanpost.jp|JPPSJPJ1|Largest by deposits
+SBI Shinsei Bank|c|B|sbishinseibank.co.jp||
+Aozora Bank|c|B|aozorabank.co.jp||
+Sumitomo Mitsui Trust Bank|c|B|smtb.jp||
+Rakuten Bank|d|B|rakuten-bank.co.jp||
+Sumishin SBI Net Bank|d|B|netbk.co.jp||
+PayPay Bank|d|B|paypay-bank.co.jp||
+au Jibun Bank|d|B|jibunbank.co.jp||
+Sony Bank|d|B|sonybank.net||
+Seven Bank|d|B|sevenbank.co.jp||ATM bank
+Minna Bank|d|B|minna-no-ginko.com||
+Shizuoka Bank|c|B|shizuokabank.co.jp||Regional
+Bank of Yokohama|c|B|boy.co.jp||Regional
+Fukuoka Financial Group|c|B|fukuoka-fg.com||Regional
+PayPay|w|B|paypay.ne.jp||Largest QR wallet
+LINE Pay|w|N|pay.line.me||Closed in Japan 2025
+Rakuten Pay|w|B|pay.rakuten.co.jp||
+
+## KP North Korea | — | https://en.wikipedia.org/wiki/Central_Bank_of_the_Democratic_People%27s_Republic_of_Korea
+> Sanctioned and isolated; no access from international app stores. Listed for completeness only.
+Central Bank of the DPRK|g|N|||Issues Jonsong cash card
+Foreign Trade Bank|g|N|||US/UN sanctioned
+Korea Kwangson Banking Corp|g|N|||Sanctioned*
+
+## KR South Korea | fss.or.kr | https://www.fss.or.kr/eng/main/main.do
+KB Kookmin Bank|c|B|kbstar.com|CZNBKRSE|Largest
+Shinhan Bank|c|B|shinhan.com|SHBKKRSE|SOL app
+Hana Bank|c|B|kebhana.com|KOEXKRSE|
+Woori Bank|c|B|wooribank.com|HVBKKRSE|
+NH NongHyup Bank|c|B|nonghyup.com|NACFKRSE|
+Industrial Bank of Korea (IBK)|g|B|ibk.co.kr|IBKOKRSE|State
+Korea Development Bank|g|N|kdb.co.kr|KODBKRSE|
+SC First Bank|x|B|standardchartered.co.kr|SCBLKRSE|
+iM Bank (ex-DGB)|c|B|imbank.co.kr||
+Busan Bank|c|B|busanbank.co.kr||
+KakaoBank|d|B|kakaobank.com||Largest internet bank
+K Bank|d|B|kbanknow.com||
+Toss Bank|d|B|tossbank.com||
+Toss|w|B|toss.im||Super-app
+Naver Pay|w|B|pay.naver.com||
+Kakao Pay|w|B|kakaopay.com||
+
+## MN Mongolia | mongolbank.mn | https://www.mongolbank.mn/en/banks
+Khan Bank|c|B|khanbank.com|AGMOMNUB|Largest
+Golomt Bank|c|B|golomtbank.com|GOLOMNUB|
+Trade and Development Bank (TDB)|c|B|tdbm.mn|TDBMMNUB|
+XacBank|c|B|xacbank.mn||
+State Bank of Mongolia|g|B|statebank.mn||
+Bogd Bank|c|?|bogdbank.com||
+Capitron Bank|c|?|capitronbank.mn||
+M bank|d|B|m-bank.mn||Digital bank
+QPay|w|B|qpay.mn||QR payments
+SocialPay (Golomt)|w|B|socialpay.mn||
+
+## MO Macao | amcm.gov.mo | https://www.amcm.gov.mo/en/banking-sector/list-of-authorized-institutions
+Banco Nacional Ultramarino (BNU)|c|B|bnu.com.mo|BNULMOMX|Note-issuing
+Bank of China Macau|x|B|bocmacau.com|BKCHMOMX|Note-issuing
+ICBC (Macau)|x|B|icbc.com.mo||
+Tai Fung Bank|c|B|taifungbank.com||
+Luso International Banking|c|B|lusobank.com.mo||
+OCBC Bank (Macau)|x|B|ocbc.com.mo||Formerly Banco Weng Hang
+MPay|w|B|macaupass.com||Wallet
+BOC Pay Macau|w|B|bocmacau.com||
+
+## TW Taiwan | fsc.gov.tw | https://www.banking.gov.tw/en/home.jsp?id=60
+Bank of Taiwan|g|B|bot.com.tw|BKTWTWTP|State
+Land Bank of Taiwan|g|B|landbank.com.tw||State
+Taiwan Cooperative Bank|g|B|tcb-bank.com.tw||
+First Commercial Bank|g|B|firstbank.com.tw|FCBKTWTP|
+Hua Nan Bank|g|B|hncb.com.tw||
+Chang Hwa Bank|g|B|bankchb.com||
+Mega International Commercial Bank|g|B|megabank.com.tw|ICBCTWTP|
+CTBC Bank|c|B|ctbcbank.com|CTCBTWTP|
+Cathay United Bank|c|B|cathaybk.com.tw|UWCBTWTP|
+Fubon (Taipei Fubon Bank)|c|B|fubon.com|TPBKTWTP|
+E.SUN Bank|c|B|esunbank.com.tw|ESUNTWTP|
+Taishin Bank|c|B|taishinbank.com.tw||
+Chunghwa Post|g|B|post.gov.tw||
+LINE Bank Taiwan|d|B|linebank.com.tw||Internet bank
+Rakuten International Commercial Bank|d|B|rakuten-bank.com.tw||
+Next Bank|d|B|nextbank.com.tw||
+JKOPay|w|B|jkopay.com||
+LINE Pay Taiwan|w|B|pay.line.me||

@@ -1,0 +1,200 @@
+# Region: South Asia
+# Line format: name|type|app|web|swift|note
+# type: c=commercial i=islamic d=digital m=microfinance g=government x=international w=wallet
+# app:  B=iOS+Android  A=Android only  I=iOS only  W=web banking only  N=no app  ?=not verified
+# A trailing "*" on the note means the entry itself is unverified.
+
+## AF Afghanistan | dab.gov.af | https://www.dab.gov.af/node/1902 ; https://en.wikipedia.org/wiki/List_of_banks_in_Afghanistan
+Afghanistan International Bank (AIB)|c|B|aib.af||Largest private bank by deposits
+Azizi Bank|c|B|azizibank.af||Largest branch/ATM network
+Islamic Bank of Afghanistan|i|?|iba.af||Formerly Bakhtar Bank
+Afghan United Bank|c|?|aub.af||
+Ghazanfar Bank|c|?|gbank.af||
+Maiwand Bank|c|?|maiwandbank.com||*
+The First MicroFinance Bank|m|?|fmfb.com.af||Aga Khan network
+Bank-e-Millie Afghan|g|?|bma.com.af||State-owned
+Pashtany Bank|g|?|pashtanybank.com.af||State-owned
+New Kabul Bank|g|?|newkabulbank.af||State-owned
+National Bank of Pakistan (Kabul)|x|N|nbp.com.pk||Foreign branch
+Bank Alfalah (Kabul)|x|N|bankalfalah.com||Foreign branch
+M-Paisa (Roshan)|w|A|roshan.af||Mobile money
+HesabPay|w|B|hesabpay.com||Digital wallet
+
+## BD Bangladesh | bb.org.bd | https://www.bb.org.bd/en/index.php/financialactivity/bankfi
+Sonali Bank|g|B|sonalibank.com.bd|BSONBDDH|State-owned, largest
+Janata Bank|g|?|jb.com.bd|JANBBDDH|State-owned
+Agrani Bank|g|?|agranibank.org|AGBKBDDH|State-owned
+Rupali Bank|g|?|rupalibank.org|RUPBBDDH|State-owned
+Bangladesh Krishi Bank|g|?|krishibank.org.bd||Agricultural
+BRAC Bank|c|B|bracbank.com|BRAKBDDH|Astha app
+Dutch-Bangla Bank|c|B|dutchbanglabank.com|DBBLBDDH|Rocket mobile banking
+Eastern Bank (EBL)|c|B|ebl.com.bd|EBLDBDDH|EBL Skybanking
+City Bank|c|B|thecitybank.com|CIBLBDDH|Citytouch
+Prime Bank|c|B|primebank.com.bd|PRBLBDDH|
+Mutual Trust Bank|c|B|mutualtrustbank.com|MTBLBDDH|
+Pubali Bank|c|B|pubalibangla.com|PUBABDDH|
+United Commercial Bank (UCB)|c|B|ucb.com.bd|UCBLBDDH|Upay wallet
+Islami Bank Bangladesh|i|B|islamibankbd.com|IBBLBDDH|Cellfin app
+Al-Arafah Islami Bank|i|?|al-arafahbank.com||
+Social Islami Bank|i|?|siblbd.com||
+Shahjalal Islami Bank|i|?|sjiblbd.com||
+EXIM Bank Bangladesh|i|?|eximbankbd.com||
+First Security Islami Bank|i|?|fsiblbd.com||
+Standard Chartered Bangladesh|x|B|sc.com/bd|SCBLBDDX|
+HSBC Bangladesh|x|B|hsbc.com.bd|HSBCBDDH|
+bKash|w|B|bkash.com||Largest mobile financial service (BRAC)
+Nagad|w|B|nagad.com.bd||Postal-department MFS
+Rocket (DBBL)|w|B|dutchbanglabank.com||Mobile banking
+Upay|w|B|upaybd.com||UCB MFS
+Grameen Bank|m|N|grameen.com||Microfinance pioneer
+
+## BT Bhutan | rma.org.bt | https://www.rma.org.bt
+Bank of Bhutan|g|B|bob.bt|BHUBBTBT|mBoB app
+Bhutan National Bank|c|B|bnb.bt|BNBTBTBT|
+Druk PNB Bank|c|?|drukpnbbank.bt||
+T Bank|c|?|tbankltd.com||
+Bhutan Development Bank|g|?|bdb.bt||
+Digital Kidu (DK Bank)|d|B|dkbank.bt||Bhutan's first digital bank (2024)*
+
+## IN India | rbi.org.in | https://www.rbi.org.in/commonperson/English/Scripts/BankLinks.aspx
+State Bank of India|g|B|sbi.co.in|SBININBB|YONO app; largest bank
+Punjab National Bank|g|B|pnbindia.in|PUNBINBB|
+Bank of Baroda|g|B|bankofbaroda.in|BARBINBB|bob World
+Canara Bank|g|B|canarabank.com|CNRBINBB|
+Union Bank of India|g|B|unionbankofindia.co.in|UBININBB|
+Bank of India|g|B|bankofindia.co.in|BKIDINBB|
+Indian Bank|g|B|indianbank.in|IDIBINBB|
+Central Bank of India|g|B|centralbankofindia.co.in|CBININBB|
+Indian Overseas Bank|g|B|iob.in|IOBAINBB|
+UCO Bank|g|B|ucobank.com|UCBAINBB|
+Bank of Maharashtra|g|B|bankofmaharashtra.in|MAHBINBB|
+Punjab & Sind Bank|g|B|punjabandsindbank.co.in|PSIBINBB|
+HDFC Bank|c|B|hdfcbank.com|HDFCINBB|Largest private bank
+ICICI Bank|c|B|icicibank.com|ICICINBB|iMobile Pay
+Axis Bank|c|B|axisbank.com|AXISINBB|
+Kotak Mahindra Bank|c|B|kotak.com|KKBKINBB|kotak811
+IndusInd Bank|c|B|indusind.com|INDBINBB|
+Yes Bank|c|B|yesbank.in|YESBINBB|
+IDFC First Bank|c|B|idfcfirstbank.com|IDFBINBB|
+IDBI Bank|c|B|idbibank.in|IBKLINBB|
+Federal Bank|c|B|federalbank.co.in|FDRLINBB|FedMobile
+South Indian Bank|c|B|southindianbank.com|SIBLINBB|
+Karur Vysya Bank|c|B|kvb.co.in|KVBLINBB|
+City Union Bank|c|B|cityunionbank.com|CIUBINBB|
+RBL Bank|c|B|rblbank.com|RATNINBB|
+Bandhan Bank|c|B|bandhanbank.com|BDBLINBB|
+AU Small Finance Bank|m|B|au.bank.in||Small finance bank
+Equitas Small Finance Bank|m|B|equitasbank.com||Small finance bank
+Ujjivan Small Finance Bank|m|B|ujjivansfb.in||Small finance bank
+Jana Small Finance Bank|m|B|janabank.com||Small finance bank
+Airtel Payments Bank|d|B|airtel.in/bank||Payments bank
+India Post Payments Bank|g|B|ippbonline.com||Payments bank
+Paytm Payments Bank|d|B|paytmbank.com||RBI restricted new deposits 2024
+Fino Payments Bank|d|B|finobank.com||Payments bank
+Jio Payments Bank|d|B|jiopaymentsbank.com||Payments bank
+Paytm|w|B|paytm.com||UPI wallet
+PhonePe|w|B|phonepe.com||UPI app
+Google Pay India|w|B|pay.google.com||UPI app
+BHIM|w|B|bhimupi.org.in||NPCI UPI app
+Jupiter|d|B|jupiter.money||Neobank (partner Federal Bank)
+Fi Money|d|B|fi.money||Neobank (partner Federal Bank)
+Citi India|x|N|citibank.co.in|CITIINBX|Retail sold to Axis (2023)
+HSBC India|x|B|hsbc.co.in|HSBCINBB|
+Standard Chartered India|x|B|sc.com/in|SCBLINBB|
+DBS Bank India|x|B|dbs.com/in|DBSSINBB|digibank
+
+## LK Sri Lanka | cbsl.gov.lk | https://www.cbsl.gov.lk/en/authorized-financial-institutions/licensed-commercial-banks
+Bank of Ceylon|g|B|boc.lk|BCEYLKLX|State-owned, largest
+People's Bank|g|B|peoplesbank.lk|PSBKLKLX|State-owned
+Commercial Bank of Ceylon|c|B|combank.lk|CCEYLKLX|
+Hatton National Bank|c|B|hnb.lk|HBLILKLX|
+Sampath Bank|c|B|sampath.lk|BSAMLKLX|
+Seylan Bank|c|B|seylan.lk|SEYBLKLX|
+Nations Trust Bank|c|B|nationstrust.com|NTBCLKLX|
+DFCC Bank|c|B|dfcc.lk|DFCCLKLX|
+National Development Bank (NDB)|c|B|ndbbank.com|NDBSLKLX|
+Pan Asia Bank|c|B|pabcbank.com||
+Union Bank of Colombo|c|?|unionb.com||
+Amana Bank|i|B|amanabank.lk||Islamic
+National Savings Bank|g|B|nsb.lk||State savings bank
+Regional Development Bank (Pradeshiya Sanwardhana)|g|?|rdb.lk||
+HSBC Sri Lanka|x|B|hsbc.lk|HSBCLKLX|
+Standard Chartered Sri Lanka|x|B|sc.com/lk|SCBLLKLX|
+FriMi|d|B|frimi.lk||Digital bank by Nations Trust
+eZ Cash (Dialog)|w|B|ezcash.lk||Mobile money
+
+## MV Maldives | mma.gov.mv | https://www.mma.gov.mv
+Bank of Maldives|g|B|bankofmaldives.com.mv|MALBMVMV|State-majority, largest
+Maldives Islamic Bank|i|B|mib.com.mv||
+State Bank of India (Malé)|x|?|sbimaldives.com||
+Mauritius Commercial Bank (Maldives)|x|?|mcb.com.mv||
+Commercial Bank of Maldives|c|B|cbm.mv||Formerly Commercial Bank of Maldives Private Ltd*
+Habib Bank (Malé)|x|N|hbl.com||Branch
+Bank of Ceylon (Malé)|x|N|boc.lk||Branch
+m-Faisaa (Ooredoo)|w|B|ooredoo.mv||Mobile money*
+Dhiraagu Pay|w|B|dhiraagu.com.mv||Mobile money
+
+## NP Nepal | nrb.org.np | https://www.nrb.org.np/bank-and-financial-institutions/
+Rastriya Banijya Bank|g|B|rbb.com.np|RBBANPKA|State-owned
+Nepal Bank|g|B|nepalbank.com.np|NEBLNPKA|
+Agricultural Development Bank|g|B|adbl.gov.np||
+Nabil Bank|c|B|nabilbank.com|NARBNPKA|
+NIC Asia Bank|c|B|nicasiabank.com||
+Global IME Bank|c|B|globalimebank.com||
+Himalayan Bank|c|B|himalayanbank.com|HIMANPKA|
+Nepal Investment Mega Bank|c|B|nimb.com.np||
+Standard Chartered Nepal|x|B|sc.com/np|SCBLNPKA|
+Everest Bank|c|B|everestbankltd.com||
+Kumari Bank|c|B|kumaribank.com||
+Prabhu Bank|c|B|prabhubank.com||
+Siddhartha Bank|c|B|siddharthabank.com||
+Sanima Bank|c|B|sanimabank.com||
+Machhapuchchhre Bank|c|B|machbank.com||
+Laxmi Sunrise Bank|c|B|laxmisunrise.com||
+Prime Commercial Bank|c|B|primebank.com.np||
+NMB Bank|c|B|nmb.com.np||
+Citizens Bank International|c|B|ctznbank.com||
+eSewa|w|B|esewa.com.np||Largest wallet
+Khalti|w|B|khalti.com||Wallet
+IME Pay|w|B|imepay.com.np||Wallet
+
+## PK Pakistan | sbp.org.pk | https://www.sbp.org.pk/f_links/index.asp
+HBL|c|B|hbl.com|HABBPKKA|Largest private bank
+UBL|c|B|ubl.com.pk|UNILPKKA|
+MCB Bank|c|B|mcb.com.pk|MUCBPKKA|
+Allied Bank|c|B|abl.com|ABPAPKKA|myABL
+Bank Alfalah|c|B|bankalfalah.com|ALFHPKKA|Alfa app
+Askari Bank|c|B|askaribank.com|ASCMPKKA|
+Bank Al Habib|c|B|bankalhabib.com|BAHLPKKA|
+Habib Metro Bank|c|B|habibmetro.com|MPBLPKKA|
+Soneri Bank|c|B|soneribank.com|SONEPKKA|
+JS Bank|c|B|jsbl.com|JSBLPKKA|Zindigi parent
+Silkbank|c|B|silkbank.com.pk|SAUDPKKA|Merged into United Bank (2025)*
+Samba Bank|c|B|samba.com.pk|SAMBPKKA|
+Meezan Bank|i|B|meezanbank.com|MEZNPKKA|Largest Islamic bank
+Faysal Bank|i|B|faysalbank.com|FAYSPKKA|Fully Islamic since 2023
+BankIslami|i|B|bankislami.com.pk|BKIPPKKA|
+Dubai Islamic Bank Pakistan|i|B|dibpak.com|DUIBPKKA|
+Al Baraka Bank Pakistan|i|B|albaraka.com.pk|AIINPKKA|
+MCB Islamic Bank|i|B|mcbislamicbank.com||
+Bank Makramah|c|?|bankmakramah.com|SUMBPKKA|Formerly Summit Bank (renamed 2023)
+National Bank of Pakistan|g|B|nbp.com.pk|NBPAPKKA|State-owned
+Bank of Punjab|g|B|bop.com.pk|PUNJPKKA|Provincial
+Sindh Bank|g|B|sindhbank.com.pk|SINDPKKA|Provincial
+Bank of Khyber|g|B|bok.com.pk|KHYBPKKA|Provincial
+First Women Bank|g|?|fwbl.com.pk||
+Zarai Taraqiati Bank (ZTBL)|g|?|ztbl.com.pk||Agricultural
+Standard Chartered Pakistan|x|B|sc.com/pk|SCBLPKKX|
+Citibank Pakistan|x|N|citibank.com.pk|CITIPKKX|Corporate only
+Easypaisa Bank|d|B|easypaisa.com.pk||Telenor/Ant; converted to digital bank 2025
+JazzCash / Mobilink Microfinance Bank|w|B|jazzcash.com.pk||Largest mobile wallet
+SadaPay|d|B|sadapay.pk||EMI
+NayaPay|d|B|nayapay.com||EMI
+Zindigi (JS Bank)|d|B|zindigi.pk||
+Mashreq Pakistan|d|B|mashreqpakistan.com||Digital bank licence*
+HBL Microfinance Bank|m|B|hblmfb.com||
+Khushhali Microfinance Bank|m|B|khushhalibank.com.pk||
+U Microfinance Bank (Upaisa)|m|B|ubank.com.pk||
+FINCA Microfinance Bank|m|B|finca.pk||SimSim wallet
+NRSP Microfinance Bank|m|?|nrspbank.com||
+Apna Microfinance Bank|m|?|apnabank.com.pk||

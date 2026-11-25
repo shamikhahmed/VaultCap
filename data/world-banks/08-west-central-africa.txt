@@ -1,0 +1,307 @@
+# Region: West & Central Africa
+# WAEMU (BJ BF CI GW ML NE SN TG): BCEAO / Commission Bancaire UMOA — 136 banks + 25 financial
+#   institutions licensed at end-2025: https://www.financialafrik.com/en/2026/04/01/uemoa-161-credit-institutions-approved-by-the-end-of-2025/
+# CEMAC (CM CF CG GA GQ TD): BEAC / COBAC — https://www.beac.int
+# Pan-African groups present in many markets: Ecobank, Société Générale (now largely sold to local/pan-African buyers),
+#   Orabank, Coris, BOA (Bank of Africa), UBA, Afriland First Bank, BGFIBank, Attijariwafa, NSIA, Oragroup.
+# Mobile money: Orange Money, Wave, MTN MoMo, Moov Money (Flooz), Free Money, Airtel Money.
+
+## BF Burkina Faso | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Coris Bank International|c|B|coris-bank.com||Largest
+Ecobank Burkina|x|B|ecobank.com||
+Bank of Africa Burkina Faso|x|B|boaburkinafaso.com||
+Société Générale Burkina Faso|x|B|societegenerale.bf||*
+UBA Burkina Faso|x|B|ubagroup.com||
+Banque Commerciale du Burkina|g|?|bcb.bf||
+Orabank Burkina|x|?|orabank.net||
+Wendkuni Bank International|c|?|wbi.bf||*
+Orange Money Burkina|w|B|orange.bf||
+Moov Money Burkina|w|B|moov-africa.bf||
+
+## BJ Benin | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Ecobank Bénin|x|B|ecobank.com||
+Bank of Africa Bénin|x|B|boabenin.com||
+Orabank Bénin|x|?|orabank.net||
+Société Générale Bénin (Vista Bank)|x|?|vistabank.bj||Acquired by Vista 2024*
+UBA Bénin|x|B|ubagroup.com||
+NSIA Banque Bénin|x|B|nsiabanque.bj||
+Coris Bank Bénin|x|?|coris-bank.com||
+BIIC (Banque Internationale pour l'Industrie et le Commerce)|g|?|biic-bank.com||State
+MTN MoMo Bénin|w|B|mtn.bj||
+Moov Money Bénin|w|B|moov-africa.bj||
+Celtiis Cash|w|?|celtiis.bj||*
+
+## CI Côte d'Ivoire | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Société Générale Côte d'Ivoire|x|B|societegenerale.ci||Largest
+SIB (Société Ivoirienne de Banque)|x|B|sib.ci||Attijariwafa group
+Ecobank Côte d'Ivoire|x|B|ecobank.com||
+NSIA Banque CI|c|B|nsiabanque.ci||
+BICICI|c|?|bicici.com||Formerly BNP; now state-backed*
+Banque Atlantique CI|x|B|banqueatlantique.net||BCP Morocco
+Bank of Africa CI|x|B|boacoteivoire.com||
+Coris Bank CI|x|?|coris-bank.com||
+BNI (Banque Nationale d'Investissement)|g|?|bni.ci||State
+Standard Chartered CI|x|N|sc.com/ci||
+Orange Money CI|w|B|orange.ci||
+Wave CI|w|B|wave.com||
+MTN MoMo CI|w|B|mtn.ci||
+Moov Money CI|w|B|moov-africa.ci||
+Djamo|d|B|djamo.com||Neobank
+
+## CV Cabo Verde | bcv.cv | https://www.bcv.cv/
+Caixa Económica de Cabo Verde|c|B|caixa.cv||
+Banco Comercial do Atlântico (BCA)|c|B|bca.cv||
+Banco Cabo-Verdiano de Negócios (BCN)|c|?|bcn.cv||
+Banco Interatlântico|c|?|bi.cv||
+International Investment Bank|c|?|iib.cv||*
+Ecobank Cabo Verde|x|?|ecobank.com||
+
+## GH Ghana | bog.gov.gh | https://www.bog.gov.gh/supervision-regulation/registered-institutions/banks/
+GCB Bank|g|B|gcbbank.com.gh|GHCBGHAC|State-majority, largest
+Ecobank Ghana|x|B|ecobank.com|ECOCGHAC|
+Stanbic Bank Ghana|x|B|stanbicbank.com.gh|SBICGHAC|
+Absa Bank Ghana|x|B|absa.com.gh|BARCGHAC|
+Standard Chartered Ghana|x|B|sc.com/gh|SCBLGHAC|
+Fidelity Bank Ghana|c|B|fidelitybank.com.gh||
+CalBank|c|B|calbank.net||
+Zenith Bank Ghana|x|B|zenithbank.com.gh||
+Access Bank Ghana|x|B|ghana.accessbankplc.com||
+Agricultural Development Bank|g|B|agricbank.com||
+National Investment Bank|g|?|nib-ghana.com||
+Consolidated Bank Ghana|g|B|cbg.com.gh||
+Republic Bank Ghana|x|B|republicghana.com||
+Prudential Bank|c|B|prudentialbank.com.gh||
+UBA Ghana|x|B|ubaghana.com||
+OmniBSIC Bank|c|B|omnibsic.com.gh||
+MTN MoMo Ghana|w|B|mtn.com.gh||Largest mobile money
+Telecel Cash|w|B|telecel.com.gh||Formerly Vodafone Cash
+AirtelTigo Money (AT Money)|w|B|at.com.gh||
+
+## GM Gambia | cbg.gm | https://www.cbg.gm/
+Trust Bank Gambia|c|B|trustbank.gm||
+Guaranty Trust Bank Gambia|x|B|gtbank.gm||
+Ecobank Gambia|x|B|ecobank.com||
+Standard Chartered Gambia|x|?|sc.com/gm||
+Access Bank Gambia|x|?|accessbankplc.com||
+Arab Gambian Islamic Bank|i|?|agib.gm||
+Zenith Bank Gambia|x|?|zenithbank.gm||
+Wave Gambia|w|B|wave.com||
+Afrimoney (Africell)|w|B|africell.gm||
+
+## GN Guinea | bcrg-guinee.org | https://www.bcrg-guinee.org/
+Ecobank Guinée|x|B|ecobank.com||
+Société Générale Guinée (Vista Bank)|x|?|vistabank.gn||Acquired by Vista*
+Orabank Guinée|x|?|orabank.net||
+UBA Guinée|x|?|ubagroup.com||
+Banque Islamique de Guinée|i|?|big.gn||*
+Afriland First Bank Guinée|x|?|afrilandfirstbankgn.com||
+Access Bank Guinée|x|?|accessbankplc.com||
+Orange Money Guinée|w|B|orange-guinee.com||
+MTN MoMo Guinée|w|B|mtn.gn||
+
+## GW Guinea-Bissau | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Ecobank Guiné-Bissau|x|?|ecobank.com||
+Banco da África Ocidental (BAO)|c|?|bao.gw||*
+Orabank Guiné-Bissau|x|?|orabank.net||
+Banque Atlantique Guiné-Bissau|x|?|banqueatlantique.net||
+Orange Money Guinée-Bissau|w|B|orange.gw||
+
+## LR Liberia | cbl.org.lr | https://www.cbl.org.lr/
+Ecobank Liberia|x|B|ecobank.com||
+LBDI (Liberian Bank for Development & Investment)|c|?|lbdi.net||
+International Bank Liberia|c|?|ibliberia.com||
+United Bank for Africa Liberia|x|B|ubagroup.com||
+Access Bank Liberia|x|?|accessbankplc.com||
+GN Bank Liberia|c|?|gnbankliberia.com||*
+Afriland First Bank Liberia|x|?|afrilandfirstbank.com.lr||
+Lonestar Cell MTN MoMo|w|B|lonestarcell.com||
+Orange Money Liberia|w|B|orange.com.lr||
+
+## ML Mali | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Banque de Développement du Mali (BDM-SA)|c|B|bdm-sa.com||Largest
+Banque Malienne de Solidarité (BMS)|g|?|bms-sa.com||
+Banque Atlantique Mali|x|?|banqueatlantique.net||
+Bank of Africa Mali|x|B|boamali.com||
+Ecobank Mali|x|B|ecobank.com||
+BICIM|x|?|bicim.com||*
+Coris Bank Mali|x|?|coris-bank.com||
+Orabank Mali|x|?|orabank.net||
+Orange Money Mali|w|B|orangemali.com||
+Moov Money Mali|w|B|malitel.ml||
+
+## MR Mauritania | bcm.mr | https://www.bcm.mr/
+Banque Mauritanienne pour le Commerce International (BMCI)|c|?|bmci.mr||
+Banque Nationale de Mauritanie (BNM)|c|?|bnm.mr||
+Attijari Bank Mauritanie|x|?|attijaribank.mr||
+Société Générale Mauritanie|x|?|societegenerale.mr||*
+Banque Al Wava|i|?|bawm.mr||Islamic*
+Chinguitty Bank|c|?|chinguittybank.mr||*
+Bankily (BPM)|w|B|bpm.mr||Leading wallet
+Masrvi|w|B|masrvi.mr||Wallet*
+Sedad|w|B|sedad.mr||Wallet*
+
+## NE Niger | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Bank of Africa Niger|x|B|boaniger.com||
+Ecobank Niger|x|B|ecobank.com||
+Sonibank|c|?|sonibank.ne||
+BIA Niger|x|?|bianiger.com||*
+Banque Atlantique Niger|x|?|banqueatlantique.net||
+Orabank Niger|x|?|orabank.net||
+Banque Islamique du Niger|i|?|bin.ne||*
+Airtel Money Niger|w|B|airtel.ne||
+Moov Money Niger|w|B|moov-africa.ne||
+
+## NG Nigeria | cbn.gov.ng | https://www.cbn.gov.ng/Supervision/Inst-DM.asp
+Access Bank|c|B|accessbankplc.com|ABNGNGLA|Largest by assets
+Zenith Bank|c|B|zenithbank.com|ZEIBNGLA|
+GTBank (Guaranty Trust)|c|B|gtbank.com|GTBINGLA|
+First Bank of Nigeria|c|B|firstbanknigeria.com|FBNINGLA|
+United Bank for Africa (UBA)|c|B|ubagroup.com|UNAFNGLA|
+Fidelity Bank|c|B|fidelitybank.ng|FIDTNGLA|
+Union Bank of Nigeria|c|B|unionbankng.com|UBNINGLA|
+Stanbic IBTC|x|B|stanbicibtcbank.com|SBICNGLX|
+Ecobank Nigeria|x|B|ecobank.com|ECOCNGLA|
+Sterling Bank|c|B|sterling.ng|NAMENGLA|
+Wema Bank (ALAT)|c|B|wemabank.com|WEMANGLA|ALAT digital bank
+FCMB|c|B|fcmb.com|FCMBNGLA|
+Polaris Bank|c|B|polarisbanklimited.com||
+Keystone Bank|c|B|keystonebankng.com||
+Providus Bank|c|B|providusbank.com||
+Globus Bank|c|B|globusbank.com||
+Titan Trust Bank|c|B|titantrustbank.com||
+Standard Chartered Nigeria|x|B|sc.com/ng|SCBLNGLA|
+Citibank Nigeria|x|N|citigroup.com||
+Jaiz Bank|i|B|jaizbankplc.com||Islamic
+TAJBank|i|B|tajbank.com||Islamic
+Lotus Bank|i|?|lotusbank.com||Islamic
+Bank of Industry|g|N|boi.ng||Development
+Kuda Bank|d|B|kuda.com||Microfinance bank licence
+Moniepoint|d|B|moniepoint.com||
+OPay|w|B|opayweb.com||
+PalmPay|w|B|palmpay.com||
+VFD Microfinance (V Bank)|d|B|vbank.ng||
+Carbon|d|B|getcarbon.co||
+FairMoney|d|B|fairmoney.io||
+Paga|w|B|paga.com||
+MTN MoMo PSB|w|B|momopsb.com||Payment service bank
+
+## SL Sierra Leone | bsl.gov.sl | https://www.bsl.gov.sl/
+Sierra Leone Commercial Bank|g|B|slcb.com||State
+Rokel Commercial Bank|g|B|rokelbank.sl||State
+Ecobank Sierra Leone|x|B|ecobank.com||
+Guaranty Trust Bank SL|x|B|gtbank.sl||
+Standard Chartered SL|x|?|sc.com/sl||
+UBA Sierra Leone|x|?|ubagroup.com||
+Access Bank SL|x|?|accessbankplc.com||
+Orange Money SL|w|B|orange.sl||
+Afrimoney SL|w|B|africell.sl||
+
+## SN Senegal | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+CBAO (Attijariwafa)|x|B|cbao.sn||Largest
+SGBS (ex-Société Générale Sénégal)|g|B|societegenerale.sn||Société Générale sold stake to Senegalese state 2024*
+Ecobank Sénégal|x|B|ecobank.com||
+BICIS|c|?|bicis.sn||Formerly BNP Paribas; sold 2022*
+Banque Atlantique Sénégal|x|B|banqueatlantique.net||
+Bank of Africa Sénégal|x|B|boasenegal.com||
+Coris Bank Sénégal|x|?|coris-bank.com||
+Orabank Sénégal|x|?|orabank.net||
+BNDE|g|?|bnde.sn||State development bank
+Banque Islamique du Sénégal|i|?|bis-bank.com||
+Wave Sénégal|w|B|wave.com||Largest wallet
+Orange Money Sénégal|w|B|orange.sn||
+Free Money|w|B|free.sn||
+
+## TG Togo | bceao.int | https://cb-umoa.org/en/landscape-reporting-institutions
+Ecobank Togo|x|B|ecobank.com||Ecobank HQ in Lomé
+Orabank Togo|x|B|orabank.net||Oragroup HQ in Lomé
+Banque Togolaise pour le Commerce et l'Industrie (BTCI)|c|?|btci.tg||
+Union Togolaise de Banque (UTB)|g|?|utb.tg||
+Société Interafricaine de Banque (SIAB)|c|?|siab.tg||*
+Coris Bank Togo|x|?|coris-bank.com||
+Bank of Africa Togo|x|?|boatogo.com||
+Flooz (Moov)|w|B|moov-africa.tg||
+T-Money (Togocom)|w|B|togocom.tg||
+
+## CD DR Congo | bcc.cd | https://www.bcc.cd/
+Rawbank|c|B|rawbank.com|RAWBCDKI|Largest
+Equity BCDC|x|B|equitybcdc.cd||
+TMB (Trust Merchant Bank)|c|B|tmb.cd||
+Ecobank RDC|x|B|ecobank.com||
+Access Bank RDC|x|?|accessbankplc.com||
+FirstBank DRC|x|?|firstbanknigeria.com||
+Standard Bank RDC (Stanbic)|x|?|standardbank.cd||
+UBA RDC|x|?|ubagroup.com||
+Sofibanque|c|?|sofibanque.com||
+Afriland First Bank CD|x|?|afrilandfirstbank.cd||
+M-Pesa (Vodacom DRC)|w|B|vodacom.cd||
+Orange Money RDC|w|B|orange.cd||
+Airtel Money RDC|w|B|airtel.cd||
+Illicocash (Rawbank)|w|B|illicocash.com||
+
+## CF Central African Republic | beac.int | https://www.beac.int
+Ecobank Centrafrique|x|?|ecobank.com||
+Commercial Bank Centrafrique (CBCA)|c|?|cbcarca.com||*
+BSIC Centrafrique|x|?|bsic.net||*
+Banque Populaire Maroco-Centrafricaine (BPMC)|x|?|bpmc.cf||*
+Orange Money Centrafrique|w|B|orange.cf||
+
+## CG Republic of the Congo | beac.int | https://www.beac.int
+BGFIBank Congo|x|B|bgfi.com||
+LCB Bank (Attijariwafa)|x|?|lcb-bank.com||
+Crédit du Congo (Attijariwafa)|x|?|creditducongo.com||
+Ecobank Congo|x|B|ecobank.com||
+UBA Congo|x|?|ubagroup.com||
+Banque Commerciale Internationale (BCI)|c|?|bci.cg||*
+MTN MoMo Congo|w|B|mtn.cg||
+Airtel Money Congo|w|B|airtel.cg||
+
+## CM Cameroon | beac.int | https://lefisk.cm/investir/banques
+Afriland First Bank|c|B|afrilandfirstbank.com||Largest
+SCB Cameroun (Attijariwafa)|x|B|scbcameroun.com||
+SG Cameroun (ex-Société Générale)|g|B|societegenerale.cm||Sold to Cameroon state 2024*
+BICEC (BCP)|x|B|bicec.com||
+Ecobank Cameroun|x|B|ecobank.com||
+UBA Cameroun|x|B|ubagroup.com||
+CCA Bank|c|B|cca-bank.com||
+Standard Chartered Cameroun|x|?|sc.com/cm||
+BGFIBank Cameroun|x|?|bgfi.com||
+Citibank Cameroon|x|N|citigroup.com||
+CBC (Commercial Bank Cameroon)|c|?|cbc-bank.com||
+BC-PME|g|?|bcpme.cm||State SME bank
+MTN MoMo Cameroun|w|B|mtn.cm||
+Orange Money Cameroun|w|B|orange.cm||
+
+## GA Gabon | beac.int | https://www.beac.int
+BGFIBank Gabon|c|B|bgfi.com||Largest; BGFI group HQ
+UGB (Union Gabonaise de Banque)|x|?|ugb-banque.com||Attijariwafa group*
+BICIG|g|?|bicig.ga||Acquired by state 2023*
+Orabank Gabon|x|?|orabank.net||
+Ecobank Gabon|x|?|ecobank.com||
+UBA Gabon|x|?|ubagroup.com||
+Citibank Gabon|x|N|citigroup.com||
+Airtel Money Gabon|w|B|airtel.ga||
+Moov Money Gabon|w|B|moov-africa.ga||
+
+## GQ Equatorial Guinea | beac.int | https://www.beac.int
+BGFIBank Guinea Ecuatorial|x|?|bgfi.com||
+CCEI Bank GE (Afriland)|x|?|cceibankge.com||
+SGBGE (ex-Société Générale)|c|?|sgbge.gq||Ownership changed*
+BANGE (Banco Nacional de Guinea Ecuatorial)|g|?|bange.gq||State
+Ecobank Guinea Ecuatorial|x|?|ecobank.com||
+Muni Dinero|w|?|getesa.gq||*
+
+## ST São Tomé and Príncipe | bcstp.st | https://www.bcstp.st/
+Banco Internacional de São Tomé e Príncipe (BISTP)|c|?|bistp.st||Largest
+Ecobank São Tomé|x|?|ecobank.com||
+Afriland First Bank STP|x|?|afrilandfirstbank.st||
+BGFIBank São Tomé|x|?|bgfi.com||*
+
+## TD Chad | beac.int | https://www.beac.int
+Commercial Bank Tchad (CBT)|c|?|cbt-tchad.com||
+Ecobank Tchad|x|B|ecobank.com||
+Orabank Tchad|x|?|orabank.net||
+Société Générale Tchad|x|?|societegenerale.td||*
+UBA Tchad|x|?|ubagroup.com||
+BSIC Tchad|x|?|bsic.net||
+Airtel Money Tchad|w|B|airtel.td||
+Moov Money Tchad|w|B|moov-africa.td||
