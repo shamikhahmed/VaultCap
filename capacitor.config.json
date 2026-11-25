@@ -7,7 +7,7 @@
   },
   "ios": {
     "contentInset": "never",
-    "backgroundColor": "#060a12",
+    "backgroundColor": "#050506",
     "scheme": "VaultCap",
     "scrollEnabled": true
   },

@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VaultCap">
-<meta name="theme-color" content="#060a12" id="themeColorMeta">
+<meta name="theme-color" content="#050506" id="themeColorMeta">
 <meta name="author" content="Capricorn Systems">
 <meta name="description" content="Encrypted life vault — finance, identity, and documents on your device. Offline-first, by Capricorn Systems.">
 <title>VaultCap — Everything you own. Encrypted. · Capricorn Systems</title>
@@ -34,7 +34,7 @@
 <meta name="application-name" content="VaultCap">
 <meta name="rating" content="general">
 <meta name="format-detection" content="telephone=no">
-<meta name="msapplication-TileColor" content="#060a12">
+<meta name="msapplication-TileColor" content="#050506">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
@@ -45,12 +45,12 @@
 <!-- Critical LCP: #pgHome shell + opaque title; defer base/layout/components off critical path -->
 <style>
 *,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;background:#060a12;color:#f4f6fa;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;padding:0;height:100%;background:#050506;color:#f4f6fa;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 body{overflow:hidden;overscroll-behavior:none}
 :focus-visible{outline:2px solid #D4A017;outline-offset:3px;border-radius:4px}
 .cap-skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10001}
 .cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:#0c1220;color:#f4f6fa;border:1px solid rgba(212,160,23,.45);border-radius:10px;outline:2px solid #D4A017;outline-offset:2px}
-#splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060a12;overflow:hidden}
+#splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#050506;overflow:hidden}
 html[data-vc-demo] #splashScreen,html[data-vc-skip-splash] #splashScreen{display:none!important}
 html[data-vc-demo] #pgHome{display:flex}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
@@ -60,11 +60,14 @@ html[data-vc-demo] #pgHome{display:flex}
 .vault-splash__progress{position:absolute;bottom:48px;width:48px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
 .vault-splash__bar{width:0;height:100%;background:#D4A017}
 .vault-door{display:none}
-.vault-home-title,.vault-display-title{margin:0;font:700 clamp(36px,10vw,46px)/1.05 system-ui,-apple-system,sans-serif;letter-spacing:.18em;color:#f4f6fa!important;-webkit-text-fill-color:#f4f6fa!important;background:none!important;-webkit-background-clip:unset!important;background-clip:unset!important;text-transform:uppercase;font-family:system-ui,-apple-system,sans-serif!important}
-#pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:#060a12}
+.vault-home-title,.vault-display-title{margin:0;font:700 clamp(2.5rem,6vw,3.25rem)/1.05 system-ui,-apple-system,sans-serif;letter-spacing:-.035em;color:#f4f6fa!important;-webkit-text-fill-color:#f4f6fa!important;background:none!important;-webkit-background-clip:unset!important;background-clip:unset!important;text-transform:none;font-family:"SF Pro Display",system-ui,-apple-system,sans-serif!important}
+#pgHome{position:fixed;inset:0;z-index:990;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:calc(env(safe-area-inset-top,0px) + 32px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);overflow-y:auto;background:radial-gradient(80% 50% at 50% 0%,rgb(242 181 58/.12),transparent 70%),#050506}
 #pgHome .vc-mark--hero{width:60px;height:60px;border-radius:16px;display:block;margin:0 auto}
 #homeThemes{min-height:48px}
 .home-modules{min-height:140px}
+/* Halo: welcome tiles look final before deferred CSS lands (no restyle jump at 5.5s) */
+.home-mod-tile{background:none;border:0;color:rgba(235,235,245,.66);font:inherit;font-size:.6875rem;border-radius:14px;cursor:pointer}
+#homeModGrid>:nth-child(6n+1) svg{color:#0a84ff}#homeModGrid>:nth-child(6n+2) svg{color:#ff9f0a}#homeModGrid>:nth-child(6n+3) svg{color:#30d158}#homeModGrid>:nth-child(6n+4) svg{color:#f2b53a}#homeModGrid>:nth-child(6n+5) svg{color:#bf5af2}#homeModGrid>:nth-child(6n+6) svg{color:#30c8be}
 .home-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:0.6875rem;color:rgba(244,246,250,.72);font-weight:500}
 .home-demo-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:4px 0 18px;padding:8px 14px;background:transparent;border:0;color:rgba(244,246,250,.72);font:500 0.9375rem/1.2 system-ui,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
 #demoBanner .demo-banner-exit{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 16px;box-sizing:border-box;font:600 0.75rem/1.2 system-ui,sans-serif}

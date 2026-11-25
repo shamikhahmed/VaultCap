@@ -390,3 +390,8 @@ body.light .vc-sheet-tile .vc-icon-wrap { filter: saturate(1.1) brightness(.85);
 
 /* ── 16. Inspector seal row: readable in light ─────────────────────── */
 body.light .dash-inspector__seal-row, body.light .dash-inspector__seal-row * { color: var(--h-text) !important; }
+
+/* ── 17. Banner toasts: one line, clear of the sample bar ─────────── */
+.tw { width: max-content !important; max-width: calc(100vw - 32px) !important; }
+.toast { white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
+body.demo-banner-active .tw { top: calc(env(safe-area-inset-top, 0px) + 58px) !important; }
