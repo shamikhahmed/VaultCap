@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#1c1710"/><stop offset=".55" stop-color="#0b0a09"/><stop offset="1" stop-color="#050506"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f2b53a" stop-opacity=".32"/><stop offset="1" stop-color="#f2b53a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g" x1="20" y1="10" x2="44" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE3A3"/><stop offset=".42" stop-color="#F2B53A"/><stop offset="1" stop-color="#B9790C"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD98A" stop-opacity="0"/><stop offset=".5" stop-color="#FFE3A3"/><stop offset="1" stop-color="#F2B53A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff" stop-opacity=".18"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="512" cy="512" r="400" fill="url(#glow)"/>
+  <g transform="translate(512 512) scale(13) translate(-32 -32)">
+    <circle cx="32" cy="32" r="27" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width=".7"/>
+    <path d="M32 5 A27 27 0 0 1 59 32" fill="none" stroke="url(#ring)" stroke-width="1.6" stroke-linecap="round" transform="rotate(-20 32 32)"/>
+    <path d="M32 12 L48.5 19.3 V31 C48.5 40.7 41.7 48.2 32 51.3 C22.3 48.2 15.5 40.7 15.5 31 V19.3 Z" fill="url(#g)"/>
+    <path d="M32 12 L48.5 19.3 V31 C48.5 40.7 41.7 48.2 32 51.3 C22.3 48.2 15.5 40.7 15.5 31 V19.3 Z" fill="url(#sheen)"/>
+    <path d="M32 12 L48.5 19.3 V31 C48.5 40.7 41.7 48.2 32 51.3 C22.3 48.2 15.5 40.7 15.5 31 V19.3 Z" fill="none" stroke="#FFE3A3" stroke-opacity=".6" stroke-width=".6" stroke-linejoin="round"/>
+    <circle cx="32" cy="28.8" r="4.8" fill="#1A1206"/>
+    <path d="M32 32 V39.2" stroke="#1A1206" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+</svg>

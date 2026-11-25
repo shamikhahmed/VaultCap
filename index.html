@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VaultCap">
-<meta name="theme-color" content="#000000" id="themeColorMeta">
+<meta name="theme-color" content="#050506" id="themeColorMeta">
 <meta name="author" content="Capricorn Systems">
 <meta name="description" content="Encrypted life vault — finance, identity, and documents on your device. Offline-first, by Capricorn Systems.">
 <title>VaultCap — Everything you own. Encrypted. · Capricorn Systems</title>
@@ -34,7 +34,7 @@
 <meta name="application-name" content="VaultCap">
 <meta name="rating" content="general">
 <meta name="format-detection" content="telephone=no">
-<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileColor" content="#050506">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
@@ -53,7 +53,7 @@ body{overscroll-behavior-x:none;overscroll-behavior-y:auto}
 .cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:var(--surface-elevated,#2c2c2e);color:var(--label,#fff);border:0;border-radius:10px;outline:3px solid var(--tint,#D4A017);outline-offset:2px}
 #splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg,#000);overflow:hidden}
 html[data-vc-demo] #splashScreen,html[data-vc-skip-splash] #splashScreen{display:none!important}
-html[data-vc-demo] #pgHome{display:flex!important}
+html[data-vc-demo] #pgHome{display:flex}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
 .vault-splash__mark{width:72px;height:72px;border-radius:18px;margin-bottom:18px;display:block}
 .vault-splash__title{margin:0 0 8px;font:700 1.75rem/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.02em;color:var(--label,#fff)}
@@ -90,9 +90,18 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 <link rel="preload" href="css/tokens.css" as="style">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/design/tokens.css">
+<!-- Halo first paint: welcome looks final before deferred CSS lands (no restyle jump at 5.5s) -->
+<style>body:not(.light) #splashScreen.vault-splash{background:#050506}
+body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 181 58/.12),transparent 70%),#050506}
+#pgHome .vault-home-title{font-size:clamp(2.5rem,6vw,3.25rem);letter-spacing:-.035em}
+#homeModGrid>:nth-child(6n+1) .home-mod-ic{color:#0a84ff}#homeModGrid>:nth-child(6n+2) .home-mod-ic{color:#ff9f0a}#homeModGrid>:nth-child(6n+3) .home-mod-ic{color:#30d158}#homeModGrid>:nth-child(6n+4) .home-mod-ic{color:#f2b53a}#homeModGrid>:nth-child(6n+5) .home-mod-ic{color:#bf5af2}#homeModGrid>:nth-child(6n+6) .home-mod-ic{color:#30c8be}</style>
 <link rel="stylesheet" href="css/app.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/alive.css" media="print" data-vc-defer-css>
+<link rel="stylesheet" href="css/halo.css" media="print" data-vc-defer-css>
 <noscript>
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/alive.css">
+<link rel="stylesheet" href="css/halo.css">
 </noscript>
 </head>
 <body data-cap-app="1">
@@ -507,6 +516,8 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 </div>
 
 <script src="js/boot-load.js"></script>
+<script src="js/halo-mark.js" defer></script>
+<script src="js/alive.js" defer></script>
 
 
 </body>
