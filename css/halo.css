@@ -276,8 +276,8 @@ body.halo-unlocking .halo-mark .hm-ring-arc { stroke-dasharray: 200 0; transitio
 body.light .vault-splash { background: radial-gradient(60% 50% at 50% 42%, rgb(242 181 58 / .16), transparent 70%), #f2f2f7 !important; }
 .vault-splash__steel, .vault-door { display: none !important; }
 .vault-splash__reveal { opacity: 1 !important; transform: none !important; animation: none !important; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.vault-splash__title { font-family: var(--h-display) !important; font-size: 2rem !important; font-weight: 700 !important; letter-spacing: -.03em !important; text-transform: none !important; color: var(--h-text) !important; background: none !important; -webkit-text-fill-color: currentColor !important; animation: halo-rise .8s var(--h-spring) .9s both; }
-.vault-splash__tagline { color: var(--h-text2) !important; letter-spacing: 0 !important; text-transform: none !important; animation: halo-rise .8s var(--h-spring) 1.05s both; }
+.vault-splash__title { font-family: var(--h-display) !important; font-size: 2rem !important; font-weight: 700 !important; letter-spacing: -.03em !important; text-transform: none !important; color: var(--h-text) !important; background: none !important; -webkit-text-fill-color: currentColor !important; }
+.vault-splash__tagline { color: var(--h-text2) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .vault-splash__progress { width: 120px !important; height: 3px !important; border-radius: 3px !important; background: var(--h-hair2) !important; overflow: hidden; }
 .vault-splash__bar { background: var(--h-gold-grad) !important; border-radius: 3px; }
 @keyframes halo-rise { from { opacity: 0; transform: translateY(8px); } }
@@ -293,9 +293,6 @@ body.light .vault-splash { background: radial-gradient(60% 50% at 50% 42%, rgb(2
 #homeOpenBtn { border-radius: 16px !important; min-height: 54px; font-size: 1.0625rem !important; font-weight: 600 !important; }
 .home-demo-link { color: var(--h-gold-text) !important; font-weight: 600; }
 .home-pill { background: var(--h-s1) !important; border: 1px solid var(--h-hair) !important; color: var(--h-text2) !important; border-radius: 999px !important; }
-#pgHome > div > * { animation: halo-rise .7s var(--h-spring) both; }
-#pgHome > div > :nth-child(2) { animation-delay: .08s; } #pgHome > div > :nth-child(3) { animation-delay: .14s; }
-#pgHome > div > :nth-child(4) { animation-delay: .2s; } #pgHome > div > :nth-child(n+5) { animation-delay: .26s; }
 
 /* ── 10. Lock + PIN ────────────────────────────────────────────────── */
 #pgLock { background: radial-gradient(70% 45% at 50% 18%, rgb(242 181 58 / .10), transparent 70%), var(--h-bg) !important; }
@@ -408,3 +405,102 @@ body.light .dash-inspector__seal-row, body.light .dash-inspector__seal-row * { c
 .tw { width: max-content !important; max-width: calc(100vw - 32px) !important; }
 .toast { white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
 body.demo-banner-active .tw { top: calc(env(safe-area-inset-top, 0px) + 58px) !important; }
+
+/* ── 18. Onboarding: global country picker ─────────────────────────── */
+#ob-countries { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.ob-cty-picked { display: flex; flex-wrap: wrap; gap: 6px; min-height: 0; }
+.ob-cty-chip { border: 0; border-radius: 999px; padding: 7px 12px; background: var(--h-gold-soft); color: var(--h-text); font: 500 .875rem/1.2 var(--h-font); cursor: pointer; animation: halo-pop .32s var(--h-pop) both; }
+.ob-cty-chip small { color: var(--h-gold-text); font-weight: 600; margin-left: 2px; }
+.ob-cty-search { width: 100%; }
+.ob-cty-list { max-height: min(46vh, 340px); overflow-y: auto; border-radius: 16px; background: var(--h-s1); border: 1px solid var(--h-hair); overscroll-behavior: contain; }
+.ob-cty { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 46px; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--h-hair); background: transparent; color: var(--h-text); font: 400 1rem/1.25 var(--h-font); text-align: left; cursor: pointer; }
+.ob-cty:last-child { border-bottom: 0; }
+.ob-cty:hover { background: var(--h-s2); }
+.ob-cty-flag { font-size: 1.25rem; width: 1.6em; text-align: center; }
+.ob-cty-name { flex: 1; }
+.ob-cty-tick { color: var(--h-gold-text); font-weight: 700; opacity: 0; transform: scale(.5); transition: opacity .18s, transform .25s var(--h-pop); }
+.ob-cty.on .ob-cty-tick { opacity: 1; transform: none; }
+.ob-cty.on { background: var(--h-gold-soft); }
+.ob-cty-none { padding: 18px; color: var(--h-text3); text-align: center; }
+@keyframes halo-pop { from { opacity: 0; transform: scale(.8); } }
+
+/* ── 19. Touch: springy press + tab icon bounce ────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .entry, .chip, .home-mod-tile, .vc-sheet-tile, .set-card .si, .ob-cty, .alive-chip, .wcard {
+    transition: transform .28s var(--h-pop), background-color .2s ease, box-shadow .2s ease;
+  }
+  .entry:active, .chip:active, .home-mod-tile:active, .vc-sheet-tile:active, .set-card .si:active, .ob-cty:active, .alive-chip:active { transform: scale(.97); transition-duration: .08s; }
+  .wcard:active { transform: scale(.985); }
+  .chip.on, .chip[aria-pressed="true"] { animation: halo-pop .34s var(--h-pop); }
+  .ti.on .ti-ic, .ti[aria-selected="true"] .ti-ic { animation: halo-tab .5s var(--h-pop); }
+  @keyframes halo-tab { 0% { transform: scale(.82) translateY(2px); } 55% { transform: scale(1.12) translateY(-2px); } 100% { transform: none; } }
+}
+
+/* ── 20. Checkboxes + radios, app-wide ─────────────────────────────────
+   Root bug: the 44px touch-target rule applied min-width/min-height to the
+   box itself, so every checkbox rendered as a huge empty square beside tiny
+   text. The ROW is the touch target; the box is a crisp 22px control. */
+:is(input[type="checkbox"], input[type="radio"]):not(.ui-switch):not([role="switch"]):not(.tog input):not(.sr-only):not(.visually-hidden) {
+  -webkit-appearance: none; appearance: none;
+  width: 22px !important; height: 22px !important; min-width: 22px !important; min-height: 22px !important;
+  margin: 0 !important; padding: 0 !important; flex: none !important; vertical-align: middle;
+  display: inline-block; position: relative; cursor: pointer;
+  border: 1.5px solid var(--h-text3, rgb(235 235 245 / .32)) !important; border-radius: 7px !important;
+  background: transparent center / 14px 14px no-repeat !important; box-shadow: none !important;
+  transition: background-color .18s ease, border-color .18s ease, transform .25s var(--h-pop, ease);
+}
+input[type="radio"]:not(.ui-switch):not([role="switch"]):not(.tog input):not(.sr-only):not(.visually-hidden) { border-radius: 50% !important; }
+input[type="checkbox"]:not(.ui-switch):not([role="switch"]):not(.tog input):not(.sr-only):not(.visually-hidden):checked {
+  background-color: var(--tint, #f2b53a) !important; border-color: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.4l2.6 2.6L11 4.4' fill='none' stroke='%231a1206' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  animation: halo-pop .3s var(--h-pop, ease);
+}
+body.light input[type="checkbox"]:not(.ui-switch):not([role="switch"]):not(.tog input):not(.sr-only):not(.visually-hidden):checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.4l2.6 2.6L11 4.4' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+input[type="radio"]:not(.ui-switch):not([role="switch"]):not(.tog input):not(.sr-only):not(.visually-hidden):checked {
+  border: 6.5px solid var(--tint, #f2b53a) !important; background: transparent !important;
+}
+body.light :is(input[type="checkbox"], input[type="radio"]):not(.ui-switch):not([role="switch"]):not(.tog input):not(:checked) { border-color: rgb(60 60 67 / .35) !important; }
+:is(input[type="checkbox"], input[type="radio"]):not(.tog input):focus-visible { outline: 3px solid var(--tint, #f2b53a); outline-offset: 2px; }
+:is(input[type="checkbox"], input[type="radio"]):not(.tog input):disabled { opacity: .4; cursor: default; }
+/* Rows that hold a checkbox: text reads at body size, box aligned to it */
+label:has(> input[type="checkbox"]:not(.tog input)), label:has(> input[type="radio"]) {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer;
+}
+
+/* Countries & Regions: proper list rows, readable names, check on the right */
+.ctx-country-grid { display: flex !important; flex-direction: column; gap: 0 !important; border-radius: 14px; overflow: hidden auto; background: var(--h-s1); border: 1px solid var(--h-hair); }
+.ctx-country-card {
+  border: 0 !important; border-radius: 0 !important; background: transparent !important;
+  padding: 0 14px !important; min-height: 50px !important; gap: 12px !important;
+  font-size: 1.0625rem !important; font-weight: 500; color: var(--h-text) !important;
+  border-bottom: 1px solid var(--h-hair) !important;
+}
+.ctx-country-card:last-child { border-bottom: 0 !important; }
+.ctx-country-card input { order: 2; }
+.ctx-country-card span { order: 1; font-size: 1.0625rem; }
+.ctx-country-card:has(input:checked) { background: rgb(242 181 58 / .08) !important; }
+
+/* ── 21. List rows: names get the full width ───────────────────────────
+   Phones: icon + title/subtitle/badges span the row; actions sit on a quiet
+   right-aligned strip underneath instead of squeezing the title to "Toyota H…". */
+@media (max-width: 600px) {
+  .entry-main { flex-wrap: wrap !important; align-items: flex-start !important; row-gap: 2px !important; column-gap: 12px !important; }
+  .entry-main > .entry-body { flex: 1 1 calc(100% - 60px) !important; min-width: 0 !important; }
+  .entry-main > .entry-acts {
+    flex: 1 0 100% !important; justify-content: flex-end !important; gap: 4px !important;
+    margin: -6px -6px -8px 0 !important; padding: 0 !important; opacity: 1 !important;
+  }
+  .entry-acts .icb {
+    width: 40px !important; min-width: 40px !important; height: 36px !important; min-height: 36px !important;
+    border-radius: 10px !important; background: transparent !important; border: 0 !important;
+    color: var(--h-text3) !important; position: relative;
+  }
+  .entry-acts .icb::after { content: ''; position: absolute; inset: -4px -2px; } /* 44pt hit area */
+  .entry-acts .icb:active { background: var(--h-s2) !important; color: var(--h-text) !important; }
+  .entry-acts .icb.fav.on { color: var(--h-gold, #f2b53a) !important; }
+  .entry-name, .entry-sub { white-space: normal !important; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .entry-sub { -webkit-line-clamp: 1; }
+  .entry-main > .entry-ic { margin-top: 2px; }
+}

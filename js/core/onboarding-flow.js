@@ -29,29 +29,52 @@ const OB = {
       `<div class="ob-pd${i < at ? ' on' : ''}"></div>`
     ).join('');
   },
-  renderCountries() {
-    const COUNTRIES = [
-      { code:'PK', flag:'🇵🇰', name:'Pakistan' },
-      { code:'GB', flag:'🇬🇧', name:'United Kingdom' },
-      { code:'AE', flag:'🇦🇪', name:'UAE' },
-      { code:'US', flag:'🇺🇸', name:'USA' },
-    ];
+  /* Every country, named in the user's own language — no shortlist, no favourites. */
+  _world() {
+    if (this.__world) return this.__world;
+    const codes = ('AD AE AF AG AI AL AM AO AR AT AU AW AZ BA BB BD BE BF BG BH BI BJ BM BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GI GM GN GQ GR GT GW GY HK HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MO MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PR PS PT PW PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VN VU WS XK YE ZA ZM ZW').split(' ');
+    let dn = null;
+    try { dn = new Intl.DisplayNames([navigator.language || 'en'], { type: 'region' }); } catch (e) {}
+    const flag = c => String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+    this.__world = codes.map(c => ({ code: c, flag: flag(c), name: (dn && dn.of(c)) || c }))
+      .sort((x, y) => x.name.localeCompare(y.name));
+    return this.__world;
+  },
+  countryName(code) {
+    const c = this._world().find(x => x.code === code);
+    return c ? c.flag + ' ' + c.name : code;
+  },
+  _localRegion() {
+    try { const m = (navigator.language || '').match(/-([A-Z]{2})$/i); return m ? m[1].toUpperCase() : ''; } catch (e) { return ''; }
+  },
+  renderCountries(q) {
     const el = document.getElementById('ob-countries');
     if (!el) return;
-    el.innerHTML = COUNTRIES.map(c =>
-      `<div data-act="OB.toggleCountry('${c.code}',this)"
-        style="padding:14px 12px;border-radius:14px;background:${obCountries.includes(c.code)?'var(--glass2)':'var(--glass)'};border:2px solid ${obCountries.includes(c.code)?'var(--accent)':'var(--border)'};cursor:pointer;touch-action:manipulation;display:flex;align-items:center;gap:10px;transition:.15s">
-        <span style="font-size:1.375rem">${c.flag}</span>
-        <span class="vc-ix-12">${c.name}</span>
-      </div>`
-    ).join('');
+    if (!el.querySelector('.ob-cty-search')) {
+      el.innerHTML =
+        '<div class="ob-cty-picked" id="ob-cty-picked" aria-live="polite"></div>' +
+        '<input class="inp ob-cty-search" type="search" placeholder="Search any country" aria-label="Search countries" autocomplete="off">' +
+        '<div class="ob-cty-list" id="ob-cty-list" role="listbox" aria-multiselectable="true"></div>';
+      const inp = el.querySelector('.ob-cty-search');
+      inp.addEventListener('input', () => this.renderCountries(inp.value));
+    }
+    const term = (q || '').trim().toLowerCase();
+    const here = this._localRegion();
+    let list = this._world();
+    if (term) list = list.filter(c => c.name.toLowerCase().includes(term) || c.code.toLowerCase() === term);
+    else if (here) list = list.slice().sort((x, y) => (y.code === here) - (x.code === here));
+    document.getElementById('ob-cty-list').innerHTML = list.map(c => {
+      const on = obCountries.includes(c.code);
+      return `<button type="button" role="option" aria-selected="${on}" class="ob-cty${on ? ' on' : ''}" data-act="OB.toggleCountry('${c.code}')"><span class="ob-cty-flag" aria-hidden="true">${c.flag}</span><span class="ob-cty-name">${c.name}</span><span class="ob-cty-tick" aria-hidden="true">✓</span></button>`;
+    }).join('') || '<div class="ob-cty-none">No match — try another spelling</div>';
+    document.getElementById('ob-cty-picked').innerHTML = obCountries.map((c, i) =>
+      `<button type="button" class="ob-cty-chip" data-act="OB.toggleCountry('${c}')" aria-label="Remove ${this.countryName(c)}">${this.countryName(c)}${i === 0 ? ' <small>home</small>' : ''} ×</button>`).join('');
   },
-  toggleCountry(code, el) {
+  toggleCountry(code) {
     const i = obCountries.indexOf(code);
     if (i > -1) obCountries.splice(i, 1); else obCountries.push(code);
-    const on = obCountries.includes(code);
-    el.style.borderColor = on ? 'var(--accent)' : 'var(--border)';
-    el.style.background = on ? 'var(--glass2)' : 'var(--glass)';
+    const inp = document.querySelector('#ob-countries .ob-cty-search');
+    this.renderCountries(inp ? inp.value : '');
   },
   renderCats() {
     const cats = [
@@ -143,10 +166,9 @@ const OB = {
     // No toast here: it covered the "Create vault" button; dashboard + Settings show the profile nudge.
   },
   _renderReadyStats() {
-    const CNAMES = { PK:'🇵🇰 Pakistan', GB:'🇬🇧 UK', AE:'🇦🇪 UAE', US:'🇺🇸 USA' };
     const el = document.getElementById('ob-ready-stats');
     if (!el) return;
-    const countries = obCountries.length ? obCountries.map(c => CNAMES[c] || c).join(', ') : 'Not set';
+    const countries = obCountries.length ? obCountries.map(c => this.countryName(c)).join(', ') : 'Not set';
     const CATLABELS = { money:'Money', assets:'Assets', identity:'Identity', family:'Family' };
     const cats = Object.entries(obCats).filter(([, v]) => v).map(([k]) => CATLABELS[k]).join(', ') || 'None selected';
     const TYPE_LABELS = { personal:'Personal', family:'Family Manager', business:'Business Owner', expat:'Global Expat' };
@@ -204,7 +226,7 @@ const OB = {
   complete() {
     if (obCountries.length > 0) {
       S.user.country = obCountries[0];
-      S.user.currency = COUNTRY_CUR[obCountries[0]] || 'USD';
+      S.user.currency = (typeof countryCurrency === 'function' ? countryCurrency(obCountries[0]) : COUNTRY_CUR[obCountries[0]]) || 'USD';
       S.user.secondaryCountries = obCountries.slice(1);
     }
     S.user.userType = obUserType;

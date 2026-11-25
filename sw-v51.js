@@ -1,4 +1,4 @@
-const CACHE = 'vaultcap-v101';
+const CACHE = 'vaultcap-v102';
 // widget-data.json is local/gitignored — never precache it (addAll would fail install).
 const ASSETS = [
   './',
@@ -15,6 +15,7 @@ const ASSETS = [
   './icon-1024.png',
   './apple-touch-icon.png',
   './icons/mark.svg',
+  './icons/halo-mark.svg',
   './icons/favicon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',

@@ -287,7 +287,7 @@ const AIImport = {
 
       '<div class="fg">' +
         '<label class="fl">Paste text or describe your data</label>' +
-        '<textarea class="inp" id="ie-paste" rows="6" placeholder="Examples:&#10;• Chase checking account — USD 12,500 balance&#10;• Visa ending 4521, expires 09/26&#10;• Lent $500 to Alex, due March 2026&#10;• Netflix $17.99 monthly&#10;• Jazz SIM +92 300 1234567"></textarea>' +
+        '<textarea class="inp" id="ie-paste" rows="6" placeholder="Examples:&#10;• Chase checking account — USD 12,500 balance&#10;• Visa ending 4521, expires 09/26&#10;• Lent $500 to Alex, due March 2026&#10;• Netflix $17.99 monthly&#10;• Work SIM, mobile number"></textarea>' +
       '</div>' +
 
       '<div id="ie-drop" style="border:2px dashed var(--border);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:all .2s" ' +

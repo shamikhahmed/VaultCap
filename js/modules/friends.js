@@ -34,7 +34,7 @@ const Friends = {
   },
   form(f = {}) {
     return `<div class="fg"><label class="fl">Name *</label><input class="inp" id="ff-name" value="${escAttr(f.name || '')}" placeholder="Full name"></div>
-    <div class="fg"><label class="fl">Phone</label><input class="inp" id="ff-phone" value="${escAttr(f.phone || '')}" placeholder="+92 300 ..."></div>
+    <div class="fg"><label class="fl">Phone</label><input class="inp" id="ff-phone" value="${escAttr(f.phone || '')}" placeholder="Phone number"></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="ff-notes" rows="2">${escAttr(f.notes || '')}</textarea></div>`;
   },
   save(editId = null) {

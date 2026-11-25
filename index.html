@@ -94,7 +94,37 @@ html:not([data-vc-css-ready]) .vc-install-banner{display:none!important}
 <style>body:not(.light) #splashScreen.vault-splash{background:#050506}
 body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 181 58/.12),transparent 70%),#050506}
 #pgHome .vault-home-title{font-size:clamp(2.5rem,6vw,3.25rem);letter-spacing:-.035em}
-#homeModGrid>:nth-child(6n+1) .home-mod-ic{color:#0a84ff}#homeModGrid>:nth-child(6n+2) .home-mod-ic{color:#ff9f0a}#homeModGrid>:nth-child(6n+3) .home-mod-ic{color:#30d158}#homeModGrid>:nth-child(6n+4) .home-mod-ic{color:#f2b53a}#homeModGrid>:nth-child(6n+5) .home-mod-ic{color:#bf5af2}#homeModGrid>:nth-child(6n+6) .home-mod-ic{color:#30c8be}</style>
+#homeModGrid>:nth-child(6n+1) .home-mod-ic{color:#0a84ff}#homeModGrid>:nth-child(6n+2) .home-mod-ic{color:#ff9f0a}#homeModGrid>:nth-child(6n+3) .home-mod-ic{color:#30d158}#homeModGrid>:nth-child(6n+4) .home-mod-ic{color:#f2b53a}#homeModGrid>:nth-child(6n+5) .home-mod-ic{color:#bf5af2}#homeModGrid>:nth-child(6n+6) .home-mod-ic{color:#30c8be}
+/* Halo splash — fully styled at first paint (no deferred CSS needed) */
+#splashScreen .vault-splash__steel,#splashScreen .vault-door{display:none}
+#splashScreen.vault-splash{background:radial-gradient(55% 40% at 50% 45%,rgb(242 181 58/.13),transparent 72%),#050506;transition:opacity .32s ease,transform .32s ease}
+body.light #splashScreen.vault-splash{background:radial-gradient(55% 40% at 50% 45%,rgb(242 181 58/.18),transparent 72%),#f5f5f7}
+#splashScreen.is-leaving{opacity:0;transform:scale(1.04)}
+#splashScreen .vault-splash__scene{display:flex;align-items:center;justify-content:center}
+#splashScreen .vault-splash__reveal{position:relative}
+#splashScreen .vault-splash__halo{position:absolute;top:-26px;left:50%;width:140px;height:140px;margin-left:-70px;border-radius:50%;background:radial-gradient(closest-side,rgb(242 181 58/.32),transparent);animation:vcs-glow 1.1s ease-out both}
+#splashScreen .vault-splash__mark{position:relative;width:88px;height:88px;border-radius:0;margin:0 0 18px;filter:drop-shadow(0 10px 30px rgb(242 181 58/.28));animation:vcs-mark .7s cubic-bezier(.34,1.45,.64,1) both}
+#splashScreen .vault-splash__title{margin:0;font:700 2.25rem/1.08 "SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.035em;color:#f5f5f7;animation:vcs-up .6s cubic-bezier(.2,.8,.2,1) .12s both}
+body.light #splashScreen .vault-splash__title{color:#1d1d1f}
+#splashScreen .vault-splash__tagline{margin-top:8px;font:400 1rem/1.3 -apple-system,system-ui,sans-serif;color:rgb(235 235 245/.6);animation:vcs-up .6s cubic-bezier(.2,.8,.2,1) .2s both}
+body.light #splashScreen .vault-splash__tagline{color:rgb(60 60 67/.62)}
+#splashScreen .vault-splash__progress{position:absolute;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));width:88px;height:3px;margin-left:-44px;border-radius:3px;background:rgb(127 127 127/.18);overflow:hidden;animation:vcs-up .5s ease .25s both}
+#splashScreen .vault-splash__bar{height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#b9790c,#f2b53a,#ffe3a3);transition:width .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes vcs-mark{from{opacity:0;transform:scale(.72) rotate(-8deg)}}
+@keyframes vcs-up{from{opacity:0;transform:translateY(10px)}}
+@keyframes vcs-glow{0%{opacity:0;transform:scale(.4)}60%{opacity:1}100%{opacity:.75;transform:scale(1)}}
+/* Halo welcome — staged entrance, module tiles pop in */
+@media (prefers-reduced-motion:no-preference){
+#pgHome>div>*{animation:vcs-up .7s cubic-bezier(.2,.8,.2,1) both}
+#pgHome>div>:nth-child(1){animation:vcs-mark .8s cubic-bezier(.34,1.45,.64,1) both}
+#pgHome>div>:nth-child(2){animation-delay:.08s}#pgHome>div>:nth-child(3){animation-delay:.13s}#pgHome>div>:nth-child(4){animation-delay:.17s}#pgHome>div>:nth-child(5){animation-delay:.22s}#pgHome>div>:nth-child(6){animation-delay:.26s}#pgHome>div>:nth-child(7){animation-delay:.3s}#pgHome>div>:nth-child(n+8){animation-delay:.36s}
+#pgHome .home-pill{animation:vcs-up .5s cubic-bezier(.2,.8,.2,1) both}#pgHome .home-pill:nth-child(2){animation-delay:.05s}#pgHome .home-pill:nth-child(3){animation-delay:.1s}#pgHome .home-pill:nth-child(4){animation-delay:.15s}
+#homeModGrid>*{animation:vcs-tile .45s cubic-bezier(.34,1.4,.64,1) both}
+#homeModGrid>:nth-child(2){animation-delay:.03s}#homeModGrid>:nth-child(3){animation-delay:.06s}#homeModGrid>:nth-child(4){animation-delay:.09s}#homeModGrid>:nth-child(5){animation-delay:.12s}#homeModGrid>:nth-child(6){animation-delay:.15s}#homeModGrid>:nth-child(7){animation-delay:.18s}#homeModGrid>:nth-child(8){animation-delay:.21s}#homeModGrid>:nth-child(9){animation-delay:.24s}#homeModGrid>:nth-child(10){animation-delay:.27s}#homeModGrid>:nth-child(11){animation-delay:.3s}#homeModGrid>:nth-child(n+12){animation-delay:.33s}
+@keyframes vcs-tile{from{opacity:0;transform:translateY(8px) scale(.9)}}
+}
+@media (prefers-reduced-motion:reduce){#splashScreen *{animation:none!important;transition:none!important}}
+</style>
 <link rel="stylesheet" href="css/app.css" media="print" data-vc-defer-css>
 <link rel="stylesheet" href="css/alive.css" media="print" data-vc-defer-css>
 <link rel="stylesheet" href="css/halo.css" media="print" data-vc-defer-css>
@@ -151,7 +181,7 @@ body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 18
       </div>
     </div>
     <div class="vault-splash__reveal">
-      <img src="icons/mark.svg" alt="" class="vc-mark vault-splash__mark" width="72" height="72">
+      <span class="vault-splash__halo" aria-hidden="true"></span><img src="icons/halo-mark.svg" alt="" class="vault-splash__mark" width="88" height="88">
       <h1 class="vault-splash__title vault-display-title">VaultCap</h1>
       <p class="vault-splash__tagline">Everything you own. Encrypted.</p>
     </div>
@@ -263,7 +293,8 @@ body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 18
   <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:20px">
     <span class="home-pill"><span data-vc-icon="lock" data-vc-size="12" aria-hidden="true"></span>Encrypted locally</span>
     <span class="home-pill"><span data-vc-icon="package" data-vc-size="12" aria-hidden="true"></span>Offline-first</span>
-    <span class="home-pill"><span data-vc-icon="sparkles" data-vc-size="12" aria-hidden="true"></span>Instant access</span>
+    <span class="home-pill"><span data-vc-icon="globe" data-vc-size="12" aria-hidden="true"></span>Any country</span>
+    <span class="home-pill"><span data-vc-icon="banknote" data-vc-size="12" aria-hidden="true"></span>Any currency</span>
   </div>
   <!-- Module grid -->
   <div class="vault-panel vault-panel--home home-modules" style="width:100%;padding:16px;margin-bottom:20px">
@@ -292,7 +323,7 @@ body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 18
 <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:36px">
   <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="lock" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> AES-256 encrypted</span>
   <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="smartphone" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> Works offline</span>
-  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="arrows" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> PK · UK · UAE</span>
+  <span style="background:var(--glass2);border:1px solid var(--border2);border-radius:99px;padding:8px 16px;font-size:0.75rem;font-weight:600;color:var(--text2)"><span data-vc-icon="globe" data-vc-size="12" style="display:inline-flex;align-items:center;justify-content:center"></span> Any country · any currency</span>
 </div>
 <button class="btn btn-p" data-act="OB.skipToPin()" style="width:100%;max-width:300px;padding:16px;font-size:1rem;font-weight:700;border-radius:16px">Create my vault</button>
 <button data-act="OB.next(1)" style="margin-top:12px;min-height:44px;background:none;border:none;color:var(--text2);font-size:0.875rem;cursor:pointer;touch-action:manipulation">Personalise first — countries &amp; modules →</button>
@@ -340,8 +371,8 @@ body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 18
 <!-- Screen 3: Country -->
 <div class="ob-step" id="ob2">
 <h2 class="ob-title" style="font-size:1.375rem;margin-bottom:6px">Where do you manage finances?</h2>
-<p class="ob-sub" style="margin-bottom:20px">Select all that apply</p>
-<div id="ob-countries" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:340px;margin-bottom:10px"></div>
+<p class="ob-sub" style="margin-bottom:20px">Any of 190+ countries. Pick home first, then any others you use.</p>
+<div id="ob-countries" style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:340px;margin-bottom:10px"></div>
 <p style="font-size:0.6875rem;color:var(--text3);margin-bottom:24px">You can change this later in Settings</p>
 <button class="btn btn-p" data-act="OB.next(3)" style="width:100%;max-width:340px;padding:14px;font-weight:700">Continue →</button>
 <button data-act="OB.skipToPin()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:0.8125rem;cursor:pointer;touch-action:manipulation">Set up later →</button>
@@ -518,6 +549,7 @@ body:not(.light) #pgHome{background:radial-gradient(80% 50% at 50% 0%,rgb(242 18
 <script src="js/boot-load.js"></script>
 <script src="js/halo-mark.js" defer></script>
 <script src="js/alive.js" defer></script>
+<script src="js/motion.js" defer></script>
 
 
 </body>

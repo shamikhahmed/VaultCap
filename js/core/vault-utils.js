@@ -81,7 +81,9 @@ const U = {
     const d = cur - inv, p = ((d / inv) * 100).toFixed(1), s = d >= 0 ? '+' : '';
     return `<span style="color:${d >= 0 ? 'var(--ok)' : 'var(--err)'}">${s}${U.fmt(Math.round(d))} (${s}${p}%)</span>`;
   },
-  countries:   () => COUNTRIES.map(c  => `<option value="${c.c}">${c.f} ${c.n}</option>`).join(''),
+  /** Home country: the user's own, else the device region, else US. Never a hard-coded market. */
+  homeCC:      () => (S.user && S.user.country) || ((((typeof navigator !== 'undefined' && navigator.language) || '').match(/-([A-Z]{2})$/i) || [])[1] || 'US').toUpperCase(),
+  countries:   (sel) => { const h = sel || U.homeCC(); return COUNTRIES.map(c => `<option value="${c.c}"${c.c === h ? ' selected' : ''}>${c.f} ${c.n}</option>`).join(''); },
   currencies:  () => CURRENCIES.map(c  => `<option value="${c}">${c}</option>`).join(''),
   bankOpts:    cc => (cc ? BANKS_DB.filter(b => b.c === cc || b.c === 'OTHER') : BANKS_DB).map(b => `<option value="${b.n}">`).join(''),
   cardOpts:    () => CARDS_DB.map(c  => `<option value="${c.n}">`).join(''),
@@ -252,7 +254,7 @@ const U = {
 
 function entityDefaults(country) {
   const now = new Date().toISOString();
-  return { ownerId: 'self', owners: ['self'], country: country || (S.user && S.user.country) || 'PK', tags: [], createdAt: now, updatedAt: now };
+  return { ownerId: 'self', owners: ['self'], country: country || U.homeCC(), tags: [], createdAt: now, updatedAt: now };
 }
 window.entityDefaults = entityDefaults;
 

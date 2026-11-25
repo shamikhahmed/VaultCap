@@ -589,7 +589,7 @@ const Family = {
         ${!m.isHead ? `<div class="fg"><label class="fl">Relationship</label><datalist id="fRelDL4"><option>Spouse</option><option>Son</option><option>Daughter</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option></datalist><input class="inp" id="fam-rel" value="${escHtml(m.relation || '')}" list="fRelDL4" placeholder="Spouse, Son, Daughter..."></div>` : ''}
         <div class="fr">
           <div class="fg"><label class="fl">Date of Birth</label><input class="inp" id="fam-dob" type="date" value="${escHtml(m.dob || '')}"></div>
-          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(m.phone || '')}" placeholder="+92..."></div>
+          <div class="fg"><label class="fl">Phone</label><input class="inp" id="fam-phone" value="${escHtml(m.phone || '')}" placeholder="Phone number"></div>
         </div>
         <div class="fg"><label class="fl">Email</label><input class="inp" id="fam-email" value="${escHtml(m.email || '')}" placeholder="email@example.com"></div>
         <div class="fg"><label class="fl">Vault Role</label><select class="inp" id="fam-role"><option value="admin"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'admin' ? ' selected' : ''}>Admin — can manage family vault</option><option value="viewer"${(m.role || (m.isHead ? 'admin' : 'viewer')) === 'viewer' ? ' selected' : ''}>Viewer — label only (not enforced yet)</option></select></div>

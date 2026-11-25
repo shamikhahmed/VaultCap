@@ -107,13 +107,13 @@ const DocsModule={
     Modal.open(title,`
     <div class="fg"><label class="fl">Document Type *</label>
       <datalist id="docTypeDL2">${DOC_TYPES.map(t=>`<option value="${escAttr(DOC_SCHEMAS[t].label)}">`).join('')}${smartNames}</datalist>
-      <input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="CNIC, Passport, Visa, Insurance..." data-act-input="DocsModule.onTypeChange(this.value)" autocomplete="off">
+      <input class="inp" id="doc-type-sel" list="docTypeDL2" placeholder="Passport, ID card, Visa, Insurance…" data-act-input="DocsModule.onTypeChange(this.value)" autocomplete="off">
     </div>
     <div id="doc-dynamic-fields"></div>
     <div id="doc-photo-area"></div>
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2" placeholder="Any additional details..."></textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags([])}`,
-    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="DocsModule.save()">Save Document</button>`);
+    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="DocsModule.save()">Save</button>`);
   },
   onTypeChange(val){
     if(!val.trim()){document.getElementById('doc-dynamic-fields').innerHTML='';document.getElementById('doc-photo-area').innerHTML='';return;}
@@ -226,7 +226,7 @@ const DocsModule={
     const backPhoto=(backEl&&backEl.dataset&&backEl.dataset.photo)||prev&&prev.backPhoto||'';
     const _oid = editId ? ((S.documents||[]).find(x=>x.id===editId)?.ownerId||'self') : (DocsModule._pendingOwnerId||'self');
     if (!editId) DocsModule._pendingOwnerId = null;
-    const data={id:editId||U.id(),docType,frontPhoto,backPhoto,ownerId:_oid,country:(S.user&&S.user.country)||'PK',updatedAt:new Date().toISOString(),createdAt:editId?(S.documents||[]).find(x=>x.id===editId)?.createdAt:new Date().toISOString(),notes:g('notes'),tags:U.getTags()};
+    const data={id:editId||U.id(),docType,frontPhoto,backPhoto,ownerId:_oid,country:U.homeCC(),updatedAt:new Date().toISOString(),createdAt:editId?(S.documents||[]).find(x=>x.id===editId)?.createdAt:new Date().toISOString(),notes:g('notes'),tags:U.getTags()};
     schema.fields.forEach(f=>{data[f.id]=g(f.id);});
     if(!S.documents)S.documents=[];
     if(editId)S.documents=S.documents.map(x=>x.id===editId?data:x);else S.documents.push(data);

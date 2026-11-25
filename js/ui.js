@@ -196,7 +196,7 @@ const Dash={
     const nwChangeStr = (nwChange >= 0 ? '▲ +' : '▼ −') + U.fmtDisplay(nwChange, cur);
     const sparkline = _nwSparkline(histDisplay.length ? histDisplay : [{v:nwDisplay,d:todayStr}]);
     const _COUNTRY_CUR = typeof COUNTRY_CUR !== 'undefined' ? COUNTRY_CUR : {PK:'PKR',GB:'GBP',AE:'AED',US:'USD',CA:'CAD',AU:'AUD',SA:'SAR',QA:'QAR'};
-    const secondaryCurs = (S.user.secondaryCountries || []).map(c => _COUNTRY_CUR[c]).filter(c => c && c !== cur).slice(0, 2);
+    const secondaryCurs = (S.user.secondaryCountries || []).map(c => (typeof countryCurrency === 'function' ? countryCurrency(c) : _COUNTRY_CUR[c])).filter(c => c && c !== cur).slice(0, 2);
     const multiCurHtml = secondaryCurs.length > 0
       ? '<div style="font-size:0.75rem;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
@@ -654,10 +654,10 @@ const Settings={
     <div class="fr"><div class="fg"><label class="fl">Default Currency</label><select class="inp" id="pp-cur">${U.currencies()}</select></div><div class="fg"><label class="fl">&nbsp;</label><button type="button" class="btn btn-g btn-full" data-act="Settings.editCountries()">Manage all countries →</button></div></div>
     <div class="fg"><label class="fl">Home Address</label><textarea class="inp" id="pp-home" rows="2">${S.user.homeAddr||''}</textarea></div>
     <div class="fg"><label class="fl">Work / Office Address</label><textarea class="inp" id="pp-work" rows="2">${S.user.workAddr||''}</textarea></div>`,
-    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Settings.saveProfile()">Save Profile</button>`);
+    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Settings.saveProfile()">Save</button>`);
     setTimeout(()=>{
       const c=document.getElementById('pp-cur');if(c)c.value=S.user.currency||'GBP';
-      const cc=document.getElementById('pp-country');if(cc)cc.value=S.user.country||'GB';
+      const cc=document.getElementById('pp-country');if(cc)cc.value=S.user.country||(((navigator.language||'').match(/-([A-Z]{2})$/i)||[])[1]||'US').toUpperCase();
     },50);
   },
   saveProfile(){
@@ -665,7 +665,7 @@ const Settings={
     S.user.name=g('pp-name')||S.user.name;S.user.avatar=g('pp-avatar')||S.user.avatar;
     S.user.email=g('pp-email');S.user.phone=g('pp-phone');S.user.dob=g('pp-dob');
     const newCountry=document.getElementById('pp-country')?.value||S.user.country;
-    if(newCountry&&newCountry!==S.user.country&&typeof COUNTRY_CUR!=='undefined')S.user.currency=COUNTRY_CUR[newCountry]||S.user.currency;
+    if(newCountry&&newCountry!==S.user.country&&typeof countryCurrency==='function')S.user.currency=countryCurrency(newCountry)||S.user.currency;
     S.user.country=newCountry;
     S.user.currency=document.getElementById('pp-cur')?.value||S.user.currency;
     S.user.homeAddr=g('pp-home');S.user.workAddr=g('pp-work');
@@ -2529,7 +2529,7 @@ const HelpCenter = {
           ${this._card('card', 'Adding a card', 'Finance → Cards → + Add Card. Fill in manually. Store the last 4 digits, expiry, CVV hint, and link it to a bank account. Front and back photos can be captured.')}
           ${this._card('arrows', 'Linking cards to banks', 'When adding a card, select the bank it belongs to in the "Linked Bank" field. Tap any bank entry and scroll down to see all linked cards automatically displayed.')}
           ${this._card('archive', 'Archiving accounts', 'Tap the archive icon on any bank or card to hide it without deleting. Useful for old accounts you want to keep a record of. Tap "Show archived" to see them again.')}
-          ${this._card('search', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by Pakistan, UK, or UAE. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
+          ${this._card('search', 'Filtering banks by country', 'Use the country chips at the top of the Banks page to filter by country. If you set up multiple countries during onboarding, the context switcher lets you filter across the whole app.')}
           ${this._card('star', 'Favouriting entries', 'Tap the star icon on any bank, card, or investment to mark it as a favourite. Favourites appear at the top of their list and in smart collections on the dashboard.')}
         </div>`,
       'documents': `
