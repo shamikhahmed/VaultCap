@@ -46,9 +46,11 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: `python3 -m http.server ${PORT}`,
+    /* Node static server — python http.server BrokenPipe under SW precache storms. */
+    command: `node scripts/pw-static.mjs`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: true,
     timeout: 120000,
+    env: { ...process.env, VAULTCAP_PORT: PORT, PORT },
   },
 });

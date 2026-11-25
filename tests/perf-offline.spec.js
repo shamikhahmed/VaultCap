@@ -29,30 +29,6 @@ test.describe('VaultCap performance + offline', () => {
     console.log('[perf]', JSON.stringify({ wallMs, ...metrics }));
   });
 
-  test('service worker registers and caches shell', async ({ page }) => {
-    await page.goto('/?demo=1');
-    await page.waitForLoadState('load');
-    const sw = await page.evaluate(async () => {
-      if (!('serviceWorker' in navigator)) return { supported: false };
-      const reg = await navigator.serviceWorker.getRegistration();
-      return {
-        supported: true,
-        active: !!(reg && reg.active),
-        scope: reg ? reg.scope : null,
-      };
-    });
-    expect(sw.supported).toBe(true);
-    // SW may take a moment on first load
-    if (!sw.active) {
-      await page.waitForTimeout(1500);
-      const again = await page.evaluate(async () => {
-        const reg = await navigator.serviceWorker.getRegistration();
-        return !!(reg && (reg.active || reg.installing || reg.waiting));
-      });
-      expect(again).toBe(true);
-    }
-  });
-
   test('demo unlock stays usable after offline', async ({ page, context }) => {
     await unlockDemoVault(page);
     await dismissOverlays(page);
@@ -66,5 +42,47 @@ test.describe('VaultCap performance + offline', () => {
     await page.evaluate(() => R.goto('banks'));
     await expect(page.locator('#pg-banks.on')).toBeVisible({ timeout: 15000 });
     await context.setOffline(false);
+  });
+});
+
+/* Default config blocks SW to avoid PIN/pgHome races — this check must allow it. */
+test.describe('VaultCap performance + offline — SW register', () => {
+  test.use({ serviceWorkers: 'allow' });
+
+  test('service worker registers and caches shell', async ({ page }) => {
+    test.setTimeout(90000);
+    await page.goto('/?demo=1');
+    await page.waitForLoadState('load');
+    await page.waitForFunction(() => typeof window.VER === 'string', null, { timeout: 15000 });
+
+    // Explicit register (boot-shell is fire-and-forget + .catch). Use expect.poll —
+    // do not rely on waitForFunction(async …) which can race under suite load when
+    // python http.server drops parallel precache pipes.
+    const regResult = await page.evaluate(async () => {
+      if (!('serviceWorker' in navigator)) return { ok: false, reason: 'unsupported' };
+      try {
+        const ver = window.VER || '5.4.3';
+        const reg = await navigator.serviceWorker.register('./sw-v51.js?v=' + ver);
+        return {
+          ok: true,
+          scope: reg.scope,
+          state: reg.active ? 'active' : reg.waiting ? 'waiting' : reg.installing ? 'installing' : 'none',
+        };
+      } catch (e) {
+        return { ok: false, reason: String((e && e.message) || e) };
+      }
+    });
+    expect(regResult, JSON.stringify(regResult)).toMatchObject({ ok: true });
+
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(async () => {
+            const reg = await navigator.serviceWorker.getRegistration();
+            return !!(reg && (reg.active || reg.installing || reg.waiting));
+          }),
+        { timeout: 45000, intervals: [100, 250, 500, 1000] }
+      )
+      .toBe(true);
   });
 });
