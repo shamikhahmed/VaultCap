@@ -7,6 +7,9 @@
     window.APP_VERSION = BUILD;
   } catch (e0) {}
   var KEY = 'vaultcap_build';
+  /* Expose bump cleanup so boot-shell can register SW only after unregister finishes.
+     Otherwise getRegistrations() can resolve after a fresh register and wipe it. */
+  try { window.__VC_CACHE_BUMP__ = Promise.resolve(); } catch (eBump0) {}
   try {
     if (localStorage.getItem(KEY) !== BUILD) {
       localStorage.setItem(KEY, BUILD);
@@ -21,7 +24,11 @@
           return Promise.all(regs.map(function (reg) { return reg.unregister(); }));
         }));
       }
-      Promise.all(tasks).catch(function () {});
+      try {
+        window.__VC_CACHE_BUMP__ = Promise.all(tasks).catch(function () {});
+      } catch (eBump1) {
+        Promise.all(tasks).catch(function () {});
+      }
     }
   } catch (e) {}
 
