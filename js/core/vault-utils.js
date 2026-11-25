@@ -86,18 +86,20 @@ const U = {
   countries:   (sel) => { const h = sel || U.homeCC(); return COUNTRIES.map(c => `<option value="${c.c}"${c.c === h ? ' selected' : ''}>${c.f} ${c.n}</option>`).join(''); },
   currencies:  () => CURRENCIES.map(c  => `<option value="${c}">${c}</option>`).join(''),
   /** Bank suggestions for a country: curated BANKS_DB first, then the lazy-loaded
-      world catalog (js/core/world-banks.js) for every other country. */
+      world catalog (js/core/world-catalog.js) for every other country. */
   bankOpts:    cc => {
     const base = cc ? BANKS_DB.filter(b => b.c === cc || b.c === 'OTHER') : BANKS_DB;
     const W = typeof WorldBanks !== 'undefined' ? WorldBanks : null;
-    if (W && !W.rows) W.load();
-    const seen = new Set(base.map(b => b.n.toLowerCase()));
-    const extra = (W && cc) ? W.forCountry(cc).filter(b => !seen.has(b.n.toLowerCase()) && seen.add(b.n.toLowerCase())) : [];
-    return base.concat(extra).map(b => `<option value="${U.esc(b.n)}">`).join('');
+    return (W ? WorldCatalog.merge(base, W, cc) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
   },
   cardOpts:    () => CARDS_DB.map(c  => `<option value="${c.n}">`).join(''),
   brokerOpts:  () => BROKERS_DB.map(b => `<option value="${b}">`).join(''),
-  netOpts:     cc => (cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB).map(n => `<option value="${n.n}">`).join(''),
+  /** SIM carriers for a country: curated NETWORKS_DB, then world carriers + global eSIMs. */
+  netOpts:     cc => {
+    const base = cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB;
+    const W = typeof WorldCarriers !== 'undefined' ? WorldCarriers : null;
+    return (W ? WorldCatalog.merge(base, W, cc) : base).map(n => `<option value="${U.esc(n.n)}">`).join('');
+  },
   /** Copies text to clipboard (Clipboard API with execCommand fallback) and shows a toast. */
   copy(text, label = '') {
     const secs = (typeof S !== 'undefined' && S.clipSecs) || 30;
