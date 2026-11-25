@@ -1411,45 +1411,6 @@ const QRSync = {
   }
 };
 
-const WhatsNew={
-  check(){
-    if(localStorage.getItem('vos_wn_ver')===VER) return;
-    // Delay so tests / dismissOverlays can stamp vos_wn_ver and suppress
-    setTimeout(()=>{
-      if(localStorage.getItem('vos_wn_ver')===VER) return;
-      localStorage.setItem('vos_wn_ver',VER);
-      this.show();
-    }, 1200);
-  },
-  show(){
-    localStorage.setItem('vos_wn_ver',VER);
-    Modal.open('Welcome to VaultCap v'+VER,`
-    <div class="vc-ix-31">
-      <div class="vc-ix-53">
-        <div class="vc-ix-54">Standalone Documents Module</div>
-        <div class="vc-ix-13">Passports, IDs, Visas, Contracts, Tax docs — 13 adaptive schemas with intelligent fields</div>
-      </div>
-      <div class="vc-ix-53">
-        <div class="vc-ix-54">Smart Bulk Import</div>
-        <div class="vc-ix-13">Paste text, Excel, Word, CSV, PDF — auto-detects banks, cards, investments, SIMs. Edit before importing.</div>
-      </div>
-      <div class="vc-ix-53">
-        <div class="vc-ix-54">Tabbed Settings Center</div>
-        <div class="vc-ix-13">Settings: Account, General, Appearance, Access, Alerts, Privacy, About</div>
-      </div>
-      <div class="vc-ix-53">
-        <div class="vc-ix-54">Self-Check Engine</div>
-        <div class="vc-ix-13">Auto-detects and repairs data integrity issues. Runs every 5 min. Search → Run Self-Check.</div>
-      </div>
-      <div class="vc-ix-53">
-        <div class="vc-ix-54">Dark / Light / System</div>
-        <div class="vc-ix-13">Appearance follows your preference or OS — Settings → Appearance</div>
-      </div>
-    </div>`,
-    `<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Start Using VaultCap →</button>`);
-  }
-};
-
 const ImportEngine={
   render(){
     const b=document.getElementById('aiImportBody')||document.getElementById('importBody');if(!b)return;
@@ -2374,7 +2335,6 @@ const SettingsNav = {
       ${isNativeApp()?'':`<div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>`}
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="SelfCheck.renderReport()">Run Diagnostics</button>
-        <button type="button" class="btn btn-g btn-full btn-sm" data-act="WhatsNew.show()">What's New</button>
       </div>
       <div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:16px;margin:0 14px 14px">
         <div style="font-size:0.8125rem;font-weight:700;color:var(--ok);margin-bottom:8px">Your Data Guarantee</div>
