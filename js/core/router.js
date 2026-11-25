@@ -135,7 +135,15 @@ const R = {
       if (home) home.classList.add('vc-mark-ready');
     };
     if (demo || document.documentElement.getAttribute('data-vc-demo') === '1') {
-      setTimeout(polish, 3200);
+      // Keep the demo LCP path light, but don't leave an empty grid for seconds:
+      // fill it once the page has loaded and the main thread is idle.
+      // The grid + icons live in the app bundle, so warm it first (also speeds up unlock).
+      const run = () => {
+        const p = typeof VaultLazy !== 'undefined' && VaultLazy.app ? VaultLazy.app() : Promise.resolve();
+        p.then(polish, polish);
+      };
+      const idle = () => (window.requestIdleCallback ? requestIdleCallback(run, { timeout: 700 }) : setTimeout(run, 120));
+      if (document.readyState === 'complete') idle(); else window.addEventListener('load', idle, { once: true });
     } else {
       polish();
     }

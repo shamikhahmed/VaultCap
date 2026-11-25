@@ -313,3 +313,11 @@ body.light .key:active, body.light .key.pressed { background: rgb(0 0 0 / .14) !
   .vault-splash__title, .vault-splash__tagline, #pgHome > div > *, .overlay.on .modal { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; }
   .btn:active, .key:active, .entry:hover { transform: none !important; }
 }
+
+/* Welcome grid + appearance tiles: placeholder shimmer until JS fills them */
+#homeModGrid:empty, #homeThemes:empty { min-height: 148px; border-radius: 14px;
+  background: linear-gradient(100deg, var(--h-s2) 30%, var(--h-s3) 50%, var(--h-s2) 70%) 0 0 / 300% 100%;
+  animation: halo-skel 1.4s ease-in-out infinite; }
+#homeThemes:empty { min-height: 72px; }
+@keyframes halo-skel { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { #homeModGrid:empty, #homeThemes:empty { animation: none; } }
