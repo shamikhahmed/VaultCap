@@ -1,0 +1,212 @@
+# World email providers — one line per country.
+# Format: CC|Name~website~type;...   type: c=consumer webmail (default), b=business/workspace,
+#   p=privacy/secure, i=ISP/telecom mail, u=university/gov, o=other
+# Suffix "*" = unverified. Global providers under OTHER.
+# Primary sources: provider sites, national ISP mail portals, privacy-mail directories.
+# Used by Emails module picker via WorldEmails.
+OTHER|Gmail~gmail.com~c;Outlook / Hotmail~outlook.com~c;Yahoo Mail~mail.yahoo.com~c;Apple iCloud Mail~icloud.com~c;Proton Mail~proton.me~p;Tuta (Tutanota)~tuta.com~p;Fastmail~fastmail.com~c;Zoho Mail~zoho.com~b;GMX~gmx.com~c;AOL Mail~aol.com~c;Yandex Mail~mail.yandex.com~c;Mail.ru~mail.ru~c;Hey~hey.com~c;Superhuman~superhuman.com~b;Google Workspace~workspace.google.com~b;Microsoft 365 Mail~microsoft.com~b;Mailbox.org~mailbox.org~p;Posteo~posteo.de~p;StartMail~startmail.com~p;Mailfence~mailfence.com~p;Custom Domain~~o;Other ISP / custom~~o
+AD|Gmail~gmail.com~c;Outlook~outlook.com~c;Andorra Telecom Mail~andorratelecom.ad~i*
+AE|Gmail~gmail.com~c;Outlook~outlook.com~c;Etisalat Mail~etisalat.ae~i;du Mail~du.ae~i;Proton Mail~proton.me~p;iCloud~icloud.com~c
+AF|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+AG|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+AI|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+AL|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+AM|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+AO|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+AR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo Argentina~ar.mail.yahoo.com~c;Fibertel~fibertel.com.ar~i*
+AT|Gmail~gmail.com~c;Outlook~outlook.com~c;A1 Mail~a1.net~i;GMX Austria~gmx.at~c;UPC / Magenta~magenta.at~i
+AU|Gmail~gmail.com~c;Outlook~outlook.com~c;BigPond / Telstra~bigpond.com~i;Optus Net~optusnet.com.au~i;iiNet~iinet.net.au~i;Internode~internode.on.net~i;iCloud~icloud.com~c
+AW|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+AZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+BA|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+BB|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+BD|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;BDMail~bdmail.net~i*
+BE|Gmail~gmail.com~c;Outlook~outlook.com~c;Proximus Mail~proximus.be~i;Skynet~skynet.be~i;Telenet~telenet.be~i
+BF|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+BG|Gmail~gmail.com~c;Outlook~outlook.com~c;Abv.bg~abv.bg~c;Mail.bg~mail.bg~c
+BH|Gmail~gmail.com~c;Outlook~outlook.com~c;Batelco Mail~batelco.com.bh~i
+BI|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+BJ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+BM|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Bermuda~digicelgroup.com~i*
+BN|Gmail~gmail.com~c;Outlook~outlook.com~c;Imagix / UNN~imagine.com.bn~i*
+BO|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+BR|Gmail~gmail.com~c;Outlook~outlook.com~c;UOL Mail~email.uol.com.br~c;Bol~bol.com.br~c;Terra~terra.com.br~c;iG Mail~ig.com.br~c;Globo Mail~globo.com~c
+BS|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+BT|Gmail~gmail.com~c;Outlook~outlook.com~c;DrukNet Mail~druknet.bt~i*
+BW|Gmail~gmail.com~c;Outlook~outlook.com~c;Webmail.co.za~webmail.co.za~c*
+BY|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+BZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CA|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo Canada~ca.mail.yahoo.com~c;Rogers Yahoo~rogers.com~i;Bell Mail~bell.net~i;Telus~telus.net~i;iCloud~icloud.com~c
+CD|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CF|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CG|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CH|Gmail~gmail.com~c;Outlook~outlook.com~c;Bluewin~bluewin.ch~i;Sunrise Mail~sunrise.ch~i;Proton Mail~proton.me~p;Posteo~posteo.de~p
+CI|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CL|Gmail~gmail.com~c;Outlook~outlook.com~c;Entel Mail~entel.cl~i*;VTR~vtr.net~i*
+CM|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CN|QQ Mail~mail.qq.com~c;NetEase 163~mail.163.com~c;126 Mail~mail.126.com~c;Sina Mail~mail.sina.com.cn~c;Aliyun Mail~mail.aliyun.com~b;Gmail (restricted)~gmail.com~c*
+CO|Gmail~gmail.com~c;Outlook~outlook.com~c;Une / Tigo~tigo.com.co~i*
+CR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CU|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CV|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+CY|Gmail~gmail.com~c;Outlook~outlook.com~c;Cyta Mail~cyta.com.cy~i;Cablenet~cablenet.com.cy~i
+CZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Seznam Email~email.seznam.cz~c;Centrum.cz~centrum.cz~c
+DE|Gmail~gmail.com~c;Outlook~outlook.com~c;GMX~gmx.de~c;WEB.DE~web.de~c;T-Online~t-online.de~i;Freenet~freenet.de~c;Posteo~posteo.de~p;Mailbox.org~mailbox.org~p;1&1 Mail~1und1.de~i
+DJ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+DK|Gmail~gmail.com~c;Outlook~outlook.com~c;TDC Mail~tdc.dk~i;YouSee~yousee.dk~i
+DM|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+DO|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+DZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+EC|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+EE|Gmail~gmail.com~c;Outlook~outlook.com~c;Hot.ee~hot.ee~c;Mail.ee~mail.ee~c
+EG|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;TE Data / WE~te.eg~i*
+ER|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+ES|Gmail~gmail.com~c;Outlook~outlook.com~c;Telefonica / Movistar~movistar.es~i;Orange España~orange.es~i;Yahoo España~es.mail.yahoo.com~c
+ET|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+FI|Gmail~gmail.com~c;Outlook~outlook.com~c;Elisa~elisa.fi~i;DNA Mail~dna.fi~i
+FJ|Gmail~gmail.com~c;Outlook~outlook.com~c;Vodafone Fiji~vodafone.com.fj~i*
+FM|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+FR|Gmail~gmail.com~c;Outlook~outlook.com~c;Orange Mail~orange.fr~i;Free~free.fr~i;SFR~sfr.fr~i;La Poste~laposte.net~c;Proton Mail~proton.me~p;OVH Mail~ovh.com~b
+GA|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GB|Gmail~gmail.com~c;Outlook~outlook.com~c;BT Internet~btinternet.com~i;Sky Mail~sky.com~i;Virgin Media Mail~virginmedia.com~i;TalkTalk~talktalk.net~i;Plusnet~plusnet.com~i;iCloud~icloud.com~c;Proton Mail~proton.me~p
+GD|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+GE|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+GH|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GI|Gmail~gmail.com~c;Outlook~outlook.com~c;Gibtelecom Mail~gibtelecom.net~i*
+GM|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GN|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GQ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GR|Gmail~gmail.com~c;Outlook~outlook.com~c;OTEnet~otenet.gr~i;Forthnet / Nova~nova.gr~i
+GT|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GW|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+GY|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+HK|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo HK~hk.mail.yahoo.com~c;Netvigator~netvigator.com~i;iCloud~icloud.com~c
+HN|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+HR|Gmail~gmail.com~c;Outlook~outlook.com~c;T-Com / HT~t.ht.hr~i;Iskon~iskon.hr~i
+HT|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+HU|Gmail~gmail.com~c;Outlook~outlook.com~c;Freemail~freemail.hu~c;Citromail~citromail.hu~c
+ID|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo Indonesia~id.mail.yahoo.com~c;Telkom / IndiHome~telkom.net.id~i*
+IE|Gmail~gmail.com~c;Outlook~outlook.com~c;Eir Mail~eir.ie~i;Virgin Media IE~virginmedia.ie~i;iCloud~icloud.com~c
+IL|Gmail~gmail.com~c;Outlook~outlook.com~c;Walla Mail~mail.walla.co.il~c;Bezeq International~bezeqint.net~i
+IN|Gmail~gmail.com~c;Outlook~outlook.com~c;Rediffmail~rediffmail.com~c;Yahoo India~in.mail.yahoo.com~c;Zoho Mail India~zoho.in~b;Airmail Sify~sify.com~i*;Indiatimes Mail~indiatimes.com~c*
+IQ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+IR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+IS|Gmail~gmail.com~c;Outlook~outlook.com~c;Síminn Mail~siminn.is~i;Nova IS~nova.is~i*
+IT|Gmail~gmail.com~c;Outlook~outlook.com~c;Libero Mail~libero.it~c;Alice / TIM~alice.it~i;Virgilio~virgilio.it~c;PEC (legal)~aruba.it~b
+JM|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+JO|Gmail~gmail.com~c;Outlook~outlook.com~c;Orange Jordan Mail~orange.jo~i
+JP|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo! Mail Japan~mail.yahoo.co.jp~c;au / KDDI Mail~au.com~i;docomo Mail~docomo.ne.jp~i;SoftBank Mail~softbank.ne.jp~i;iCloud~icloud.com~c;Rakuten Mail~mail.rakuten.co.jp~c
+KE|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;Safaricom Mail~safaricom.co.ke~i*
+KG|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+KH|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+KI|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+KM|Gmail~gmail.com~c;Outlook~outlook.com~c;Comoros Telecom~comorestelecom.km~i*
+KN|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+KP|—No public consumer webmail internationally;Domestic email (restricted)~kcna.kp~o*
+KR|Gmail~gmail.com~c;Outlook~outlook.com~c;Naver Mail~mail.naver.com~c;Daum / Kakao Mail~mail.daum.net~c;Nate Mail~mail.nate.com~c;iCloud~icloud.com~c
+KW|Gmail~gmail.com~c;Outlook~outlook.com~c;Zain Kuwait~kw.zain.com~i;Ooredoo Kuwait~ooredoo.com.kw~i
+KY|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+KZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+LA|Gmail~gmail.com~c;Outlook~outlook.com~c
+LB|Gmail~gmail.com~c;Outlook~outlook.com~c;IDM Mail~idm.net.lb~i*
+LC|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+LI|Gmail~gmail.com~c;Outlook~outlook.com~c;Telecom Liechtenstein~telecom.li~i*
+LK|Gmail~gmail.com~c;Outlook~outlook.com~c;SLT Mobitel Mail~slt.lk~i*
+LR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+LS|Gmail~gmail.com~c;Outlook~outlook.com~c;Webmail.co.za~webmail.co.za~c*
+LT|Gmail~gmail.com~c;Outlook~outlook.com~c;Inbox.lt~inbox.lt~c;Takas~takas.lt~i*
+LU|Gmail~gmail.com~c;Outlook~outlook.com~c;POST Luxembourg~post.lu~i;PT Luxembourg~pt.lu~i
+LV|Gmail~gmail.com~c;Outlook~outlook.com~c;Inbox.lv~inbox.lv~c;One.lv~one.lv~c
+LY|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MA|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MC|Gmail~gmail.com~c;Outlook~outlook.com~c;Monaco Telecom~monaco-telecom.mc~i*
+MD|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+ME|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MG|Gmail~gmail.com~c;Outlook~outlook.com~c;Telma Mail~telma.mg~i*
+MH|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+MK|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+ML|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MM|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MN|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+MO|Gmail~gmail.com~c;Outlook~outlook.com~c;CTM Mail~ctm.net~i*
+MR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MT|Gmail~gmail.com~c;Outlook~outlook.com~c;GO Mail~go.com.mt~i;Melita~melita.com~i
+MU|Gmail~gmail.com~c;Outlook~outlook.com~c;Mauritius Telecom~telecom.mu~i
+MV|Gmail~gmail.com~c;Outlook~outlook.com~c;Dhiraagu Mail~dhiraagu.com.mv~i*
+MW|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+MX|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo México~mx.mail.yahoo.com~c;Telmex / Prodigy~prodigy.net.mx~i*
+MY|Gmail~gmail.com~c;Outlook~outlook.com~c;TM Net / Unifi~tm.com.my~i;Yahoo Malaysia~my.mail.yahoo.com~c
+MZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+NA|Gmail~gmail.com~c;Outlook~outlook.com~c;Webmail.co.za~webmail.co.za~c*
+NE|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+NG|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;Proton Mail~proton.me~p
+NI|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+NL|Gmail~gmail.com~c;Outlook~outlook.com~c;Ziggo Mail~ziggo.nl~i;KPN Mail~kpnmail.nl~i;XS4ALL~xs4all.nl~i;Proton Mail~proton.me~p
+NO|Gmail~gmail.com~c;Outlook~outlook.com~c;Telenor Mail~telenor.no~i;Online.no~online.no~i
+NP|Gmail~gmail.com~c;Outlook~outlook.com~c;WorldLink~worldlink.com.np~i*
+NR|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+NZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Xtra / Spark~xtra.co.nz~i;Orcon~orcon.net.nz~i;iCloud~icloud.com~c
+OM|Gmail~gmail.com~c;Outlook~outlook.com~c;Omantel Mail~omantel.om~i;Ooredoo Oman~ooredoo.om~i
+PA|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+PE|Gmail~gmail.com~c;Outlook~outlook.com~c;Claro Mail~claro.com.pe~i*
+PG|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+PH|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo Philippines~ph.mail.yahoo.com~c;PLDT~pldt.com~i*
+PK|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;Proton Mail~proton.me~p;PTCL / Cybernet~ptcl.net.pk~i*;NayaTel~nayat.com~i*
+PL|Gmail~gmail.com~c;Outlook~outlook.com~c;WP Poczta~poczta.wp.pl~c;Onet Poczta~poczta.onet.pl~c;Interia~poczta.interia.pl~c;o2 Poczta~poczta.o2.pl~c
+PR|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+PS|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+PT|Gmail~gmail.com~c;Outlook~outlook.com~c;SAPO Mail~sapo.pt~c;MEO~meo.pt~i
+PW|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+PY|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+QA|Gmail~gmail.com~c;Outlook~outlook.com~c;Ooredoo Qatar Mail~ooredoo.qa~i;Vodafone Qatar~vodafone.qa~i
+RO|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo România~ro.mail.yahoo.com~c;RDS / Digi~rcs-rds.ro~i
+RS|Gmail~gmail.com~c;Outlook~outlook.com~c;EUnet~eunet.rs~i*;Yahoo~mail.yahoo.com~c
+RU|Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.ru~c;Rambler~mail.rambler.ru~c;Gmail~gmail.com~c;Outlook~outlook.com~c
+RW|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SA|Gmail~gmail.com~c;Outlook~outlook.com~c;stc Mail~stc.com.sa~i;Mobily~mobily.com.sa~i;iCloud~icloud.com~c
+SB|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+SC|Gmail~gmail.com~c;Outlook~outlook.com~c;Cable & Wireless~cwseychelles.com~i*
+SD|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SE|Gmail~gmail.com~c;Outlook~outlook.com~c;Telia Mail~telia.com~i;Passagen~passagen.se~c*
+SG|Gmail~gmail.com~c;Outlook~outlook.com~c;Singtel Mail~singnet.com.sg~i;StarHub~starhub.com~i;iCloud~icloud.com~c
+SI|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SK|Gmail~gmail.com~c;Outlook~outlook.com~c;Azet / Centrum~azet.sk~c;Orange Slovensko~orange.sk~i
+SL|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SM|Gmail~gmail.com~c;Outlook~outlook.com~c
+SN|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SO|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SR|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+SS|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+ST|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SV|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SY|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+SZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Webmail.co.za~webmail.co.za~c*
+TD|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+TG|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+TH|Gmail~gmail.com~c;Outlook~outlook.com~c;TRUE Mail~truecorp.co.th~i*;AIS~ais.co.th~i*
+TJ|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+TL|Gmail~gmail.com~c;Outlook~outlook.com~c
+TM|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+TN|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+TO|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+TR|Gmail~gmail.com~c;Outlook~outlook.com~c;Turkcell Superonline~superonline.net~i;TTNET~ttnet.com.tr~i;Yandex Mail TR~mail.yandex.com.tr~c;Proton Mail~proton.me~p
+TT|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+TV|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+TW|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo Taiwan~tw.mail.yahoo.com~c;HiNet Mail~hinet.net~i;iCloud~icloud.com~c
+TZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+UA|Gmail~gmail.com~c;Outlook~outlook.com~c;Ukr.net~ukr.net~c;Meta.ua~meta.ua~c;i.ua~i.ua~c
+UG|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+US|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c;AOL~aol.com~c;iCloud~icloud.com~c;Proton Mail~proton.me~p;Fastmail~fastmail.com~c;Hey~hey.com~c;Google Workspace~workspace.google.com~b;Microsoft 365~microsoft.com~b
+UY|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+UZ|Gmail~gmail.com~c;Outlook~outlook.com~c;Mail.ru~mail.ru~c;Yandex Mail~mail.yandex.com~c
+VA|Gmail~gmail.com~c;Outlook~outlook.com~c;Vatican Mail~vatican.va~u*
+VC|Gmail~gmail.com~c;Outlook~outlook.com~c;Flow Mail~discoverflow.co~i*
+VE|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+VN|Gmail~gmail.com~c;Outlook~outlook.com~c;Zimbra / local ISP~vnpt.vn~i*;Proton Mail~proton.me~p
+VU|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+WS|Gmail~gmail.com~c;Outlook~outlook.com~c;Digicel Mail~digicelgroup.com~i*
+XK|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+YE|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+ZA|Gmail~gmail.com~c;Outlook~outlook.com~c;Webmail.co.za~webmail.co.za~c;MWEB~mweb.co.za~i;Telkom Internet~telkomsa.net~i;Proton Mail~proton.me~p
+ZM|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c
+ZW|Gmail~gmail.com~c;Outlook~outlook.com~c;Yahoo~mail.yahoo.com~c

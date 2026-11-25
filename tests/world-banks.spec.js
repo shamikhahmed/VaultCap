@@ -100,4 +100,24 @@ test.describe('world bank catalog', () => {
     expect(r.dig).toContain('Instagram');
     expect(r.none).toContain('Netflix'); // curated SUBS_DB still shown
   });
+
+  test('emailOpts suggests local ISP and global providers', async ({ page }) => {
+    const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/data/world-emails.min.json'), 'utf8'));
+    expect(new Set(rows.map(r => r[1])).size).toBeGreaterThanOrEqual(206);
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldEmails !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldEmails.load());
+    const r = await page.evaluate(() => ({
+      de: U.emailOpts('DE'),
+      pk: U.emailOpts('PK'),
+      jp: U.emailOpts('JP'),
+      none: U.emailOpts(''),
+    }));
+    expect(r.de).toContain('GMX');
+    expect(r.de).toContain('WEB.DE');
+    expect(r.de).toContain('Proton Mail'); // global OTHER
+    expect(r.pk).toContain('Gmail');
+    expect(r.jp).toContain('Yahoo! Mail Japan');
+    expect(r.none).toContain('Gmail'); // curated EMAIL_PROVIDERS still shown
+  });
 });
