@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 /**
- * Build-time only: download bank logos into assets/banks/.
- * Runtime never hits Google — privacy leak lives here (dev machine), not user devices.
+ * Build-time only: download logos into assets/banks/.
+ * Runtime never hits Google / Clearbit / DDG — those calls happen here on a
+ * developer machine only. The PWA serves bundled PNGs (or initials) offline.
+ *
+ * Domain sources:
+ *  - js/core/bank-catalog.js + branding.js (curated)
+ *  - data/world-*.json `web` fields (banks, carriers, brokers, cards, emails, subs)
+ *    Cities are skipped (no website domains).
  *
  * Sources (tried in order per domain):
  *  1. Clearbit logo API (often real mark)
@@ -12,6 +18,7 @@
  *   node scripts/fetch-bank-logos.mjs           # fill missing + upgrade weak (<800B)
  *   node scripts/fetch-bank-logos.mjs --all     # re-fetch every domain
  *   node scripts/fetch-bank-logos.mjs --min=1200
+ *   npm run logos:fetch
  */
 import fs from 'fs';
 import path from 'path';
@@ -33,6 +40,15 @@ function slug(domain) {
   return String(domain).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+function addDomain(domains, raw) {
+  if (!raw) return;
+  const d = String(raw).toLowerCase().split('/')[0].trim();
+  if (!d || d.includes('example') || d.includes('w3.org') || d.includes('googleapis')) return;
+  if (d.split('.').length < 2) return;
+  if (!/^[a-z0-9][a-z0-9.-]+\.[a-z]{2,}$/i.test(d)) return;
+  domains.add(d);
+}
+
 function extractDomains() {
   const domains = new Set();
   const files = [
@@ -43,10 +59,20 @@ function extractDomains() {
     if (!fs.existsSync(file)) continue;
     const src = fs.readFileSync(file, 'utf8');
     for (const m of src.matchAll(/['"]([a-z0-9][a-z0-9.-]+\.[a-z]{2,})['"]/gi)) {
-      const d = m[1].toLowerCase();
-      if (d.includes('example') || d.includes('w3.org') || d.includes('googleapis')) continue;
-      if (d.split('.').length < 2) continue;
-      domains.add(d);
+      addDomain(domains, m[1]);
+    }
+  }
+  // World catalogs (offline JSON) — same LogoEngine slug path at runtime.
+  const worldDir = path.join(root, 'data');
+  const skip = new Set(['world-cities.json']); // no website domains
+  if (fs.existsSync(worldDir)) {
+    for (const name of fs.readdirSync(worldDir)) {
+      if (!name.startsWith('world-') || !name.endsWith('.json') || skip.has(name)) continue;
+      let rows;
+      try { rows = JSON.parse(fs.readFileSync(path.join(worldDir, name), 'utf8')); }
+      catch { continue; }
+      if (!Array.isArray(rows)) continue;
+      for (const r of rows) addDomain(domains, r && r.web);
     }
   }
   return [...domains].sort();
