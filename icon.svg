@@ -1,19 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="VaultCap">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#121a2a"/>
-      <stop offset="100%" stop-color="#04070d"/>
-    </linearGradient>
-    <linearGradient id="shield" gradientUnits="userSpaceOnUse" x1="96" y1="140" x2="416" y2="420">
-      <stop offset="0%" stop-color="#F3D27A"/>
-      <stop offset="50%" stop-color="#D4A017"/>
-      <stop offset="100%" stop-color="#9A7410"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <path d="M380 96 L420 108 L408 148" stroke="#c9a227" stroke-width="10" stroke-linecap="round" fill="none" opacity=".9"/>
-  <circle cx="408" cy="118" r="6" fill="#c9a227"/>
-  <path d="M256 148 L336 184 V296 C336 348 302 388 256 404 C210 388 176 348 176 296 V184 Z" fill="none" stroke="url(#shield)" stroke-width="22" stroke-linejoin="round"/>
-  <circle cx="256" cy="268" r="34" fill="none" stroke="#f4f0e8" stroke-width="16"/>
-  <rect x="244" y="268" width="24" height="44" rx="12" fill="#f4f0e8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <defs><linearGradient id="g" x1="20" y1="10" x2="44" y2="52" gradientUnits="userSpaceOnUse"><stop stop-color="#FFE3A3"/><stop offset=".42" stop-color="#F2B53A"/><stop offset="1" stop-color="#B9790C"/></linearGradient></defs>
+  <rect width="64" height="64" rx="14" fill="#0b0a09"/>
+  <path d="M32 8 L52 16.8 V31 C52 42.8 43.8 51.9 32 55.6 C20.2 51.9 12 42.8 12 31 V16.8 Z" fill="url(#g)"/>
+  <circle cx="32" cy="28.5" r="5.8" fill="#1A1206"/><path d="M32 32 V41" stroke="#1A1206" stroke-width="4.4" stroke-linecap="round"/>
 </svg>
