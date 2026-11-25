@@ -1,0 +1,210 @@
+# World major cities — one line per country (capitals + metros for address/forms).
+# Format: CC|City~~type;...   type: a=capital, m=metro, c=city (default)
+# Empty website field (~~) — cities have no logo domain. No OTHER row.
+# Primary sources: national capitals, UN / World Bank metro lists, national stats.
+# Used by Assets property Location via WorldCities / U.cityOpts.
+AD|Andorra la Vella~~a;Escaldes-Engordany~~c
+AE|Abu Dhabi~~a;Dubai~~m;Sharjah~~m;Ajman~~c;Ras Al Khaimah~~c;Fujairah~~c
+AF|Kabul~~a;Herat~~m;Kandahar~~m;Mazar-i-Sharif~~m;Jalalabad~~c
+AG|St. John's~~a
+AI|The Valley~~a
+AL|Tirana~~a;Durrës~~m;Vlorë~~c;Shkodër~~c
+AM|Yerevan~~a;Gyumri~~c;Vanadzor~~c
+AO|Luanda~~a;Huambo~~m;Lobito~~c;Benguela~~c
+AR|Buenos Aires~~a;Córdoba~~m;Rosario~~m;Mendoza~~m;La Plata~~c;Mar del Plata~~c;Salta~~c
+AT|Vienna~~a;Graz~~m;Linz~~m;Salzburg~~m;Innsbruck~~c
+AU|Canberra~~a;Sydney~~m;Melbourne~~m;Brisbane~~m;Perth~~m;Adelaide~~m;Gold Coast~~c;Hobart~~c;Darwin~~c
+AW|Oranjestad~~a
+AZ|Baku~~a;Ganja~~m;Sumqayit~~c
+BA|Sarajevo~~a;Banja Luka~~m;Tuzla~~c;Mostar~~c
+BB|Bridgetown~~a
+BD|Dhaka~~a;Chittagong~~m;Khulna~~m;Rajshahi~~c;Sylhet~~c
+BE|Brussels~~a;Antwerp~~m;Ghent~~m;Charleroi~~c;Liège~~c;Bruges~~c
+BF|Ouagadougou~~a;Bobo-Dioulasso~~m
+BG|Sofia~~a;Plovdiv~~m;Varna~~m;Burgas~~c
+BH|Manama~~a;Riffa~~c;Muharraq~~c
+BI|Gitega~~a;Bujumbura~~m
+BJ|Porto-Novo~~a;Cotonou~~m;Parakou~~c
+BM|Hamilton~~a
+BN|Bandar Seri Begawan~~a
+BO|Sucre~~a;La Paz~~m;Santa Cruz~~m;Cochabamba~~m
+BR|Brasília~~a;São Paulo~~m;Rio de Janeiro~~m;Salvador~~m;Fortaleza~~m;Belo Horizonte~~m;Manaus~~m;Curitiba~~m;Recife~~m;Porto Alegre~~m
+BS|Nassau~~a;Freeport~~c
+BT|Thimphu~~a;Phuentsholing~~c
+BW|Gaborone~~a;Francistown~~c;Maun~~c
+BY|Minsk~~a;Gomel~~m;Mogilev~~c;Vitebsk~~c;Brest~~c
+BZ|Belmopan~~a;Belize City~~m
+CA|Ottawa~~a;Toronto~~m;Montreal~~m;Vancouver~~m;Calgary~~m;Edmonton~~m;Winnipeg~~c;Quebec City~~c;Halifax~~c
+CD|Kinshasa~~a;Lubumbashi~~m;Mbuji-Mayi~~m;Goma~~c
+CF|Bangui~~a
+CG|Brazzaville~~a;Pointe-Noire~~m
+CH|Bern~~a;Zürich~~m;Geneva~~m;Basel~~m;Lausanne~~c;Lucerne~~c
+CI|Yamoussoukro~~a;Abidjan~~m;Bouaké~~c
+CL|Santiago~~a;Valparaíso~~m;Concepción~~m;Antofagasta~~c;Viña del Mar~~c
+CM|Yaoundé~~a;Douala~~m;Garoua~~c
+CN|Beijing~~a;Shanghai~~m;Guangzhou~~m;Shenzhen~~m;Chengdu~~m;Chongqing~~m;Tianjin~~m;Wuhan~~m;Hangzhou~~m;Xi'an~~m;Nanjing~~m;Suzhou~~c
+CO|Bogotá~~a;Medellín~~m;Cali~~m;Barranquilla~~m;Cartagena~~c
+CR|San José~~a;Alajuela~~c;Cartago~~c
+CU|Havana~~a;Santiago de Cuba~~m;Camagüey~~c
+CV|Praia~~a;Mindelo~~c
+CY|Nicosia~~a;Limassol~~m;Larnaca~~c;Paphos~~c
+CZ|Prague~~a;Brno~~m;Ostrava~~m;Plzeň~~c
+DE|Berlin~~a;Hamburg~~m;Munich~~m;Cologne~~m;Frankfurt~~m;Stuttgart~~m;Düsseldorf~~m;Leipzig~~c;Dortmund~~c;Essen~~c
+DJ|Djibouti~~a
+DK|Copenhagen~~a;Aarhus~~m;Odense~~c;Aalborg~~c
+DM|Roseau~~a
+DO|Santo Domingo~~a;Santiago~~m;La Romana~~c
+DZ|Algiers~~a;Oran~~m;Constantine~~m;Annaba~~c
+EC|Quito~~a;Guayaquil~~m;Cuenca~~c
+EE|Tallinn~~a;Tartu~~c;Narva~~c
+EG|Cairo~~a;Alexandria~~m;Giza~~m;Luxor~~c;Aswan~~c;Sharm El Sheikh~~c
+ER|Asmara~~a
+ES|Madrid~~a;Barcelona~~m;Valencia~~m;Seville~~m;Zaragoza~~m;Málaga~~c;Bilbao~~c
+ET|Addis Ababa~~a;Dire Dawa~~c;Mekelle~~c
+FI|Helsinki~~a;Espoo~~m;Tampere~~m;Turku~~c;Oulu~~c
+FJ|Suva~~a;Nadi~~c;Lautoka~~c
+FM|Palikir~~a;Kolonia~~c
+FR|Paris~~a;Marseille~~m;Lyon~~m;Toulouse~~m;Nice~~m;Nantes~~c;Strasbourg~~c;Bordeaux~~c;Lille~~c
+GA|Libreville~~a;Port-Gentil~~c
+GB|London~~a;Birmingham~~m;Manchester~~m;Glasgow~~m;Liverpool~~m;Leeds~~m;Edinburgh~~c;Bristol~~c;Cardiff~~c;Belfast~~c
+GD|St. George's~~a
+GE|Tbilisi~~a;Batumi~~m;Kutaisi~~c
+GH|Accra~~a;Kumasi~~m;Tamale~~c;Takoradi~~c
+GI|Gibraltar~~a
+GM|Banjul~~a;Serekunda~~m
+GN|Conakry~~a;Nzérékoré~~c
+GQ|Malabo~~a;Bata~~c
+GR|Athens~~a;Thessaloniki~~m;Patras~~c;Heraklion~~c
+GT|Guatemala City~~a;Quetzaltenango~~c;Antigua Guatemala~~c
+GW|Bissau~~a
+GY|Georgetown~~a
+HK|Hong Kong~~a;Kowloon~~m;Tsuen Wan~~c
+HN|Tegucigalpa~~a;San Pedro Sula~~m
+HR|Zagreb~~a;Split~~m;Rijeka~~c;Osijek~~c
+HT|Port-au-Prince~~a;Cap-Haïtien~~c
+HU|Budapest~~a;Debrecen~~m;Szeged~~c;Miskolc~~c
+ID|Jakarta~~a;Surabaya~~m;Bandung~~m;Medan~~m;Bekasi~~m;Semarang~~c;Makassar~~c;Denpasar~~c
+IE|Dublin~~a;Cork~~m;Galway~~c;Limerick~~c;Waterford~~c
+IL|Jerusalem~~a;Tel Aviv~~m;Haifa~~m;Beersheba~~c;Eilat~~c
+IN|New Delhi~~a;Mumbai~~m;Bengaluru~~m;Hyderabad~~m;Chennai~~m;Kolkata~~m;Pune~~m;Ahmedabad~~m;Jaipur~~m;Surat~~c;Lucknow~~c;Chandigarh~~c
+IQ|Baghdad~~a;Basra~~m;Mosul~~m;Erbil~~m;Najaf~~c
+IR|Tehran~~a;Mashhad~~m;Isfahan~~m;Karaj~~m;Shiraz~~m;Tabriz~~c
+IS|Reykjavík~~a;Akureyri~~c
+IT|Rome~~a;Milan~~m;Naples~~m;Turin~~m;Palermo~~m;Genoa~~c;Bologna~~c;Florence~~c;Venice~~c
+JM|Kingston~~a;Montego Bay~~c;Spanish Town~~c
+JO|Amman~~a;Zarqa~~c;Irbid~~c;Aqaba~~c
+JP|Tokyo~~a;Yokohama~~m;Osaka~~m;Nagoya~~m;Sapporo~~m;Fukuoka~~m;Kobe~~m;Kyoto~~c;Hiroshima~~c
+KE|Nairobi~~a;Mombasa~~m;Kisumu~~c;Nakuru~~c
+KG|Bishkek~~a;Osh~~m
+KH|Phnom Penh~~a;Siem Reap~~c;Battambang~~c;Sihanoukville~~c
+KI|Tarawa~~a
+KM|Moroni~~a
+KN|Basseterre~~a
+KP|Pyongyang~~a;Hamhung~~c;Chongjin~~c
+KR|Seoul~~a;Busan~~m;Incheon~~m;Daegu~~m;Daejeon~~m;Gwangju~~c;Ulsan~~c
+KW|Kuwait City~~a;Hawalli~~c;Salmiya~~c
+KY|George Town~~a
+KZ|Astana~~a;Almaty~~m;Shymkent~~m;Karaganda~~c
+LA|Vientiane~~a;Luang Prabang~~c;Pakse~~c
+LB|Beirut~~a;Tripoli~~m;Sidon~~c;Byblos~~c
+LC|Castries~~a
+LI|Vaduz~~a
+LK|Sri Jayawardenepura Kotte~~a;Colombo~~m;Kandy~~c;Galle~~c;Jaffna~~c
+LR|Monrovia~~a
+LS|Maseru~~a
+LT|Vilnius~~a;Kaunas~~m;Klaipėda~~c
+LU|Luxembourg City~~a;Esch-sur-Alzette~~c
+LV|Riga~~a;Daugavpils~~c;Liepāja~~c
+LY|Tripoli~~a;Benghazi~~m;Misrata~~c
+MA|Rabat~~a;Casablanca~~m;Fes~~m;Marrakech~~m;Tangier~~m;Agadir~~c
+MC|Monaco~~a
+MD|Chișinău~~a;Tiraspol~~c;Bălți~~c
+ME|Podgorica~~a;Nikšić~~c;Budva~~c
+MG|Antananarivo~~a;Toamasina~~c;Antsirabe~~c
+MH|Majuro~~a
+MK|Skopje~~a;Bitola~~c;Ohrid~~c
+ML|Bamako~~a;Sikasso~~c;Timbuktu~~c
+MM|Naypyidaw~~a;Yangon~~m;Mandalay~~m
+MN|Ulaanbaatar~~a;Erdenet~~c
+MO|Macau~~a
+MR|Nouakchott~~a
+MT|Valletta~~a;Birkirkara~~c;Sliema~~c
+MU|Port Louis~~a;Curepipe~~c
+MV|Malé~~a;Addu City~~c
+MW|Lilongwe~~a;Blantyre~~m
+MX|Mexico City~~a;Guadalajara~~m;Monterrey~~m;Puebla~~m;Tijuana~~m;León~~c;Cancún~~c;Mérida~~c
+MY|Kuala Lumpur~~a;George Town~~m;Johor Bahru~~m;Ipoh~~c;Kota Kinabalu~~c;Kuching~~c
+MZ|Maputo~~a;Beira~~m;Nampula~~c
+NA|Windhoek~~a;Walvis Bay~~c;Swakopmund~~c
+NE|Niamey~~a;Zinder~~c
+NG|Abuja~~a;Lagos~~m;Kano~~m;Ibadan~~m;Port Harcourt~~m;Benin City~~c;Kaduna~~c
+NI|Managua~~a;León~~c;Granada~~c
+NL|Amsterdam~~a;Rotterdam~~m;The Hague~~m;Utrecht~~m;Eindhoven~~c
+NO|Oslo~~a;Bergen~~m;Trondheim~~m;Stavanger~~c;Tromsø~~c
+NP|Kathmandu~~a;Pokhara~~m;Lalitpur~~c;Biratnagar~~c
+NR|Yaren~~a
+NZ|Wellington~~a;Auckland~~m;Christchurch~~m;Hamilton~~c;Dunedin~~c;Queenstown~~c
+OM|Muscat~~a;Salalah~~c;Sohar~~c
+PA|Panama City~~a;Colón~~c;David~~c
+PE|Lima~~a;Arequipa~~m;Trujillo~~m;Cusco~~c
+PG|Port Moresby~~a;Lae~~c
+PH|Manila~~a;Quezon City~~m;Davao City~~m;Cebu City~~m;Makati~~c
+PK|Islamabad~~a;Karachi~~m;Lahore~~m;Faisalabad~~m;Rawalpindi~~m;Multan~~c;Peshawar~~c;Quetta~~c;Sialkot~~c;Gujranwala~~c
+PL|Warsaw~~a;Kraków~~m;Łódź~~m;Wrocław~~m;Poznań~~m;Gdańsk~~c
+PR|San Juan~~a;Ponce~~c;Mayagüez~~c
+PS|Ramallah~~a;Gaza City~~m;Hebron~~c;Nablus~~c
+PT|Lisbon~~a;Porto~~m;Braga~~c;Faro~~c;Coimbra~~c
+PW|Ngerulmud~~a;Koror~~c
+PY|Asunción~~a;Ciudad del Este~~c
+QA|Doha~~a;Al Rayyan~~c;Al Wakrah~~c
+RO|Bucharest~~a;Cluj-Napoca~~m;Timișoara~~m;Iași~~c;Constanța~~c
+RS|Belgrade~~a;Novi Sad~~m;Niš~~c
+RU|Moscow~~a;Saint Petersburg~~m;Novosibirsk~~m;Yekaterinburg~~m;Kazan~~m;Nizhny Novgorod~~c;Vladivostok~~c;Sochi~~c
+RW|Kigali~~a
+SA|Riyadh~~a;Jeddah~~m;Mecca~~m;Medina~~m;Dammam~~m;Khobar~~c;Abha~~c
+SB|Honiara~~a
+SC|Victoria~~a
+SD|Khartoum~~a;Omdurman~~m;Port Sudan~~c
+SE|Stockholm~~a;Gothenburg~~m;Malmö~~m;Uppsala~~c
+SG|Singapore~~a
+SI|Ljubljana~~a;Maribor~~c
+SK|Bratislava~~a;Košice~~m
+SL|Freetown~~a
+SM|San Marino~~a
+SN|Dakar~~a;Thiès~~c;Saint-Louis~~c
+SO|Mogadishu~~a;Hargeisa~~c
+SR|Paramaribo~~a
+SS|Juba~~a
+ST|São Tomé~~a
+SV|San Salvador~~a;Santa Ana~~c;San Miguel~~c
+SY|Damascus~~a;Aleppo~~m;Homs~~c;Latakia~~c
+SZ|Mbabane~~a;Manzini~~m
+TD|N'Djamena~~a;Moundou~~c
+TG|Lomé~~a
+TH|Bangkok~~a;Chiang Mai~~m;Pattaya~~c;Phuket~~c;Khon Kaen~~c
+TJ|Dushanbe~~a;Khujand~~c
+TL|Dili~~a
+TM|Ashgabat~~a;Türkmenabat~~c
+TN|Tunis~~a;Sfax~~m;Sousse~~c
+TO|Nukuʻalofa~~a
+TR|Ankara~~a;Istanbul~~m;Izmir~~m;Bursa~~m;Antalya~~m;Adana~~c;Gaziantep~~c
+TT|Port of Spain~~a;San Fernando~~c
+TV|Funafuti~~a
+TW|Taipei~~a;Kaohsiung~~m;Taichung~~m;Tainan~~c;Hsinchu~~c
+TZ|Dodoma~~a;Dar es Salaam~~m;Arusha~~c;Mwanza~~c;Zanzibar City~~c
+UA|Kyiv~~a;Kharkiv~~m;Odesa~~m;Dnipro~~m;Lviv~~m
+UG|Kampala~~a;Entebbe~~c;Gulu~~c
+US|Washington, D.C.~~a;New York~~m;Los Angeles~~m;Chicago~~m;Houston~~m;Phoenix~~m;Philadelphia~~m;San Antonio~~m;San Diego~~m;Dallas~~m;San Francisco~~c;Seattle~~c;Boston~~c;Miami~~c;Atlanta~~c;Denver~~c
+UY|Montevideo~~a;Punta del Este~~c
+UZ|Tashkent~~a;Samarkand~~m;Bukhara~~c;Namangan~~c
+VA|Vatican City~~a
+VC|Kingstown~~a
+VE|Caracas~~a;Maracaibo~~m;Valencia~~m;Barquisimeto~~c
+VN|Hanoi~~a;Ho Chi Minh City~~m;Da Nang~~m;Hai Phong~~c;Can Tho~~c
+VU|Port Vila~~a
+WS|Apia~~a
+XK|Pristina~~a;Prizren~~c;Peja~~c
+YE|Sana'a~~a;Aden~~m;Taiz~~c
+ZA|Pretoria~~a;Cape Town~~m;Johannesburg~~m;Durban~~m;Port Elizabeth / Gqeberha~~c;Bloemfontein~~c
+ZM|Lusaka~~a;Ndola~~c;Kitwe~~c;Livingstone~~c
+ZW|Harare~~a;Bulawayo~~m;Victoria Falls~~c

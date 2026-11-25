@@ -7,6 +7,7 @@
      cards    data/world-cards.txt     → scripts/build-world-lists.mjs    → assets/data/world-cards.min.json
      subs     data/world-subs.txt      → scripts/build-world-lists.mjs    → assets/data/world-subs.min.json
      emails   data/world-emails.txt    → scripts/build-world-lists.mjs    → assets/data/world-emails.min.json
+     cities   data/world-cities.txt    → scripts/build-world-lists.mjs    → assets/data/world-cities.min.json
    Rows: [name, countryCode, type, logoDomain]. Same-origin fetch only; logos resolve
    through LogoEngine (bundled file → initials tile), never a third-party service. */
 const WorldCatalog = {
@@ -65,12 +66,13 @@ const WorldBrokers = WorldCatalog.make('assets/data/world-brokers.min.json', 'vc
 const WorldCards = WorldCatalog.make('assets/data/world-cards.min.json', 'vc:world-cards');
 const WorldSubs = WorldCatalog.make('assets/data/world-subs.min.json', 'vc:world-subs');
 const WorldEmails = WorldCatalog.make('assets/data/world-emails.min.json', 'vc:world-emails');
+const WorldCities = WorldCatalog.make('assets/data/world-cities.min.json', 'vc:world-cities');
 
 // Warm the catalogs after first paint; pickers re-read them when they next render.
 if (typeof window !== 'undefined') {
   const warm = () => {
     WorldBanks.load(); WorldCarriers.load(); WorldBrokers.load();
-    WorldCards.load(); WorldSubs.load(); WorldEmails.load();
+    WorldCards.load(); WorldSubs.load(); WorldEmails.load(); WorldCities.load();
   };
   if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
   else setTimeout(warm, 1500);

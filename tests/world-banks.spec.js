@@ -120,4 +120,23 @@ test.describe('world bank catalog', () => {
     expect(r.jp).toContain('Yahoo! Mail Japan');
     expect(r.none).toContain('Gmail'); // curated EMAIL_PROVIDERS still shown
   });
+
+  test('cityOpts suggests capitals and metros for address forms', async ({ page }) => {
+    const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/data/world-cities.min.json'), 'utf8'));
+    expect(new Set(rows.map(r => r[1])).size).toBeGreaterThanOrEqual(205);
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldCities !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldCities.load());
+    const r = await page.evaluate(() => ({
+      pk: U.cityOpts('PK'),
+      ae: U.cityOpts('AE'),
+      us: U.cityOpts('US'),
+      none: U.cityOpts(''),
+    }));
+    expect(r.pk).toContain('Islamabad');
+    expect(r.pk).toContain('Karachi');
+    expect(r.ae).toContain('Dubai');
+    expect(r.us).toContain('New York');
+    expect(r.none).toBe('');
+  });
 });

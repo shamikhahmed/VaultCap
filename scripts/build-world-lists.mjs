@@ -83,6 +83,18 @@ const CATALOGS = {
     },
     otherLabel: 'Global email providers',
   },
+  cities: {
+    title: 'World major cities',
+    unit: 'cities',
+    defType: () => 'city',
+    types: { a: 'capital', m: 'metro', c: 'city' },
+    labels: {
+      capital: 'capital',
+      metro: 'metro',
+      city: 'city',
+    },
+    otherLabel: 'Global cities',
+  },
 };
 
 const slug = d => String(d || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

@@ -128,6 +128,13 @@ const U = {
     const W = typeof WorldEmails !== 'undefined' ? WorldEmails : null;
     return (W ? WorldCatalog.merge(base, W, cc || U.homeCC()) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
   },
+  /** Major cities for a country (Assets location, address forms). Empty until WorldCities loads. */
+  cityOpts:    cc => {
+    const W = typeof WorldCities !== 'undefined' ? WorldCities : null;
+    if (!W || !cc) return '';
+    if (!W.rows) W.load();
+    return W.forCountry(cc).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   /** Copies text to clipboard (Clipboard API with execCommand fallback) and shows a toast. */
   copy(text, label = '') {
     const secs = (typeof S !== 'undefined' && S.clipSecs) || 30;
