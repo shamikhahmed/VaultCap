@@ -1,0 +1,211 @@
+# World mobile carriers (SIM / eSIM) — one line per country.
+# Format: CC|Carrier~website;Carrier~website;...
+# Default type is a network operator (MNO). Prefix "^" = MVNO / sub-brand. Suffix "*" = unverified.
+# Primary sources: national telecom regulators' licensee lists and GSMA Intelligence operator directory;
+# spot-checked against operator websites. Global eSIM travel providers are listed under OTHER.
+OTHER|Airalo~airalo.com;Holafly~holafly.com;Nomad eSIM~getnomad.app;Ubigi~ubigi.com;Saily~saily.com;eSIM.me~esim.me;Google Fi~fi.google.com;Truphone~truphone.com
+AD|Andorra Telecom~andorratelecom.ad
+AE|e& (Etisalat)~etisalat.ae;du~du.ae;^Virgin Mobile UAE~virginmobile.ae
+AF|Afghan Wireless (AWCC)~afghan-wireless.com;Roshan~roshan.af;Etisalat Afghanistan~etisalat.af;M1 Afghanistan (ex-MTN)~m1.af*;Salaam~salaam.af
+AG|Flow Antigua~discoverflow.co/antigua;Digicel Antigua~digicelgroup.com/ag;APUA imagine~apua.ag
+AI|Flow Anguilla~discoverflow.co/anguilla;Digicel Anguilla~digicelgroup.com/ai
+AL|One Albania~one.al;Vodafone Albania~vodafone.al;^ALBtelecom~albtelecom.al*
+AM|Team Telecom (ex-Beeline)~telecomarmenia.am;Viva Armenia~viva.am;Ucom~ucom.am
+AO|Unitel~unitel.ao;Africell Angola~africell.ao;Movicel~movicel.co.ao
+AR|Personal~personal.com.ar;Claro Argentina~claro.com.ar;Movistar Argentina~movistar.com.ar
+AT|A1 Austria~a1.net;Magenta Telekom~magenta.at;Drei~drei.at;^HoT~hot.at;^spusu~spusu.at;^yesss!~yesss.at
+AU|Telstra~telstra.com.au;Optus~optus.com.au;TPG Vodafone~vodafone.com.au;^Boost Mobile~boost.com.au;^Amaysim~amaysim.com.au;^Belong~belong.com.au
+AW|Setar~setar.aw;Digicel Aruba~digicelgroup.com/aw
+AZ|Azercell~azercell.com;Bakcell~bakcell.com;Nar~nar.az
+BA|BH Telecom~bhtelecom.ba;m:tel~mtel.ba;HT Eronet~hteronet.ba
+BB|Flow Barbados~discoverflow.co/barbados;Digicel Barbados~digicelgroup.com/bb
+BD|Grameenphone~grameenphone.com;Robi~robi.com.bd;Banglalink~banglalink.net;Teletalk~teletalk.com.bd;^Airtel BD (Robi)~bd.airtel.com
+BE|Proximus~proximus.be;Orange Belgium~orange.be;Telenet / BASE~telenet.be;Digi Belgium~digi.be;^Mobile Vikings~mobilevikings.be
+BF|Orange Burkina Faso~orange.bf;Moov Africa Burkina~moov-africa.bf;Telecel Faso~telecelfaso.bf
+BG|A1 Bulgaria~a1.bg;Yettel Bulgaria~yettel.bg;Vivacom~vivacom.bg
+BH|Batelco (Beyon)~batelco.com;Zain Bahrain~bh.zain.com;stc Bahrain~stc.com.bh
+BI|Econet Leo~econet.bi;Lumitel~lumitel.bi;Onatel~onatel.bi*
+BJ|MTN Bénin~mtn.bj;Moov Africa Bénin~moov-africa.bj;Celtiis~celtiis.bj
+BM|One Communications~onecomm.bm;Digicel Bermuda~digicelbermuda.com
+BN|DST~dst.com.bn;Imagine~imagine.com.bn;Progresif~progresif.com
+BO|Entel Bolivia~entel.bo;Tigo Bolivia~tigo.com.bo;Viva Bolivia~viva.com.bo
+BR|Vivo~vivo.com.br;Claro Brasil~claro.com.br;TIM Brasil~tim.com.br;^Algar~algartelecom.com.br
+BS|BTC Bahamas~btcbahamas.com;Aliv~bealiv.com
+BT|B-Mobile (Bhutan Telecom)~bt.bt;TashiCell~tashicell.com
+BW|Mascom~mascom.bw;Orange Botswana~orange.co.bw;BTC (beMobile)~btc.bw
+BY|A1 Belarus~a1.by;MTS Belarus~mts.by;life:)~life.com.by
+BZ|DigiCell (BTL)~digicell.bz;Smart (SpeedNet)~smart-bz.com
+CA|Rogers~rogers.com;Bell~bell.ca;Telus~telus.com;Freedom Mobile~freedommobile.ca;Vidéotron~videotron.com;^Fido~fido.ca;^Koodo~koodomobile.com;^Virgin Plus~virginplus.ca;^Public Mobile~publicmobile.ca
+CD|Vodacom Congo~vodacom.cd;Orange RDC~orange.cd;Airtel RDC~airtel.cd;Africell RDC~africell.cd
+CF|Orange Centrafrique~orange.cf;Telecel Centrafrique~telecel.cf*;Moov Africa Centrafrique~moov-africa.cf*
+CG|MTN Congo~mtn.cg;Airtel Congo~airtel.cg
+CH|Swisscom~swisscom.ch;Sunrise~sunrise.ch;Salt~salt.ch;^Wingo~wingo.ch;^Yallo~yallo.ch;^M-Budget Mobile~m-budget.ch
+CI|Orange Côte d'Ivoire~orange.ci;MTN Côte d'Ivoire~mtn.ci;Moov Africa CI~moov-africa.ci
+CL|Entel Chile~entel.cl;Movistar Chile~movistar.cl;Claro Chile~clarochile.cl;WOM Chile~wom.cl
+CM|MTN Cameroon~mtn.cm;Orange Cameroun~orange.cm;Camtel (Blue)~camtel.cm;Nexttel~nexttel.cm
+CN|China Mobile~10086.cn;China Unicom~chinaunicom.com.cn;China Telecom~chinatelecom.com.cn;China Broadnet~10099.com.cn
+CO|Claro Colombia~claro.com.co;Movistar Colombia~movistar.co;Tigo Colombia~tigo.com.co;WOM Colombia~wom.co
+CR|Kölbi (ICE)~kolbi.cr;Claro Costa Rica~claro.cr;Liberty Costa Rica~libertycr.com
+CU|Cubacel (ETECSA)~etecsa.cu
+CV|CVMóvel~cvmovel.cv;Unitel T+~unitel.cv
+CY|Cyta~cyta.com.cy;Epic~epic.com.cy;Cablenet~cablenet.com.cy;PrimeTel~primetel.com.cy
+CZ|O2 Czech~o2.cz;T-Mobile Czech~t-mobile.cz;Vodafone Czech~vodafone.cz;^Kaktus~mujkaktus.cz
+DE|Telekom~telekom.de;Vodafone Germany~vodafone.de;O2 Telefónica~o2online.de;1&1~1und1.de;^congstar~congstar.de;^Aldi Talk~alditalk.de;^freenet~freenet.de
+DJ|Djibouti Telecom (Evatis)~djiboutitelecom.dj
+DK|TDC NET / YouSee~yousee.dk;Telenor Denmark~telenor.dk;Telia Denmark~telia.dk;3 Denmark~3.dk;^Lebara Denmark~lebara.dk
+DM|Flow Dominica~discoverflow.co/dominica;Digicel Dominica~digicelgroup.com/dm
+DO|Claro RD~claro.com.do;Altice Dominicana~altice.com.do;Viva RD~viva.com.do
+DZ|Mobilis~mobilis.dz;Djezzy~djezzy.dz;Ooredoo Algérie~ooredoo.dz
+EC|Claro Ecuador~claro.com.ec;Movistar Ecuador~movistar.com.ec;CNT Ecuador~cnt.gob.ec
+EE|Telia Eesti~telia.ee;Elisa Eesti~elisa.ee;Tele2 Eesti~tele2.ee
+EG|Vodafone Egypt~vodafone.com.eg;Orange Egypt~orange.eg;e& Egypt~etisalat.eg;WE (Telecom Egypt)~te.eg
+ER|EriTel~eritel.com.er*
+ES|Movistar~movistar.es;Vodafone España (Zegona)~vodafone.es;MasOrange (Orange/Yoigo/MásMóvil)~orange.es;Digi España~digimobil.es;^Simyo~simyo.es;^Lowi~lowi.es;^O2 España~o2online.es
+ET|Ethio Telecom~ethiotelecom.et;Safaricom Ethiopia~safaricom.et
+FI|Elisa~elisa.fi;Telia Finland~telia.fi;DNA~dna.fi
+FJ|Vodafone Fiji~vodafone.com.fj;Digicel Fiji~digicelgroup.com/fj
+FM|FSM Telecom~fsmtc.fm;^Vodafone Micronesia~vodafone.fm*
+FR|Orange~orange.fr;SFR~sfr.fr;Bouygues Telecom~bouyguestelecom.fr;Free Mobile~free.fr;^Sosh~sosh.fr;^RED by SFR~red-by-sfr.fr;^B&You~bouyguestelecom.fr
+GA|Airtel Gabon~airtel.ga;Moov Africa Gabon~moov-africa.ga
+GB|EE~ee.co.uk;VodafoneThree~vodafone.co.uk;O2~o2.co.uk;Three UK~three.co.uk;^Sky Mobile~sky.com;^giffgaff~giffgaff.com;^Tesco Mobile~tescomobile.com;^Lebara UK~lebara.co.uk;^Lyca Mobile~lycamobile.co.uk;^Smarty~smarty.co.uk;^iD Mobile~idmobile.co.uk;^Voxi~voxi.co.uk
+GD|Flow Grenada~discoverflow.co/grenada;Digicel Grenada~digicelgroup.com/gd
+GE|Magti~magticom.ge;Silknet (Geocell)~silknet.com;Cellfie~cellfie.ge
+GH|MTN Ghana~mtn.com.gh;Telecel Ghana~telecel.com.gh;AT Ghana (AirtelTigo)~at.com.gh
+GI|Gibtelecom~gibtele.com;GibFibre / U Mee~gibfibre.com*
+GM|Africell Gambia~africell.gm;QCell~qcell.gm;Gamcel~gamcel.gm;Comium~comium.gm*
+GN|Orange Guinée~orange-guinee.com;MTN Guinée~mtn.gn;Cellcom Guinée~cellcom.gn*
+GQ|GETESA (Muni)~getesa.gq;Gecomsa~gecomsa.gq*
+GR|Cosmote~cosmote.gr;Vodafone Greece~vodafone.gr;Nova~nova.gr
+GT|Tigo Guatemala~tigo.com.gt;Claro Guatemala~claro.com.gt
+GW|Orange Bissau~orange.gw;MTN Guiné-Bissau (Telecel)~mtn.gw*
+GY|GTT~gtt.co.gy;Digicel Guyana~digicelgroup.com/gy
+HK|CSL / 1O1O (HKT)~hkcsl.com;SmarTone~smartone.com;3 Hong Kong~three.com.hk;China Mobile Hong Kong~hk.chinamobile.com;^club sim~clubsim.com.hk
+HN|Tigo Honduras~tigo.com.hn;Claro Honduras~claro.com.hn
+HR|Hrvatski Telekom~hrvatskitelekom.hr;A1 Hrvatska~a1.hr;Telemach Hrvatska~telemach.hr
+HT|Digicel Haiti~digicelgroup.com/ht;Natcom~natcom.com.ht
+HU|Magyar Telekom~telekom.hu;Yettel Hungary~yettel.hu;One Hungary (ex-Vodafone)~one.hu
+ID|Telkomsel~telkomsel.com;Indosat Ooredoo Hutchison (IM3/Tri)~ioh.co.id;XLSmart (XL/Axis/Smartfren)~xlsmart.co.id;^by.U~byu.id
+IE|Vodafone Ireland~vodafone.ie;Three Ireland~three.ie;Eir~eir.ie;^Tesco Mobile Ireland~tescomobile.ie;^48~48.ie;^GoMo~gomo.ie;^Lyca Ireland~lycamobile.ie
+IL|Partner~partner.co.il;Cellcom~cellcom.co.il;Pelephone~pelephone.co.il;HOT Mobile~hotmobile.co.il;^Golan Telecom~golantelecom.co.il;^We4G~we4g.co.il*
+IN|Jio~jio.com;Airtel~airtel.in;Vi (Vodafone Idea)~myvi.in;BSNL~bsnl.co.in;MTNL~mtnl.in
+IQ|Zain Iraq~iq.zain.com;Asiacell~asiacell.com;Korek Telecom~korektel.com
+IR|MCI (Hamrah-e Aval)~mci.ir;Irancell~irancell.ir;RighTel~rightel.ir
+IS|Síminn~siminn.is;Vodafone Iceland (Sýn)~vodafone.is;Nova~nova.is
+IT|TIM~tim.it;Vodafone Italia (Swisscom)~vodafone.it;WindTre~windtre.it;Iliad Italia~iliad.it;^ho. Mobile~ho-mobile.it;^Kena Mobile~kenamobile.it;^Very Mobile~verymobile.it;^Fastweb Mobile~fastweb.it
+JM|Digicel Jamaica~digicelgroup.com/jm;Flow Jamaica~discoverflow.co/jamaica
+JO|Zain Jordan~jo.zain.com;Orange Jordan~orange.jo;Umniah~umniah.com
+JP|NTT docomo~docomo.ne.jp;au (KDDI)~au.com;SoftBank~softbank.jp;Rakuten Mobile~network.mobile.rakuten.co.jp;^ahamo~ahamo.com;^povo~povo.jp;^LINEMO~linemo.jp;^Y!mobile~ymobile.jp;^UQ mobile~uqwimax.jp
+KE|Safaricom~safaricom.co.ke;Airtel Kenya~airtel.co.ke;Telkom Kenya~telkom.co.ke
+KG|MegaCom~megacom.kg;Beeline Kyrgyzstan~beeline.kg;O! (Nur Telecom)~o.kg
+KH|Smart Axiata~smart.com.kh;Cellcard~cellcard.com.kh;Metfone~metfone.com.kh
+KI|Vodafone Kiribati (ATHKL)~vodafone.ki*;Ocean Link~oceanlink.ki*
+KM|Comores Telecom (Huri)~comorestelecom.km;Telma Comores (Yas)~telma.km
+KN|Flow St Kitts~discoverflow.co/stkitts;Digicel St Kitts~digicelgroup.com/kn
+KP|Koryolink~koryolink.com*;Kangsong NET~*
+KR|SK Telecom~sktelecom.com;KT~kt.com;LG U+~lguplus.com;^Hello Mobile~lghellovision.net*
+KW|Zain Kuwait~kw.zain.com;Ooredoo Kuwait~ooredoo.com.kw;stc Kuwait~stc.com.kw
+KY|Flow Cayman~discoverflow.co/cayman;Digicel Cayman~digicelgroup.com/ky
+KZ|Kcell~kcell.kz;Beeline Kazakhstan~beeline.kz;Tele2 / Altel~tele2.kz;^Activ~activ.kz
+LA|Lao Telecom~laotel.com;Unitel Laos~unitel.com.la;ETL~etllao.com;T-Plus~tplus.la*
+LB|Alfa~alfa.com.lb;touch~touch.com.lb
+LC|Flow St Lucia~discoverflow.co/stlucia;Digicel St Lucia~digicelgroup.com/lc
+LI|Swisscom Liechtenstein~swisscom.li;FL1 (Telecom Liechtenstein)~fl1.li;Salt Liechtenstein~salt.li*
+LK|Dialog~dialog.lk;SLT-Mobitel~mobitel.lk;Hutch Sri Lanka (incl. Airtel)~hutch.lk
+LR|Lonestar Cell MTN~lonestarcell.com;Orange Liberia~orange.com.lr
+LS|Vodacom Lesotho~vodacom.co.ls;Econet Telecom Lesotho~etl.co.ls
+LT|Telia Lietuva~telia.lt;Bitė~bite.lt;Tele2 Lietuva~tele2.lt
+LU|POST Luxembourg~post.lu;Tango~tango.lu;Orange Luxembourg~orange.lu
+LV|LMT~lmt.lv;Tele2 Latvia~tele2.lv;Bite Latvija~bite.lv
+LY|Libyana~libyana.ly;Al-Madar~almadar.ly
+MA|Maroc Telecom (IAM)~iam.ma;Orange Maroc~orange.ma;inwi~inwi.ma
+MC|Monaco Telecom~monaco-telecom.mc
+MD|Orange Moldova~orange.md;Moldcell~moldcell.md;Moldtelecom~moldtelecom.md
+ME|Crnogorski Telekom~telekom.me;One Montenegro~one.me;m:tel Montenegro~mtel.me
+MG|Telma (Yas)~telma.mg;Orange Madagascar~orange.mg;Airtel Madagascar~airtel.mg
+MH|NTA (National Telecommunications Authority)~ntamar.net
+MK|Makedonski Telekom~telekom.mk;A1 Makedonija~a1.mk
+ML|Orange Mali~orangemali.com;Moov Africa Malitel~malitel.ml;Telecel Mali~telecel.ml*
+MM|MPT~mpt.com.mm;ATOM (ex-Telenor)~atom.com.mm;Ooredoo Myanmar~ooredoo.com.mm;Mytel~mytel.com.mm
+MN|Mobicom~mobicom.mn;Unitel Mongolia~unitel.mn;Skytel~skytel.mn;G-Mobile~gmobile.mn
+MO|CTM~ctm.net;China Telecom Macau~chinatelecom.com.mo;3 Macau~three.com.mo;SmarTone Macau~smartone.com.mo
+MR|Mauritel~mauritel.mr;Mattel~mattel.mr;Chinguitel~chinguitel.mr
+MT|Epic Malta~epic.com.mt;GO~go.com.mt;Melita~melita.com
+MU|my.t (Mauritius Telecom)~myt.mu;Emtel~emtel.com;MTML (Chili)~mtmltd.net
+MV|Dhiraagu~dhiraagu.com.mv;Ooredoo Maldives~ooredoo.mv
+MW|Airtel Malawi~airtel.mw;TNM~tnm.co.mw
+MX|Telcel~telcel.com;AT&T México~att.com.mx;Movistar México~movistar.com.mx;^Bait (Walmart)~bait.com.mx;^Virgin Mobile México~virginmobile.mx
+MY|CelcomDigi~celcomdigi.com;Maxis~maxis.com.my;U Mobile~u.com.my;Unifi Mobile~unifi.com.my;^Yes~yes.my;^Tune Talk~tunetalk.com;^XOX~xox.com.my
+MZ|Vodacom Moçambique~vm.co.mz;Movitel~movitel.co.mz;Tmcel~tmcel.mz
+NA|MTC Namibia~mtc.com.na;Paratus / TN Mobile~tn.com.na*
+NE|Airtel Niger~airtel.ne;Moov Africa Niger~moov-africa.ne;Zamani Telecom~zamanitelecom.ne;Niger Telecoms~nigertelecoms.ne
+NG|MTN Nigeria~mtn.ng;Airtel Nigeria~airtel.com.ng;Glo~gloworld.com;9mobile~9mobile.com.ng;^Ntel~ntel.com.ng
+NI|Claro Nicaragua~claro.com.ni;Tigo Nicaragua~tigo.com.ni
+NL|KPN~kpn.com;Vodafone NL (VodafoneZiggo)~vodafone.nl;Odido (ex-T-Mobile)~odido.nl;^Simyo NL~simyo.nl;^Lebara NL~lebara.nl;^Ben~ben.nl
+NO|Telenor~telenor.no;Telia Norway~telia.no;Ice~ice.no;^OneCall~onecall.no;^Talkmore~talkmore.no
+NP|Nepal Telecom (Namaste)~ntc.net.np;Ncell~ncell.axiata.com
+NR|Digicel Nauru~digicelgroup.com/nr;Nauru Telecom (NTEC)~*
+NZ|One NZ (ex-Vodafone)~one.nz;Spark~spark.co.nz;2degrees~2degrees.nz;^Skinny~skinny.co.nz;^Warehouse Mobile~warehousemobile.co.nz
+OM|Omantel~omantel.om;Ooredoo Oman~ooredoo.om;Vodafone Oman~vodafone.om
+PA|Tigo Panamá (ex-Cable & Wireless)~tigo.com.pa;Más Móvil Panamá~masmovilpanama.com*;Claro Panamá~claro.com.pa*
+PE|Movistar Perú~movistar.com.pe;Claro Perú~claro.com.pe;Entel Perú~entel.pe;Bitel~bitel.com.pe
+PG|Digicel PNG~digicelgroup.com/pg;Vodafone PNG~vodafone.com.pg;bmobile~bmobile.com.pg*
+PH|Globe~globe.com.ph;Smart~smart.com.ph;DITO~dito.ph;^TM~tm.com.ph;^TNT~tntph.com;^GOMO~gomo.ph
+PK|Jazz~jazz.com.pk;Zong~zong.com.pk;Ufone (incl. Telenor PK)~ufone.com;Telenor Pakistan~telenor.com.pk;SCOM~scom.gov.pk
+PL|Orange Polska~orange.pl;Play~play.pl;Plus~plus.pl;T-Mobile Polska~t-mobile.pl;^Heyah~heyah.pl;^Nju Mobile~njumobile.pl
+PR|Liberty PR~libertypr.com;T-Mobile PR~t-mobilepr.com;Claro PR~claropr.com
+PS|Jawwal~jawwal.ps;Ooredoo Palestine~ooredoo.ps
+PT|MEO~meo.pt;Vodafone Portugal~vodafone.pt;NOS~nos.pt;Digi Portugal~digi.pt;^UZO~uzo.pt;^WOO~woo.pt
+PW|PNCC (Palau National Communications Corp)~palautel.com
+PY|Tigo Paraguay~tigo.com.py;Personal Paraguay~personal.com.py;Claro Paraguay~claro.com.py
+QA|Ooredoo Qatar~ooredoo.qa;Vodafone Qatar~vodafone.qa
+RO|Orange România~orange.ro;Vodafone România~vodafone.ro;Digi România~digi.ro;Telekom Romania Mobile~telekom.ro
+RS|Telekom Srbija (mts)~mts.rs;Yettel Serbia~yettel.rs;A1 Srbija~a1.rs
+RU|MTS~mts.ru;MegaFon~megafon.ru;Beeline~beeline.ru;T2 (ex-Tele2)~t2.ru;^Yota~yota.ru;^Tinkoff Mobile~tbank.ru
+RW|MTN Rwanda~mtn.co.rw;Airtel Rwanda~airtel.co.rw
+SA|stc~stc.com.sa;Mobily~mobily.com.sa;Zain KSA~sa.zain.com;^Virgin Mobile KSA~virginmobile.sa;^Salam Mobile~salam.sa;^Lebara KSA~lebara.sa
+SB|Our Telekom~ourtelekom.com.sb;bmobile Vodafone SI~bmobile.com.sb
+SC|Cable & Wireless Seychelles~cwseychelles.com;Airtel Seychelles~airtel.sc
+SD|Zain Sudan~sd.zain.com;MTN Sudan~mtn.sd;Sudani~sudani.sd
+SE|Telia Sweden~telia.se;Tele2~tele2.se;Telenor Sweden~telenor.se;Tre (3)~tre.se;^Comviq~comviq.se;^Hallon~hallon.se
+SG|Singtel~singtel.com;StarHub~starhub.com;M1~m1.com.sg;SIMBA~simba.sg;^GOMO SG~gomo.sg;^giga~giga.com.sg;^Circles.Life~circles.life
+SI|Telekom Slovenije~telekom.si;A1 Slovenija~a1.si;Telemach~telemach.si;T-2~t-2.net
+SK|Orange Slovensko~orange.sk;Telekom SK~telekom.sk;O2 Slovakia~o2.sk;4ka~4ka.sk
+SL|Orange Sierra Leone~orange.sl;Africell Sierra Leone~africell.sl;Qcell SL~qcell.sl*
+SM|TIM San Marino~tim.sm*;San Marino Telecom~smtelecom.sm*
+SN|Orange Sénégal (Sonatel)~orange.sn;Free Sénégal (Yas)~free.sn;Expresso Sénégal~expressotelecom.sn
+SO|Hormuud Telecom~hormuud.com;Somtel~somtel.com;Golis~golistelecom.com;Telesom (Somaliland)~telesom.com;Somnet~*
+SR|Telesur~telesur.sr;Digicel Suriname~digicelgroup.com/sr
+SS|Zain South Sudan~ss.zain.com;MTN South Sudan~mtn.com.ss;Digitel South Sudan~*
+ST|CST~cstmovel.st;Unitel STP~unitel.st
+SV|Tigo El Salvador~tigo.com.sv;Claro El Salvador~claro.com.sv;Movistar El Salvador (Millicom)~movistar.com.sv*;Digicel El Salvador~digicel.com.sv*
+SY|Syriatel~syriatel.sy;MTN Syria~mtn.com.sy;Wafa Telecom~*
+SZ|MTN Eswatini~mtn.co.sz;Eswatini Mobile~eswatinimobile.co.sz
+TD|Airtel Tchad~airtel.td;Moov Africa Tchad~moov-africa.td
+TG|Togocom (Yas)~togocom.tg;Moov Africa Togo~moov-africa.tg
+TH|AIS~ais.th;True Move H~true.th;NT (National Telecom)~ntplc.co.th;^dtac (True)~dtac.co.th
+TJ|Tcell~tcell.tj;Megafon Tajikistan~megafon.tj;ZET-Mobile (Babilon)~zet-mobile.tj;Beeline Tajikistan~beeline.tj*
+TL|Telkomcel~telkomcel.tl;Timor Telecom~timortelecom.tl;Telemor~telemor.tl
+TM|TMCELL (Altyn Asyr)~tmcell.tm
+TN|Ooredoo Tunisie~ooredoo.tn;Orange Tunisie~orange.tn;Tunisie Telecom~tunisietelecom.tn
+TO|Digicel Tonga~digicelgroup.com/to;U-Call (TCC)~tcc.to
+TR|Turkcell~turkcell.com.tr;Vodafone Türkiye~vodafone.com.tr;Türk Telekom~turktelekom.com.tr
+TT|bmobile (TSTT)~tstt.co.tt;Digicel Trinidad~digicelgroup.com/tt
+TV|Tuvalu Telecommunications Corp~tuvalutelecom.tv*
+TW|Chunghwa Telecom~cht.com.tw;Taiwan Mobile~taiwanmobile.com;FarEasTone~fetnet.net
+TZ|Vodacom Tanzania~vodacom.co.tz;Yas Tanzania (ex-Tigo)~yas.co.tz;Airtel Tanzania~airtel.co.tz;Halotel~halotel.co.tz;TTCL~ttcl.co.tz
+UA|Kyivstar~kyivstar.ua;Vodafone Ukraine~vodafone.ua;lifecell~lifecell.ua
+UG|MTN Uganda~mtn.co.ug;Airtel Uganda~airtel.co.ug;Lyca Mobile Uganda~lycamobile.ug*
+US|Verizon~verizon.com;AT&T~att.com;T-Mobile US~t-mobile.com;UScellular (T-Mobile)~uscellular.com;^Mint Mobile~mintmobile.com;^Visible~visible.com;^Cricket~cricketwireless.com;^Metro by T-Mobile~metrobyt-mobile.com;^US Mobile~usmobile.com;^Boost Mobile~boostmobile.com
+UY|Antel~antel.com.uy;Movistar Uruguay~movistar.com.uy;Claro Uruguay~claro.com.uy
+UZ|Ucell~ucell.uz;Beeline Uzbekistan~beeline.uz;Mobiuz~mobi.uz;Uzmobile~uzmobile.uz
+VA|TIM (Italian networks)~tim.it
+VC|Flow St Vincent~discoverflow.co/stvincent;Digicel St Vincent~digicelgroup.com/vc
+VE|Movistar Venezuela~movistar.com.ve;Digitel~digitel.com.ve;Movilnet~movilnet.com.ve
+VN|Viettel~viettel.vn;VinaPhone~vinaphone.com.vn;MobiFone~mobifone.vn;Vietnamobile~vietnamobile.com.vn
+VU|Digicel Vanuatu~digicelgroup.com/vu;Vodafone Vanuatu (TVL)~tvl.vu*
+WS|Digicel Samoa~digicelgroup.com/ws;Vodafone Samoa~vodafone.com.ws
+XK|Vala (Telekomi i Kosovës)~vala.com;IPKO~ipko.com
+YE|Yemen Mobile~yemenmobile.com.ye;YOU (ex-MTN Yemen)~you.ye;Sabafon~sabafon.com;Y Telecom~y-tel.com.ye*
+ZA|Vodacom~vodacom.co.za;MTN South Africa~mtn.co.za;Telkom Mobile~telkom.co.za;Cell C~cellc.co.za;Rain~rain.co.za
+ZM|MTN Zambia~mtn.zm;Airtel Zambia~airtel.co.zm;Zamtel~zamtel.zm
+ZW|Econet Wireless~econet.co.zw;NetOne~netone.co.zw;Telecel Zimbabwe~telecel.co.zw

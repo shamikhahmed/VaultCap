@@ -35,4 +35,17 @@ test.describe('world bank catalog', () => {
     expect(r.missing).toEqual([]);
     expect(r.domain).toBe('equitygroupholdings.com');
   });
+
+  test('netOpts suggests SIM carriers for every country plus global eSIMs', async ({ page }) => {
+    const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/data/world-carriers.min.json'), 'utf8'));
+    expect(new Set(rows.map(r => r[1])).size).toBeGreaterThanOrEqual(206); // 205 countries + OTHER
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldCarriers !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldCarriers.load());
+    const r = await page.evaluate(() => ({ ke: U.netOpts('KE'), jp: U.netOpts('JP'), pk: U.netOpts('PK') }));
+    expect(r.ke).toContain('Safaricom');
+    expect(r.ke).toContain('Airalo');
+    expect(r.jp).toContain('NTT docomo');
+    expect((r.pk.match(/value="Jazz"/g) || []).length).toBe(1);
+  });
 });
