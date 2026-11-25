@@ -381,7 +381,10 @@ const Cards={
     const isEdit=!!c.id;
     const isVirtual=(c.category||'').toLowerCase()==='virtual'||(c.category||'').toLowerCase()==='digital';
     const _v = escAttr;
-    const cardNames=SMART_DB.cards.map(x=>'<option value="'+_v(x.name)+'">').join('');
+    const homeCc=c.country||(typeof U!=='undefined'?U.homeCC():'');
+    const smartNames=SMART_DB.cards.map(x=>'<option value="'+_v(x.name)+'">').join('');
+    const worldNames=(typeof U!=='undefined'?U.cardOpts(homeCc):'');
+    const cardNames=smartNames+worldNames;
     const myBanks=(window.S?.banks||[]);
     const bankOptions=myBanks.length?myBanks.map(b=>`<option value="${escAttr(b.bankName)}"${(c.linkedBankId===b.id||c.linkedBank===b.bankName)?' selected':''}>${escHtml(b.bankName)}</option>`).join(''):'';
     const bankPicker=myBanks.length?'<div class="vc-ix-9"><label style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Your Bank</label><select id="cf-mybank" data-act-change="Cards._bankSelected(this.value)" style="width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text)"><option value="">Select your bank (optional)</option>'+bankOptions+'<option value="__other__">Other / Not listed</option></select></div>':'';
@@ -399,7 +402,7 @@ const Cards={
       +'<summary class="vc-ix-111"><span class="vc-ix-5">More details</span><span class="vc-ix-18">▾</span></summary>'
       +'<div class="vc-ix-112">'
       +'<div class="fr"><div class="fg"><label class="fl">Type</label><datalist id="cfTypeDL"><option>Credit</option><option>Debit</option><option>Prepaid</option><option>Corporate</option><option>Virtual</option></datalist><input class="inp" id="cf-type" value="'+_v(c.cardType||'')+'" list="cfTypeDL" placeholder="Credit, Debit…"></div><div class="fg"><label class="fl">Category</label><datalist id="cfCatDL"><option>Standard</option><option>Gold</option><option>Premium</option><option>Travel</option><option>Cashback</option><option>Rewards</option><option>Business</option><option>Crypto</option><option>BNPL</option><option>Islamic</option><option>Digital</option><option>Virtual</option></datalist><input class="inp" id="cf-cat" value="'+_v(c.category||'')+'" list="cfCatDL" placeholder="Standard, Premium…"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="cf-cc">'+U.countries()+'</select></div><div class="fg"><label class="fl">Expiry (MM/YY)</label><input class="inp" id="cf-exp" value="'+_v(c.expiry||'')+'" placeholder="12/28" maxlength="5"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="cf-cc" data-act-change="Cards._countryChanged(this.value)">'+U.countries(c.country)+'</select></div><div class="fg"><label class="fl">Expiry (MM/YY)</label><input class="inp" id="cf-exp" value="'+_v(c.expiry||'')+'" placeholder="12/28" maxlength="5"></div></div>'
       +'<div class="fr"><div class="fg"><label class="fl">CVV</label><input class="inp" id="cf-cvv" value="'+_v(c.cvv||'')+'" maxlength="4" type="password" inputmode="numeric" placeholder="•••"></div><div class="fg"><label class="fl">Card PIN</label><input class="inp" id="cf-cpin" value="'+_v(c.cardPin||'')+'" maxlength="6" type="password" inputmode="numeric" placeholder="••••"></div></div>'
       +'<div class="fg"><label class="fl">Cardholder Name</label><input class="inp" id="cf-holder" value="'+_v(c.holderName||S.user.name||'')+'" placeholder="Name on card"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Rewards Program</label><input class="inp" id="cf-rprog" value="'+_v(c.rewardsProgram||'')+'" placeholder="Avios, MR…"></div><div class="fg"><label class="fl">Points Balance</label><input class="inp" id="cf-pts" value="'+_v(c.rewardsPoints||'')+'" type="number" placeholder="50000"></div></div>'
@@ -412,17 +415,25 @@ const Cards={
       +'<div style="display:flex;gap:16px;margin-top:4px"><label class="vc-ix-202"><input type="checkbox" id="cf-fav" '+(c.favorite?'checked':'')+'>  Favourite</label><label class="vc-ix-202"><input type="checkbox" id="cf-carry" '+(S.wallet.includes(c.id)?'checked':'')+'>  Carrying</label></div>'
       +'</div></details>';
   },
+  _countryChanged(cc){
+    const dl=document.getElementById('cfNameDL');
+    if(!dl||typeof U==='undefined')return;
+    const smart=(window.SMART_DB?.cards||[]).map(c=>`<option value="${escAttr(c.name)}">`).join('');
+    dl.innerHTML=smart+U.cardOpts(cc||U.homeCC());
+  },
   _bankSelected(bankName){
     const dl=document.getElementById('cfNameDL');
     if(!dl)return;
     const allCards=(window.SMART_DB?.cards||[]);
+    const cc=document.getElementById('cf-cc')?.value||(typeof U!=='undefined'?U.homeCC():'');
+    const world=(typeof U!=='undefined'?U.cardOpts(cc):'');
     if(!bankName||bankName==='__other__'){
-      dl.innerHTML=allCards.map(c=>`<option value="${escAttr(c.name)}"></option>`).join('');
+      dl.innerHTML=allCards.map(c=>`<option value="${escAttr(c.name)}"></option>`).join('')+world;
       return;
     }
     const key=bankName.toLowerCase().split(' ')[0];
     const filtered=allCards.filter(c=>c.name.toLowerCase().includes(key));
-    dl.innerHTML=(filtered.length?filtered:allCards).map(c=>`<option value="${escAttr(c.name)}"></option>`).join('');
+    dl.innerHTML=(filtered.length?filtered:allCards).map(c=>`<option value="${escAttr(c.name)}"></option>`).join('')+world;
     const bankField=document.getElementById('cf-bank');
     if(bankField)bankField.value=bankName;
   },
