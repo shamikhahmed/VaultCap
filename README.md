@@ -21,7 +21,7 @@ Illustrative day-in-the-life stories (fictional personas) with screenshots and c
 - **Margaret** — documents, large-type settings, reminders
 
 Hub: https://shamikhahmed.github.io/apps/vaultcap/ · All Cap stories: https://shamikhahmed.github.io/stories/  
-Source assets: Capricorn Lab `content/stories/vaultcap/` (recapture via lab `capture-story.mjs`, not `npm run gallery`).
+Source assets: Capricorn Lab `content/stories/vaultcap/` (recapture via `capricorn-tooling/scripts/capture-story.mjs`, not `npm run gallery`). Screen gallery last real regen: **2026-11-26 00:56 PKT** (89 screens).
 
 
 ## What It Does

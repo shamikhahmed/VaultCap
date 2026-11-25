@@ -1,6 +1,6 @@
 # VaultCap screen gallery
 
-**Status (2026-11-26):** full `npm run gallery` PASS (~6.2m) after world catalogs v112 + Cap motion token map — **89 screens** embedded into `screen-gallery.html`. Curated `docs/screenshots/gallery/` webp set may still show older captions until a separate curated pass.
+**Status (2026-11-26):** Wave 1 **real** gallery regen PASS — `npm run build:js` + `npm run gallery` finished **2026-11-26 00:56:57 PKT** (manifest `generatedAt` `2026-11-25T19:50:18.688Z`, duration **~6.7m / 401s**, 1 worker). **89 screens** embedded into `screen-gallery.html`; **786** theme×viewport PNGs under `assets/screenshots/{dark,light}/` (mtimes post-motion). Curated `docs/screenshots/gallery/` webp set is older (Oct) — hub OS sync uses Cap gallery paths; story recapture is Wave 1b.
 
 ## Commands
 
@@ -28,7 +28,17 @@ Example day-in-the-life personas (Ayesha / Omar / Margaret) live under Capricorn
 `../capricorn-lab/content/stories/vaultcap/`
 
 Hub: https://shamikhahmed.github.io/apps/vaultcap/  
-Recapture is a lab `capture-story.mjs` pass — not part of `npm run gallery`.
+Recapture is Playwright (not Blender) via Capricorn tooling — **Wave 1b**, not part of `npm run gallery`:
+
+```bash
+# from Cap-Apps/
+node capricorn-tooling/scripts/capture-story.mjs vaultcap vaultcap-ayesha
+node capricorn-tooling/scripts/capture-story.mjs vaultcap vaultcap-omar
+node capricorn-tooling/scripts/capture-story.mjs vaultcap vaultcap-margaret
+# then hub:
+cd capricorn-lab && npm run build:minisites   # or node scripts/build-minisites.mjs
+node scripts/sync-screenshots.mjs             # OS window thumbs from Cap galleries
+```
 
 ## Notes
 

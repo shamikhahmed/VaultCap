@@ -55,7 +55,7 @@ Zero-knowledge lock unchanged. Runtime logos stay same-origin / bundled — no G
 | Cap Standard item | Status |
 |---|---|
 | Docs pack | ✅ (this file + CHANGELOG + README + brain note) |
-| Screen gallery | ✅ / regenerating — see `docs/screenshots/README.md` |
+| Screen gallery | ✅ Wave 1 real regen 2026-11-26 00:56 PKT (89 screens / ~6.7m) — see `docs/screenshots/README.md` |
 | Version discipline | ✅ 5.4.3 / vaultcap-v113 |
 | QA / e2e | ✅ |
 | CI gate | ✅ |

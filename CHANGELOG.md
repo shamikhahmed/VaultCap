@@ -3,7 +3,7 @@
 - World catalogs complete on main through logo pipeline: banks 2,318 · carriers 692 · brokers 745 · cards 1,637 · subscriptions 775 · emails 776 · cities 719 (205 countries). SW lineage **vaultcap-v104→v112**; cache bump **vaultcap-v113** for motion/docs ship.
 - Motion: splash / Halo / `js/motion.js` map to Cap kit `--cap-dur-*` + `--cap-ease*`; reduced-motion still skips splash + entrances; no pin-scrub in product UI.
 - Docs: HANDOVER / README / Capricorn-Brain + `docs/screenshots/README.md` (gallery + story capture notes).
-- Gallery: `npm run gallery` refresh after catalogs; example stories remain Capricorn Lab personas (Ayesha / Omar / Margaret).
+- **Gallery Wave 1 (real regen):** `npm run gallery` PASS 2026-11-26 00:56:57 PKT (~6.7m) — 89 screens embedded, 786 dark/light×mobile/desktop PNGs under `assets/screenshots/`; SW unchanged (`vaultcap-v113`, screenshots not precached). Example stories remain Capricorn Lab personas (Ayesha / Omar / Margaret) — Wave 1b `capture-story.mjs`.
 
 ## [Unreleased] — Prod-ready audit (HIG 3 branch)
 
