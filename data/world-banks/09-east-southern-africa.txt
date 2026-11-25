@@ -13,15 +13,15 @@ Lumicash (Econet)|w|B|lumicash.bi||
 Bank of Africa Mer Rouge (BCIMR)|x|B|bcimr.dj||
 CAC International Bank|c|B|cacintbank.com||
 Salaam African Bank|i|?|salaamafricanbank.com||
-East Africa Bank Djibouti|c|?|eab.dj||*
-Exim Bank Djibouti|x|?|eximbank-djibouti.com||*
-D-Money (Djibouti Telecom)|w|B|d-money.dj||*
+East Africa Bank Djibouti|i|?|eastafricabank.com|EABDDJJD|
+Exim Bank Djibouti|x|?|eximbank-djibouti.com|EXTNDJJD|
+D-Money (Djibouti Telecom)|w|B|d-money.dj||
 Waafi Djibouti|w|B|waafi.com||
 
 ## ER Eritrea | — (Bank of Eritrea) | https://en.wikipedia.org/wiki/List_of_banks_in_Eritrea
 > All banks are state-owned; no consumer banking apps known.
 Commercial Bank of Eritrea|g|N|||State; dominant
-Housing and Commerce Bank of Eritrea|g|N|||State*
+Housing and Commerce Bank of Eritrea|g|N|||State
 Eritrean Investment and Development Bank|g|N|||State*
 
 ## ET Ethiopia | nbe.gov.et | https://nbe.gov.et/financial-institutions/banks/
@@ -65,16 +65,16 @@ Faulu Microfinance Bank|m|B|faulukenya.com||
 Kenya Women Microfinance Bank|m|B|kwftbank.com||
 
 ## KM Comoros | banque-comores.km | https://www.banque-comores.km/
-Banque pour l'Industrie et le Commerce – Comores (BIC)|c|?|bic-comores.com||*
-Exim Bank Comores|x|?|eximbank-comores.com||*
-Banque Fédérale de Commerce|c|?|bfc.km||*
-Snpsf (Postal financial services)|g|?|snpsf.km||*
-MVola Comores (Telma)|w|B|telma.km||*
-Huri Money|w|?|comorestelecom.km||*
+Banque pour l'Industrie et le Commerce – Comores (BIC)|c|?|bic-comores.com||Majority owned by Atlantic Financial Group since 2020 (ex-BNP Paribas)
+Exim Bank Comores|x|?|eximbank-comores.com|EXTNKMKM|
+Banque Fédérale de Commerce|c|?|bfc.km|BFDCKMKM|SWIFT from directory
+Société Nationale des Postes et des Services Financiers (SNPSF)|g|?|snpsf.km|HAHMKMKM|Being split into Banque Postale des Comores and Poste des Comores
+MVola Comores (Telma)|w|B|telma.km||
+Huri Money|w|?|comorestelecom.km||
 
 ## MG Madagascar | banky-foiben-madagasikara.mg | https://www.banky-foiben-madagasikara.mg/
 BNI Madagascar|c|B|bni.mg||
-BFV-Société Générale|x|B|bfvsg.mg||*
+BRED Madagasikara Banque Populaire|x|B|bfvsg.mg|BFAVMGMG|Formerly BFV-SG / SG Madagasikara; BRED acquisition; SWIFT from directory
 BOA Madagascar|x|B|boa.mg||Largest
 BMOI (BCP)|x|?|bmoi.mg||
 MCB Madagascar|x|?|mcbmadagascar.com||
@@ -93,7 +93,7 @@ MauBank|g|B|maubank.mu||State
 HSBC Mauritius|x|B|hsbc.co.mu||
 Standard Chartered Mauritius|x|?|sc.com/mu||
 Juice (MCB)|w|B|mcb.mu||Mobile banking/wallet
-blink (Emtel)|w|B|blink.mu||*
+blink by Emtel|w|B|blink.emtel.com||
 MauCAS|w|N|bom.mu||National instant payments
 
 ## MW Malawi | rbm.mw | https://www.rbm.mw/
@@ -116,7 +116,7 @@ Ecobank Rwanda|x|B|ecobank.com||
 Access Bank Rwanda|x|?|accessbankplc.com||
 BPR Bank (KCB)|x|B|bpr.rw||Merged KCB Rwanda
 NCBA Rwanda|x|?|ncbagroup.com||
-GT Bank Rwanda|x|?|gtbank.co.rw||*
+GT Bank Rwanda|x|?|gtbank.co.rw|GTBIRWRK|
 Development Bank of Rwanda|g|N|brd.rw||
 Urwego Bank|m|?|urwegobank.com||
 MTN MoMo Rwanda|w|B|mtn.co.rw||
@@ -128,7 +128,7 @@ Absa Seychelles|x|B|absa.sc||
 MCB Seychelles|x|B|mcbseychelles.com||
 Bank of Baroda Seychelles|x|?|bankofbaroda.sc||
 Al Salam Bank Seychelles|i|?|alsalambank.sc||
-Bank of Ceylon Seychelles|x|?|boc.lk||*
+Bank of Ceylon (Seychelles branch)|x|?|boc.lk|BCEYSCSC|SWIFT from directory
 Development Bank of Seychelles|g|N|dbs.sc||
 
 ## SD Sudan | cbos.gov.sd | https://cbos.gov.sd/
@@ -137,12 +137,12 @@ Bank of Khartoum|i|B|bankofkhartoum.com||Largest; Bankak app
 Omdurman National Bank|i|B|onb-sd.com||
 Faisal Islamic Bank Sudan|i|B|fibsudan.com||
 Al Baraka Bank Sudan|i|?|albaraka.com.sd||
-Sudanese French Bank|i|?|sfbank.sd||*
+Sudanese French Bank|i|?|sfbank.sd|SUFRSDKH|SWIFT from directory
 Agricultural Bank of Sudan|g|?|agribank.sd||State
-Blue Nile Mashreq Bank|i|?|bnmb.sd||*
-Al Salam Bank Sudan|i|?|alsalam.sd||*
+Blue Nile Mashreq Bank|i|?|bnmb.sd|BLNISDKH|SWIFT from directory
+Al Salam Bank Sudan|i|?|alsalam.sd||
 Bankak (BoK)|w|B|bankofkhartoum.com||Most used banking app
-Fawry Sudan / O-Cash|w|?|ocash.sd||*
+Omdurman National Bank (O-Cash)|c|I||OMDBSDKH|
 
 ## SO Somalia | centralbank.gov.so | https://en.goobjoog.com/central-bank-of-somalia-licenses-15-banks-strengthens-financial-oversight ; https://en.wikipedia.org/wiki/List_of_banks_in_Somalia
 Premier Bank|i|B|premierbank.so||Among largest
@@ -150,11 +150,10 @@ Salaam Somali Bank|i|B|salaambank.so||Hormuud group
 Dahabshil Bank International|i|B|dahabshilbank.com||
 International Bank of Somalia (IBS)|i|B|ibsbank.so||
 Amal Bank|i|B|amalbankso.com||
-Agro Africa Bank|i|?|agroafricabank.com||*
-MyBank Somalia|i|?|mybank.so||*
-Darasalaam Bank|i|?|darasalaambank.com||*
-Ziraat Katılım (Somalia branch)|x|?|ziraatkatilim.com.tr||Foreign*
-Qatar National Bank (Somalia)|x|N|qnb.com||Foreign*
+Agro Africa Bank|i|?|agrobank.so|AGOFSOSM|
+MyBank Somalia|c|I|mybank.so|MYBASOSM|
+Dara-Salaam Bank|i|?|darasalaambank.com||Hargeisa, Somaliland; app 'Dhaweeye'
+Ziraat Katılım (Somalia branch)|x|?|ziraatkatilim.com.tr||Foreign
 EVC Plus (Hormuud)|w|A|hormuud.com||Leading mobile money
 Sahal (Golis)|w|A|golistelecom.com||Puntland
 Zaad (Telesom)|w|A|telesom.com||Somaliland
@@ -166,12 +165,12 @@ Equity Bank South Sudan|x|?|equitygroupholdings.com||
 Ecobank South Sudan|x|?|ecobank.com||
 Commercial Bank of Ethiopia (South Sudan)|x|?|combanketh.et||
 Ivory Bank|c|?|ivorybank.com.ss||
-Cooperative Bank of South Sudan|c|?|||*
-Nile Commercial Bank|c|?|||*
-Stanbic Bank South Sudan|x|?|stanbicbank.com.ss||*
+Cooperative Bank of South Sudan|c|?||COBLSSJB|51% Co-operative Bank of Kenya, 49% GoSS
+Nile Commercial Bank|c|?||NCBLSSJ1|
+Stanbic Bank South Sudan|x|A|stanbicbank.com.ss||
 m-Gurush|w|A|mgurush.com||Mobile money legalised 2025
 Nilepay|w|?|nilepay.com||*
-MTN MoMo South Sudan|w|?|mtn.com.ss||*
+MTN MoMo South Sudan|w|?|mtn.com.ss||
 
 ## TZ Tanzania | bot.go.tz | https://www.bot.go.tz/BankingSupervision
 CRDB Bank|c|B|crdbbank.co.tz|CORUTZTZ|Largest
@@ -243,7 +242,7 @@ BCI (Banco Comercial e de Investimentos)|c|B|bci.co.mz||
 Standard Bank Moçambique|x|B|standardbank.co.mz||
 Absa Moçambique|x|B|absa.co.mz||
 Moza Banco|c|B|mozabanco.co.mz||
-FNB Moçambique|x|?|fnb.co.mz||*
+FNB Moçambique|x|?|fnb.co.mz||
 Ecobank Moçambique|x|?|ecobank.com||
 M-Pesa Moçambique (Vodacom)|w|B|vm.co.mz||
 e-Mola (Movitel)|w|B|movitel.co.mz||
@@ -256,9 +255,8 @@ Standard Bank Namibia|x|B|standardbank.com.na||
 Nedbank Namibia|x|B|nedbank.com.na||
 Letshego Bank Namibia|m|B|letshego.com||
 Bank BIC Namibia|x|?|bankbic.com.na||
-Trustco Bank|c|?|trustco.com.na||*
 NamPost Savings Bank|g|B|nampost.com.na||
-MTC Maris|w|B|mtc.com.na||Wallet*
+MTC Maris|w|B|mtc.com.na||Wallet
 
 ## SZ Eswatini | centralbank.org.sz | https://www.centralbank.org.sz/
 Standard Bank Eswatini|x|B|standardbank.co.sz||
@@ -266,7 +264,7 @@ FNB Eswatini|x|B|fnb.co.sz||
 Nedbank Eswatini|x|B|nedbank.co.sz||
 Eswatini Bank|g|B|eswatinibank.co.sz||State
 MTN MoMo Eswatini|w|B|mtn.co.sz||
-Eswatini Mobile e-Mali|w|?|eswatinimobile.co.sz||*
+Eswatini Mobile e-Mali|w|I|eswatinimobile.co.sz||
 
 ## ZA South Africa | resbank.co.za | https://www.resbank.co.za/en/home/what-we-do/prudential-regulation/banks
 Standard Bank|c|B|standardbank.co.za|SBZAZAJJ|Largest
@@ -279,11 +277,10 @@ African Bank|c|B|africanbank.co.za||
 TymeBank|d|B|tymebank.co.za||Digital
 Discovery Bank|d|B|discovery.co.za||Digital
 Bank Zero|d|B|bankzero.co.za||Digital
-Old Mutual Bank|c|B|oldmutual.co.za||Launched 2025*
+OM Bank (Old Mutual)|c|B|oldmutual.co.za/bank||Launched 2025
 Postbank (SA Post Office)|g|B|postbank.co.za||State
 Al Baraka Bank SA|i|B|albaraka.co.za||Islamic
 HBZ Bank|c|?|hbzbank.co.za||
-Sasfin Bank|c|N|sasfin.com||Retail exited 2024*
 SnapScan|w|B|snapscan.co.za||
 Zapper|w|B|zapper.com||
 VodaPay|w|B|vodapay.co.za||Vodacom super-app

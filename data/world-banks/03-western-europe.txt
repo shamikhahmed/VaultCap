@@ -62,7 +62,7 @@ TWINT|w|B|twint.ch||National mobile payments
 Bank of Cyprus|c|B|bankofcyprus.com|BCYPCY2N|
 Hellenic Bank (Eurobank)|c|B|hellenicbank.com|HEBACY2N|
 Eurobank Cyprus|x|B|eurobank.com.cy||
-Alpha Bank Cyprus|x|?|alphabank.com.cy||*
+Alpha Bank Cyprus|c|B|alphabank.com.cy||Absorbed AstroBank business Oct 2025; now Cyprus #3 lender
 Astrobank|c|B|astrobank.com||
 Ancoria Bank|c|B|ancoriabank.com||
 Housing Finance Corporation|g|N|hfc.com.cy||
@@ -89,8 +89,8 @@ N26|d|B|n26.com|NTSBDEB1|
 Trade Republic|d|B|traderepublic.com||Bank licence
 C24 Bank|d|B|c24.de||
 Tomorrow Bank|d|B|tomorrow.one||
-Vivid Money|d|B|vivid.money||*
-Kontist|d|B|kontist.com||Freelancers*
+Vivid Money|d|B|vivid.money||Not a bank: e-money institution (Vivid Money S.A., CSSF Luxembourg) + Vivid Money B.V. (AFM)
+Kontist|d|B|kontist.com||Freelancer business account; owned by Ageras ('Kontist by Ageras')
 Solaris|d|N|solarisgroup.com||BaaS
 PayPal Deutschland|w|B|paypal.com||Wallet
 
@@ -129,7 +129,6 @@ Boursorama (BoursoBank)|d|B|boursobank.com|BOUSFRPP|Largest French online bank
 Fortuneo|d|B|fortuneo.fr||
 Hello bank!|d|B|hellobank.fr||
 Monabanq|d|B|monabanq.com||
-Ma French Bank|d|N|mafrenchbank.fr||Closed 2024*
 Shine|d|B|shine.fr||Business neobank
 Qonto|d|B|qonto.com||Business neobank
 Nickel|d|B|nickel.eu||Account at tobacconists
@@ -147,7 +146,7 @@ Halifax|c|B|halifax.co.uk|HLFXGB21|Lloyds group
 Bank of Scotland|c|B|bankofscotland.co.uk|BOFSGB21|
 Royal Bank of Scotland|c|B|rbs.co.uk|RBOSGB2L|
 Nationwide Building Society|c|B|nationwide.co.uk|NAIAGB21|
-TSB Bank|c|B|tsb.co.uk|TSBSGB2A|Acquired by Santander 2025*
+TSB Bank|c|B|tsb.co.uk|TSBSGB2A|Acquired by Santander UK 30 Apr 2026; separate entity until Part VII transfer (exp. H1 2027)
 Metro Bank|c|B|metrobankonline.co.uk|MYMBGB2L|
 Virgin Money (Nationwide)|c|B|virginmoney.com||Acquired by Nationwide 2024
 Co-operative Bank|c|B|co-operativebank.co.uk|CPBKGB22|Acquired by Coventry BS 2025
@@ -156,7 +155,7 @@ Yorkshire Building Society|c|B|ybs.co.uk||
 Skipton Building Society|c|?|skipton.co.uk||
 Danske Bank UK (Northern Ireland)|c|B|danskebank.co.uk||
 Bank of Ireland UK|c|B|bankofirelanduk.com||
-AIB (NI)|c|N|aibni.co.uk||Exited NI 2024*
+AIB (NI)|c|B|aibni.co.uk||
 Ulster Bank NI|c|B|ulsterbank.co.uk||NatWest group
 First Direct|d|B|firstdirect.com||HSBC brand
 Monzo|d|B|monzo.com|MONZGB2L|
@@ -183,7 +182,7 @@ Turicum Private Bank|c|N|turicum.com||Private bank
 Moneycorp Bank|x|B|moneycorp.com||FX bank
 SG Kleinwort Hambros (Gibraltar)|c|N|kleinworthambros.com||Private bank
 Xapo Bank|d|B|xapobank.com||Bitcoin-oriented bank
-IDT Financial Services|w|?|idtfinance.com||EMI*
+IDT Finance (IDT Financial Services Ltd)|w|?|idtfinance.com||GFSC-licensed bank; B2B card issuing / BIN sponsorship
 
 ## GR Greece | bankofgreece.gr | https://www.bankofgreece.gr/en/main-tasks/supervision/supervised-institutions
 National Bank of Greece|c|B|nbg.gr|ETHNGRAA|
@@ -205,7 +204,7 @@ Revolut Bank (Ireland)|d|B|revolut.com||Largest by users in IE
 N26 Ireland|d|B|n26.com||
 bunq Ireland|d|B|bunq.com||
 Ulster Bank / KBC Ireland|c|N|ulsterbank.ie||Exited 2023
-Zippay / Zip|w|B|zippay.ie||Bank-owned P2P (planned)*
+Zippay|w|?|zippay.ie||In-app P2P inside AIB, Bank of Ireland, PTSB apps; launched Mar 2026 (Nexi)
 
 ## IT Italy | bancaditalia.it | https://infostat.bancaditalia.it/GIAVAInquiry-public/ng/
 Intesa Sanpaolo|c|B|intesasanpaolo.com|BCITITMM|Largest
@@ -215,7 +214,6 @@ BPER Banca|c|B|bper.it|BPMOIT22|
 Monte dei Paschi di Siena|c|B|mps.it|PASCITMM|
 Crédit Agricole Italia|x|B|credit-agricole.it||
 BNL (BNP Paribas)|x|B|bnl.it|BNLIITRR|
-Banca Popolare di Sondrio|c|B|popso.it||Merged into BPER 2025*
 Banca Mediolanum|c|B|bancamediolanum.it||
 Credem|c|B|credem.it||
 Mediobanca / CheBanca!|c|B|mediobanca.com||
@@ -278,7 +276,7 @@ iDEAL / Wero|w|B|ideal.nl||National online payments
 ## PT Portugal | bportugal.pt | https://www.bportugal.pt/en/entidades-autorizadas
 Caixa Geral de Depósitos|g|B|cgd.pt|CGDIPTPL|State-owned
 Millennium bcp|c|B|millenniumbcp.pt|BCOMPTPL|
-Novo Banco|c|B|novobanco.pt|BESCPTPL|Acquired by BPCE 2025*
+Novo Banco|c|B|novobanco.pt|BESCPTPL|Acquired 100% by BPCE, closed 30 Apr 2026
 Santander Totta|c|B|santander.pt|TOTAPTPL|
 BPI (CaixaBank)|c|B|bancobpi.pt|BBPIPTPL|
 Crédito Agrícola|c|B|creditoagricola.pt||

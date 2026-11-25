@@ -10,7 +10,7 @@ Azizi Bank|c|B|azizibank.af||Largest branch/ATM network
 Islamic Bank of Afghanistan|i|?|iba.af||Formerly Bakhtar Bank
 Afghan United Bank|c|?|aub.af||
 Ghazanfar Bank|c|?|gbank.af||
-Maiwand Bank|c|?|maiwandbank.com||*
+Maiwand Bank|c|?|maiwandbank.com|MWBKAFKA|SWIFT from directory
 The First MicroFinance Bank|m|?|fmfb.com.af||Aga Khan network
 Bank-e-Millie Afghan|g|?|bma.com.af||State-owned
 Pashtany Bank|g|?|pashtanybank.com.af||State-owned
@@ -54,7 +54,7 @@ Bhutan National Bank|c|B|bnb.bt|BNBTBTBT|
 Druk PNB Bank|c|?|drukpnbbank.bt||
 T Bank|c|?|tbankltd.com||
 Bhutan Development Bank|g|?|bdb.bt||
-Digital Kidu (DK Bank)|d|B|dkbank.bt||Bhutan's first digital bank (2024)*
+Digital Kidu (DK Bank)|d|B|dkbank.bt||Bhutan's first digital bank (2024)
 
 ## IN India | rbi.org.in | https://www.rbi.org.in/commonperson/English/Scripts/BankLinks.aspx
 State Bank of India|g|B|sbi.co.in|SBININBB|YONO app; largest bank
@@ -128,10 +128,10 @@ Bank of Maldives|g|B|bankofmaldives.com.mv|MALBMVMV|State-majority, largest
 Maldives Islamic Bank|i|B|mib.com.mv||
 State Bank of India (Malé)|x|?|sbimaldives.com||
 Mauritius Commercial Bank (Maldives)|x|?|mcb.com.mv||
-Commercial Bank of Maldives|c|B|cbm.mv||Formerly Commercial Bank of Maldives Private Ltd*
+Commercial Bank of Maldives|c|B|cbm.mv|CBMVMVMV|JV of Commercial Bank of Ceylon (55%) and Tree Top Investments; operating since 2016; SWIFT from directory
 Habib Bank (Malé)|x|N|hbl.com||Branch
 Bank of Ceylon (Malé)|x|N|boc.lk||Branch
-m-Faisaa (Ooredoo)|w|B|ooredoo.mv||Mobile money*
+m-Faisaa (Ooredoo)|w|B|ooredoo.mv||Mobile money
 Dhiraagu Pay|w|B|dhiraagu.com.mv||Mobile money
 
 ## NP Nepal | nrb.org.np | https://www.nrb.org.np/bank-and-financial-institutions/
@@ -169,7 +169,6 @@ Bank Al Habib|c|B|bankalhabib.com|BAHLPKKA|
 Habib Metro Bank|c|B|habibmetro.com|MPBLPKKA|
 Soneri Bank|c|B|soneribank.com|SONEPKKA|
 JS Bank|c|B|jsbl.com|JSBLPKKA|Zindigi parent
-Silkbank|c|B|silkbank.com.pk|SAUDPKKA|Merged into United Bank (2025)*
 Samba Bank|c|B|samba.com.pk|SAMBPKKA|
 Meezan Bank|i|B|meezanbank.com|MEZNPKKA|Largest Islamic bank
 Faysal Bank|i|B|faysalbank.com|FAYSPKKA|Fully Islamic since 2023
@@ -191,7 +190,7 @@ JazzCash / Mobilink Microfinance Bank|w|B|jazzcash.com.pk||Largest mobile wallet
 SadaPay|d|B|sadapay.pk||EMI
 NayaPay|d|B|nayapay.com||EMI
 Zindigi (JS Bank)|d|B|zindigi.pk||
-Mashreq Pakistan|d|B|mashreqpakistan.com||Digital bank licence*
+Mashreq Pakistan|d|B|mashreqpakistan.com||Shariah-compliant digital retail bank; commercial launch Sep 2025 (Mashreq NEO)
 HBL Microfinance Bank|m|B|hblmfb.com||
 Khushhali Microfinance Bank|m|B|khushhalibank.com.pk||
 U Microfinance Bank (Upaisa)|m|B|ubank.com.pk||

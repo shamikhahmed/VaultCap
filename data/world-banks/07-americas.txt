@@ -36,9 +36,9 @@ Venmo|w|B|venmo.com||P2P
 Cash App|w|B|cash.app||P2P
 Zelle|w|B|zellepay.com||Bank P2P network
 PayPal|w|B|paypal.com||
-Apple Cash / Apple Card|w|I|apple.com/apple-card||Goldman → JPMorgan transition*
+Apple Cash / Apple Card|w|I|apple.com/apple-card||Card issued by Goldman Sachs; Chase to become issuer (announced Jan 2026, ~24-month transition)
 Popular Bank|c|B|popular.com||Also in PR
-University Islamic Financial|i|?|universityislamicfinancial.com||Islamic window*
+University Islamic Financial (UIF Corp)|i|?|universityislamicfinancial.com||Islamic window
 Guidance Residential|i|N|guidanceresidential.com||Islamic home finance
 
 ## CA Canada | osfi-bsif.gc.ca | https://www.osfi-bsif.gc.ca/en/supervision/who-we-regulate
@@ -57,7 +57,6 @@ KOHO|d|B|koho.ca||
 Wealthsimple|d|B|wealthsimple.com||
 ATB Financial|g|B|atb.com||Alberta crown corp
 Vancity|c|B|vancity.com||Credit union
-HSBC Canada (RBC)|x|N|hsbc.ca||Acquired by RBC 2024
 Interac e-Transfer|w|N|interac.ca||National P2P
 
 ## MX Mexico | cnbv.gob.mx | https://www.gob.mx/cnbv
@@ -83,12 +82,12 @@ Antigua Commercial Bank|c|?|acbonline.com||
 Eastern Caribbean Amalgamated Bank (ECAB)|c|?|ecabank.com||
 CIBC Caribbean (FirstCaribbean)|x|B|cibcfcib.com||
 RBC Royal Bank Antigua|x|B|rbc.com/caribbean||
-Caribbean Union Bank|c|?|cubantigua.com||*
+Caribbean Union Bank|c|?|caribbeanunionbank.com|CUNBAGAG|
 
 ## AI Anguilla | eccb-centralbank.org | https://www.eccb-centralbank.org/structure-of-financial-system
-National Bank of Anguilla (NCBA)|c|?|nba.ai||Local; post-resolution*
+National Commercial Bank of Anguilla (NCBA)|c|?|nba.ai|ANGUAIAI|Local; post-resolution; SWIFT from directory
 CIBC Caribbean Anguilla|x|B|cibcfcib.com||
-Republic Bank Anguilla|x|B|republicbankanguilla.com||*
+Republic Bank (Anguilla) Limited|x|B||RBNKAIAI|Ex-Scotiabank Anguilla (2019); app is RepublicMobile EC
 
 ## AW Aruba | cbaruba.org | https://www.cbaruba.org/financial-sector-supervision/supervised-institutions
 Aruba Bank|c|B|arubabank.com||
@@ -102,7 +101,7 @@ Republic Bank Barbados|x|B|republicbarbados.com||
 RBC Royal Bank Barbados|x|B|rbc.com/caribbean||
 Scotiabank Barbados|x|B|scotiabank.com/bb||
 First Citizens Barbados|x|B|firstcitizensbb.com||
-Sagicor Bank|c|?|sagicor.com||*
+Sagicor Bank (Barbados)|d|?|sagicor.com|SBBLBBBB|
 Barbados credit unions (Capita, COB)|c|B|cobcreditunion.com||
 
 ## BM Bermuda | bma.bm | https://www.bma.bm/regulated-entities
@@ -113,7 +112,7 @@ Bermuda Commercial Bank|c|?|bcb.bm||
 
 ## BS Bahamas | centralbankbahamas.com | https://www.centralbankbahamas.com/bank-supervision/regulated-entities
 RBC Royal Bank Bahamas|x|B|rbcroyalbank.com/bahamas||
-Scotiabank Bahamas|x|B|scotiabank.com/bs||*
+Scotiabank Bahamas|x|B|scotiabank.com/bs|NOSCBSNS|
 CIBC Caribbean Bahamas|x|B|cibcfcib.com||
 Commonwealth Bank (Bahamas)|c|B|combankltd.com||
 Bank of The Bahamas|g|B|bankbahamas.com||State
@@ -133,8 +132,6 @@ EnZona|w|A|enzona.net||Payments app
 
 ## DM Dominica | eccb-centralbank.org | https://www.eccb-centralbank.org/structure-of-financial-system
 National Bank of Dominica|c|?|nbdominica.com||Locally owned
-CIBC Caribbean Dominica|x|B|cibcfcib.com||*
-Dominica credit unions|c|?|||*
 
 ## DO Dominican Republic | sb.gob.do | https://www.sb.gob.do/
 Banreservas|g|B|banreservas.com|BRRDDOSD|State, largest
@@ -150,8 +147,7 @@ tPago|w|B|tpago.com||Mobile payments
 ## GD Grenada | eccb-centralbank.org | https://www.eccb-centralbank.org/structure-of-financial-system
 Grenada Co-operative Bank|c|?|grenadaco-opbank.com||
 Republic Bank Grenada|x|B|republicgrenada.com||
-CIBC Caribbean Grenada|x|B|cibcfcib.com||*
-ACB Grenada Bank|c|?|acbgrenada.com||*
+ACB Grenada Bank|c|?|acbgrenada.com|ACGDGDGD|SWIFT from directory
 
 ## HT Haiti | brh.ht | https://www.brh.ht/
 Unibank|c|B|unibankhaiti.com||Largest private
@@ -160,7 +156,7 @@ Banque Nationale de Crédit (BNC)|g|B|bnconline.com||State
 Capital Bank Haiti|c|?|capitalbankhaiti.com||
 Banque Populaire Haïtienne|g|?|bph.ht||
 MonCash (Digicel)|w|B|moncashbutton.digicelgroup.com||Wallet
-Lajan Cash (Natcom)|w|?|natcom.com.ht||*
+Natcash (Natcom)|w|B|natcom.com.ht||
 
 ## JM Jamaica | boj.org.jm | https://boj.org.jm/core-functions/financial-system-supervision/licensees-and-registrants/
 NCB (National Commercial Bank)|c|B|jncb.com|JNCBJMKX|Largest
@@ -185,19 +181,18 @@ Butterfield Cayman|x|B|butterfieldgroup.com||
 Cayman National Bank|c|B|caymannational.com||
 RBC Royal Bank Cayman|x|B|rbc.com/caribbean||
 CIBC Caribbean Cayman|x|B|cibcfcib.com||
-Scotiabank Cayman|x|B|scotiabank.com/ky||*
+Scotiabank Cayman|x|B|scotiabank.com/ky||
 
 ## LC Saint Lucia | eccb-centralbank.org | https://www.eccb-centralbank.org/structure-of-financial-system
 Bank of Saint Lucia|c|B|bankofsaintlucia.com||
 CIBC Caribbean Saint Lucia|x|B|cibcfcib.com||
-RBC Royal Bank Saint Lucia|x|B|rbc.com/caribbean||*
-First National Bank St Lucia|c|?|1stnationalbankonline.com||*
+1st National Bank St. Lucia|c|?|1stnationalbankonline.com|LUOBLCLC|
 
 ## PR Puerto Rico | ocif.pr.gov | https://www.ocif.pr.gov/
 Banco Popular de Puerto Rico|c|B|popular.com|BPPRPRSJ|Largest
 FirstBank Puerto Rico|c|B|1firstbank.com|FBPRPRSJ|
 Oriental Bank (OFG)|c|B|orientalbank.com||
-Banesco USA (PR)|x|?|banescousa.com||*
+Banesco USA (PR)|x|B|banescousa.com||
 ATH Móvil|w|B|athmovil.com||P2P
 
 ## TT Trinidad and Tobago | central-bank.org.tt | https://www.central-bank.org.tt/core-functions/supervision/financial-institutions
@@ -208,20 +203,20 @@ Scotiabank Trinidad|x|B|scotiabank.com/tt||
 CIBC Caribbean Trinidad|x|B|cibcfcib.com||
 JMMB Bank TT|c|B|jmmb.com||
 Citibank TT|x|N|citibank.com/tt||
-Paywise|w|B|paywise.co||Wallet*
+Paywise|w|B|paywise.co||Wallet
 
 ## VC Saint Vincent and the Grenadines | eccb-centralbank.org | https://www.eccb-centralbank.org/structure-of-financial-system
 Bank of Saint Vincent and the Grenadines|c|B|bosvg.com||Formerly National Commercial Bank SVG
 CIBC Caribbean SVG|x|B|cibcfcib.com||
-Republic Bank SVG|x|?|republicsvg.com||*
+Republic Bank (EC) Limited – St Vincent|x|?|republicsvg.com|RBNKVCVC|
 
 ## BZ Belize | centralbank.org.bz | https://www.centralbank.org.bz/financial-system/supervised-institutions
 Belize Bank|c|B|belizebank.com||
 Heritage Bank|c|B|heritageibt.com||
 National Bank of Belize|g|B|nbbl.bz||State
 Atlantic Bank|c|B|atlanticbank.bz||
-Belize credit unions (Holy Redeemer)|c|?|hrcu.bz||*
-DigiWallet|w|B|digiwallet.bz||*
+Holy Redeemer Credit Union|c|?|hrcubelize.org||
+DigiWallet|w|B|digiwallet.bz||
 
 ## CR Costa Rica | sugef.fi.cr | https://www.sugef.fi.cr/entidades_supervisadas/
 Banco Nacional de Costa Rica|g|B|bncr.fi.cr|BNCRCRSJ|State
@@ -229,7 +224,7 @@ Banco de Costa Rica|g|B|bancobcr.com|BCRICRSJ|State
 Banco Popular y de Desarrollo Comunal|g|B|bancopopular.fi.cr||
 BAC Credomatic|c|B|baccredomatic.com||
 Davivienda Costa Rica|x|B|davivienda.cr||
-Scotiabank Costa Rica (Davivienda)|x|B|scotiabankcr.com||Sold to Davivienda 2025*
+DAVIbank Costa Rica|x|B|scotiabankcr.com||Ex-Scotiabank de Costa Rica; renamed DAVIbank (Costa Rica) S.A. Dec 2025; merger with Davivienda CR planned
 Promerica Costa Rica|c|B|promerica.fi.cr||
 SINPE Móvil|w|N|bccr.fi.cr||National mobile payments
 
@@ -259,7 +254,7 @@ LAFISE Bancentro|c|B|lafise.com||
 BAC Nicaragua|c|B|baccredomatic.com||
 Banco Ficohsa Nicaragua|c|B|ficohsa.com.ni||
 Avanz|c|?|avanzbanc.com||
-Banco Atlántida Nicaragua|c|?|bancoatlantida.com.ni||*
+Banco Atlántida Nicaragua|c|?|bancoatlantida.com.ni||
 
 ## PA Panama | superbancos.gob.pa | https://www.superbancos.gob.pa/en/
 Banco General|c|B|bgeneral.com|BAGEPAPA|Largest private
@@ -272,7 +267,6 @@ Multibank|c|B|multibank.com.pa||
 Banesco Panamá|c|B|banesco.com.pa||
 Davivienda Panamá|x|B|davivienda.com.pa||
 Yappy (Banco General)|w|B|yappy.com.pa||P2P
-Nequi Panamá|w|B|nequi.com.pa||*
 
 ## SV El Salvador | ssf.gob.sv | https://ssf.gob.sv/
 Banco Agrícola (Bancolombia)|c|B|bancoagricola.com||Largest
@@ -332,7 +326,7 @@ PicPay|w|B|picpay.com||
 Mercado Pago Brasil|w|B|mercadopago.com.br||
 PagBank|d|B|pagbank.com.br||
 Neon|d|B|neon.com.br||
-Banco Original|d|B|original.com.br||*
+Banco Original|c|B|original.com.br||Wholesale/corporate only since Jul 2023; retail clients moved to PicPay
 Pix|w|N|bcb.gov.br/pix||National instant payments
 
 ## CL Chile | cmfchile.cl | https://www.cmfchile.cl/portal/principal/613/w3-propertyvalue-29006.html
@@ -365,7 +359,7 @@ Lulo Bank|d|B|lulobank.com||
 Nu Colombia|d|B|nu.com.co||
 Nequi (Bancolombia)|w|B|nequi.com.co||Largest wallet
 Daviplata|w|B|daviplata.com||
-Bre-B|w|N|banrep.gov.co||National instant payments (2025)*
+Bre-B|w|N|banrep.gov.co||BanRep interoperable instant payments system, live 6 Oct 2025 (not a bank; used via bank/wallet apps)
 
 ## EC Ecuador | superbancos.gob.ec | https://www.superbancos.gob.ec/
 Banco Pichincha|c|B|pichincha.com|PICHECEQ|Largest
@@ -376,7 +370,7 @@ Banco Internacional|c|B|bancointernacional.com.ec||
 Banco Bolivariano|c|B|bolivariano.com||
 BanEcuador|g|B|banecuador.fin.ec||State
 Deuna (Pichincha)|w|B|deuna.app||Wallet
-Peigo|w|B|peigo.ec||*
+Peigo|w|B|peigo.ec||
 
 ## GY Guyana | bankofguyana.org.gy | https://www.bankofguyana.org.gy/bog/supervision/licensed-financial-institutions
 Republic Bank Guyana|x|B|republicguyana.com||
@@ -413,8 +407,8 @@ De Surinaamsche Bank (DSB)|c|B|dsbbank.sr||
 Hakrinbank|c|B|hakrinbank.com||
 Finabank|c|?|finabank.sr||
 Republic Bank Suriname|x|B|republicbanksr.com||
-Southern Commercial Bank|c|?|scombank.sr||*
-Godo (cooperative)|c|?|godo.sr||*
+Southern Commercial Bank|c|?|scombank.sr|SOUOSRPP|
+Godo (cooperative)|c|?|godo.sr||
 
 ## UY Uruguay | bcu.gub.uy | https://www.bcu.gub.uy/
 Banco República (BROU)|g|B|brou.com.uy|BROUUYMM|State
