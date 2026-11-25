@@ -42,6 +42,8 @@ test.describe('VaultCap vault switch', () => {
     });
     await page.goto('./index.html');
     await page.waitForFunction(() => localStorage.getItem('vo_active_profile') === 'personal', null, { timeout: 10000 });
+    // App bundle (VaultProfiles) loads after the first-launch splash — wait for it, don't race it
+    await page.waitForFunction(() => typeof VaultProfiles !== 'undefined', null, { timeout: 15000 });
     const active = await page.evaluate(() => VaultProfiles.active());
     expect(active).toBe('personal');
     expect(await page.evaluate(() => VaultProfiles.dbName())).toBe('vaultos');
