@@ -93,7 +93,12 @@ const U = {
     return (W ? WorldCatalog.merge(base, W, cc) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
   },
   cardOpts:    () => CARDS_DB.map(c  => `<option value="${c.n}">`).join(''),
-  brokerOpts:  () => BROKERS_DB.map(b => `<option value="${b}">`).join(''),
+  /** Brokers / investment platforms: curated BROKERS_DB, then the country's platforms + global ones. */
+  brokerOpts:  cc => {
+    const base = BROKERS_DB.map(n => ({ n }));
+    const W = typeof WorldBrokers !== 'undefined' ? WorldBrokers : null;
+    return (W ? WorldCatalog.merge(base, W, cc) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   /** SIM carriers for a country: curated NETWORKS_DB, then world carriers + global eSIMs. */
   netOpts:     cc => {
     const base = cc ? NETWORKS_DB.filter(n => n.c === cc || n.c === 'OTHER') : NETWORKS_DB;

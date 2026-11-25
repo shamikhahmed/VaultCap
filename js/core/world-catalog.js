@@ -2,7 +2,8 @@
 /* World catalogs — lazy-loaded so thousands of per-country entries stay out of the
    boot bundle. Each runtime file is built from researched sources:
      banks    data/world-banks/*.txt   → scripts/build-world-banks.mjs    → assets/data/world-banks.min.json
-     carriers data/world-carriers.txt  → scripts/build-world-carriers.mjs → assets/data/world-carriers.min.json
+     carriers data/world-carriers.txt  → scripts/build-world-lists.mjs    → assets/data/world-carriers.min.json
+     brokers  data/world-brokers.txt   → scripts/build-world-lists.mjs    → assets/data/world-brokers.min.json
    Rows: [name, countryCode, type, logoDomain]. Same-origin fetch only; logos resolve
    through LogoEngine (bundled file → initials tile), never a third-party service. */
 const WorldCatalog = {
@@ -57,10 +58,11 @@ const WorldCatalog = {
 
 const WorldBanks = WorldCatalog.make('assets/data/world-banks.min.json', 'vc:world-banks');
 const WorldCarriers = WorldCatalog.make('assets/data/world-carriers.min.json', 'vc:world-carriers');
+const WorldBrokers = WorldCatalog.make('assets/data/world-brokers.min.json', 'vc:world-brokers');
 
 // Warm the catalogs after first paint; pickers re-read them when they next render.
 if (typeof window !== 'undefined') {
-  const warm = () => { WorldBanks.load(); WorldCarriers.load(); };
+  const warm = () => { WorldBanks.load(); WorldCarriers.load(); WorldBrokers.load(); };
   if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
   else setTimeout(warm, 1500);
 }

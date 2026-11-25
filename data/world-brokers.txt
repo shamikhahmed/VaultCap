@@ -1,0 +1,212 @@
+# World investment brokers & platforms — one line per country.
+# Format: CC|Name~website~type;...   type: b=stock broker / trading app (default), f=fund / asset manager,
+#   r=robo-advisor / savings-investing app, x=crypto exchange, e=stock exchange / depository (listed for reference)
+# Suffix "*" on an item = unverified. Global platforms that serve many countries are under OTHER.
+# Primary sources: each country's securities regulator / stock-exchange member list (named in docs/research/world-brokers.md),
+# operator websites. Countries without a domestic stock exchange list the regional exchange or bank investment arms.
+OTHER|Interactive Brokers~interactivebrokers.com;eToro~etoro.com;Saxo Bank~home.saxo;XTB~xtb.com;Swissquote~swissquote.com;moomoo~moomoo.com;Webull~webull.com;Tiger Brokers~tigerbrokers.com;Revolut Invest~revolut.com~r;Trading 212~trading212.com;Binance~binance.com~x;Coinbase~coinbase.com~x;Kraken~kraken.com~x;Bybit~bybit.com~x;OKX~okx.com~x;Crypto.com~crypto.com~x;KuCoin~kucoin.com~x;Bitget~bitget.com~x;Vanguard~vanguard.com~f;BlackRock iShares~ishares.com~f
+AD|Andbank Investments~andbank.com~f;Crèdit Andorrà Asset Management~creditandorra.ad~f;MoraBanc Asset Management~morabanc.ad~f
+AE|Sarwa~sarwa.co~r;Baraka~getbaraka.com;EFG Hermes UAE~efghermes.com;Emirates NBD Securities~emiratesnbd.com;ADCB Securities~adcb.com;FAB Securities~bankfab.com;International Securities~isecurities.ae;Al Ramz~alramz.ae;StashAway UAE~stashaway.ae~r;BitOasis~bitoasis.net~x;Rain~rain.com~x;Dubai Financial Market~dfm.ae~e;ADX~adx.ae~e
+AF|Da Afghanistan Bank (no stock exchange)~dab.gov.af~e*
+AG|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+AI|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+AL|Tirana Stock Exchange (ALSE)~alse.al~e*;Raiffeisen Invest Albania~raiffeisen-invest.al~f
+AM|Armenia Securities Exchange (AMX)~amx.am~e;Ameria Asset Management~ameriabank.am~f;Armbrok~armbrok.am;Renesa~renesa.am*
+AO|BODIVA (Angola Debt & Stock Exchange)~bodiva.ao~e;BAI Securities~bancobai.ao;BFA Asset Management~bfa.ao~f
+AR|Bull Market Brokers~bullmarketbrokers.com;Balanz~balanz.com;IOL invertironline~invertironline.com;Cocos Capital~cocos.capital;PPI (Portfolio Personal Inversiones)~portfoliopersonal.com;Allaria~allaria.com.ar;Ualá Inversiones~uala.com.ar~r;Lemon Cash~lemon.me~x;Ripio~ripio.com~x;BYMA~byma.com.ar~e
+AT|Flatex Austria~flatex.at;Bawag easybank Depot~easybank.at;Erste Bank (George) Wertpapiere~sparkasse.at;Raiffeisen Capital Management~rcm.at~f;Bitpanda~bitpanda.com~x;Dadat Bank~dadat.at;Wiener Börse~wienerborse.at~e
+AU|CommSec~commsec.com.au;Stake~hellostake.com;Superhero~superhero.com.au;SelfWealth~selfwealth.com.au;CMC Markets Invest~cmcmarkets.com/en-au;Pearler~pearler.com~r;Raiz~raizinvest.com.au~r;Spaceship~spaceship.com.au~r;nabtrade~nabtrade.com.au;Vanguard Australia~vanguard.com.au~f;AustralianSuper~australiansuper.com~f;CoinSpot~coinspot.com.au~x;Swyftx~swyftx.com.au~x;ASX~asx.com.au~e
+AW|Aruba Bank investments~arubabank.com~f*
+AZ|Baku Stock Exchange~bfb.az~e;PASHA Capital~pashacapital.az;Kapital Bank Invest~kapitalbank.az*
+BA|Sarajevo Stock Exchange~sase.ba~e;Banja Luka Stock Exchange~blberza.com~e;Raiffeisen Capital BiH~raiffeisenbank.ba*
+BB|Barbados Stock Exchange~bse.com.bb~e;Sagicor Investments~sagicor.com~f;Republic Wealth (Barbados)~republicbarbados.com~f*
+BD|Dhaka Stock Exchange~dsebd.org~e;Chittagong Stock Exchange~cse.com.bd~e;LankaBangla Securities~lankabd.com;BRAC EPL Stock Brokerage~bracepl.com;IDLC Securities~idlc.com;EBL Securities~eblsecurities.com;City Brokerage~citybrokerageltd.com;UCB Stock Brokerage~ucbstock.com.bd*;ShantaAMC~shantaamc.com~f
+BE|Bolero (KBC)~bolero.be;Keytrade Bank~keytradebank.be;Saxo Belgium~home.saxo;Lynx~lynxbroker.be;MeDirect Belgium~medirect.be~r;Euronext Brussels~euronext.com~e
+BF|BRVM (regional exchange)~brvm.org~e;Coris Bourse~coris-bank.com*;SBIF~sbif.bf*
+BG|Bulgarian Stock Exchange~bse-sofia.bg~e;Karoll~karoll.bg;Elana Trading~elana.net;Nexo~nexo.com~x
+BH|Bahrain Bourse~bahrainbourse.com~e;SICO~sicobank.com;GIB Capital~gibcapital.com*;Rain (crypto)~rain.com~x
+BI|BRB (no securities exchange; Burundi Stock Exchange project)~brb.bi~e*
+BJ|BRVM (regional exchange)~brvm.org~e;BOA Capital Securities~boacapital.com*;Africa Bourse~africabourse.net*
+BM|Bermuda Stock Exchange~bsx.com~e;Butterfield Wealth~butterfieldgroup.com~f;HSBC Bermuda Investments~hsbc.bm~f
+BN|Baiduri Capital~baiduri.com*;BIBD Investments~bibd.com.bn~f*;Brunei Darussalam Central Bank (no stock exchange)~bdcb.gov.bn~e*
+BO|Bolsa Boliviana de Valores~bbv.com.bo~e;BNB Valores~bnb.com.bo;Credibolsa (BCP)~bcp.com.bo*;Panamerican Securities~panamericanbo.com*
+BR|XP Investimentos~xpi.com.br;BTG Pactual Investimentos~btgpactual.com;Rico~rico.com.vc;Clear~clear.com.br;NuInvest~nuinvest.com.br;Inter Invest~inter.co;Itaú Íon~itau.com.br;Avenue~avenue.us;Toro Investimentos~toroinvestimentos.com.br;Genial Investimentos~genialinvestimentos.com.br;Mercado Bitcoin~mercadobitcoin.com.br~x;B3~b3.com.br~e
+BS|BISX (Bahamas International Securities Exchange)~bisxbahamas.com~e;CFAL~cfal.com*;RoyalFidelity~royalfidelity.com~f
+BT|Royal Securities Exchange of Bhutan~rsebl.org.bt~e;Bhutan National Bank Securities~bnb.bt*
+BW|Botswana Stock Exchange~bse.co.bw~e;Motswedi Securities~motswedi.co.bw;Imara Capital Securities~imara.com*;Stockbrokers Botswana~sbb.bw*
+BY|Belarusian Currency & Stock Exchange~bcse.by~e;Finstore (Alfa)~finstore.by*;Belarusbank brokerage~belarusbank.by*
+BZ|Belize Bank investments~belizebank.com~f*
+CA|Questrade~questrade.com;Wealthsimple~wealthsimple.com~r;RBC Direct Investing~rbcdirectinvesting.com;TD Direct Investing~td.com;BMO InvestorLine~bmo.com;CIBC Investor's Edge~cibc.com;Scotia iTRADE~scotiaitrade.com;National Bank Direct Brokerage~nbdb.ca;Qtrade~qtrade.ca;Interactive Brokers Canada~interactivebrokers.ca;Newton~newton.co~x;TSX~tsx.com~e
+CD|BCC (no stock exchange)~bcc.cd~e*;Rawbank Securities~rawbank.com*
+CF|BVMAC (regional exchange)~bvm-ac.org~e
+CG|BVMAC (regional exchange)~bvm-ac.org~e
+CH|PostFinance e-trading~postfinance.ch;Swissquote~swissquote.com;UBS KeyInvest / e-banking trading~ubs.com;Yuh~yuh.com~r;neon invest~neon-free.ch~r;Selma~selma.com~r;True Wealth~truewealth.ch~r;VIAC (pillar 3a)~viac.ch~r;frankly (ZKB)~frankly.ch~r;Cornèrtrader~cornertrader.ch;SIX Swiss Exchange~six-group.com~e
+CI|BRVM (regional exchange)~brvm.org~e;SGI Hudson & Cie~hudson-cie.com*;BICI Bourse~bicibourse.com*;Africa Bourse~africabourse.net*;Atlantique Finance~atlantiquefinance.net*
+CL|Banchile Inversiones~banchileinversiones.cl;Santander Corredores~santander.cl;BCI Corredor de Bolsa~bci.cl;Fintual~fintual.cl~r;Racional~racional.cl~r;Renta4 Chile~renta4.cl;LarrainVial~larrainvial.com;Buda.com~buda.com~x;Bolsa de Santiago~bolsadesantiago.com~e
+CM|BVMAC (regional exchange)~bvm-ac.org~e;Financia Capital~financiacapital.com*;Afriland Bourse~afrilandfirstbank.com*
+CN|East Money (Eastmoney Securities)~eastmoney.com;Huatai Securities~htsc.com.cn;CITIC Securities~citics.com;Guotai Haitong Securities~gtht.com*;China Merchants Securities~cmschina.com;Futu NiuNiu~futunn.com;Tiger Brokers~tigerbrokers.com;Ant Fortune~antgroup.com~r;Tiantian Fund~1234567.com.cn~f;Shanghai Stock Exchange~sse.com.cn~e;Shenzhen Stock Exchange~szse.cn~e
+CO|Trii~trii.co;Acciones y Valores~accivalores.com;Credicorp Capital Colombia~credicorpcapital.com;Davivienda Corredores~corredores.davivienda.com;tyba~tyba.com.co~r;Hapi~hapi.trade;Bolsa de Valores de Colombia (bvc)~bvc.com.co~e
+CR|Bolsa Nacional de Valores~bolsacr.com~e;BN Valores~bnvalores.com;BCR Valores~bancobcr.com;Popular Valores~popularvalores.com
+CU|— (no securities market)~~e
+CV|Bolsa de Valores de Cabo Verde~bvc.cv~e*
+CY|Cyprus Stock Exchange~cse.com.cy~e;Bank of Cyprus investments~bankofcyprus.com~f;Exness (CySEC broker)~exness.com*;Plus500 CY~plus500.com*
+CZ|Fio e-Broker~fio.cz;Patria Finance~patria.cz;Portu~portu.cz~r;Lynx CZ~lynxbroker.cz;XTB Czech~xtb.com/cz;Coinmate~coinmate.io~x;Anycoin~anycoin.cz~x;Prague Stock Exchange~pse.cz~e
+DE|Trade Republic~traderepublic.com;Scalable Capital~scalable.capital;comdirect~comdirect.de;Consorsbank~consorsbank.de;ING Deutschland Depot~ing.de;DKB Broker~dkb.de;flatex~flatex.de;onvista bank~onvista.de;Smartbroker+~smartbroker.de;justTRADE~justtrade.com;finanzen.net zero~finanzen.net;Bitvavo DE~bitvavo.com~x;Boerse Stuttgart Digital (BISON)~bisonapp.com~x;DWS~dws.com~f;Union Investment~union-investment.de~f;Deka~deka.de~f;Deutsche Börse (Xetra)~deutsche-boerse.com~e
+DJ|— (no stock exchange)~~e
+DK|Nordnet Danmark~nordnet.dk;Saxo Bank Danmark~home.saxo;Danske eBanking Investering~danskebank.dk;Lunar Invest~lunar.app~r;June~june.dk~r;Nasdaq Copenhagen~nasdaqomxnordic.com~e
+DM|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+DO|Bolsa de Valores de RD~bvrd.com.do~e;Inversiones Popular~inversionespopular.com.do;Parallax Valores~parallax.com.do;Alpha Inversiones~alpha.com.do;JMMB Puesto de Bolsa~jmmb.com.do
+DZ|Bourse d'Alger (SGBV)~sgbv.dz~e;BNA Invest~bna.dz*
+EC|Bolsa de Valores de Quito~bolsadequito.com~e;Bolsa de Valores de Guayaquil~bvg.fin.ec~e*;Plusvalores~plusvalores.ec*
+EE|LHV Pank broker~lhv.ee;Swedbank Estonia trading~swedbank.ee;Lightyear~lightyear.com;Robo by Swedbank~swedbank.ee~r*;Nasdaq Tallinn~nasdaqbaltic.com~e
+EG|EFG Hermes (EFG Hermes ONE)~efghermes.com;CI Capital~cicapital.com;Beltone~beltoneholding.com;Thndr~thndr.app;Al Ahly Pharos~alahlypharos.com*;Egyptian Exchange (EGX)~egx.com.eg~e
+ER|— (no stock exchange)~~e
+ES|MyInvestor~myinvestor.es~r;Indexa Capital~indexacapital.com~r;Renta 4~r4.com;Openbank broker~openbank.es;ING España Broker Naranja~ing.es;Self Bank~selfbank.es;Bankinter Broker~bankinter.com;DEGIRO España~degiro.es;Finizens~finizens.com~r;Bit2Me~bit2me.com~x;BME (Bolsa de Madrid)~bolsasymercados.es~e
+ET|Ethiopian Securities Exchange (ESX)~esxethiopia.com~e;CBE Capital~cbecapital.et*;Wegagen Capital~wegagencapital.com*
+FI|Nordnet Suomi~nordnet.fi;Nordea Investor~nordea.fi;OP Arvo / OP Online trading~op.fi;Seligson~seligson.fi~f;Northern Crypto / Coinmotion~coinmotion.com~x;Nasdaq Helsinki~nasdaqomxnordic.com~e
+FJ|South Pacific Stock Exchange~spx.com.fj~e;Kontiki Stockbroking~kontikicapital.com*;FHL Fund Management~fhl.com.fj~f*
+FM|— (no stock exchange)~~e
+FR|Boursorama (BoursoBank) Bourse~boursobank.com;Fortuneo Bourse~fortuneo.fr;Bourse Direct~boursedirect.fr;Trade Republic France~traderepublic.com;Yomoni~yomoni.fr~r;Nalo~nalo.fr~r;Linxea~linxea.com~f;Amundi~amundi.fr~f;Coinhouse~coinhouse.com~x;Euronext Paris~euronext.com~e
+GA|BVMAC (regional exchange; HQ Libreville)~bvm-ac.org~e;BGFI Capital~bgfi.com*
+GB|Hargreaves Lansdown~hl.co.uk;AJ Bell~ajbell.co.uk;Interactive Investor~ii.co.uk;Vanguard UK~vanguardinvestor.co.uk~f;Trading 212~trading212.com;Freetrade~freetrade.io;Fidelity UK~fidelity.co.uk;Moneybox~moneyboxapp.com~r;Nutmeg (J.P. Morgan)~nutmeg.com~r;Chip~getchip.uk~r;InvestEngine~investengine.com~r;Wealthify~wealthify.com~r;IG~ig.com;Lightyear UK~lightyear.com;Plum~withplum.com~r;Coinbase UK~coinbase.com~x;Kraken UK~kraken.com~x;London Stock Exchange~londonstockexchange.com~e
+GD|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+GE|Galt & Taggart (Bank of Georgia)~galtandtaggart.com;TBC Capital~tbccapital.ge;Georgian Stock Exchange~gse.ge~e
+GH|Ghana Stock Exchange~gse.com.gh~e;Databank~databankgroup.com;IC Securities~icsecurities.com;EDC Stockbrokers (Ecobank)~edcgroup.com*;Stanbic Investment Management~stanbicbank.com.gh~f;Petra Trust~petratrust.com~f
+GI|— (Gibraltar Stock Exchange closed; use UK brokers)~~e*
+GM|— (no stock exchange)~~e
+GN|— (no stock exchange)~~e
+GQ|BVMAC (regional exchange)~bvm-ac.org~e
+GR|Athens Stock Exchange~athexgroup.gr~e;Piraeus Securities~piraeus-sec.gr;Eurobank Equities~eurobankequities.gr;Alpha Finance~alphafinance.gr;NBG Securities~nbgsecurities.com
+GT|Bolsa de Valores Nacional~bvnsa.com.gt~e*;Inversiones BI~corporacionbi.com*
+GW|BRVM (regional exchange)~brvm.org~e
+GY|Guyana Stock Exchange~gasci.com~e;Trust Company Guyana~trustcogy.com*
+HK|Futu (moomoo HK)~futuhk.com;Tiger Brokers HK~tigerbrokers.com.hk;HSBC Invest Express~hsbc.com.hk;Hang Seng Investment~hangseng.com;Bank of China (HK) Securities~bochk.com;Phillip Securities HK~phillip.com.hk;Webull HK~webull.hk;Interactive Brokers HK~interactivebrokers.com.hk;HashKey Exchange~hashkey.com~x;OSL~osl.com~x;HKEX~hkex.com.hk~e
+HN|Bolsa Centroamericana de Valores~bcv.hn~e*
+HR|Zagreb Stock Exchange~zse.hr~e;InterCapital~intercapital.hr;Erste Bank Croatia brokerage~erstebank.hr;Raiffeisen Invest Croatia~rbainvest.hr~f*;Revolut Croatia~revolut.com~r
+HT|— (no stock exchange)~~e
+HU|Budapest Stock Exchange~bse.hu~e;OTP Bank brokerage~otpbank.hu;Erste Investment Hungary~erstebroker.hu;Concorde Securities~con.hu;SPB Investment~spb.hu*;Equilor~equilor.hu
+ID|Ajaib~ajaib.co.id;Stockbit~stockbit.com;Bibit~bibit.id~r;Mirae Asset Sekuritas~miraeasset.co.id;BCA Sekuritas~bcasekuritas.co.id;Mandiri Sekuritas~mandirisekuritas.co.id;IPOT (Indo Premier)~indopremier.com;Pluang~pluang.com~r;Indodax~indodax.com~x;Pintu~pintu.co.id~x;Tokocrypto~tokocrypto.com~x;IDX~idx.co.id~e
+IE|Degiro Ireland~degiro.ie;Trading 212 Ireland~trading212.com;Davy Select~davy.ie;Revolut Ireland Invest~revolut.com~r;Interactive Brokers Ireland~interactivebrokers.ie;Euronext Dublin~euronext.com~e
+IL|Bank Leumi Trade~leumi.co.il;Bank Hapoalim brokerage~bankhapoalim.co.il;IBI Smart~ibi.co.il;Meitav Trade~meitav.co.il;Altshuler Shaham~as-invest.co.il~f;Bits of Gold~bitsofgold.co.il~x;Tel Aviv Stock Exchange~tase.co.il~e
+IN|Zerodha~zerodha.com;Groww~groww.in;Upstox~upstox.com;Angel One~angelone.in;ICICI Direct~icicidirect.com;HDFC Securities~hdfcsec.com;Kotak Securities~kotaksecurities.com;Paytm Money~paytmmoney.com;5paisa~5paisa.com;Motilal Oswal~motilaloswal.com;SBI Securities~sbisecurities.in;Dhan~dhan.co;Kuvera~kuvera.in~r;SBI Mutual Fund~sbimf.com~f;HDFC Mutual Fund~hdfcfund.com~f;CoinDCX~coindcx.com~x;WazirX~wazirx.com~x*;NSE~nseindia.com~e;BSE~bseindia.com~e
+IQ|Iraq Stock Exchange~isx-iq.net~e;Rabee Securities~rs.iq*
+IR|Tehran Stock Exchange~tse.ir~e;Mofid Securities~emofid.com;Agah~agah.com*;Nobitex~nobitex.ir~x
+IS|Nasdaq Iceland~nasdaqomxnordic.com~e;Íslandsbanki markets~islandsbanki.is;Landsbankinn securities~landsbankinn.is;Arion banki securities~arionbanki.is;Auður (Kvika)~audur.is~r
+IT|Fineco~finecobank.com;Directa SIM~directa.it;Banca Sella / Sella brokerage~sella.it;IW Bank (Intesa)~iwbank.it*;Moneyfarm~moneyfarm.com~r;Scalable Capital Italia~scalable.capital;Trade Republic Italia~traderepublic.com;Young Platform~youngplatform.com~x;Borsa Italiana (Euronext Milan)~borsaitaliana.it~e
+JM|Jamaica Stock Exchange~jamstockex.com~e;NCB Capital Markets~ncbcapitalmarkets.com;JMMB Investments~jmmb.com;Mayberry Investments~mayberryinv.com;Sagicor Investments Jamaica~sagicor.com~f;Barita Investments~barita.com
+JO|Amman Stock Exchange~ase.com.jo~e;Capital Bank Brokerage~capitalbank.jo*;Arab Bank brokerage (Al Arabi Investment Group)~aig.jo*
+JP|SBI Securities~sbisec.co.jp;Rakuten Securities~rakuten-sec.co.jp;Monex~monex.co.jp;Matsui Securities~matsui.co.jp;au Kabucom~kabu.com;Nomura Securities~nomura.co.jp;Daiwa Securities~daiwa.jp;SMBC Nikko~smbcnikko.co.jp;PayPay Securities~paypay-sec.co.jp;WealthNavi~wealthnavi.com~r;THEO~theo.blue~r;bitFlyer~bitflyer.com~x;Coincheck~coincheck.com~x;Japan Exchange Group (TSE)~jpx.co.jp~e
+KE|Nairobi Securities Exchange~nse.co.ke~e;Faida Investment Bank~fib.co.ke;Genghis Capital~genghis-capital.com;Dyer & Blair~dyerandblair.com;AIB-AXYS Africa~aib-axysafrica.com;Standard Investment Bank~sib.co.ke;Hisa~hisa.co~r;Bamba~getbamba.com~r*;CIC Asset Management~cic.co.ke~f;Sanlam Investments~sanlam.co.ke~f;Etica Capital~eticacap.com~f*
+KG|Kyrgyz Stock Exchange~kse.kg~e;Senti~senti.kg*;Freedom Finance Kyrgyzstan~ffin.kg*
+KH|Cambodia Securities Exchange~csx.com.kh~e;ABA Securities~ababank.com*;Phillip Securities Cambodia~phillip.com.kh;Yuanta Securities Cambodia~yuantacambodia.com*
+KI|— (no stock exchange)~~e
+KM|— (no stock exchange)~~e
+KN|ECSE (Eastern Caribbean Securities Exchange; HQ Basseterre)~ecseonline.com~e
+KP|— (no securities market)~~e
+KR|Kiwoom Securities~kiwoom.com;Mirae Asset Securities~securities.miraeasset.com;Samsung Securities~samsungpop.com;NH Investment & Securities~nhqv.com;KB Securities~kbsec.com;Korea Investment & Securities~truefriend.com;Toss Securities~tossinvest.com;Kakao Pay Securities~kakaopaysec.com;Upbit~upbit.com~x;Bithumb~bithumb.com~x;KRX~krx.co.kr~e
+KW|Boursa Kuwait~boursakuwait.com.kw~e;KFH Capital~kfhcapital.com.kw;Kamco Invest~kamcoinvest.com;NBK Capital~nbkcapital.com;Markaz~markaz.com~f
+KY|Cayman Islands Stock Exchange~csx.ky~e;Butterfield Cayman investments~butterfieldgroup.com~f*
+KZ|Freedom Broker~ffin.kz;Halyk Invest~halykinvest.kz;Jusan Invest~jusaninvest.kz;BCC Invest~bcc-invest.kz;Tabys (Freedom)~tabys.kz~r*;KASE~kase.kz~e;AIX~aix.kz~e
+LA|Lao Securities Exchange~lsx.com.la~e;BCEL-KT Securities~bcel-kt.com*
+LB|Beirut Stock Exchange~bse.com.lb~e;FFA Private Bank~ffaprivatebank.com;BLOMInvest Bank~blominvestbank.com;Audi Capital~bankaudi.com.lb*
+LC|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+LI|LGT investments~lgt.com~f;VP Bank e-banking trading~vpbank.com;Bank Frick (crypto & securities)~bankfrick.li
+LK|Colombo Stock Exchange~cse.lk~e;CAL (Capital Alliance)~cal.lk;Asia Securities~asiasecurities.lk;NDB Securities~ndbs.lk;John Keells Stock Brokers~jksb.lk;CT CLSA~ctclsa.lk*;First Capital~firstcapital.lk~f
+LR|— (no stock exchange)~~e
+LS|Maseru Securities Market~centralbank.org.ls~e*
+LT|Nasdaq Vilnius~nasdaqbaltic.com~e;Šiaulių bankas brokerage~sb.lt;Swedbank Lithuania investing~swedbank.lt;Revolut Invest (EU HQ)~revolut.com~r
+LU|Luxembourg Stock Exchange~luxse.com~e;BIL investing~bil.com;Spuerkeess S-Invest~spuerkeess.lu;ING Luxembourg investments~ing.lu
+LV|Nasdaq Riga~nasdaqbaltic.com~e;Swedbank Latvia investing~swedbank.lv;Citadele investments~citadele.lv;Signet Bank~signetbank.com
+LY|Libyan Stock Market~lsm.ly~e*
+MA|Casablanca Stock Exchange~casablanca-bourse.com~e;Attijari Intermédiation~attijariwafabank.com;BMCE Capital Bourse~bmcecapitalbourse.com;CDG Capital Bourse~cdgcapitalbourse.ma*;Valoris Securities~valoris.ma*;BMCI Bourse~bmci.ma*
+MC|CFM Indosuez investments~ca-indosuez.com~f;CMB investments~cmb.mc~f
+MD|Moldova Stock Exchange~moldse.md~e*;Victoriabank brokerage~victoriabank.md*
+ME|Montenegro Stock Exchange~mnse.me~e;Hipotekarna Banka investments~hipotekarnabanka.com*
+MG|— (no stock exchange)~~e
+MH|— (no stock exchange)~~e
+MK|Macedonian Stock Exchange~mse.mk~e;Ilirika Investments~ilirika.com.mk;KB First Capital Invest~kbprvoinvest.com.mk*
+ML|BRVM (regional exchange)~brvm.org~e;SGI Mali~sgimali.com*
+MM|Yangon Stock Exchange~ysx-mm.com~e;KBZ Capital~kbzcapital.com*;CB Securities~cbsecurities.com.mm*;Myanmar Securities Exchange Centre~msec.com.mm*
+MN|Mongolian Stock Exchange~mse.mn~e;Golomt Capital~golomtcapital.com;TDB Capital~tdbcapital.mn;Ard Securities~ardsec.mn;Bichil Globus~bichilglobus.mn*
+MO|BNU Wealth~bnu.com.mo~f*;Futu / Tiger (HK brokers serving Macao)~futuhk.com
+MR|— (no stock exchange)~~e
+MT|Malta Stock Exchange~borzamalta.com.mt~e;Rizzo Farrugia~rizzofarrugia.com;Calamatta Cuschieri~cc.com.mt;Jesmond Mizzi Financial Advisors~jesmondmizzi.com;MeDirect investments~medirect.com.mt~r
+MU|Stock Exchange of Mauritius~stockexchangeofmauritius.com~e;MCB Stockbrokers~mcbcapitalmarkets.mu;SBM Securities~sbmgroup.mu;Swan Securities~swanforlife.com*;Axys Stockbroking~axys-group.com
+MV|Maldives Stock Exchange~stockexchange.mv~e
+MW|Malawi Stock Exchange~mse.co.mw~e;Stockbrokers Malawi~smlmw.com*;NICO Asset Managers~nicomw.com~f*
+MX|GBM+~gbm.com;Bursanet (Actinver)~actinver.com;Kuspit~kuspit.com;Flink~flink.com.mx;Cetesdirecto~cetesdirecto.com~f;Hey Banco inversión~heybanco.com~r;Bitso~bitso.com~x;BMV~bmv.com.mx~e;BIVA~biva.mx~e
+MY|Rakuten Trade~rakutentrade.my;Moomoo MY~moomoo.com/my;Maybank Investment Bank (M+ Online)~mplusonline.com;Kenanga Investment Bank~kenanga.com.my;Public Investment Bank~publicinvestbank.com.my;StashAway MY~stashaway.my~r;Wahed MY~wahed.com~r;Versa~versa.com.my~r;Luno MY~luno.com~x;Bursa Malaysia~bursamalaysia.com~e
+MZ|Bolsa de Valores de Moçambique~bvm.co.mz~e;BCI Fomento investments~bci.co.mz*
+NA|Namibian Stock Exchange~nsx.com.na~e;Simonis Storm Securities~sss.com.na;IJG Securities~ijg.net;PSG Wealth Namibia~psg.co.za~f*
+NE|BRVM (regional exchange)~brvm.org~e
+NG|Bamboo~investbamboo.com;Trove~troveapp.co;Chaka~chaka.com;Risevest~risevest.com~r;Cowrywise~cowrywise.com~r;PiggyVest~piggyvest.com~r;Stanbic IBTC Stockbrokers~stanbicibtc.com;Meristem~meristemng.com;Cardinalstone~cardinalstone.com;Afrinvest~afrinvest.com;Chapel Hill Denham~chapelhilldenham.com;ARM Investment Managers~arm.com.ng~f;Quidax~quidax.com~x;Nigerian Exchange (NGX)~ngxgroup.com~e
+NI|Bolsa de Valores de Nicaragua~bolsanic.com~e*
+NL|DEGIRO~degiro.nl;Bux~getbux.com;Flatex NL~flatex.nl*;ABN AMRO Zelf Beleggen~abnamro.nl;ING Zelf Beleggen~ing.nl;Rabobank Beleggen~rabobank.nl;Meesman~meesman.nl~f;Brand New Day~brandnewday.nl~f;Bitvavo~bitvavo.com~x;Euronext Amsterdam~euronext.com~e
+NO|Nordnet Norge~nordnet.no;DNB Aksjehandel~dnb.no;Kron~kron.no~r;Firi~firi.com~x;KLP Fondsforvaltning~klp.no~f;Oslo Børs (Euronext Oslo)~euronext.com~e
+NP|Nepal Stock Exchange (NEPSE)~nepalstock.com~e;TMS (broker trading system)~nepsetms.com.np~e;NIC Asia Capital~nicasiacapital.com;Global IME Capital~globalimecapital.com;Siddhartha Capital~siddharthacapital.com;Meroshare (CDSC)~meroshare.cdsc.com.np~e
+NR|— (no stock exchange)~~e
+NZ|Sharesies~sharesies.nz;Hatch (Sharesies)~hatchinvest.nz;Kernel~kernelwealth.co.nz~r;InvestNow~investnow.co.nz~f;Stake NZ~hellostake.com;ASB Securities~asb.co.nz;Jarden Direct~jardendirect.co.nz;Simplicity~simplicity.kiwi~f;Easy Crypto~easycrypto.com~x;NZX~nzx.com~e
+OM|Muscat Stock Exchange~msx.om~e;Bank Muscat Investment Banking~bankmuscat.com;Ubhar Capital~u-capital.net*;Ahli Bank brokerage~ahlibank.om*
+PA|Latinex (Bolsa Latinoamericana de Valores)~latinexbolsa.com~e;Banistmo Investments~banistmo.com~f*;Prival Securities~prival.com*
+PE|Credicorp Capital Perú~credicorpcapital.com;Kallpa SAB~kallpasab.com;Tyba Perú~tyba.com.pe~r;Diviso Bolsa~diviso.pe*;Buda Perú~buda.com~x;Bolsa de Valores de Lima~bvl.com.pe~e
+PG|PNGX (PNG National Stock Exchange)~pngx.com.pg~e;Kina Securities~kinabank.com.pg;BSP Capital~bsp.com.pg*
+PH|COL Financial~colfinancial.com;First Metro Securities~firstmetrosec.com.ph;BPI Trade~bpitrade.com;BDO Nomura Securities~bdo.com.ph;GInvest (GCash)~gcash.com~r;Maya Invest~maya.ph~r;eToro PH~etoro.com;Coins.ph~coins.ph~x;PDAX~pdax.ph~x;PSE~pse.com.ph~e
+PK|JS Global Capital~jsgcl.com;AKD Securities~akdsecurities.net;Arif Habib Limited~arifhabibltd.com;Topline Securities~topline.com.pk;Next Capital~nextcapital.com.pk;Alfalah Securities~alfalahsec.com;IGI Securities~igisecurities.com.pk;Intermarket Securities~imsecurities.com.pk;Pearl Securities~pearlsecurities.com;Optimus Capital~optimus.com.pk;Al Meezan Investments~almeezangroup.com~f;UBL Fund Managers~ublfunds.com.pk~f;NBP Funds~nbpfunds.com~f;MCB Funds~mcbfunds.com~f;HBL Asset Management~hblasset.com~f;Atlas Asset Management~atlasfunds.com.pk~f;Faysal Funds~faysalfunds.com~f;ABL Funds~ablfunds.com~f;Lakson Investments~li.com.pk~f;Mahaana~mahaana.com~r;Finqalab~finqalab.com.pk;Sarmaaya~sarmaaya.pk*;National Savings (CDNS)~savings.gov.pk~f;CDC Pakistan~cdcpakistan.com~e;PSX~psx.com.pk~e
+PL|XTB Polska~xtb.com/pl;mBank eMakler~mbank.pl;PKO Biuro Maklerskie~bm.pkobp.pl;Bossa (BOŚ)~bossa.pl;Santander Biuro Maklerskie~santander.pl;Revolut Poland~revolut.com~r;Zonda~zondacrypto.com~x;GPW (Warsaw Stock Exchange)~gpw.pl~e
+PR|Popular Securities~popular.com;Oriental Financial Services~orientalbank.com*;UBS Puerto Rico~ubs.com*
+PS|Palestine Exchange~pex.ps~e;Lotus Financial Investments~lotus.ps*;Al-Wasata Securities~wasata.ps*
+PT|XTB Portugal~xtb.com/pt;ActivoBank investimentos~activobank.pt;Banco BiG~bancobig.pt;Banco Best~bancobest.pt;Millennium bcp trading~millenniumbcp.pt;Euronext Lisbon~euronext.com~e
+PW|— (no stock exchange)~~e
+PY|Bolsa de Valores de Asunción~bolsadevalores.com.py~e*;Basa Capital~basacapital.com.py*;Cadiem~cadiem.com.py*
+QA|Qatar Stock Exchange~qe.com.qa~e;QNB Financial Services~qnbfs.com;Commercial Bank Financial Services~cbfin.qa*;Dlala Brokerage~dlalabrokerage.com*;QInvest~qinvest.com~f
+RO|Bursa de Valori București (BVB)~bvb.ro~e;Tradeville~tradeville.ro;BT Capital Partners~btcapitalpartners.ro;XTB România~xtb.com/ro;Revolut Romania~revolut.com~r;Goldring / InterCapital Romania~intercapital.ro*
+RS|Belgrade Stock Exchange~belex.rs~e;Intesa Invest~bancaintesa.rs~f*;M&V Investments~mvinvestments.rs*
+RU|T-Investments (Tinkoff)~tbank.ru;Sber Investments~sberbank.ru;VTB My Investments~vtb.ru;Alfa-Investments~alfabank.ru;BCS World of Investments~bcs.ru;Finam~finam.ru;Moscow Exchange (MOEX)~moex.com~e
+RW|Rwanda Stock Exchange~rse.rw~e;BK Capital~bkcapital.rw*;Faida Securities Rwanda~fib.co.ke*;Rwanda National Investment Trust~rnit.rw~f
+SA|Al Rajhi Capital~alrajhi-capital.sa;SNB Capital~alahlicapital.com;Riyad Capital~riyadcapital.com;Derayah Financial~derayah.com;Al Jazira Capital~aljaziracapital.com.sa;Alinma Capital~alinmacapital.com;Sahm Capital~sahmcapital.com;Abyan Capital~abyancapital.sa*;Tamra Capital~tamracapital.sa*;Rain Saudi~rain.com~x;Saudi Exchange (Tadawul)~saudiexchange.sa~e
+SB|— (no stock exchange)~~e
+SC|MERJ Exchange~merj.exchange~e*;SCB/Absa Seychelles investments~absa.sc*
+SD|Khartoum Stock Exchange~xse.sd~e*
+SE|Avanza~avanza.se;Nordnet Sverige~nordnet.se;Lysa~lysa.se~r;Montrose~montrose.io;Swedbank Robur~swedbankrobur.se~f;Handelsbanken Fonder~handelsbanken.se~f;Safello~safello.com~x;Nasdaq Stockholm~nasdaqomxnordic.com~e
+SG|Moomoo SG~moomoo.com/sg;Tiger Brokers SG~tigerbrokers.com.sg;DBS Vickers / digiPortfolio~dbs.com.sg;POEMS (Phillip Securities)~poems.com.sg;OCBC Securities~iocbc.com;UOB Kay Hian~utrade.com.sg;FSMOne~fsmone.com.sg~f;Syfe~syfe.com~r;StashAway~stashaway.sg~r;Endowus~endowus.com~r;Webull SG~webull.com.sg;Gemini SG / Coinhako~coinhako.com~x;SGX~sgx.com~e
+SI|Ljubljana Stock Exchange~ljse.si~e;Ilirika~ilirika.si;NLB Skladi~nlbskladi.si~f;Bitstamp (founded in Slovenia)~bitstamp.net~x
+SK|Fio SK~fio.sk;Finax~finax.eu~r;Tatra banka investments~tatrabanka.sk~f;Bratislava Stock Exchange~bsse.sk~e
+SL|Sierra Leone Stock Exchange~slse.sl~e*
+SM|Banca di San Marino investments~bsm.sm~f*
+SN|BRVM (regional exchange)~brvm.org~e;CGF Bourse~cgfbourse.com*;Invictus Capital & Finance~invictuscapfin.com*;Everest Finance~everestfinance.sn*
+SO|— (no operating stock exchange yet; Somali Stock Exchange planned)~~e
+SR|Suriname Stock Exchange~surinamestockexchange.com~e*
+SS|— (no stock exchange)~~e
+ST|— (no stock exchange)~~e
+SV|Bolsa de Valores de El Salvador~bolsadevalores.com.sv~e;Chivo / Bitcoin exchanges~chivowallet.com~x*
+SY|Damascus Securities Exchange~dse.gov.sy~e
+SZ|Eswatini Stock Exchange~ese.co.sz~e;African Alliance Eswatini~africanalliance.com~f*
+TD|BVMAC (regional exchange)~bvm-ac.org~e
+TG|BRVM (regional exchange)~brvm.org~e;SGI Togo~sgitogo.com*
+TH|Settrade Streaming~settrade.com;Bualuang Securities~bualuang.co.th;Kasikorn Securities~kasikornsecurities.com;SCB Securities (InnovestX)~innovestx.co.th;KGI Securities Thailand~kgieworld.co.th;Finnomena~finnomena.com~r;Dime! (KKP)~dime.co.th;Bitkub~bitkub.com~x;SET~set.or.th~e
+TJ|Central Asian Stock Exchange (CASE)~case.tj~e*
+TL|— (no stock exchange)~~e
+TM|— (no securities market open to retail)~~e
+TN|Bourse de Tunis~bvmt.com.tn~e;Tunisie Valeurs~tunisievaleurs.com;MAC SA~macsa.com.tn*;BNA Capitaux~bnacapitaux.com.tn*
+TO|— (no stock exchange)~~e
+TR|Midas~getmidas.com;İş Yatırım~isyatirim.com.tr;Garanti BBVA Yatırım~garantibbvayatirim.com.tr;Yapı Kredi Yatırım~yapikredi.com.tr;Gedik Yatırım~gedik.com;QNB Invest~qnbinvest.com.tr;Ak Yatırım~akyatirim.com.tr;Paribu~paribu.com~x;BtcTurk~btcturk.com~x;Borsa İstanbul~borsaistanbul.com~e
+TT|Trinidad & Tobago Stock Exchange~stockex.co.tt~e;First Citizens Brokerage~firstcitizenstt.com;Republic Wealth~republictt.com~f;JMMB Investments TT~jmmb.com;Unit Trust Corporation~ttutc.com~f
+TV|— (no stock exchange)~~e
+TW|Yuanta Securities~yuanta.com.tw;Fubon Securities~fubon.com;KGI Securities~kgieworld.com.tw;Cathay Securities~cathaysec.com.tw;SinoPac Securities~sinotrade.com.tw;MaiCoin~maicoin.com~x;TWSE~twse.com.tw~e
+TZ|Dar es Salaam Stock Exchange~dse.co.tz~e;UTT AMIS~uttamis.co.tz~f;Zan Securities~zansec.com;Orbit Securities~orbit.co.tz*;Vertex International Securities~vertex.co.tz*
+UA|Freedom Finance Ukraine~freedom24.com;ICU~icu.ua*;Kuna~kuna.io~x*;WhiteBIT~whitebit.com~x;PFTS~pfts.ua~e
+UG|Uganda Securities Exchange~use.or.ug~e;Crested Capital~crestedcapital.com;UAP Old Mutual Investments~uapoldmutual.com~f;Sanlam Investments Uganda~sanlam.co.ug~f*;XENO~myxeno.com~r
+US|Fidelity~fidelity.com;Charles Schwab~schwab.com;Vanguard~investor.vanguard.com~f;Robinhood~robinhood.com;E*TRADE (Morgan Stanley)~etrade.com;Merrill Edge~merrilledge.com;Interactive Brokers~interactivebrokers.com;Webull~webull.com;SoFi Invest~sofi.com;Public~public.com;Betterment~betterment.com~r;Wealthfront~wealthfront.com~r;Acorns~acorns.com~r;Stash~stash.com~r;J.P. Morgan Self-Directed~chase.com;Firstrade~firstrade.com;TreasuryDirect~treasurydirect.gov~f;Coinbase~coinbase.com~x;Kraken~kraken.com~x;Gemini~gemini.com~x;NYSE~nyse.com~e;Nasdaq~nasdaq.com~e
+UY|Bolsa de Valores de Montevideo~bvm.com.uy~e;BROU Inversiones~brou.com.uy~f*;Prex Investments~prexcard.com*
+UZ|Tashkent Stock Exchange~uzse.uz~e;Kapital Invest~kapitalbank.uz*;Freedom Finance Uzbekistan~ffin.uz*
+VA|— (no securities market)~~e
+VC|ECSE member dealers (Eastern Caribbean Securities Exchange)~ecseonline.com~e
+VE|Bolsa de Valores de Caracas~bolsadecaracas.com~e;Mercantil Inversiones~mercantilbanco.com*
+VN|SSI Securities~ssi.com.vn;VNDirect~vndirect.com.vn;TCBS (Techcom Securities)~tcbs.com.vn;VPS Securities~vps.com.vn;HSC~hsc.com.vn;MB Securities~mbs.com.vn;Infina~infina.vn~r;Fmarket~fmarket.vn~f;HOSE~hsx.vn~e
+VU|— (no stock exchange)~~e
+WS|— (no stock exchange)~~e
+XK|— (no stock exchange)~~e
+YE|— (no stock exchange)~~e
+ZA|EasyEquities~easyequities.co.za;Satrix~satrix.co.za~f;FNB Share Investing~fnb.co.za;Standard Bank OST~securities.standardbank.co.za;Absa Stockbrokers~absa.co.za;Investec Online~investec.com;10X Investments~10x.co.za~f;Allan Gray~allangray.co.za~f;Coronation~coronation.com~f;Sygnia~sygnia.co.za~f;Luno~luno.com~x;VALR~valr.com~x;JSE~jse.co.za~e
+ZM|Lusaka Securities Exchange~luse.co.zm~e;Stockbrokers Zambia~sbz.com.zm;Madison Asset Management~madison.co.zm~f*
+ZW|Zimbabwe Stock Exchange~zse.co.zw~e;Victoria Falls Stock Exchange~vfex.exchange~e;C-Trade~ctrade.co.zw;EFE Securities~efesecurities.co.zw;Imara Edwards Securities~imara.com*;Old Mutual Zimbabwe investments~oldmutual.co.zw~f

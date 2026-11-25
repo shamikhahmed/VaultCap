@@ -32,7 +32,7 @@ const Inv={
     const invNames=SMART_DB.investments.map(x=>`<option value="${escAttr(x.name)}">`).join('');
     return `
     <datalist id="invDL">${invNames}</datalist>
-    <datalist id="brDL">${U.brokerOpts()}</datalist>
+    <datalist id="brDL">${U.brokerOpts(i.country||U.homeCC())}</datalist>
     <datalist id="ifTypeDL"><option>Stocks</option><option>Mutual Funds</option><option>ETFs</option><option>Bonds</option><option>Sukuk</option><option>Crypto</option><option>Fixed Deposit</option><option>Pension</option><option>REITs</option><option>Other</option></datalist>
     <!-- REQUIRED -->
     <div class="fg"><label class="fl">Investment Name *</label><input class="inp" id="if-name" list="invDL" placeholder="e.g. Index fund, Apple, Bitcoin…" autocomplete="off" data-act-input="SMART_DB.fillInv(this.value)" value="${escAttr(i.investmentName||'')}"></div>
@@ -46,7 +46,7 @@ const Inv={
         <div class="fr"><div class="fg"><label class="fl">Current Value</label><input class="inp num-inp" id="if-cur2" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(i.currentValue||'')}" placeholder="0"></div><div class="fg"><label class="fl">Currency</label><select class="inp" id="if-cur">${U.currencies()}</select></div></div>
         <div class="fr"><div class="fg"><label class="fl">Ticker / Symbol</label><input class="inp" id="if-tick" value="${escAttr(i.ticker||'')}" placeholder="AAPL, BTC" data-act-input="Inv.lookupTicker(this.value)"><div id="if-tick-hint" style="font-size:0.6875rem;color:var(--text3);margin-top:3px;min-height:14px"></div></div><div class="fg"><label class="fl">Purchase Date</label><input class="inp" id="if-date" value="${escAttr(i.purchaseDate||'')}" type="date"></div></div>
         <div class="fr"><div class="fg"><label class="fl">Broker / Platform</label><input class="inp" id="if-broker" value="${escAttr(i.broker||'')}" list="brDL" placeholder="AKD, Binance…"></div><div class="fg"><label class="fl">Risk Level</label><datalist id="ifRiskDL"><option>Low</option><option>Medium</option><option>High</option><option>Very High</option></datalist><input class="inp" id="if-risk" value="${escAttr(i.riskLevel||'')}" list="ifRiskDL" placeholder="Low, Medium, High"></div></div>
-        <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="if-cc">${U.countries()}</select></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="if-own"><option value="personal"${i.ownership!=='business'?' selected':''}>Personal</option><option value="business"${i.ownership==='business'?' selected':''}>Business</option></select></div></div>
+        <div class="fr"><div class="fg"><label class="fl">Country</label><select class="inp" id="if-cc" data-act-change="var d=document.getElementById('brDL');if(d)d.innerHTML=U.brokerOpts(this.value)">${U.countries(i.country)}</select></div><div class="fg"><label class="fl">Ownership</label><select class="inp" id="if-own"><option value="personal"${i.ownership!=='business'?' selected':''}>Personal</option><option value="business"${i.ownership==='business'?' selected':''}>Business</option></select></div></div>
         ${U.loginFields(i)}
         <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="if-notes" rows="2">${escAttr(i.notes||'')}</textarea></div>
         <div class="fg"><label class="fl">Tags</label>${U.tags(i.tags||[])}</div>
