@@ -110,6 +110,18 @@ const U = {
     const W = typeof WorldCarriers !== 'undefined' ? WorldCarriers : null;
     return (W ? WorldCatalog.merge(base, W, cc) : base).map(n => `<option value="${U.esc(n.n)}">`).join('');
   },
+  /** Subscriptions / streaming: curated SUBS_DB, then country locals + global OTHER. */
+  subOpts:     cc => {
+    const base = SUBS_DB.map(s => ({ n: s.n }));
+    const W = typeof WorldSubs !== 'undefined' ? WorldSubs : null;
+    return (W ? WorldCatalog.merge(base, W, cc || U.homeCC()) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
+  /** Digital accounts / social: curated COMMON_SERVICES, then world subs (social/saas) + OTHER. */
+  digOpts:     cc => {
+    const base = COMMON_SERVICES.map(n => ({ n }));
+    const W = typeof WorldSubs !== 'undefined' ? WorldSubs : null;
+    return (W ? WorldCatalog.merge(base, W, cc || U.homeCC()) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   /** Copies text to clipboard (Clipboard API with execCommand fallback) and shows a toast. */
   copy(text, label = '') {
     const secs = (typeof S !== 'undefined' && S.clipSecs) || 30;

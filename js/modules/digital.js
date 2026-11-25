@@ -10,7 +10,7 @@ const Digital={
   openAdd(){Modal.open('Add Digital Account',this.form(),`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Digital.save()">Save</button>`);},
   form(d={}){
     const emailOpts=S.emails.map(e=>`<option value="${escAttr(e.email)}"${d.email===e.email?' selected':''}>${e.email} (${e.purpose||''})</option>`).join('');
-    return `<datalist id="digDL">${COMMON_SERVICES.map(s=>`<option value="${escAttr(s)}">`).join('')}</datalist>
+    return `<datalist id="digDL">${U.digOpts((S.user&&S.user.country)||'')}</datalist>
     <div class="fg"><label class="fl">Service / Website *</label><input class="inp" id="df-name" value="${escAttr(d.serviceName||'')}" list="digDL" placeholder="Instagram, ChatGPT, PayPal, GitHub..." autocomplete="off"></div>
     <div class="fr"><div class="fg"><label class="fl">Category</label><datalist id="dfCatDL">${DIGITAL_CATS.map(c=>`<option value="${escAttr(c)}">`).join('')}</datalist><input class="inp" id="df-cat" value="${escAttr(d.category||'')}" list="dfCatDL" placeholder="Social Media, AI Tools..."></div><div class="fg"><label class="fl">Website URL</label><input class="inp" id="df-url" value="${escAttr(d.url||'')}" placeholder="https://..."></div></div>
     <div class="fr"><div class="fg"><label class="fl">Username / Handle</label><input class="inp" id="df-user" value="${escAttr(d.username||'')}" placeholder="@username or user ID"></div><div class="fg"><label class="fl">Linked Email</label><select class="inp" id="df-email"><option value="">— Select or type below —</option>${emailOpts}<option value="custom">+ Custom email</option></select></div></div>
