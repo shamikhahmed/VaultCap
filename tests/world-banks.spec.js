@@ -61,4 +61,22 @@ test.describe('world bank catalog', () => {
     expect((r.us.match(/value="eToro"/g) || []).length).toBe(1);
     expect(r.none).toContain('AJ Bell'); // curated list still shown without a country
   });
+
+  test('cardOpts suggests local issuers and global networks', async ({ page }) => {
+    const rows = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/data/world-cards.min.json'), 'utf8'));
+    expect(new Set(rows.map(r => r[1])).size).toBeGreaterThanOrEqual(206);
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldCards !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldCards.load());
+    const r = await page.evaluate(() => ({
+      pk: U.cardOpts('PK'),
+      ke: U.cardOpts('KE'),
+      none: U.cardOpts(''),
+    }));
+    expect(r.pk).toContain('HBL');
+    expect(r.pk).toContain('PayPak');
+    expect(r.pk).toContain('American Express'); // global OTHER
+    expect(r.ke).toContain('Equity Bank');
+    expect(r.none).toContain('Amex Platinum'); // curated CARDS_DB without country
+  });
 });

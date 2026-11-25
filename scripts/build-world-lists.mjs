@@ -29,6 +29,20 @@ const CATALOGS = {
     labels: { broker: 'broker / trading app', fund: 'fund / asset manager', robo: 'robo / investing app', crypto: 'crypto exchange', exchange: 'exchange (reference)' },
     otherLabel: 'Global platforms',
   },
+  cards: {
+    title: 'World payment / credit / debit card issuers',
+    unit: 'issuers',
+    defType: () => 'issuer',
+    types: { i: 'issuer', n: 'network', f: 'fintech', c: 'crypto', b: 'bnpl' },
+    labels: {
+      issuer: 'bank / issuer',
+      network: 'network / scheme',
+      fintech: 'fintech / neobank',
+      crypto: 'crypto card',
+      bnpl: 'BNPL card',
+    },
+    otherLabel: 'Global networks & multi-country cards',
+  },
 };
 
 const slug = d => String(d || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

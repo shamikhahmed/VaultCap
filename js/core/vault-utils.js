@@ -92,7 +92,12 @@ const U = {
     const W = typeof WorldBanks !== 'undefined' ? WorldBanks : null;
     return (W ? WorldCatalog.merge(base, W, cc) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
   },
-  cardOpts:    () => CARDS_DB.map(c  => `<option value="${c.n}">`).join(''),
+  /** Card issuers / products: curated CARDS_DB, then the country's issuers + global networks. */
+  cardOpts:    cc => {
+    const base = CARDS_DB.map(c => ({ n: c.n }));
+    const W = typeof WorldCards !== 'undefined' ? WorldCards : null;
+    return (W && cc ? WorldCatalog.merge(base, W, cc) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   /** Brokers / investment platforms: curated BROKERS_DB, then the country's platforms + global ones. */
   brokerOpts:  cc => {
     const base = BROKERS_DB.map(n => ({ n }));
