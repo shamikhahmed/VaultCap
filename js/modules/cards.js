@@ -23,8 +23,12 @@ const Cards={
     const sort=document.getElementById('cSort')?.value||'name';
     const f=S.cF;
     const chips=[['all','All'],['credit','Credit'],['debit','Debit'],['amex','Amex'],['visa','Visa'],['mc','MC'],['paypak','PayPak'],['crypto','Crypto'],['bnpl','BNPL'],['expiring','Expiring'],['fav','Favourites']];
+    // Network chips only for networks the user actually holds (no market-specific chips for everyone)
+    const _nets={amex:'American Express',visa:'Visa',mc:'Mastercard',paypak:'PayPak'};
+    const _held=new Set((S.cards||[]).map(c=>c.network));
+    const _chips=chips.filter(([v])=>!_nets[v]||_held.has(_nets[v])||v===f);
     const ci=document.getElementById('cChips');
-    if(ci)ci.innerHTML=chips.map(([v,l])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.cF='${v}';Cards.render()">${l}</button>`).join('');
+    if(ci)ci.innerHTML=_chips.map(([v,l])=>`<button type="button" class="chip${v===f?' on':''}" aria-pressed="${v===f}" data-act="S.cF='${v}';Cards.render()">${l}</button>`).join('');
     const we=document.getElementById('cWallet');
     const wc=S.cards.filter(c=>S.wallet.includes(c.id));
     if(we)we.innerHTML=wc.length>0?`<div class="widget"><div class="wh"><span class="chip-ic">${VC.icon('wallet',14)}</span>Carrying Today<button type="button" class="btn btn-g btn-sm wh-act" data-act="Dash.editWallet()">Edit</button></div><div class="wallet-row" tabindex="0" aria-label="Cards carrying today">${wc.map(c=>Dash.miniCard(c,114)).join('')}</div></div>`:'';
@@ -384,7 +388,7 @@ const Cards={
     return '<datalist id="cfNameDL">'+cardNames+'</datalist>'
       +'<datalist id="cfNetDL"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>JCB</option><option>UnionPay</option><option>PayPak</option></datalist>'
       +bankPicker
-      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Amex Gold, Sadapay…" autocomplete="off" data-act-input="SMART_DB.fillCard(this.value)" value="'+_v(c.cardName||'')+'"></div>'
+      +'<div class="fg"><label class="fl">Card Name *</label><input class="inp" id="cf-name" list="cfNameDL" placeholder="e.g. Everyday Visa, Travel card…" autocomplete="off" data-act-input="SMART_DB.fillCard(this.value)" value="'+_v(c.cardName||'')+'"></div>'
       +'<div class="fg"><label class="fl">Card Number (optional)</label><input class="inp" id="cf-fullnum" value="'+_v(c.cardNumber?'•••• •••• •••• '+c.last4:'')+'" maxlength="19" inputmode="numeric" placeholder="1234 5678 9012 3456" data-act-input="Cards._fmtCardNum(this)" autocomplete="cc-number"></div>'
       +'<div class="fr"><div class="fg"><label class="fl">Network *</label><input class="inp" id="cf-net" value="'+_v(c.network||'')+'" list="cfNetDL" placeholder="Visa, Mastercard…"></div><div class="fg"><label class="fl">Last 4 Digits</label><input class="inp" id="cf-l4" value="'+_v(c.last4||'')+'" maxlength="4" inputmode="numeric" placeholder="1234 (auto-filled)"></div></div>'
       +'<div class="vc-ix-110">'

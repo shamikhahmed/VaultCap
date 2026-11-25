@@ -9,7 +9,11 @@ const RatesEngine = {
     USD: 1, PKR: 278.5, GBP: 0.7879, AED: 3.6725, EUR: 0.9198,
     SAR: 3.75, QAR: 3.64, CAD: 1.3631, AUD: 1.5287, SGD: 1.3421,
     INR: 83.47, CNY: 7.243, TRY: 32.15, OMR: 0.385, KWD: 0.307,
-    BHD: 0.376, MYR: 4.71, NGN: 1580, EGP: 30.9
+    BHD: 0.376, MYR: 4.71, NGN: 1580, EGP: 30.9,
+    // Offline approximations so any home country starts in its own currency; live rates replace these.
+    JPY: 150, KRW: 1380, HKD: 7.8, TWD: 31, IDR: 16300, PHP: 57, THB: 33, VND: 26000, BDT: 120, LKR: 300,
+    NPR: 135, NZD: 1.7, CHF: 0.8, SEK: 10.5, NOK: 10.8, DKK: 6.6, PLN: 3.7, CZK: 22.5, HUF: 355, RON: 4.5,
+    ILS: 3.7, JOD: 0.709, MAD: 9.2, ZAR: 18, KES: 129, GHS: 12, BRL: 5.4, MXN: 18, CLP: 950, COP: 4000, PEN: 3.7
   },
 
   _METAL_FALLBACK: {

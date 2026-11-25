@@ -307,8 +307,9 @@ const ContextSwitcher = {
       <div class="fg"><label class="fl">Home country</label>
         <select class="inp" id="ctx-primary">${pickList.map(c => `<option value="${c.c}">${c.f} ${c.n}</option>`).join('')}</select>
       </div>
-      <div class="fg"><label class="fl">Also active in</label>
-        <div class="ctx-country-grid" id="ctx-secondary">${pickList.filter(c => c.c !== primary).map(c => `
+      <div class="fg"><label class="fl" for="ctx-search">Also active in</label>
+        <input class="inp" id="ctx-search" type="search" placeholder="Search any country" autocomplete="off" style="margin-bottom:8px">
+        <div class="ctx-country-grid" id="ctx-secondary" style="max-height:min(40vh,320px);overflow-y:auto">${pickList.filter(c => c.c !== primary).map(c => `
           <label class="ctx-country-card">
             <input type="checkbox" class="ctx-sec-chk" value="${c.c}" ${secondary.includes(c.c) ? 'checked' : ''}>
             <span>${c.f} ${c.n}</span>
@@ -320,31 +321,41 @@ const ContextSwitcher = {
     setTimeout(() => {
       const p = document.getElementById('ctx-primary');
       if (p) {
-        p.value = primary || 'GB';
+        p.value = primary || (((navigator.language || '').match(/-([A-Z]{2})$/i) || [])[1] || 'US').toUpperCase();
         p.onchange = () => ContextSwitcher._refreshSecondaryList();
       }
+      const q = document.getElementById('ctx-search');
+      if (q) q.oninput = () => ContextSwitcher._refreshSecondaryList();
       const c = document.getElementById('ctx-currency');
-      if (c) c.value = S.user.currency || COUNTRY_CUR[primary] || 'GBP';
+      if (c) c.value = S.user.currency || (typeof countryCurrency === 'function' ? countryCurrency(primary) : 'USD');
       ContextSwitcher._refreshSecondaryList();
     }, 50);
   },
   _refreshSecondaryList() {
     const primary = document.getElementById('ctx-primary')?.value || '';
-    const secondary = [...(S.user.secondaryCountries || [])];
     const box = document.getElementById('ctx-secondary');
     if (!box) return;
-    const pickList = COUNTRIES.filter(c => c.c !== 'OTHER' && c.c !== primary);
+    // Keep ticks the user made before searching
+    const ticked = new Set(box._ticked || S.user.secondaryCountries || []);
+    box.querySelectorAll('.ctx-sec-chk').forEach(x => { if (x.checked) ticked.add(x.value); else ticked.delete(x.value); });
+    box._ticked = ticked;
+    const secondary = [...ticked];
+    const term = (document.getElementById('ctx-search')?.value || '').trim().toLowerCase();
+    const pickList = COUNTRIES.filter(c => c.c !== 'OTHER' && c.c !== primary && (!term || c.n.toLowerCase().includes(term) || c.c.toLowerCase() === term))
+      .sort((a, b) => secondary.includes(b.c) - secondary.includes(a.c));
     box.innerHTML = pickList.map(c => `
       <label class="ctx-country-card">
         <input type="checkbox" class="ctx-sec-chk" value="${c.c}" ${secondary.includes(c.c) ? 'checked' : ''}>
         <span>${c.f} ${c.n}</span>
       </label>`).join('') || '<div class="ctx-country-empty">Add another home country above to enable secondary regions.</div>';
     const cur = document.getElementById('ctx-currency');
-    if (cur && primary && COUNTRY_CUR[primary]) cur.value = COUNTRY_CUR[primary];
+    if (cur && primary && !term && typeof countryCurrency === 'function') cur.value = countryCurrency(primary);
   },
   saveManager() {
     const primary = document.getElementById('ctx-primary')?.value || '';
-    const secondary = [...document.querySelectorAll('.ctx-sec-chk:checked')].map(el => el.value).filter(c => c !== primary);
+    const ticked = new Set(document.getElementById('ctx-secondary')?._ticked || []);
+    document.querySelectorAll('.ctx-sec-chk').forEach(el => { if (el.checked) ticked.add(el.value); else ticked.delete(el.value); });
+    const secondary = [...ticked].filter(c => c !== primary);
     const currency = document.getElementById('ctx-currency')?.value || S.user.currency || 'GBP';
     S.user.country = primary;
     S.user.secondaryCountries = secondary;

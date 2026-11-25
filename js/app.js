@@ -60,15 +60,15 @@ async function App() {
     markAppReady();
   } else {
     try { sessionStorage.setItem('vc_splash_seen', '1'); } catch (_) {}
-    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 20);
+    // Halo splash: mark springs in, title rises, bar fills, then a soft zoom-fade (~0.9s, first launch per session only).
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 40);
     setTimeout(() => {
-      splash.style.transition = 'opacity 0.12s ease';
-      splash.style.opacity = '0';
+      splash.classList.add('is-leaving');
       setTimeout(() => {
         splash.style.display = 'none';
         markAppReady();
-      }, 120);
-    }, 80);
+      }, 320);
+    }, 620);
   }
 
   document.addEventListener('click', function(e) {

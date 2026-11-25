@@ -100,7 +100,7 @@ const Onboarding = {
         { key:'vehicles',    icon:'car', label:'Vehicles & Assets',   desc:'Cars, property, gadgets' },
         { key:'expenses',    icon:'arrow-right', label:'Expenses',            desc:'Daily spending tracker' },
         { key:'zakat',       icon:'moon', label:'Zakat',               desc:'Islamic wealth calculator' },
-        { key:'tax',         icon:'receipt', label:'Tax Calculator',      desc:'PK, UK, UAE tax tools' },
+        { key:'tax',         icon:'receipt', label:'Tax Calculator',      desc:'Income-tax estimates' },
         { key:'currency',    icon:'arrows', label:'Currency & Metals',   desc:'Exchange rates, gold, silver' },
         { key:'loans',       icon:'handshake', label:'Loans & Debts',       desc:'Money lent or borrowed' },
       ];

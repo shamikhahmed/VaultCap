@@ -3,7 +3,7 @@
    BROKERS_DB, SUBS_DB, EMAIL_PROVIDERS, GADGET_TYPES, device models,
    DIGITAL_CATS, COMMON_SERVICES, WORKSPACE_PRESETS */
 
-const COUNTRIES=[
+const _COUNTRIES_SEED=[
   {c:'PK',n:'Pakistan',f:'🇵🇰',p:'+92'},{c:'GB',n:'United Kingdom',f:'🇬🇧',p:'+44'},
   {c:'AE',n:'UAE',f:'🇦🇪',p:'+971'},{c:'US',n:'United States',f:'🇺🇸',p:'+1'},
   {c:'CA',n:'Canada',f:'🇨🇦',p:'+1'},{c:'AU',n:'Australia',f:'🇦🇺',p:'+61'},
@@ -11,8 +11,29 @@ const COUNTRIES=[
   {c:'SA',n:'Saudi Arabia',f:'🇸🇦',p:'+966'},{c:'QA',n:'Qatar',f:'🇶🇦',p:'+974'},
   {c:'OTHER',n:'Other',f:'🌐',p:'+0'},
 ];
+/* Every country, not a handful: ISO 3166 regions with dial codes, names localised via
+   Intl.DisplayNames, sorted by name. "Other" stays last. */
+const COUNTRIES = (() => {
+  const seed = {}; _COUNTRIES_SEED.forEach(c => { seed[c.c] = c; });
+  let dn = null;
+  try { dn = new Intl.DisplayNames([(typeof navigator !== 'undefined' && navigator.language) || 'en'], { type: 'region' }); } catch (_) {}
+  const flag = c => String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+  const list = 'AD:376 AE:971 AF:93 AG:1 AI:1 AL:355 AM:374 AO:244 AR:54 AT:43 AU:61 AW:297 AZ:994 BA:387 BB:1 BD:880 BE:32 BF:226 BG:359 BH:973 BI:257 BJ:229 BM:1 BN:673 BO:591 BR:55 BS:1 BT:975 BW:267 BY:375 BZ:501 CA:1 CD:243 CF:236 CG:242 CH:41 CI:225 CL:56 CM:237 CN:86 CO:57 CR:506 CU:53 CV:238 CY:357 CZ:420 DE:49 DJ:253 DK:45 DM:1 DO:1 DZ:213 EC:593 EE:372 EG:20 ER:291 ES:34 ET:251 FI:358 FJ:679 FM:691 FR:33 GA:241 GB:44 GD:1 GE:995 GH:233 GI:350 GM:220 GN:224 GQ:240 GR:30 GT:502 GW:245 GY:592 HK:852 HN:504 HR:385 HT:509 HU:36 ID:62 IE:353 IL:972 IN:91 IQ:964 IR:98 IS:354 IT:39 JM:1 JO:962 JP:81 KE:254 KG:996 KH:855 KI:686 KM:269 KN:1 KP:850 KR:82 KW:965 KY:1 KZ:7 LA:856 LB:961 LC:1 LI:423 LK:94 LR:231 LS:266 LT:370 LU:352 LV:371 LY:218 MA:212 MC:377 MD:373 ME:382 MG:261 MH:692 MK:389 ML:223 MM:95 MN:976 MO:853 MR:222 MT:356 MU:230 MV:960 MW:265 MX:52 MY:60 MZ:258 NA:264 NE:227 NG:234 NI:505 NL:31 NO:47 NP:977 NR:674 NZ:64 OM:968 PA:507 PE:51 PG:675 PH:63 PK:92 PL:48 PR:1 PS:970 PT:351 PW:680 PY:595 QA:974 RO:40 RS:381 RU:7 RW:250 SA:966 SB:677 SC:248 SD:249 SE:46 SG:65 SI:386 SK:421 SL:232 SM:378 SN:221 SO:252 SR:597 SS:211 ST:239 SV:503 SY:963 SZ:268 TD:235 TG:228 TH:66 TJ:992 TL:670 TM:993 TN:216 TO:676 TR:90 TT:1 TV:688 TW:886 TZ:255 UA:380 UG:256 US:1 UY:598 UZ:998 VA:39 VC:1 VE:58 VN:84 VU:678 WS:685 XK:383 YE:967 ZA:27 ZM:260 ZW:263'.split(' ').map(pair => {
+    const [c, d] = pair.split(':');
+    let n = seed[c] ? seed[c].n : c;
+    try { if (dn) n = dn.of(c) || n; } catch (_) {}
+    return { c, n, f: flag(c), p: '+' + d };
+  }).sort((a, b) => a.n.localeCompare(b.n));
+  list.push(seed.OTHER || { c: 'OTHER', n: 'Other', f: '🌐', p: '+0' });
+  return list;
+})();
 
-const CURRENCIES=['PKR','GBP','USD','AED','EUR','SAR','CAD','AUD','SGD','INR','QAR','BTC','ETH','USDT'];
+
+const CURRENCIES = (() => {
+  const fiat = new Set(['PKR','GBP','USD','AED','EUR','SAR','CAD','AUD','SGD','INR','QAR']);
+  try { Object.values(typeof WORLD_CUR !== 'undefined' ? WORLD_CUR : {}).forEach(c => fiat.add(c)); } catch (_) {}
+  return [...fiat].sort().concat(['BTC','ETH','USDT']);
+})();
 
 // COUNTRY_CUR → js/core/constants.js · SMART_DB → js/core/smart-db.js
 

@@ -112,7 +112,7 @@ const Banks={
       { label: 'Delete', ic: 'trash', destructive: true, action: () => Banks.del(id) },
     ]);
   },
-  emptyState(){return `<div class="empty-ios"><div class="ei-ic">${VC.icon('bank',32)}</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs, and card links across PK, UK & UAE</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Banks.openAdd()">+ Add Bank</button><button type="button" class="btn btn-g" data-act="Settings.loadDemo()">Try Demo</button></div></div>`;},
+  emptyState(){return `<div class="empty-ios"><div class="ei-ic">${VC.icon('bank',32)}</div><div class="ei-title">No banks yet</div><div class="ei-sub">Add your first bank account — track balances, IBANs and card links in any country</div><div class="vc-ix-33"><button type="button" class="btn btn-p" data-act="Banks.openAdd()">+ Add Bank</button><button type="button" class="btn btn-g" data-act="Settings.loadDemo()">Try Demo</button></div></div>`;},
   _showExample(){Modal.open('Example Bank Entry',`<div class="entry-main vc-ix-239"><div class="entry-ic" style="background:var(--glass2,rgba(26,58,107,.9));width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${VC.icon('bank',18)}</div><div class="entry-body"><div class="entry-name">HBL — Main Current</div><div class="entry-sub">PKR · IBAN: PK36HABB…0000</div><div class="entry-meta"><span class="badge b-muted">commercial</span><span class="badge b-ok">Primary</span></div></div></div><div class="vc-ix-192">Bank name: HBL<br>Country: 🇵🇰 Pakistan<br>Type: Commercial<br>Currency: PKR<br>IBAN: PK36HABB0000000000000000<br>Balance: PKR 125,000</div><p class="vc-ix-92">This is a preview — nothing is saved.</p>`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Modal.close();Banks.openAdd()">+ Add My Bank</button>`);},
   _pendingOwnerId: null,
   openAdd(prefill={}){
@@ -121,7 +121,7 @@ const Banks={
       return;
     }
     Banks._pendingOwnerId = prefill.ownerId || null;
-    Banks._openWithCountry(S.user.country||'PK', prefill.ownerName||prefill._ownerName||null);
+    Banks._openWithCountry(U.homeCC(), prefill.ownerName||prefill._ownerName||null);
   },
   _openWithCountry(cc, ownerName=null){
     const title = ownerName ? `Add Bank — ${escHtml(ownerName)}` : 'Add Bank';
@@ -206,7 +206,7 @@ const Banks={
     <!-- Bank picker injected here by _showBankChips() -->
     <div id="bf-bank-picker-wrap"></div>
     <!-- REQUIRED -->
-    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="e.g. HBL, Monzo, Emirates NBD…" autocomplete="off" data-act-input="SMART_DB.fillBank(this.value,document.getElementById('bf-cc')?.value)" value="${escAttr(b.bankName||'')}"></div>
+    <div class="fg"><label class="fl">Bank Name *</label><input class="inp" id="bf-name" list="bankDL" placeholder="Your bank's name…" autocomplete="off" data-act-input="SMART_DB.fillBank(this.value,document.getElementById('bf-cc')?.value)" value="${escAttr(b.bankName||'')}"></div>
     <!-- BASIC: Account Type + Balance (always visible) -->
     <datalist id="bfAtypeDL"><option>Current</option><option>Savings</option><option>Business</option><option>Joint</option><option>Islamic</option><option>Fixed Deposit</option></datalist>
     <div class="fr"><div class="fg"><label class="fl">Account Type</label><input class="inp" id="bf-atype" value="${escAttr(b.accountType||'')}" list="bfAtypeDL" placeholder="Current, Savings…"></div><div class="fg"><label class="fl">Balance</label><input class="inp num-inp" id="bf-bal" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${escAttr(b.balance||'')}" placeholder="0"></div></div>
