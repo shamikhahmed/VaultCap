@@ -66,6 +66,23 @@ const CATALOGS = {
     },
     otherLabel: 'Global streaming, social & SaaS',
   },
+  emails: {
+    title: 'World email providers',
+    unit: 'providers',
+    defType: () => 'consumer',
+    types: {
+      c: 'consumer', b: 'business', p: 'privacy', i: 'isp', u: 'university', o: 'other',
+    },
+    labels: {
+      consumer: 'consumer webmail',
+      business: 'business / workspace',
+      privacy: 'privacy / secure',
+      isp: 'ISP / telecom mail',
+      university: 'university / gov',
+      other: 'other',
+    },
+    otherLabel: 'Global email providers',
+  },
 };
 
 const slug = d => String(d || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

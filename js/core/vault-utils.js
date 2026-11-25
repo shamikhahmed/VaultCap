@@ -122,6 +122,12 @@ const U = {
     const W = typeof WorldSubs !== 'undefined' ? WorldSubs : null;
     return (W ? WorldCatalog.merge(base, W, cc || U.homeCC()) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
   },
+  /** Email providers: curated EMAIL_PROVIDERS, then country locals + global OTHER. */
+  emailOpts:   cc => {
+    const base = EMAIL_PROVIDERS.map(p => ({ n: p.n }));
+    const W = typeof WorldEmails !== 'undefined' ? WorldEmails : null;
+    return (W ? WorldCatalog.merge(base, W, cc || U.homeCC()) : base).map(b => `<option value="${U.esc(b.n)}">`).join('');
+  },
   /** Copies text to clipboard (Clipboard API with execCommand fallback) and shows a toast. */
   copy(text, label = '') {
     const secs = (typeof S !== 'undefined' && S.clipSecs) || 30;
