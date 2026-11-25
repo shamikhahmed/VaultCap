@@ -114,8 +114,8 @@ body:not(.light) {
   --r-md: 14px;
   --r-lg: 20px;
   --r-xl: 28px;
-  --ease: cubic-bezier(0.32, 0.72, 0, 1);
-  --dur: 220ms;
+  --ease: var(--cap-ease, cubic-bezier(0.32, 0.72, 0, 1));
+  --dur: var(--cap-dur-base, 280ms);
   --hit: 44px;
   --gutter: 20px;
   --tabbar-h: 58px;

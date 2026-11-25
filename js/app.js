@@ -60,15 +60,26 @@ async function App() {
     markAppReady();
   } else {
     try { sessionStorage.setItem('vc_splash_seen', '1'); } catch (_) {}
-    // Halo splash: mark springs in, title rises, bar fills, then a soft zoom-fade (~0.9s, first launch per session only).
-    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 40);
+    // Halo splash: Cap kit durations (fast → fill, slow → hold, base → leave). First launch per session only.
+    const ms = (name, fallback) => {
+      try {
+        const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        const m = raw.match(/^([\d.]+)(ms|s)$/i);
+        if (!m) return fallback;
+        return m[2].toLowerCase() === 's' ? parseFloat(m[1]) * 1000 : parseFloat(m[1]);
+      } catch (_) { return fallback; }
+    };
+    const fillDelay = ms('--cap-dur-fast', 150);
+    const hold = ms('--cap-dur-slow', 600);
+    const leave = ms('--cap-dur-base', 280);
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, Math.min(40, fillDelay));
     setTimeout(() => {
       splash.classList.add('is-leaving');
       setTimeout(() => {
         splash.style.display = 'none';
         markAppReady();
-      }, 320);
-    }, 620);
+      }, leave);
+    }, hold);
   }
 
   document.addEventListener('click', function(e) {

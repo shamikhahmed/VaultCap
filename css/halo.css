@@ -30,10 +30,14 @@ body, body.light, body:not(.light) {
   --h-shadow-1: 0 1px 0 rgb(255 255 255 / .04) inset, 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px -18px rgb(0 0 0 / .8);
   --h-shadow-2: 0 1px 0 rgb(255 255 255 / .06) inset, 0 24px 64px -24px rgb(0 0 0 / .9);
   --h-bar: rgb(14 15 18 / .72);
-  /* Shape + motion */
+  /* Shape + motion (Cap kit durations / eases) */
   --h-r-ctl: 12px; --h-r-card: 20px; --h-r-sheet: 30px;
-  --h-spring: cubic-bezier(.32, .72, 0, 1);
-  --h-pop: cubic-bezier(.34, 1.4, .64, 1);
+  --h-spring: var(--cap-ease, cubic-bezier(.32, .72, 0, 1));
+  --h-pop: var(--cap-ease-spring, cubic-bezier(.34, 1.4, .64, 1));
+  --h-dur-fast: var(--cap-dur-fast, 150ms);
+  --h-dur-base: var(--cap-dur-base, 280ms);
+  --h-dur-slow: var(--cap-dur-slow, 600ms);
+  --h-dur-reveal: var(--cap-dur-reveal, 800ms);
   /* Type */
   --h-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
   --h-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, "Segoe UI", Roboto, sans-serif;
@@ -130,7 +134,7 @@ h1, h2, h3, .cap-title, .vault-display-title { font-family: var(--h-display); }
   background: var(--h-bg) !important;
   border-right: 1px solid var(--h-hair) !important;
 }
-.sidebar .ni { border-radius: 10px !important; min-height: 36px; color: var(--h-text2); transition: background .2s ease, color .2s ease; }
+.sidebar .ni { border-radius: 10px !important; min-height: 36px; color: var(--h-text2); transition: background var(--h-dur-fast) ease, color var(--h-dur-fast) ease; }
 .sidebar .ni:hover { background: var(--h-s2) !important; color: var(--h-text); }
 .sidebar .ni.on, .ni.cap-premium-item.on {
   background: var(--h-gold-soft) !important; color: var(--h-text) !important;
@@ -150,7 +154,7 @@ body.light .sidebar { background: #fafafc !important; }
   box-shadow: 0 10px 40px -12px rgb(0 0 0 / .55) !important;
   padding: 6px !important;
 }
-.btabs .ti { border-radius: 22px !important; transition: background .25s var(--h-spring), color .25s ease; }
+.btabs .ti { border-radius: 22px !important; transition: background var(--h-dur-base) var(--h-spring), color var(--h-dur-base) ease; }
 .btabs .ti.on { background: var(--h-gold-soft) !important; color: var(--h-gold-text) !important; }
 .btabs .ti.on .vc-icon { color: var(--h-gold-text) !important; }
 
@@ -161,7 +165,7 @@ body.light .sidebar { background: #fafafc !important; }
   border-radius: var(--h-r-card) !important;
   box-shadow: var(--h-shadow-1) !important;
 }
-.entry { transition: transform .25s var(--h-spring), box-shadow .25s ease, background .2s ease; }
+.entry { transition: transform var(--h-dur-base) var(--h-spring), box-shadow var(--h-dur-base) ease, background var(--h-dur-fast) ease; }
 @media (hover: hover) and (pointer: fine) {
   .entry:hover { background: var(--h-s2) !important; transform: translateY(-1px); }
 }
@@ -258,7 +262,7 @@ body.light .overlay { background: rgb(0 0 0 / .22) !important; }
 .halo-mark { display: block; overflow: visible; }
 .halo-mark .hm-ring { transform-box: view-box; transform-origin: 50% 50%; animation: halo-orbit 14s linear infinite; }
 .halo-mark .hm-ring-arc { stroke-dasharray: 70 200; }
-.halo-mark .hm-key { transform-box: fill-box; transform-origin: 50% 30%; transition: transform .6s var(--h-pop); }
+.halo-mark .hm-key { transform-box: fill-box; transform-origin: 50% 30%; transition: transform var(--h-dur-slow) var(--h-pop); }
 .halo-mark .hm-glint { animation: halo-glint 6s ease-in-out infinite; }
 @keyframes halo-orbit { to { transform: rotate(360deg); } }
 @keyframes halo-glint { 0%, 70%, 100% { opacity: 0; transform: translateX(-30px); } 85% { opacity: .9; } 95% { opacity: 0; transform: translateX(30px); } }
@@ -269,7 +273,7 @@ body.light .overlay { background: rgb(0 0 0 / .22) !important; }
 @keyframes halo-fade { to { opacity: 1; } }
 /* Unlock: key turns, ring flares */
 body.halo-unlocking .halo-mark .hm-key { transform: rotate(90deg); }
-body.halo-unlocking .halo-mark .hm-ring-arc { stroke-dasharray: 200 0; transition: stroke-dasharray .5s var(--h-spring); }
+body.halo-unlocking .halo-mark .hm-ring-arc { stroke-dasharray: 200 0; transition: stroke-dasharray var(--h-dur-slow) var(--h-spring); }
 
 /* ── 8. Splash ─────────────────────────────────────────────────────── */
 .vault-splash { background: radial-gradient(60% 50% at 50% 42%, rgb(242 181 58 / .10), transparent 70%), #000 !important; }

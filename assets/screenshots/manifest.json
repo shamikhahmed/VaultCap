@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19T07:08:39.583Z",
+  "generatedAt": "2026-11-25T19:32:59.338Z",
   "themes": [
     "dark",
     "light"
@@ -191,16 +191,7 @@
               "desktop": "light/desktop/hubs/dashboard.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/hubs/dashboard-scroll.png",
-              "desktop": "dark/desktop/hubs/dashboard-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/hubs/dashboard-scroll.png",
-              "desktop": "light/desktop/hubs/dashboard-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "finance-home",
@@ -267,16 +258,7 @@
               "desktop": "light/desktop/finance/banks.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/banks-scroll.png",
-              "desktop": "dark/desktop/finance/banks-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/banks-scroll.png",
-              "desktop": "light/desktop/finance/banks-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "cards",
@@ -291,16 +273,7 @@
               "desktop": "light/desktop/finance/cards.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/cards-scroll.png",
-              "desktop": "dark/desktop/finance/cards-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/cards-scroll.png",
-              "desktop": "light/desktop/finance/cards-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "cash",
@@ -330,16 +303,7 @@
               "desktop": "light/desktop/finance/investments.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/investments-scroll.png",
-              "desktop": "dark/desktop/finance/investments-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/investments-scroll.png",
-              "desktop": "light/desktop/finance/investments-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "loans",
@@ -354,16 +318,7 @@
               "desktop": "light/desktop/finance/loans.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/loans-scroll.png",
-              "desktop": "dark/desktop/finance/loans-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/loans-scroll.png",
-              "desktop": "light/desktop/finance/loans-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "expenses",
@@ -378,16 +333,7 @@
               "desktop": "light/desktop/finance/expenses.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/expenses-scroll.png",
-              "desktop": "dark/desktop/finance/expenses-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/expenses-scroll.png",
-              "desktop": "light/desktop/finance/expenses-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "bc",
@@ -402,14 +348,7 @@
               "desktop": "light/desktop/finance/bc.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/bc-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/bc-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "bonds",
@@ -424,14 +363,7 @@
               "desktop": "light/desktop/finance/bonds.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/bonds-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/bonds-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "currency",
@@ -446,16 +378,7 @@
               "desktop": "light/desktop/finance/currency.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/currency-scroll.png",
-              "desktop": "dark/desktop/finance/currency-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/currency-scroll.png",
-              "desktop": "light/desktop/finance/currency-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "credit",
@@ -470,16 +393,7 @@
               "desktop": "light/desktop/finance/credit.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/credit-scroll.png",
-              "desktop": "dark/desktop/finance/credit-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/credit-scroll.png",
-              "desktop": "light/desktop/finance/credit-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "tax",
@@ -494,14 +408,7 @@
               "desktop": "light/desktop/finance/tax.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/tax-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/tax-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "zakat",
@@ -516,16 +423,7 @@
               "desktop": "light/desktop/finance/zakat.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/finance/zakat-scroll.png",
-              "desktop": "dark/desktop/finance/zakat-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/finance/zakat-scroll.png",
-              "desktop": "light/desktop/finance/zakat-scroll.png"
-            }
-          }
+          "scroll": {}
         }
       ]
     },
@@ -547,14 +445,7 @@
               "desktop": "light/desktop/identity/documents.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/identity/documents-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/identity/documents-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "digital",
@@ -666,11 +557,7 @@
               "desktop": "light/desktop/assets/assets.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/assets/assets-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "vehicles",
@@ -737,16 +624,7 @@
               "desktop": "light/desktop/tools/search.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/search-scroll.png",
-              "desktop": "dark/desktop/tools/search-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/search-scroll.png",
-              "desktop": "light/desktop/tools/search-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "import",
@@ -776,16 +654,7 @@
               "desktop": "light/desktop/tools/timeline.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/timeline-scroll.png",
-              "desktop": "dark/desktop/tools/timeline-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/timeline-scroll.png",
-              "desktop": "light/desktop/tools/timeline-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "security",
@@ -800,16 +669,7 @@
               "desktop": "light/desktop/tools/security.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/security-scroll.png",
-              "desktop": "dark/desktop/tools/security-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/security-scroll.png",
-              "desktop": "light/desktop/tools/security-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "backup",
@@ -824,16 +684,7 @@
               "desktop": "light/desktop/tools/backup.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/backup-scroll.png",
-              "desktop": "dark/desktop/tools/backup-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/backup-scroll.png",
-              "desktop": "light/desktop/tools/backup-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "recovery",
@@ -848,16 +699,7 @@
               "desktop": "light/desktop/tools/recovery.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/recovery-scroll.png",
-              "desktop": "dark/desktop/tools/recovery-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/recovery-scroll.png",
-              "desktop": "light/desktop/tools/recovery-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "recovery-center",
@@ -932,16 +774,7 @@
               "desktop": "light/desktop/tools/reminders.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/reminders-scroll.png",
-              "desktop": "dark/desktop/tools/reminders-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/reminders-scroll.png",
-              "desktop": "light/desktop/tools/reminders-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "alerts",
@@ -956,16 +789,7 @@
               "desktop": "light/desktop/tools/alerts.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/alerts-scroll.png",
-              "desktop": "dark/desktop/tools/alerts-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/alerts-scroll.png",
-              "desktop": "light/desktop/tools/alerts-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "help",
@@ -980,16 +804,7 @@
               "desktop": "light/desktop/tools/help.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/help-scroll.png",
-              "desktop": "dark/desktop/tools/help-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/help-scroll.png",
-              "desktop": "light/desktop/tools/help-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "settings",
@@ -1004,16 +819,7 @@
               "desktop": "light/desktop/tools/settings.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/tools/settings-scroll.png",
-              "desktop": "dark/desktop/tools/settings-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/tools/settings-scroll.png",
-              "desktop": "light/desktop/tools/settings-scroll.png"
-            }
-          }
+          "scroll": {}
         }
       ]
     },
@@ -1035,16 +841,7 @@
               "desktop": "light/desktop/settings/profile.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/profile-scroll.png",
-              "desktop": "dark/desktop/settings/profile-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/profile-scroll.png",
-              "desktop": "light/desktop/settings/profile-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "security",
@@ -1059,16 +856,7 @@
               "desktop": "light/desktop/settings/security.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/security-scroll.png",
-              "desktop": "dark/desktop/settings/security-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/security-scroll.png",
-              "desktop": "light/desktop/settings/security-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "appearance",
@@ -1098,16 +886,7 @@
               "desktop": "light/desktop/settings/modules.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/modules-scroll.png",
-              "desktop": "dark/desktop/settings/modules-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/modules-scroll.png",
-              "desktop": "light/desktop/settings/modules-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "backup",
@@ -1122,16 +901,7 @@
               "desktop": "light/desktop/settings/backup.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/backup-scroll.png",
-              "desktop": "dark/desktop/settings/backup-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/backup-scroll.png",
-              "desktop": "light/desktop/settings/backup-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "import",
@@ -1146,16 +916,7 @@
               "desktop": "light/desktop/settings/import.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/import-scroll.png",
-              "desktop": "dark/desktop/settings/import-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/import-scroll.png",
-              "desktop": "light/desktop/settings/import-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "accessibility",
@@ -1185,16 +946,7 @@
               "desktop": "light/desktop/settings/about.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/settings/about-scroll.png",
-              "desktop": "dark/desktop/settings/about-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/settings/about-scroll.png",
-              "desktop": "light/desktop/settings/about-scroll.png"
-            }
-          }
+          "scroll": {}
         }
       ]
     },
@@ -1216,16 +968,7 @@
               "desktop": "light/desktop/help/getting-started.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/help/getting-started-scroll.png",
-              "desktop": "dark/desktop/help/getting-started-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/help/getting-started-scroll.png",
-              "desktop": "light/desktop/help/getting-started-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "banks-cards",
@@ -1240,14 +983,7 @@
               "desktop": "light/desktop/help/banks-cards.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/help/banks-cards-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/help/banks-cards-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "backup",
@@ -1262,14 +998,7 @@
               "desktop": "light/desktop/help/backup.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/help/backup-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/help/backup-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "security",
@@ -1284,14 +1013,7 @@
               "desktop": "light/desktop/help/security.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/help/security-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/help/security-scroll.png"
-            }
-          }
+          "scroll": {}
         },
         {
           "id": "faq",
@@ -1306,16 +1028,7 @@
               "desktop": "light/desktop/help/faq.png"
             }
           },
-          "scroll": {
-            "dark": {
-              "mobile": "dark/mobile/help/faq-scroll.png",
-              "desktop": "dark/desktop/help/faq-scroll.png"
-            },
-            "light": {
-              "mobile": "light/mobile/help/faq-scroll.png",
-              "desktop": "light/desktop/help/faq-scroll.png"
-            }
-          }
+          "scroll": {}
         }
       ]
     },

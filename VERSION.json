@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v112",
-  "updated": "2026-11-25",
-  "notes": "HIG-3 / vaultcap-v100 — VERSION.json synced to SW CACHE (prod-ready audit)"
+  "swCache": "vaultcap-v113",
+  "updated": "2026-11-26",
+  "notes": "World catalogs v112 complete; Cap motion token map + docs/gallery perfection (vaultcap-v113)"
 }

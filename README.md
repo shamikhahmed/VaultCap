@@ -16,13 +16,17 @@ VaultCap by Capricorn Systems is a zero-knowledge personal vault built as a PWA.
 
 Illustrative day-in-the-life stories (fictional personas) with screenshots and captions:
 
-- App stories: https://shamikhahmed.github.io/apps/vaultcap/
-- All Cap stories: https://shamikhahmed.github.io/stories/
+- **Ayesha** — family documents, banks, zakat, reminders
+- **Omar** — multi-country money + identity
+- **Margaret** — documents, large-type settings, reminders
+
+Hub: https://shamikhahmed.github.io/apps/vaultcap/ · All Cap stories: https://shamikhahmed.github.io/stories/  
+Source assets: Capricorn Lab `content/stories/vaultcap/` (recapture via lab `capture-story.mjs`, not `npm run gallery`).
 
 
 ## What It Does
 
-VaultCap replaces a dozen fragmented apps with one encrypted vault — managing banks, cards, investments, loans, documents, family, identity, and more across Pakistan, the UK, and the UAE.
+VaultCap replaces a dozen fragmented apps with one encrypted vault — managing banks, cards, investments, loans, documents, family, identity, and more. Offline **world catalogs** cover 205 countries (banks, SIMs, brokers, card issuers, subscriptions, email providers, cities); day-to-day UX still shines for Pakistan, the UK, and the UAE.
 
 ### Finance
 - Banks & accounts across PK/UK/UAE with IBAN tracking
@@ -74,7 +78,8 @@ VaultCap replaces a dozen fragmented apps with one encrypted vault — managing 
 - **Reminders** — unified timeline for document expiry, MOT, BC turns, loan due dates
 - **Multi-country** — filter by Pakistan, UK, UAE
 - **Dark & light modes** — plus system appearance on supported devices
-- **60+ bank logos** with real favicons
+- **World catalogs** — 2,300+ banks, 1,600+ card issuers, subscriptions, emails, cities, SIMs (offline JSON; logos via build-time pipeline)
+- **Bundled logos** — same-origin marks; no Google favicon at runtime
 - **QR sync** — transfer vault between devices via QR code
 
 ---
@@ -95,10 +100,13 @@ VaultCap/
 ├── landing.html            # Marketing landing page
 ├── docs/
 ├── assets/banks/           # Bundled bank logos (privacy: no Google at runtime)
-└── sw-v51.js               # Service worker (offline PWA · vaultcap-v100)
+├── assets/data/            # World catalog JSON (banks, cards, …) precached by SW
+└── sw-v51.js               # Service worker (offline PWA · vaultcap-v113)
 ```
 
 **Stack:** Vanilla JS · Web Crypto API · IndexedDB · Tesseract.js · **100% free · v5.4.3** · no account
+
+**Motion:** Cap kit `--cap-dur-*` / `--cap-ease*` (splash, Halo, page entrances). Respects `prefers-reduced-motion`. No pin-scrub in the product UI.
 
 ---
 
@@ -152,7 +160,7 @@ npm run serve       # http://127.0.0.1:8765
 
 **GitHub Pages / deploy:** push to `main` runs `.github/workflows/pages.yml` (`npm run build:js` then publish). Local: always `npm run build:js` before serve — `index.html` loads `dist/vaultcap.boot.js` (app chunk lazy).
 
-**Screenshots:** `npm run gallery` (or `npm run capture:screenshots`) then commit `assets/screenshots/` + `screen-gallery.html` embed. Viewer: [screen-gallery.html](screen-gallery.html) or `npm run gallery:view`.
+**Screenshots:** `npm run gallery` (~10 min; see [docs/screenshots/README.md](docs/screenshots/README.md)) then commit `assets/screenshots/` + `screen-gallery.html` embed. Viewer: [screen-gallery.html](screen-gallery.html) or `npm run gallery:view`.
 
 ---
 
