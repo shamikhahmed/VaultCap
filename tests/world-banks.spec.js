@@ -48,4 +48,17 @@ test.describe('world bank catalog', () => {
     expect(r.jp).toContain('NTT docomo');
     expect((r.pk.match(/value="Jazz"/g) || []).length).toBe(1);
   });
+
+  test('brokerOpts suggests local and global investment platforms', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForFunction(() => typeof WorldBrokers !== 'undefined' && typeof U !== 'undefined');
+    await page.evaluate(() => WorldBrokers.load());
+    const r = await page.evaluate(() => ({ ke: U.brokerOpts('KE'), us: U.brokerOpts('US'), none: U.brokerOpts('') }));
+    expect(r.ke).toContain('Genghis Capital');
+    expect(r.ke).toContain('Interactive Brokers');
+    expect(r.ke).not.toContain('Nairobi Securities Exchange'); // reference-only rows stay out of pickers
+    expect(r.us).toContain('Fidelity');
+    expect((r.us.match(/value="eToro"/g) || []).length).toBe(1);
+    expect(r.none).toContain('AJ Bell'); // curated list still shown without a country
+  });
 });

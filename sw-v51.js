@@ -53,6 +53,7 @@ const ASSETS = [
   './dist/vaultcap.bundle.js',
   './assets/data/world-banks.min.json',
   './assets/data/world-carriers.min.json',
+  './assets/data/world-brokers.min.json',
 ];
 
 const PRECACHE_PATHS = new Set(
