@@ -267,7 +267,6 @@ const R = {
     S.trash = (S.trash||[]).filter(item => new Date(item.deletedAt).getTime() > cutoff);
     if (S.trash.length < before) Store.save();
     if (S.autoLock) this.resetTimer();
-    setTimeout(() => WhatsNew.check(), 800);
     // OB (index.html inline onboarding) is the active system; Onboarding overlay is retired.
     if (S._clockTimer) clearInterval(S._clockTimer);
   },

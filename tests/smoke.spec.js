@@ -44,7 +44,7 @@ test.describe('VaultCap smoke', () => {
     await dismissOverlays(page);
     // Prefer programmatic nav — What's New modal can race after unlock
     await page.evaluate(() => {
-      if (typeof WhatsNew !== 'undefined' && window.VER) localStorage.setItem('vos_wn_ver', window.VER);
+      if (window.VER) localStorage.setItem('vos_wn_ver', window.VER);
       if (typeof Modal !== 'undefined') Modal.close();
       document.getElementById('overlay')?.classList.remove('on');
       R.goto('banks');
