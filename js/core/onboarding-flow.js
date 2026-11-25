@@ -231,7 +231,7 @@ const OB = {
     }
     S.user.userType = obUserType;
     // Apply onboarding category choices to modules
-    const moneyMods = ['banks','cards','investments','cash','loans','expenses','bc','bonds','credit','currency','zakat','tax'];
+    const moneyMods = ['banks','cards','investments','cash','payids','loans','expenses','bc','remits','giving','bonds','credit','currency','zakat','tax'];
     const assetMods = ['assets','vehicles','gold'];
     const identityMods = ['documents','sims','emails','digital','friends'];
     if (!obCats.money) moneyMods.forEach(id => { S.modules[id] = false; });

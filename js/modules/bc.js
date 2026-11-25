@@ -1,11 +1,68 @@
 'use strict';
-// VaultOS BC (Committee/ROSCA) Module — © 2026 Shamikh Ahmed
+// VaultOS Savings Circles (ROSCA: BC, committee, tontine, tanda, susu, chit, stokvel…) — © 2026 Shamikh Ahmed
+/* Same record shape as the original BC module (S.bc) — only the names, currencies and
+   bid maths became worldwide. Local names: docs/research/worldwide-features.md §1.1. */
+const ROSCA_NAMES = [
+  [['PK', 'IN', 'NP'], 'Committee (BC)', 'Committees'],
+  [['LK'], 'Seettu', 'Seettu circles'],
+  [['BD'], 'Samity', 'Samities'],
+  [['NG'], 'Esusu / Ajo', 'Esusu / Ajo groups'],
+  [['GH', 'SL', 'LR'], 'Susu', 'Susu groups'],
+  [['KE', 'UG', 'RW'], 'Chama', 'Chamas'],
+  [['TZ', 'ZM', 'MW'], 'Upatu', 'Upatu groups'],
+  [['ZA', 'BW', 'LS', 'SZ', 'NA', 'ZW'], 'Stokvel', 'Stokvels'],
+  [['ET', 'ER'], 'Ekub', 'Ekubs'],
+  [['SO', 'DJ'], 'Hagbad', 'Hagbads'],
+  [['EG', 'SD'], 'Gameya', 'Gameyas'],
+  [['SA', 'AE', 'JO', 'LB', 'KW', 'QA', 'BH', 'OM', 'SY', 'IQ', 'PS', 'YE', 'LY', 'TN', 'DZ', 'MA'], "Jam'iya", "Jam'iyas"],
+  [['CI', 'CM', 'SN', 'ML', 'BF', 'BJ', 'TG', 'GA', 'CD', 'CG', 'NE', 'TD', 'GN', 'CF', 'FR', 'BE', 'MG', 'HT'], 'Tontine', 'Tontines'],
+  [['DO'], 'San', 'Sanes'],
+  [['MX', 'GT', 'SV', 'HN', 'NI', 'CR', 'PA', 'US'], 'Tanda', 'Tandas'],
+  [['CO', 'VE'], 'Natillera', 'Natilleras'],
+  [['PE', 'BO', 'EC'], 'Pandero', 'Panderos'],
+  [['JM', 'TT', 'BB', 'GY', 'BS', 'LC', 'GD', 'VC', 'DM', 'AG', 'KN', 'GB'], 'Pardner / Susu', 'Pardners'],
+  [['ID'], 'Arisan', 'Arisans'],
+  [['PH'], 'Paluwagan', 'Paluwagans'],
+  [['MY', 'SG', 'BN'], 'Kutu', 'Kutu groups'],
+  [['CN', 'TW', 'HK', 'VN', 'TH'], 'Hui', 'Hui groups'],
+  [['KR'], 'Kye', 'Kye groups'],
+  [['JP'], 'Tanomoshi', 'Tanomoshi groups'],
+  [['TR', 'AZ'], 'Gün', 'Gün groups'],
+];
+
 const BCModule = {
+  /** Name people use for a rotating savings group where the user lives. */
+  localName(cc) {
+    const home = cc || ((typeof U !== 'undefined' && U.homeCC) ? U.homeCC() : '');
+    const hit = ROSCA_NAMES.find(r => r[0].includes(home));
+    return hit ? { one: hit[1], plural: hit[2] } : { one: 'Savings circle', plural: 'Savings Circles' };
+  },
+  _n() { return this.localName().one; },
+
+  /** Accepts a record id (search, links) or the legacy array index. */
+  _idx(x) {
+    const list = S.bc || [];
+    if (typeof x === 'number' && list[x]) return x;
+    const byId = list.findIndex(b => b && b.id === x);
+    if (byId >= 0) return byId;
+    const n = parseInt(x, 10);
+    return !isNaN(n) && String(n) === String(x) && list[n] ? n : -1;
+  },
+
+  /** Bid / auction round (chit fund, bidding hui/kye): prize, organiser fee, dividend each. */
+  bidMath(bc, discount) {
+    const members = bc.members || 1, pot = members * (bc.contribution || 0);
+    const d = Math.max(0, +discount || 0);
+    const fee = pot * ((+bc.feePct || 0) / 100);
+    const dividend = Math.max(0, d - fee) / members;
+    return { pot, discount: d, prize: pot - d, fee, dividend, instalment: (bc.contribution || 0) - dividend };
+  },
 
   TYPES: {
-    ballot: 'Ballot Draw (Random)',
-    fixed: 'Fixed Order (Pre-agreed)',
-    bid: 'Bid-based (Premium)',
+    ballot: 'Lottery draw (random)',
+    fixed: 'Fixed order (pre-agreed)',
+    bid: 'Bid / auction (discount)',
+    shared: 'Shared payout (grocery / year-end)',
     auto: 'Auto-deduction',
   },
 
@@ -17,12 +74,14 @@ const BCModule = {
   render() {
     const el = document.getElementById('pg-bc-body');
     if (!el) return;
+    const t = document.getElementById('bc-title');
+    if (t) t.textContent = this.localName().plural;
     const bcs = S.bc || [];
 
     const totalCommitted = bcs.reduce((sum, bc) => {
       const paid = (bc.currentRound || 1) * (bc.contribution || 0);
       return sum + (typeof RatesEngine !== 'undefined'
-        ? RatesEngine.convert(paid, bc.currency || 'PKR', S.user.currency || 'PKR')
+        ? RatesEngine.convert(paid, bc.currency || 'USD', S.user.currency || 'USD')
         : paid);
     }, 0);
 
@@ -30,18 +89,18 @@ const BCModule = {
       if (!bc.myTurnRound || bc.currentRound < bc.myTurnRound) return sum;
       const received = (bc.members || 1) * (bc.contribution || 0);
       return sum + (typeof RatesEngine !== 'undefined'
-        ? RatesEngine.convert(received, bc.currency || 'PKR', S.user.currency || 'PKR')
+        ? RatesEngine.convert(received, bc.currency || 'USD', S.user.currency || 'USD')
         : received);
     }, 0);
 
-    const fmt = n => (S.user.currency || 'PKR') + ' ' + Math.round(n).toLocaleString();
+    const fmt = n => (S.user.currency || 'USD') + ' ' + Math.round(n).toLocaleString();
 
     el.innerHTML =
       '<div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:14px">' +
 
       (bcs.length > 0 ? (
         '<div class="u-highlight-card">' +
-          '<div class="vc-ix-187">BC Summary</div>' +
+          '<div class="vc-ix-187">' + escHtml(BCModule.localName().plural) + ' summary</div>' +
           '<div class="vc-ix-89">' +
             '<div class="vc-ix-109"><div class="vc-ix-3">Total Paid In</div><div style="font-size:1.25rem;font-weight:900;color:var(--text)">' + fmt(totalCommitted) + '</div></div>' +
             '<div class="vc-ix-109"><div class="vc-ix-3">Total Received</div><div style="font-size:1.25rem;font-weight:900;color:var(--ok)">' + fmt(totalReceived) + '</div></div>' +
@@ -50,25 +109,25 @@ const BCModule = {
         '</div>'
       ) : '') +
 
-      '<button type="button" class="btn btn-p vc-ix-16" data-act="BCModule.openAdd()">+ Join / Create a BC</button>' +
+      '<button type="button" class="btn btn-p vc-ix-16" data-act="BCModule.openAdd()">+ Join / start a ' + escHtml(BCModule._n()) + '</button>' +
 
       (bcs.length === 0 ?
-        '<div class="empty-ios"><div class="ei-ic">' + VC.icon('handshake', 32) + '</div><div class="ei-title">No committees yet</div><div class="ei-sub">Track your BC (ballot committees), pardner schemes, jamiya, susu — rotating savings groups across PK, UK, UAE</div></div>'
+        '<div class="empty-ios"><div class="ei-ic">' + VC.icon('handshake', 32) + '</div><div class="ei-title">No savings circles yet</div><div class="ei-sub">Track any rotating savings group — BC, chit fund, tontine, tanda, susu, stokvel, chama, arisan, paluwagan, hui, kye, jam\'iya, pardner — in any currency.</div></div>'
         :
         bcs.map((bc, i) => BCModule._bcCard(bc, i)).join('')
       ) +
 
       '<div class="vc-ix-219">' +
         '<div class="vc-ix-220">Zakat Note</div>' +
-        '<div class="vc-ix-90">Money paid into a BC that you haven\'t received yet is zakatable as a receivable (you still own it). This is auto-added to your Zakat calculator.</div>' +
+        '<div class="vc-ix-90">Money paid into a circle that you haven\'t received yet is zakatable as a receivable (you still own it). This is auto-added to your Zakat calculator.</div>' +
       '</div>' +
 
       '</div>';
   },
 
   _bcCard(bc, i) {
-    const cur = bc.currency || 'PKR';
-    const displayCur = (S.user && S.user.currency) || 'PKR';
+    const cur = bc.currency || 'USD';
+    const displayCur = (S.user && S.user.currency) || 'USD';
     const fmt = n => {
       if (typeof RatesEngine !== 'undefined' && cur !== displayCur) {
         return displayCur + ' ' + Math.round(RatesEngine.convert(n, cur, displayCur)).toLocaleString();
@@ -88,7 +147,7 @@ const BCModule = {
       '<div class="entry-main">' +
         '<div class="entry-ic">' + VC.icon('refresh-cw', 18) + '</div>' +
         '<div class="entry-body">' +
-          '<div class="entry-name entry-name--wrap">' + escHtml(bc.name || 'BC') + '</div>' +
+          '<div class="entry-name entry-name--wrap">' + escHtml(bc.name || BCModule._n()) + '</div>' +
           '<div class="entry-sub entry-sub--wrap">' + escHtml(BCModule.TYPES[bc.type] || bc.type || 'Ballot') + ' · ' + escHtml(String(bc.members || '?')) + ' members · ' + fmt(bc.contribution || 0) + '/round</div>' +
           '<div class="entry-meta">' +
             '<span class="badge b-acc">' + fmt(pot) + ' pot</span>' +
@@ -121,11 +180,14 @@ const BCModule = {
   },
 
   openAdd(editIdx) {
+    if (editIdx != null) { editIdx = this._idx(editIdx); if (editIdx < 0) editIdx = null; }
     const bc = editIdx != null ? (S.bc || [])[editIdx] : {};
-    const cur = S.user.currency || 'PKR';
-    Modal.open(editIdx != null ? 'Edit BC' : 'Join / Create a BC',
-      '<div class="fg"><label class="fl">BC Name</label>' +
-        '<input class="inp" id="bc-name" value="' + (bc.name || '') + '" placeholder="e.g. Family BC, Office Committee 2026"></div>' +
+    const cur = S.user.currency || 'USD';
+    const nm = this._n();
+    const curList = typeof CURRENCIES !== 'undefined' ? CURRENCIES : ['USD', 'EUR', 'GBP'];
+    Modal.open(editIdx != null ? 'Edit ' + nm : 'Join / start a ' + nm,
+      '<div class="fg"><label class="fl" for="bc-name">Name</label>' +
+        '<input class="inp" id="bc-name" dir="auto" value="' + escAttr(bc.name || '') + '" placeholder="e.g. Family ' + escAttr(nm) + ', Office circle 2026"></div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Your Role</label>' +
@@ -133,7 +195,7 @@ const BCModule = {
             '<option value="participant"' + (bc.role !== 'organiser' ? ' selected' : '') + '>Participant</option>' +
             '<option value="organiser"' + (bc.role === 'organiser' ? ' selected' : '') + '>Organiser</option>' +
           '</select></div>' +
-        '<div class="fg"><label class="fl">BC Type</label>' +
+        '<div class="fg"><label class="fl">Payout order</label>' +
           '<select class="inp" id="bc-type" data-act-change="BCModule._onTypeChange()">' +
             Object.entries(BCModule.TYPES).map(function(e) {
               return '<option value="' + e[0] + '"' + (bc.type === e[0] ? ' selected' : '') + '>' + e[1] + '</option>';
@@ -141,26 +203,34 @@ const BCModule = {
           '</select></div>' +
       '</div>' +
 
-      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:0.6875rem;color:var(--warn)">Bid-based BCs are considered impermissible by many scholars (resembles riba). Consider using a fixed-order BC instead.</div>' +
+      '<div id="bc-bid-warning" style="display:' + (bc.type === 'bid' ? 'block' : 'none') + ';background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:10px;margin-bottom:10px;font-size:0.6875rem;color:var(--warn)">' +
+        'In a bid circle the member who takes the pot early accepts a discount, which is shared out as a dividend. Some places regulate this (India caps the discount at 40% under the Chit Funds Act), and many Islamic scholars consider it impermissible.' +
+        '<div class="fr" style="margin-top:8px">' +
+          '<div class="fg"><label class="fl" for="bc-discount">This round\'s winning discount</label><input class="inp num-inp" type="text" inputmode="decimal" id="bc-discount" value="' + escAttr(bc.bidDiscount || '') + '" placeholder="0" data-act-input="BCModule._updatePot()"></div>' +
+          '<div class="fg"><label class="fl" for="bc-fee">Organiser fee (% of pot)</label><input class="inp num-inp" type="text" inputmode="decimal" id="bc-fee" value="' + escAttr(bc.feePct || '') + '" placeholder="e.g. 5" data-act-input="BCModule._updatePot()"></div>' +
+        '</div>' +
+      '</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Total Members</label>' +
-          '<input class="inp num-inp" type="number" id="bc-members" min="2" value="' + (bc.members || '') + '" placeholder="e.g. 10" data-act-input="BCModule._updatePot()"></div>' +
+          '<input class="inp num-inp" type="number" id="bc-members" min="2" value="' + escAttr(bc.members || '') + '" placeholder="e.g. 10" data-act-input="BCModule._updatePot()"></div>' +
         '<div class="fg"><label class="fl">Contribution/Round</label>' +
-          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bc-contribution" value="' + (bc.contribution || '') + '" placeholder="e.g. 10,000" data-act-input="BCModule._updatePot()"></div>' +
+          '<input class="inp num-inp" type="text" inputmode="decimal" pattern="[0-9,\\.]*" id="bc-contribution" value="' + escAttr(bc.contribution || '') + '" placeholder="e.g. 10,000" data-act-input="BCModule._updatePot()"></div>' +
       '</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Currency</label>' +
-          '<select class="inp" id="bc-currency">' +
-            ['PKR','GBP','AED','USD','SAR','QAR','EUR'].map(function(c) {
+          '<select class="inp" id="bc-currency" data-act-change="BCModule._updatePot()">' +
+            curList.map(function(c) {
               return '<option value="' + c + '"' + ((bc.currency || cur) === c ? ' selected' : '') + '>' + c + '</option>';
             }).join('') +
           '</select></div>' +
         '<div class="fg"><label class="fl">Frequency</label>' +
           '<select class="inp" id="bc-freq">' +
             '<option value="monthly"' + ((bc.frequency || 'monthly') === 'monthly' ? ' selected' : '') + '>Monthly</option>' +
+            '<option value="fortnightly"' + (bc.frequency === 'fortnightly' ? ' selected' : '') + '>Every 2 weeks</option>' +
             '<option value="weekly"' + (bc.frequency === 'weekly' ? ' selected' : '') + '>Weekly</option>' +
+            '<option value="daily"' + (bc.frequency === 'daily' ? ' selected' : '') + '>Daily</option>' +
             '<option value="bimonthly"' + (bc.frequency === 'bimonthly' ? ' selected' : '') + '>Every 2 months</option>' +
           '</select></div>' +
       '</div>' +
@@ -169,26 +239,26 @@ const BCModule = {
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">My Turn (Round #)</label>' +
-          '<input class="inp num-inp" type="number" id="bc-myturn" min="1" value="' + (bc.myTurnRound || '') + '" placeholder="Leave blank if not drawn yet"></div>' +
+          '<input class="inp num-inp" type="number" id="bc-myturn" min="1" value="' + escAttr(bc.myTurnRound || '') + '" placeholder="Leave blank if not drawn yet"></div>' +
         '<div class="fg"><label class="fl">Current Round</label>' +
-          '<input class="inp num-inp" type="number" id="bc-current" min="1" value="' + (bc.currentRound || 1) + '" placeholder="1"></div>' +
+          '<input class="inp num-inp" type="number" id="bc-current" min="1" value="' + escAttr(bc.currentRound || 1) + '" placeholder="1"></div>' +
       '</div>' +
 
       '<div class="fr">' +
         '<div class="fg"><label class="fl">Start Date</label>' +
-          '<input class="inp" type="date" id="bc-start" value="' + (bc.startDate || '') + '"></div>' +
+          '<input class="inp" type="date" id="bc-start" value="' + escAttr(bc.startDate || '') + '"></div>' +
         '<div class="fg"><label class="fl">Payment Day of Month</label>' +
-          '<input class="inp num-inp" type="number" id="bc-payday" min="1" max="28" value="' + (bc.paymentDay || '') + '" placeholder="e.g. 1"></div>' +
+          '<input class="inp num-inp" type="number" id="bc-payday" min="1" max="28" value="' + escAttr(bc.paymentDay || '') + '" placeholder="e.g. 1"></div>' +
       '</div>' +
 
       '<div class="fg"><label class="fl">Organiser / Contact (optional)</label>' +
         (typeof familyOrganiserDatalistHtml === 'function' ? familyOrganiserDatalistHtml() : '') +
-        '<input class="inp" id="bc-organiser" value="' + (bc.organiser || '') + '" list="bcOrgDL" placeholder="Name or phone number"></div>' +
+        '<input class="inp" id="bc-organiser" dir="auto" value="' + escAttr(bc.organiser || '') + '" list="bcOrgDL" placeholder="Name or phone number"></div>' +
 
       '<div class="fg"><label class="fl">Notes</label>' +
-        '<textarea class="inp" id="bc-notes" rows="2">' + (bc.notes || '') + '</textarea></div>' +
+        '<textarea class="inp" id="bc-notes" rows="2" dir="auto">' + escHtml(bc.notes || '') + '</textarea></div>' +
 
-      '<div class="vc-ix-222">Your BC payments are tracked as zakatable receivables in the Zakat calculator</div>',
+      '<div class="vc-ix-222">Money paid in but not yet received counts toward net worth' + (S.modules && S.modules.zakat !== false ? ' and as a zakatable receivable' : '') + '.</div>',
 
       '<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button>' +
       '<button type="button" class="btn btn-p" data-act="BCModule.save(' + (editIdx != null ? editIdx : 'null') + ')">Save</button>'
@@ -196,7 +266,7 @@ const BCModule = {
     setTimeout(function() {
       BCModule._updatePot();
       var contrib = document.getElementById('bc-contribution');
-      if (contrib) U.numInput(contrib, document.getElementById('bc-currency')?.value || (S.user && S.user.currency) || 'PKR');
+      if (contrib) U.numInput(contrib, document.getElementById('bc-currency')?.value || (S.user && S.user.currency) || 'USD');
     }, 50);
   },
 
@@ -204,35 +274,49 @@ const BCModule = {
     const type = (document.getElementById('bc-type') || {}).value;
     const warn = document.getElementById('bc-bid-warning');
     if (warn) warn.style.display = type === 'bid' ? 'block' : 'none';
+    this._updatePot();
   },
 
   _updatePot() {
     const members = parseInt((document.getElementById('bc-members') || {}).value) || 0;
     const contribution = parseFloat(((document.getElementById('bc-contribution') || {}).value || '').replace(/,/g,'')) || 0;
-    const currency = (document.getElementById('bc-currency') || {}).value || 'PKR';
+    const currency = (document.getElementById('bc-currency') || {}).value || 'USD';
     const el = document.getElementById('bc-pot-display');
     if (el && members && contribution) {
       const pot = members * contribution;
-      el.textContent = 'Pot: ' + currency + ' ' + pot.toLocaleString() + ' · ' + members + ' members × ' + currency + ' ' + contribution.toLocaleString();
+      let txt = 'Pot: ' + currency + ' ' + pot.toLocaleString() + ' · ' + members + ' members × ' + currency + ' ' + contribution.toLocaleString();
+      const type = (document.getElementById('bc-type') || {}).value;
+      const disc = parseFloat(((document.getElementById('bc-discount') || {}).value || '').replace(/,/g, '')) || 0;
+      const fee = parseFloat(((document.getElementById('bc-fee') || {}).value || '').replace(/,/g, '')) || 0;
+      if (type === 'bid' && (disc || fee)) {
+        const m = this.bidMath({ members, contribution, feePct: fee }, disc);
+        txt += ' — winner takes ' + currency + ' ' + Math.round(m.prize).toLocaleString() + ', dividend ' + currency + ' ' + Math.round(m.dividend).toLocaleString() + ' each, so everyone pays ' + currency + ' ' + Math.round(m.instalment).toLocaleString() + ' this round';
+        if (disc > pot * 0.4) txt += ' ⚠︎ discount is over 40% of the pot';
+      }
+      el.textContent = txt;
     }
   },
 
   save(editIdx) {
+    if (editIdx != null) { editIdx = this._idx(editIdx); if (editIdx < 0) editIdx = null; }
     const name = ((document.getElementById('bc-name') || {}).value || '').trim();
-    if (!name) { Toast.show('BC name is required', 'error'); return; }
+    if (!name) { Toast.show('Name is required', 'error'); return; }
     const members = parseInt((document.getElementById('bc-members') || {}).value) || 0;
     const contribution = parseFloat(((document.getElementById('bc-contribution') || {}).value || '').replace(/,/g,'')) || 0;
     if (!members || !contribution) { Toast.show('Members and contribution amount are required', 'error'); return; }
 
     const existing = editIdx != null ? (S.bc || [])[editIdx] : null;
     const item = {
-      id: existing ? existing.id : Math.random().toString(36).slice(2),
+      ...(existing || {}),
+      id: existing ? existing.id : U.id(),
       name,
       role: (document.getElementById('bc-role') || {}).value || 'participant',
       type: (document.getElementById('bc-type') || {}).value || 'ballot',
       members,
       contribution,
-      currency: (document.getElementById('bc-currency') || {}).value || 'PKR',
+      currency: (document.getElementById('bc-currency') || {}).value || 'USD',
+      bidDiscount: parseFloat(((document.getElementById('bc-discount') || {}).value || '').replace(/,/g, '')) || null,
+      feePct: parseFloat(((document.getElementById('bc-fee') || {}).value || '').replace(/,/g, '')) || null,
       frequency: (document.getElementById('bc-freq') || {}).value || 'monthly',
       totalRounds: members,
       myTurnRound: parseInt((document.getElementById('bc-myturn') || {}).value) || null,
@@ -252,13 +336,16 @@ const BCModule = {
     Store.save();
     Modal.close();
     this.render();
-    Toast.show(editIdx != null ? 'BC updated' : 'BC added', 'success');
+    Toast.show(editIdx != null ? 'Updated' : 'Added: ' + escHtml(name), 'success');
   },
 
   edit(i) { this.openAdd(i); },
+  detail(i) { this.openDetail(i); },
 
   async del(i) {
-    if (!await window.__vos_confirm('Delete this BC?')) return;
+    i = this._idx(i);
+    if (i < 0) return;
+    if (!await window.__vos_confirm('Delete this ' + this._n() + '?')) return;
     S.bc.splice(i, 1);
     Store.save();
     this.render();
@@ -266,9 +353,10 @@ const BCModule = {
   },
 
   openDetail(i) {
+    i = this._idx(i);
     const bc = (S.bc || [])[i];
     if (!bc) return;
-    const cur = bc.currency || 'PKR';
+    const cur = bc.currency || 'USD';
     const fmt = n => cur + ' ' + Math.round(n).toLocaleString();
     const pot = (bc.members || 1) * (bc.contribution || 0);
     const paid = Math.min(bc.currentRound || 1, bc.totalRounds || bc.members || 1) * (bc.contribution || 0);
@@ -276,7 +364,7 @@ const BCModule = {
     const received = myTurnDone ? pot : 0;
     const net = received - paid;
 
-    Modal.open(bc.name,
+    Modal.open(bc.name || this._n(),
       '<div class="vc-ix-14">' +
 
       '<div class="vc-ix-133">' +
@@ -303,7 +391,8 @@ const BCModule = {
 
       '<button type="button" data-act="BCModule.advanceRound(' + i + ')" class="btn btn-g vc-ix-16">→ Advance to Next Round</button>' +
 
-      (bc.notes ? '<div style="font-size:0.75rem;color:var(--text2);padding:8px 0">' + bc.notes + '</div>' : '') +
+      (bc.type === 'bid' && (bc.bidDiscount || bc.feePct) ? (function () { const m = BCModule.bidMath(bc, bc.bidDiscount); return '<div class="vc-ix-222" id="bc-bid-detail">Bid round: winner takes ' + fmt(m.prize) + ' · organiser fee ' + fmt(m.fee) + ' · dividend ' + fmt(m.dividend) + ' each · instalment ' + fmt(m.instalment) + '</div>'; })() : '') +
+      (bc.notes ? '<div style="font-size:0.75rem;color:var(--text2);padding:8px 0" dir="auto">' + escHtml(bc.notes) + '</div>' : '') +
 
       (!myTurnDone && paid > 0 ?
         '<div class="vc-ix-222">Zakat: ' + fmt(paid) + ' is zakatable as receivable</div>'
@@ -315,10 +404,11 @@ const BCModule = {
   },
 
   advanceRound(i) {
+    i = this._idx(i);
     const bc = (S.bc || [])[i];
     if (!bc) return;
     const maxRound = bc.totalRounds || bc.members || 1;
-    if ((bc.currentRound || 1) >= maxRound) { Toast.show('BC is complete — all rounds done', 'info'); return; }
+    if ((bc.currentRound || 1) >= maxRound) { Toast.show('Complete — all rounds done', 'info'); return; }
     bc.currentRound = (bc.currentRound || 1) + 1;
     bc.updatedAt = new Date().toISOString();
     Store.save();
@@ -328,6 +418,7 @@ const BCModule = {
   },
 
   runBallot(i) {
+    i = this._idx(i);
     const bc = (S.bc || [])[i];
     if (!bc) return;
     const currentRound = bc.currentRound || 1;

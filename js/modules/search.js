@@ -15,15 +15,18 @@ const GlobalSearch = {
     { key: 'expenses',    label: 'Subscription',icon: 'repeat', fields: ['name','category','notes'] },
     { key: 'gadgets',     label: 'Device',      icon: 'laptop', fields: ['name','brand','model','serialNum','notes'] },
     { key: 'digital',     label: 'Login',       icon: 'briefcase', fields: ['serviceName','username','category','notes'] },
-    { key: 'bc',          label: 'Committee',   icon: 'handshake', fields: ['name','organiser','notes'] },
+    { key: 'bc',          label: 'Savings circle',   icon: 'handshake', fields: ['name','organiser','notes'] },
     { key: 'bonds',       label: 'Bond',        icon: 'ticket', fields: ['name','typeId','issuer','notes'] },
+    { key: 'payids',      label: 'Payment handle', icon: 'qr', fields: ['value','label','holder','idType','rail','notes'] },
+    { key: 'remits',      label: 'Transfer',    icon: 'send', fields: ['recipient','provider','reference','purpose','notes'] },
+    { key: 'giving',      label: 'Gift',        icon: 'heart', fields: ['recipient','kind','regNo','receipt','notes'] },
   ],
 
   _FILTER_KEYS: {
     bank: 'Bank', card: 'Card', investment: 'Investment', cash: 'Cash',
     loan: 'Loan', document: 'Document', asset: 'Asset', contact: 'Contact',
     sim: 'SIM', email: 'Email', subscription: 'Subscription', device: 'Device',
-    login: 'Login', committee: 'Committee', bond: 'Bond', family: 'Family',
+    login: 'Login', committee: 'Savings circle', bond: 'Bond', family: 'Family',
   },
 
   render() {
@@ -82,6 +85,7 @@ const GlobalSearch = {
         else if (key === 'bonds' && typeof Bonds !== 'undefined' && Bonds.detail) Bonds.detail(id);
         else if (key === 'bonds' && typeof Bonds !== 'undefined' && Bonds.edit) Bonds.edit(id);
         else if (key === 'family' && typeof Family !== 'undefined') Family.openMember(id);
+        else if (typeof WorldLedgers !== 'undefined' && WorldLedgers.has(key)) WorldLedgers.mod(key).detail(id);
       } catch (e) { /* page open is enough */ }
     }, 100);
   },
@@ -99,7 +103,7 @@ const GlobalSearch = {
     if (!text) return false;
     const tl = text.toString().toLowerCase();
     if (tl.includes(ql)) return true;
-    if (typeof CMD !== 'undefined' && CMD.fuzzyMatch) return CMD.fuzzyMatch(text, ql);
+    if (typeof CMD !== 'undefined' && CMD.fuzzyMatch) return CMD.fuzzyMatch(String(text), ql);
     return false;
   },
 
@@ -134,7 +138,7 @@ const GlobalSearch = {
       'Bank': 'bank', 'Card': 'card', 'Investment': 'investment', 'Cash': 'cash',
       'Loan': 'loan', 'Document': 'document', 'Asset': 'asset', 'Contact': 'contact',
       'SIM': 'sim', 'Email': 'email', 'Subscription': 'subscription', 'Device': 'device',
-      'Login': 'login', 'Committee': 'committee', 'Bond': 'bond', 'Family Member': 'family',
+      'Login': 'login', 'Committee': 'committee', 'Savings circle': 'committee', 'Payment handle': 'payid', 'Transfer': 'remit', 'Gift': 'gift', 'Bond': 'bond', 'Family Member': 'family',
     };
     return map[label] || 'all';
   },

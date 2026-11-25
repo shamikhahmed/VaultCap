@@ -10,7 +10,7 @@ const IdPolicy = {
   ENTITY_KEYS: [
     'banks', 'cards', 'investments', 'cash', 'loans', 'friends', 'sims', 'assets',
     'expenses', 'bills', 'emails', 'gadgets', 'digital', 'documents', 'vehicles',
-    'bc', 'bonds', 'trash', 'familyMembers', 'activity',
+    'bc', 'bonds', 'payids', 'remits', 'giving', 'trash', 'familyMembers', 'activity',
   ],
 
   REF_KEYS: ['ownerId', 'linkedBankId', 'friendId', 'fromId'],

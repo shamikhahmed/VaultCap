@@ -86,9 +86,28 @@ const DocsModule={
       return `<div class="entry${checked?' on':''}"><div class="entry-main"><div class="entry-ic">${VC.docIcon(schema,18)}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">Linked</span>':''}</div></div><div class="entry-acts">${selectCtl}</div></div></div>`;
     }).join('');
   },
+  /** Which soft ID check applies to a field of this document type (IdCheck kinds). */
+  _checkKind(schema,fid){
+    const key=Object.keys(DOC_SCHEMAS).find(k=>DOC_SCHEMAS[k]===schema)||'';
+    if(fid==='mrzLine')return 'mrz';
+    if(fid==='docNumber'&&key==='passport')return 'passport';
+    if(fid==='docNumber'&&key==='nic')return 'nic';
+    if(fid==='referenceNum'&&key==='tax')return 'tax';
+    return '';
+  },
+  _checkNum(fid,kind){
+    const el=document.getElementById('df-'+fid),h=document.getElementById('df-'+fid+'-hint');
+    if(!el||!h||typeof IdCheck==='undefined')return;
+    const cc=IdCheck.resolveCountry((document.getElementById('df-issuingCountry')||{}).value||'');
+    const r=IdCheck.check(cc,kind,el.value);
+    h.textContent=r.ok===false?'⚠︎ '+r.msg:(r.ok&&r.label&&kind!=='passport'?'✓ Valid '+r.label+' format':'');
+    h.style.color=r.ok===false?'var(--warn)':'var(--ok)';
+  },
   buildForm(schema,d={}){
     return schema.fields.map(f=>{
       const val=d[f.id]||'';
+      const ck=this._checkKind(schema,f.id);
+      if(ck)return `<div class="fg"><label class="fl" for="df-${f.id}">${f.label}</label><input class="inp" id="df-${f.id}" value="${escAttr(val)}" placeholder="${f.ph||''}" dir="ltr" autocapitalize="characters" autocomplete="off" spellcheck="false" data-act-input="DocsModule._checkNum('${f.id}','${ck}')"><div class="vc-ix-221" id="df-${f.id}-hint" aria-live="polite"></div></div>`;
       if(f.multi)return `<div class="fg"><label class="fl">${f.label}</label><textarea class="inp" id="df-${f.id}" rows="3" placeholder="${f.ph||''}">${escAttr(val)}</textarea></div>`;
       if(f.type==='date')return `<div class="fg"><label class="fl">${f.label}</label><input class="inp" id="df-${f.id}" type="date" value="${escAttr(val)}"></div>`;
       if(f.list)return `<div class="fg"><label class="fl">${f.label}</label><datalist id="dl-${f.id}">${f.list.split(',').map(o=>`<option>${o}</option>`).join('')}</datalist><input class="inp" id="df-${f.id}" list="dl-${f.id}" value="${escAttr(val)}" placeholder="${f.ph||''}"></div>`;

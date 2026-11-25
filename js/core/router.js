@@ -394,6 +394,9 @@ const R = {
       currency:    () => { if (typeof Currency !== 'undefined') Currency.render(); },
       gold:        () => Assets.render(),
       bc:          () => { if (typeof BCModule !== 'undefined') BCModule.render(); },
+      payids:      () => { if (typeof PayIDs !== 'undefined') PayIDs.render(); },
+      remits:      () => { if (typeof Remits !== 'undefined') Remits.render(); },
+      giving:      () => { if (typeof Giving !== 'undefined') Giving.render(); },
       bonds:       () => { if (typeof BondsModule !== 'undefined') BondsModule.render(); },
       zakat:       () => {
         const run = () => { if (typeof Zakat !== 'undefined') Zakat.render(); };

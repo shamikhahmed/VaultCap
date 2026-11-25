@@ -38,11 +38,14 @@ function openMoneySheet() {
     {id:'banks',ic:'bank',n:'Banks'},
     {id:'cards',ic:'card',n:'Cards'},
     {id:'cash',ic:'banknote',n:'Cash'},
+    {id:'payids',ic:'qr',n:'Handles'},
   ].filter(m => isModOn(m.id));
   const cashflow = [
     {id:'loans',ic:'handshake',n:'Loans'},
     {id:'expenses',ic:'repeat',n:'Expenses'},
-    {id:'bc',ic:'refresh-cw',n:'Committees'},
+    {id:'bc',ic:'refresh-cw',n:'Circles'},
+    {id:'remits',ic:'send',n:'Remittances'},
+    {id:'giving',ic:'heart',n:'Giving'},
   ].filter(m => isModOn(m.id));
   const section = (label, items) => !items.length ? '' :
     '<div class="vc-sheet-section">'+label+'</div>' +
@@ -141,13 +144,13 @@ function openMore() {
       {id:'dashboard',n:'Dashboard'},{id:'family',n:'Family Vault'},
     ].filter(m => m.id === 'dashboard' || vis(m.id))},
     { label:'Banking', items:[
-      {id:'banks',n:'Banks'},{id:'cards',n:'Cards'},{id:'cash',n:'Cash'},
+      {id:'banks',n:'Banks'},{id:'cards',n:'Cards'},{id:'cash',n:'Cash'},{id:'payids',n:'Payment Handles'},
     ].filter(m => vis(m.id))},
     { label:'Wealth', items:[
       {id:'investments',n:'Investments'},{id:'bonds',n:'Bonds'},{id:'assets',n:'Property'},
     ].filter(m => vis(m.id))},
     { label:'Cashflow', items:[
-      {id:'loans',n:'Loans'},{id:'expenses',n:'Expenses'},{id:'bc',n:'Committees'},
+      {id:'loans',n:'Loans'},{id:'expenses',n:'Expenses'},{id:'bc',n:'Savings Circles'},{id:'remits',n:'Remittances'},{id:'giving',n:'Giving'},
     ].filter(m => vis(m.id))},
     { label:'Identity', items:[
       {id:'documents',n:'Documents'},{id:'sims',n:'SIM Cards'},{id:'emails',n:'Emails'},
@@ -272,11 +275,14 @@ function renderFinanceHome() {
     {id:'banks',ic:'bank',label:'Banks',desc:(S.banks||[]).length+' accounts'},
     {id:'cards',ic:'card',label:'Cards',desc:(S.cards||[]).length+' cards'},
     {id:'cash',ic:'banknote',label:'Cash',desc:(S.cash||[]).length+' entries'},
+    {id:'payids',ic:'qr',label:'Payment Handles',desc:(S.payids||[]).length+' handles'},
   ].filter(vis);
   const cashflow = [
     {id:'loans',ic:'handshake',label:'Loans',desc:(S.loans||[]).length+' loans'},
     {id:'expenses',ic:'repeat',label:'Expenses',desc:(S.expenses||[]).length+' entries'},
-    {id:'bc',ic:'refresh-cw',label:'Committee (BC)',desc:(S.bc||[]).length+' committees'},
+    {id:'bc',ic:'refresh-cw',label:(typeof BCModule!=='undefined'&&BCModule.localName?BCModule.localName().plural:'Savings Circles'),desc:(S.bc||[]).length+' circles'},
+    {id:'remits',ic:'send',label:'Remittances',desc:(S.remits||[]).length+' transfers'},
+    {id:'giving',ic:'heart',label:'Giving',desc:(S.giving||[]).length+' entries'},
   ].filter(vis);
   const section = (label, mods) => !mods.length ? '' :
     `<div style="padding:16px 16px 0"><div class="vc-ix-187">${label}</div>` +
@@ -398,7 +404,7 @@ function buildNav() {
   const nameEl = document.getElementById('sbUser');
   if (nameEl) nameEl.textContent = (S.user.name || 'User') + ' · v' + appVer;
 
-  const bankingPages = new Set(['banks','cards','cash','loans','expenses','bc','finance-home']);
+  const bankingPages = new Set(['banks','cards','cash','payids','loans','expenses','bc','remits','giving','finance-home']);
   const wealthPages = new Set(['investments','bonds','assets','vehicles','gadgets','gold','assets-home']);
   const identityPages = new Set(['documents','sims','emails','digital','friends','vault-home']);
 
@@ -448,7 +454,7 @@ function patchNavActiveState() {
     el.classList.toggle('on', on);
     if (on) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
-  const bankingPages = new Set(['banks','cards','cash','loans','expenses','bc','finance-home']);
+  const bankingPages = new Set(['banks','cards','cash','payids','loans','expenses','bc','remits','giving','finance-home']);
   const wealthPages = new Set(['investments','bonds','assets','vehicles','gadgets','gold','assets-home']);
   const identityPages = new Set(['documents','sims','emails','digital','friends','vault-home']);
   const tabs = document.getElementById('btabs');

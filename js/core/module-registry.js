@@ -19,7 +19,7 @@ function isPageModOn(pg) {
     'recovery', 'recovery-center', 'workspace', 'family',
   ]);
   if (always.has(pg)) return true;
-  if (pg === 'finance-home') return ['banks', 'cards', 'cash', 'loans', 'expenses', 'bc'].some(isModOn);
+  if (pg === 'finance-home') return ['banks', 'cards', 'cash', 'payids', 'loans', 'expenses', 'bc', 'remits', 'giving'].some(isModOn);
   if (pg === 'assets-home') return ['investments', 'bonds', 'assets'].some(isModOn);
   if (pg === 'vault-home') return ['documents', 'sims', 'emails', 'digital', 'friends'].some(isModOn);
   const parent = MOD_PARENT[pg] || pg;
@@ -33,6 +33,7 @@ const ALL_MODULES=[
   {id:'banks',  n:'Banks',       ic:'bank', desc:'Accounts, IBAN, login details',      group:'Banking'},
   {id:'cards',  n:'Cards',       ic:'card', desc:'Debit, credit, crypto & BNPL',       group:'Banking'},
   {id:'cash',    n:'Cash',        ic:'banknote', desc:'Physical cash by location',          group:'Banking'},
+  {id:'payids',  n:'Payment Handles', ic:'qr', desc:'UPI, Pix, PayNow, M-Pesa, Zelle, IBAN…', group:'Banking'},
   // Wealth — holdings that store / grow value (yes: investments & bonds are assets)
   {id:'investments',n:'Investments',ic:'trending-up',desc:'Stocks, funds, crypto, securities', group:'Wealth'},
   {id:'bonds',   n:'Prize Bonds & Savings', ic:'ticket', desc:'Prize bonds, NSS, govt securities', group:'Wealth'},
@@ -40,7 +41,9 @@ const ALL_MODULES=[
   // Cashflow — money moving in/out & obligations
   {id:'loans',   n:'Loans',       ic:'handshake', desc:'Money lent & borrowed',              group:'Cashflow'},
   {id:'expenses',n:'Expenses',   ic:'repeat', desc:'Subscriptions & recurring bills',    group:'Cashflow'},
-  {id:'bc',      n:'Committee (BC)', ic:'refresh-cw', desc:'Rotating savings committees',    group:'Cashflow'},
+  {id:'bc',      n:'Savings Circles', ic:'refresh-cw', desc:'BC, tontine, tanda, susu, chit, stokvel…', group:'Cashflow'},
+  {id:'remits',  n:'Remittances', ic:'send', desc:'Money sent home — true cost per transfer', group:'Cashflow'},
+  {id:'giving',  n:'Giving',      ic:'heart', desc:'Sadaqah, tithe, ma’aser, dana, donations', group:'Cashflow'},
   // Family — under dashboard
   {id:'family',        n:'Family Vault',    ic:'users', desc:'Family financial overview',                    group:'Family'},
   // Identity

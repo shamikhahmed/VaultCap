@@ -591,9 +591,9 @@ const Dash={
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px"><div class="vc-ix-140">Net Worth</div><div style="font-size:1.25rem;font-weight:800;color:${nwPKR>=0?'var(--ok)':'var(--err)'}">${fmt(nwPKR)}</div></div>
     </div>
     <div style="margin-top:10px;padding:12px;background:var(--glass);border-radius:var(--r);border:1px solid var(--border)">
-      <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange Rates (vs PKR)</div>
+      <div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Exchange rates (1 unit in ${escHtml(cur)})</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:0.6875rem;color:var(--text2)">
-        ${Object.entries(typeof RatesEngine!=='undefined'?RatesEngine.getFX():{}).filter(([c,r])=>r>0&&c!=='PKR').slice(0,9).map(([c,r])=>`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${c}</span><span style="font-weight:600">${U.fmt(r)}</span></div>`).join('')}
+        ${[...new Set([...(typeof Currency!=='undefined'&&Currency.inUse?Currency.inUse():[]),'USD','EUR','GBP','AED','SAR','INR','PKR','CAD','AUD'])].filter(c=>c!==cur).slice(0,9).map(c=>{const v=typeof RatesEngine!=='undefined'?RatesEngine.convert(1,c,cur):0;return v>0?`<div style="display:flex;justify-content:space-between;padding:3px 0"><span>${escHtml(c)}</span><span style="font-weight:600">${v<0.01?v.toPrecision(2):U.fmt(+v.toFixed(v<10?3:2))}</span></div>`:'';}).join('')}
       </div>
     </div>`,
     `<button type="button" class="btn btn-p btn-full" data-act="Modal.close()">Close</button>`);
@@ -847,7 +847,7 @@ const ExIm={
       (S.gadgets||[]).forEach(g=>csv+=`Device,"${g.name}","","${g.currency||''}","${g.purchasePrice||0}","${g.warranty?'Warranty: '+g.warranty:''}"\n`);
       this.dl('VaultCap-plaintext.csv','text/csv',csv);Toast.show('CSV exported — not a backup','warning');return;
     }
-    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
+    const data2={...this._exportMeta('json'),user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],payids:S.payids||[],remits:S.remits||[],giving:S.giving||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     const content=JSON.stringify(data2,null,fmt==='json'?2:0);
     this.dl('VaultCap-plaintext-'+(new Date().toISOString().slice(0,10))+'.json','application/json',content);
     Activity.log('Exported plaintext',fmt.toUpperCase());Toast.show('Exported plaintext '+fmt+' — not a backup','warning');
@@ -881,7 +881,7 @@ const ExIm={
       _appVersion:typeof VER!=='undefined'?VER:'5.0.2',
       _kdf:'pbkdf2-sha256-600k',
       user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,
-      cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],
+      cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],payids:S.payids||[],remits:S.remits||[],giving:S.giving||[],
       sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,
       digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,
       family:S.family||{},familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{},
@@ -912,7 +912,7 @@ const ExIm={
   _exportLegacyVault(){
     if(!Crypto.available()||!S.pin){Toast.show('Unlock vault to export backup','warn');return;}
     const pw=S.pin+'_vos4_'+S.user.name;
-    const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
+    const data={...this._exportMeta('vault'),_vaultVersion:SCHEMA_VERSION,_exportedAt:new Date().toISOString(),_appVersion:VER||'4.1.0',user:S.user,modules:S.modules,banks:S.banks,cards:S.cards,investments:S.investments,cash:S.cash||[],loans:S.loans||[],friends:S.friends||[],bc:S.bc||[],bonds:S.bonds||[],payids:S.payids||[],remits:S.remits||[],giving:S.giving||[],sims:S.sims,assets:S.assets,expenses:S.expenses,emails:S.emails,gadgets:S.gadgets,digital:S.digital,documents:S.documents||[],tags:S.tags,wallet:S.wallet,familyMembers:S.familyMembers||[],vaultMeta:S.vaultMeta||{}};
     Crypto.encrypt(JSON.stringify(data),pw).then(async enc=>{
       const res=await this.dl('VaultCap-'+(new Date().toISOString().slice(0,10))+'.vos','application/octet-stream','VAULTOS_AES256::'+enc);
       if(res&&res.ok){ this._markBackedUp(); Activity.log('Exported','Legacy AES-256-GCM .vos'); Toast.show('Legacy backup saved','success',4000); }
@@ -980,7 +980,7 @@ const ExIm={
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
               if(typeof IdPolicy!=='undefined')IdPolicy.sanitizeVault(data);
-              ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
+              ['banks','cards','investments','cash','loans','friends','bc','bonds','payids','remits','giving','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
               if(data.vaultMeta&&typeof VaultMeta!=='undefined'){VaultMeta._ensure();Object.keys(data.vaultMeta).forEach(k=>{if(data.vaultMeta[k]&&typeof data.vaultMeta[k]==='object')S.vaultMeta[k]={...S.vaultMeta[k],...data.vaultMeta[k]};});}
               Store.sanitizeIds();
@@ -1079,13 +1079,13 @@ const QRSync = {
       cash: s(S.cash), loans: s(S.loans), sims: s(S.sims), friends: s(S.friends),
       assets: s(S.assets), expenses: s(S.expenses), emails: s(S.emails),
       gadgets: s(S.gadgets), digital: s(S.digital), documents: s(S.documents),
-      vehicles: s(S.vehicles), bonds: s(S.bonds), bc: s(S.bc),
+      vehicles: s(S.vehicles), bonds: s(S.bonds), bc: s(S.bc), payids: s(S.payids), remits: s(S.remits), giving: s(S.giving),
       familyMembers: s(S.familyMembers),
     };
   },
 
   _syncKeys() {
-    return ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital','documents','vehicles','bonds','bc','familyMembers'];
+    return ['banks','cards','investments','sims','cash','loans','friends','assets','expenses','emails','gadgets','digital','documents','vehicles','bonds','bc','payids','remits','giving','familyMembers'];
   },
 
   async exportQR() {
@@ -2170,6 +2170,9 @@ const SettingsNav = {
       <div class="si vc-ix-6" data-act="Dash.toggleCurrency()">
         <div class="sil"><div class="name">Display Currency</div><div class="desc">${S.user.currency||'GBP'} — tap to change</div></div><span class="vc-ix-4">›</span>
       </div>
+      <div class="si vc-ix-6" id="set-altcal" data-act="WorldCal.openSettings()">
+        <div class="sil"><div class="name">Second calendar</div><div class="desc">${typeof WorldCal!=='undefined'?escHtml(WorldCal.label()):'None'} — shown beside dates</div></div><span class="vc-ix-4">›</span>
+      </div>
       <div class="si vc-ix-6" data-act="Settings.editProfile()">
         <div class="sil"><div class="name">Home Address</div><div class="desc">${S.user.homeAddr||'Not set'}</div></div><span class="vc-ix-4">›</span>
       </div>
@@ -2273,6 +2276,7 @@ const SettingsNav = {
   },
 
   _privacy() {
+    if (typeof VaultStorage!=='undefined') setTimeout(()=>VaultStorage.hydrate(),0);
     const lastBackup = S.user.lastBackup;
     const backupAge  = lastBackup ? Math.floor((Date.now()-new Date(lastBackup))/864e5) : null;
     const backupStatus = !lastBackup ? 'Never backed up' : backupAge===0 ? 'Backed up today' : backupAge<=7 ? 'Backed up '+backupAge+' days ago' : 'Last backup '+backupAge+' days ago';
@@ -2288,6 +2292,7 @@ const SettingsNav = {
     </div></div>
     <div class="set-sec"><div class="set-title">Backup &amp; export</div><div class="set-card">
       <div class="si"><div class="sil"><div class="name">Last Backup</div><div class="desc">${backupStatus}</div></div></div>
+      <div class="si" id="set-storage"><div class="sil"><div class="name">On-device storage</div><div class="desc" id="vs-desc">${typeof VaultStorage!=='undefined'?VaultStorage.desc():''}</div></div><button type="button" class="btn btn-s btn-sm" id="vs-btn" style="display:none" data-act="VaultStorage.request()">Keep</button></div>
       <div class="vc-ix-95">
         <button type="button" class="btn btn-p btn-full btn-sm" data-act="ExIm.export('vault')">Export Encrypted Vault (.vos)</button>
         <button type="button" class="btn btn-s btn-full btn-sm" data-act="BackupVerify.open()">Verify Backup (dry-run)</button>

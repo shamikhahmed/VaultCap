@@ -18,3 +18,10 @@
 @import url("ios-tokens.css") layer(legacy);
 @import url("design/system.css");
 @import url("design/vaultcap.css");
+
+/* Worldwide: currency badges, second calendar, ledger detail */
+.cur-badge{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;font-size:.625rem;font-weight:700;letter-spacing:.4px;color:var(--text3);background:var(--glass2);vertical-align:middle}
+.cur-badge--manual{color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.cur-live-btn{background:none;border:none;padding:4px 0;font-size:.6875rem;font-weight:600;color:var(--accent);cursor:pointer;touch-action:manipulation;min-height:24px}
+.wc-alt{color:var(--text3);font-size:.6875rem}
+.wl-detail{display:flex;flex-direction:column}
