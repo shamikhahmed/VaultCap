@@ -140,3 +140,87 @@ body.alive.alive-paused *, body.alive.alive-paused *::after { animation-play-sta
   body.alive .vault-status-seal__score.alive-ring { transition: none; }
 }
 @media (prefers-reduced-transparency: reduce) { .alive-aurora { display: none; } }
+
+/* ═══ Round 2 ══════════════════════════════════════════════════════════ */
+
+/* A. "Since you were away" strip */
+.alive-away {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  padding: 0 16px; margin: 4px 0 12px;
+}
+.alive-away__hi {
+  font-size: .6875rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text3); margin-right: 4px;
+}
+.alive-chip {
+  --tone: 160 170 190;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 6px 12px;
+  border-radius: 999px; font: inherit; font-size: .8125rem; line-height: 1.2; color: var(--text);
+  background: rgb(var(--tone) / .10); border: 1px solid rgb(var(--tone) / .28);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+button.alive-chip { cursor: pointer; transition: background .25s ease, transform .25s ease; }
+button.alive-chip:hover { background: rgb(var(--tone) / .18); transform: translateY(-1px); }
+button.alive-chip::after { content: '›'; opacity: .6; }
+.alive-chip b { font-weight: 700; color: rgb(var(--tone)); font-variant-numeric: tabular-nums; }
+.alive-chip--up   { --tone: 52 199 89; }
+.alive-chip--down { --tone: 255 90 80; }
+.alive-chip--warn { --tone: 255 165 40; }
+.alive-chip--high { --tone: 230 177 40; }
+.alive-chip--high::before { content: '★'; color: rgb(var(--tone)); }
+body.light .alive-chip b { filter: brightness(.72); }
+.alive-away--in .alive-chip, .alive-away--in .alive-away__hi {
+  animation: alive-rise .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(300ms + var(--alive-i, 0) * 90ms);
+}
+@media (max-width: 600px) { .alive-chip { font-size: .75rem; } }
+
+/* B. Rolling digits (departures-board style) */
+.alive-d { display: inline-block; overflow: hidden; vertical-align: bottom; height: 1.15em; }
+.alive-d > span { display: inline-block; animation: alive-roll .7s cubic-bezier(.2,.9,.25,1.2) both; animation-delay: calc(var(--alive-i, 0) * 35ms); }
+@keyframes alive-roll { 0% { transform: translateY(-110%); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; } }
+
+/* C. Hero chart hover */
+body.alive .nw-hero-card svg { cursor: crosshair; touch-action: pan-y; }
+.alive-xhair, .alive-tip { position: absolute; pointer-events: none; opacity: 0; transition: opacity .18s ease; z-index: 2; }
+.alive-xhair { width: 1px; transform: translateX(-.5px); background: linear-gradient(to bottom, transparent, rgb(var(--mood-a) / .8), transparent); }
+.alive-tip {
+  transform: translate(-50%, calc(-100% - 12px)); padding: 6px 10px; border-radius: 10px; white-space: nowrap;
+  display: grid; gap: 1px; text-align: center; font-size: .6875rem; color: var(--text2, var(--text));
+  background: rgb(20 24 34 / .86); border: 1px solid rgb(255 255 255 / .12); box-shadow: 0 8px 24px -8px rgb(0 0 0 / .5);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.alive-tip b { font-size: .875rem; color: #fff; font-variant-numeric: tabular-nums; }
+.alive-tip span { color: rgb(255 255 255 / .7); }
+.alive-hover .alive-xhair, .alive-hover .alive-tip { opacity: 1; }
+
+/* D. Milestone shimmer: one light sweep across the hero */
+body.alive .nw-hero-card.alive-shimmer::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 225 140 / .28) 50%, transparent 65%);
+  background-size: 250% 100%; animation: alive-sweep 2.2s cubic-bezier(.4,0,.2,1) .6s both;
+}
+@keyframes alive-sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+
+/* E. Tools chamber countdown ring */
+body.alive .chamber-card__icon.alive-countdown {
+  --due: 52 199 89;
+  position: relative;
+}
+body.alive .chamber-card__icon.alive-countdown::after {
+  content: ''; position: absolute; inset: -4px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(rgb(var(--due)) calc(var(--alive-p) * 1%), rgb(127 127 127 / .2) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px));
+  border-radius: 50%;
+}
+
+/* F. Lock screen: same light + breathing mark */
+body.alive #pgLock { isolation: isolate; }
+.alive-aurora--lock { left: 0; -webkit-mask-image: none; mask-image: none; opacity: calc(var(--aurora-o) * .8); }
+body.alive #pgLock .lk-mark { animation: alive-mark 5s ease-in-out infinite; border-radius: 50%; }
+@keyframes alive-mark { 0%, 100% { filter: drop-shadow(0 0 0 rgb(212 160 23 / 0)); } 50% { filter: drop-shadow(0 0 18px rgb(212 160 23 / .45)); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .alive-away--in .alive-chip, .alive-away--in .alive-away__hi, .alive-d > span,
+  body.alive .nw-hero-card.alive-shimmer::before, body.alive #pgLock .lk-mark { animation: none !important; }
+}
