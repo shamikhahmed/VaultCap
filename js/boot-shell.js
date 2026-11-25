@@ -35,7 +35,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (window.CapricornMotion) CapricornMotion.init();
     if (typeof window.enhanceFoundationSwitches === 'function') window.enhanceFoundationSwitches(document);
   });
 })();

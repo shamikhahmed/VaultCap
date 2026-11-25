@@ -152,11 +152,25 @@ const Store = {
     return this._pendingSave || Promise.resolve();
   },
 
+  /** Assign vault payload into S after id-policy sanitization (restore/import/unlock). */
+  hydrate(data) {
+    if (!data || typeof data !== 'object') return false;
+    if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
+    Object.assign(S, data);
+    return true;
+  },
+
+  /** Sanitize live S in place (post-merge imports). */
+  sanitizeIds() {
+    if (typeof IdPolicy !== 'undefined') return IdPolicy.sanitizeVault(S);
+    return { remapped: 0 };
+  },
+
   async load() {
     try {
       const d = await VaultDB.load();
       if (d) {
-        Object.assign(S, d);
+        this.hydrate(d);
         if (typeof VaultMeta !== 'undefined') VaultMeta.migrateFromLocalStorage();
         return true;
       }

@@ -85,13 +85,21 @@ let cmdRes = [], cmdIdx = -1;
 const CMD = {
   /** Opens the command palette, clears input, and focuses the search field. */
   open() {
-    document.getElementById('cmdPal').classList.add('on');
+    const pal = document.getElementById('cmdPal');
+    pal.classList.add('on');
     document.getElementById('cmdIn').value = '';
     this.search('');
-    setTimeout(() => document.getElementById('cmdIn').focus(), 80);
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
+    if (typeof FocusTrap !== 'undefined') FocusTrap.trap(pal, () => CMD.close());
+    setTimeout(() => document.getElementById('cmdIn').focus({ preventScroll: true }), 80);
   },
   /** Closes the command palette and resets the keyboard-navigation index. */
-  close() { document.getElementById('cmdPal').classList.remove('on'); cmdIdx = -1; },
+  close() {
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    document.getElementById('cmdPal')?.classList.remove('on');
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
+    cmdIdx = -1;
+  },
   fuzzyMatch(str, q) {
     if (!str || !q) return false;
     const s = str.toLowerCase().trim();
@@ -267,24 +275,55 @@ const CMD = {
 
 // ===================== FAB =====================
 const FAB = {
+  _hideAfterTransition(el) {
+    if (!el) return;
+    const finish = () => {
+      if (!el.classList.contains('on')) el.hidden = true;
+      el.removeEventListener('transitionend', onEnd);
+    };
+    const onEnd = (e) => {
+      if (e.target !== el) return;
+      finish();
+    };
+    el.addEventListener('transitionend', onEnd);
+    setTimeout(finish, 320);
+  },
   toggle() {
     const m = document.getElementById('fabMenu'), btn = document.getElementById('fab'), scrim = document.getElementById('fabScrim');
-    const o = m.classList.toggle('on');
-    btn.classList.toggle('open', o);
-    btn.textContent = o ? 'Close' : '＋';
-    btn.setAttribute('aria-expanded', o ? 'true' : 'false');
+    if (!m || !btn) return;
+    if (m.classList.contains('on')) { this.close(); return; }
+    // Reveal first so opacity/transform transition can play, then add .on.
+    m.hidden = false;
+    m.removeAttribute('inert');
+    m.setAttribute('aria-hidden', 'false');
     if (scrim) {
-      scrim.classList.toggle('on', o);
-      scrim.setAttribute('aria-hidden', o ? 'false' : 'true');
+      scrim.hidden = false;
+      scrim.removeAttribute('inert');
+      scrim.setAttribute('aria-hidden', 'false');
     }
+    void m.offsetWidth;
+    m.classList.add('on');
+    btn.classList.add('open');
+    btn.textContent = 'Close';
+    btn.setAttribute('aria-expanded', 'true');
+    if (scrim) scrim.classList.add('on');
   },
   close() {
     const m = document.getElementById('fabMenu'), btn = document.getElementById('fab'), scrim = document.getElementById('fabScrim');
-    m.classList.remove('on'); btn.classList.remove('open'); btn.textContent = '＋';
+    if (!m || !btn) return;
+    m.classList.remove('on');
+    btn.classList.remove('open');
+    btn.textContent = '＋';
     btn.setAttribute('aria-expanded', 'false');
+    // Keep out of a11y tree immediately; defer hidden until transition ends so close anim plays.
+    m.setAttribute('inert', '');
+    m.setAttribute('aria-hidden', 'true');
+    this._hideAfterTransition(m);
     if (scrim) {
       scrim.classList.remove('on');
+      scrim.setAttribute('inert', '');
       scrim.setAttribute('aria-hidden', 'true');
+      this._hideAfterTransition(scrim);
     }
   }
 };

@@ -1,16 +1,16 @@
 # VaultCap — Handover
 
 > Read this + `ROADMAP.md` + `~/Capricorn-Brain/01 Projects/VaultCap.md` before working here.
-> Last updated: 2026-07-19 · Fleet-wide standard: `capricorn-tooling/shared/CAP-STANDARD.md`
+> Last updated: 2026-10-25 · Fleet-wide standard: `capricorn-tooling/shared/CAP-STANDARD.md`
 
 ## What this is
 Personal vault — encrypted offline finance, identity, family vault. PK/UK/UAE expat finance. **100% free** consumer PWA.
 
 ## Facts
-**Version:** 5.4.0
+**Version:** 5.4.3 (HIG 6 on `design/hig-3`; owner may release as 6.0.0)
 **Live:** https://shamikhahmed.github.io/VaultCap
 **Repo:** https://github.com/shamikhahmed/VaultCap
-**Stack:** Vanilla JS → `dist/vaultcap.boot.js` (lock/onboard) + lazy `dist/vaultcap.app.js` / VaultLazy modules. PIN-first unlock + recovery/backup keys + `.vos`. CSP `script-src 'self'` via `Act`/`data-act*`. Playwright e2e + XSS audit.
+**Stack:** Vanilla JS → `dist/vaultcap.boot.js` (lock/onboard) + lazy `dist/vaultcap.app.js` / VaultLazy modules. PIN-first unlock + recovery/backup keys + `.vos`. CSP `script-src 'self'` via `Act`/`data-act*`. Playwright e2e + XSS audit. Design: `css/design/*` + `DESIGN.md`.
 **Data:** Encrypted IndexedDB; no required cloud/accounts.
 
 ## Run & verify
@@ -26,15 +26,16 @@ npm run test:e2e
 - `js/core/` — crypto, PIN, Act, store, router
 - `js/modules/` — feature modules
 - `dist/vaultcap.boot.js` + `dist/vaultcap.app.js` via `npm run build:js` (`js/bundle-boot-order.json` / `js/bundle-app-order.json`); `vaultcap.bundle.js` aliases boot for probes
-- SW `sw-v51.js` cache `vaultcap-v96`
+- SW `sw-v51.js` cache `vaultcap-v100` (must match `VERSION.json` `swCache`)
 - `.github/workflows/` — ci.yml + pages.yml
+- Leave `VaultProfiles.switch()` full reload as-is (owner decision)
 
-## Cap Standard status (2026-07-18)
+## Cap Standard status (2026-10-25)
 | Cap Standard item | Status |
 |---|---|
 | Docs pack | ✅ |
 | Screen gallery | ✅ |
-| Version discipline | ✅ 5.4.0 |
+| Version discipline | ✅ 5.4.3 / vaultcap-v100 |
 | QA / e2e | ✅ |
 | CI gate | ✅ |
 | PWA polish | ✅ |

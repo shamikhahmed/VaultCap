@@ -1,0 +1,20 @@
+FAIL  PIN keypad tap reaches keys  (      - <div id="pgHome">…</div> intercepts pointer events)
+FAIL  PIN keypad unlocks by tapping
+FAIL  tab bar + header controls tappable  (GBP,More actions,Home,Money,Wealth,Identity,More options)
+PASS  hit areas ≥44pt (tabs, header)
+PASS  no sideways overflow · dashboard
+FAIL  document scrolls (no inner scroller) · dashboard  ({"sw":393,"iw":393,"docScroll":false,"innerScroller":"auto"})
+PASS  no sideways overflow · banks
+FAIL  document scrolls (no inner scroller) · banks  ({"sw":393,"iw":393,"docScroll":false,"innerScroller":"auto"})
+PASS  no sideways overflow · cards
+FAIL  document scrolls (no inner scroller) · cards  ({"sw":393,"iw":393,"docScroll":false,"innerScroller":"auto"})
+PASS  no sideways overflow · investments
+FAIL  document scrolls (no inner scroller) · investments  ({"sw":393,"iw":393,"docScroll":false,"innerScroller":"auto"})
+PASS  no sideways overflow · documents
+FAIL  document scrolls (no inner scroller) · documents  ({"sw":393,"iw":393,"docScroll":false,"innerScroller":"auto"})
+PASS  no sideways overflow · settings
+FAIL  navigation by tapping  (locator.tap: Timeout 8000ms exceeded.)
+FAIL  sheet flow  (locator.tap: Timeout 8000ms exceeded.)
+PASS  inputs ≥16px (no zoom-on-focus)
+PASS  no reload during session
+FAIL  SW: no skipWaiting/clients.claim

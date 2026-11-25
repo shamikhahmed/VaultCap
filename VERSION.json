@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v99",
-  "updated": "2026-10-22",
-  "notes": "v7-fix LH: defer base/layout/components; storage off critical path; migrate/demo-profiles/OB/icons → app"
+  "swCache": "vaultcap-v100",
+  "updated": "2026-10-25",
+  "notes": "HIG-3 / vaultcap-v100 — VERSION.json synced to SW CACHE (prod-ready audit)"
 }

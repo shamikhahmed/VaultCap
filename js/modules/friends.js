@@ -67,7 +67,7 @@ const Friends = {
   },
   edit(id) {
     const f = (S.friends || []).find(x => x.id === id); if (!f) return;
-    Modal.open('Edit Friend', this.form(f), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Friends.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Friends.save('${id}')">Update</button>`);
+    Modal.open('Edit Friend', this.form(f), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Friends.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Friends.save('${U.actId(id)}')">Update</button>`);
   },
   async del(id, fm = false) {
     if (!await window.__vos_confirm('Move to Trash?')) return;
@@ -76,7 +76,7 @@ const Friends = {
     S.friends = (S.friends || []).filter(x => x.id !== id);
     Activity.log('Trashed friend', f.name);
     Store.save(); if (fm) Modal.close(); this.render();
-    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${U.actId(S.trash[S.trash.length-1].id)}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
   }
 };
 window.Contacts = Friends;

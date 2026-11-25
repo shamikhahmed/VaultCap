@@ -26,8 +26,10 @@ test.describe('VaultCap theme', () => {
     const light = await check('light');
     expect(light.theme).toBe('light');
     expect(light.isLight).toBe(true);
-    // Cap DNA light accent = ink navy (not pure #000, not blue)
-    expect(light.accent.toLowerCase()).toMatch(/#0a1220|#000|#000000|rgb\(\s*10,\s*18,\s*32\s*\)|rgb\(\s*0,\s*0,\s*0\s*\)/);
+    // HIG 6: one accent across appearances — vault gold, deepened in light for AA (DESIGN.md)
+    const tint = await page.evaluate(() => getComputedStyle(document.body).getPropertyValue('--tint').trim().toLowerCase());
+    expect(tint).toMatch(/#8b6508|#6e5005/);
+    expect(light.accent.toLowerCase()).toMatch(/var\(--tint\)|#8b6508|#6e5005/);
     expect(light.hasBlue).toBe(false);
 
     const auto = await check('auto');

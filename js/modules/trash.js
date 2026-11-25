@@ -34,8 +34,8 @@ const Trash = {
               <div class="entry-sub">Deleted ${age(item.deletedAt)} · ${daysLeft(item.deletedAt)}</div>
             </div>
             <div class="entry-acts">
-              ${U.icb('undo',{onclick:`Trash.restore('${item.id}')`,ariaLabel:'Restore',title:'Restore'})}
-              ${U.icb('trash',{onclick:`Trash.purge('${item.id}')`,ariaLabel:'Delete permanently',title:'Delete permanently',class:'del'})}
+              ${U.icb('undo',{onclick:`Trash.restore('${U.actId(item.id)}')`,ariaLabel:'Restore',title:'Restore'})}
+              ${U.icb('trash',{onclick:`Trash.purge('${U.actId(item.id)}')`,ariaLabel:'Delete permanently',title:'Delete permanently',class:'del'})}
             </div>
           </div>
         </div>`;

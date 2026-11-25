@@ -1,0 +1,22 @@
+PASS  PIN keypad unlocks by tapping
+PASS  tab bar + header controls tappable
+PASS  hit areas ≥44pt (tabs, header)
+PASS  no sideways overflow · dashboard
+PASS  document scrolls (no inner scroller) · dashboard
+PASS  no sideways overflow · banks
+PASS  document scrolls (no inner scroller) · banks
+PASS  no sideways overflow · cards
+PASS  document scrolls (no inner scroller) · cards
+PASS  no sideways overflow · investments
+PASS  document scrolls (no inner scroller) · investments
+PASS  no sideways overflow · documents
+PASS  document scrolls (no inner scroller) · documents
+PASS  no sideways overflow · settings
+PASS  programmatic scroll lands instantly
+PASS  tab → sheet → module keeps shell (no reload)
+PASS  new screen opens at top
+PASS  page locked behind sheet
+PASS  sheet keeps scroll position
+PASS  inputs ≥16px (no zoom-on-focus)
+PASS  no reload during session
+PASS  SW: no skipWaiting/clients.claim

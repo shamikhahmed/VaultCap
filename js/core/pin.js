@@ -154,7 +154,7 @@ const PIN = {
       if (String(pin) !== VaultProfiles.DEMO_PIN) return null;
       const result = await unlockDemoVaultWithPin(pin);
       if (!result) return null;
-      Object.assign(S, result.data);
+      Store.hydrate(result.data);
       S.pin = VaultProfiles.DEMO_PIN;
       return { kind: 'real' };
     }
@@ -170,7 +170,7 @@ const PIN = {
 
     if (oldData && !hasVaultDB) {
       if (await PinHash.verifyLegacy(pin, oldData)) {
-        Object.assign(S, oldData);
+        Store.hydrate(oldData);
         delete S.pin;
         try {
           await VaultDB.init(pin || '000000');
@@ -198,7 +198,7 @@ const PIN = {
     const result = await VaultDB.tryPin(pin);
     if (!result) return null;
     if (result.slot === 'decoy') return { kind: 'decoy', data: result.data };
-    Object.assign(S, result.data);
+    Store.hydrate(result.data);
     return { kind: 'real' };
   },
 
@@ -212,7 +212,7 @@ const PIN = {
     if (pin !== pin2) { if (err) err.textContent = 'PINs do not match'; return; }
     if (err) err.textContent = 'Migrating…';
     VaultDB.migrateToPin(pp, pin).then(async (data) => {
-      Object.assign(S, data);
+      Store.hydrate(data);
       if (!S.vaultMeta) S.vaultMeta = {};
       try { S.vaultMeta.pinHash = await PinHash.digest(pin); S.vaultMeta.pinWeak = PinHash.isWeak(pin); } catch (e) {}
       S.fails = 0; S.lockedUntil = 0;

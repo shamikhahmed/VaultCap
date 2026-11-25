@@ -52,7 +52,7 @@ const DocsModule={
     const el=document.getElementById('docsItems');
     if(!ci||!el)return;
     const cats=[['all','All','id-card'],['passport','Passport','id-card'],['nic','ID','id-card'],['driving_license','Driving','car'],['visa','Visa','arrows'],['property_doc','Property','building'],['insurance_doc','Insurance','shield'],['vehicle_reg','Vehicle Reg','car'],['tax','Tax','receipt'],['medical','Medical','cross'],['warranty','Warranty','receipt'],['contract','Contract','book'],['certificate','Certificate','star'],['other','Other','file']];
-    ci.innerHTML=cats.map(([v,l,ic])=>`<div class="chip${this.filter===v?' on':''}" data-act="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic">${VC.icon(ic,12)}</span>${l}</div>`).join('');
+    ci.innerHTML=cats.map(([v,l,ic])=>`<button type="button" class="chip${this.filter===v?' on':''}" aria-pressed="${this.filter===v}" data-act="DocsModule.filter='${v}';DocsModule.render()"><span class="chip-ic" aria-hidden="true">${VC.icon(ic,12)}</span>${l}</button>`).join('');
     const docs=this._filteredDocs();
     const selCount=Object.keys(this.selected).length;
     const toolbar=
@@ -81,8 +81,8 @@ const DocsModule={
       const hasPhotos=d.frontPhoto||d.backPhoto;
       const checked=!!this.selected[d.id];
       const selectCtl=this.selectMode
-        ? `<button type="button" class="btn btn-g btn-sm" style="min-width:44px;min-height:44px" aria-pressed="${checked?'true':'false'}" aria-label="${checked?'Deselect':'Select'} document" data-act="DocsModule.toggleSelect('${d.id}')">${checked?'✓':'○'}</button>`
-        : `${U.icb('pin',{onclick:`DocsModule.pin('${d.id}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}`;
+        ? `<button type="button" class="btn btn-g btn-sm" style="min-width:44px;min-height:44px" aria-pressed="${checked?'true':'false'}" aria-label="${checked?'Deselect':'Select'} document" data-act="DocsModule.toggleSelect('${U.actId(d.id)}')">${checked?'✓':'○'}</button>`
+        : `${U.icb('pin',{onclick:`DocsModule.pin('${U.actId(d.id)}')`,title:'Pin',class:d.pinned?' on':''})}${U.actsViewEditDel('DocsModule', d.id, 'openDetail')}`;
       return `<div class="entry${checked?' on':''}"><div class="entry-main"><div class="entry-ic">${VC.docIcon(schema,18)}</div><div class="entry-body"><div class="entry-name">${schema.label}${d.docSubType?' — '+d.docSubType:''}</div><div class="entry-sub">${subtitle}</div><div class="entry-meta">${exp?`<span class="badge ${expStatus}">${expLabel}</span>`:''} ${d.notes?'<span class="badge b-muted">Notes</span>':''} ${hasPhotos?'<span class="badge b-info">Photo</span>':''} ${d.linkedEntries?.length?'<span class="badge b-muted">Linked</span>':''}</div></div><div class="entry-acts">${selectCtl}</div></div></div>`;
     }).join('');
   },
@@ -250,7 +250,7 @@ const DocsModule={
     ${photoHtml}
     <div class="fg"><label class="fl">Notes</label><textarea class="inp" id="df-notes" rows="2">${escAttr(d.notes||'')}</textarea></div>
     <div class="fg"><label class="fl">Tags</label>${U.tags(d.tags||[])}`,
-    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="DocsModule.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="DocsModule.save('${id}')">Update</button>`);
+    `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="DocsModule.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="DocsModule.save('${U.actId(id)}')">Update</button>`);
     // Restore saved photo data attributes for save() to read
     setTimeout(function(){
       if(d.frontPhoto){const f=document.getElementById('doc-photo-front');if(f)f.dataset.photo=d.frontPhoto;}
@@ -271,8 +271,8 @@ const DocsModule={
     const rows=schema.fields.map(f=>{const v=d[f.id];return v?U.drRow(f.label,v):''}).filter(Boolean).join('');
     Modal.open(schema.ic+' '+schema.label,'<div>'+rows+(d.notes?U.drRow('Notes',d.notes):'')+'</div>'+photoHtml,
       `<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button>`+
-      `<button type="button" class="btn btn-g" data-act="DocsModule.exportPdf('${id}')">Export PDF</button>`+
-      `<button type="button" class="btn btn-p" data-act="DocsModule.edit('${id}');Modal.close()">Edit</button>`);
+      `<button type="button" class="btn btn-g" data-act="DocsModule.exportPdf('${U.actId(id)}')">Export PDF</button>`+
+      `<button type="button" class="btn btn-p" data-act="DocsModule.edit('${U.actId(id)}');Modal.close()">Edit</button>`);
   },
   _openPhotoFull(base64){
     const v=document.createElement('div');

@@ -421,9 +421,33 @@ const Act = (() => {
     runStmts(code, { el: node, event: e });
   }
 
+  /* iOS/WebKit touch adjustment retargets a tap to the nearest node that handles clicks itself.
+   * A <div data-act> served only by the document-level delegate doesn't count, so taps on tabs,
+   * chips and rows landed on whatever button sat nearby (e.g. a dashboard tile under the tab bar).
+   * A no-op own listener marks every data-act element as tappable; the delegate still runs the act. */
+  const tappable = new WeakSet();
+  const noop = function () {};
+  function markTappable(root) {
+    if (!root || root.nodeType !== 1) return;
+    const mark = (el) => {
+      if (tappable.has(el)) return;
+      tappable.add(el);
+      el.addEventListener('click', noop);
+    };
+    if (root.hasAttribute('data-act')) mark(root);
+    root.querySelectorAll('[data-act]').forEach(mark);
+  }
+
   function bind() {
     if (window.__vosActBound) return;
     window.__vosActBound = true;
+    markTappable(document.body);
+    new MutationObserver((records) => {
+      for (const r of records) {
+        if (r.type === 'attributes') markTappable(r.target);
+        else r.addedNodes.forEach(markTappable);
+      }
+    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-act'] });
     document.addEventListener('click', (e) => handle('click', e), false);
     document.addEventListener('input', (e) => handle('input', e), false);
     document.addEventListener('change', (e) => handle('change', e), false);

@@ -201,14 +201,6 @@ const Dash={
       ? '<div style="font-size:0.75rem;color:var(--text3);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap" class="sens">' +
         secondaryCurs.map(c => '<span>≈ ' + U.fmtCur(nwPKR, c) + '</span>').join('') + '</div>'
       : '';
-    const nwHero = '<div class="nw-hero-wrap" style="padding:0 16px;margin-top:12px"><div class="nw-hero-card" style="background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:20px;position:relative;overflow:hidden">' +
-      '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0.35"></div>' +
-      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px">' + (activeCtx !== 'ALL' ? 'Net Worth · ' + U.flag(activeCtx) + ' ' + U.cname(activeCtx) : 'Net Worth') + '</div>' +
-      '<div style="font-size:clamp(1.75rem,9vw,2.5rem);font-weight:800;color:var(--text);letter-spacing:-.03em;word-break:break-word" class="sens nw-hero-amount">'+fmt(nwPKR)+'</div>' +
-      ((nwChange !== 0 || pctStr) ? '<div style="font-size:0.75rem;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(nwChange!==0?'<span style="color:'+(nwChange>=0?'var(--ok)':'var(--err)')+'">'+nwChangeStr+'</span>':'')+(pctStr?'<span style="font-size:0.6875rem;color:'+(pctChange>=0?'var(--ok)':'var(--err)')+';opacity:.8">'+pctStr+'</span>':'')+'</div>' : '') +
-      sparkline +
-      multiCurHtml +
-      '</div></div>';
 
     const familyMC = typeof Family !== 'undefined' ? Family.memberCount() : 0;
     const familyNW = typeof Family !== 'undefined' ? Family.totalNetWorthPKR() : 0;
@@ -223,25 +215,18 @@ const Dash={
 
     const bankTotal = ctxFilter(S.banks||[]).reduce((a,b) => a + toB(b.balance||0, b.currency), 0);
     const invTotal = ctxFilter(S.investments||[]).reduce((a,i) => a + toB(i.currentValue||0, i.currency), 0);
-    const cashTotal = ctxFilter(S.cash||[]).reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
+    const cashRows = ctxFilter(S.cash||[]);
+    const cashTotal = cashRows.reduce((a,c) => a + toB(c.amount||0, c.currency), 0);
     const cashByCur = {};
-    ctxFilter(S.cash||[]).forEach(c => { const cur = c.currency || 'PKR'; cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0); });
+    cashRows.forEach(c => {
+      const cur = c.currency || 'PKR';
+      cashByCur[cur] = (cashByCur[cur] || 0) + (c.amount || 0);
+    });
     const cashCurKeys = Object.keys(cashByCur);
+    const _cashEsc = (s) => (typeof UIKit !== 'undefined' ? UIKit.esc(String(s)) : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'));
     const cashBreakdown = cashCurKeys.length > 1
-      ? '<div style="font-size:0.6875rem;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);text-align:center;line-height:1.6">' +
-        cashCurKeys.map(cur => '<span class="sens">' + U.fmt(cashByCur[cur]) + ' ' + cur + '</span>').join(' · ') + '</div>'
+      ? cashCurKeys.map(cur => '<span class="sens">' + _cashEsc(U.fmt(cashByCur[cur])) + ' ' + _cashEsc(cur) + '</span>').join(' · ')
       : '';
-    const moneyCell = (total, color, label, page) =>
-      '<div data-act="R.goto(\'' + page + '\')" style="text-align:center;cursor:pointer;touch-action:manipulation;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:12px;min-width:0"><div style="font-size:clamp(12px,4vw,17px);font-weight:900;color:' + color + ';line-height:1.2;word-break:break-word;overflow-wrap:anywhere;max-width:100%" class="sens">' + fmt(total) + '</div><div style="font-size:0.6875rem;color:var(--text3);margin-top:4px;line-height:1.2">' + label + '</div></div>';
-    const moneySum = (isModOn('banks') || isModOn('investments') || isModOn('cash')) ?
-      '<div style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px">' +
-      '<div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('banknote', 14) + '</span>Money</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:stretch">' +
-      (isModOn('banks') ? moneyCell(bankTotal, 'var(--accent)', 'Banks', 'banks') : '') +
-      (isModOn('investments') ? moneyCell(invTotal, 'var(--ok)', 'Investments', 'investments') : '') +
-      (isModOn('cash') ? moneyCell(cashTotal, 'var(--warn)', 'Cash', 'cash') : '') +
-      '</div>' + (isModOn('cash') && cashBreakdown ? cashBreakdown : '') +
-      '</div>' : '';
 
     const assetTotal = ctxFilter(S.assets||[]).reduce((a,x) => {
       if ((x.assetType==='precious_metals'||x.assetType==='precious') && x.weight && typeof RatesEngine!=='undefined') {
@@ -254,12 +239,6 @@ const Dash={
       return a + toB(x.currentValue||x.purchasePrice||0, x.currency);
     }, 0);
     const assetCount = ctxFilter(S.assets||[]).length;
-    const assetSum = isModOn('assets') && assetCount > 0 ?
-      '<div data-act="R.goto(\'assets\')" style="margin:0 16px 16px;background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px"><span class="chip-ic">' + _uiIcon('building', 14) + '</span>Property</div>' +
-      '<div style="font-size:1.375rem;font-weight:900;color:var(--text)" class="sens">' + fmt(assetTotal) + '</div></div>' +
-      '<div class="vc-ix-132"><div style="font-size:1.75rem;font-weight:900;color:var(--text3)">' + assetCount + '</div>' +
-      '<div class="vc-ix-18">items</div></div></div>' : '';
 
     const _alerts = (S.alerts || []).filter(a => !a.dismissed && a.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 3);
     const _reminders = (S.reminders || []).filter(r => !r.done).sort((a,b) => new Date(a.dueDate||0) - new Date(b.dueDate||0)).slice(0, 2);
@@ -279,17 +258,7 @@ const Dash={
       '</div>' : '';
 
     const entityTotal = ['banks','cards','investments','cash','loans','documents','assets'].reduce((a,k)=>a+(S[k]||[]).length,0);
-    const activeCountryLabel = (activeCtx && activeCtx !== 'ALL') ? (U.flag(activeCtx) + ' ' + U.cname(activeCtx)) : (S.user.country ? U.flag(S.user.country) + ' ' + U.cname(S.user.country) : 'All');
     const lastBackupLabel = S.user?.lastBackup ? new Date(S.user.lastBackup).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    const quickStatCell = (value, label, onclick) =>
-      '<div' + (onclick ? ' data-act="' + onclick + '"' : '') + ' style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px' + (onclick ? ';cursor:pointer;touch-action:manipulation' : '') + '">' +
-      '<div style="font-size:0.8125rem;font-weight:800;color:var(--text);line-height:1.25;word-break:break-word;overflow-wrap:anywhere;max-width:100%">' + value + '</div>' +
-      '<div style="font-size:0.6875rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;line-height:1.2">'+label+'</div></div>';
-    const quickStats = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px">' +
-      quickStatCell(entityTotal, 'Records') +
-      quickStatCell(activeCountryLabel, 'Country') +
-      quickStatCell(lastBackupLabel, 'Backup', "ActHelpers.gotoSettingsTab('backup')") +
-      '</div>';
 
     const setupBanner = (S.user.setupProgress && S.user.setupProgress.profileDone === false) ? `
     <div style="margin:0 16px 16px;background:var(--glass2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -322,15 +291,6 @@ const Dash={
     const wealthCount = (S.investments||[]).length + (S.assets||[]).length + (S.bonds||[]).length;
     const identityCount = (S.documents||[]).length + (S.sims||[]).length + (S.emails||[]).length + (S.digital||[]).length;
     const sealOk = health >= 70;
-    const vaultStatusSeal = `
-    <div class="vault-status-seal" role="status" aria-label="Vault security status">
-      <div class="vault-status-seal__lock" aria-hidden="true">${_uiIcon(sealOk ? 'lock' : 'shield', 18)}</div>
-      <div class="vault-status-seal__copy">
-        <div class="vault-status-seal__title">${sealOk ? 'Vault secure' : 'Improve your security'}</div>
-        <div class="vault-status-seal__sub">Security ${health}% · ${entityTotal} records · local AES</div>
-      </div>
-      <button type="button" class="vault-status-seal__score" data-act="R.goto('security')" style="color:${healthColor}" aria-label="Open security center">${health}%</button>
-    </div>`;
 
     const chambers = [
       { id:'money', label:'Money', page:'finance-home', icon:'banknote', count:moneyCount, show: typeof isPageModOn==='function' ? isPageModOn('finance-home') : true },
@@ -340,19 +300,6 @@ const Dash={
       { id:'zakat', label:'Zakat', page:'zakat', icon:'moon', count:0, show: isModOn('zakat') },
       { id:'tools', label:'Tools', page:'alerts', icon:'bell', count:allExpiring.length, show: true },
     ].filter(c => c.show);
-    const chamberFloor = `
-    <div class="chamber-floor" aria-label="Vault chambers">
-      <div class="chamber-floor__label">Your vault</div>
-      <div class="chamber-floor__grid">
-        ${chambers.map((c,i) => `
-          <button type="button" class="chamber-card" data-act="R.goto('${c.page}')" style="--chamber-i:${i}" aria-label="${c.label}${c.count!=null?' · '+c.count+' items':''}">
-            <span class="chamber-card__rim" aria-hidden="true"></span>
-            <span class="chamber-card__icon">${_uiIcon(c.icon, 20)}</span>
-            <span class="chamber-card__name">${c.label}</span>
-            ${c.count!=null?`<span class="chamber-card__count">${c.count}</span>`:''}
-          </button>`).join('')}
-      </div>
-    </div>`;
 
     const activityRows = (S.activity||[]).slice(0,5).map((a,i) => `
       <div class="ledger-strip" style="--strip-i:${i}">
@@ -413,17 +360,55 @@ const Dash={
       </div>
     </aside>`;
 
+    // ── 6.0 HIG dashboard: hero card, money tiles, security + vault lists (UIKit, DESIGN.md) ──
+    const K = UIKit;
+    const heroDelta = (nwChange !== 0 || pctStr)
+      ? '<p class="dash6-hero__delta">' +
+        (nwChange !== 0 ? '<span style="color:' + (nwChange >= 0 ? 'var(--success)' : 'var(--danger)') + '">' + nwChangeStr + '</span>' : '') +
+        (pctStr ? '<span>' + pctStr + '</span>' : '') + '</p>'
+      : '';
+    const heroCard = '<div class="ui-card ui-card--lg dash6-hero">' +
+      '<p class="ui-eyebrow">' + (activeCtx !== 'ALL' ? 'Net worth · ' + U.cname(activeCtx) : 'Net worth') + '</p>' +
+      '<p class="dash6-hero__value sens num">' + fmt(nwPKR) + '</p>' + heroDelta + sparkline + multiCurHtml + '</div>';
+    const moneyTiles = [
+      isModOn('banks') && K.widget({ icon: 'bank', label: 'Banks', value: fmt(bankTotal), act: "R.goto('banks')", sens: true }),
+      isModOn('investments') && K.widget({ icon: 'trending-up', label: 'Investments', value: fmt(invTotal), act: "R.goto('investments')", sens: true }),
+      isModOn('cash') && K.widget({ icon: 'banknote', label: 'Cash', value: fmt(cashTotal), act: "R.goto('cash')", sens: true, sub: cashBreakdown }),
+      isModOn('assets') && assetCount > 0 && K.widget({ icon: 'building', label: 'Property', value: fmt(assetTotal), act: "R.goto('assets')", sens: true }),
+    ].filter(Boolean);
+    const moneySection = moneyTiles.length
+      ? K.section({ title: 'Money', id: 'dash6-money', action: { label: 'All', act: "R.goto('finance-home')" } }, '<div class="ui-widgets">' + moneyTiles.join('') + '</div>')
+      : '';
+    const securitySection = K.section({ title: 'Security', id: 'dash6-security' }, K.list([
+      K.row({
+        icon: sealOk ? 'lock' : 'shield',
+        title: sealOk ? 'Vault secure' : 'Improve your security',
+        sub: entityTotal + ' records · encrypted on this device',
+        value: '<span class="num" style="color:' + healthColor + '">' + health + '%</span>',
+        act: "R.goto('security')",
+        aria: 'Security ' + health + '%, open security center',
+      }),
+      K.row({ icon: 'share', title: 'Backup', value: lastBackupLabel, act: "ActHelpers.gotoSettingsTab('backup')" }),
+    ]));
+    const vaultSection = K.section({ title: 'Your vault', id: 'dash6-vault' }, K.list(chambers.map((c) => K.row({
+      icon: c.icon,
+      title: c.label,
+      value: c.count != null ? String(c.count) : '',
+      act: "R.goto('" + c.page + "')",
+    }))));
+
     b.innerHTML = `
     ${ctxBar}
     ${totalItems === 0 ? firstStepsBanner : ''}
     <div class="dash-vault-layout">
     <div class="dash-vault-main">
-    ${totalItems === 0 ? '' : nwHero}
+    <div class="dash6">
+    ${totalItems === 0 ? '' : heroCard}
     ${totalItems === 0 ? '' : setupBanner}
-    ${vaultStatusSeal}
-    ${totalItems === 0 ? '' : chamberFloor}
-
-    ${moneySum}
+    ${totalItems === 0 ? '' : moneySection}
+    ${securitySection}
+    ${totalItems === 0 ? '' : vaultSection}
+    </div>
 
     ${breakdownHtml}
 
@@ -433,11 +418,9 @@ const Dash={
 
     ${familyWidget}
 
-    ${assetSum}
 
     ${upcomingActions}
 
-    ${quickStats}
 
     <!-- WALLET -->
     ${isModOn('cards') && (S.cards||[]).length ? `
@@ -447,7 +430,7 @@ const Dash={
         <button type="button" class="tap-link" data-act="Dash.editWallet()">${wCards.length ? 'Edit' : 'Set'} →</button>
       </div>
       ${wCards.length
-        ? `<div class="wallet-row">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
+        ? `<div class="wallet-row" tabindex="0" aria-label="Cards carrying today">${wCards.map(c => this.miniCard(c, 80)).join('')}</div>`
         : `<button type="button" data-act="Dash.editWallet()" style="width:100%;background:var(--glass);border:1px dashed var(--border2);border-radius:14px;padding:14px;cursor:pointer;touch-action:manipulation;text-align:left"><div class="vc-ix-12">Set today's wallet</div><div class="vc-ix-36">Pick which cards you're carrying</div></button>`}
     </div>` : ''}
 
@@ -456,7 +439,7 @@ const Dash={
     <div class="vc-ix-30">
       <div class="vc-ix-135"><span class="chip-ic">${_uiIcon('bell', 14)}</span>Expiring Soon</div>
       ${allExpiring.slice(0,3).map(x => `
-        <div data-act="Dash.openExpiring('${x.type}','${x.id||''}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
+        <div data-act="Dash.openExpiring('${x.type}','${U.actId(x.id||'')}')" style="background:${x.days<=30?'rgba(255,69,58,.08)':'rgba(255,152,0,.08)'};border:1px solid ${x.days<=30?'rgba(255,69,58,.3)':'rgba(255,152,0,.3)'};border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;touch-action:manipulation">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="chip-ic vc-ix-21">${_uiIcon(x.type==='card'?'card':'file', 18)}</span>
             <div>
@@ -540,7 +523,7 @@ const Dash={
     const f3=h>=100?'9px':'8px';
     const mb1=h>=100?'6px':'4px';
     const st=U.expSt(c.expiry);
-    return `<div class="wc-mini" data-act="Cards.openDetail('${c.id}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
+    return `<div class="wc-mini" data-act="Cards.openDetail('${U.actId(c.id)}')" style="background:${bg};min-width:${w}px;max-width:${w}px;height:${h}px;border-radius:${br}px;padding:${pad}px ${Math.round(pad*1.1)}px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);flex-shrink:0;${st!=='ok'?'outline:2px solid var(--'+st+')':''}">
   <div style="position:absolute;top:-30%;right:-15%;width:${Math.round(h*1.4)}px;height:${Math.round(h*1.4)}px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
     <div style="display:flex;align-items:center;gap:5px;font-size:${f1};font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;max-width:65%">${logo?`<img src="${(bankLogo(c.cardName||bankName,c.country).match(/src="([^"]+)"/)||[])[1]||''}" alt="" style="width:${imgSz};height:${imgSz};border-radius:3px;flex-shrink:0" data-act-error="ActHelpers.hideEl(this)">`:''}${bankName}</div>
@@ -554,7 +537,7 @@ const Dash={
 </div>`;
   },
   editWallet(){
-    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${c.id}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
+    Modal.open('Carrying Today',`<p class="vc-ix-66">Select which cards you have on you today</p><div style="display:flex;flex-direction:column;gap:7px">${S.cards.map(c=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:var(--rsm);cursor:pointer"><input type="checkbox" ${S.wallet.includes(c.id)?'checked':''} data-act-change="ActHelpers.toggleWallet('${U.actId(c.id)}',this.checked)"><span class="chip-ic">${_uiIcon('card',16)}</span><div class="vc-ix-20"><div style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.cardName}</div><div class="vc-ix-3">${c.network||''} ${c.last4?'****'+c.last4:''}</div></div></label>`).join('')||'<div class="empty"><div class="empty-ic">'+_uiIcon('card',32)+'</div><h3>No cards yet</h3></div>'}`,`<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Store.save();Modal.close();Dash.render()">Save</button>`);
   },
   editNW(){
     // Net worth is live-computed from banks/cash/investments/assets — open breakdown instead of a dead manual field
@@ -622,14 +605,16 @@ const Dash={
     const willOpen = !m.classList.contains('on');
     if (!willOpen) { this.closeMore(); return; }
     m.classList.add('on');
-    m.setAttribute('aria-hidden', 'false');
+    m.hidden = false;
+    m.removeAttribute('inert');
     setTimeout(() => document.addEventListener('click', () => this.closeMore(), { once: true }), 0);
   },
   closeMore() {
     const m = document.getElementById('dashMoreMenu');
     if (!m) return;
     m.classList.remove('on');
-    m.setAttribute('aria-hidden', 'true');
+    m.hidden = true;
+    m.setAttribute('inert', '');
   }
 };
 
@@ -994,9 +979,11 @@ const ExIm={
             if(!await window.__vos_confirm(`Import vault?\n\nContains:\n${previewLines}\n\nThis will merge with your existing data.`))return;
             const rollbackSnapshot={banks:[...(S.banks||[])],cards:[...(S.cards||[])],documents:[...(S.documents||[])],investments:[...(S.investments||[])],cash:[...(S.cash||[])],loans:[...(S.loans||[])]};
             try{
+              if(typeof IdPolicy!=='undefined')IdPolicy.sanitizeVault(data);
               ['banks','cards','investments','cash','loans','friends','bc','bonds','sims','assets','expenses','emails','gadgets','digital','documents','tags','familyMembers'].forEach(k=>{if(Array.isArray(data[k]))S[k]=[...(S[k]||[]),...data[k].filter(x=>!S[k]?.find(y=>y.id===x.id))];});
               if(data.modules)Object.assign(S.modules,data.modules);
               if(data.vaultMeta&&typeof VaultMeta!=='undefined'){VaultMeta._ensure();Object.keys(data.vaultMeta).forEach(k=>{if(data.vaultMeta[k]&&typeof data.vaultMeta[k]==='object')S.vaultMeta[k]={...S.vaultMeta[k],...data.vaultMeta[k]};});}
+              Store.sanitizeIds();
               Store.save();buildNav();Activity.log('Vault imported');Toast.show('Import successful!','success');R.goto(S.currentPage||'dashboard');
             }catch(importErr){Object.assign(S,rollbackSnapshot);Store.save();Toast.show('Import failed — vault restored to previous state','error',5000);console.error('[Import] failed:',importErr);}
           }catch(err){Toast.show('Failed: '+err.message,'error');}
@@ -1358,6 +1345,7 @@ const QRSync = {
 
   _applyImportData(data) {
     try {
+      if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
       const now = t => t ? new Date(t).getTime() : 0;
       QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
@@ -1367,6 +1355,7 @@ const QRSync = {
           else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
         });
       });
+      Store.sanitizeIds();
       Store.save(); buildNav(); Modal.close();
       Toast.show('Vault imported from QR!', 'success');
       R.goto(S.currentPage || 'dashboard');
@@ -1401,6 +1390,7 @@ const QRSync = {
       const enc = decodeURIComponent(encEncoded);
       const raw = await Crypto.decrypt(enc, code);
       const data = JSON.parse(raw);
+      if (typeof IdPolicy !== 'undefined') IdPolicy.sanitizeVault(data);
       const now = t => t ? new Date(t).getTime() : 0;
       QRSync._syncKeys().forEach(k => {
         if (!Array.isArray(data[k])) return;
@@ -1410,6 +1400,7 @@ const QRSync = {
           else if (now(item.updatedAt) > now(existing.updatedAt)) { S[k] = S[k].map(x => x.id === item.id ? item : x); }
         });
       });
+      Store.sanitizeIds();
       Store.save(); buildNav(); Modal.close();
       Toast.show('Vault synced successfully!', 'success');
       R.goto(S.currentPage || 'dashboard');
@@ -1621,9 +1612,11 @@ const ImportEngine={
   },
   mergeVault(data){
     if(!data.banks&&!data.cards){Toast.show('Not a valid VaultCap file','error');return;}
+    if(typeof IdPolicy!=='undefined')IdPolicy.sanitizeVault(data);
     const total=['banks','cards','investments','sims','assets','expenses','emails','gadgets','digital'].reduce((a,k)=>{
       if(Array.isArray(data[k])){const new_=data[k].filter(x=>!S[k]?.find(y=>y.id===x.id));S[k]=[...(S[k]||[]),...new_];return a+new_.length;}return a;
     },0);
+    Store.sanitizeIds();
     Store.save();buildNav();Activity.log('Vault merged',''+total+' new entries');
     Toast.show('Imported '+total+' new entries','success');this.render();
   },
@@ -1921,7 +1914,7 @@ const Links={
     <p class="vc-ix-66">Connect related entries — property with insurance, card with bank, device with email account...</p>
     <div style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:7px">
       ${opts.map(o=>`<label style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--glass);border-radius:10px;cursor:pointer;border:1px solid var(--border)">
-        <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${o.id}" style="width:18px;height:18px;accent-color:var(--accent)">
+        <input type="checkbox" ${linked.includes(o.id)?'checked':''} data-lid="${escAttr(U.actId(o.id))}" style="width:18px;height:18px;accent-color:var(--accent)">
         <span class="chip-ic">${_uiIcon(o.ic,18)}</span>
         <div><div style="font-size:0.8125rem;font-weight:500">${o.label}</div><div class="vc-ix-3">${o.type}</div></div>
       </label>`).join('') || '<div style="text-align:center;color:var(--text3);font-size:0.8125rem;padding:20px">No other entries to link to yet</div>'}
@@ -2229,10 +2222,10 @@ const SettingsNav = {
       ${(typeof WebAuthnUnlock!=='undefined'?WebAuthnUnlock.settingsRow():'')}
       <div class="si"><div class="sil"><div class="name">Master Key</div><div class="desc">Emergency bypass — store this somewhere safe</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="Settings.showMasterKey()">View</button></div>
       <div class="si"><div class="sil"><div class="name">Decoy PIN</div><div class="desc">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Set — shows convincing fake vault':'Not set'}</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="Settings.setDecoyPIN()">${(S.decoyPin||VaultDB?.hasDecoy||false)?'Change':'Set'}</button></div>
-      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} data-act-change="ActHelpers.toggleNoPin(this)"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} data-act-change="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
-      <div class="si"><div class="sil"><div class="name">Lock Timeout</div></div><select class="inp btn-sm vc-ix-156" data-act-change="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
-      <div class="si"><div class="sil"><div class="name">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm vc-ix-156" data-act-change="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
+      <div class="si"><div class="sil"><div class="name">No PIN Mode</div><div class="desc">Open vault without PIN (not recommended)</div></div><label class="tog"><input type="checkbox" ${S.noPin?'checked':''} aria-label="No PIN Mode" data-act-change="ActHelpers.toggleNoPin(this)"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name">Auto-Lock</div><div class="desc">Lock vault when phone sleeps</div></div><label class="tog"><input type="checkbox" ${S.autoLock?'checked':''} aria-label="Auto-Lock" data-act-change="S.autoLock=this.checked;Store.save()"><span class="ts"></span></label></div>
+      <div class="si"><div class="sil"><div class="name" id="sett-lock-timeout-lbl">Lock Timeout</div></div><select class="inp btn-sm vc-ix-156" aria-labelledby="sett-lock-timeout-lbl" data-act-change="S.lockMins=parseInt(this.value);Store.save()">${[1,5,10,30,60].map(m=>`<option value="${m}"${S.lockMins===m?' selected':''}>${m} min</option>`).join('')}<option value="0"${S.lockMins===0?' selected':''}>Never</option></select></div>
+      <div class="si"><div class="sil"><div class="name" id="sett-clip-clear-lbl">Clipboard Clear</div><div class="desc">Auto-clear after copying sensitive data</div></div><select class="inp btn-sm vc-ix-156" aria-labelledby="sett-clip-clear-lbl" data-act-change="S.clipSecs=parseInt(this.value);Store.save()">${[15,30,60,120].map(s=>`<option value="${s}"${S.clipSecs===s?' selected':''}>${s}s</option>`).join('')}</select></div>
       <div class="si"><div class="sil"><div class="name">Vault Profiles</div><div class="desc">Active: ${(()=>{const p=window.VaultProfiles?.active()||'personal';const m={'personal':'My Vault','demo':'Guided Demo','test':'Test'};return m[p]||p;})()} — demo is for tours; your real vault is My Vault</div></div><button type="button" class="btn btn-g btn-sm vc-ix-55" data-act="VaultProfiles.showSwitcher()">Switch</button></div>
     </div></div>
     <div class="set-sec"><div class="set-title">Vault Integrity</div><div class="set-card"><div style="padding:12px 14px"><button type="button" class="btn btn-g vc-ix-16" data-act="DataIntegrity.run()">Run Vault Integrity Check</button></div></div></div>
@@ -2257,7 +2250,7 @@ const SettingsNav = {
     const mods = typeof ALL_MODULES !== 'undefined' ? ALL_MODULES : [];
     const byGroup = {};
     mods.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
-    const row = m => `<div class="si"><div class="vc-ix-93"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${m.id}',this.checked)"><span class="ts"></span></label></div>`;
+    const row = m => `<div class="si"><div class="vc-ix-93"><span class="ni-ic" style="width:auto">${typeof VC!=='undefined'?VC.modIcon(m,18):''}</span><div class="sil"><div class="name">${m.n}</div><div class="desc">${m.desc}</div></div></div><label class="tog"><input type="checkbox" ${S.modules[m.id]?'checked':''} data-act-change="Settings.toggleMod('${U.actId(m.id)}',this.checked)"><span class="ts"></span></label></div>`;
     const sections = order.filter(g => byGroup[g]?.length).map(g =>
       `<div class="set-sec"><div class="set-title">${g}</div><div class="set-card">${byGroup[g].map(row).join('')}</div></div>`
     ).join('');
@@ -2276,7 +2269,7 @@ const SettingsNav = {
         <div class="vc-ix-158">Dark, Light, or match your device. Accessibility controls live under Access.</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" role="radiogroup" aria-label="Theme">
           ${options.map(o => `
-            <button type="button" role="radio" aria-checked="${active === o.id}" data-act="ThemeEngine.apply('${o.id}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
+            <button type="button" role="radio" aria-checked="${active === o.id}" data-act="ThemeEngine.apply('${U.actId(o.id)}')" style="cursor:pointer;touch-action:manipulation;border-radius:14px;overflow:hidden;border:2px solid ${active === o.id ? 'var(--accent)' : 'var(--border)'};background:var(--glass);padding:0;text-align:left;font-family:var(--font)">
               <div style="height:48px;background:${o.preview};display:flex;align-items:center;justify-content:center">
                 <div style="width:12px;height:12px;border-radius:50%;background:${o.dot};border:1px solid var(--border)"></div>
               </div>
@@ -2545,7 +2538,7 @@ const HelpCenter = {
       <button type="button" class="btn btn-p btn-full vc-ix-167" data-act="SmartHelp.open()">Ask Smart Help</button>
       <div style="display:flex;gap:8px;overflow-x:auto;padding:2px 4px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
         ${sections.map(s => `
-          <div data-act="HelpCenter._section='${s.id}';HelpCenter._renderContent()"
+          <div data-act="HelpCenter._section='${U.actId(s.id)}';HelpCenter._renderContent()"
             class="chip${this._section===s.id?' on':''}"
             style="white-space:nowrap;padding:6px 14px;cursor:pointer;touch-action:manipulation;display:inline-flex;align-items:center;gap:6px">
             ${typeof VC !== 'undefined' ? VC.icon(s.icon, 14) : ''} ${s.label}

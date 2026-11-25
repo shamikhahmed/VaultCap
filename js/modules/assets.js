@@ -106,7 +106,7 @@ const Assets = {
       const _pnl=(a.currentValue>0&&a.purchasePrice>0)?a.currentValue-a.purchasePrice:null;
       const _pnlPct=_pnl!==null?(_pnl/a.purchasePrice*100).toFixed(1):null;
       const _pnlHtml=_pnl!==null?`<span class="badge" style="color:${_pnl>=0?'var(--ok)':'var(--err)'}">${_pnl>=0?'+':''}${U.fmt(Math.round(Math.abs(_pnl)))} (${_pnl>=0?'+':''}${_pnlPct}%)</span>`:'';
-      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.assetIcon(a.assetType, 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||escHtml((a.notes||'').slice(0,60))}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'Business':'Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">${escHtml(a.staffAssigned)}</span>`:''}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Assets.fav('${a.id}')`,class:'fav'+(a.favorite?' on':'')})}${U.actsViewEditDel('Assets', a.id)}</div></div></div>`;
+      return `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.assetIcon(a.assetType, 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(a.name||'Asset')}</div><div class="entry-sub">${sub||escHtml((a.notes||'').slice(0,60))}</div><div class="entry-meta">${valDisplay?`<span class="badge b-acc">${displayCur} ${U.fmt(valDisplay)}</span>`:''} ${_pnlHtml} <span class="badge b-muted">${a.ownership==='business'?'Business':'Personal'}</span>${a.assetType==='vehicle'&&a.staffAssigned?` <span class="badge b-muted">${escHtml(a.staffAssigned)}</span>`:''}</div></div><div class="entry-acts">${U.icb('star',{onclick:`Assets.fav('${U.actId(a.id)}')`,class:'fav'+(a.favorite?' on':'')})}${U.actsViewEditDel('Assets', a.id)}</div></div></div>`;
     }).join('');
   },
 
@@ -228,13 +228,13 @@ const Assets = {
       : '';
     Modal.open(`${typeInfo.label} — ${a.name||'Asset'}`,
       `<div>${[['Type',typeInfo.label],['Value',(a.currentValue?(a.currency||'')+' '+U.fmt(a.currentValue):'—')],['Ownership',a.ownership||'personal'],['Notes',a.notes||'—']].map(([k,v])=>U.drRow(k,v)).join('')}${docsHtml}${remHtml}${noRelated}</div>`,
-      `<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Assets.edit('${id}');Modal.close()">Edit</button>`
+      `<button type="button" class="btn btn-g" data-act="Modal.close()">Close</button><button type="button" class="btn btn-p" data-act="Assets.edit('${U.actId(id)}');Modal.close()">Edit</button>`
     );
   },
 
   edit(id) {
     const a = (S.assets||[]).find(x => x.id===id); if (!a) return;
-    Modal.open('Edit Asset', this.form(a), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Assets.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Assets.save('${id}')">Update</button>`);
+    Modal.open('Edit Asset', this.form(a), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Assets.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Assets.save('${U.actId(id)}')">Update</button>`);
     setTimeout(() => {
       const cur = document.getElementById('af-cur'); const own = document.getElementById('af-own');
       if (cur) cur.value = a.currency || 'GBP'; if (own) own.value = a.ownership || 'personal';
@@ -265,6 +265,6 @@ const Assets = {
     S.assets = S.assets.filter(x => x.id!==id);
     Activity.log('Trashed asset', a.name);
     Store.save(); if (fm) Modal.close(); this.render();
-    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${S.trash[S.trash.length-1].id}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
+    Toast.show(`Moved to Trash — <button type="button" class="cpbtn" data-act="Trash.restore('${U.actId(S.trash[S.trash.length-1].id)}');this.closest('.toast').remove()">Undo</button>`,'info',6000, true);
   }
 };

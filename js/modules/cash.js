@@ -28,7 +28,7 @@ const Cash = {
     }
     const locIc = { Wallet:'wallet', Home:'building', Office:'building-2', Car:'car', Other:'package' };
     const locColor = { Wallet:'b-acc', Home:'b-ok', Office:'b-info', Car:'b-warn', Other:'b-muted' };
-    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.icon(locIc[c.location] || 'banknote', 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(c.location || 'Cash')}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}</div></div><div class="entry-acts">${U.icb('arrow-right',{onclick:`Cash.transfer('${c.id}')`,title:'Transfer'})}${U.actsEditDel('Cash', c.id)}</div></div></div>`).join('');
+    el.innerHTML = data.map(c => `<div class="entry"><div class="entry-main"><div class="entry-ic">${VC.icon(locIc[c.location] || 'banknote', 18)}</div><div class="entry-body"><div class="entry-name">${escHtml(c.location || 'Cash')}</div><div class="entry-sub sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}${c.notes ? ' · ' + escHtml(c.notes) : ''}</div><div class="entry-meta"><span class="badge ${locColor[c.location]||'b-muted'} sens">${(c.amount || 0).toLocaleString()} ${escHtml(c.currency || '')}</span>${(c.tags||[]).slice(0,2).map(t=>`<span class="badge b-muted">${escHtml(t)}</span>`).join('')}</div></div><div class="entry-acts">${U.icb('arrow-right',{onclick:`Cash.transfer('${U.actId(c.id)}')`,title:'Transfer'})}${U.actsEditDel('Cash', c.id)}</div></div></div>`).join('');
   },
   _pendingOwnerId: null,
   openAdd(prefill={}) {
@@ -62,7 +62,7 @@ const Cash = {
   },
   edit(id) {
     const c = (S.cash || []).find(x => x.id === id); if (!c) return;
-    Modal.open('Edit Cash', this.form(c), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cash.del('${id}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cash.save('${id}')">Update</button>`);
+    Modal.open('Edit Cash', this.form(c), `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-d btn-sm" data-act="Cash.del('${U.actId(id)}',true)">Delete</button><button type="button" class="btn btn-p" data-act="Cash.save('${U.actId(id)}')">Update</button>`);
     setTimeout(() => {
       const loc = document.getElementById('cf-loc'); if (loc) loc.value = c.location || 'Wallet';
       const cur = document.getElementById('cf-cur'); if (cur) cur.value = c.currency || 'PKR';
@@ -87,7 +87,7 @@ const Cash = {
         <div class="fg"><label class="fl">Currency</label><input class="inp vc-ix-212" value="${escAttr(src.currency||'')}" readonly></div>
       </div>
       <div class="fg"><label class="fl">Note (optional)</label><input class="inp" id="ct-note" placeholder="reason…"></div>
-    `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cash._doTransfer('${id}')">Transfer</button>`);
+    `, `<button type="button" class="btn btn-g" data-act="Modal.close()">Cancel</button><button type="button" class="btn btn-p" data-act="Cash._doTransfer('${U.actId(id)}')">Transfer</button>`);
     setTimeout(() => { const a = document.getElementById('ct-amt'); if (a) U.numInput(a, src.currency || 'PKR'); }, 60);
   },
   _doTransfer(srcId) {

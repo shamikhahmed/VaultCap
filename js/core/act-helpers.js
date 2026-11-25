@@ -72,12 +72,16 @@ const ActHelpers = {
   closeSheetGotoModules(sheetId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     this.gotoSettingsTab('general');
   },
 
   closeSheetGoto(sheetId, pageId) {
     const el = document.getElementById(sheetId);
     if (el) el.remove();
+    if (typeof FocusTrap !== 'undefined') FocusTrap.release();
+    if (typeof ScrollLock !== 'undefined') ScrollLock.sync();
     if (pageId && typeof R !== 'undefined') R.goto(pageId);
   },
 

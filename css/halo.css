@@ -7,8 +7,8 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── 0. Tokens ─────────────────────────────────────────────────────── */
-/* `body.light` listed too so these mappings out-rank luxe.css's body.light block */
-body, body.light {
+/* `body.light` / `body:not(.light)` listed so these mappings out-rank luxe.css and HIG 6 design/tokens.css */
+body, body.light, body:not(.light) {
   /* Palette — dark */
   --h-bg: #050506;
   --h-s1: #0e0f12;          /* cards */
@@ -64,6 +64,18 @@ body, body.light {
   --font-display: var(--h-round); --font-display-title: var(--h-display);
   --ease: var(--h-spring); --spring: var(--h-pop);
   --chart-1: #0a84ff; --chart-2: #30d158; --chart-3: #f2b53a; --chart-4: #bf5af2; --chart-5: #ff9f0a;
+  /* HIG 6 (css/design/tokens.css) semantic tokens → Halo */
+  --label: var(--h-text); --label-2: var(--h-text2); --label-3: var(--h-text3); --label-4: var(--h-hair2);
+  --tint: var(--accent); --tint-hover: var(--h-gold-hi); --tint-soft: var(--h-gold-soft); --on-tint: var(--accent-fg); --on-accent: var(--accent-fg);
+  --surface: var(--h-s1); --surface-2: var(--h-s2); --surface-elev: var(--h-s2); --surface-elevated: var(--h-s2);
+  --fill: var(--h-s3); --fill-2: var(--h-s2); --separator: var(--h-hair); --input: var(--h-s2);
+  --cap-bg: var(--h-bg); --cap-bg-2: var(--h-s1); --cap-surface: var(--h-s1); --cap-surface-2: var(--h-s2);
+  --cap-border: var(--h-hair); --cap-border-strong: var(--h-hair2); --cap-glass-bg: var(--h-s1); --cap-glass-border: var(--h-hair);
+  --cap-text: var(--h-text); --cap-text-dim: var(--h-text2); --cap-text-faint: var(--h-text3);
+  --success: var(--h-ok); --warning: var(--h-warn); --danger: var(--h-err);
+  --font-ui: var(--h-font); --font-rounded: var(--h-round); --cap-font-body: var(--h-font); --cap-font-display: var(--h-display);
+  --shadow-1: var(--h-shadow-1); --shadow-2: var(--h-shadow-2);
+  --r-sm: 10px; --r-md: var(--h-r-ctl); --r-lg: 16px; --r-xl: var(--h-r-card);
 }
 body.light {
   --h-bg: #f2f2f7;
@@ -84,13 +96,14 @@ body.light {
   --h-bar: rgb(249 249 251 / .78);
   --border3: rgb(0 0 0 / .2);
   --info: #0066cc;
-  /* Cap DNA: light-mode accent is ink navy; gold stays the brand highlight */
-  --accent: #0a1220; --accent-fg: #ffffff; --cap-accent: #0a1220; --cap-accent-contrast: #ffffff;
-  --glow: rgb(10 18 32 / .14);
+  /* HIG 6 rule (DESIGN.md): one accent across appearances — vault gold, deepened in light for AA */
+  --accent: #8b6508; --accent-fg: #ffffff; --cap-accent: #8b6508; --cap-accent-contrast: #ffffff;
+  --glow: rgb(139 101 8 / .16);
+  --tint-hover: #6e5005; --tint-soft: rgb(139 101 8 / .1);
 }
 body.light .btn-p, body.light #homeOpenBtn {
-  background: #0a1220 !important; color: #fff !important;
-  box-shadow: 0 1px 0 rgb(255 255 255 / .12) inset, 0 8px 22px -12px rgb(10 18 32 / .55) !important;
+  background: #8b6508 !important; color: #fff !important;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .14) inset, 0 8px 22px -12px rgb(139 101 8 / .55) !important;
 }
 @media (prefers-contrast: more) {
   body { --h-hair: rgb(255 255 255 / .22); --h-text2: rgb(235 235 245 / .85); --h-text3: rgb(235 235 245 / .7); }
