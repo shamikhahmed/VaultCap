@@ -84,7 +84,8 @@ const U = {
   /** Home country: the user's own, else the device region, else US. Never a hard-coded market. */
   homeCC:      () => (S.user && S.user.country) || ((((typeof navigator !== 'undefined' && navigator.language) || '').match(/-([A-Z]{2})$/i) || [])[1] || 'US').toUpperCase(),
   countries:   (sel) => { const h = sel || U.homeCC(); return COUNTRIES.map(c => `<option value="${c.c}"${c.c === h ? ' selected' : ''}>${c.f} ${c.n}</option>`).join(''); },
-  currencies:  () => CURRENCIES.map(c  => `<option value="${c}">${c}</option>`).join(''),
+  /** Currency options with the user's own currency pre-selected (list is alphabetical, so the first entry must never be the default). */
+  currencies:  (sel) => { const h = (sel || (typeof S !== 'undefined' && S.user && S.user.currency) || (typeof countryCurrency === 'function' ? countryCurrency(U.homeCC()) : 'USD')).toUpperCase(); return CURRENCIES.map(c => `<option value="${c}"${c === h ? ' selected' : ''}>${c}</option>`).join(''); },
   /** Bank suggestions for a country: curated BANKS_DB first, then the lazy-loaded
       world catalog (js/core/world-catalog.js) for every other country. */
   bankOpts:    cc => {

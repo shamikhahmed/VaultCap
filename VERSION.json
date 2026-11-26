@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v113",
+  "swCache": "vaultcap-v114",
   "updated": "2026-11-26",
-  "notes": "World catalogs v112 complete; Cap motion token map + docs/gallery perfection (vaultcap-v113)"
+  "notes": "Post-Cursor checks: home currency default, SIM dial prefix, years no longer count up, 2-decimal convert, tap-to-skip splash (vaultcap-v114)"
 }
