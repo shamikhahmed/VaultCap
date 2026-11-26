@@ -105,7 +105,7 @@ body.light {
   --glow: rgb(139 101 8 / .16);
   --tint-hover: #6e5005; --tint-soft: rgb(139 101 8 / .1);
 }
-body.light .btn-p, body.light #homeOpenBtn {
+body.light .btn-p, body.light #homeOpenBtn, body.light .vc-ix-29 {
   background: #8b6508 !important; color: #fff !important;
   box-shadow: 0 1px 0 rgb(255 255 255 / .14) inset, 0 8px 22px -12px rgb(139 101 8 / .55) !important;
 }
@@ -191,11 +191,11 @@ body.light .sidebar { background: #fafafc !important; }
 }
 .btn:active { transform: scale(.97); }
 .btn-sm { min-height: 36px; border-radius: 10px !important; }
-.btn-p, #homeOpenBtn {
+.btn-p, #homeOpenBtn, .vc-ix-29 {
   background: var(--h-gold-grad) !important; color: var(--h-gold-ink) !important; border: 0 !important;
   box-shadow: 0 1px 0 rgb(255 255 255 / .35) inset, 0 8px 24px -10px rgb(242 181 58 / .7) !important;
 }
-.btn-p:hover, #homeOpenBtn:hover { filter: brightness(1.06); }
+.btn-p:hover, #homeOpenBtn:hover, .vc-ix-29:hover { filter: brightness(1.06); }
 .btn-g { background: var(--h-s2) !important; color: var(--h-text) !important; border: 1px solid var(--h-hair) !important; }
 .btn-g:hover { background: var(--h-s3) !important; }
 .btn-d { background: rgb(255 69 58 / .12) !important; color: var(--h-err) !important; border: 1px solid rgb(255 69 58 / .25) !important; }
@@ -508,3 +508,6 @@ label:has(> input[type="checkbox"]:not(.tog input)), label:has(> input[type="rad
   .entry-sub { -webkit-line-clamp: 1; }
   .entry-main > .entry-ic { margin-top: 2px; }
 }
+
+/* ── 22. Sheets take focus on the container, not the first button ── */
+[data-vc-trap-focus]:focus, [data-vc-trap-focus]:focus-visible { outline: none !important; }
