@@ -102,7 +102,6 @@ async function maybeWelcomeIntro(done, opts) {
     clearTimeout(safetyTimer);
     clearTimeout(posterTimer);
     try { video.pause(); } catch (_) {}
-    shell.setAttribute('hidden', '');
     shell.style.pointerEvents = 'none';
     shell.classList.add('is-leaving');
     setTimeout(() => {
@@ -141,9 +140,24 @@ async function maybeWelcomeIntro(done, opts) {
   }
 }
 
+function ensureWelcomeIntroShell() {
+  if (document.getElementById('welcomeIntro')) return;
+  const splash = document.getElementById('splashScreen');
+  const shell = document.createElement('div');
+  shell.id = 'welcomeIntro';
+  shell.hidden = true;
+  shell.setAttribute('aria-label', 'Welcome to VaultCap');
+  shell.innerHTML =
+    '<video id="welcomeIntroVideo" muted playsinline preload="none" poster="assets/intro/welcome-poster.jpg"></video>' +
+    '<button id="welcomeIntroSkip" type="button">Skip</button>';
+  if (splash && splash.parentNode) splash.parentNode.insertBefore(shell, splash.nextSibling);
+  else document.body.appendChild(shell);
+}
+
 window.VCWelcomeIntro = {
   replay() {
     try { localStorage.removeItem('vc_intro_seen'); } catch (_) {}
+    ensureWelcomeIntroShell();
     maybeWelcomeIntro(() => {}, { force: true });
   },
 };
