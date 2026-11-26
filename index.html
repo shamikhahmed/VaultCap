@@ -53,7 +53,6 @@ body{overscroll-behavior-x:none;overscroll-behavior-y:auto}
 .cap-skip-link:focus,.cap-skip-link:focus-visible{left:12px;top:12px;width:auto;height:auto;padding:10px 14px;background:var(--surface-elevated,#2c2c2e);color:var(--label,#fff);border:0;border-radius:10px;outline:3px solid var(--tint,#D4A017);outline-offset:2px}
 #splashScreen.vault-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg,#000);overflow:hidden}
 html[data-vc-demo] #splashScreen,html[data-vc-skip-splash] #splashScreen{display:none!important}
-#welcomeIntro{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#060b13;transition:opacity .6s ease}#welcomeIntro[hidden]{display:none}#welcomeIntro.is-leaving{opacity:0}#welcomeIntroVideo{width:100%;height:100%;object-fit:contain;background:#060b13}#welcomeIntroSkip{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:16px;min-height:44px;padding:0 18px;border:1px solid rgb(255 255 255/.22);border-radius:999px;background:rgb(20 20 22/.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;font:600 15px/1 -apple-system,system-ui,sans-serif;z-index:1}.offline-bar:not(.on){display:none}
 html[data-vc-demo] #pgHome{display:flex}
 .vault-splash__reveal{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1}
 .vault-splash__mark{width:72px;height:72px;border-radius:18px;margin-bottom:18px;display:block}
@@ -190,10 +189,6 @@ body.light #splashScreen .vault-splash__tagline{color:rgb(60 60 67/.62)}
   <div class="vault-splash__progress" aria-hidden="true">
     <div id="splashBar" class="vault-splash__bar"></div>
   </div>
-</div>
-<div id="welcomeIntro" hidden aria-label="Welcome to VaultCap">
-  <video id="welcomeIntroVideo" muted playsinline preload="none" poster="assets/intro/welcome-poster.jpg"></video>
-  <button id="welcomeIntroSkip" type="button">Skip</button>
 </div>
 
 <!-- LOCK -->

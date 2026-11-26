@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v116",
+  "swCache": "vaultcap-v117",
   "updated": "2026-11-26",
-  "notes": "Welcome intro: critical CSS inline (styled before deferred CSS), full frame fit, bt709 clip colours (vaultcap-v116)"
+  "notes": "Reverted first-run welcome intro (PRs 23, 24); Halo splash as in v114 (vaultcap-v117)"
 }
