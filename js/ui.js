@@ -2340,6 +2340,7 @@ const SettingsNav = {
       <div class="si" style="flex-wrap:wrap;gap:8px"><div class="sil" style="flex:1;min-width:140px"><div class="name">Vault ID</div><div class="desc">Public ticket ID only — not a password. Capricorn Systems cannot open your vault with it.</div></div><div class="vc-ix-161"><code style="font-family:var(--mono);font-weight:700;letter-spacing:.06em">${vaultId}</code><button type="button" class="btn btn-g btn-sm" data-act="copyVaultId()">Copy</button></div></div>
       <div class="si"><div class="name vc-ix-8">Support: support@capricornsystems.com — include Vault ID. We guide recovery on your device; we never hold your PIN or master key.</div></div>
       ${isNativeApp()?'':`<div class="si"><div class="name vc-ix-8">Tip: On iPhone — Safari → Share → Add to Home Screen</div></div>`}
+      <div class="si vc-ix-6" data-act="typeof VCWelcomeIntro!=='undefined'&&VCWelcomeIntro.replay()"><div class="sil"><div class="name">Play welcome intro</div><div class="desc">Replay the first-run welcome clip</div></div><span class="vc-ix-4">›</span></div>
       <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
         <button type="button" class="btn btn-g btn-full btn-sm" data-act="SelfCheck.renderReport()">Run Diagnostics</button>
       </div>
