@@ -37,6 +37,131 @@ function mkEntity(type, fields = {}) {
 /* → js/core/demo-profiles.js */
 /* → js/core/app-helpers.js */
 // ===================== APP INIT =====================
+function isFreshVaultInstall() {
+  try {
+    if (localStorage.getItem('vo_used_demo') === '1') return false;
+    const profile = localStorage.getItem('vo_active_profile');
+    if (profile && profile !== 'personal' && profile !== '') return false;
+    const old = typeof Store !== 'undefined' && Store.loadRaw ? Store.loadRaw() : null;
+    if (old && old.user && old.user.name) return false;
+    if (old && ((Array.isArray(old.banks) && old.banks.length) || (Array.isArray(old.cards) && old.cards.length))) {
+      return false;
+    }
+  } catch (_) {}
+  return true;
+}
+
+function capMotionMs(name, fallback) {
+  try {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const m = raw.match(/^([\d.]+)(ms|s)$/i);
+    if (!m) return fallback;
+    return m[2].toLowerCase() === 's' ? parseFloat(m[1]) * 1000 : parseFloat(m[1]);
+  } catch (_) { return fallback; }
+}
+
+async function maybeWelcomeIntro(done, opts) {
+  opts = opts || {};
+  const shell = document.getElementById('welcomeIntro');
+  const video = document.getElementById('welcomeIntroVideo');
+  if (!shell || !video || typeof done !== 'function') { done(); return; }
+
+  let introSeen = false;
+  try { introSeen = localStorage.getItem('vc_intro_seen') === '1'; } catch (_) {}
+  const demo = document.documentElement.hasAttribute('data-vc-demo');
+  const skipAttr = document.documentElement.hasAttribute('data-vc-skip-splash');
+  let demoUrl = false;
+  try { demoUrl = new URLSearchParams(location.search).get('demo') === '1'; } catch (_) {}
+  let webdriver = false;
+  try { webdriver = !!navigator.webdriver; } catch (_) {}
+
+  if (!opts.force) {
+    if (introSeen || demo || demoUrl || skipAttr || webdriver || !isFreshVaultInstall()) {
+      done();
+      return;
+    }
+    try {
+      if (typeof VaultDB !== 'undefined' && typeof VaultDB.isInitialized === 'function' && await VaultDB.isInitialized()) {
+        done();
+        return;
+      }
+    } catch (_) {}
+  }
+
+  try { localStorage.setItem('vc_intro_seen', '1'); } catch (_) {}
+
+  shell.removeAttribute('hidden');
+  let closed = false;
+  let safetyTimer;
+  let posterTimer;
+  const leaveMs = capMotionMs('--cap-dur-slow', 600);
+
+  const close = () => {
+    if (closed) return;
+    closed = true;
+    clearTimeout(safetyTimer);
+    clearTimeout(posterTimer);
+    try { video.pause(); } catch (_) {}
+    shell.style.pointerEvents = 'none';
+    shell.classList.add('is-leaving');
+    setTimeout(() => {
+      shell.remove();
+      done();
+    }, leaveMs);
+  };
+
+  const skipBtn = document.getElementById('welcomeIntroSkip');
+  const dismissIntro = () => { close(); };
+  skipBtn?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); dismissIntro(); });
+  video.addEventListener('click', dismissIntro);
+  shell.addEventListener('click', dismissIntro);
+  video.addEventListener('ended', close, { once: true });
+  const onKey = (e) => {
+    if (e.key === 'Escape' || e.key === 'Enter') {
+      close();
+      window.removeEventListener('keydown', onKey);
+    }
+  };
+  window.addEventListener('keydown', onKey);
+  safetyTimer = setTimeout(close, 8000);
+
+  let reduceMotion = false;
+  try { reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (_) {}
+
+  if (reduceMotion) {
+    posterTimer = setTimeout(close, 1200);
+    return;
+  }
+
+  video.src = 'assets/intro/welcome.mp4';
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => { posterTimer = setTimeout(close, 1200); });
+  }
+}
+
+function ensureWelcomeIntroShell() {
+  if (document.getElementById('welcomeIntro')) return;
+  const splash = document.getElementById('splashScreen');
+  const shell = document.createElement('div');
+  shell.id = 'welcomeIntro';
+  shell.hidden = true;
+  shell.setAttribute('aria-label', 'Welcome to VaultCap');
+  shell.innerHTML =
+    '<video id="welcomeIntroVideo" muted playsinline preload="none" poster="assets/intro/welcome-poster.jpg"></video>' +
+    '<button id="welcomeIntroSkip" type="button">Skip</button>';
+  if (splash && splash.parentNode) splash.parentNode.insertBefore(shell, splash.nextSibling);
+  else document.body.appendChild(shell);
+}
+
+window.VCWelcomeIntro = {
+  replay() {
+    try { localStorage.removeItem('vc_intro_seen'); } catch (_) {}
+    ensureWelcomeIntroShell();
+    maybeWelcomeIntro(() => {}, { force: true });
+  },
+};
+
 async function App() {
   // Sidebar chrome lives in the deferred app chunk — init on unlock via R.unlock.
   if (typeof initSidebar === 'function') initSidebar();
@@ -55,9 +180,10 @@ async function App() {
       document.documentElement.dataset.appReady = 'true';
     } catch (_) {}
   };
+  const finishBootSplash = () => { void maybeWelcomeIntro(markAppReady); };
   if (skipSplash) {
     if (splash) splash.style.display = 'none';
-    markAppReady();
+    finishBootSplash();
   } else {
     let splashFillTimer;
     let splashHoldTimer;
@@ -70,7 +196,7 @@ async function App() {
       clearTimeout(splashHoldTimer);
       clearTimeout(splashLeaveTimer);
       splash.style.display = 'none';
-      markAppReady();
+      finishBootSplash();
       window.removeEventListener('pointerdown', dismissSplash);
       window.removeEventListener('keydown', dismissSplash);
     };
@@ -78,17 +204,9 @@ async function App() {
     window.addEventListener('pointerdown', dismissSplash, { once: true, passive: true });
     window.addEventListener('keydown', dismissSplash, { once: true, passive: true });
     // Halo splash: Cap kit durations (fast → fill, slow → hold, base → leave). First launch per session only.
-    const ms = (name, fallback) => {
-      try {
-        const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        const m = raw.match(/^([\d.]+)(ms|s)$/i);
-        if (!m) return fallback;
-        return m[2].toLowerCase() === 's' ? parseFloat(m[1]) * 1000 : parseFloat(m[1]);
-      } catch (_) { return fallback; }
-    };
-    const fillDelay = ms('--cap-dur-fast', 150);
-    const hold = ms('--cap-dur-slow', 600);
-    const leave = ms('--cap-dur-base', 280);
+    const fillDelay = capMotionMs('--cap-dur-fast', 150);
+    const hold = capMotionMs('--cap-dur-slow', 600);
+    const leave = capMotionMs('--cap-dur-base', 280);
     splashFillTimer = setTimeout(() => { if (bar) bar.style.width = '100%'; }, Math.min(40, fillDelay));
     splashHoldTimer = setTimeout(() => {
       splash.classList.add('is-leaving');
