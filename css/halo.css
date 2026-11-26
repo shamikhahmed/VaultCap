@@ -508,36 +508,3 @@ label:has(> input[type="checkbox"]:not(.tog input)), label:has(> input[type="rad
   .entry-sub { -webkit-line-clamp: 1; }
   .entry-main > .entry-ic { margin-top: 2px; }
 }
-
-/* ── 22. Welcome intro (first-run video) ──────────────────────────────── */
-#welcomeIntro {
-  position: fixed; inset: 0; z-index: 10000; background: #000;
-  display: grid; place-items: center;
-  transition: opacity var(--cap-dur-slow, 600ms) var(--cap-ease, ease);
-}
-#welcomeIntro.is-leaving { opacity: 0; }
-#welcomeIntroVideo { width: 100%; height: 100%; object-fit: cover; }
-#welcomeIntroSkip {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 12px);
-  right: 16px;
-  min-height: 44px;
-  padding: 0 18px;
-  border: 1px solid rgb(255 255 255 / .22);
-  border-radius: 999px;
-  background: rgb(20 20 22 / .55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #fff;
-  font: 600 15px/1 -apple-system, system-ui, sans-serif;
-  cursor: pointer;
-  touch-action: manipulation;
-  z-index: 1;
-}
-#welcomeIntroSkip:focus-visible { outline: 3px solid var(--tint, #f2b53a); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) {
-  #welcomeIntro #welcomeIntroVideo { display: none; }
-  #welcomeIntro {
-    background: #000 url('../assets/intro/welcome-poster.jpg') center / cover no-repeat;
-  }
-}

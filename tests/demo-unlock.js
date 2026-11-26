@@ -24,7 +24,6 @@ async function enterPin(page, pin) {
 async function dismissOverlays(page) {
   await page.evaluate(() => {
     document.getElementById('splashScreen')?.remove();
-    document.getElementById('welcomeIntro')?.remove();
     if (typeof Modal !== 'undefined') Modal.close();
     const overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('on');
@@ -197,7 +196,6 @@ async function fastGalleryUnlock(page) {
     localStorage.setItem('vo_demo_guide_seen', '1');
     localStorage.setItem('vos_wn_ver', typeof VER !== 'undefined' ? VER : '4.9.2');
     document.getElementById('splashScreen')?.remove();
-    document.getElementById('welcomeIntro')?.remove();
     ['pgHome', 'pgLock', 'pgOnboard', 'pgProfilePicker'].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
@@ -220,7 +218,6 @@ async function fastGalleryUnlock(page) {
 /** @param {import('@playwright/test').Page} page */
 async function unlockDemoVault(page) {
   await page.addInitScript(() => {
-    localStorage.setItem('vc_intro_seen', '1');
     localStorage.setItem('vo_active_profile', 'demo');
     localStorage.setItem('vo_used_demo', '1');
     localStorage.removeItem('vo_demo_guide_pending');
@@ -276,7 +273,6 @@ async function unlockDemoVault(page) {
   if (!unlocked) {
     await page.evaluate(async () => {
       document.getElementById('splashScreen')?.remove();
-      document.getElementById('welcomeIntro')?.remove();
       if (typeof ensureDemoVaultReady === 'function') await ensureDemoVaultReady();
       loadDemoProfile('business');
       S.user.onboardingComplete = true;
