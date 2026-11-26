@@ -62,8 +62,11 @@
     try { document.documentElement.setAttribute('data-vc-css-ready', '1'); } catch (e5) {}
   }
   window.__vcActivateDeferredCss = activateDeferredCss;
-  /* After LH/LCP window — early activation of layout/components caused CLS ~0.4 */
-  setTimeout(activateDeferredCss, 5500);
+  /* Full CSS must be live before the splash hands over (~1s), or first-run users see an
+     unstyled welcome screen. Activate on window load (splash still covers the page). */
+  if (document.readyState === 'complete') activateDeferredCss();
+  else window.addEventListener('load', activateDeferredCss, { once: true });
+  setTimeout(activateDeferredCss, 1200);
   ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
     document.addEventListener(evt, activateDeferredCss, { once: true, passive: true, capture: true });
   });
