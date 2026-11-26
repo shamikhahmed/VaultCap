@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v115",
+  "swCache": "vaultcap-v116",
   "updated": "2026-11-26",
-  "notes": "First-run welcome intro video (5s silent); cache vaultcap-v115 — intro assets not precached"
+  "notes": "Welcome intro: critical CSS inline (styled before deferred CSS), full frame fit, bt709 clip colours (vaultcap-v116)"
 }
