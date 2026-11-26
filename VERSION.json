@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v114",
+  "swCache": "vaultcap-v117",
   "updated": "2026-11-26",
-  "notes": "Post-Cursor checks: home currency default, SIM dial prefix, years no longer count up, 2-decimal convert, tap-to-skip splash (vaultcap-v114)"
+  "notes": "Reverted first-run welcome intro (PRs 23, 24); Halo splash as in v114 (vaultcap-v117)"
 }
