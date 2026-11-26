@@ -59,7 +59,24 @@ async function App() {
     if (splash) splash.style.display = 'none';
     markAppReady();
   } else {
+    let splashFillTimer;
+    let splashHoldTimer;
+    let splashLeaveTimer;
+    let splashDismissed = false;
+    const dismissSplash = () => {
+      if (splashDismissed) return;
+      splashDismissed = true;
+      clearTimeout(splashFillTimer);
+      clearTimeout(splashHoldTimer);
+      clearTimeout(splashLeaveTimer);
+      splash.style.display = 'none';
+      markAppReady();
+      window.removeEventListener('pointerdown', dismissSplash);
+      window.removeEventListener('keydown', dismissSplash);
+    };
     try { sessionStorage.setItem('vc_splash_seen', '1'); } catch (_) {}
+    window.addEventListener('pointerdown', dismissSplash, { once: true, passive: true });
+    window.addEventListener('keydown', dismissSplash, { once: true, passive: true });
     // Halo splash: Cap kit durations (fast → fill, slow → hold, base → leave). First launch per session only.
     const ms = (name, fallback) => {
       try {
@@ -72,13 +89,10 @@ async function App() {
     const fillDelay = ms('--cap-dur-fast', 150);
     const hold = ms('--cap-dur-slow', 600);
     const leave = ms('--cap-dur-base', 280);
-    setTimeout(() => { if (bar) bar.style.width = '100%'; }, Math.min(40, fillDelay));
-    setTimeout(() => {
+    splashFillTimer = setTimeout(() => { if (bar) bar.style.width = '100%'; }, Math.min(40, fillDelay));
+    splashHoldTimer = setTimeout(() => {
       splash.classList.add('is-leaving');
-      setTimeout(() => {
-        splash.style.display = 'none';
-        markAppReady();
-      }, leave);
+      splashLeaveTimer = setTimeout(dismissSplash, leave);
     }, hold);
   }
 

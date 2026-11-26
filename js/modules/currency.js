@@ -248,7 +248,7 @@ const Currency = {
     const to = (document.getElementById('conv-to') || {}).value || 'USD';
     const result = this.convert(amt, from, to);
     const el = document.getElementById('conv-result');
-    if (el) el.textContent = result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + ' ' + to;
+    if (el) el.textContent = result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: Math.abs(result) < 1 ? 4 : 2 }) + ' ' + to;
   },
 
   /** val = display-currency units per 1 `code`; stored USD-based so the rest of the app reads it directly. */

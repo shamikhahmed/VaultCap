@@ -65,8 +65,8 @@
     var raw = m[2].replace(/,/g, '').replace('−', '-');
     var to = parseFloat(raw);
     if (!isFinite(to) || to === 0) return null;
-    var plain = !m[1].trim() && !m[3].trim();
-    if (plain && /^(19|20)\d\d$/.test(raw)) return null;          // a year
+    // Years never count up — "2025", "2025 rates", "FY 2025", "YA 2025" (no thousands comma, no decimals)
+    if (/^(19|20)\d\d$/.test(raw) && m[2].indexOf(',') < 0) return null;
     var dashboardMain = el.closest('.dash-vault-main');
     if (dashboardMain && parseFloat(getComputedStyle(el).fontSize) >= 16) return null; // alive.js owns these
     return { el: el, node: node, orig: node.nodeValue, text: t, m: m, to: to, dec: (raw.split('.')[1] || '').length, comma: /,/.test(m[2]) };
