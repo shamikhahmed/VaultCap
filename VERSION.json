@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v117",
+  "swCache": "vaultcap-v118",
   "updated": "2026-11-26",
-  "notes": "Reverted first-run welcome intro (PRs 23, 24); Halo splash as in v114 (vaultcap-v117)"
+  "notes": "Full CSS activates on window load (was 5.5s), so first-run welcome is styled; rounded splash mark (vaultcap-v118)"
 }
