@@ -1,7 +1,7 @@
 {
   "app": "VaultCap",
   "version": "5.4.3",
-  "swCache": "vaultcap-v118",
+  "swCache": "vaultcap-v119",
   "updated": "2026-11-26",
-  "notes": "Full CSS activates on window load (was 5.5s), so first-run welcome is styled; rounded splash mark (vaultcap-v118)"
+  "notes": "Gold style for remaining blue primary buttons; sheets focus the sheet, not Cancel (vaultcap-v119)"
 }

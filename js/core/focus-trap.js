@@ -14,8 +14,12 @@ const FocusTrap = (function () {
     _el = el;
     _prev = document.activeElement;
     _onEscape = typeof onEscape === 'function' ? onEscape : null;
-    var first = _focusables()[0];
-    if (first) first.focus({ preventScroll: true });
+    /* Focus the sheet itself so the first button (usually Cancel) doesn't light up with a focus ring.
+       Tab still moves into the sheet's controls; screen readers start at the sheet. */
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.setAttribute('data-vc-trap-focus', '');
+    try { el.focus({ preventScroll: true }); } catch (e) {}
+    if (document.activeElement !== el) { var first = _focusables()[0]; if (first) first.focus({ preventScroll: true }); }
     document.addEventListener('keydown', _onKey, true);
   }
 
@@ -48,7 +52,7 @@ const FocusTrap = (function () {
     if (!nodes.length) { e.preventDefault(); return; }
     var first = nodes[0], last = nodes[nodes.length - 1];
     if (e.shiftKey) {
-      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      if (document.activeElement === first || document.activeElement === _el) { e.preventDefault(); last.focus(); }
     } else {
       if (document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
